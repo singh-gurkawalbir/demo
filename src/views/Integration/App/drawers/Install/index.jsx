@@ -5,6 +5,7 @@
 */
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -62,6 +63,7 @@ const getConnectionType = resource => {
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
+  const history = useHistory();
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -78,6 +80,8 @@ export default function ConnectorInstallation(props) {
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const isFrameWork2 =
+    integration && integration.installSteps && integration.installSteps.length;
 
   useEffect(() => {
     if (
@@ -119,12 +123,6 @@ export default function ConnectorInstallation(props) {
     return <Typography>No Integration Found</Typography>;
   }
 
-  const initUninstall = storeId => {
-    dispatch(
-      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
-    );
-  };
-
   const handleUninstall = e => {
     e.preventDefault();
     confirmDialog({
@@ -141,7 +139,18 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            initUninstall(storeId);
+            if (
+              integration.settings &&
+              integration.settings.supportsMultiStore
+            ) {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+              );
+            } else {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+              );
+            }
           },
         },
       ],
@@ -149,16 +158,26 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction } = step;
+    const { _connectionId, installURL, installerFunction, type } = step;
 
     // handle connection step click
-    if (_connectionId) {
+    if (_connectionId || type === 'connection') {
       if (step.isTriggered) {
         return false;
       }
 
       setSelectedConnectionId(_connectionId);
-      // handle Installation step click
+    } else if (isFrameWork2 && !step.isTriggered) {
+      dispatch(
+        actions.integrationApp.installer.updateStep(
+          integrationId,
+          installerFunction,
+          'inProgress'
+        )
+      );
+      dispatch(
+        actions.integrationApp.installer.scriptInstallStep(integrationId)
+      );
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
@@ -218,7 +237,14 @@ export default function ConnectorInstallation(props) {
       resourceConstants.OAUTH_APPLICATIONS.includes(
         getConnectionType(selectedConnection)
       ) &&
-      !isAuthorized
+      !isAuthorized &&
+      !(
+        getConnectionType(selectedConnection) === 'shopify' &&
+        selectedConnection &&
+        selectedConnection.http &&
+        selectedConnection.http.auth &&
+        selectedConnection.http.auth.type === 'basic'
+      )
     ) {
       return;
     }
@@ -230,12 +256,24 @@ export default function ConnectorInstallation(props) {
         'inProgress'
       )
     );
-    dispatch(
-      actions.integrationApp.installer.installStep(
-        integrationId,
-        (step || {}).installerFunction
-      )
-    );
+
+    if (isFrameWork2) {
+      dispatch(
+        actions.integrationApp.installer.scriptInstallStep(
+          integrationId,
+          selectedConnectionId
+        )
+      );
+    } else {
+      dispatch(
+        actions.integrationApp.installer.installStep(
+          integrationId,
+          (step || {}).installerFunction,
+          selectedConnectionId
+        )
+      );
+    }
+
     setSelectedConnectionId(false);
   };
 

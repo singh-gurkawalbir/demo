@@ -37,7 +37,7 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
     if (fieldId === 'version') {
       fieldDefinitions[fieldId].visible = versions.length > 1;
 
-      if (!fieldDefinitions[fieldId].value) {
+      if (!fieldDefinitions[fieldId].value && versions.length === 1) {
         fieldDefinitions[fieldId].value = versions[0].version;
       }
     }
@@ -74,6 +74,18 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
         ];
       }
 
+      if (pathParam.suggestions && pathParam.suggestions.length > 0) {
+        pathParamField.type = 'autosuggest';
+        pathParamField.labelName = 'name';
+        pathParamField.valueName = 'value';
+        pathParamField.options = {
+          suggestions: pathParam.suggestions.map(s => ({
+            name: s,
+            value: s,
+          })),
+        };
+      }
+
       return pathParamField;
     });
 }
@@ -101,6 +113,7 @@ export function howToFindIdentifierFieldsMeta({
   pathParameterValues = {},
   lookupType,
   lookupQueryParameterValues = {},
+  resource,
 }) {
   const lookupTypeOptions = [];
   const fields = [];
@@ -162,7 +175,10 @@ export function howToFindIdentifierFieldsMeta({
       const identifierField = {
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
-        type: 'text',
+        type: 'textwithlookupextract',
+        fieldType: 'ignoreExistingData',
+        hideLookups: true,
+        connectionId: resource._connectionId,
         required: true,
         value: pathParameterValues[identifierPathParam.id],
         visibleWhenAll: [
@@ -266,6 +282,7 @@ export function fieldMeta({ resource, assistantData }) {
         pathParameterValues: assistantConfig.pathParams,
         lookupType: assistantConfig.lookupType,
         lookupQueryParameterValues: assistantConfig.lookupQueryParams,
+        resource,
       });
     }
   }

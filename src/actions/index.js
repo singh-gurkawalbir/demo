@@ -731,6 +731,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
+      }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
@@ -1115,8 +1120,8 @@ const mapping = {
     }),
   patchField: (id, field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
-  updateGenerates: (id, generateFields) =>
-    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
+  updateImportSampleData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA, { id, value }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, key, value) =>
