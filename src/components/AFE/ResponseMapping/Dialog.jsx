@@ -54,7 +54,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const SaveButton = props => {
-  const { dataTest, disabled, onSave, label, saveInProgress } = props;
+  const { dataTest, disabled, onSave, label, saveInProgress, onClose } = props;
+  const handleBtnClick = useCallback(() => {
+    onSave();
+
+    if (onClose) onClose();
+  }, [onClose, onSave]);
 
   return (
     <Button
@@ -62,7 +67,7 @@ const SaveButton = props => {
       variant="outlined"
       color="secondary"
       disabled={disabled}
-      onClick={onSave}>
+      onClick={handleBtnClick}>
       {saveInProgress ? (
         <Fragment>
           <Spinner size={16} />
@@ -186,13 +191,13 @@ export default function ResponseMappingDialog(props) {
   const patchSave = useCallback(() => {
     dispatch(actions.responseMapping.save(editorId));
   }, [dispatch, editorId]);
-  const handleSaveClick = useCallback(
-    shouldClose => () => {
-      patchSave();
-      setCloseOnSave(shouldClose);
-    },
-    [patchSave]
-  );
+  const handleSave = useCallback(() => {
+    patchSave();
+  }, [patchSave]);
+  const handleClose = () => {
+    setCloseOnSave(true);
+  };
+
   const disableSave = disabled || saveInProgress || !isDirty;
 
   return (
@@ -242,7 +247,7 @@ export default function ResponseMappingDialog(props) {
           <SaveButton
             dataTest="saveMapping"
             disabled={disableSave}
-            onSave={handleSaveClick(false)}
+            onSave={handleSave}
             saveInProgress={!closeOnSave && saveInProgress}
             label="Save"
           />
@@ -250,7 +255,8 @@ export default function ResponseMappingDialog(props) {
             <SaveButton
               dataTest="saveAndCloseMapping"
               disabled={disableSave}
-              onSave={handleSaveClick(true)}
+              onSave={handleSave}
+              onClose={handleClose}
               saveInProgress={closeOnSave && saveInProgress}
               label="Save and Close"
             />
