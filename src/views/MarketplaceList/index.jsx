@@ -120,7 +120,7 @@ export default function MarketplaceList() {
     selectors.marketplaceTemplates(state, application)
   );
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector && connector.name;
+  const applicationName = connector ? connector.name : application;
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -170,7 +170,13 @@ export default function MarketplaceList() {
     <Fragment>
       <InstallTemplateDrawer />
 
-      <CeligoPageBar title={`${applicationName} Integrations`} />
+      <CeligoPageBar
+        title={`${
+          applicationName
+            ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
+            : ''
+        } Integrations`}
+      />
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card
