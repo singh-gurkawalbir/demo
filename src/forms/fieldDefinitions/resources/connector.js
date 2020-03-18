@@ -32,6 +32,7 @@ export default {
     type: 'text',
     label: 'Contact Emails',
     required: true,
+    placeholder: 'Comma separated list of emails',
     validWhen: {
       matchesRegEx: {
         pattern: MULTIPLE_EMAILS,
