@@ -47,8 +47,11 @@ function MappingDrawer() {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
+  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
+    state => selectors.mapping(state, mappingEditorId)
+  );
+  const showPreview = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
@@ -59,10 +62,8 @@ function MappingDrawer() {
       open={!!match}
       classes={{
         paper: clsx(classes.drawerPaper, {
-          [classes.fullWidthDrawerClose]:
-            !drawerOpened && showSalesforceNetsuiteAssistant,
-          [classes.fullWidthDrawerOpen]:
-            drawerOpened && showSalesforceNetsuiteAssistant,
+          [classes.fullWidthDrawerClose]: !drawerOpened && showPreview,
+          [classes.fullWidthDrawerOpen]: drawerOpened && showPreview,
         }),
       }}
       onClose={handleClose}>
