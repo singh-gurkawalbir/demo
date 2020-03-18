@@ -80,7 +80,6 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_ON_OFF_ACTION_STATUS:
         draft.onOffInProgress = onOffInProgress;
-        console.log('onOffInProgress ***', draft.onOffInProgress);
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
         .SHOW_FORM_VALIDATION_ERRORS:
