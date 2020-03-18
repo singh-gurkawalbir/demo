@@ -113,6 +113,7 @@ export function howToFindIdentifierFieldsMeta({
   pathParameterValues = {},
   lookupType,
   lookupQueryParameterValues = {},
+  resource,
 }) {
   const lookupTypeOptions = [];
   const fields = [];
@@ -174,7 +175,10 @@ export function howToFindIdentifierFieldsMeta({
       const identifierField = {
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
-        type: 'text',
+        type: 'textwithlookupextract',
+        fieldType: 'ignoreExistingData',
+        hideLookups: true,
+        connectionId: resource._connectionId,
         required: true,
         value: pathParameterValues[identifierPathParam.id],
         visibleWhenAll: [
@@ -278,6 +282,7 @@ export function fieldMeta({ resource, assistantData }) {
         pathParameterValues: assistantConfig.pathParams,
         lookupType: assistantConfig.lookupType,
         lookupQueryParameterValues: assistantConfig.lookupQueryParams,
+        resource,
       });
     }
   }
