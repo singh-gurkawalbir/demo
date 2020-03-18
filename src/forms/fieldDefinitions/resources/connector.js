@@ -1,3 +1,5 @@
+const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
+
 export default {
   name: {
     type: 'text',
@@ -32,7 +34,7 @@ export default {
     required: true,
     validWhen: {
       matchesRegEx: {
-        pattern: '^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$',
+        pattern: MULTIPLE_EMAILS,
         message: 'Please enter a valid Email.',
       },
     },
