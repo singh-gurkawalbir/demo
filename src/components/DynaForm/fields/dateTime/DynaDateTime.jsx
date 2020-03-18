@@ -40,9 +40,10 @@ export default function DateTimePicker(props) {
 
           e.preventDefault();
         }}
-        variant="inline"
+        variant="dialog"
         onChange={value => setDateValue(value)}
         disabled={disabled}
+        clearable
         keyboardIcon={<CalendarIcon />}
       />
       <ErroredMessageComponent {...props} />
