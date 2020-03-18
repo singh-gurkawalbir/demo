@@ -36,6 +36,8 @@ function InputFilterDialog({
       entryFunction: script.function,
     };
   }, [resource, resourceType]);
+  const helpKey =
+    resourceType === 'imports' ? 'import.filter.rules' : 'lookup.input.filter';
 
   useEffect(() => {
     if (!sampleDataStatus) {
@@ -69,6 +71,8 @@ function InputFilterDialog({
   return (
     <InputFilterToggleEditorDialog
       title="Define Input Filter"
+      helpTitle="Filter Rules"
+      helpKey={helpKey}
       disabled={isViewMode}
       id={resourceId + flowId}
       data={sampleData}
