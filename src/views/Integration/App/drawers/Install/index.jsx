@@ -5,6 +5,7 @@
 */
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -62,6 +63,7 @@ const getConnectionType = resource => {
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
+  const history = useHistory();
   const [selectedConnectionId, setSelectedConnectionId] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -119,12 +121,6 @@ export default function ConnectorInstallation(props) {
     return <Typography>No Integration Found</Typography>;
   }
 
-  const initUninstall = storeId => {
-    dispatch(
-      actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
-    );
-  };
-
   const handleUninstall = e => {
     e.preventDefault();
     confirmDialog({
@@ -141,7 +137,18 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            initUninstall(storeId);
+            if (
+              integration.settings &&
+              integration.settings.supportsMultiStore
+            ) {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+              );
+            } else {
+              history.push(
+                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+              );
+            }
           },
         },
       ],
