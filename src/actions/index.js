@@ -1359,6 +1359,11 @@ const flow = {
       fileContent,
       fileType,
     }),
+  isOnOffActionInprogress: (onOffInProgress, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+      onOffInProgress,
+      flowId,
+    }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   receivedLastExportDateTime: (flowId, response) =>
