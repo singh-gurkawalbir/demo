@@ -16,6 +16,9 @@ const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
     dispatch(actions.auth.request(email, password));
   },
+  getCsrfToken: () => {
+    dispatch(actions.auth.getCsrfToken());
+  },
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
@@ -122,6 +125,8 @@ class SignIn extends Component {
     email: '',
   };
   componentDidMount() {
+    // this.props.getCsrfToken();
+
     if (
       process.env.AUTO_LOGIN === 'true' &&
       process.env.NODE_ENV === 'development'
@@ -154,7 +159,13 @@ class SignIn extends Component {
   };
 
   render() {
-    const { classes, error, dialogOpen, userEmail } = this.props;
+    const {
+      classes,
+      error,
+      dialogOpen,
+      userEmail,
+      attemptedRoute,
+    } = this.props;
     const { email } = this.state;
 
     return (
@@ -205,18 +216,28 @@ class SignIn extends Component {
               Forgot password?
             </Link>
           </div>
-          <div className={classes.hidden}>
-            <div className={classes.or}>
-              <Typography variant="body1">or</Typography>
-            </div>
+        </form>
+        <div>
+          <div className={classes.or}>
+            <Typography variant="body1">or</Typography>
+          </div>
+          <form
+            action={`/auth/google?attemptedRoute=${attemptedRoute || ''}`}
+            method="post">
+            <TextField
+              id="_csrf"
+              name="_csrf"
+              value={document.getElementsByTagName('meta')['x-csrf-token']}
+            />
             <Button
+              type="submit"
               variant="contained"
               color="secondary"
               className={classes.googleBtn}>
               Sign in with Google
             </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     );
   }

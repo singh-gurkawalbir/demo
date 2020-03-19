@@ -204,6 +204,7 @@ module.exports = {
       });
 
       neutrino.config.devServer.proxy({
+        '/auth/google': proxyOpts,
         '/signin': proxyOpts,
         '/signout': proxyOpts,
         '/csrf': proxyOpts,
