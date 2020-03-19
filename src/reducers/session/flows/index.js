@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { type, response, flowId } = action;
+  const { type, response, flowId, onOffInProgress } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -14,6 +14,9 @@ export default (state = {}, action) => {
           },
         };
 
+        break;
+      case actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS:
+        draft[flowId] = { onOffInProgress };
         break;
 
       default:
@@ -27,4 +30,12 @@ export function getLastExportDateTime(state, flowId) {
   }
 
   return state.lastExportDateTime && state.lastExportDateTime[flowId];
+}
+
+export function isOnOffInProgress(state, flowId) {
+  if (!(state && state[flowId])) {
+    return { onOffInProgress: false };
+  }
+
+  return { onOffInProgress: state[flowId].onOffInProgress || false };
 }

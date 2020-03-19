@@ -21,6 +21,7 @@ import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
+import responseMapping, * as fromResponseMapping from './responseMapping';
 
 export default combineReducers({
   stage,
@@ -45,6 +46,7 @@ export default combineReducers({
   searchCriteria,
   flows,
   transfers,
+  responseMapping,
 });
 
 // #region PUBLIC SELECTORS
@@ -112,6 +114,20 @@ export function mappingsChanged(state, id) {
 
 export function mappingsSaveStatus(state, id) {
   return fromMappings.mappingsSaveStatus(state && state.mappings, id);
+}
+
+export function responseMappings(state, id) {
+  return fromResponseMapping.responseMappings(
+    state && state.responseMapping,
+    id
+  );
+}
+
+export function responseMappingDirty(state, id) {
+  return fromResponseMapping.responseMappingDirty(
+    state && state.responseMapping,
+    id
+  );
 }
 
 export function getSearchCriteria(state, id) {
@@ -318,6 +334,10 @@ export function checkUpgradeRequested(state, licenseId) {
     state && state.integrationApps,
     licenseId
   );
+}
+
+export function isOnOffInProgress(state, flowId) {
+  return fromFlows.isOnOffInProgress(state && state.flows, flowId);
 }
 
 export function integrationAppsInstaller(state, id) {

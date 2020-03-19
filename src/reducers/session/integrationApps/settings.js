@@ -835,4 +835,5 @@ export function checkUpgradeRequested(state, licenseId) {
 
   return !!state[licenseId];
 }
+
 // #endregion

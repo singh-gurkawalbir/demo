@@ -1359,6 +1359,11 @@ const flow = {
       fileContent,
       fileType,
     }),
+  isOnOffActionInprogress: (onOffInProgress, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+      onOffInProgress,
+      flowId,
+    }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   receivedLastExportDateTime: (flowId, response) =>
@@ -1385,6 +1390,31 @@ const analytics = {
         details,
       }),
   },
+};
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
+      id,
+      value,
+    }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 // #endregion
 
@@ -1429,4 +1459,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
+  responseMapping,
 };
