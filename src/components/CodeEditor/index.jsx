@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/mode/handlebars';
@@ -31,6 +31,7 @@ export default function CodeEditor(props) {
     onChange,
   } = props;
   const aceEditor = useRef(null);
+  // inputVal holds value being passed from the prop. editorVal holds current value of the editor
   const [state, setState] = useState({
     inputVal: value,
     editorVal: value,
@@ -38,9 +39,9 @@ export default function CodeEditor(props) {
   });
   const theme = useSelector(state => selectors.editorTheme(state.user));
   const { inputVal, editorVal, typingTimeout } = state;
-  const resize = useCallback(() => {
+  const resize = () => {
     if (aceEditor && aceEditor.resize) aceEditor.editor.resize();
-  }, []);
+  };
 
   // this is equivalent to componentDidMount implementation done earlier. TODO
   useEffect(() => {
