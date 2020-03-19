@@ -70,7 +70,7 @@ const FieldActions = props => {
           data-test={`help-${field.id}`}
           title={field.label || 'Field Help'}
           className={classes.iconButton}
-          caption={developer && helpKey}
+          caption={developer}
           helpKey={helpKey}
           helpText={helpText}
           fieldId={field.id}
