@@ -45,11 +45,6 @@ export default function CodeEditor(props) {
       aceEditor.current.editor.resize();
   };
 
-  // this is equivalent to componentDidMount implementation done earlier. TODO
-  useEffect(() => {
-    resize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   useEffect(() => {
     // update the state value, only when user is not typing and new value is available from the selector.
     if (inputVal !== value && !typingTimeout) {
