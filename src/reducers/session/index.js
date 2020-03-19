@@ -336,6 +336,10 @@ export function checkUpgradeRequested(state, licenseId) {
   );
 }
 
+export function isOnOffInProgress(state, flowId) {
+  return fromFlows.isOnOffInProgress(state && state.flows, flowId);
+}
+
 export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
     state && state.integrationApps,
