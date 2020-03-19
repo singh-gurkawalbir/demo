@@ -13,7 +13,7 @@ import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
 import 'brace/ext/beautify';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers/user';
+import * as selectors from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
 export default function CodeEditor(props) {
@@ -38,12 +38,12 @@ export default function CodeEditor(props) {
     editorVal: value,
     typingTimeout: 0,
   });
-  const theme = useSelector(state => selectors.editorTheme(state.user));
+  const theme = useSelector(state => selectors.editorTheme(state));
   const { inputVal, editorVal, typingTimeout } = state;
-  const resize = () => {
+  const resize = useCallback(() => {
     if (aceEditor && aceEditor.current && aceEditor.current.editor)
       aceEditor.current.editor.resize();
-  };
+  }, []);
 
   useEffect(() => {
     // update the state value, only when user is not typing and new value is available from the selector.
@@ -66,7 +66,6 @@ export default function CodeEditor(props) {
         clearTimeout(typingTimeout);
       }
 
-      resize();
       setState({
         ...state,
         editorVal: value,
