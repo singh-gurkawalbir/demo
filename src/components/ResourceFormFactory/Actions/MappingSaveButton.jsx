@@ -67,7 +67,7 @@ const MappingSaveButton = props => {
   };
 
   if (showOnlyOnChanges && !mappingsChanged) {
-    return <div />;
+    return null;
   }
 
   return (

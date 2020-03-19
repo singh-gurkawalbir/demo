@@ -411,6 +411,14 @@ export function mappingsSaveStatus(state, id) {
   return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
+export function responseMappings(state, id) {
+  return fromSession.responseMappings(state && state.session, id);
+}
+
+export function responseMappingDirty(state, id) {
+  return fromSession.responseMappingDirty(state && state.session, id);
+}
+
 export function searchCriteria(state, id) {
   return fromSession.getSearchCriteria(state && state.session, id);
 }
