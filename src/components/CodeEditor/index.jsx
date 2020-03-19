@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, Fragment } from 'react';
+import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import AceEditor from 'react-ace';
 import ReactResizeDetector from 'react-resize-detector';
 import 'brace/mode/javascript';
@@ -52,27 +52,31 @@ export default function CodeEditor(props) {
     }
   }, [inputVal, state, typingTimeout, value]);
 
-  const handleLoad = editor => {
-    if (enableAutocomplete) {
-      handlebarCompleterSetup(editor);
-    }
-  };
+  const handleLoad = useCallback(
+    editor => {
+      if (enableAutocomplete) {
+        handlebarCompleterSetup(editor);
+      }
+    },
+    [enableAutocomplete]
+  );
+  const handleChange = useCallback(
+    value => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
 
-  const handleChange = value => {
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    resize();
-    setState({
-      ...state,
-      editorVal: value,
-      typingTimeout: setTimeout(() => {
-        onChange(value);
-      }, 500),
-    });
-  };
-
+      resize();
+      setState({
+        ...state,
+        editorVal: value,
+        typingTimeout: setTimeout(() => {
+          onChange(value);
+        }, 500),
+      });
+    },
+    [onChange, state, typingTimeout]
+  );
   const valueAsString =
     typeof editorVal === 'string'
       ? editorVal
