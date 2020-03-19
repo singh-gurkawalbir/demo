@@ -67,8 +67,6 @@ export default function Signin(props) {
     props.location.state &&
     props.location.state.attemptedRoute;
 
-  console.log(`Signin attemptedRoute ${attemptedRoute}`);
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.signinWrapper}>
