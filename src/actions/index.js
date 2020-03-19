@@ -731,6 +731,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
+      }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
@@ -1115,8 +1120,8 @@ const mapping = {
     }),
   patchField: (id, field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
-  updateGenerates: (id, generateFields) =>
-    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
+  updateImportSampleData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA, { id, value }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, key, value) =>
@@ -1381,6 +1386,31 @@ const analytics = {
       }),
   },
 };
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
+      id,
+      value,
+    }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
+};
 // #endregion
 
 export default {
@@ -1424,4 +1454,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
+  responseMapping,
 };

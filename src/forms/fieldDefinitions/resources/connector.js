@@ -1,3 +1,5 @@
+const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/; // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
+
 export default {
   name: {
     type: 'text',
@@ -30,9 +32,10 @@ export default {
     type: 'text',
     label: 'Contact Emails',
     required: true,
+    placeholder: 'Comma separated list of emails',
     validWhen: {
       matchesRegEx: {
-        pattern: '^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$',
+        pattern: MULTIPLE_EMAILS,
         message: 'Please enter a valid Email.',
       },
     },
