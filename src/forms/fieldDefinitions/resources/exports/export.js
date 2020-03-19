@@ -116,7 +116,8 @@ export default {
   },
   pathToMany: {
     type: 'text',
-    label: 'JSON path to child records for objects',
+    label:
+      'If records being processed are represented by Objects then please specify the JSON path to the child objects that should be used to parameterize each export',
     placeholder: 'Optional. Not needed for row/array formats.',
     visibleWhen: [
       {
