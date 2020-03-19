@@ -11,7 +11,7 @@ import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
-import resourceConflictResolution from '../../utils/resourceConflictResolution';
+import { resourceConflictResolution } from '../utils';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;

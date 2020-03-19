@@ -16,7 +16,7 @@ import { status500 } from '../test';
 import * as selectors from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
-import resourceConflictResolution from '../../utils/resourceConflictResolution';
+import { resourceConflictResolution } from '../utils';
 
 describe('commitStagedChanges saga', () => {
   const id = '1';

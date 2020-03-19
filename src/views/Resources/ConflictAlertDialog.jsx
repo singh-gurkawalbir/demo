@@ -73,8 +73,8 @@ export default function ConflictAlertDialog() {
         <Typography variant="body1">
           The following changes have been made to this resource. We have
           attempted to automatically merge these changes, but this resolution
-          was not successful. Please the click the refresh button to refresh
-          your browser.
+          was not successful. Please click the refresh button to refresh your
+          browser.
         </Typography>
 
         {allResourceConflicts.map(r => (
