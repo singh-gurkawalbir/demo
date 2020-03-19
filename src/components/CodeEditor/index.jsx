@@ -1,5 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Fragment } from 'react';
 import AceEditor from 'react-ace';
+import ReactResizeDetector from 'react-resize-detector';
 import 'brace/mode/javascript';
 import 'brace/mode/handlebars';
 import 'brace/mode/json';
@@ -40,7 +41,8 @@ export default function CodeEditor(props) {
   const theme = useSelector(state => selectors.editorTheme(state.user));
   const { inputVal, editorVal, typingTimeout } = state;
   const resize = () => {
-    if (aceEditor && aceEditor.resize) aceEditor.editor.resize();
+    if (aceEditor && aceEditor.current && aceEditor.current.editor)
+      aceEditor.current.editor.resize();
   };
 
   // this is equivalent to componentDidMount implementation done earlier. TODO
@@ -82,29 +84,33 @@ export default function CodeEditor(props) {
       : JSON.stringify(editorVal, null, 2);
 
   return (
-    <AceEditor
-      ref={aceEditor}
-      name={name}
-      value={valueAsString}
-      mode={mode}
-      readOnly={readOnly}
-      width={width || '100%'}
-      height={height || '100%'}
-      showPrintMargin={false}
-      showGutter={showGutter}
-      enableLiveAutocompletion={enableAutocomplete}
-      enableBasicAutocompletion={enableAutocomplete}
-      theme={theme}
-      onLoad={handleLoad}
-      onChange={handleChange}
-      setOptions={{
-        useWorker,
-        showInvisibles,
-        wrap,
-        // showLineNumbers: true,
-        tabSize: 2,
-      }}
-      editorProps={{ $blockScrolling: true }}
-    />
+    <Fragment>
+      <AceEditor
+        ref={aceEditor}
+        name={name}
+        value={valueAsString}
+        mode={mode}
+        readOnly={readOnly}
+        width={width || '100%'}
+        height={height || '100%'}
+        showPrintMargin={false}
+        showGutter={showGutter}
+        enableLiveAutocompletion={enableAutocomplete}
+        enableBasicAutocompletion={enableAutocomplete}
+        theme={theme}
+        onLoad={handleLoad}
+        onChange={handleChange}
+        setOptions={{
+          useWorker,
+          showInvisibles,
+          wrap,
+          // showLineNumbers: true,
+          tabSize: 2,
+        }}
+        editorProps={{ $blockScrolling: true }}
+      />
+
+      <ReactResizeDetector handleWidth handleHeight onResize={resize} />
+    </Fragment>
   );
 }

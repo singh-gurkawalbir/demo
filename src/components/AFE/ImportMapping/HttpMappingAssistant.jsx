@@ -27,7 +27,7 @@ export default function HttpMappingAssistant(props) {
   const [initTriggered, setInitTriggered] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
-  const { data, result, initChangeIdentifier } = useSelector(state =>
+  const { data, result } = useSelector(state =>
     selectors.editor(state, editorId)
   );
 
@@ -69,7 +69,6 @@ export default function HttpMappingAssistant(props) {
         <CodePanel
           height="100%"
           width="100%"
-          key={initChangeIdentifier}
           name="result"
           value={result ? result.data : ''}
           mode="text"
