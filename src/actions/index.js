@@ -25,6 +25,18 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+// #region this form specific source code, please be careful when making changes to the interface
+const form = {
+  field: {
+    registerField: fieldProps =>
+      action(actionTypes.FORM.FIELD.REGISTER, { fieldProps }),
+    onFieldChange: (id, value) =>
+      action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, { id, value }),
+    onFieldBlur: id => action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, { id }),
+    onFieldFocus: id => action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, { id }),
+  },
+};
+// #endregion
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
@@ -1419,6 +1431,7 @@ const responseMapping = {
 // #endregion
 
 export default {
+  form,
   postFeedback,
   app,
   toggleBanner,
