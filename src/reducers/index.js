@@ -411,6 +411,14 @@ export function mappingsSaveStatus(state, id) {
   return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
+export function responseMappings(state, id) {
+  return fromSession.responseMappings(state && state.session, id);
+}
+
+export function responseMappingDirty(state, id) {
+  return fromSession.responseMappingDirty(state && state.session, id);
+}
+
 export function searchCriteria(state, id) {
   return fromSession.getSearchCriteria(state && state.session, id);
 }
@@ -1125,6 +1133,10 @@ export function integrationAppAddOnState(state, integrationId) {
 
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
+}
+
+export function isOnOffInProgress(state, flowId) {
+  return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
 export function integrationConnectionList(state, integrationId, tableConfig) {

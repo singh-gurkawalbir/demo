@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
   error: {
     width: '10.15%',
     textAlign: 'right',
-    color: theme.palette.error.main,
   },
   resolved: {
     width: '9%',
@@ -66,6 +65,9 @@ const useStyles = makeStyles(theme => ({
   checkActionBorder: {
     paddingLeft: 55,
     borderLeft: `5px solid ${theme.palette.primary.main}`,
+  },
+  errorCount: {
+    color: theme.palette.error.main,
   },
 }));
 
@@ -147,7 +149,9 @@ export default function ChildJobDetail({
         onMouseLeave={() => {
           setShowViewErrorsLink(false);
         }}
-        className={classes.error}>
+        className={clsx(classes.error, {
+          [classes.errorCount]: job.numError > 0,
+        })}>
         {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
           <Button
             data-test="jobNumErrorView"
