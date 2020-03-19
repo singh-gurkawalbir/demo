@@ -1391,6 +1391,31 @@ const analytics = {
       }),
   },
 };
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
+      id,
+      value,
+    }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
+};
 // #endregion
 
 export default {
@@ -1434,4 +1459,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
+  responseMapping,
 };
