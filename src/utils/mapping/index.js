@@ -292,19 +292,6 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
   return modifiedExtract;
 }
 
-export const LookupResponseMappingExtracts = [
-  'data',
-  'errors',
-  'ignored',
-  'statusCode',
-];
-export const ImportResponseMappingExtracts = [
-  'id',
-  'errors',
-  'ignored',
-  'statusCode',
-];
-
 export default {
   getDefaultDataType: value => {
     if (
@@ -1082,17 +1069,7 @@ export default {
 
     return generatedMapping;
   },
-  getResponseMappingDefaultExtracts: resourceType => {
-    const extractFields =
-      resourceType === 'imports'
-        ? ImportResponseMappingExtracts
-        : LookupResponseMappingExtracts;
 
-    return extractFields.map(m => ({
-      id: m,
-      name: m,
-    }));
-  },
   getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 
