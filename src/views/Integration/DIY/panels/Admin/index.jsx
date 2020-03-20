@@ -10,10 +10,8 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
-import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
-import UsersSection from '../../../../../components/ManageUsersPanel';
 import SettingsSections from './sections/Settings';
 import * as selectors from '../../../../../reducers';
 
@@ -53,18 +51,6 @@ const allSections = [
     label: 'Notifications',
     Section: NotificationsSection,
     id: 'notifications',
-  },
-  {
-    path: 'audit',
-    label: 'Audit log',
-    Section: AuditLogSection,
-    id: 'auditLog',
-  },
-  {
-    path: 'users',
-    label: 'Users',
-    Section: UsersSection,
-    id: 'users',
   },
   {
     path: 'readme',

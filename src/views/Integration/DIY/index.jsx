@@ -6,7 +6,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';
-import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
@@ -18,12 +17,10 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
 import AuditLogPanel from './panels/AuditLog';
-import ReadmePanel from './panels/Readme';
-import SettingsPanel from './panels/Settings';
+import SettingsPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
-import NotificationsPanel from './panels/Notifications';
 import DashboardPanel from './panels/Dashboard';
 import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
@@ -64,28 +61,16 @@ const tabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'users',
-    label: 'Users',
-    Icon: UsersIcon,
-    Panel: UsersPanel,
-  },
-  {
-    path: 'notifications',
-    label: 'Notifications',
-    Icon: NotificationsIcon,
-    Panel: NotificationsPanel,
-  },
-  {
     path: 'auditlog',
     label: 'Audit Log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
   {
-    path: 'readme',
-    label: 'Read me',
-    Icon: ConnectionsIcon,
-    Panel: ReadmePanel,
+    path: 'users',
+    label: 'Users',
+    Icon: UsersIcon,
+    Panel: UsersPanel,
   },
   {
     path: 'settings',

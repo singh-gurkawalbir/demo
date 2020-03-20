@@ -56,14 +56,13 @@ const allTabs = [
     Icon: AdminIcon,
     Panel: UsersPanel,
   },
+  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
   {
     path: 'settings',
     label: 'Settings',
     Icon: GeneralIcon,
     Panel: AdminPanel,
   },
-
-  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
