@@ -10,10 +10,7 @@ import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
-import TokensIcon from '../../../components/icons/TokensApiIcon';
-import DeleteIcon from '../../../components/icons/TrashIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
-import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
@@ -23,12 +20,9 @@ import ChipInput from '../../../components/ChipInput';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
 import FlowsPanel from './panels/Flows';
-import ApiTokensPanel from './panels/ApiTokens';
 import AuditLogPanel from './panels/AuditLog';
+import AdminPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
-import NotificationsPanel from './panels/Notifications';
-import SubscriptionPanel from './panels/Subscription';
-import UninstallPanel from './panels/Uninstall';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
@@ -51,12 +45,6 @@ const allTabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'apitokens',
-    label: 'API Tokens',
-    Icon: TokensIcon,
-    Panel: ApiTokensPanel,
-  },
-  {
     path: 'auditlog',
     label: 'Audit Log',
     Icon: AuditLogIcon,
@@ -69,23 +57,12 @@ const allTabs = [
     Panel: UsersPanel,
   },
   {
-    path: 'notifications',
-    label: 'Notifications',
-    Icon: NotificationsIcon,
-    Panel: NotificationsPanel,
+    path: 'settings',
+    label: 'Settings',
+    Icon: GeneralIcon,
+    Panel: AdminPanel,
   },
-  {
-    path: 'subscription',
-    label: 'Subscription',
-    Icon: ConnectionsIcon,
-    Panel: SubscriptionPanel,
-  },
-  {
-    path: 'delete',
-    label: 'Uninstall',
-    Icon: DeleteIcon,
-    Panel: UninstallPanel,
-  },
+
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
