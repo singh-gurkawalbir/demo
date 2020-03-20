@@ -88,7 +88,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const { supportsMultiStore } = !!storeId;
+  const supportsMultiStore = !!storeId;
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );

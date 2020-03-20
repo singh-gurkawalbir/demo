@@ -185,8 +185,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
+  commitStaged: (resourceType, id, scope, options) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, {
+      resourceType,
+      id,
+      scope,
+      options,
+    }),
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
@@ -822,6 +827,12 @@ const integrationApp = {
         steps,
       }),
   },
+  // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
+  isAddonInstallInprogress: (installInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
+      installInprogress,
+      id,
+    }),
 };
 const ashare = {
   receivedCollection: ashares =>
