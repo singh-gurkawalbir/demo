@@ -45,17 +45,18 @@ const allTabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'auditlog',
-    label: 'Audit Log',
-    Icon: AuditLogIcon,
-    Panel: AuditLogPanel,
-  },
-  {
     path: 'users',
     label: 'Users',
     Icon: AdminIcon,
     Panel: UsersPanel,
   },
+  {
+    path: 'auditlog',
+    label: 'Audit Log',
+    Icon: AuditLogIcon,
+    Panel: AuditLogPanel,
+  },
+
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
   {
     path: 'settings',
