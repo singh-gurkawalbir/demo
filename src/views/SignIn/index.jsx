@@ -61,11 +61,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function Signin(props) {
   const classes = useStyles();
-  const attemptedRoute =
-    props &&
-    props.location &&
-    props.location.state &&
-    props.location.state.attemptedRoute;
 
   return (
     <div className={classes.wrapper}>
@@ -85,7 +80,6 @@ export default function Signin(props) {
           </Typography>
           <SigninForm
             {...props}
-            attemptedRoute={attemptedRoute}
             dialogOpen={false}
             className={classes.signInForm}
           />

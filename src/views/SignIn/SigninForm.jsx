@@ -16,9 +16,6 @@ const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
     dispatch(actions.auth.request(email, password));
   },
-  getCsrfToken: () => {
-    dispatch(actions.auth.getCsrfToken());
-  },
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
@@ -125,8 +122,6 @@ class SignIn extends Component {
     email: '',
   };
   componentDidMount() {
-    // this.props.getCsrfToken();
-
     if (
       process.env.AUTO_LOGIN === 'true' &&
       process.env.NODE_ENV === 'development'
@@ -159,13 +154,16 @@ class SignIn extends Component {
   };
 
   render() {
-    const {
-      classes,
-      error,
-      dialogOpen,
-      userEmail,
-      attemptedRoute,
-    } = this.props;
+    const { classes, dialogOpen, userEmail, location } = this.props;
+    let { error } = this.props;
+    const attemptedRoute = location.state && location.state.attemptedRoute;
+
+    if (error) {
+      error = 'Oops! Something went wrong. Try again.';
+    } else if (window.signInError) {
+      error = window.signInError;
+    }
+
     const { email } = this.state;
 
     return (
@@ -198,7 +196,7 @@ class SignIn extends Component {
                 color="error"
                 variant="h5"
                 className={classes.alertMsg}>
-                <ErrorIcon /> Oops! Something went wrong. Try again.
+                <ErrorIcon /> {error}
               </Typography>
             </div>
           )}
@@ -222,12 +220,13 @@ class SignIn extends Component {
             <Typography variant="body1">or</Typography>
           </div>
           <form
-            action={`/auth/google?attemptedRoute=${attemptedRoute || ''}`}
+            action={`/auth/google?attemptedRoute=${attemptedRoute || '/pg/'}`}
             method="post">
             <TextField
+              type="hidden"
               id="_csrf"
               name="_csrf"
-              value={document.getElementsByTagName('meta')['x-csrf-token']}
+              value={window.siwgCsrf || ''}
             />
             <Button
               type="submit"

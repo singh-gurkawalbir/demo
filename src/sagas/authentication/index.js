@@ -13,8 +13,8 @@ import { apiCallWithRetry } from '../index';
 import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
-  removeCSRFToken,
   getCSRFToken,
+  removeCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
