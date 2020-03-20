@@ -25,7 +25,7 @@ export default function CsvGenerateEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
   const [editorInit, setEditorInit] = useState(false);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -78,7 +78,7 @@ export default function CsvGenerateEditor(props) {
   }, [data, editorInit, handleInit]);
 
   return (
-    <PanelGrid className={classes.template} key={initChangeIdentifier}>
+    <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV generate options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />
