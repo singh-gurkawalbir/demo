@@ -69,8 +69,6 @@ export default function AddonInstallerButton({ resource }) {
       resource.status === 'available' ||
       resource.status === 'partiallyInstalled'
     ) {
-      //       app.mask(window.$(app.currentPage.el), 'Installing ' + self.name + ' add-on...')
-
       dispatch(
         actions.integrationApp.isAddonInstallInprogress(true, resource.id)
       );
