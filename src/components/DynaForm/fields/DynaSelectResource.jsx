@@ -30,6 +30,7 @@ const handleAddNewResource = args => {
     newResourceId,
     expConnId,
     statusExport,
+    assistantName,
   } = args;
 
   if (
@@ -40,6 +41,7 @@ const handleAddNewResource = args => {
       'pageProcessor',
       'pageGenerator',
       'asyncHelpers',
+      'iClients',
     ].includes(resourceType)
   ) {
     let values;
@@ -48,7 +50,12 @@ const handleAddNewResource = args => {
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
       });
-    else {
+    else if (['iClients'].includes(resourceType)) {
+      values = {
+        ...values,
+        '/assistantName': assistantName,
+      };
+    } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
       });
@@ -203,7 +210,7 @@ function DynaSelectResource(props) {
     label: conn.name || conn._id,
     value: conn._id,
   }));
-  const expConnId = useSelector(state => {
+  const { expConnId, assistantName } = useSelector(state => {
     const { merged } =
       selectors.resourceData(
         state,
@@ -211,7 +218,10 @@ function DynaSelectResource(props) {
         resourceContext.resourceId
       ) || {};
 
-    return merged && merged._connectionId;
+    return {
+      expConnId: merged && merged._connectionId,
+      assistantName: merged.assistant,
+    };
   });
   const handleAddNewResourceMemo = useCallback(
     () =>
@@ -224,16 +234,18 @@ function DynaSelectResource(props) {
         newResourceId,
         statusExport,
         expConnId,
+        assistantName,
       }),
     [
-      expConnId,
       dispatch,
       history,
       location,
-      newResourceId,
-      options,
       resourceType,
+      options,
+      newResourceId,
       statusExport,
+      expConnId,
+      assistantName,
     ]
   );
   const handleEditResource = useCallback(() => {

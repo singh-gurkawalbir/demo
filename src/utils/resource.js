@@ -470,12 +470,14 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
 
     if (getHelpUrlForConnector(connectorId, marketplaceConnectors)) {
       helpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
-    } else if (connectorId) {
-      helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us';
-    } else {
-      helpUrl =
-        'https://celigosuccess.zendesk.com/hc/en-us/categories/203820768';
     }
+    // Link https://celigosuccess.zendesk.com/hc/en-us/categories/203820768 seems to be broken recently.So we set https://celigosuccess.zendesk.com/hc/en-us as a default url in integration context.
+    // else if (connectorId) {
+    //   helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us';
+    // } else {
+    //   helpUrl =
+    //     'https://celigosuccess.zendesk.com/hc/en-us/categories/203820768';
+    // }
   }
 
   return helpUrl;

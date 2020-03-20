@@ -34,7 +34,7 @@ export default function JavaScriptEditor(props) {
     resultMode = 'json',
   } = props;
   const classes = useStyles(props);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -55,7 +55,7 @@ export default function JavaScriptEditor(props) {
         entryFunction: entryFunction || 'main',
         data: props.data,
         autoEvaluate: true,
-        autoEvaluateDelay: 1000,
+        autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
         optionalSaveParams,
       })
@@ -75,9 +75,7 @@ export default function JavaScriptEditor(props) {
   const parsedData = result ? result.data : '';
 
   return (
-    <PanelGrid
-      key={`${editorId}-${initChangeIdentifier}`}
-      className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}
@@ -88,6 +86,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
         <CodePanel
+          id="data"
           name="data"
           value={data}
           mode="json"
@@ -98,6 +97,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />
         <CodePanel
+          id="result"
           name="result"
           value={parsedData}
           mode={resultMode}
