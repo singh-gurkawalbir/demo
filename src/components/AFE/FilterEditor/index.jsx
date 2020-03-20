@@ -23,7 +23,7 @@ const useStyles = makeStyles({
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -63,7 +63,7 @@ export default function FilterEditor(props) {
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Rules" />
         <FilterPanel
-          key={`${editorId}-${initChangeIdentifier}`}
+          key={editorId}
           editorId={editorId}
           data={data}
           rule={props.rule}
