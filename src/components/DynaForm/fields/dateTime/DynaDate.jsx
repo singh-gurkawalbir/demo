@@ -1,5 +1,6 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import { useCallback } from 'react';
+import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
@@ -11,7 +12,7 @@ export default function DatePicker(props) {
   const { id, label, onFieldChange, value = '', disabled } = props;
   const onChange = useCallback(
     value => {
-      onFieldChange(id, value || '');
+      onFieldChange(id, moment(value).format('MM/DD/YYYY') || '');
     },
     [id, onFieldChange]
   );
@@ -22,11 +23,13 @@ export default function DatePicker(props) {
         label={label}
         format="MM/DD/YYYY"
         value={value}
-        variant="inline"
+        invalidLabel={null}
+        invalidDateMessage={null}
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
         onChange={onChange}
         disabled={disabled}
+        clearable
         keyboardIcon={<CalendarIcon />}
       />
       <ErroredMessageComponent {...props} />

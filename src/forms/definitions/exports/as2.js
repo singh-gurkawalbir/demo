@@ -46,6 +46,8 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    newValues['/type'] = 'webhook';
+
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
