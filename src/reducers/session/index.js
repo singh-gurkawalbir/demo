@@ -329,8 +329,8 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
-export function isAddOnInstallerInProgress(state, id) {
-  return fromIntegrationApps.isAddOnInstallerInProgress(
+export function isAddOnInstallInProgress(state, id) {
+  return fromIntegrationApps.isAddOnInstallInProgress(
     state && state.integrationApps,
     id
   );

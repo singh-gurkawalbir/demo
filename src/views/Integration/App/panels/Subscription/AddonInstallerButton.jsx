@@ -10,16 +10,16 @@ import Loader from '../../../../../components/Loader';
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
   const [isInProgress, setIsInProgressStatus] = useState(false);
-  const { installerInprogress } = useSelector(
-    state => selectors.isAddOnInstallerInProgress(state, resource.id),
+  const { installInprogress } = useSelector(
+    state => selectors.isAddOnInstallInProgress(state, resource.id),
     (left, right) => left.installerInprogress === right.installerInprogress
   );
 
   useEffect(() => {
-    if (!installerInprogress) {
+    if (!installInprogress) {
       setIsInProgressStatus(false);
     }
-  }, [dispatch, installerInprogress]);
+  }, [dispatch, installInprogress]);
   const { confirmDialog } = useConfirmDialog();
   const onClick = resource => {
     if (resource.status === 'installed') {
@@ -34,7 +34,7 @@ export default function AddonInstallerButton({ resource }) {
             label: 'Uninstall',
             onClick: () => {
               dispatch(
-                actions.integrationApp.isAddonInstallerInprogress(
+                actions.integrationApp.isAddonInstallInprogress(
                   true,
                   resource.id
                 )
@@ -54,7 +54,7 @@ export default function AddonInstallerButton({ resource }) {
       });
     } else if (resource.status === 'paritallyUninstalled') {
       dispatch(
-        actions.integrationApp.isAddonInstallerInprogress(true, resource.id)
+        actions.integrationApp.isAddonInstallInprogress(true, resource.id)
       );
       setIsInProgressStatus(true);
       dispatch(
@@ -72,7 +72,7 @@ export default function AddonInstallerButton({ resource }) {
       //       app.mask(window.$(app.currentPage.el), 'Installing ' + self.name + ' add-on...')
 
       dispatch(
-        actions.integrationApp.isAddonInstallerInprogress(true, resource.id)
+        actions.integrationApp.isAddonInstallInprogress(true, resource.id)
       );
       setIsInProgressStatus(true);
       dispatch(

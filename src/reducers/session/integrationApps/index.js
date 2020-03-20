@@ -135,6 +135,6 @@ export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
 }
 
-export function isAddOnInstallerInProgress(state, id) {
-  return fromAddon.isAddOnInstallerInProgress(state && state.addon, id);
+export function isAddOnInstallInProgress(state, id) {
+  return fromAddon.isAddOnInstallInProgress(state && state.addon, id);
 }

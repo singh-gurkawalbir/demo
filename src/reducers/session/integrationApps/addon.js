@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
-  const { id, installerInprogress, type } = action;
+  const { id, installInprogress, type } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -11,8 +11,8 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALLER_STATUS:
-        draft[id] = { installerInprogress };
+      case actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS:
+        draft[id] = { installInprogress };
         break;
     }
   });
@@ -20,12 +20,12 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 
-export function isAddOnInstallerInProgress(state, id) {
+export function isAddOnInstallInProgress(state, id) {
   if (!(state && state[id])) {
-    return { installerInprogress: false };
+    return { installInprogress: false };
   }
 
-  return { installerInprogress: state[id].installerInprogress || false };
+  return { installInprogress: state[id].installInprogress || false };
 }
 
 // #endregion

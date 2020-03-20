@@ -1135,8 +1135,8 @@ export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(state.session, integrationId);
 }
 
-export function isAddOnInstallerInProgress(state, id) {
-  return fromSession.isAddOnInstallerInProgress(state.session, id);
+export function isAddOnInstallInProgress(state, id) {
+  return fromSession.isAddOnInstallInProgress(state.session, id);
 }
 
 export function checkUpgradeRequested(state, licenseId) {

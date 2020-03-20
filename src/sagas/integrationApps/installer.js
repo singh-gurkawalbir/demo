@@ -17,7 +17,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   } catch (error) {
     if (addOnId) {
       yield put(
-        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
+        actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
     }
 
@@ -52,7 +52,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       yield put(actions.resource.requestCollection('imports'));
       yield put(actions.resource.requestCollection('connections'));
       yield put(
-        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
+        actions.integrationApp.isAddonInstallInprogress(false, addOnId)
       );
     }
   } else if (

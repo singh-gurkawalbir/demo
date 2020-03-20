@@ -729,19 +729,12 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    installStep: (
-      integrationId,
-      installerFunction,
-      storeId,
-      addOnId,
-      options
-    ) =>
+    installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
         storeId,
         addOnId,
-        options,
       }),
     scriptInstallStep: (integrationId, connectionId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
@@ -777,19 +770,12 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (
-      storeId,
-      integrationId,
-      uninstallerFunction,
-      addOnId,
-      options
-    ) =>
+    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
         storeId,
         id: integrationId,
         uninstallerFunction,
         addOnId,
-        options,
       }),
     receivedUninstallSteps: (uninstallSteps, storeId, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
@@ -841,9 +827,10 @@ const integrationApp = {
         steps,
       }),
   },
-  isAddonInstallerInprogress: (installerInprogress, id) =>
-    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALLER_STATUS, {
-      installerInprogress,
+  // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
+  isAddonInstallInprogress: (installInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
+      installInprogress,
       id,
     }),
 };
