@@ -1,6 +1,6 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
 import AceEditor from 'react-ace';
+import ReactResizeDetector from 'react-resize-detector';
 import 'brace/mode/javascript';
 import 'brace/mode/handlebars';
 import 'brace/mode/json';
@@ -12,62 +12,79 @@ import 'brace/mode/sql';
 import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
 import 'brace/ext/beautify';
-import * as selectors from '../../reducers/user';
+import { useSelector } from 'react-redux';
+import * as selectors from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
-const mapStateToProps = state => ({
-  theme: selectors.editorTheme(state.user),
-});
+export default function CodeEditor(props) {
+  const {
+    name,
+    value = '',
+    mode,
+    readOnly,
+    width,
+    height,
+    wrap,
+    showGutter,
+    showInvisibles,
+    useWorker,
+    enableAutocomplete,
+    onChange,
+  } = props;
+  const aceEditor = useRef(null);
+  // inputVal holds value being passed from the prop. editorVal holds current value of the editor
+  const [state, setState] = useState({
+    inputVal: value,
+    editorVal: value,
+    typingTimeout: 0,
+  });
+  const theme = useSelector(state => selectors.editorTheme(state));
+  const { inputVal, editorVal, typingTimeout } = state;
+  const resize = useCallback(() => {
+    if (aceEditor && aceEditor.current && aceEditor.current.editor)
+      aceEditor.current.editor.resize();
+  }, []);
 
-class CodeEditor extends Component {
-  componentDidMount() {
-    // TODO: anytime the container DOM element changes size (both height and width)
-    // the resize method of the editor needs to be fired so it can internally
-    // adjust it's internal variables that control the controlled scrollbars
-    // and basic functionality.
-    // TODO: We are cheating here and calling the resize on EVERY change...
-    // The better approach would be to only call resize whenever the parent
-    // component changed its size...
-    this.resize();
-  }
-  handleLoad = enableAutocomplete => editor => {
-    if (enableAutocomplete) {
-      handlebarCompleterSetup(editor);
+  useEffect(() => {
+    // update the state value, only when user is not typing and new value is available from the selector.
+    if (inputVal !== value && !typingTimeout) {
+      setState({ ...state, inputVal: value, editorVal: value });
     }
-  };
+  }, [inputVal, state, typingTimeout, value]);
 
-  handleChange = value => {
-    if (this.props.onChange) {
-      this.props.onChange(value);
-    }
+  const handleLoad = useCallback(
+    editor => {
+      if (enableAutocomplete) {
+        handlebarCompleterSetup(editor);
+      }
+    },
+    [enableAutocomplete]
+  );
+  const handleChange = useCallback(
+    value => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
 
-    this.resize();
-  };
+      setState({
+        ...state,
+        editorVal: value,
+        typingTimeout: setTimeout(() => {
+          onChange(value);
+        }, 500),
+      });
+    },
+    [onChange, state, typingTimeout]
+  );
+  const valueAsString =
+    typeof editorVal === 'string'
+      ? editorVal
+      : JSON.stringify(editorVal, null, 2);
 
-  resize() {
-    this.aceEditor.editor.resize();
-  }
-
-  render() {
-    const {
-      name,
-      theme,
-      value = '',
-      mode,
-      readOnly,
-      width,
-      height,
-      wrap,
-      showGutter,
-      showInvisibles,
-      useWorker,
-      enableAutocomplete,
-    } = this.props;
-    const valueAsString =
-      typeof value === 'string' ? value : JSON.stringify(value, null, 2);
-
-    return (
+  return (
+    <Fragment>
       <AceEditor
+        ref={aceEditor}
         name={name}
         value={valueAsString}
         mode={mode}
@@ -79,11 +96,8 @@ class CodeEditor extends Component {
         enableLiveAutocompletion={enableAutocomplete}
         enableBasicAutocompletion={enableAutocomplete}
         theme={theme}
-        onLoad={this.handleLoad(enableAutocomplete)}
-        onChange={this.handleChange}
-        ref={c => {
-          this.aceEditor = c;
-        }}
+        onLoad={handleLoad}
+        onChange={handleChange}
         setOptions={{
           useWorker,
           showInvisibles,
@@ -93,9 +107,8 @@ class CodeEditor extends Component {
         }}
         editorProps={{ $blockScrolling: true }}
       />
-    );
-  }
-}
 
-// prettier-ignore
-export default connect(mapStateToProps)(CodeEditor);
+      <ReactResizeDetector handleWidth handleHeight onResize={resize} />
+    </Fragment>
+  );
+}

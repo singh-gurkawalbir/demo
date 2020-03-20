@@ -685,6 +685,10 @@ export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
 }
 
+export function editorTheme(state) {
+  return fromUser.editorTheme((state && state.user) || null);
+}
+
 export function hasPreferences(state) {
   return !!userPreferences(state);
 }
