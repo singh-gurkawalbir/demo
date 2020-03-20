@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { map } from 'lodash';
 import clsx from 'clsx';
 import { getDatabaseConnectors } from '../../../constants/applications';
 
@@ -56,7 +57,7 @@ export default function ApplicationImg({
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
-  const dbConnectors = getDatabaseConnectors();
+  const dbConnectors = map(getDatabaseConnectors(), 'id');
 
   if (!assistant) {
     if (dbConnectors.includes(iconMap(type))) {
