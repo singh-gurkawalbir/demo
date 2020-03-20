@@ -25,6 +25,7 @@ export default {
           </Typography>
         );
       },
+      orderBy: 'license.expires',
     },
     {
       heading: 'Environment',
@@ -33,6 +34,7 @@ export default {
     {
       heading: 'Version',
       value: r => r.version,
+      orderBy: 'version',
     },
   ],
 };
