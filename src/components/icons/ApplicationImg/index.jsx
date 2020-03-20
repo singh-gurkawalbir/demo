@@ -55,9 +55,16 @@ export default function ApplicationImg({
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
+  const dbConnectors = ['mongodb', 'mssql', 'mysql', 'postgresql', 'dynamodb'];
 
   if (!assistant) {
-    path += `flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+    if (dbConnectors.includes(iconMap(type))) {
+      path += `marketplace/small/${iconMap(type)}.png`;
+    } else {
+      path += `flow-builder/company-logos/integration-icon-${iconMap(
+        type
+      )}.png`;
+    }
   } else if (markOnly) {
     path += `marketplace/small/${assistant}.png`;
   } else {
