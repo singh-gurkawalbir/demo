@@ -10,6 +10,7 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
+import ConsoleGridItem from '../ConsoleGridItem';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -73,6 +74,7 @@ export default function JavaScriptEditor(props) {
     handleInit();
   }, [handleInit]);
   const parsedData = result ? result.data : '';
+  const logs = result && !error && !violations && result.logs;
 
   return (
     <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
@@ -106,6 +108,7 @@ export default function JavaScriptEditor(props) {
       </PanelGridItem>
 
       <ErrorGridItem error={error} violations={violations} />
+      <ConsoleGridItem logs={logs} />
     </PanelGrid>
   );
 }
