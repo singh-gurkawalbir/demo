@@ -15,6 +15,12 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       hidden: true,
     }) || {};
   } catch (error) {
+    if (addOnId) {
+      yield put(
+        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
+      );
+    }
+
     yield put(
       actions.integrationApp.installer.updateStep(
         id,
@@ -45,6 +51,9 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       yield put(actions.resource.requestCollection('exports'));
       yield put(actions.resource.requestCollection('imports'));
       yield put(actions.resource.requestCollection('connections'));
+      yield put(
+        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
+      );
     }
   } else if (
     stepCompleteResponse &&

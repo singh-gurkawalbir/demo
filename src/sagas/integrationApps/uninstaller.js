@@ -49,6 +49,12 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
       message: `Uninstalling`,
     }) || {};
   } catch (error) {
+    if (addOnId) {
+      yield put(
+        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
+      );
+    }
+
     yield put(
       actions.integrationApp.uninstaller.updateStep(
         id,
@@ -77,6 +83,9 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
     if (addOnId) {
       yield put(
         actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
+      );
+      yield put(
+        actions.integrationApp.isAddonInstallerInprogress(false, addOnId)
       );
     }
   }

@@ -87,6 +87,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     state => selectors.isOnOffInProgress(state, flowId),
     (left, right) => left.onOffInProgress === right.onOffInProgress
   );
+  // TODO: Ashok, Need to  move OnOff functionality to component level.
 
   useEffect(() => {
     if (!onOffInProgress) {
@@ -116,7 +117,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       const patchSet = [{ op: 'replace', path, value }];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(
+        actions.resource.commitStaged('flows', flowId, 'value', {
+          action: 'flowEnableDisable',
+        })
+      );
     },
     [dispatch, flowId]
   );
@@ -213,7 +218,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   function getRunLabel() {
     if (flowDetails.isRealtime) return `Realtime`;
 
-    if (flowDetails.schedule)
+    if (flowDetails.schedule && flowDetails.schedule !== 'false')
       return `Runs ${cronstrue.toString(
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;

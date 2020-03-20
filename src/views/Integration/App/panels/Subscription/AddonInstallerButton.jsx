@@ -1,10 +1,25 @@
+import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import * as selectors from '../../../../../reducers';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import actions from '../../../../../actions';
+import Spinner from '../../../../../components/Spinner';
+import Loader from '../../../../../components/Loader';
 
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
+  const [isInProgress, setIsInProgressStatus] = useState(false);
+  const { installerInprogress } = useSelector(
+    state => selectors.isAddOnInstallerInProgress(state, resource.id),
+    (left, right) => left.installerInprogress === right.installerInprogress
+  );
+
+  useEffect(() => {
+    if (!installerInprogress) {
+      setIsInProgressStatus(false);
+    }
+  }, [dispatch, installerInprogress]);
   const { confirmDialog } = useConfirmDialog();
   const onClick = resource => {
     if (resource.status === 'installed') {
@@ -19,11 +34,19 @@ export default function AddonInstallerButton({ resource }) {
             label: 'Uninstall',
             onClick: () => {
               dispatch(
+                actions.integrationApp.isAddonInstallerInprogress(
+                  true,
+                  resource.id
+                )
+              );
+              setIsInProgressStatus(true);
+              dispatch(
                 actions.integrationApp.uninstaller.stepUninstall(
                   resource.storeId,
                   resource.integrationId,
                   resource.uninstallerFunction,
-                  resource.id
+                  resource.id,
+                  { action: 'addOninstaller' }
                 )
               );
             },
@@ -32,17 +55,28 @@ export default function AddonInstallerButton({ resource }) {
       });
     } else if (resource.status === 'paritallyUninstalled') {
       dispatch(
+        actions.integrationApp.isAddonInstallerInprogress(true, resource.id)
+      );
+      setIsInProgressStatus(true);
+      dispatch(
         actions.integrationApp.uninstaller.stepUninstall(
           resource.storeId,
           resource.integrationId,
           resource.uninstallerFunction,
-          resource.id
+          resource.id,
+          { action: 'addOninstaller' }
         )
       );
     } else if (
       resource.status === 'available' ||
       resource.status === 'partiallyInstalled'
     ) {
+      //       app.mask(window.$(app.currentPage.el), 'Installing ' + self.name + ' add-on...')
+
+      dispatch(
+        actions.integrationApp.isAddonInstallerInprogress(true, resource.id)
+      );
+      setIsInProgressStatus(true);
       dispatch(
         actions.integrationApp.installer.installStep(
           resource.integrationId,
@@ -65,6 +99,26 @@ export default function AddonInstallerButton({ resource }) {
       return 'Resume Install';
     }
   };
+
+  const getInprogressMessage = () => {
+    if (
+      resource.status === 'available' ||
+      resource.status === 'partiallyInstalled'
+    ) {
+      return `Installing ${resource.name} add-on...`;
+    }
+
+    return `Uninstalling ${resource.name} add-on...`;
+  };
+
+  if (isInProgress) {
+    return (
+      <Loader open>
+        {getInprogressMessage()}
+        <Spinner />
+      </Loader>
+    );
+  }
 
   return (
     <Button

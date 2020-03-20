@@ -329,6 +329,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function isAddOnInstallerInProgress(state, id) {
+  return fromIntegrationApps.isAddOnInstallerInProgress(
+    state && state.integrationApps,
+    id
+  );
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromIntegrationApps.checkUpgradeRequested(
     state && state.integrationApps,

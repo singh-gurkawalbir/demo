@@ -3,12 +3,14 @@ import installer, * as fromInstaller from './installer';
 import uninstaller, * as fromUninstaller from './uninstaller';
 import addStore, * as fromAddStore from './addStore';
 import settings, * as fromSettings from './settings';
+import addon, * as fromAddon from './addon';
 
 export default combineReducers({
   installer,
   uninstaller,
   settings,
   addStore,
+  addon,
 });
 
 export function integrationAppsInstaller(state, id) {
@@ -131,4 +133,8 @@ export function uninstallData(state, id, storeId) {
 
 export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
+}
+
+export function isAddOnInstallerInProgress(state, id) {
+  return fromAddon.isAddOnInstallerInProgress(state && state.addon, id);
 }

@@ -185,8 +185,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
+  commitStaged: (resourceType, id, scope, options) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, {
+      resourceType,
+      id,
+      scope,
+      options,
+    }),
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
@@ -724,12 +729,19 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    installStep: (integrationId, installerFunction, storeId, addOnId) =>
+    installStep: (
+      integrationId,
+      installerFunction,
+      storeId,
+      addOnId,
+      options
+    ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
         installerFunction,
         storeId,
         addOnId,
+        options,
       }),
     scriptInstallStep: (integrationId, connectionId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
@@ -765,12 +777,19 @@ const integrationApp = {
         uninstallerFunction,
         update,
       }),
-    stepUninstall: (storeId, integrationId, uninstallerFunction, addOnId) =>
+    stepUninstall: (
+      storeId,
+      integrationId,
+      uninstallerFunction,
+      addOnId,
+      options
+    ) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.REQUEST, {
         storeId,
         id: integrationId,
         uninstallerFunction,
         addOnId,
+        options,
       }),
     receivedUninstallSteps: (uninstallSteps, storeId, id) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.RECEIVED_STEPS, {
@@ -822,6 +841,11 @@ const integrationApp = {
         steps,
       }),
   },
+  isAddonInstallerInprogress: (installerInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.RECEIVED_INSTALLER_STATUS, {
+      installerInprogress,
+      id,
+    }),
 };
 const ashare = {
   receivedCollection: ashares =>
