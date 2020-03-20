@@ -22,6 +22,17 @@ export const registerField = (field, fields) => {
   return fields.slice();
 };
 
+export const registerFieldWithCorrectValueUpdated = (field, formValue) => {
+  const { defaultValue, name, value, valueDelimiter } = field;
+  const initialValue = getFirstDefinedValue(
+    formValue[name],
+    value,
+    defaultValue
+  );
+
+  field.value = splitDelimitedValue(initialValue, valueDelimiter);
+};
+
 export const registerFields = (fieldsToValidate, formValue) => {
   const fields = [];
 
@@ -231,6 +242,30 @@ export const processFields = (
   return updatedFields;
 };
 
+const fieldsByIdToFields = fieldsById => Object.values(fieldsById);
+
+export const processFieldsUpdated = (
+  fieldsById,
+  formIsDisabled,
+  resetTouchedState = false
+) => {
+  const updatedFields = fieldsByIdToFields(fieldsById).map(field => {
+    const { defaultValue, value, touched = false } = field;
+    const processedValue = typeof value !== 'undefined' ? value : defaultValue;
+
+    return {
+      ...field,
+      touched: getTouchedStateForField(touched, resetTouchedState),
+      value: processedValue,
+      visible: isVisible(field, fieldsById),
+      required: isRequired(field, fieldsById),
+      disabled: formIsDisabled || isDisabled(field, fieldsById),
+    };
+  });
+
+  return updatedFields;
+};
+
 export const processOptions = ({
   fields,
   lastFieldUpdated,
@@ -301,19 +336,14 @@ export const createField = field => {
   };
 };
 
-export const updateFieldTouchedState = (id, touched, fields) => {
-  const fieldsById = mapFieldsById(fields);
-  const field = fieldsById[id];
-
+export const updateFieldTouchedState = (field, touched) => {
   field.touched = touched;
 
-  return fields;
+  return field;
 };
 
-export const updateFieldValue = (id, value, fields) => {
-  const fieldsById = mapFieldsById(fields);
+export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;
-  const field = fieldsById[id];
 
   if (field.omitWhenHidden && !field.visible) {
     console.log('Not updating field value for', field);
@@ -321,7 +351,7 @@ export const updateFieldValue = (id, value, fields) => {
     field.value = updateValue;
   }
 
-  return fields;
+  return field;
 };
 
 export const joinDelimitedValue = (value, valueDelimiter) => {
@@ -421,6 +451,46 @@ export const getNextStateFromFields = ({
   parentContext,
 }) => {
   fields = processFields(fields, !!formIsDisabled, resetTouchedState);
+
+  if (optionsHandler) {
+    fields = processOptions({
+      fields,
+      lastFieldUpdated,
+      optionsHandler,
+      parentContext,
+    });
+  }
+
+  fields = validateAllFields({
+    fields,
+    showValidationBeforeTouched,
+    validationHandler,
+    parentContext,
+  });
+
+  const value = calculateFormValue(fields);
+  const isValid = fields.every(field => field.isValid);
+  const isDiscretelyInvalid = fields.some(field => field.isDiscretelyInvalid);
+  const nextState = {
+    fields,
+    value,
+    isValid: isValid && !isDiscretelyInvalid,
+  };
+
+  return nextState;
+};
+
+export const getNextStateFromFieldsUpdated = ({
+  fields,
+  lastFieldUpdated,
+  showValidationBeforeTouched,
+  formIsDisabled,
+  resetTouchedState,
+  optionsHandler,
+  validationHandler,
+  parentContext,
+}) => {
+  fields = processFieldsUpdated(fields, !!formIsDisabled, resetTouchedState);
 
   if (optionsHandler) {
     fields = processOptions({

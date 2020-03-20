@@ -22,8 +22,10 @@ import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
+import form from './form';
 
 export default combineReducers({
+  form,
   stage,
   filters,
   editors,

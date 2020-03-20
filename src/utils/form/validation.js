@@ -1,6 +1,7 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-restricted-globals */
+import validators from './validators';
+
 export const compareSize = (value, comparedTo, type) => {
   const targetValue = parseFloat(value);
   const compareValue = parseFloat(comparedTo.value);
@@ -162,19 +163,6 @@ export const isValue = ({ value, values, message }) => {
   if (!values.some(currValue => currValue === value)) {
     return message || 'Unacceptable value provided';
   }
-};
-
-export const validators = {
-  allAreTrue,
-  comparedTo,
-  fallsWithinNumericalRange,
-  is: isValue,
-  isNot: isNotValue,
-  lengthIsGreaterThan,
-  lengthIsLessThan,
-  matchesRegEx,
-  noneAreTrue,
-  someAreTrue,
 };
 
 export const hasValue = value => {
