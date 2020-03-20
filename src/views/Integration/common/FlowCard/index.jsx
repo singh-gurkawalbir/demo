@@ -218,7 +218,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   function getRunLabel() {
     if (flowDetails.isRealtime) return `Realtime`;
 
-    if (flowDetails.schedule && flowDetails.schedule !== 'false')
+    if (flowDetails.schedule)
       return `Runs ${cronstrue.toString(
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;

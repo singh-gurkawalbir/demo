@@ -45,8 +45,7 @@ export default function AddonInstallerButton({ resource }) {
                   resource.storeId,
                   resource.integrationId,
                   resource.uninstallerFunction,
-                  resource.id,
-                  { action: 'addOninstaller' }
+                  resource.id
                 )
               );
             },
@@ -63,8 +62,7 @@ export default function AddonInstallerButton({ resource }) {
           resource.storeId,
           resource.integrationId,
           resource.uninstallerFunction,
-          resource.id,
-          { action: 'addOninstaller' }
+          resource.id
         )
       );
     } else if (

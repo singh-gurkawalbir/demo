@@ -11,7 +11,7 @@ export default (state = {}, action) => {
 
     // eslint-disable-next-line default-case
     switch (type) {
-      case actionTypes.INTEGRATION_APPS.RECEIVED_INSTALLER_STATUS:
+      case actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALLER_STATUS:
         draft[id] = { installerInprogress };
         break;
     }

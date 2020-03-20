@@ -842,7 +842,7 @@ const integrationApp = {
       }),
   },
   isAddonInstallerInprogress: (installerInprogress, id) =>
-    action(actionTypes.INTEGRATION_APPS.RECEIVED_INSTALLER_STATUS, {
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALLER_STATUS, {
       installerInprogress,
       id,
     }),
