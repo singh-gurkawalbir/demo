@@ -186,14 +186,13 @@ export default function SelectApplication(props) {
       value: app.id,
       type: app.type,
       icon: app.icon || app.assistant,
-      group,
       label: app.name,
       keywords: app.keywords,
       assistant: app.assistant,
     })),
   }));
   const Option = props => {
-    const { type, icon, value, group } = props.data;
+    const { type, icon, value } = props.data;
 
     return (
       <div data-test={props.label} className={classes.optionRoot}>
@@ -203,7 +202,6 @@ export default function SelectApplication(props) {
               markOnly
               type={type === 'webhook' ? value : type}
               assistant={icon}
-              isDatabaseConnector={group.label === 'Databases'}
               className={classes.img}
             />
           </span>

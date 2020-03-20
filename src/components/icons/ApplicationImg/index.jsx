@@ -50,17 +50,23 @@ export default function ApplicationImg({
   size = 'small',
   markOnly = false,
   assistant,
-  isDatabaseConnector = false,
   type,
   className,
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
+  const dbConnectors = ['mongodb', 'mssql', 'mysql', 'postgresql', 'dynamodb'];
 
-  if (!assistant && !isDatabaseConnector) {
-    path += `flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+  if (!assistant) {
+    if (dbConnectors.includes(iconMap(type))) {
+      path += `marketplace/small/${iconMap(type)}.png`;
+    } else {
+      path += `flow-builder/company-logos/integration-icon-${iconMap(
+        type
+      )}.png`;
+    }
   } else if (markOnly) {
-    path += `marketplace/small/${assistant || iconMap(type)}.png`;
+    path += `marketplace/small/${assistant}.png`;
   } else {
     path += `flow-builder/company-logos/integration-icon-${assistant}.png`;
   }
