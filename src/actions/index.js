@@ -29,6 +29,10 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
+  signInWithGoogle: attemptedRoute =>
+    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { attemptedRoute }),
+  reSignInWithGoogle: email =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),

@@ -539,7 +539,17 @@ export function userProfilePreferencesProps(state) {
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
-// #endregion
+
+export function userProfileLinkedWithGoogle(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.auth_type_google &&
+    state.user.profile.auth_type_google.id
+  );
+}
+// #endregiod
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {

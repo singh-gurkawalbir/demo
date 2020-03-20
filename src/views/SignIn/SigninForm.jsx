@@ -11,10 +11,20 @@ import ErrorIcon from '../../components/icons/ErrorIcon';
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
   userEmail: selectors.userProfileEmail(state),
+  userProfileLinkedWithGoogle: selectors.userProfileLinkedWithGoogle(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
     dispatch(actions.auth.request(email, password));
+  },
+  handleSignInWithGoogle: attemptedRoute => {
+    dispatch(actions.auth.signInWithGoogle(attemptedRoute));
+  },
+  handleReSignInWithGoogle: email => {
+    dispatch(actions.auth.reSignInWithGoogle(email));
+  },
+  handleReSignInWithGoogleCompleted: () => {
+    dispatch(actions.auth.initSession());
   },
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
@@ -152,11 +162,33 @@ class SignIn extends Component {
 
     this.props.handleAuthentication(email, password);
   };
+  handleSignInWithGoogle = e => {
+    e.preventDefault();
+
+    this.props.handleSignInWithGoogle(e.target.attemptedRoute.value);
+  };
+
+  handleReSignInWithGoogle = e => {
+    e.preventDefault();
+
+    this.props.handleReSignInWithGoogle(this.props.userEmail);
+  };
 
   render() {
-    const { classes, dialogOpen, userEmail, location } = this.props;
+    window.signedInWithGoogle = () => {
+      this.props.handleReSignInWithGoogleCompleted();
+    };
+
+    const {
+      classes,
+      dialogOpen,
+      userEmail,
+      location,
+      userProfileLinkedWithGoogle,
+    } = this.props;
     let { error } = this.props;
-    const attemptedRoute = location.state && location.state.attemptedRoute;
+    const attemptedRoute =
+      location && location.state && location.state.attemptedRoute;
 
     if (error) {
       error = 'Oops! Something went wrong. Try again.';
@@ -219,23 +251,34 @@ class SignIn extends Component {
           <div className={classes.or}>
             <Typography variant="body1">or</Typography>
           </div>
-          <form
-            action={`/auth/google?attemptedRoute=${attemptedRoute || '/pg/'}`}
-            method="post">
-            <TextField
-              type="hidden"
-              id="_csrf"
-              name="_csrf"
-              value={window.siwgCsrf || ''}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              className={classes.googleBtn}>
-              Sign in with Google
-            </Button>
-          </form>
+          {!dialogOpen && (
+            <form onSubmit={this.handleSignInWithGoogle}>
+              <TextField
+                type="hidden"
+                id="attemptedRoute"
+                name="attemptedRoute"
+                value={attemptedRoute || '/pg/'}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="secondary"
+                className={classes.googleBtn}>
+                Sign in with Google
+              </Button>
+            </form>
+          )}
+          {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+            <form onSubmit={this.handleReSignInWithGoogle}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="secondary"
+                className={classes.googleBtn}>
+                Sign in with Google
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     );
