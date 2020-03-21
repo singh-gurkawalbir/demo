@@ -12,7 +12,6 @@ import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
 import GeneralSection from './sections/General';
-import SettingsSections from './sections/Settings';
 import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -63,12 +62,6 @@ const allSections = [
     label: 'Readme',
     Section: ReadmeSection,
     id: 'readMe',
-  },
-  {
-    path: 'settings',
-    label: 'Settings',
-    Section: SettingsSections,
-    id: 'settings',
   },
 ];
 

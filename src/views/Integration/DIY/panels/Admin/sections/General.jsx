@@ -1,5 +1,6 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isObject } from 'lodash';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
@@ -8,6 +9,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import PanelHeader from '../../../../../../components/PanelHeader';
+import { isJsonString } from '../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -22,34 +24,69 @@ export default function GeneralSection({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
-  const integration =
+  const { name, description, settings } =
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
+  const monitorLevelAccess = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+  const developerModeOn = useSelector(state => selectors.developerMode(state));
   const fieldMeta = {
     fieldMap: {
       name: {
         id: 'name',
-        helpKey: 'integrations.name',
+        helpKey: 'integration.name',
         name: 'name',
         type: 'text',
         label: 'Name',
-        defaultValue: integration.name,
+        defaultValue: name,
       },
       description: {
         id: 'description',
-        helpKey: 'integrations.description',
+        helpKey: 'integration.description',
         name: 'description',
         type: 'text',
+        multiline: true,
+        maxRows: 5,
         label: 'Description',
-        defaultValue: integration.description,
+        defaultValue: description,
+      },
+      settings: {
+        id: 'settings',
+        helpKey: 'integration.settings',
+        name: 'settings',
+        disabled: monitorLevelAccess || !developerModeOn,
+        type: 'settings',
+        label: 'Settings',
+        defaultValue: settings,
       },
     },
     layout: {
       fields: ['name', 'description'],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'Custom Settings',
+          fields: ['settings'],
+        },
+      ],
     },
   };
+
+  useEffect(() => {
+    setCount(count => count + 1);
+  }, [name, description, settings]);
   const handleSubmit = formVal => {
+    let settings;
+
+    if (isObject(formVal.settings)) {
+      ({ settings } = formVal);
+    } else if (isJsonString(formVal.settings)) {
+      settings = JSON.parse(formVal.settings);
+    }
+
     const patchSet = [
       {
         op: 'replace',
@@ -60,6 +97,11 @@ export default function GeneralSection({ integrationId }) {
         op: 'replace',
         path: '/description',
         value: formVal.description,
+      },
+      {
+        op: 'replace',
+        path: '/settings',
+        value: settings,
       },
     ];
 
