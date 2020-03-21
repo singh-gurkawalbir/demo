@@ -61,11 +61,17 @@ function getIntegrationAppsNextState(state, action) {
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
 
-    if (!integration || !(integration.install || integration.installSteps)) {
+    if (
+      !integration ||
+      !(
+        (integration.install && integration.install.length) ||
+        (integration.installSteps && integration.installSteps.length)
+      )
+    ) {
       return;
     }
 
-    if (integration && integration.installSteps) {
+    if (integration.installSteps && integration.installSteps.length) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.installSteps.findIndex(
@@ -399,11 +405,17 @@ export function connectionHasAs2Routing(state, id) {
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration || !(integration.install || integration.installSteps)) {
+  if (
+    !integration ||
+    !(
+      (integration.install && integration.install.length) ||
+      (integration.installSteps && integration.installSteps.length)
+    )
+  ) {
     return emptyList;
   }
 
-  if (integration && integration.installSteps) {
+  if (integration.installSteps && integration.installSteps.length) {
     return produce(integration.installSteps, draft => {
       if (draft.find(step => !step.completed)) {
         draft.find(step => !step.completed).isCurrentStep = true;
