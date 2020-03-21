@@ -70,7 +70,7 @@ export function* resourceConflictDetermination({
   return { conflict: false };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope }) {
+export function* commitStagedChanges({ resourceType, id, scope, options }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -255,7 +255,7 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     );
   }
 
-  if (resourceType === 'flows' && !isNew) {
+  if (options && options.action === 'flowEnableDisable') {
     yield put(actions.flow.isOnOffActionInprogress(false, id));
   }
 
