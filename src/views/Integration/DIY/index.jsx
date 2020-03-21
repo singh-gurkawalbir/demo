@@ -186,7 +186,7 @@ export default function Integration({ history, match }) {
     <Fragment>
       <ResourceDrawer match={match} />
 
-      <LoadResources required resources="integrations">
+      <LoadResources required resources="integrations,marketplacetemplates">
         <CeligoPageBar
           title={
             integration ? (

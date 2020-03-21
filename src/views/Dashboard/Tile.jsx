@@ -1,7 +1,8 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
+import * as selectors from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -25,6 +26,7 @@ import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getDomain } from '../../utils/resource';
 import ModalDialog from '../../components/ModalDialog';
+import { getTemplateUrlName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -55,6 +57,25 @@ function Tile({ tile, history }) {
     false
   );
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      tile && tile._integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
@@ -62,8 +83,12 @@ function Tile({ tile, history }) {
   const status = tileStatus(tile);
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
-  let urlToIntegrationSettings = `/integrations/${tile._integrationId}`;
-  let urlToIntegrationUsers = `/integrations/${tile._integrationId}/admin/users`;
+  let urlToIntegrationSettings = templateName
+    ? `/integrations/${templateName}/${tile._integrationId}`
+    : `/integrations/${tile._integrationId}`;
+  let urlToIntegrationUsers = templateName
+    ? `/integrations/${templateName}/${tile._integrationId}`
+    : `/integrations/${templateName}/${tile._integrationId}/admin/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
