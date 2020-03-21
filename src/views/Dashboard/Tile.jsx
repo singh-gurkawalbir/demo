@@ -84,11 +84,11 @@ function Tile({ tile, history }) {
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
   let urlToIntegrationSettings = templateName
-    ? `/integrations/${templateName}/${tile._integrationId}`
+    ? `/templates/${templateName}/${tile._integrationId}`
     : `/integrations/${tile._integrationId}`;
   let urlToIntegrationUsers = templateName
-    ? `/integrations/${templateName}/${tile._integrationId}`
-    : `/integrations/${templateName}/${tile._integrationId}/admin/users`;
+    ? `/templates/${templateName}/${tile._integrationId}/users`
+    : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
@@ -98,7 +98,7 @@ function Tile({ tile, history }) {
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/admin/users`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
   const isNotYetSupported =

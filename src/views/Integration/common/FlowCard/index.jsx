@@ -159,7 +159,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
       }
     } else if (templateName) {
       history.push(
-        `/pg/integrations/${templateName}/${flowDetails._integrationId ||
+        `/pg/templates/${templateName}/${flowDetails._integrationId ||
           'none'}/dashboard`
       );
     } else {
