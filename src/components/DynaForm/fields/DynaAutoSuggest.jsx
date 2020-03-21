@@ -120,6 +120,10 @@ export default function DynaAutoSuggest(props) {
     label,
     valueName,
     autoFocus,
+    isValid,
+    description,
+    errorMessages,
+    required,
     options = {},
   } = props;
   const classes = useStyles();
@@ -168,6 +172,9 @@ export default function DynaAutoSuggest(props) {
             autoFocus,
             value,
             disabled,
+            error: !isValid,
+            helperText: isValid ? description : errorMessages,
+            required,
             onChange: handleChange,
           }}
           theme={{

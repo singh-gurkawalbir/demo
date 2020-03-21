@@ -92,7 +92,9 @@ export default {
                   actions.resource.patchStaged(flow._id, patchSet, 'value')
                 );
                 dispatch(
-                  actions.resource.commitStaged('flows', flow._id, 'value')
+                  actions.resource.commitStaged('flows', flow._id, 'value', {
+                    action: 'flowEnableDisable',
+                  })
                 );
               }
             },

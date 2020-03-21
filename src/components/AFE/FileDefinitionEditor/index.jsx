@@ -7,8 +7,8 @@ import { FILE_GENERATOR } from './constants';
 
 export default function FileDefinitionEditor(props) {
   const { editorId, layout = 'column', processor, disabled } = props;
-  const { rule, data, result, error, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId)
+  const { rule, data, result, error } = useSelector(state =>
+    selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -47,7 +47,6 @@ export default function FileDefinitionEditor(props) {
 
   return (
     <Editor
-      changeIdentifier={initChangeIdentifier}
       handleInit={handleInit}
       handleDataChange={handleDataChange}
       handleRuleChange={handleRuleChange}

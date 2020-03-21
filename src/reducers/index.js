@@ -685,6 +685,10 @@ export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
 }
 
+export function editorTheme(state) {
+  return fromUser.editorTheme((state && state.user) || null);
+}
+
 export function hasPreferences(state) {
   return !!userPreferences(state);
 }
@@ -1129,6 +1133,10 @@ export function shouldRedirect(state, integrationId) {
 
 export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(state.session, integrationId);
+}
+
+export function isAddOnInstallInProgress(state, id) {
+  return fromSession.isAddOnInstallInProgress(state.session, id);
 }
 
 export function checkUpgradeRequested(state, licenseId) {
