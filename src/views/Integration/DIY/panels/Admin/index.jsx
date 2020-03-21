@@ -1,4 +1,3 @@
-// import clsx from 'clsx';
 import {
   Route,
   Switch,
@@ -12,6 +11,7 @@ import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
+import GeneralSection from './sections/General';
 import SettingsSections from './sections/Settings';
 import * as selectors from '../../../../../reducers';
 
@@ -46,6 +46,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
+  {
+    path: 'general',
+    label: 'General',
+    Section: GeneralSection,
+    id: 'general',
+  },
   {
     path: 'notifications',
     label: 'Notifications',
