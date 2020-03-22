@@ -8,6 +8,7 @@ describe('integrationApps reducer test cases', () => {
 
     expect(state).toEqual({
       installer: {},
+      addon: {},
       uninstaller: {},
       addStore: {},
       settings: {},
@@ -27,6 +28,7 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: { '1': { isTriggered: true } },
+          addon: {},
           uninstaller: {},
           settings: {},
           addStore: {},
@@ -58,6 +60,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
     });
@@ -78,6 +81,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
 
@@ -106,6 +110,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
     });
@@ -128,6 +133,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
 
@@ -156,6 +162,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
     });
@@ -178,6 +185,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
 
@@ -205,6 +213,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          addon: {},
         });
       });
     });
@@ -243,6 +252,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: { integrationId: {} },
           addStore: {},
           settings: {},
+          addon: {},
         });
       });
       test('should try to find the integrationId reference inside uninstaller reducer state and reset it if any data present', () => {
@@ -259,6 +269,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: { integrationId: {} },
           addStore: {},
           settings: {},
+          addon: {},
         });
       });
     });
@@ -274,6 +285,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           settings: {},
           installer: {},
           uninstaller: {
@@ -311,6 +323,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           settings: {},
           installer: {},
           uninstaller: {
@@ -357,6 +370,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -416,6 +430,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -453,6 +468,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -500,6 +516,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -560,6 +577,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -597,6 +615,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -644,6 +663,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -704,6 +724,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -741,6 +762,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -788,6 +810,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -848,6 +871,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -885,6 +909,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -940,6 +965,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -977,6 +1003,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -1015,6 +1042,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           settings: {},
           installer: {},
           uninstaller: {},
@@ -1030,6 +1058,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           settings: {},
           installer: {},
           uninstaller: {},
@@ -1049,6 +1078,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {
@@ -1082,6 +1112,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           settings: {},
           installer: {},
           uninstaller: {
@@ -1140,6 +1171,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': [
               {
@@ -1175,6 +1207,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1221,6 +1254,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1280,6 +1314,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1317,6 +1352,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1364,6 +1400,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1424,6 +1461,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1461,6 +1499,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1508,6 +1547,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': [
               {
@@ -1562,6 +1602,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1599,6 +1640,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1644,6 +1686,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1703,6 +1746,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '2': {
               steps: [
@@ -1739,6 +1783,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1793,6 +1838,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1829,6 +1875,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1865,6 +1912,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {},
@@ -1880,6 +1928,7 @@ describe('integrationApps reducer test cases', () => {
         );
         const expectedValue = {
           addStore: {},
+          addon: {},
           installer: {},
           settings: {},
           uninstaller: {},
@@ -1898,6 +1947,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.store.clearSteps(2)
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1931,6 +1981,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.store.clearSteps()
         );
         const expectedValue = {
+          addon: {},
           addStore: {
             '1': {
               steps: [
@@ -1975,6 +2026,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {
@@ -1998,6 +2050,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {
@@ -2020,6 +2073,7 @@ describe('integrationApps reducer test cases', () => {
           })
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {
@@ -2040,6 +2094,7 @@ describe('integrationApps reducer test cases', () => {
           })
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {
@@ -2064,6 +2119,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.clear('integrationId', 'flowId')
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {
@@ -2080,6 +2136,7 @@ describe('integrationApps reducer test cases', () => {
           actions.integrationApp.settings.clear('integrationId', 'flowId')
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: {},
@@ -2098,6 +2155,7 @@ describe('integrationApps reducer test cases', () => {
           )
         );
         const expectedValue = {
+          addon: {},
           addStore: {},
           installer: {},
           settings: { 'integrationId-flowId': { submitComplete: true } },

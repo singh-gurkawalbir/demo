@@ -30,7 +30,7 @@ const handleAddNewResource = args => {
     newResourceId,
     expConnId,
     statusExport,
-    assistantName,
+    assistant,
   } = args;
 
   if (
@@ -53,7 +53,7 @@ const handleAddNewResource = args => {
     else if (['iClients'].includes(resourceType)) {
       values = {
         ...values,
-        '/assistantName': assistantName,
+        '/assistant': assistant,
       };
     } else {
       values = resourceMeta[resourceType].new.preSave({
@@ -210,7 +210,7 @@ function DynaSelectResource(props) {
     label: conn.name || conn._id,
     value: conn._id,
   }));
-  const { expConnId, assistantName } = useSelector(state => {
+  const { expConnId, assistant } = useSelector(state => {
     const { merged } =
       selectors.resourceData(
         state,
@@ -220,7 +220,7 @@ function DynaSelectResource(props) {
 
     return {
       expConnId: merged && merged._connectionId,
-      assistantName: merged.assistant,
+      assistant: merged.assistant,
     };
   });
   const handleAddNewResourceMemo = useCallback(
@@ -234,7 +234,7 @@ function DynaSelectResource(props) {
         newResourceId,
         statusExport,
         expConnId,
-        assistantName,
+        assistant,
       }),
     [
       dispatch,
@@ -245,7 +245,7 @@ function DynaSelectResource(props) {
       newResourceId,
       statusExport,
       expConnId,
-      assistantName,
+      assistant,
     ]
   );
   const handleEditResource = useCallback(() => {
