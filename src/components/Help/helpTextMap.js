@@ -1404,7 +1404,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping#field-mapping-types+++++++++++++" target="_blank"/> Field Reference Guide.</a>',
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
