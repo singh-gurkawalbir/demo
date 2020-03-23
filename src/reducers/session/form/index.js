@@ -40,7 +40,12 @@ function form(state = {}, action) {
 
 export default reduceReducers(form, fields);
 
-export const getFormState = (state, formKey) => ({
-  ...state,
-  ...getNextStateFromFieldsUpdated(state && state[formKey]),
-});
+export const getFormState = (state, formKey) => {
+  if (!state || !state[formKey]) return null;
+  const updatedState = getNextStateFromFieldsUpdated(state[formKey]);
+
+  return {
+    ...state[formKey],
+    ...updatedState,
+  };
+};

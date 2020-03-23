@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
@@ -9,6 +8,7 @@ import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 
 const useStyles = makeStyles(() => ({
   children: {
@@ -96,10 +96,10 @@ function GenerateUrl(props) {
   );
 }
 
-const DynaGenerateUrlFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <GenerateUrl {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaGenerateUrlFormContext = props => {
+  const form = useFormContext(props);
+
+  return <GenerateUrl {...props} formContext={form} />;
+};
 
 export default DynaGenerateUrlFormContext;

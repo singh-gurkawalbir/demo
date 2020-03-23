@@ -1,6 +1,6 @@
 import { ButtonGroup, Button, makeStyles } from '@material-ui/core';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useEffect, useCallback, Fragment } from 'react';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles({
   buttonGroup: {
@@ -89,9 +89,7 @@ function GroupedButton(props) {
 }
 
 export default function DynaGroupedButton(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <GroupedButton {...props} fields={form.fields} />}
-    </FormContext.Consumer>
-  );
+  const form = useFormContext(props);
+
+  return <GroupedButton {...props} fields={form.fields} />;
 }

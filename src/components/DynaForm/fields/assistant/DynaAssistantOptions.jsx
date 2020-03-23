@@ -1,4 +1,3 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
@@ -6,6 +5,7 @@ import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
+import useFormContext from '../../../Form/FormContext';
 
 export const useSetInitializeFormData = ({
   resourceType,
@@ -194,10 +194,10 @@ function DynaAssistantOptions(props) {
   );
 }
 
-const WrappedContextConsumer = props => (
-  <FormContext.Consumer>
-    {form => <DynaAssistantOptions {...form} {...props} />}
-  </FormContext.Consumer>
-);
+const WrappedContextConsumer = props => {
+  const form = useFormContext(props);
+
+  return <DynaAssistantOptions {...form} {...props} />;
+};
 
 export default WrappedContextConsumer;

@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 import { salesforceExportSelectOptions } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
   const { connectionId, filterKey, formContext, fieldName } = props;
@@ -35,12 +35,10 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   );
 }
 
-const DynaSalesforceFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => (
-      <DynaSalesforceSelectOptionsGenerator {...props} formContext={form} />
-    )}
-  </FormContext.Consumer>
-);
+const DynaSalesforceFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaSalesforceSelectOptionsGenerator {...props} formContext={form} />;
+};
 
 export default DynaSalesforceFormContext;

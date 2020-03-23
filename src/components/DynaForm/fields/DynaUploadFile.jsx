@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import {
   getFileReaderOptions,
@@ -10,6 +9,7 @@ import {
   getUploadedFileStatus,
 } from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import useFormContext from '../../Form/FormContext';
 
 function DynaUploadFile(props) {
   const {
@@ -139,10 +139,10 @@ function DynaUploadFile(props) {
   );
 }
 
-const DynaUploadFileWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaUploadFile {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaUploadFileWithFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaUploadFile {...props} formContext={form} />;
+};
 
 export default DynaUploadFileWithFormContext;

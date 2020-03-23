@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
-import { FormContext } from 'react-forms-processor/dist';
 import uuid from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
@@ -11,6 +10,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 
 // TODO Azhar
 const useStyles = makeStyles(() => ({
@@ -133,10 +133,10 @@ function DynaWebhookTokenGenerator(props) {
   );
 }
 
-const DynaWebhookTokenGeneratorFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaWebhookTokenGenerator {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaWebhookTokenGeneratorFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaWebhookTokenGenerator {...props} formContext={form} />;
+};
 
 export default DynaWebhookTokenGeneratorFormContext;

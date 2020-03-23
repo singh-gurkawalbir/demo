@@ -1,13 +1,12 @@
-import { useMemo } from 'react';
-import { Form } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { Children, cloneElement, useMemo, Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import getRenderer from './renderer';
-import DynaFormGenerator from './DynaFormGenerator';
-import ButtonGroup from '../ButtonGroup';
-import * as selectors from '../../reducers';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
+import * as selectors from '../../reducers';
+import ButtonGroup from '../ButtonGroup';
+import DynaFormGenerator from './DynaFormGenerator';
+import useForm from '../Form';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {

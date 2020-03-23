@@ -1,12 +1,12 @@
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import { useEffect } from 'react';
-import Button from '@material-ui/core/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import * as selectors from '../../../reducers';
 import trim from '../../../utils/trim';
+import useFormContext from '../../Form/FormContext';
 
 const styles = theme => ({
   actionButton: {
@@ -119,10 +119,10 @@ const NetsuiteValidateButton = props => {
   );
 };
 
-const FormWrappedNetsuiteValidateButton = props => (
-  <FormContext.Consumer>
-    {form => <NetsuiteValidateButton {...form} {...props} />}
-  </FormContext.Consumer>
-);
+const FormWrappedNetsuiteValidateButton = props => {
+  const form = useFormContext(props);
+
+  return <NetsuiteValidateButton {...form} {...props} />;
+};
 
 export default withStyles(styles)(FormWrappedNetsuiteValidateButton);

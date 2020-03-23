@@ -1,8 +1,8 @@
 import { useEffect, useCallback } from 'react';
-import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
+import useFormContext from '../Form/FormContext';
 
 function DynaAction(props) {
   const {
@@ -63,17 +63,17 @@ function DynaAction(props) {
 }
 
 // field props are getting merged first
-const DynaActionWrapped = props => (
-  <FormContext.Consumer {...props}>
-    {form => (
-      <DynaAction
-        {...form}
-        {...props}
-        disabled={!!(form.disabled || props.disabled)}
-        isValid={props.isValid === undefined ? form.isValid : props.isValid}
-      />
-    )}
-  </FormContext.Consumer>
-);
+const DynaActionWrapped = props => {
+  const form = useFormContext(props);
+
+  return (
+    <DynaAction
+      {...form}
+      {...props}
+      disabled={!!(form.disabled || props.disabled)}
+      isValid={props.isValid === undefined ? form.isValid : props.isValid}
+    />
+  );
+};
 
 export default DynaActionWrapped;

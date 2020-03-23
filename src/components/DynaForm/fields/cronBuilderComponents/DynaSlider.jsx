@@ -1,6 +1,6 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useCallback, Fragment, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
+import useFormContext from '../../../Form/FormContext';
 
 function DynaSlider(props) {
   const {
@@ -51,9 +51,7 @@ function DynaSlider(props) {
 }
 
 export default function DynaGroupedButton(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaSlider {...props} fields={form.fields} />}
-    </FormContext.Consumer>
-  );
+  const form = useFormContext(props);
+
+  return <DynaSlider {...props} fields={form.fields} />;
 }

@@ -1,14 +1,14 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
-import React, { useState, Fragment, useCallback } from 'react';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
+import React, { Fragment, useCallback, useState } from 'react';
 import FormGenerator from '..';
 import {
   getAllFormValuesAssociatedToMeta,
-  isExpansionPanelErrored,
   isAnyFieldTouchedForMeta,
+  isExpansionPanelErrored,
 } from '../../../../forms/utils';
+import useFormContext from '../../../Form/FormContext';
+import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -91,26 +91,21 @@ function FormWithSave(props) {
     values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
     [fieldMap, layout]
   );
+  const form = useFormContext(props);
 
   return (
-    <FormContext.Consumer>
-      {form => (
-        <Fragment>
-          <FormGenerator {...props} />
-          <IntegrationSettingsSaveButton
-            {...rest}
-            isValid={
-              !isExpansionPanelErrored({ layout, fieldMap }, form.fields)
-            }
-            isFormTouchedForMeta={isAnyFieldTouchedForMeta(
-              { layout, fieldMap },
-              form.fields
-            )}
-            postProcessValuesFn={postProcessValuesFn}
-          />
-        </Fragment>
-      )}
-    </FormContext.Consumer>
+    <Fragment>
+      <FormGenerator {...props} />
+      <IntegrationSettingsSaveButton
+        {...rest}
+        isValid={!isExpansionPanelErrored({ layout, fieldMap }, form.fields)}
+        isFormTouchedForMeta={isAnyFieldTouchedForMeta(
+          { layout, fieldMap },
+          form.fields
+        )}
+        postProcessValuesFn={postProcessValuesFn}
+      />
+    </Fragment>
   );
 }
 

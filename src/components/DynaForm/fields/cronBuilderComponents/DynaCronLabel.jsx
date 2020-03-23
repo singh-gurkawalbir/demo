@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { useEffect } from 'react';
-import { FormContext } from 'react-forms-processor';
+import useFormContext from '../../../Form/FormContext';
 
 function CronLabel(props) {
   const { onFieldChange, id, clearFields, fields, unit } = props;
@@ -18,9 +18,7 @@ function CronLabel(props) {
 }
 
 export default function DynaCronLabel(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <CronLabel {...props} fields={form.fields} />}
-    </FormContext.Consumer>
-  );
+  const form = useFormContext(props);
+
+  return <CronLabel {...props} fields={form.fields} />;
 }

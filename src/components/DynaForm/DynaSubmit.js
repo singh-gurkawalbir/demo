@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
-import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
+import useFormContext from '../Form/FormContext';
 
 function FormButton({
   disabled,
@@ -52,10 +52,10 @@ function FormButton({
   );
 }
 
-const DynaSubmit = props => (
-  <FormContext.Consumer {...props}>
-    {form => <FormButton {...form} {...props} />}
-  </FormContext.Consumer>
-);
+const DynaSubmit = props => {
+  const form = useFormContext(props);
+
+  return <FormButton {...form} {...props} />;
+};
 
 export default DynaSubmit;

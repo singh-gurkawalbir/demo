@@ -1,4 +1,3 @@
-import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo } from 'react';
 import actions from '../../../actions';
@@ -12,6 +11,7 @@ import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import { SCOPES } from '../../../sagas/resourceForm';
 import formFactory from '../../../forms/formFactory';
 import { getApp } from '../../../constants/applications';
+import useFormContext from '../../Form/FormContext';
 
 const emptyObj = {};
 const isParent = true;
@@ -126,9 +126,7 @@ export function FormView(props) {
 }
 
 export default function DynaFormView(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <FormView formContext={form} {...props} />}
-    </FormContext.Consumer>
-  );
+  const form = useFormContext(props);
+
+  return <FormView formContext={form} {...props} />;
 }

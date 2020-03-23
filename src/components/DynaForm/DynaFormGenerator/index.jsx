@@ -1,11 +1,11 @@
-import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
+import FormFragment from '../../Form/FormFragment';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
 import {
-  TabIAComponent,
   TabComponentSimple,
   TabComponentWithoutSave,
+  TabIAComponent,
 } from './TabComponent';
 
 // TODO: Checked with little change
@@ -45,12 +45,15 @@ const getCorrespondingFieldMap = (fields, fieldMap) =>
 export default function FormGenerator(props) {
   const classes = useStyles();
 
+  console.log('check form gen ', props);
+
   if (!props || !props.layout || !props.fieldMap) return null;
-  const { fieldMap, layout } = props;
+  const { fieldMap, layout, formKey } = props;
   const { fields, containers, type } = layout;
   const fieldsComponent = fields && (
     <FormFragment
       className={classes.child}
+      formKey={formKey}
       defaultFields={getCorrespondingFieldMap(fields, fieldMap)}
     />
   );

@@ -1,7 +1,7 @@
 import Typography from '@material-ui/core/Typography';
-import { FormContext } from 'react-forms-processor';
 import FormGenerator from '../';
 import { isAnyFieldVisibleForMeta } from '../../../../forms/utils';
+import useFormContext from '../../../Form/FormContext';
 
 function ColumnComponents(props) {
   const { containers, fieldMap, classes, formState } = props;
@@ -32,9 +32,7 @@ function ColumnComponents(props) {
 }
 
 export default function ColumnComponentsWithFormState(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <ColumnComponents {...props} formState={form} />}
-    </FormContext.Consumer>
-  );
+  const formState = useFormContext(props);
+
+  return <ColumnComponents {...props} formState={formState} />;
 }

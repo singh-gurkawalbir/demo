@@ -1,35 +1,31 @@
-import { cloneElement, useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import actions from '../../actions';
+import { cloneElement } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 
 export default function FieldWrapper(props) {
   const { formKey, id, children, ...rest } = props;
   const fieldState = useSelector(state => {
-    const { fields } = selectors.getFormState(state, formKey);
+    const formState = selectors.getFormState(state, formKey);
+    const fieldState =
+      formState && formState.fields.find(field => field.id === id);
+    const {
+      onFieldFocus,
+      onFieldBlur,
+      onFieldChange,
+      registerField,
+    } = formState;
 
-    return fields.find(field => field.id === id);
+    return {
+      ...fieldState,
+      onFieldFocus,
+      onFieldBlur,
+      onFieldChange,
+      registerField,
+    };
   }, shallowEqual);
-  const dispatch = useDispatch();
-  const onFieldChange = useCallback(
-    (fieldId, value) =>
-      dispatch(actions.form.field.onFieldChange(formKey)(fieldId, value)),
-    [dispatch, formKey]
-  );
-  const onFieldBlur = useCallback(
-    fieldId => dispatch(actions.form.field.onFieldBlur(formKey)(fieldId)),
-    [dispatch, formKey]
-  );
-  const onFieldFocus = useCallback(
-    fieldId => dispatch(actions.form.field.onFieldFocus(formKey)(fieldId)),
-    [dispatch, formKey]
-  );
 
   return cloneElement(children, {
     ...rest,
     ...fieldState,
-    onFieldChange,
-    onFieldBlur,
-    onFieldFocus,
   });
 }

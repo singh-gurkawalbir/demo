@@ -1,10 +1,10 @@
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 import * as selectors from '../../reducers';
+import FieldWrapper from '../Form/FieldWrapper';
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -82,6 +82,7 @@ const FieldActions = props => {
 };
 
 function getRenderer(
+  formKey,
   editMode = false,
   formFieldsMeta,
   resourceId,
@@ -106,7 +107,7 @@ function getRenderer(
 
       <div key={fid} style={wrapper}>
         <div style={fieldStyle}>
-          <FieldWrapper {...field}>
+          <FieldWrapper formKey={formKey} {...field}>
             <DynaField resourceContext={context} />
           </FieldWrapper>
         </div>

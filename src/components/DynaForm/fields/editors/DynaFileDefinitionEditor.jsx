@@ -1,7 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -10,6 +9,7 @@ import {
   FILE_GENERATOR,
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
+import useFormContext from '../../../Form/FormContext';
 
 /*
  * This editor is shown in case of :
@@ -189,10 +189,10 @@ function DynaFileDefinitionEditor(props) {
   );
 }
 
-const DynaFileDefinitionEditorWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaFileDefinitionEditor {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaFileDefinitionEditorWithFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaFileDefinitionEditor {...props} formContext={form} />;
+};
 
 export default DynaFileDefinitionEditorWithFormContext;

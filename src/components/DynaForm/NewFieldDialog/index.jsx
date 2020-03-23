@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Form, FormContext } from 'react-forms-processor/dist';
+import { Form } from 'react-forms-processor/dist';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -17,6 +17,7 @@ import fields from '../fields';
 import CodeEditor from '../../CodeEditor';
 import fieldDefinitions from '../../../forms/fieldDefinitions';
 import { getFieldById, getFieldByName } from '../../../forms/utils';
+import useFormContext from '../../Form/FormContext';
 
 const fieldMeta = {
   text: { key: 'text', label: 'Text', props: {} },
@@ -220,6 +221,7 @@ export default function NewFieldDialog(props) {
   const DynaField = fields[meta.type];
   // console.log('render:', fieldType, fieldId, meta);
   const resourceMeta = fieldDefinitions[resourceType] || {};
+  const form = useFormContext(props);
 
   return (
     <FormDialog
@@ -284,9 +286,7 @@ export default function NewFieldDialog(props) {
         <div className={classes.fieldPreview}>
           {DynaField && (
             <Form key={count}>
-              <FormContext.Consumer>
-                {form => <DynaField {...form} {...meta} />}
-              </FormContext.Consumer>
+              <DynaField {...form} {...meta} />
             </Form>
           )}
         </div>

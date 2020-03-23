@@ -1,7 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { FormContext } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
@@ -15,6 +14,7 @@ import {
 } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import Panels from './Panels';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -139,10 +139,10 @@ function DynaExportPanel(props) {
   );
 }
 
-const DynaExportPanelWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaExportPanel {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaExportPanelWithFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaExportPanel {...props} formContext={form} />;
+};
 
 export default DynaExportPanelWithFormContext;
