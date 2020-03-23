@@ -23,6 +23,10 @@ export default {
           retValues['/rest/relativeURIUpdate'],
           retValues['/rest/relativeURICreate'],
         ];
+        retValues['/rest/requestType'] = [
+          retValues['/rest/requestTypeUpdate'],
+          retValues['/rest/requestTypeCreate'],
+        ];
         retValues['/rest/method'] = [
           retValues['/rest/compositeMethodUpdate'],
           retValues['/rest/compositeMethodCreate'],
@@ -69,6 +73,8 @@ export default {
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
       } else if (retValues['/rest/compositeType'] === 'createandignore') {
+        retValues['/rest/requestType'] = [retValues['/rest/requestTypeCreate']];
+
         retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
         retValues['/rest/method'] = [retValues['/rest/compositeMethodCreate']];
 
@@ -113,6 +119,8 @@ export default {
           ];
         }
       } else if (retValues['/rest/compositeType'] === 'updateandignore') {
+        retValues['/rest/requestType'] = [retValues['/rest/requestTypeUpdate']];
+
         retValues['/rest/relativeURI'] = [retValues['/rest/relativeURIUpdate']];
         retValues['/rest/method'] = [retValues['/rest/compositeMethodUpdate']];
 
@@ -154,6 +162,10 @@ export default {
         retValues['/rest/existingDataId'] = undefined;
       }
     } else {
+      if (!retValues['/rest/requestType'])
+        retValues['/rest/requestType'] =
+          retValues['/rest/method'] === 'POST' ? ['CREATE'] : ['UPDATE'];
+
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
       retValues['/rest/body'] = retValues['/rest/body']
@@ -232,6 +244,7 @@ export default {
     'rest.compositeType': { fieldId: 'rest.compositeType' },
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
+    'rest.requestType': { fieldId: 'rest.requestType' },
     'rest.body': { fieldId: 'rest.body' },
     'rest.successPath': { fieldId: 'rest.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
@@ -334,6 +347,51 @@ export default {
           }
 
           return r.rest.relativeURI && r.rest.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'rest.requestTypeCreate': {
+      id: 'rest.requestTypeCreate',
+      type: 'select',
+      label: 'RequestType',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      defaultValue: r => {
+        if (!r || !r.rest || !r.rest.method) {
+          return '';
+        }
+
+        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.rest.method.length > 1) {
+            return r.rest.requestType && r.rest.requestType[1];
+          }
+
+          return r.rest.requestType && r.rest.requestType[0];
         }
 
         return '';
@@ -578,6 +636,47 @@ export default {
 
         if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return r.rest.relativeURI && r.rest.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'rest.requestTypeUpdate': {
+      id: 'rest.requestTypeUpdate',
+      type: 'select',
+      label: 'Request Type',
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      defaultValue: r => {
+        if (!r || !r.rest || !r.rest.method) {
+          return '';
+        }
+
+        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.rest.requestType && r.rest.requestType[0];
         }
 
         return '';
@@ -836,6 +935,7 @@ export default {
       'rest.lookups',
       // 'mapping',
       'rest.relativeURI',
+      'rest.requestType',
       'rest.body',
       'rest.successPath',
       'rest.successValues',
@@ -843,6 +943,7 @@ export default {
       'createNewData',
       'rest.compositeMethodCreate',
       'rest.relativeURICreate',
+      'rest.requestTypeCreate',
       'rest.bodyCreate',
       'rest.successPathCreate',
       'rest.successValuesCreate',
@@ -850,6 +951,7 @@ export default {
       'upateExistingData',
       'rest.compositeMethodUpdate',
       'rest.relativeURIUpdate',
+      'rest.requestTypeUpdate',
       'rest.bodyUpdate',
       'rest.successPathUpdate',
       'rest.successValuesUpdate',

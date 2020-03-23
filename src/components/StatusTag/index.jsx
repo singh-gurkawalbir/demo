@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       position: 'absolute',
       zIndex: 2,
-      width: props => `${props.resolvedValue}%`,
       right: 0,
       background: theme.palette.primary.main,
       bottom: 0,
@@ -49,11 +48,30 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       position: 'absolute',
       zIndex: 2,
-      width: props => `${props.errorValue}%`,
-      left: 0,
       background: theme.palette.error.main,
       bottom: 0,
       top: 0,
+    },
+  },
+  bothValues: {
+    '&:after': {
+      width: props => `${props.resolvedValue}%`,
+    },
+    '&:before': {
+      width: props => `${props.errorValue}%`,
+      left: props => `calc(100% - ${props.errorValue}%)`,
+    },
+  },
+  errorValueOnly: {
+    '&:before': {
+      width: props => `${props.errorValue}%`,
+      left: props => `calc(100% - ${props.errorValue}%)`,
+    },
+  },
+  resolvedValueOnly: {
+    '&:after': {
+      width: props => `${props.resolvedValue}%`,
+      left: props => `calc(100% - ${props.resolvedValue}%)`,
     },
   },
   customLabel: {
@@ -85,12 +103,15 @@ function StatusTag(props) {
       className={clsx(
         classes.root,
         classes[variant],
+        errorValue && !resolvedValue && classes.errorValueOnly,
+        resolvedValue && !errorValue && classes.resolvedValueOnly,
+        errorValue && resolvedValue && classes.bothValues,
         (errorValue || resolvedValue) && classes.values,
 
         className
       )}
       {...other}>
-      {errorValue ? (
+      {errorValue || resolvedValue ? (
         <span className={classes.customLabel}>{label}</span>
       ) : (
         label

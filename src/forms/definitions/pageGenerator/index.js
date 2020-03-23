@@ -35,6 +35,11 @@ export default {
     } else {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
+      if (application === 'webhook') {
+        newValues['/type'] = 'webhook';
+        newValues['/webhook/provider'] = 'custom';
+      }
+
       if (app.assistant) {
         newValues['/assistant'] = app.assistant;
       }
@@ -153,6 +158,7 @@ export default {
 
     if (fieldId === 'exportId') {
       const connectionField = fields.find(field => field.id === 'connection');
+      const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =
         getWebhookOnlyConnectors()
@@ -198,6 +204,9 @@ export default {
         filter,
         appType: app.type,
         visible,
+        label: isWebhook
+          ? 'Would you like to use an existing listener?'
+          : exportField.label,
       };
     }
 

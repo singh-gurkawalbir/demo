@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
@@ -14,6 +13,8 @@ export default function DynaHook(props) {
     hookStage = 'preSavePage',
     disabled,
   } = props;
+  // Lists all hooks stages with default sample data where no api call is required
+  const hooksWithDefaultSampleData = ['as2routing'];
   const dispatch = useDispatch();
   const [isPreHookDataRequested, setIsPreHookDataRequested] = useState(false);
   const requestForPreHookData = () => {
@@ -38,7 +39,7 @@ export default function DynaHook(props) {
   );
   // Selector to get sample data for different hook types
   // TODO @Raghu: Move all this logic to a selector
-  const getSampleDataSelector = ({ state, flowId, resourceId, stage }) => {
+  const getSampleDataSelector = ({ state, flowId, resourceId }) => {
     // Show empty JSON incase of out of flow context
     if (!flowId) {
       return {};
@@ -48,54 +49,47 @@ export default function DynaHook(props) {
       return { as2: { sample: { data: 'coming soon' } } };
     }
 
-    // Post Aggregate Hook is shown default data
-    if (hookStage === 'postAggregate') {
-      return {
-        postAggregateData: {
-          success: true,
-          _json: {},
-        },
-      };
-    }
-
     // Fetch corresponding data for specific hookStage ('preSavePage',  'preMap', 'postMap', 'postSubmit')
-    const sampleData = selectors.getSampleData(state, {
+    const { data: sampleData } = selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
-      stage: resourceType === 'exports' ? stage : hookStage,
+      stage: hookStage,
     });
 
-    if (hookStage === 'postSubmit') {
-      return {
-        responseData: {
-          _json: isEmpty(sampleData) ? {} : sampleData,
-        },
-      };
-    }
-
-    if (hookStage === 'postMap') {
-      return {
-        postMapData: isEmpty(sampleData) ? {} : sampleData,
-      };
-    }
-
-    if (sampleData) {
-      return { errors: [], data: [sampleData] };
-    }
+    return sampleData;
   };
 
   const preHookData = useSelector(state => {
     if (props.preHookData) return props.preHookData;
 
-    return getSampleDataSelector({ state, flowId, resourceId, stage: 'hooks' });
+    return getSampleDataSelector({ state, flowId, resourceId });
+  });
+  const preHookDataStatus = useSelector(state => {
+    // Incase of default data for hooks, return status as received
+    if (props.preHookData || hooksWithDefaultSampleData.includes(hookStage)) {
+      return 'received';
+    }
+
+    // returns status of sampleData state for this hookStage
+    return selectors.getSampleDataWrapper(state, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage: hookStage,
+    }).status;
   });
 
   useEffect(() => {
     // Sample data is shown incase of flow context
-    if (!preHookData && flowId && isPreHookDataRequested) {
+    if (!preHookDataStatus && flowId && isPreHookDataRequested) {
       dispatch(
-        requestSampleData({ flowId, resourceId, resourceType, stage: 'hooks' })
+        requestSampleData({
+          flowId,
+          resourceId,
+          resourceType,
+          stage: hookStage,
+        })
       );
     }
   }, [
@@ -103,9 +97,10 @@ export default function DynaHook(props) {
     requestSampleData,
     flowId,
     isPreHookDataRequested,
-    preHookData,
     resourceId,
     resourceType,
+    preHookDataStatus,
+    hookStage,
   ]);
 
   return (

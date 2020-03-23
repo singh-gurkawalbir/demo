@@ -34,21 +34,21 @@ export function basicFieldsMeta({ assistantConfig, assistantData }) {
   };
   const { labels = {}, versions = [] } = assistantData;
 
-  return Object.keys(fieldDefinitions)
-    .filter(fieldId => {
-      if (fieldId === 'version') {
-        return versions.length > 1;
-      }
+  return Object.keys(fieldDefinitions).map(fieldId => {
+    if (fieldId === 'version') {
+      fieldDefinitions[fieldId].visible = versions.length > 1;
 
-      return true;
-    })
-    .map(fieldId => {
-      if (labels[fieldId]) {
-        fieldDefinitions[fieldId].label = labels[fieldId];
+      if (!fieldDefinitions[fieldId].value && versions.length === 1) {
+        fieldDefinitions[fieldId].value = versions[0].version;
       }
+    }
 
-      return fieldDefinitions[fieldId];
-    });
+    if (labels[fieldId]) {
+      fieldDefinitions[fieldId].label = labels[fieldId];
+    }
+
+    return fieldDefinitions[fieldId];
+  });
 }
 
 export function pathParameterFieldsMeta({ operationParameters = [], values }) {
@@ -71,6 +71,18 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
           })),
         },
       ];
+    }
+
+    if (pathParam.suggestions && pathParam.suggestions.length > 0) {
+      pathParamField.type = 'autosuggest';
+      pathParamField.labelName = 'name';
+      pathParamField.valueName = 'value';
+      pathParamField.options = {
+        suggestions: pathParam.suggestions.map(s => ({
+          name: s,
+          value: s,
+        })),
+      };
     }
 
     return pathParamField;
@@ -262,6 +274,10 @@ export function fieldMeta({ resource, assistantData }) {
 
   fieldMap.exportPanel = {
     fieldId: 'exportPanel',
+  };
+
+  fieldMap.settings = {
+    fieldId: 'settings',
   };
 
   return {

@@ -12,15 +12,16 @@ import {
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import { preSaveValidate } from './util';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import TextToggle from '../../../components/TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
+import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -34,6 +35,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1),
     padding: theme.spacing(2),
     display: 'flex',
+  },
+  helpTextButton: {
+    float: 'right',
+    padding: theme.spacing(1),
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -74,11 +79,13 @@ export default function ToggleEditorDialog(props) {
     height = '50vh',
     onClose,
     disabled,
+    helpTitle,
+    helpKey,
     hidePreviewAction = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
@@ -108,52 +115,76 @@ export default function ToggleEditorDialog(props) {
     [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
+  );
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, activeEditorId)
   );
   const handlePreview = useCallback(
     () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
     [activeEditorId, dispatch]
   );
-  const handleClose = useCallback(
-    shouldCommit => {
-      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
-        return;
-      }
-
-      if (onClose) {
-        onClose(shouldCommit, editor);
-      }
-    },
-    [editor, enquesnackbar, onClose]
-  );
-  const patchEditorLayoutChange = () => {
+  const handleCancelClick = useCallback(() => {
+    if (isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: onClose,
+          },
+        ],
+      });
+    } else {
+      onClose();
+    }
+  }, [confirmDialog, isEditorDirty, onClose]);
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
-  };
-
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
-  const handleFullScreenClick = () => {
+  }, [activeEditorId, dispatch]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
+  const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
-  };
-
-  const handleEditorToggle = value =>
-    setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 });
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const disableSave = !editor || editorViolations || disabled;
-  const handleCancel = useCallback(() => handleClose(), [handleClose]);
-  const handleSave = useCallback(() => handleClose(true), [handleClose]);
+  }, [fullScreen, patchEditorLayoutChange, state]);
+  const handleEditorToggle = useCallback(
+    value =>
+      setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 }),
+    [state]
+  );
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={handleCancel}
+      onClose={handleCancelClick}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
@@ -202,6 +233,14 @@ export default function ToggleEditorDialog(props) {
             </ToggleButton>
           )}
         </div>
+        {helpKey && (
+          <Help
+            title={helpTitle || title}
+            className={classes.helpTextButton}
+            helpKey={helpKey}
+            fieldId={helpKey}
+          />
+        )}
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
@@ -216,23 +255,27 @@ export default function ToggleEditorDialog(props) {
           <Button
             variant="outlined"
             data-test="previewEditorResult"
+            disabled={!!saveInProgress}
             onClick={handlePreview}>
             Preview
           </Button>
         )}
-        <Button
+        <EditorSaveButton
+          key={activeEditorId}
+          id={activeEditorId}
           variant="outlined"
-          data-test="saveEditor"
-          disabled={!!disableSave}
           color="primary"
-          onClick={handleSave}>
-          Save
-        </Button>
+          dataTest="saveEditor"
+          disabled={!!disableSave}
+          onClose={handleClose}
+          submitButtonLabel="Save"
+        />
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={handleCancel}>
+          disabled={!!saveInProgress}
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

@@ -3,12 +3,14 @@ import installer, * as fromInstaller from './installer';
 import uninstaller, * as fromUninstaller from './uninstaller';
 import addStore, * as fromAddStore from './addStore';
 import settings, * as fromSettings from './settings';
+import addon, * as fromAddon from './addon';
 
 export default combineReducers({
   installer,
   uninstaller,
   settings,
   addStore,
+  addon,
 });
 
 export function integrationAppsInstaller(state, id) {
@@ -20,6 +22,39 @@ export function categoryMapping(state, integrationId, flowId) {
     state && state.settings,
     integrationId,
     flowId
+  );
+}
+
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromSettings.categoryMappingsCollapsedStatus(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromSettings.categoryMappingsChanged(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromSettings.categoryMappingSaveStatus(
+    state && state.settings,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromSettings.categoryMappingsForSection(
+    state && state.settings,
+    integrationId,
+    flowId,
+    id
   );
 }
 
@@ -98,4 +133,8 @@ export function uninstallData(state, id, storeId) {
 
 export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
+}
+
+export function isAddOnInstallInProgress(state, id) {
+  return fromAddon.isAddOnInstallInProgress(state && state.addon, id);
 }

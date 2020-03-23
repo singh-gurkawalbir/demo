@@ -167,6 +167,7 @@ const connectors = [
   { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
   { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
+  { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
   {
     id: '4castplus',
     name: '4CastPlus',
@@ -401,6 +402,12 @@ const connectors = [
     name: 'LiquidPlanner',
     type: 'rest',
     assistant: 'liquidplanner',
+  },
+  {
+    id: 'loopreturns',
+    name: 'Loop Returns',
+    type: 'http',
+    assistant: 'loopreturns',
   },
   { id: 'magento', name: 'Magento 2', type: 'rest', assistant: 'magento' },
   {
@@ -712,6 +719,17 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
+connectors.sort((a, b) => {
+  const nameA = a.name ? a.name.toUpperCase() : '';
+  const nameB = b.name ? b.name.toUpperCase() : '';
+
+  if (nameA < nameB) return -1;
+
+  if (nameA > nameB) return 1;
+
+  return 0; // names must be equal
+});
+
 export const groupApplications = (
   resourceType,
   { assistants, appType, isSimpleImport }
@@ -778,7 +796,7 @@ export const groupApplications = (
       connectors: filteredConnectors.filter(c => c.group === 'db'),
     },
     {
-      label: 'Generic tech connectors',
+      label: 'Universal connectors',
       connectors: filteredConnectors.filter(c => c.group === 'tech'),
     },
     {
@@ -800,6 +818,8 @@ export const groupApplications = (
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+export const getDatabaseConnectors = () =>
+  connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 

@@ -21,6 +21,7 @@ import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
+import responseMapping, * as fromResponseMapping from './responseMapping';
 
 export default combineReducers({
   stage,
@@ -45,6 +46,7 @@ export default combineReducers({
   searchCriteria,
   flows,
   transfers,
+  responseMapping,
 });
 
 // #region PUBLIC SELECTORS
@@ -90,6 +92,18 @@ export function editorViolations(state, id) {
   return fromEditors.editorViolations(state && state.editors, id);
 }
 
+export function isEditorDirty(state, id) {
+  return fromEditors.isEditorDirty(state && state.editors, id);
+}
+
+export function editorPatchSet(state, id) {
+  return fromEditors.editorPatchSet(state && state.editors, id);
+}
+
+export function editorPatchStatus(state, id) {
+  return fromEditors.editorPatchStatus(state && state.editors, id);
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -98,8 +112,22 @@ export function mappingsChanged(state, id) {
   return fromMappings.mappingsChanged(state && state.mappings, id);
 }
 
-export function mappingSaveProcessTerminate(state, id) {
-  return fromMappings.mappingSaveProcessTerminate(state && state.mappings, id);
+export function mappingsSaveStatus(state, id) {
+  return fromMappings.mappingsSaveStatus(state && state.mappings, id);
+}
+
+export function responseMappings(state, id) {
+  return fromResponseMapping.responseMappings(
+    state && state.responseMapping,
+    id
+  );
+}
+
+export function responseMappingDirty(state, id) {
+  return fromResponseMapping.responseMappingDirty(
+    state && state.responseMapping,
+    id
+  );
 }
 
 export function getSearchCriteria(state, id) {
@@ -115,6 +143,10 @@ export function processorRequestOptions(state, id) {
 
 export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state && state.stage, id, scope);
+}
+
+export function getAllResourceConflicts(state) {
+  return fromStage.getAllResourceConflicts(state && state.stage);
 }
 
 export function optionsFromMetadata({
@@ -297,11 +329,22 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function isAddOnInstallInProgress(state, id) {
+  return fromIntegrationApps.isAddOnInstallInProgress(
+    state && state.integrationApps,
+    id
+  );
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromIntegrationApps.checkUpgradeRequested(
     state && state.integrationApps,
     licenseId
   );
+}
+
+export function isOnOffInProgress(state, flowId) {
+  return fromFlows.isOnOffInProgress(state && state.flows, flowId);
 }
 
 export function integrationAppsInstaller(state, id) {
@@ -311,11 +354,44 @@ export function integrationAppsInstaller(state, id) {
   );
 }
 
+export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsCollapsedStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingsChanged(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingsChanged(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
+export function categoryMappingSaveStatus(state, integrationId, flowId) {
+  return fromIntegrationApps.categoryMappingSaveStatus(
+    state && state.integrationApps,
+    integrationId,
+    flowId
+  );
+}
+
 export function categoryMapping(state, integrationId, flowId) {
   return fromIntegrationApps.categoryMapping(
     state && state.integrationApps,
     integrationId,
     flowId
+  );
+}
+
+export function categoryMappingsForSection(state, integrationId, flowId, id) {
+  return fromIntegrationApps.categoryMappingsForSection(
+    state && state.integrationApps,
+    integrationId,
+    flowId,
+    id
   );
 }
 

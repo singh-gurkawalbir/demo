@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -113,6 +114,18 @@ export default {
       newValues['/netsuite/distributed/qualifier'] = undefined;
     }
 
+    if (Object.hasOwnProperty.call(newValues, '/settings')) {
+      let settings = newValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      newValues['/settings'] = settings;
+    }
+
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
@@ -122,6 +135,7 @@ export default {
       );
 
       return {
+        disableFetch: !(recordTypeField && recordTypeField.value),
         commMetaPath:
           recordTypeField &&
           `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`,
@@ -338,35 +352,47 @@ export default {
       ],
     },
     common: { formId: 'common' },
+    settings: { fieldId: 'settings' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'common',
-      'outputMode',
-      'netsuite.execution.type',
-      'netsuite.api.type',
-      'exportOneToMany',
-      'netsuite.netsuiteExportlabel',
-      'distributed',
-      'restlet',
-      'search',
-      'netsuite.skipGrouping',
-      'blob',
-      'netsuite.restlet.criteria',
-      'netsuite.webservices.criteria',
-    ],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'Advanced',
         fields: [
-          'dataURITemplate',
-          'netsuite.distributed.skipExportFieldId',
-          'netsuite.distributed.forceReload',
-          'pageSize',
-          'netsuite.restlet.batchSize',
+          'common',
+          'outputMode',
+          'netsuite.execution.type',
+          'netsuite.api.type',
+          'exportOneToMany',
+          'netsuite.netsuiteExportlabel',
+          'distributed',
+          'restlet',
+          'search',
+          'netsuite.skipGrouping',
+          'blob',
+          'netsuite.restlet.criteria',
+          'netsuite.webservices.criteria',
         ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: [
+              'dataURITemplate',
+              'netsuite.distributed.skipExportFieldId',
+              'netsuite.distributed.forceReload',
+              'pageSize',
+              'netsuite.restlet.batchSize',
+            ],
+          },
+        ],
+      },
+      {
+        fields: ['exportPanel'],
       },
     ],
   },

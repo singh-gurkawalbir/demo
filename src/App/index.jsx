@@ -1,11 +1,12 @@
-import { useMemo, Fragment, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo, Fragment, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
+import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
 import themeProvider from '../theme/themeProvider';
 import CeligoAppBar from './CeligoAppBar';
@@ -15,11 +16,13 @@ import AuthDialog from '../components/AuthDialog';
 import AppErroredModal from './AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
+import actions from '../actions';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
+import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -51,10 +54,15 @@ export const PageContentComponents = () => (
 
 export default function App() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state => selectors.themeName(state));
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
+  const toggleDebugMode = useCallback(() => {
+    dispatch(actions.user.preferences.toggleDebug());
+  }, [dispatch]);
 
+  useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);
   // eslint-disable-next-line
   // console.log('render: <App>', reloadCount);
 
@@ -91,6 +99,7 @@ export default function App() {
               </div>
             </BrowserRouter>
           </DndProvider>
+          <ConflictAlertDialog />
         </SnackbarProvider>
       </ConfirmDialogProvider>
     </MuiThemeProvider>

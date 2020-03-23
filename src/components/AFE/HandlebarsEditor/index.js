@@ -20,8 +20,8 @@ export default function HandlebarsEditor(props) {
     enableAutocomplete,
     lookups = [],
   } = props;
-  const { template, data, result, error, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId)
+  const { template, data, result, error } = useSelector(state =>
+    selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -54,6 +54,7 @@ export default function HandlebarsEditor(props) {
         autoEvaluateDelay: 500,
         template: props.rule,
         data: props.data,
+        initTemplate: props.rule,
       })
     );
     // get Helper functions when the editor initializes
@@ -65,7 +66,6 @@ export default function HandlebarsEditor(props) {
 
   return (
     <Editor
-      changeIdentifier={initChangeIdentifier}
       disabled={disabled}
       editorId={editorId}
       handleInit={handleInit}

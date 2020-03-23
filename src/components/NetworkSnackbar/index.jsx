@@ -1,3 +1,4 @@
+import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
@@ -6,7 +7,6 @@ import {
   Snackbar,
   Typography,
 } from '@material-ui/core';
-import { Fragment } from 'react';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
@@ -22,8 +22,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     textAlign: 'center',
   },
+  contentWrapper: {
+    wordBreak: 'break-word',
+  },
 }));
-const LinearInDertiminate = props => props.show && <LinearProgress />;
 const Dismiss = props =>
   props.show && (
     <Button
@@ -64,13 +66,12 @@ export default function NetworkSnackbar() {
   const isLoadingAnyResource = useSelector(state =>
     selectors.isLoadingAnyResource(state)
   );
+  const handleClearComms = useCallback(() => {
+    dispatch(actions.clearComms());
+  }, [dispatch]);
 
   if (!isAllLoadingCommsAboveThreshold || !allLoadingOrErrored) {
     return null;
-  }
-
-  function handleClearComms() {
-    dispatch(actions.clearComms());
   }
 
   const notification = r => {
@@ -95,9 +96,9 @@ export default function NetworkSnackbar() {
   };
 
   const msg = (
-    <div>
+    <div className={classes.contentWrapper}>
       <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
-      <LinearInDertiminate show={isLoadingAnyResource} />
+      {isLoadingAnyResource && <LinearProgress />}
       <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
     </div>
   );
@@ -107,10 +108,10 @@ export default function NetworkSnackbar() {
       className={classes.snackbar}
       ContentProps={{
         // TODO: Are we overriding the default "paper" component style
-        // globaly? The material-ui demo page has the snackbar width
+        // globally? The material-ui demo page has the snackbar width
         // and corner radius set differently than our default... we need
         // to use the overrides below to compensate. why? where in our
-        // component heirarchy are these css overides?
+        // component hierarchy are these css overrides?
         square: false,
         className: classes.snackbarContent,
       }}

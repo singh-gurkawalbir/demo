@@ -41,6 +41,16 @@ export default function StandaloneMapping(props) {
   ] = useState(false);
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [initTriggered, setInitTriggered] = useState(false);
+  const exportResource = useSelector(state => {
+    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const _exportId =
+      flowDetails &&
+      flowDetails.pageGenerators &&
+      flowDetails.pageGenerators.length &&
+      flowDetails.pageGenerators[0]._exportId;
+
+    return selectors.resource(state, 'exports', _exportId) || undefined;
+  });
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -54,9 +64,10 @@ export default function StandaloneMapping(props) {
     resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
-  const { visible: showMappings } = useSelector(state =>
-    selectors.mapping(state, id)
-  );
+  const {
+    visible: showMappings,
+    importSampleData: savedImportSampleData,
+  } = useSelector(state => selectors.mapping(state, id));
   /**
    * subRecordMappingObj returns subRecord mapping and filePath in case of subrecord mapping
    */
@@ -146,10 +157,18 @@ export default function StandaloneMapping(props) {
   }, [generateStatus, importSampleDataLoaded]);
 
   useEffect(() => {
-    if (!importSampleData) {
+    // request for import sample data for 1st time without refreshCache=true
+
+    if (!importSampleData && !importSampleDataLoaded) {
       requestImportSampleData(false);
     }
-  }, [importSampleData, dispatch, resourceId, requestImportSampleData]);
+  }, [
+    importSampleData,
+    dispatch,
+    resourceId,
+    requestImportSampleData,
+    importSampleDataLoaded,
+  ]);
 
   /**  get assistance metadata from
    *   selector and dispatching an action if not loaded
@@ -247,7 +266,6 @@ export default function StandaloneMapping(props) {
 
     if (subRecordMappingId) {
       ({ recordType } = subRecordMappingObj);
-      // recordType = subRecordMappingObj.recordType;
     } else {
       recordType =
         resourceData.netsuite_da && resourceData.netsuite_da.recordType;
@@ -292,6 +310,10 @@ export default function StandaloneMapping(props) {
     };
   }
 
+  if (importSampleData) {
+    mappingOptions.importSampleData = importSampleData;
+  }
+
   let formattedExtractFields = [];
 
   /**
@@ -309,11 +331,6 @@ export default function StandaloneMapping(props) {
       [];
   }
 
-  const formattedGenerateFields = mappingUtil.getFormattedGenerateData(
-    importSampleData,
-    application
-  );
-  const [importSampleDataState, setImportSampleDataState] = useState([]);
   const handleInit = useCallback(() => {
     dispatch(
       actions.mapping.init({
@@ -348,17 +365,22 @@ export default function StandaloneMapping(props) {
     }
   }, [dispatch, id, initTriggered, isFetchingDuringInit, setMappingVisibility]);
 
+  useEffect(() => {
+    if (
+      initTriggered &&
+      importSampleData &&
+      !isEqual(importSampleData, savedImportSampleData)
+    ) {
+      dispatch(actions.mapping.updateImportSampleData(id, importSampleData));
+    }
+  }, [dispatch, id, importSampleData, initTriggered, savedImportSampleData]);
+
   if (!showMappings || isFetchingDuringInit) {
     return (
       <div className={classes.spinnerWrapper}>
         <Spinner />
       </div>
     );
-  }
-
-  if (initTriggered && !isEqual(importSampleDataState, importSampleData)) {
-    dispatch(actions.mapping.updateGenerates(id, formattedGenerateFields));
-    setImportSampleDataState(importSampleData);
   }
 
   const fetchSalesforceSObjectMetadata = sObject => {
@@ -386,8 +408,8 @@ export default function StandaloneMapping(props) {
       onClose={onClose}
       disabled={disabled}
       extractFields={formattedExtractFields}
-      generateFields={formattedGenerateFields}
       resource={resourceData}
+      exportResource={exportResource}
       isExtractsLoading={extractStatus === 'requested'}
       isGeneratesLoading={generateStatus === 'requested'}
       isGenerateRefreshSupported={isGenerateRefreshSupported}

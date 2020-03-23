@@ -3,6 +3,8 @@ export default {
     name: { fieldId: 'name' },
     description: { fieldId: 'description' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+
+    formView: { fieldId: 'formView' },
   },
-  layout: { fields: ['name', 'description', 'apiIdentifier'] },
+  layout: { fields: ['name', 'description', 'formView', 'apiIdentifier'] },
 };

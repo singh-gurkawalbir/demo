@@ -11,6 +11,7 @@ const ArrowRightIcon = require('../../src/components/icons/ArrowRightIcon').defa
 const ArrowDownIcon = require('../../src/components/icons/ArrowDownIcon').default;
 const ArrowUpIcon = require('../../src/components/icons/ArrowUpIcon').default;
 const AuditLogIcon = require('../../src/components/icons/AuditLogIcon').default;
+const BackArrowIcon = require('../../src/components/icons/BackArrowIcon').default;
 const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CancelIcon = require('../../src/components/icons/CancelIcon').default;
 const CheckboxUnselectedIcon = require('../../src/components/icons/CheckboxUnselectedIcon').default;
@@ -19,9 +20,11 @@ const ConditionalIcon = require('../../src/components/icons/ConditionalIcon').de
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
 const ConnectorIcon = require('../../src/components/icons/ConnectorIcon').default;
+const CollapseWindowIcon = require('../../src/components/icons/CollapseWindowIcon').default;
 const CloudTransferIcon = require('../../src/components/icons/CloudTransferIcon').default;
 const CeligoMarkIcon = require('../../src/components/icons/CeligoMarkIcon').default;
 const ConnectionsIcon = require('../../src/components/icons/ConnectionsIcon').default;
+const ConfigureSettingIcon = require('../../src/components/icons/ConfigureSettingIcon').default;
 const TransformIcon = require('../../src/components/icons/TransformIcon').default;
 const DataLoaderIcon = require('../../src/components/icons/DataLoaderIcon').default;
 const DashboardIcon = require('../../src/components/icons/DashboardIcon').default;
@@ -45,6 +48,7 @@ const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIco
 const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').default;
+const GripperIcon = require('../../src/components/icons/GripperIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
@@ -107,6 +111,7 @@ const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
 const UnlinkedIcon = require('../../src/components/icons/UnlinkedIcon').default;
 const UploadIcon = require('../../src/components/icons/UploadIcon').default;
 const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
+const UniversityIcon = require('../../src/components/icons/UniversityIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
 const WarningIcon = require('../../src/components/icons/WarningIcon').default;
 const WhatsNewIcon = require('../../src/components/icons/WhatsNewIcon').default;
@@ -175,6 +180,10 @@ const icon = {
       <AuditLogIcon style={icon}/>
       <p>AuditLog</p>
     </div>
+     <div style={wrapper}>
+        <BackArrowIcon style={icon}/>
+        <p> BackArrow</p>
+    </div>
     <div style={wrapper}>
       <CalendarIcon style={icon}/>
       <p>Calendar</p>
@@ -207,9 +216,17 @@ const icon = {
       <ConnectorIcon style={icon} />
       <p>Connector</p>
     </div>
+     <div style={wrapper}>
+      <CollapseWindowIcon style={icon} />
+      <p>CollapseWindow</p>
+    </div>
     <div style={wrapper}>
       <ConnectionsIcon style={icon} />
       <p>Connections</p>
+    </div>
+    <div style={wrapper}>
+      <ConfigureSettingIcon style={icon}/>
+      <p>ConfigureSetting</p>
     </div>
     <div style={wrapper}>
       <CeligoMarkIcon style={icon} />
@@ -306,6 +323,10 @@ const icon = {
     <div style={wrapper}>
       <GroupOfUsersIcon style={icon} />
       <p>GroupOfUsers</p>
+    </div>
+     <div style={wrapper}>
+      <GripperIcon style={icon} />
+      <p>Gripper</p>
     </div>
      <div style={wrapper}>
       <HelpIcon style={icon} />
@@ -555,6 +576,10 @@ const icon = {
     <div style={wrapper}>
       <UnlockIcon style={icon} />
       <p>Unlock</p>
+    </div>
+     <div style={wrapper}>
+        <UniversityIcon style={icon}/>
+        <p>University</p>
     </div>
     <div style={wrapper}>
       <UnlinkedIcon style={icon} />

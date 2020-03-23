@@ -1,19 +1,27 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useRouteMatch, useHistory } from 'react-router-dom';
+import {
+  Route,
+  useRouteMatch,
+  useHistory,
+  generatePath,
+} from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Grid,
+  Tooltip,
+  IconButton,
   Drawer,
   Typography,
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Button,
 } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';
+import IconTextButton from '../../../../../../components/IconTextButton';
 import Spinner from '../../../../../../components/Spinner';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import TrashIcon from '../../../../../../components/icons/TrashIcon';
@@ -21,11 +29,16 @@ import RestoreIcon from '../../../../../../components/icons/RestoreIcon';
 import ApplicationImg from '../../../../../../components/icons/ApplicationImg';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
-import VariationIcon from '../../../../../../components/icons/AdjustInventoryIcon';
+import ShowContentIcon from '../../../../../../components/icons/ShowContentIcon';
+import HideContentIcon from '../../../../../../components/icons/HideContentIcon';
+import VariationIcon from '../../../../../../components/icons/ConfigureSettingIcon';
 import Mappings from './BasicMapping';
 import Filters from './Filters';
 import CategoryList from './CategoryList';
 import DrawerTitleBar from './TitleBar';
+import ButtonGroup from '../../../../../../components/ButtonGroup';
+import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
+import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
 
 const emptySet = [];
 const drawerWidth = 200;
@@ -44,10 +57,15 @@ const useStyles = makeStyles(theme => ({
     padding: '0 0 10px 20px',
     border: 'solid 1px',
     borderColor: theme.palette.background.default,
+    marginTop: theme.spacing(1),
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+  },
+  saveButtonGroup: {
+    margin: '10px 10px 10px 24px',
+    float: 'left',
   },
   fullWidth: {
     width: '100%',
@@ -70,6 +88,15 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
     marginLeft: '20px',
     background: theme.palette.background.default,
+    display: 'flex',
+    justifyContent: 'flex-start',
+  },
+  mappingChild: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '40%',
+    marginRight: 45,
   },
   toolbar: theme.mixins.toolbar,
   root: {
@@ -89,23 +116,26 @@ const useStyles = makeStyles(theme => ({
   },
 
   subNav: {
-    minWidth: 200,
+    width: '20%',
     background: theme.palette.background.paper2,
-    borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
   },
   deleteIcon: {
     position: 'absolute',
-    right: '20px',
+    right: '45px',
   },
   variationIcon: {
     position: 'absolute',
-    right: '50px',
+    right: theme.spacing(10),
+    padding: 0,
+    '&:hover': {
+      backgroundColor: theme.palette.common.white,
+    },
   },
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 0, 3, 0),
+    padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
     background: 'blue',
@@ -115,24 +145,59 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+    fontWeight: 'bold',
   },
   default: {
     marginBottom: 10,
   },
+  titleBar: {
+    padding: '4px 16px',
+  },
+  categoryMapWrapper: {
+    display: 'flex',
+  },
+  rootExpansionPanel: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  innerContentHeader: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    display: 'flex',
+  },
+  expCollBtn: {
+    marginRight: -30,
+  },
 }));
 
-function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
+function CategoryMappings({
+  integrationId,
+  flowId,
+  sectionId,
+  isRoot = true,
+  isParentCommonCategory = false,
+}) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const isCommonCategory =
+    sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
   const { fields: generateFields, name, variation_themes: variationThemes } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
       })
+    ) || {};
+  const { collapseAction } =
+    useSelector(state =>
+      selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
     ) || {};
   const { children = [], deleted } =
     useSelector(state =>
@@ -166,11 +231,25 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     sectionId,
     isRoot,
   ]);
+  const shouldExpand =
+    isRoot || (collapseAction ? collapseAction !== 'collapse' : expanded);
 
-  const handleChange = () => {
+  useEffect(() => {
+    setExpanded(shouldExpand);
+  }, [shouldExpand]);
+  useEffect(() => {
+    if (collapseAction) {
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clearCollapseStatus(
+          integrationId,
+          flowId
+        )
+      );
+    }
+  }, [collapseAction, dispatch, flowId, integrationId]);
+  const handleChange = useCallback(() => {
     setExpanded(!expanded);
-  };
-
+  }, [expanded]);
   const handleDelete = e => {
     // Clicking of this icon should avoid collapsing this category section
     e.stopPropagation();
@@ -201,32 +280,83 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
     history.push(`${match.url}/variations/${sectionId}`);
   };
 
+  if (!generateFields) {
+    return (
+      <Loader open>
+        {`Loading ${sectionId}  metadata`}
+        <Spinner />
+      </Loader>
+    );
+  }
+
   return (
     <div className={isRoot ? classes.mappingContainer : classes.default}>
       <ExpansionPanel
         expanded={expanded}
+        elevation={0}
         onChange={handleChange}
-        className={isRoot ? '' : classes.childExpansionPanel}>
+        className={
+          isRoot ? classes.rootExpansionPanel : classes.childExpansionPanel
+        }>
         <ExpansionPanelSummary
           aria-controls="panel1bh-content"
           id="panel1bh-header">
-          {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          <Typography className={classes.secondaryHeading} variant="body2">
-            {name}
-          </Typography>
+          <div className={classes.innerContentHeader}>
+            <div className={classes.title}>
+              <span>{expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}</span>
+              <Typography className={classes.secondaryHeading} variant="body2">
+                {name}
+              </Typography>
+            </div>
+            <span>
+              {expanded ? (
+                <Tooltip title="Hide categories" placement="bottom">
+                  <IconButton size="small" color="inherit">
+                    <ShowContentIcon />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Enable categories" placement="bottom">
+                  <IconButton size="small" color="inherit">
+                    <HideContentIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </span>
+          </div>
+
           {!!variationThemes && !!variationThemes.length && (
-            <VariationIcon
-              className={classes.variationIcon}
-              onClick={handleVariation}
-            />
+            <Tooltip title="Configure variations" placement="bottom">
+              <IconButton
+                size="small"
+                color="inherit"
+                className={classes.variationIcon}>
+                <VariationIcon onClick={handleVariation} />
+              </IconButton>
+            </Tooltip>
           )}
-          {deleted ? (
-            <RestoreIcon
-              className={classes.deleteIcon}
-              onClick={handleRestore}
-            />
-          ) : (
-            <TrashIcon className={classes.deleteIcon} onClick={handleDelete} />
+          {!isCommonCategory && (
+            <div>
+              {deleted ? (
+                <Tooltip title="Restore category" placement="bottom">
+                  <IconButton
+                    size="small"
+                    color="inherit"
+                    className={classes.deleteIcon}>
+                    <RestoreIcon onClick={handleRestore} />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Delete category" placement="bottom">
+                  <IconButton
+                    size="small"
+                    color="inherit"
+                    className={classes.deleteIcon}>
+                    <TrashIcon onClick={handleDelete} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </div>
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
@@ -245,6 +375,7 @@ function CategoryMappings({ integrationId, flowId, sectionId, isRoot = true }) {
                   flowId={flowId}
                   key={child.id}
                   isRoot={false}
+                  isParentCommonCategory={isCommonCategory}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
                 />
@@ -263,6 +394,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
   const [requestedMetadata, setRequestedMetadata] = useState(false);
+  const mappingsChanged = useSelector(state =>
+    selectors.categoryMappingsChanged(state, integrationId, flowId)
+  );
+  const mappingSaveStatus = useSelector(state =>
+    selectors.categoryMappingSaveStatus(state, integrationId, flowId)
+  );
+  const isSaving = mappingSaveStatus === 'requested';
   const integrationName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -275,12 +413,22 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
+  const { collapseStatus = 'collapsed' } = useSelector(state =>
+    selectors.categoryMappingsCollapsedStatus(state, integrationId, flowId)
+  );
   const uiAssistant = useSelector(state => {
     const categoryMappingMetadata =
       selectors.categoryMapping(state, integrationId, flowId) || {};
     const { uiAssistant = '' } = categoryMappingMetadata;
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+  });
+  const isCurrentCategoryDeleted = useSelector(state => {
+    const categoryMappingMetadata =
+      selectors.categoryMapping(state, integrationId, flowId) || {};
+    const { deleted = [] } = categoryMappingMetadata;
+
+    return deleted.includes(categoryId);
   });
   const mappedCategories =
     useSelector(state =>
@@ -289,9 +437,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const currentSectionLabel =
     (mappedCategories.find(category => category.id === categoryId) || {})
       .name || categoryId;
-  const handleClose = () => {
-    history.push(parentUrl);
-  };
 
   useEffect(() => {
     if (!metadataLoaded && !requestedMetadata) {
@@ -312,6 +457,74 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     requestedMetadata,
     categoryId,
   ]);
+  useEffect(() => {
+    if (mappingSaveStatus === 'close') {
+      history.push(parentUrl);
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clear(
+          integrationId,
+          flowId
+        )
+      );
+    } else if (mappingSaveStatus === 'saved' && isCurrentCategoryDeleted) {
+      history.push(
+        generatePath(match.path, {
+          ...match.params,
+          categoryId: 'commonAttributes',
+        })
+      );
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.clearSaveStatus(
+          integrationId,
+          flowId
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId, isCurrentCategoryDeleted, mappingSaveStatus, parentUrl]);
+
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.clear(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, history, integrationId, parentUrl]);
+  const handleSave = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleSaveAndClose = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.save(
+        integrationId,
+        flowId,
+        true
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleCollapseAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.collapseAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
+  const handleExpandAll = useCallback(() => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.expandAll(
+        integrationId,
+        flowId
+      )
+    );
+  }, [dispatch, flowId, integrationId]);
 
   if (!integrationName) {
     return <LoadResources required resources="integrations" />;
@@ -329,11 +542,11 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
         <DrawerTitleBar flowId={flowId} parentUrl={parentUrl} />
         {metadataLoaded ? (
           <div className={classes.root}>
-            <Grid container wrap="nowrap">
-              <Grid item className={classes.subNav}>
+            <div className={classes.categoryMapWrapper}>
+              <div className={classes.subNav}>
                 <CategoryList integrationId={integrationId} flowId={flowId} />
-              </Grid>
-              <Grid item className={classes.content}>
+              </div>
+              <div className={classes.content}>
                 <PanelHeader
                   className={classes.header}
                   title={currentSectionLabel}>
@@ -342,31 +555,75 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                     flowId={flowId}
                     uiAssistant={uiAssistant}
                   />
+                  {collapseStatus === 'collapsed' ? (
+                    <IconTextButton
+                      variant="text"
+                      onClick={handleExpandAll}
+                      className={classes.expCollBtn}>
+                      <ExpandWindowIcon /> Expand All
+                    </IconTextButton>
+                  ) : (
+                    <IconTextButton
+                      variant="text"
+                      onClick={handleCollapseAll}
+                      className={classes.expCollBtn}>
+                      <CollapseWindowIcon /> Collapse All
+                    </IconTextButton>
+                  )}
                 </PanelHeader>
-                <Grid container className={classes.mappingHeader}>
-                  <Grid item xs={6}>
+                <div className={classes.mappingHeader}>
+                  <div className={classes.mappingChild}>
                     <Typography variant="h5" className={classes.childHeader}>
                       {uiAssistant}
-                      <ApplicationImg
-                        assistant={uiAssistant.toLowerCase()}
-                        size="small"
-                      />
                     </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
+                    <ApplicationImg
+                      assistant={uiAssistant.toLowerCase()}
+                      size="small"
+                    />
+                  </div>
+                  <div className={classes.mappingChild}>
                     <Typography variant="h5" className={classes.childHeader}>
                       NetSuite
-                      <ApplicationImg assistant="netsuite" />
                     </Typography>
-                  </Grid>
-                </Grid>
+                    <ApplicationImg assistant="netsuite" />
+                  </div>
+                </div>
                 <CategoryMappings
                   integrationId={integrationId}
                   flowId={flowId}
                   sectionId={categoryId}
                 />
-              </Grid>
-            </Grid>
+                <ButtonGroup className={classes.saveButtonGroup}>
+                  <Button
+                    id={flowId}
+                    variant="outlined"
+                    color="primary"
+                    disabled={!mappingsChanged || isSaving}
+                    data-test="saveCategoryMappings"
+                    onClick={handleSave}>
+                    {isSaving ? 'Saving...' : 'Save'}
+                  </Button>
+                  {(mappingsChanged || isSaving) && (
+                    <Button
+                      id={flowId}
+                      variant="outlined"
+                      color="secondary"
+                      disabled={isSaving}
+                      data-test="saveAndCloseImportMapping"
+                      onClick={handleSaveAndClose}>
+                      Save & Close
+                    </Button>
+                  )}
+                  <Button
+                    variant="text"
+                    data-test="saveImportMapping"
+                    disabled={isSaving}
+                    onClick={handleClose}>
+                    Close
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </div>
           </div>
         ) : (
           <Loader open>

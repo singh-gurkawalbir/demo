@@ -8,6 +8,7 @@ import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
+import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -23,6 +24,25 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: theme.spacing(3),
     width: 1,
+    marginRight: theme.spacing(1),
+  },
+  button: {
+    padding: '4px 10px',
+    marginRight: theme.spacing(0.5),
+    color: theme.palette.secondary.light,
+  },
+  closeIcon: {
+    padding: theme.spacing(0.5),
+  },
+  arrowLeft: {
+    float: 'left',
+    padding: 0,
+    marginLeft: '-10px',
+    marginRight: '10px',
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.secondary.dark,
+    },
   },
 }));
 
@@ -32,6 +52,7 @@ export default function DrawerTitleBar({
   title,
   addCategory,
   parentUrl,
+  backToParent,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -53,6 +74,15 @@ export default function DrawerTitleBar({
   return (
     <div className={classes.titleBar}>
       <LoadResources required resources="flows">
+        {backToParent && (
+          <IconButton
+            data-test="openBasicMapping"
+            aria-label="back"
+            onClick={handleClose}
+            className={classes.arrowLeft}>
+            <BackArrowIcon />
+          </IconButton>
+        )}
         <Typography variant="h3" className={classes.title}>
           {title ||
             `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
@@ -66,7 +96,7 @@ export default function DrawerTitleBar({
             variant="text"
             data-test="addCategory"
             onClick={handleAddCategoryClick}
-            color="secondary"
+            color="primary"
             className={classes.button}>
             <AddIcon /> Add Category
           </IconTextButton>
@@ -75,7 +105,8 @@ export default function DrawerTitleBar({
         <IconButton
           data-test="closeCategoryMapping"
           aria-label="Close"
-          onClick={handleClose}>
+          onClick={handleClose}
+          className={classes.closeIcon}>
           <CloseIcon />
         </IconButton>
       </LoadResources>

@@ -74,9 +74,9 @@ export default function TemplateEditor(props) {
   };
 
   const handleClose = (shouldCommit, editorValues) => {
-    const { template } = editorValues;
-
     if (shouldCommit) {
+      const { template } = editorValues;
+
       handleFieldChange(id, template);
     }
 

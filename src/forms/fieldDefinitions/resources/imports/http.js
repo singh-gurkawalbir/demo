@@ -145,6 +145,34 @@ export default {
       return type;
     },
   },
+  'http.requestType': {
+    type: 'select',
+    label: 'Request Type',
+    options: [
+      {
+        items: [
+          {
+            label: 'CREATE',
+            value: 'CREATE',
+          },
+          {
+            label: 'UPDATE',
+            value: 'UPDATE',
+          },
+        ],
+      },
+    ],
+    helpText:
+      'Please specify whether the record is being created or updated using this field.',
+    visibleWhen: [
+      {
+        field: 'http.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+    defaultValue: r =>
+      r && r.http && r.http.requestType && r.http.requestType[0],
+  },
   'http.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
@@ -362,12 +390,18 @@ export default {
   'http.configureAsyncHelper': {
     type: 'checkbox',
     label: 'Configure Async Helper',
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
+    defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+    visible: r => !(r && r.statusExport),
+    visibleWhen: r => {
+      if (r && r.statusExport) return [];
+
+      return [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ];
+    },
   },
 
   'http._asyncHelperId': {

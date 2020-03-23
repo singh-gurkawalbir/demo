@@ -1,9 +1,11 @@
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import Spinner from '../../components/Spinner';
 
 export default {
   label: 'Off/On',
@@ -14,8 +16,19 @@ export default {
   }) {
     // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
     const { confirmDialog } = useConfirmDialog();
-    const [enqueueSnackbar] = useEnqueueSnackbar();
     const dispatch = useDispatch();
+    const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
+    const { onOffInProgress } = useSelector(
+      state => selectors.isOnOffInProgress(state, flow._id),
+      (left, right) => left.onOffInProgress === right.onOffInProgress
+    );
+
+    useEffect(() => {
+      if (!onOffInProgress) {
+        setOnOffInProgressStatus(false);
+      }
+    }, [dispatch, onOffInProgress]);
+    const [enqueueSnackbar] = useEnqueueSnackbar();
     const isLicenseValidToEnableFlow = useSelector(
       state => selectors.isLicenseValidToEnableFlow(state),
       (left, right) =>
@@ -41,6 +54,8 @@ export default {
             label: 'Yes',
             onClick: () => {
               if (flow._connectorId) {
+                dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
+                setOnOffInProgressStatus(true);
                 dispatch(
                   actions.integrationApp.settings.update(
                     flow._integrationId,
@@ -52,7 +67,7 @@ export default {
                   )
                 );
               } else {
-                if (enable) {
+                if (enable && !flow.free && !flow.isSimpleImport) {
                   if (!isLicenseValidToEnableFlow.enable) {
                     return enqueueSnackbar({
                       message: isLicenseValidToEnableFlow.message,
@@ -69,11 +84,17 @@ export default {
                   },
                 ];
 
+                setOnOffInProgressStatus(true);
+
+                dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
+
                 dispatch(
                   actions.resource.patchStaged(flow._id, patchSet, 'value')
                 );
                 dispatch(
-                  actions.resource.commitStaged('flows', flow._id, 'value')
+                  actions.resource.commitStaged('flows', flow._id, 'value', {
+                    action: 'flowEnableDisable',
+                  })
                 );
               }
             },
@@ -82,7 +103,9 @@ export default {
       });
     };
 
-    return (
+    return onOffInProgressStatus ? (
+      <Spinner />
+    ) : (
       <SwitchOnOff
         disabled={disabled}
         on={!disabled && !flow.disabled}

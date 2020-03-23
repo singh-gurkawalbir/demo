@@ -1,5 +1,6 @@
-import { Fragment, useMemo, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { Fragment, useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
@@ -7,10 +8,18 @@ import TransformToggleEditorDialog from '../../../../components/AFE/TransformEdi
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function ResponseTransformationDialog(props) {
+  const { onClose, resource, isViewMode, flowId } = props;
   const dispatch = useDispatch();
-  const { onClose, resource, isViewMode } = props;
   const resourceId = resource._id;
-  const { sampleResponseData, responseTransform } = resource;
+  const { responseTransform } = resource;
+  const { status, data: sampleResponseData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
+      flowId,
+      resourceId,
+      resourceType: 'imports',
+      stage: 'sampleResponse',
+    })
+  );
   const { type, rule, scriptId, entryFunction } = useMemo(() => {
     const { type, script = {}, expression = {} } = responseTransform || {};
 
@@ -21,86 +30,27 @@ function ResponseTransformationDialog(props) {
       entryFunction: script.function,
     };
   }, [responseTransform]);
-  const saveResponseTransform = useCallback(
-    formValues => {
-      const { sampleResponseData, responseTransform } = formValues;
-      const patchSet = [];
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'responseTransform',
+      resourceId,
+      resourceType: 'imports',
+    }),
+    [resourceId]
+  );
 
-      patchSet.push(
-        {
-          op: 'replace',
-          path: '/sampleResponseData',
-          value: sampleResponseData,
-        },
-        {
-          op: 'replace',
-          path: '/responseTransform',
-          value: responseTransform,
-        }
+  useEffect(() => {
+    if (!status) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          'imports',
+          'sampleResponse'
+        )
       );
-      // Save the resource
-      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('imports', resourceId, 'value'));
-    },
-    [dispatch, resourceId]
-  );
-  /*
-   * Creates transform rules as per required format to be saved
-   */
-  const constructTransformData = values => {
-    const { processor, rule, scriptId, entryFunction } = values;
-    const type = processor === 'transform' ? 'expression' : 'script';
-
-    return {
-      type,
-      expression: {
-        version: 1,
-        rules: rule ? [rule] : [[]],
-      },
-      script: {
-        _scriptId: scriptId,
-        function: entryFunction,
-      },
-    };
-  };
-
-  const saveScript = useCallback(
-    values => {
-      const { code, scriptId } = values;
-      const patchSet = [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
-    },
-    [dispatch]
-  );
-  const handleClose = useCallback(
-    (shouldCommit, editorValues = {}) => {
-      if (shouldCommit) {
-        const responseTransformData = constructTransformData(editorValues);
-        const sampleResponseData = editorValues.data;
-
-        if (responseTransformData.type === 'script') {
-          saveScript(editorValues);
-        }
-
-        saveResponseTransform({
-          sampleResponseData,
-          responseTransform: responseTransformData,
-        });
-      }
-
-      // Closes Editor
-      onClose();
-    },
-    [onClose, saveResponseTransform, saveScript]
-  );
+    }
+  }, [dispatch, flowId, resourceId, status]);
 
   return (
     <TransformToggleEditorDialog
@@ -113,7 +63,8 @@ function ResponseTransformationDialog(props) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={handleClose}
+      onClose={onClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

@@ -19,7 +19,11 @@ export default {
     let stepText = '';
     const isUninstall = mode === 'uninstall';
 
-    if (step._connectionId || step.type === INSTALL_STEP_TYPES.STACK) {
+    if (
+      step._connectionId ||
+      step.type === INSTALL_STEP_TYPES.STACK ||
+      step.type === 'connection'
+    ) {
       if (step.completed) {
         stepText = 'Configured';
       } else if (step.isTriggered) {
@@ -94,6 +98,7 @@ export default {
         '58d94e6b2e4b300dbf6b01bc': 'eBay',
         '5833ea9127b52153647f3b7e': 'magento1',
         '592e8679c95560380ff1325c': 'salesforceSubscription',
+        '58f772ed3c25f31c8041d5fe': 'vendorPaymentManager',
         '5c8f30229f701b3e9a0aa817': 'sfnsio',
         '5db8164d9df868329731fca0': 'square',
         '5b754a8fddbb3b71d6046c87': 'amazonmcf',
@@ -114,6 +119,7 @@ export default {
         '58d94e6b2e4b300dbf6b01bc': 'eBay',
         '5833ea9127b52153647f3b7e': 'magento1',
         '592e8679c95560380ff1325c': 'salesforceSubscription',
+        '58f772ed3c25f31c8041d5fe': 'vendorPaymentManager',
         '5c8f30229f701b3e9a0aa817': 'sfnsio',
         '5db8164d9df868329731fca0': 'square',
         '5b754a8fddbb3b71d6046c87': 'amazonmcf',
@@ -157,6 +163,7 @@ export default {
         'amazon',
         'sfnsio',
         'adp',
+        'vendorPaymentManager',
         'jira',
         'cashapp',
       ].indexOf(integrationApp) !== -1

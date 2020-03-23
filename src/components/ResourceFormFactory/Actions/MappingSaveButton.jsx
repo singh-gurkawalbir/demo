@@ -35,7 +35,7 @@ const MappingSaveButton = props => {
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.mappingSaveProcessTerminate(state, id)
+    selectors.mappingsSaveStatus(state, id)
   );
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const MappingSaveButton = props => {
   };
 
   if (showOnlyOnChanges && !mappingsChanged) {
-    return <div />;
+    return null;
   }
 
   return (
@@ -75,7 +75,7 @@ const MappingSaveButton = props => {
       data-test={dataTest}
       variant={variant}
       color={color}
-      disabled={disabled || !mappingsChanged}
+      disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
       {disableSave ? (
         <Fragment>

@@ -69,7 +69,10 @@ export default {
       delete retValues['/delta/lagOffset'];
     }
 
-    if (!retValues['/http/response/successValues'].length) {
+    if (
+      retValues['/http/response/successValues'] &&
+      !retValues['/http/response/successValues'].length
+    ) {
       retValues['/http/response/successValues'] = undefined;
     }
 
@@ -77,7 +80,10 @@ export default {
       retValues['/http/response/successPath'] = undefined;
     }
 
-    if (!retValues['/http/response/failValues'].length) {
+    if (
+      retValues['/http/response/failValues'] &&
+      !retValues['/http/response/failValues'].length
+    ) {
       retValues['/http/response/failValues'] = undefined;
     }
 

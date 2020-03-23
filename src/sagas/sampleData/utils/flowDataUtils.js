@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import {
   resourceData,
   isPageGenerator,
-  getSampleData,
+  getSampleDataWrapper,
 } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
@@ -12,7 +12,6 @@ import {
   fetchPageGeneratorPreview,
   requestProcessorData,
   requestSampleData,
-  requestSampleDataWithContext,
 } from '../flows';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import {
@@ -20,6 +19,7 @@ import {
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
 import { isConnector } from '../../../utils/flows';
+import { isJsonString } from '../../../utils/string';
 
 /*
  * Returns PG/PP Document saved on Flow Doc.
@@ -120,14 +120,16 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
         // Example: type: once should not be sent while previewing
         if (eliminateDataProcessors) {
           resourceMap[resourceId] = {
-            doc: getFormattedResourceForPreview(rest),
+            doc: getFormattedResourceForPreview(rest, resourceType, type),
           };
         } else {
           // pgs have eliminateDataProcessors as false, but incase of connectors with sampledata on resource it should be true
           // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
           resourceMap[resourceId] = {
             doc: getFormattedResourceForPreview(
-              isConnector(flow) && resource.sampleData ? rest : resource
+              isConnector(flow) && resource.sampleData ? rest : resource,
+              resourceType,
+              type
             ),
           };
         }
@@ -184,18 +186,6 @@ export function* requestSampleDataForImports({
         break;
       }
 
-      case 'flowInputWithContext': {
-        // This stage is added explicitly to feed context info for input filter
-        // TODO @Raghu: Find the better way for this case
-        yield call(requestSampleDataWithContext, {
-          flowId,
-          resourceId,
-          resourceType,
-          stage: sampleDataStage,
-        });
-        break;
-      }
-
       case 'sampleResponse': {
         const { merged: resource } = yield select(
           resourceData,
@@ -206,9 +196,10 @@ export function* requestSampleDataForImports({
 
         try {
           // @TODO Raghu: Handle sample response as a XML
-          const sampleResponse = JSON.parse(
-            resource && resource.sampleResponseData
-          );
+          const { sampleResponseData = '' } = resource;
+          const sampleResponse = isJsonString(sampleResponseData)
+            ? JSON.parse(sampleResponseData)
+            : sampleResponseData;
 
           yield put(
             actions.flowData.receivedPreviewData(
@@ -282,17 +273,6 @@ export function* requestSampleDataForExports({
           previewType: sampleDataStage,
         });
       }
-    } else if (
-      ['flowInputWithContext', 'transformWithContext'].includes(sampleDataStage)
-    ) {
-      // These stages are added explicitly to feed context info for input/outputFilters
-      // TODO @Raghu: Find the better way for this case
-      yield call(requestSampleDataWithContext, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage: sampleDataStage,
-      });
     } else {
       yield call(requestProcessorData, {
         flowId,
@@ -312,12 +292,26 @@ export function* updateStateForProcessorData({
   stage,
   processedData,
   wrapInArrayProcessedData,
+  removeDataPropFromProcessedData,
 }) {
   // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
   // So this prop wraps data to extract the same in the reducer
   if (wrapInArrayProcessedData && processedData && processedData.data) {
     // eslint-disable-next-line no-param-reassign
     processedData.data = [processedData.data];
+  }
+
+  // Incase of preMap u get sampleData wrapped against 'data' prop
+  // This replaces [{data: {}}] to direct [{}], so that receivedProcessorData reducer extract the same
+  if (
+    removeDataPropFromProcessedData &&
+    processedData &&
+    processedData.data &&
+    processedData.data[0] &&
+    processedData.data[0].data
+  ) {
+    // eslint-disable-next-line no-param-reassign
+    processedData.data[0] = processedData.data[0].data;
   }
 
   yield put(
@@ -365,9 +359,11 @@ export function getPreProcessedResponseMappingData({
 }) {
   const extractsObj = generateDefaultExtractsObject(resourceType);
 
-  // Incase of lookups , add preProcessedData as part of data
+  // Incase of lookups , add preProcessedData as part of data if exists else no data from lookup is passed
   if (resourceType === 'exports') {
-    extractsObj.data = [preProcessedData] || '';
+    if (preProcessedData) {
+      extractsObj.data = [preProcessedData];
+    } else delete extractsObj.data;
 
     return extractsObj;
   }
@@ -383,7 +379,7 @@ export function* getFlowStageData({
   stage,
   isInitialized,
 }) {
-  let flowStageData = yield select(getSampleData, {
+  let flowStageData = yield select(getSampleDataWrapper, {
     flowId,
     resourceId,
     resourceType,
@@ -391,7 +387,7 @@ export function* getFlowStageData({
   });
 
   try {
-    if (!flowStageData) {
+    if (!flowStageData.status) {
       yield call(requestSampleData, {
         flowId,
         resourceId,
@@ -399,7 +395,7 @@ export function* getFlowStageData({
         stage,
         isInitialized,
       });
-      flowStageData = yield select(getSampleData, {
+      flowStageData = yield select(getSampleDataWrapper, {
         flowId,
         resourceId,
         resourceType,
@@ -407,7 +403,7 @@ export function* getFlowStageData({
       });
     }
 
-    return flowStageData;
+    return flowStageData.data;
   } catch (e) {
     throw e;
   }

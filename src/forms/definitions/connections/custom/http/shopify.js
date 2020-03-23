@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
     retValues['/http/ping/relativeURI'] = '/admin/orders.json';
@@ -48,6 +48,15 @@ export default {
           retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
         }
       }
+
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
     } else {
       retValues['/http/auth/basic/username'] = `${
         formValues['/http/auth/basic/username']
@@ -55,9 +64,10 @@ export default {
       retValues['/http/auth/basic/password'] = `${
         formValues['/http/auth/basic/password']
       }`;
-      delete retValues['/http/auth/oauth/scope'];
-      retValues['/http/auth/oauth'] = undefined;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/token'] = undefined;
+      retValues['/http/_iClientId'] = undefined;
     }
 
     return {

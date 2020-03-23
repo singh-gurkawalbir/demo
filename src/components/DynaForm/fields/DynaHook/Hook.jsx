@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useCallback } from 'react';
+import { useMemo, useState, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -35,13 +35,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/*
+ * pass patchOnSave = true along with processorKey, if network save is required on click of Save button
+ */
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
+  const dispatch = useDispatch();
   const [isNewScriptIdAssigned, setIsNewScriptIdAssigned] = useState(false);
   const classes = useStyles();
-  const dispatch = useDispatch();
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, tempScriptId)
   );
@@ -63,6 +66,7 @@ export default function DynaHook(props) {
     hookType = 'script',
     hookStage = 'preSavePage',
     preHookData = {},
+    editorResultMode,
     requestForPreHookData,
   } = props;
   const handleEditorClick = useCallback(() => {
@@ -73,12 +77,9 @@ export default function DynaHook(props) {
     setShowEditor(!showEditor);
   }, [requestForPreHookData, showEditor]);
   const handleClose = (shouldCommit, editorValues) => {
-    const { scriptId, entryFunction, code: content } = editorValues;
-
     if (shouldCommit) {
-      const values = { content, scriptId };
+      const { scriptId, entryFunction } = editorValues;
 
-      saveScript(values, { dispatch });
       onFieldChange(id, {
         ...value,
         _scriptId: scriptId,
@@ -90,7 +91,16 @@ export default function DynaHook(props) {
   };
 
   const handleFieldChange = field => (event, fieldValue) => {
-    onFieldChange(id, { ...value, [field]: fieldValue });
+    // Incase user selects scripts/stacks list to 'None' for which fieldValue is '' , we remove function name if entered any
+    // if functionToBeEmptied is true, in onFieldChange we update function prop to empty
+    const functionToBeEmptied =
+      ['_scriptId', '_stackId'].includes(field) && !fieldValue;
+
+    onFieldChange(id, {
+      ...value,
+      [field]: fieldValue,
+      ...(functionToBeEmptied ? { function: '' } : {}),
+    });
   };
 
   const handleCreateScriptClick = () => {
@@ -152,6 +162,12 @@ export default function DynaHook(props) {
     },
     [value]
   );
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'scriptEdit',
+    }),
+    []
+  );
 
   return (
     <Fragment>
@@ -166,6 +182,9 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           onClose={handleClose}
+          resultMode={editorResultMode}
+          optionalSaveParams={optionalSaveParams}
+          patchOnSave
         />
       )}
       {showCreateScriptDialog && (
@@ -202,6 +221,7 @@ export default function DynaHook(props) {
                   id="stackId"
                   label="Stacks"
                   value={value._stackId}
+                  placeholder="None"
                   disabled={disabled}
                   required={required}
                   isValid={isValidHookField('_stackId')}
@@ -221,6 +241,7 @@ export default function DynaHook(props) {
                     label="Scripts"
                     value={value._scriptId}
                     disabled={disabled}
+                    placeholder="None"
                     required={required}
                     isValid={isValidHookField('_scriptId')}
                     onFieldChange={handleFieldChange('_scriptId')}

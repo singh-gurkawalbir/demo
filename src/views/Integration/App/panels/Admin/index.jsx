@@ -1,4 +1,3 @@
-// import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import {
   Route,
@@ -10,10 +9,8 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
-import AuditLogSection from './sections/AuditLog';
 import SubscriptionSection from './sections/Subscription';
 import NotificationsSection from './sections/Notifications';
-import UsersSection from '../../../../../components/ManageUsersPanel';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
 
@@ -53,16 +50,10 @@ const allSections = [
     id: 'notifications',
   },
   {
-    path: 'audit',
-    label: 'Audit log',
-    Section: AuditLogSection,
-    id: 'auditLog',
-  },
-  {
-    path: 'users',
-    label: 'Users',
-    Section: UsersSection,
-    id: 'users',
+    path: 'apitoken',
+    label: 'API tokens',
+    Section: ApiTokensSection,
+    id: 'apitoken',
   },
   {
     path: 'subscription',
@@ -75,12 +66,6 @@ const allSections = [
     label: 'Uninstall',
     Section: UninstallSection,
     id: 'uninstall',
-  },
-  {
-    path: 'apitoken',
-    label: 'API tokens',
-    Section: ApiTokensSection,
-    id: 'apitoken',
   },
 ];
 

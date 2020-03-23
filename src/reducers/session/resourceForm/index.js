@@ -123,8 +123,8 @@ export function resourceFormSaveProcessTerminated(
   const key = `${resourceType}-${resourceId}`;
 
   if (!state[key]) return false;
-  const { submitFailed, submitCompleted, submitAborted } = state[key];
+  const { submitFailed, submitComplete, submitAborted } = state[key];
 
-  return !!(submitFailed || submitCompleted || submitAborted);
+  return !!(submitFailed || submitComplete || submitAborted);
 }
 // #endregion

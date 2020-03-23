@@ -2,6 +2,7 @@ import {
   isNewId,
   updateMappingsBasedOnNetSuiteSubrecords,
 } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -11,6 +12,18 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+    }
+
+    if (Object.hasOwnProperty.call(newValues, '/settings')) {
+      let settings = newValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      newValues['/settings'] = settings;
     }
 
     const subrecords = newValues['/netsuite_da/subrecords'];
@@ -111,6 +124,7 @@ export default {
         },
       ],
     },
+    settings: { fieldId: 'settings' },
   },
   layout: {
     fields: [

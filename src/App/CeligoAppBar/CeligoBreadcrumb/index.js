@@ -12,6 +12,7 @@ import TemplateCrumb from './crumbs/Template';
 import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
+import AddResourceTypeCrumb from './crumbs/AddResourceType';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -233,8 +234,7 @@ const commonChildRoutes = [
   { path: '/clone', breadcrumb: () => 'Clone' },
   {
     path: '/add/:resourceType/:id',
-    breadcrumb: ({ resourceType }) =>
-      `Add ${MODEL_PLURAL_TO_LABEL[resourceType]}`,
+    breadcrumb: AddResourceTypeCrumb,
   },
   {
     path: '/edit/:resourceType/:id',

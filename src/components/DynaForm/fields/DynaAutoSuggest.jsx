@@ -100,8 +100,7 @@ function getSuggestions(val, suggestions, showAllSuggestions) {
   return inputLength === 0
     ? suggestions
     : suggestions.filter(
-        suggestion =>
-          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue
+        suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
       );
 }
 
@@ -121,6 +120,10 @@ export default function DynaAutoSuggest(props) {
     label,
     valueName,
     autoFocus,
+    isValid,
+    description,
+    errorMessages,
+    required,
     options = {},
   } = props;
   const classes = useStyles();
@@ -169,6 +172,9 @@ export default function DynaAutoSuggest(props) {
             autoFocus,
             value,
             disabled,
+            error: !isValid,
+            helperText: isValid ? description : errorMessages,
+            required,
             onChange: handleChange,
           }}
           theme={{

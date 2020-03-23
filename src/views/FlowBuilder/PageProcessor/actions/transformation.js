@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo, useCallback } from 'react';
+import { useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -11,8 +11,8 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const resourceType = 'exports';
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
+    selectors.getSampleDataWrapper(state, {
       flowId,
       resourceId: exportId,
       resourceType,
@@ -30,68 +30,9 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       entryFunction: script.function,
     };
   }, [resource]);
-  const saveScript = useCallback(
-    values => {
-      const { code, scriptId } = values;
-      const patchSet = [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
-    },
-    [dispatch]
-  );
-  const saveTransformRules = useCallback(
-    values => {
-      const { processor, rule, scriptId, entryFunction } = values;
-      const type = processor === 'transform' ? 'expression' : 'script';
-      const path = '/transform';
-      const value = {
-        type,
-        expression: {
-          version: 1,
-          rules: rule ? [rule] : [[]],
-        },
-        script: {
-          _scriptId: scriptId,
-          function: entryFunction,
-        },
-      };
-      const patchSet = [{ op: 'replace', path, value }];
-
-      // Save the resource
-      dispatch(actions.resource.patchStaged(exportId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('exports', exportId, 'value'));
-    },
-    [dispatch, exportId]
-  );
-  const handleClose = useCallback(
-    (shouldCommit, editorValues) => {
-      if (shouldCommit) {
-        const transformType =
-          editorValues.processor === 'transform' ? 'expression' : 'script';
-
-        if (transformType === 'script') {
-          // Incase of script type, save script changes
-          saveScript(editorValues);
-        }
-
-        // save transform rules
-        saveTransformRules(editorValues);
-      }
-
-      onClose();
-    },
-    [onClose, saveScript, saveTransformRules]
-  );
 
   useEffect(() => {
-    if (!sampleData) {
+    if (!sampleDataStatus) {
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
@@ -101,11 +42,22 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
         )
       );
     }
-  }, [dispatch, exportId, flowId, sampleData]);
+  }, [dispatch, exportId, flowId, sampleDataStatus]);
+
+  const optionalSaveParams = useMemo(
+    () => ({
+      processorKey: 'transform',
+      resourceId: exportId,
+      resourceType: 'exports',
+    }),
+    [exportId]
+  );
 
   return (
     <TransformEditorDialog
       title="Transform record"
+      helpKey="export.transform.rules"
+      helpTitle="Transform Rules"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}
@@ -114,7 +66,8 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       rule={rule}
       entryFunction={entryFunction || hooksToFunctionNamesMap.transform}
       insertStubKey="transform"
-      onClose={handleClose}
+      onClose={onClose}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

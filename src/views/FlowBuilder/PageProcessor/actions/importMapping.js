@@ -14,7 +14,6 @@ import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -22,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(0, 0, 0, 3),
+    padding: theme.spacing(0, 0, 0, 0),
     width: '100%',
     display: 'flex',
   },
@@ -50,8 +49,11 @@ function ImportMapping({
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
-  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
+  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
+    state => selectors.mapping(state, mappingEditorId)
+  );
+  const showPreview = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
   const handleClose = (...args) => {
     setSelectedMapping(null);
@@ -101,9 +103,13 @@ function ImportMapping({
       classes={{
         paper: clsx(classes.drawerPaper, {
           [classes.fullWidthDrawerClose]:
-            !drawerOpened && showSalesforceNetsuiteAssistant,
+            !drawerOpened &&
+            showPreview &&
+            (!subrecords || subrecords.length === 0 || selectedMapping),
           [classes.fullWidthDrawerOpen]:
-            drawerOpened && showSalesforceNetsuiteAssistant,
+            drawerOpened &&
+            showPreview &&
+            (!subrecords || subrecords.length === 0 || selectedMapping),
         }),
       }}>
       <DrawerTitleBar
@@ -126,7 +132,7 @@ function ImportMapping({
                   you would like to edit the mapping for.
                 </Typography>
                 {subrecords.map((sr, index) => (
-                  <div key={sr.id}>
+                  <div key={sr.fieldId}>
                     <Button
                       data-test={`subrecordMapping-${index}`}
                       className={classes.button}
@@ -134,7 +140,7 @@ function ImportMapping({
                         setSelectedMapping(sr.fieldId);
                       }}>
                       <Typography variant="h6" color="primary">
-                        {sr.name || sr.id}
+                        {sr.name || sr.fieldId}
                       </Typography>
                     </Button>
                   </div>

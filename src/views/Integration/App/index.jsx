@@ -8,8 +8,9 @@ import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import AdminIcon from '../../../components/icons/InviteUsersIcon';
+import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
-import AdminIcon from '../../../components/icons/AdminIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
@@ -18,8 +19,10 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
-import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
+import AuditLogPanel from './panels/AuditLog';
+import AdminPanel from './panels/Admin';
+import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
@@ -41,7 +44,24 @@ const allTabs = [
     Icon: ConnectionsIcon,
     Panel: ConnectionsPanel,
   },
-  { path: 'admin', label: 'Admin', Icon: AdminIcon, Panel: AdminPanel },
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: AdminIcon,
+    Panel: UsersPanel,
+  },
+  {
+    path: 'auditlog',
+    label: 'Audit Log',
+    Icon: AuditLogIcon,
+    Panel: AuditLogPanel,
+  },
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: GeneralIcon,
+    Panel: AdminPanel,
+  },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({

@@ -6,19 +6,16 @@ import styleguideTheme from '../styleguide/style';
 import colors from '../theme/colors';
 import light from './light';
 import dark from './dark';
+import sandbox from './sandbox';
 
 const DEFAULT_THEME = 'light';
 const themes = {
   light,
   dark,
+  sandbox,
 };
 
-// TODO: Revert this to support custom theme again.
-// temporarily disabling this since we have no
-// theme switch in the UI, and are stuck with a half-implemented dark-theme.
-// export default (name = DEFAULT_THEME) => {
-export default () => {
-  const name = DEFAULT_THEME;
+export default (name = DEFAULT_THEME) => {
   const defaultTheme = themes[DEFAULT_THEME];
   // eslint-disable-next-line no-unused-vars
   const theme = produce(defaultTheme, draft => {

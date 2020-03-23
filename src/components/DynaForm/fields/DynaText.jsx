@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { InputAdornment } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
@@ -58,6 +58,7 @@ function DynaText(props) {
     readOnly,
     inputType,
     options,
+    className,
     disableText = false,
     uppercase = false,
   } = props;
@@ -78,6 +79,9 @@ function DynaText(props) {
 
     if (inputType === 'number') {
       returnVal = isNaN(valueAsNumber) ? null : valueAsNumber;
+
+      // resets the value to 0, if user tries to enter negative value
+      if (returnVal < 0) returnVal = 0;
     } else {
       returnVal = value;
     }
@@ -97,6 +101,36 @@ function DynaText(props) {
 
   const classes = useStyles();
   const inpValue = value === '' && inputType === 'number' ? 0 : value;
+  const InputProps = useMemo(() => {
+    const props = {
+      startAdornment: startAdornment ? (
+        <InputAdornment
+          position="start"
+          className={classes.startAdornmentWrapper}>
+          {startAdornment}
+        </InputAdornment>
+      ) : null,
+      endAdornment: endAdornment ? (
+        <InputAdornment position="end">{endAdornment}</InputAdornment>
+      ) : null,
+      readOnly: !!readOnly,
+    };
+
+    if (inputType === 'number') {
+      props.inputProps = {
+        min: '0',
+        step: '1',
+      };
+    }
+
+    return props;
+  }, [
+    classes.startAdornmentWrapper,
+    endAdornment,
+    inputType,
+    readOnly,
+    startAdornment,
+  ]);
 
   return (
     <TextField
@@ -105,19 +139,7 @@ function DynaText(props) {
       data-test={id}
       name={name}
       label={label}
-      InputProps={{
-        startAdornment: startAdornment ? (
-          <InputAdornment
-            position="start"
-            className={classes.startAdornmentWrapper}>
-            {startAdornment}
-          </InputAdornment>
-        ) : null,
-        endAdornment: endAdornment ? (
-          <InputAdornment position="end">{endAdornment}</InputAdornment>
-        ) : null,
-        readOnly: !!readOnly,
-      }}
+      InputProps={InputProps}
       type={inputType}
       placeholder={placeholder}
       helperText={isValid ? description : errorMessages}
@@ -129,7 +151,7 @@ function DynaText(props) {
       value={inpValue}
       variant="filled"
       onChange={handleFieldChange}
-      className={classes.formField}
+      className={(classes.formField, className)}
     />
   );
 }

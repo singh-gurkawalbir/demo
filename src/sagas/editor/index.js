@@ -10,8 +10,9 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { getResource } from '../resources';
+import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/editors/processorLogic';
+import { SCOPES } from '../resourceForm';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
@@ -35,8 +36,6 @@ export function* evaluateProcessor({ id }) {
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
   }
-
-  // console.log(`editorProcessorOptions for ${id}`, processor, body);
 
   try {
     // we are hiding this comm activity from the network snackbar
@@ -71,6 +70,83 @@ export function* evaluateExternalProcessor({ processorData }) {
     return yield call(invokeProcessor, { processor, body });
   } catch (e) {
     return { error: e };
+  }
+}
+
+export function* saveProcessor({ id }) {
+  const patches = yield select(selectors.editorPatchSet, id);
+
+  if (!patches) {
+    yield put(actions.editor.saveFailed(id));
+  }
+
+  /**
+   *Editor will not be closed unless 'foregroundPatch' terminates. After success/failure of foreground patch, 'backgroundPatches' run in background.
+   backgroundPatches is an array consisting of resource patch and/or actions
+  Example:
+  foregroundPatch = {
+      patch: [{ op: 'replace', path:${path}, value: ${value} }],
+      resourceType: ${resourceType},
+      resourceId: ${resourceId},
+   };
+   backgroundPatches=[
+    {
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: ${code},
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: ${scriptId},
+    },
+    actions.analytics.gainsight.trackEvent('actionName')
+    ];
+   */
+
+  const { foregroundPatch, backgroundPatches } = patches || {};
+
+  if (foregroundPatch) {
+    const { patch, resourceType, resourceId } = foregroundPatch || {};
+
+    if (!!patch && !!resourceType && !!resourceId) {
+      yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
+      const error = yield call(commitStagedChanges, {
+        resourceType,
+        id: resourceId,
+        scope: SCOPES.VALUE,
+      });
+
+      // trigger save failed in case of error
+      if (error) yield put(actions.editor.saveFailed(id));
+
+      // trigger save complete in case of success
+      yield put(actions.editor.saveComplete(id));
+    } else {
+      // trigger save failed in case any among patch, resourceType and resourceId is missing
+      yield put(actions.editor.saveFailed(id));
+    }
+  } else {
+    // trigger save complete in case editor doesnt have any foreground processes
+    yield put(actions.editor.saveComplete(id));
+  }
+
+  if (backgroundPatches && Array.isArray(backgroundPatches)) {
+    for (let index = 0; index < backgroundPatches.length; index += 1) {
+      const { action, patch, resourceType, resourceId } =
+        backgroundPatches[index] || {};
+
+      // check if backgroundPatch is an action
+      if (action) {
+        yield put(backgroundPatches[index].action);
+      } else if (!!patch && !!resourceType && !!resourceId) {
+        yield put(actions.resource.patchStaged(resourceId, patch, 'value'));
+        yield put(
+          actions.resource.commitStaged(resourceType, resourceId, 'value')
+        );
+      }
+    }
   }
 }
 
@@ -149,4 +225,5 @@ export default [
     autoEvaluateProcessor
   ),
   takeLatest(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
+  takeLatest(actionTypes.EDITOR_SAVE, saveProcessor),
 ];

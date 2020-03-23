@@ -9,7 +9,7 @@ import {
   cancel,
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import { isEmpty, keys } from 'lodash';
+import { keys } from 'lodash';
 import { resourceData, getSampleData } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -35,7 +35,6 @@ import {
   getSampleDataStage,
   getCurrentSampleDataStageStatus,
   getPreviewStageData,
-  getContextInfo,
   getBlobResourceSampleData,
   isOneToManyResource,
   generatePostResponseMapData,
@@ -265,7 +264,8 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
 function* processData({ flowId, resourceId, processorData, stage }) {
   try {
-    const { wrapInArrayProcessedData } = processorData || {};
+    const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+      processorData || {};
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
@@ -276,6 +276,7 @@ function* processData({ flowId, resourceId, processorData, stage }) {
       stage,
       processedData,
       wrapInArrayProcessedData,
+      removeDataPropFromProcessedData,
     });
   } catch (e) {
     // Handle errors
@@ -296,7 +297,7 @@ function* processMappingData({
     rules: {
       rules: [mappings],
     },
-    data: [preProcessedData],
+    data: preProcessedData ? [preProcessedData] : [],
   };
   // call processor data specific to mapper as it is not part of editors saga
   const path = `/processors/mapperProcessor`;
@@ -333,88 +334,6 @@ function* processMappingData({
   }
 }
 
-/*
- * This saga handles 2 sample data stages
- * 1. flowInputWithContext 2. transformWithContext
- * Above stages are replica of flowInput and transform stage with added Context Info specifically for Input and outputFilter stages
- */
-export function* requestSampleDataWithContext({
-  flowId,
-  resourceId,
-  resourceType,
-  stage,
-}) {
-  let sampleData = yield select(getSampleData, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-  });
-
-  if (!sampleData) {
-    yield call(requestSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-      isInitialized: true,
-    });
-    sampleData = yield select(getSampleData, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage,
-    });
-  }
-
-  const { merged: resource = {} } = yield select(
-    resourceData,
-    resourceType,
-    resourceId
-  );
-  let sampleDataWithContextInfo;
-
-  if (sampleData) {
-    sampleDataWithContextInfo = Array.isArray(sampleData)
-      ? [...sampleData]
-      : { ...sampleData };
-  }
-
-  // For resources other than real time , context info is passed
-  // Any other conditions to not show context Info can be added here
-  if (
-    !isEmpty(sampleDataWithContextInfo) &&
-    !(
-      isRealTimeOrDistributedResource(resource, resourceType) &&
-      isBlobTypeResource(resource)
-    )
-  ) {
-    if (Array.isArray(sampleDataWithContextInfo)) {
-      // Incase of array add context to the first object
-      const [firstObject, ...rest] = sampleDataWithContextInfo;
-
-      sampleDataWithContextInfo = [
-        ...[{ ...firstObject, ...getContextInfo() }],
-        ...rest,
-      ];
-    } else {
-      sampleDataWithContextInfo = {
-        ...sampleDataWithContextInfo,
-        ...getContextInfo(),
-      };
-    }
-  }
-
-  yield put(
-    actions.flowData.receivedPreviewData(
-      flowId,
-      resourceId,
-      sampleDataWithContextInfo,
-      stage
-    )
-  );
-}
-
 export function* requestProcessorData({
   flowId,
   resourceId,
@@ -434,12 +353,20 @@ export function* requestProcessorData({
 
   try {
     let processorData;
+    // The below data received is the wrapped form of sampleData which is needed as input for dependent stages
     const preProcessedData = yield call(getFlowStageData, {
       flowId,
       resourceId,
       resourceType,
       stage,
       isInitialized: true,
+    });
+    // The below data is plain raw sample data stored in state
+    const preProcessedSampleData = yield select(getSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
     });
 
     if (stage === 'transform' || stage === 'responseTransform') {
@@ -451,8 +378,9 @@ export function* requestProcessorData({
         if (!(rule && rule.length)) {
           hasNoRulesToProcess = true;
         } else {
+          // we use preProcessedSampleData instead of preProcessedData as transformation processor expects data without wrapper
           processorData = {
-            data: preProcessedData,
+            data: preProcessedSampleData,
             rule,
             processor: 'transform',
           };
@@ -482,19 +410,19 @@ export function* requestProcessorData({
     }
     // Below list are all Possible hook types
     else if (
-      ['hooks', 'preMap', 'postMap', 'postSubmit', 'postAggregate'].includes(
-        stage
-      )
+      [
+        'preSavePage',
+        'preMap',
+        'postMap',
+        'postSubmit',
+        'postAggregate',
+      ].includes(stage)
     ) {
       const { hooks = {} } = { ...resource };
-      // Default hooks stage is preSavePage for Exports
-      // Other stages are hook stages for Imports
-      const hookType = stage === 'hooks' ? 'preSavePage' : stage;
-      const hook = hooks[hookType] || {};
+      const hook = hooks[stage] || {};
 
       if (hook._scriptId) {
         const scriptId = hook._scriptId;
-        const data = { data: [preProcessedData], errors: [] };
         const script = yield call(getResource, {
           resourceType: 'scripts',
           id: scriptId,
@@ -502,9 +430,10 @@ export function* requestProcessorData({
         const { content: code } = script;
 
         processorData = {
-          data,
+          data: preProcessedData,
           code,
           entryFunction: hook.function,
+          removeDataPropFromProcessedData: stage === 'preMap',
           processor: 'javascript',
         };
       } else {
@@ -518,7 +447,12 @@ export function* requestProcessorData({
       // mapping fields are processed here against raw data
       const mappings = mappingUtil.getMappingFromResource(resource, true);
 
-      if (preProcessedData && mappings)
+      // Incase of no fields/lists inside mappings , no need to make a processor call
+      if (
+        preProcessedData &&
+        mappings &&
+        (mappings.fields.length || mappings.lists.length)
+      )
         return yield call(processMappingData, {
           flowId,
           resourceId,
@@ -587,7 +521,7 @@ export function* requestProcessorData({
       return yield call(updateStateForProcessorData, {
         flowId,
         resourceId,
-        processedData: { data: [preProcessedData] },
+        processedData: { data: [preProcessedSampleData] },
         stage,
       });
     }
