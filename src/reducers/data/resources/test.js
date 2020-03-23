@@ -502,6 +502,7 @@ describe('intetgrationApps installer reducer', () => {
         {
           _id: 1,
           name: 'bob',
+          installSteps: [],
           install: [
             {
               a: 1,
@@ -585,6 +586,7 @@ describe('intetgrationApps installer reducer', () => {
         {
           _id: 1,
           name: 'bob',
+          installSteps: [],
           install: [
             {
               a: 1,

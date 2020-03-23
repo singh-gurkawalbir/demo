@@ -1,23 +1,17 @@
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import PanelHeader from '../../../../../components/PanelHeader';
-import useConfirmDialog from '../../../../../components/ConfirmDialog';
-import * as selectors from '../../../../../reducers';
-import DeleteIcon from '../../../../../components/icons/TrashIcon';
-import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import PanelHeader from '../../../../../../components/PanelHeader';
+import useConfirmDialog from '../../../../../../components/ConfirmDialog';
+import * as selectors from '../../../../../../reducers';
+import DeleteIcon from '../../../../../../components/icons/TrashIcon';
+import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   content: {
     marginLeft: theme.spacing(2),
-  },
-  root: {
-    backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    paddingBottom: theme.spacing(1),
   },
   button: {
     margin: theme.spacing(3, 0),
@@ -76,7 +70,7 @@ export default function UninstallSection({ storeId, integrationId }) {
   };
 
   return (
-    <div className={classes.root}>
+    <Fragment>
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
@@ -103,6 +97,6 @@ export default function UninstallSection({ storeId, integrationId }) {
           <DeleteIcon className={classes.rightIcon} />
         </Button>
       </div>
-    </div>
+    </Fragment>
   );
 }

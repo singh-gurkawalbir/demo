@@ -510,7 +510,7 @@ export function* deleteResource({ resourceType, id }) {
 }
 
 export function* getResourceCollection({ resourceType }) {
-  const path = `/${resourceType}`;
+  let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
@@ -520,6 +520,10 @@ export function* getResourceCollection({ resourceType }) {
     resourceType.includes('/tiles')
   ) {
     hideNetWorkSnackbar = true;
+  }
+
+  if (resourceType === 'marketplacetemplates') {
+    path = `/templates/published`;
   }
 
   try {
