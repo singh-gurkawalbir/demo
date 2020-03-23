@@ -1,15 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import { registerFields } from '../../utils/form';
 import { generateNewId } from '../../utils/resource';
 
-export default function useForm({ formKey, formSpecificProps }) {
-  let formKeyUsed = formKey;
+export default function useForm({ formKey, ...formSpecificProps }) {
+  const [formKeyUsed, setFormKeyUsed] = useState(formKey);
   const dispatch = useDispatch();
 
   // generate a new formKey when none is provided
-  if (!formKey) formKeyUsed = generateNewId();
+  if (!formKeyUsed) {
+    setFormKeyUsed(generateNewId());
+  }
 
   // form specific props could be
 
@@ -22,17 +24,23 @@ export default function useForm({ formKey, formSpecificProps }) {
 
   // this controls form behaviour
   useEffect(() => {
-    const { fieldsMeta } = formSpecificProps;
+    if (formKeyUsed) {
+      const { fieldsMeta } = formSpecificProps;
 
-    dispatch(actions.form.formInit(formKeyUsed, formSpecificProps));
+      console.log('check here ', formSpecificProps);
+      dispatch(actions.form.formInit(formKeyUsed, formSpecificProps));
 
-    // no form Value for now
-    registerFields(fieldsMeta).forEach(field =>
-      dispatch(actions.form.field.registerField(formKey)(field))
-    );
+      const fieldsUpdated = Object.values(fieldsMeta.fieldMap);
+
+      // no form Value for now
+      registerFields(fieldsUpdated).forEach(field =>
+        dispatch(actions.form.field.registerField(formKeyUsed)(field))
+      );
+    }
 
     return () => dispatch(actions.form.formClear(formKeyUsed));
-  }, [dispatch, formKey, formKeyUsed, formSpecificProps]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, formKeyUsed]);
 
   return formKeyUsed;
 }

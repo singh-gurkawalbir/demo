@@ -10,18 +10,18 @@ import {
 import fields, { fieldsState } from './fields';
 
 function form(state = {}, action) {
-  const { type, formKey, ...rest } = action;
+  const { type, formKey, formSpecificProps = {} } = action;
   const {
     showValidationBeforeTouched = false,
     conditionalUpdate = false,
     disabled = false,
-  } = rest;
+  } = formSpecificProps;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FORM.INIT:
         draft[formKey] = {
-          ...rest,
+          ...formSpecificProps,
           showValidationBeforeTouched,
           conditionalUpdate,
           disabled,

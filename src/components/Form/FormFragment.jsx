@@ -33,7 +33,8 @@ export default function FormFragment({ defaultFields, formKey }) {
         dispatch(actions.form.field.registerField(formKey)(field));
       }
     });
-  }, [defaultFields, dispatch, formKey, formState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, formKey]);
 
   return (
     <Fragment>

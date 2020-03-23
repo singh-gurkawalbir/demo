@@ -9,8 +9,8 @@ import {
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
 export default function fields(state = {}, action) {
-  const { type, formKey, ...rest } = action;
-  const { value, id, skipFieldTouched } = rest;
+  const { type, formKey, fieldProps = {} } = action;
+  const { value, id, skipFieldTouched, defaultValue } = fieldProps;
 
   return produce(state, draft => {
     if (!draft[formKey]) {
@@ -19,9 +19,8 @@ export default function fields(state = {}, action) {
       return;
     }
 
-    let fieldsRef = draft[formKey].fields;
-
-    if (!fieldsRef) fieldsRef = {};
+    if (!draft[formKey].fields) draft[formKey].fields = {};
+    const fieldsRef = draft[formKey].fields;
 
     switch (type) {
       case actionTypes.FORM.FIELD.REGISTER:
@@ -34,8 +33,8 @@ export default function fields(state = {}, action) {
         }
 
         fieldsRef[id] = {
-          ...rest,
-          value: getFirstDefinedValue(value, rest.defaultValue),
+          ...fieldProps,
+          value: getFirstDefinedValue(value, defaultValue),
           touched: false,
         };
         registerFieldWithCorrectValueUpdated(fieldsRef[id]);

@@ -22,7 +22,7 @@ export const registerField = (field, fields) => {
   return fields.slice();
 };
 
-export const registerFieldWithCorrectValueUpdated = (field, formValue) => {
+export const registerFieldWithCorrectValueUpdated = (field, formValue = {}) => {
   const { defaultValue, name, value, valueDelimiter } = field;
   const initialValue = getFirstDefinedValue(
     formValue[name],
@@ -33,7 +33,7 @@ export const registerFieldWithCorrectValueUpdated = (field, formValue) => {
   field.value = splitDelimitedValue(initialValue, valueDelimiter);
 };
 
-export const registerFields = (fieldsToValidate, formValue) => {
+export const registerFields = (fieldsToValidate, formValue = {}) => {
   const fields = [];
 
   fieldsToValidate.forEach(field => {
