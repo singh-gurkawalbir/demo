@@ -17,6 +17,7 @@ function form(state = {}, action) {
     disabled = false,
   } = formSpecificProps;
 
+  // if default fields have changed then reset touched state
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FORM.INIT:
@@ -25,6 +26,8 @@ function form(state = {}, action) {
           showValidationBeforeTouched,
           conditionalUpdate,
           disabled,
+          formIsDisabled: disabled,
+          resetTouchedState: false,
         };
 
         return;

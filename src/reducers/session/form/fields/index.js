@@ -14,7 +14,7 @@ export default function fields(state = {}, action) {
 
   return produce(state, draft => {
     if (!draft[formKey]) {
-      console.warn('No form key present for Form');
+      //   'No form key present for Form'
 
       return;
     }
@@ -43,6 +43,9 @@ export default function fields(state = {}, action) {
         if (!skipFieldTouched) {
           updateFieldTouchedState(fieldsRef[id], true);
         }
+
+        // update the last modified field id in the form state
+        draft[formKey].lastFieldUpdated = id;
 
         updateFieldValue(fieldsRef[id], value);
         break;
