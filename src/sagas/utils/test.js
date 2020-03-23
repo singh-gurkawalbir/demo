@@ -99,7 +99,7 @@ describe('resourceConflictResolution', () => {
       lastModified: 12,
     };
 
-    describe('should return no conflict with merged incorporating staged changes over origin changes, when master and origin has changed', () => {
+    test('should return no conflict with merged incorporating staged changes over origin changes, when master and origin has changed', () => {
       const result = resourceConflictResolution({
         master,
         merged: alteredMerged,
