@@ -528,7 +528,7 @@ const connectors = [
   { id: 'paycor', name: 'Paycor', type: 'http', assistant: 'paycor' },
   // { id: 'paylocity', name: 'paylocity',
   // type: 'http', assistant: 'paylocity' },
-  { id: 'paypal', name: 'Paypal', type: 'http', assistant: 'paypal' },
+  { id: 'paypal', name: 'PayPal', type: 'http', assistant: 'paypal' },
   { id: 'pdffiller', name: 'PDFfiller', type: 'rest', assistant: 'pdffiller' },
   {
     id: 'pitneybowes',

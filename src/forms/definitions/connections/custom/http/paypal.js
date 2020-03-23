@@ -46,7 +46,7 @@ export default {
         },
       ],
       helpText:
-        'Please select your Account Type here. Select Sandbox if your API Endpoint starts with https://api.sandbox.paypal.com. Select Production if your API Endpoint starts with https://api.paypal.com',
+        'Select one of the following, depending on the account you’re connecting to. <br> <b>.</b> Sandbox </br> <b>.</b> Production',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
