@@ -29,6 +29,12 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
+  signInWithGoogle: returnTo =>
+    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+  reSignInWithGoogle: email =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  linkWithGoogle: returnTo =>
+    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),
@@ -931,6 +937,8 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
