@@ -75,10 +75,11 @@ describe('resourceConflictResolution', () => {
     });
   });
 
-  describe('for mutual properties of merged and origin has changed', () => {
+  describe('when mutual properties of merged and origin has changed', () => {
     const master = {
       a: '1',
       b: '2',
+
       lastModified: 12,
     };
     const alteredMerged = {

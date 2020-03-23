@@ -50,13 +50,12 @@ export function resourceConflictResolution({ merged, master, origin }) {
 
     return { conflict: conflictPatches, merged: null };
   }
-  // resolution required
 
-  const resolutionPatches = masterVsMerged.filter(
-    patch => !isPathPresentAndValueDiff(masterVsOrigin)(patch)
-  );
-  // apply the resolution patches to merged
-  const updatedMerged = applyPatch(origin, resolutionPatches).newDocument;
+  // resolution required
+  // apply the staged patches over origin
+  // mutate document set to false
+  const updatedMerged = applyPatch(origin, masterVsMerged, false, false)
+    .newDocument;
 
   return { conflict: null, merged: updatedMerged };
 }
