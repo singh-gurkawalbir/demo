@@ -152,7 +152,7 @@ const applyCustomSettings = ({
           return 'Settings must be a valid JSON';
       }
 
-      if (validationHandler) validationHandler(field);
+      if (validationHandler) return validationHandler(field);
     };
   }
 

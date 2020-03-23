@@ -13,6 +13,7 @@ export default {
     if (sampleData === '') {
       retValues['/sampleData'] = undefined;
     } else {
+      // Save sampleData in JSON format with a fail safe condition
       retValues['/sampleData'] = isJsonString(sampleData)
         ? JSON.parse(sampleData)
         : undefined;
