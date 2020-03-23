@@ -175,7 +175,6 @@ const connectors = [
     assistant: '4castplus',
   },
   { id: 'atera', name: 'Atera', type: 'rest', assistant: 'atera' },
-  { id: 'bigquery', name: 'bigquery', type: 'http', assistant: 'bigquery' },
   {
     id: 'authorize.net',
     name: 'Authorize.Net',
