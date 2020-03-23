@@ -13,8 +13,8 @@ import { apiCallWithRetry } from '../index';
 import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
-  removeCSRFToken,
   getCSRFToken,
+  removeCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
@@ -177,8 +177,54 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
+export function* signInWithGoogle({ returnTo }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'signinWithGoogle';
+  form.method = 'POST';
+  form.action = `/auth/google?returnTo=${returnTo || '/pg/'}`;
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+export function* reSignInWithGoogle({ email }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'reSigninWithGoogle';
+  form.method = 'POST';
+  form.action = '/reSigninWithGoogle';
+  form.target = '_blank';
+
+  form.innerHTML = `<input name="skipRedirect" value="false"><input name="login_hint" value="${email}"><input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+export function* linkWithGoogle({ returnTo }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'linkWithGoogle';
+  form.method = 'POST';
+  form.action = `/link/google?returnTo=${returnTo || '/pg/'}`;
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
+  takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
 ];

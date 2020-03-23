@@ -10,6 +10,7 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
+import ConsoleGridItem from '../ConsoleGridItem';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -31,10 +32,10 @@ export default function JavaScriptEditor(props) {
     disabled,
     optionalSaveParams,
     layout = 'compact',
-    // resultMode = 'json',
+    resultMode = 'json',
   } = props;
   const classes = useStyles(props);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -55,7 +56,7 @@ export default function JavaScriptEditor(props) {
         entryFunction: entryFunction || 'main',
         data: props.data,
         autoEvaluate: true,
-        autoEvaluateDelay: 1000,
+        autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
         optionalSaveParams,
       })
@@ -73,11 +74,10 @@ export default function JavaScriptEditor(props) {
     handleInit();
   }, [handleInit]);
   const parsedData = result ? result.data : '';
+  const logs = result && !error && !violations && result.logs;
 
   return (
-    <PanelGrid
-      key={`${editorId}-${initChangeIdentifier}`}
-      className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}
@@ -88,6 +88,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
         <CodePanel
+          id="data"
           name="data"
           value={data}
           mode="json"
@@ -97,10 +98,17 @@ export default function JavaScriptEditor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />
-        <CodePanel name="result" value={parsedData} mode="json" readOnly />
+        <CodePanel
+          id="result"
+          name="result"
+          value={parsedData}
+          mode={resultMode}
+          readOnly
+        />
       </PanelGridItem>
 
       <ErrorGridItem error={error} violations={violations} />
+      <ConsoleGridItem logs={logs} />
     </PanelGrid>
   );
 }

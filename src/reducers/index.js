@@ -411,6 +411,14 @@ export function mappingsSaveStatus(state, id) {
   return fromSession.mappingsSaveStatus(state && state.session, id);
 }
 
+export function responseMappings(state, id) {
+  return fromSession.responseMappings(state && state.session, id);
+}
+
+export function responseMappingDirty(state, id) {
+  return fromSession.responseMappingDirty(state && state.session, id);
+}
+
 export function searchCriteria(state, id) {
   return fromSession.getSearchCriteria(state && state.session, id);
 }
@@ -511,6 +519,8 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
   } = { ...profile, ...preferences };
 
   return {
@@ -525,13 +535,24 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
   };
 }
 
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
-// #endregion
+
+export function userProfileLinkedWithGoogle(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.auth_type_google &&
+    state.user.profile.auth_type_google.id
+  );
+}
+// #endregiod
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {
@@ -675,6 +696,10 @@ export function testConnectionCommState(state, resourceId) {
 
 export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
+}
+
+export function editorTheme(state) {
+  return fromUser.editorTheme((state && state.user) || null);
 }
 
 export function hasPreferences(state) {
@@ -1123,8 +1148,16 @@ export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(state.session, integrationId);
 }
 
+export function isAddOnInstallInProgress(state, id) {
+  return fromSession.isAddOnInstallInProgress(state.session, id);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
+}
+
+export function isOnOffInProgress(state, flowId) {
+  return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
 export function integrationConnectionList(state, integrationId, tableConfig) {

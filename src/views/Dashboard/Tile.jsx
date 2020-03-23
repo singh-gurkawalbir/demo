@@ -1,7 +1,8 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
+import * as selectors from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -25,6 +26,7 @@ import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getDomain } from '../../utils/resource';
 import ModalDialog from '../../components/ModalDialog';
+import { getTemplateUrlName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -55,6 +57,25 @@ function Tile({ tile, history }) {
     false
   );
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      tile && tile._integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
@@ -62,8 +83,12 @@ function Tile({ tile, history }) {
   const status = tileStatus(tile);
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
-  let urlToIntegrationSettings = `/integrations/${tile._integrationId}`;
-  let urlToIntegrationUsers = `/integrations/${tile._integrationId}/admin/users`;
+  let urlToIntegrationSettings = templateName
+    ? `/templates/${templateName}/${tile._integrationId}`
+    : `/integrations/${tile._integrationId}`;
+  let urlToIntegrationUsers = templateName
+    ? `/templates/${templateName}/${tile._integrationId}/users`
+    : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
@@ -73,7 +98,7 @@ function Tile({ tile, history }) {
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/admin/users`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
   const isNotYetSupported =
@@ -90,6 +115,7 @@ function Tile({ tile, history }) {
       '5db8164d9df868329731fca0', // Square POS
       '58d94e6b2e4b300dbf6b01bc', // eBay
       '5b754a8fddbb3b71d6046c87', // Amazon MCF
+      '58c90bccc13f547763bf2fc1', // Amazon
       // '586cb88fc1d53d6a279d527e', // CAM
       '5a546b705556c2539f4a8dba', // Shipwire
       '5bfe38e363afaf4b872b4ee0', // Returnly

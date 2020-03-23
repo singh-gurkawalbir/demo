@@ -87,6 +87,10 @@ export default {
               label: 'A13V1IB3VIYZZH (FR)',
             },
             {
+              value: 'A1805IZSGTT6HS',
+              label: 'A1805IZSGTT6HS (NL)',
+            },
+            {
               value: 'APJ6JRA9NG5V4',
               label: 'APJ6JRA9NG5V4 (IT)',
             },
@@ -185,6 +189,8 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      allowNew: true,
+      allowEdit: true,
       helpText:
         'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
     },

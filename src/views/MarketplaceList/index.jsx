@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,6 +17,7 @@ import * as selectors from '../../reducers';
 import { prompt } from '../../components/Prompt';
 import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -120,7 +121,7 @@ export default function MarketplaceList() {
     selectors.marketplaceTemplates(state, application)
   );
   const connector = applications.find(c => c.id === application);
-  const applicationName = connector && connector.name;
+  const applicationName = connector ? connector.name : application;
 
   useEffect(() => {
     if (!connectors.length && !templates.length && !fetchedCollection) {
@@ -167,10 +168,16 @@ export default function MarketplaceList() {
   };
 
   return (
-    <Fragment>
+    <LoadResources required resources="integrations">
       <InstallTemplateDrawer />
 
-      <CeligoPageBar title={`${applicationName} Integrations`} />
+      <CeligoPageBar
+        title={`${
+          applicationName
+            ? applicationName.charAt(0).toUpperCase() + applicationName.slice(1)
+            : ''
+        } Integrations`}
+      />
       <div className={classes.root}>
         {connectors.map(connector => (
           <Card
@@ -263,6 +270,6 @@ export default function MarketplaceList() {
           </div>
         </ModalDialog>
       )}
-    </Fragment>
+    </LoadResources>
   );
 }

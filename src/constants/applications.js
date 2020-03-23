@@ -528,7 +528,7 @@ const connectors = [
   { id: 'paycor', name: 'Paycor', type: 'http', assistant: 'paycor' },
   // { id: 'paylocity', name: 'paylocity',
   // type: 'http', assistant: 'paylocity' },
-  { id: 'paypal', name: 'Paypal', type: 'http', assistant: 'paypal' },
+  { id: 'paypal', name: 'PayPal', type: 'http', assistant: 'paypal' },
   { id: 'pdffiller', name: 'PDFfiller', type: 'rest', assistant: 'pdffiller' },
   {
     id: 'pitneybowes',
@@ -818,6 +818,8 @@ export const groupApplications = (
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+export const getDatabaseConnectors = () =>
+  connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 

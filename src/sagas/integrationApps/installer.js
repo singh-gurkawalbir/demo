@@ -15,6 +15,12 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       hidden: true,
     }) || {};
   } catch (error) {
+    if (addOnId) {
+      yield put(
+        actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+      );
+    }
+
     yield put(
       actions.integrationApp.installer.updateStep(
         id,
@@ -45,6 +51,9 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       yield put(actions.resource.requestCollection('exports'));
       yield put(actions.resource.requestCollection('imports'));
       yield put(actions.resource.requestCollection('connections'));
+      yield put(
+        actions.integrationApp.isAddonInstallInprogress(false, addOnId)
+      );
     }
   } else if (
     stepCompleteResponse &&
@@ -60,6 +69,39 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
       )
     );
   }
+}
+
+export function* installScriptStep({ id, connectionId }) {
+  const path = `/integrations/${id}/installSteps`;
+  let stepCompleteResponse;
+
+  try {
+    stepCompleteResponse = yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        body: connectionId ? { _connectionId: connectionId } : {},
+        method: 'POST',
+      },
+      hidden: true,
+    }) || {};
+  } catch (error) {
+    yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
+    yield put(actions.api.failure(path, 'PUT', error.message, false));
+
+    return undefined;
+  }
+
+  if (!stepCompleteResponse) {
+    return yield put(actions.resource.request('integrations', id));
+  }
+
+  yield put(
+    actions.integrationApp.installer.completedStepInstall(
+      { stepsToUpdate: stepCompleteResponse },
+      id
+    )
+  );
 }
 
 export function* installStoreStep({ id, installerFunction }) {
@@ -135,6 +177,10 @@ export function* addNewStore({ id }) {
 
 export default [
   takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST,
+    installScriptStep
+  ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
 ];

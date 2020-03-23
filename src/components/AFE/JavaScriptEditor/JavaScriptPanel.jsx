@@ -46,15 +46,10 @@ export default function JavaScriptPanel(props) {
   const editor = useSelector(state => selectors.editor(state, editorId));
   const {
     code = '',
-    initChangeIdentifier,
-    error,
     fetchScriptContent = false,
     entryFunction = '',
     scriptId = '',
   } = editor;
-  const violations = useSelector(state =>
-    selectors.editorViolations(state, editorId)
-  );
   const scriptContent = useSelector(state => {
     const data = selectors.resourceData(state, 'scripts', scriptId);
 
@@ -103,7 +98,6 @@ export default function JavaScriptPanel(props) {
       const patchObj = {
         code: scriptContent,
         fetchScriptContent: false,
-        initChangeIdentifier: initChangeIdentifier + 1,
       };
 
       // check if code property existings in editor. If yes, save a copy as initCode for dirty checking
@@ -118,7 +112,6 @@ export default function JavaScriptPanel(props) {
     editor,
     editorId,
     fetchScriptContent,
-    initChangeIdentifier,
     patchEditor,
     requestScript,
     scriptContent,
@@ -177,9 +170,7 @@ export default function JavaScriptPanel(props) {
             </Button>
           )}
         </div>
-        <div
-          className={classes.scriptPanel}
-          key={error || violations ? 'sm' : 'md'}>
+        <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
             <Fragment>
               <Typography>Retrieving your script</Typography>
@@ -188,6 +179,7 @@ export default function JavaScriptPanel(props) {
           ) : (
             <CodePanel
               name="code"
+              id="code"
               readOnly={disabled}
               value={code}
               mode="javascript"

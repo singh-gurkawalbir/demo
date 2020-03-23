@@ -1,4 +1,3 @@
-// import clsx from 'clsx';
 import {
   Route,
   Switch,
@@ -10,11 +9,9 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
-import AuditLogSection from './sections/AuditLog';
 import ReadmeSection from './sections/Readme';
 import NotificationsSection from './sections/Notifications';
-import UsersSection from '../../../../../components/ManageUsersPanel';
-import SettingsSections from './sections/Settings';
+import GeneralSection from './sections/General';
 import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -49,34 +46,22 @@ const useStyles = makeStyles(theme => ({
 }));
 const allSections = [
   {
+    path: 'general',
+    label: 'General',
+    Section: GeneralSection,
+    id: 'general',
+  },
+  {
     path: 'notifications',
     label: 'Notifications',
     Section: NotificationsSection,
     id: 'notifications',
   },
   {
-    path: 'audit',
-    label: 'Audit log',
-    Section: AuditLogSection,
-    id: 'auditLog',
-  },
-  {
-    path: 'users',
-    label: 'Users',
-    Section: UsersSection,
-    id: 'users',
-  },
-  {
     path: 'readme',
     label: 'Readme',
     Section: ReadmeSection,
     id: 'readMe',
-  },
-  {
-    path: 'settings',
-    label: 'Settings',
-    Section: SettingsSections,
-    id: 'settings',
   },
 ];
 

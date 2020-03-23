@@ -68,7 +68,7 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope }) {
+export function* commitStagedChanges({ resourceType, id, scope, options }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -256,6 +256,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     );
   }
 
+  if (options && options.action === 'flowEnableDisable') {
+    yield put(actions.flow.isOnOffActionInprogress(false, id));
+  }
+
   yield put(actions.resource.clearStaged(id, scope));
 
   if (isNew) {
@@ -382,6 +386,10 @@ export function* updateIntegrationSettings({
       yield put(actions.resource.requestCollection('imports'));
     }
   }
+
+  if (options.action === 'flowEnableDisable') {
+    yield put(actions.flow.isOnOffActionInprogress(false, flowId));
+  }
 }
 
 export function* patchResource({ resourceType, id, patchSet, options = {} }) {
@@ -503,7 +511,7 @@ export function* deleteResource({ resourceType, id }) {
 }
 
 export function* getResourceCollection({ resourceType }) {
-  const path = `/${resourceType}`;
+  let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
@@ -513,6 +521,10 @@ export function* getResourceCollection({ resourceType }) {
     resourceType.includes('/tiles')
   ) {
     hideNetWorkSnackbar = true;
+  }
+
+  if (resourceType === 'marketplacetemplates') {
+    path = `/templates/published`;
   }
 
   try {

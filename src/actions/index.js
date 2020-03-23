@@ -29,6 +29,12 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
+  signInWithGoogle: returnTo =>
+    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+  reSignInWithGoogle: email =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  linkWithGoogle: returnTo =>
+    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),
@@ -185,8 +191,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
+  commitStaged: (resourceType, id, scope, options) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, {
+      resourceType,
+      id,
+      scope,
+      options,
+    }),
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
@@ -731,6 +742,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
+      }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
@@ -817,6 +833,12 @@ const integrationApp = {
         steps,
       }),
   },
+  // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
+  isAddonInstallInprogress: (installInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
+      installInprogress,
+      id,
+    }),
 };
 const ashare = {
   receivedCollection: ashares =>
@@ -915,6 +937,8 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
@@ -1115,8 +1139,8 @@ const mapping = {
     }),
   patchField: (id, field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
-  updateGenerates: (id, generateFields) =>
-    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
+  updateImportSampleData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA, { id, value }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
   patchSettings: (id, key, value) =>
@@ -1354,6 +1378,11 @@ const flow = {
       fileContent,
       fileType,
     }),
+  isOnOffActionInprogress: (onOffInProgress, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+      onOffInProgress,
+      flowId,
+    }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   receivedLastExportDateTime: (flowId, response) =>
@@ -1380,6 +1409,31 @@ const analytics = {
         details,
       }),
   },
+};
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
+      id,
+      value,
+    }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 // #endregion
 
@@ -1424,4 +1478,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
+  responseMapping,
 };
