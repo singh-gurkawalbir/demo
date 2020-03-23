@@ -18,8 +18,8 @@ const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
     dispatch(actions.auth.request(email, password));
   },
-  handleSignInWithGoogle: attemptedRoute => {
-    dispatch(actions.auth.signInWithGoogle(attemptedRoute));
+  handleSignInWithGoogle: returnTo => {
+    dispatch(actions.auth.signInWithGoogle(returnTo));
   },
   handleReSignInWithGoogle: email => {
     dispatch(actions.auth.reSignInWithGoogle(email));

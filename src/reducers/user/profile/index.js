@@ -13,6 +13,9 @@ export default (state = null, action) => {
     case actionTypes.UPDATE_PROFILE:
       return { ...newState, ...profile };
 
+    case actionTypes.UNLINKED_WITH_GOOGLE:
+      return { ...profile, auth_type_google: {} };
+
     case actionTypes.DELETE_PROFILE:
       if (state && state.email)
         return { email: state.email, auth_type_google: state.auth_type_google };

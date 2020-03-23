@@ -519,6 +519,8 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
   } = { ...profile, ...preferences };
 
   return {
@@ -533,6 +535,7 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
   };
 }
 

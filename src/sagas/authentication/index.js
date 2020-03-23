@@ -177,13 +177,13 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
-export function* signInWithGoogle({ attemptedRoute }) {
+export function* signInWithGoogle({ returnTo }) {
   const _csrf = yield call(getCSRFTokenBackend);
   const form = document.createElement('form');
 
   form.id = 'signinWithGoogle';
   form.method = 'POST';
-  form.action = `/auth/google?attemptedRoute=${attemptedRoute || '/pg/'}`;
+  form.action = `/auth/google?returnTo=${returnTo || '/pg/'}`;
 
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
@@ -206,10 +206,25 @@ export function* reSignInWithGoogle({ email }) {
   document.body.removeChild(form);
 }
 
+export function* linkWithGoogle({ returnTo }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'linkWithGoogle';
+  form.method = 'POST';
+  form.action = `/link/google?returnTo=${returnTo || '/pg/'}`;
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
 ];

@@ -207,6 +207,8 @@ module.exports = {
         '/signin': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
+        '/link/google': proxyOpts,
+        '/unlink/google': proxyOpts,
         '/signout': proxyOpts,
         '/csrf': proxyOpts,
         '/api': proxyOpts,
