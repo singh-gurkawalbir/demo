@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import { getDomain } from '../../utils/resource';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
@@ -247,39 +248,41 @@ class SignIn extends Component {
             </Link>
           </div>
         </form>
-        <div>
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
+        {getDomain() !== 'eu.integrator.io' && (
+          <div>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
+            {!dialogOpen && (
+              <form onSubmit={this.handleSignInWithGoogle}>
+                <TextField
+                  type="hidden"
+                  id="attemptedRoute"
+                  name="attemptedRoute"
+                  value={attemptedRoute || '/pg/'}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}>
+                  Sign in with Google
+                </Button>
+              </form>
+            )}
+            {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+              <form onSubmit={this.handleReSignInWithGoogle}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}>
+                  Sign in with Google
+                </Button>
+              </form>
+            )}
           </div>
-          {!dialogOpen && (
-            <form onSubmit={this.handleSignInWithGoogle}>
-              <TextField
-                type="hidden"
-                id="attemptedRoute"
-                name="attemptedRoute"
-                value={attemptedRoute || '/pg/'}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                className={classes.googleBtn}>
-                Sign in with Google
-              </Button>
-            </form>
-          )}
-          {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-            <form onSubmit={this.handleReSignInWithGoogle}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                className={classes.googleBtn}>
-                Sign in with Google
-              </Button>
-            </form>
-          )}
-        </div>
+        )}
       </div>
     );
   }
