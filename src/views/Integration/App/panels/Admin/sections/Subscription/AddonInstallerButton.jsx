@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../../reducers';
-import useConfirmDialog from '../../../../../components/ConfirmDialog';
-import actions from '../../../../../actions';
-import Spinner from '../../../../../components/Spinner';
-import Loader from '../../../../../components/Loader';
+import * as selectors from '../../../../../../../reducers';
+import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import actions from '../../../../../../../actions';
+import Spinner from '../../../../../../../components/Spinner';
+import Loader from '../../../../../../../components/Loader';
 
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();

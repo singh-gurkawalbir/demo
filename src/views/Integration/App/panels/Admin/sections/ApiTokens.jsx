@@ -1,25 +1,19 @@
+import { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import ResourceDrawer from '../../../../../components/drawer/Resource';
-import PanelHeader from '../../../../../components/PanelHeader';
-import ResourceTable from '../../../../../components/ResourceTable';
-import IconTextButton from '../../../../../components/IconTextButton';
-import LoadResources from '../../../../../components/LoadResources';
-import AddIcon from '../../../../../components/icons/AddIcon';
-import { generateNewId } from '../../../../../utils/resource';
-import actions from '../../../../../actions';
+import * as selectors from '../../../../../../reducers';
+import ResourceDrawer from '../../../../../../components/drawer/Resource';
+import PanelHeader from '../../../../../../components/PanelHeader';
+import ResourceTable from '../../../../../../components/ResourceTable';
+import IconTextButton from '../../../../../../components/IconTextButton';
+import LoadResources from '../../../../../../components/LoadResources';
+import AddIcon from '../../../../../../components/icons/AddIcon';
+import { generateNewId } from '../../../../../../utils/resource';
+import actions from '../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    paddingBottom: theme.spacing(1),
-  },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
@@ -39,7 +33,7 @@ export default function ApiTokenSection({ integrationId }) {
   );
 
   return (
-    <div className={classes.root}>
+    <Fragment>
       <ResourceDrawer match={match} />
 
       <PanelHeader title="API tokens">
@@ -85,6 +79,6 @@ export default function ApiTokenSection({ integrationId }) {
           )}
         </LoadResources>
       </div>
-    </div>
+    </Fragment>
   );
 }

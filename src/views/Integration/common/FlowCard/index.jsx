@@ -18,6 +18,7 @@ import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import Spinner from '../../../../components/Spinner';
+import { getTemplateUrlName } from '../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -111,6 +112,25 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
     return '';
   });
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      flowDetails && flowDetails._integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const { defaultConfirmDialog } = useConfirmDialog();
   const patchFlow = useCallback(
     (path, value) => {
@@ -137,6 +157,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/dashboard`
         );
       }
+    } else if (templateName) {
+      history.push(
+        `/pg/templates/${templateName}/${flowDetails._integrationId ||
+          'none'}/dashboard`
+      );
     } else {
       history.push(
         `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
@@ -148,6 +173,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     history,
     integrationAppName,
     storeId,
+    templateName,
   ]);
   const handleDisableClick = useCallback(() => {
     defaultConfirmDialog(

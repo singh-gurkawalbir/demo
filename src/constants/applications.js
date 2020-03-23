@@ -818,6 +818,8 @@ export const groupApplications = (
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+export const getDatabaseConnectors = () =>
+  connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 
