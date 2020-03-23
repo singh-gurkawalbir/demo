@@ -23,7 +23,7 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_ERRORED: {
         draft[resourceId] = {
           status: PING_STATES.ERROR,
-          message: message || 'test errored',
+          message,
         };
 
         break;
@@ -32,8 +32,6 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_SUCCESSFUL: {
         draft[resourceId] = {
           status: PING_STATES.SUCCESS,
-
-          message: message || 'test successful',
         };
 
         break;
@@ -42,8 +40,6 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_CANCELLED: {
         draft[resourceId] = {
           status: PING_STATES.ABORTED,
-
-          message: message || 'test cancelled',
         };
         break;
       }

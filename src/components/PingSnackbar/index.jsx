@@ -134,11 +134,6 @@ class PingSnackbar extends React.Component {
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
     else if (commState === PING_STATES.ERROR) {
       return <ErroredMessageList messages={messages} />;
-    } else if (
-      commState === PING_STATES.SUCCESS ||
-      commState === PING_STATES.ABORTED
-    ) {
-      return messages;
     }
   };
   render() {
@@ -151,7 +146,11 @@ class PingSnackbar extends React.Component {
       onHandleCancelTask
     );
 
-    if (!commState) return null;
+    if (
+      !commState ||
+      ![PING_STATES.LOADING, PING_STATES.ERROR].includes(commState)
+    )
+      return null;
 
     return (
       <div>

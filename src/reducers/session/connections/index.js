@@ -11,7 +11,7 @@ const updateConnectionStatus = (
       c => c._id === connectionId
     );
 
-    if (connectionIndex) {
+    if (connectionIndex !== -1) {
       // allConnectionsStatus is a draft... mutating it is fine....hence disabling lint for the next lin
       // eslint-disable-next-line no-param-reassign
       allConnectionsStatus[connectionIndex] = {

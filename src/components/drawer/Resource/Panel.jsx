@@ -1,3 +1,4 @@
+import qs from 'qs';
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useLocation, generatePath } from 'react-router-dom';
@@ -10,6 +11,8 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
+import OfflineConnectionNotification from '../../OfflineConnectionNotification';
+import ConnectionNotification from '../../ConnectionNotification';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -266,9 +269,20 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  let title = `${
-    isNewId(id) ? `Create` : 'Edit'
-  } ${resourceLabel.toLowerCase()}`;
+  const queryParams = qs.parse(props.history.location.search, {
+    delimiter: /[?&]/,
+    depth: 0,
+  });
+  const isConnectionFixFromImpExp = !!(
+    queryParams && queryParams.fixConnnection === 'true'
+  );
+  let title = '';
+
+  if (isConnectionFixFromImpExp && resourceType === 'connections') {
+    title = `Fix offline connection`;
+  } else {
+    title = `${isNewId(id) ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
+  }
 
   if (resourceType === 'pageGenerator') {
     title = 'Create source';
@@ -295,6 +309,15 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
+          {(resourceType === 'exports' || resourceType === 'imports') && (
+            <OfflineConnectionNotification
+              resourceType={resourceType}
+              resourceId={id}
+            />
+          )}
+          {resourceType === 'connections' && (
+            <ConnectionNotification connectionId={id} />
+          )}
           <ResourceForm
             className={classes.form}
             variant={match.isExact ? 'edit' : 'view'}

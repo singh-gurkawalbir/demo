@@ -1,9 +1,7 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
 import InfoIcon from '../icons/InfoIcon';
@@ -116,17 +114,6 @@ function NotificationToaster(props) {
             {children}
           </div>
         }
-        action={[
-          <IconButton
-            data-test="closeNotificationToaster"
-            key="close"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-            className={classes.actionButton}>
-            <CloseIcon className={classes.icon} />
-          </IconButton>,
-        ]}
         {...other}
       />
     </div>
