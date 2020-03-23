@@ -98,6 +98,10 @@ describe('resourceConflictResolution', () => {
       b: '3',
       lastModified: 12,
     };
+    const unresolvableMergedWithDelete = {
+      b: '3',
+      lastModified: 12,
+    };
 
     test('should return no conflict with merged incorporating staged changes over origin changes, when master and origin has changed', () => {
       const result = resourceConflictResolution({
@@ -121,7 +125,7 @@ describe('resourceConflictResolution', () => {
         merged: resolvedMerged,
       });
     });
-    test('should return a conflict with merged incorporating resolvable staged changes when master and origin has changes which are unresolvable', () => {
+    test('should return a conflict when master and origin has changes which are unresolvable', () => {
       const result = resourceConflictResolution({
         master,
         merged: unresolvableMerged,
@@ -129,6 +133,19 @@ describe('resourceConflictResolution', () => {
       });
       // in this case staged has changes....and i cannot apply any automatic resolution changes ..since i have staged some changes which are completely different
       const conflictPatches = [{ op: 'replace', path: '/a', value: '4' }];
+
+      expect(result).toEqual({
+        conflict: conflictPatches,
+        merged: null,
+      });
+    });
+    test('should return a conflict when master and origin has changes which are unresolvable and they are delete attempts', () => {
+      const result = resourceConflictResolution({
+        master,
+        merged: unresolvableMergedWithDelete,
+        origin: alteredOrigin,
+      });
+      const conflictPatches = [{ op: 'remove', path: '/a' }];
 
       expect(result).toEqual({
         conflict: conflictPatches,
