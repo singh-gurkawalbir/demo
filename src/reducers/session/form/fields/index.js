@@ -6,6 +6,7 @@ import {
   registerFieldWithCorrectValueUpdated,
   processFieldsUpdated,
 } from '../../../../utils/form';
+import { getFirstDefinedValue } from '../../../../utils/form/field';
 
 export default function fields(state = {}, action) {
   const { type, formKey, ...rest } = action;
@@ -34,6 +35,7 @@ export default function fields(state = {}, action) {
 
         fieldsRef[id] = {
           ...rest,
+          value: getFirstDefinedValue(value, rest.defaultValue),
           touched: false,
         };
         registerFieldWithCorrectValueUpdated(fieldsRef[id]);

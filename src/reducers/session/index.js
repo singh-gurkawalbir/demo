@@ -1,31 +1,31 @@
 import { combineReducers } from 'redux';
-import stage, * as fromStage from './stage';
-import filters, * as fromFilters from './filters';
-import editors, * as fromEditors from './editors';
-import metadata, * as fromMetadata from './metadata';
-import connectors, * as fromConnectors from './connectors';
-import connections, * as fromConnections from './connections';
-import resourceForm, * as fromResourceForm from './resourceForm';
 import agentAccessTokens, * as fromAgentAccessTokens from './agentAccessTokens';
-import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
+import connections, * as fromConnections from './connections';
 import connectionToken, * as fromConnectionToken from './connectionToken';
-import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
-import sampleData, * as fromSampleData from './sampleData';
-import flowData, * as fromFlowData from './sampleData/flows';
+import connectors, * as fromConnectors from './connectors';
+import editors, * as fromEditors from './editors';
+import filters, * as fromFilters from './filters';
+import flows, * as fromFlows from './flows';
+import formReducer, * as fromForm from './form';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
-import templates, * as fromTemplates from './templates';
+import mappings, * as fromMappings from './mappings';
+import metadata, * as fromMetadata from './metadata';
+import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
-import mappings, * as fromMappings from './mappings';
-import searchCriteria, * as fromSearchCriteria from './searchCriteria';
-import flows, * as fromFlows from './flows';
-import transfers, * as fromTransfers from './transfers';
+import resourceForm, * as fromResourceForm from './resourceForm';
 import responseMapping, * as fromResponseMapping from './responseMapping';
-import form from './form';
+import sampleData, * as fromSampleData from './sampleData';
+import flowData, * as fromFlowData from './sampleData/flows';
+import searchCriteria, * as fromSearchCriteria from './searchCriteria';
+import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
+import stage, * as fromStage from './stage';
+import templates, * as fromTemplates from './templates';
+import transfers, * as fromTransfers from './transfers';
 
 export default combineReducers({
-  form,
+  form: formReducer,
   stage,
   filters,
   editors,
@@ -52,6 +52,10 @@ export default combineReducers({
 });
 
 // #region PUBLIC SELECTORS
+
+export const getFormState = (state, formKey) =>
+  fromForm.getFormState(state && state.form, formKey);
+
 export function netsuiteUserRoles(
   state,
   connectionId,

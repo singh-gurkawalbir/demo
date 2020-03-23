@@ -9,7 +9,7 @@ import {
 } from '../../../utils/form';
 import fields, { fieldsState } from './fields';
 
-export function form(state = {}, action) {
+function form(state = {}, action) {
   const { type, formKey, ...rest } = action;
   const {
     showValidationBeforeTouched = false,
@@ -40,4 +40,7 @@ export function form(state = {}, action) {
 
 export default reduceReducers(form, fields);
 
-const getFormState = state => getNextStateFromFieldsUpdated(state);
+export const getFormState = (state, formKey) => ({
+  ...state,
+  ...getNextStateFromFieldsUpdated(state && state[formKey]),
+});

@@ -152,6 +152,10 @@ export function commStatusPerPath(state, path, method) {
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
+
+export const getFormState = (state, formKey) =>
+  fromSession.getFormState(state && state.session, formKey);
+
 export function resourceFormState(state, resourceType, resourceId) {
   return fromSession.resourceFormState(
     state && state.session,

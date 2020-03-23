@@ -27,13 +27,14 @@ function action(type, payload = {}) {
 
 // #region this form specific source code, please be careful when making changes to the interface
 const form = {
-  formInit: formKey => action(actionTypes.FORM.INIT, { formKey }),
+  formInit: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, ...formSpecificProps }),
   formClear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   field: {
     registerField: formKey => fieldProps =>
-      action(actionTypes.FORM.FIELD.REGISTER, { fieldProps, formKey }),
+      action(actionTypes.FORM.FIELD.REGISTER, { formKey, ...fieldProps }),
     onFieldChange: formKey => (id, value) =>
-      action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, { id, value, formKey }),
+      action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, { formKey, id, value }),
     onFieldBlur: formKey => id =>
       action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, { formKey, id }),
     onFieldFocus: formKey => id =>
