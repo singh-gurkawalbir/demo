@@ -38,6 +38,7 @@ export default function FormFragment({ defaultFields, formKey }) {
   return (
     <Fragment>
       {defaultFields.map(field => {
+        // maybe .find may not be necessaery ..we can get the fieldState directly
         const fieldState = formState.fields.find(field.id);
 
         return (

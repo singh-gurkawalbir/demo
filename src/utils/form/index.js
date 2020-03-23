@@ -243,6 +243,7 @@ export const processFields = (
 };
 
 const fieldsByIdToFields = fieldsById => Object.values(fieldsById);
+const fieldHash = fieldProps => JSON.stringify(fieldProps);
 
 export const processFieldsUpdated = (
   fieldsById,
@@ -252,8 +253,7 @@ export const processFieldsUpdated = (
   const updatedFields = fieldsByIdToFields(fieldsById).map(field => {
     const { defaultValue, value, touched = false } = field;
     const processedValue = typeof value !== 'undefined' ? value : defaultValue;
-
-    return {
+    const updatedField = {
       ...field,
       touched: getTouchedStateForField(touched, resetTouchedState),
       value: processedValue,
@@ -261,6 +261,16 @@ export const processFieldsUpdated = (
       required: isRequired(field, fieldsById),
       disabled: formIsDisabled || isDisabled(field, fieldsById),
     };
+    const { value: fieldValue, visible, required, disabled } = updatedField;
+
+    updatedField.fieldKey = fieldHash({
+      value: fieldValue,
+      visible,
+      required,
+      disabled,
+    });
+
+    return updatedField;
   });
 
   return updatedFields;
