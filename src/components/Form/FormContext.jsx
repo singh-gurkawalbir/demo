@@ -9,5 +9,5 @@ export default function FormContext(props) {
     selectors.getFormState(state, formKey)
   );
 
-  return cloneElement(children, { ...formState, ...rest });
+  return cloneElement(children, { ...formState });
 }
