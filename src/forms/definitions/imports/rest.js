@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -7,9 +8,14 @@ export default {
     const lookup =
       lookups &&
       lookups.find(l => l.name === retValues['/rest/existingDataId']);
+    const sampleData = retValues['/sampleData'];
 
-    if (retValues['/sampleData'] === '') {
+    if (sampleData === '') {
       retValues['/sampleData'] = undefined;
+    } else {
+      retValues['/sampleData'] = isJsonString(sampleData)
+        ? JSON.parse(sampleData)
+        : undefined;
     }
 
     if (retValues['/inputMode'] === 'blob') {
@@ -181,6 +187,18 @@ export default {
     return {
       ...retValues,
     };
+  },
+  validationHandler: field => {
+    // Used to validate sampleData field
+    // Incase of invalid json throws error to be shown on the field
+    if (field && field.id === 'sampleData') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Sample Data must be a valid JSON';
+    }
   },
   optionsHandler: (fieldId, fields) => {
     if (
@@ -899,7 +917,9 @@ export default {
         },
       ],
     },
-    sampleData: { fieldId: 'sampleData' },
+    sampleData: {
+      fieldId: 'sampleData',
+    },
     dataMappings: {
       formId: 'dataMappings',
     },

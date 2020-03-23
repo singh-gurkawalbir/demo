@@ -288,6 +288,8 @@ const getResourceFormAssets = ({
   }
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
+  // Need to be revisited @Surya
+  const { validationHandler } = meta || {};
 
   if (
     [
@@ -311,6 +313,7 @@ const getResourceFormAssets = ({
     init,
     preSave,
     optionsHandler,
+    validationHandler,
   };
 };
 

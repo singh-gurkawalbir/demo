@@ -259,7 +259,6 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    saveMode: 'json',
     label: 'If so,please paste it here',
     visibleWhenAll: [
       {
@@ -271,5 +270,7 @@ export default {
         isNot: ['DELETE'],
       },
     ],
+    defaultValue: r =>
+      r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },
 };
