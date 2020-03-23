@@ -519,6 +519,8 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
   } = { ...profile, ...preferences };
 
   return {
@@ -533,13 +535,24 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
   };
 }
 
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
-// #endregion
+
+export function userProfileLinkedWithGoogle(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.auth_type_google &&
+    state.user.profile.auth_type_google.id
+  );
+}
+// #endregiod
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {

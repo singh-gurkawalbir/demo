@@ -18,6 +18,7 @@ import RefIcon from '../icons/ViewReferencesIcon';
 import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getTemplateUrlName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -67,6 +68,25 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
     return null;
   });
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template.applications);
+    }
+
+    return null;
+  });
   const [showAudit, setShowAudit] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -88,13 +108,20 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'schedule':
-          flowDetails._connectorId
-            ? history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
-              )
-            : history.push(
-                `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
-              );
+          if (flowDetails._connectorId) {
+            history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else if (templateName) {
+            history.push(
+              `/pg/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else {
+            history.push(
+              `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          }
+
           break;
 
         case 'clone':
@@ -153,6 +180,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       integrationAppName,
       integrationId,
       flowId,
+      templateName,
       dispatch,
       patchFlow,
     ]

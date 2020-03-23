@@ -146,7 +146,9 @@ function Dashboard() {
           Download integration
         </IconTextButton>
       </CeligoPageBar>
-      <LoadResources required resources="published,integrations,connections">
+      <LoadResources
+        required
+        resources="published,integrations,connections,marketplacetemplates">
         <div className={classes.container}>
           {sortedTiles.map(t => (
             <div key={t._ioConnectionId ? t._id : t._integrationId}>

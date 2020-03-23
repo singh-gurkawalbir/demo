@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-// import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import actions from '../../../../../actions';
-import DynaForm from '../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
-import LoadResources from '../../../../../components/LoadResources';
-import PanelHeader from '../../../../../components/PanelHeader';
+import * as selectors from '../../../../../../reducers';
+import actions from '../../../../../../actions';
+import DynaForm from '../../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
+import LoadResources from '../../../../../../components/LoadResources';
+import PanelHeader from '../../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {

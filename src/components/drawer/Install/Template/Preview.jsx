@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import { isEmpty } from 'lodash';
 import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -61,9 +60,8 @@ export default function TemplatePreview() {
   const template = useSelector(state =>
     selectors.marketplaceTemplate(state, templateId)
   );
-  const components = useSelector(state =>
-    selectors.previewTemplate(state, templateId)
-  );
+  const { objects: components } =
+    useSelector(state => selectors.previewTemplate(state, templateId)) || {};
 
   useEffect(() => {
     if (!template) {
@@ -71,7 +69,7 @@ export default function TemplatePreview() {
     }
   }, [dispatch, template]);
   useEffect(() => {
-    if (!components || (isEmpty(components) && !requested)) {
+    if (!components || !requested) {
       dispatch(actions.template.requestPreview(templateId));
       setRequested(true);
     }
@@ -81,6 +79,13 @@ export default function TemplatePreview() {
     return <Typography>Loading Template...</Typography>;
   }
 
+  const integration =
+    components && components.find(c => c.model === 'Integration');
+  const hasReadMe = !!(
+    integration &&
+    integration.doc &&
+    integration.doc.readme
+  );
   const { name, description, user } = template;
   const { name: username, company } = user || {};
   const installTemplate = () => {
@@ -99,6 +104,19 @@ export default function TemplatePreview() {
     } else {
       dispatch(actions.template.createComponents(templateId));
     }
+  };
+
+  const handleReadMeClick = () => {
+    confirmDialog({
+      title: 'ReadMe',
+      isHtml: true,
+      message: integration.doc.readme,
+      buttons: [
+        {
+          label: 'Ok',
+        },
+      ],
+    });
   };
 
   const handleInstallIntegration = () => {
@@ -161,6 +179,15 @@ export default function TemplatePreview() {
           <br />
           <Typography>Company: </Typography>
           <Typography>{company}</Typography>
+          <br />
+          {hasReadMe && (
+            <Button
+              color="primary"
+              variant="outlined"
+              onClick={handleReadMeClick}>
+              View ReadMe
+            </Button>
+          )}
         </div>
 
         <div className={classes.componentPreview}>
