@@ -141,6 +141,12 @@ export const getFormattedResourceForPreview = resourceObj => {
     }
   }
 
+  if (resource && resource.type === 'delta') {
+    resource.postData = {
+      lastExportDateTime: getLastExportDateTime(),
+    };
+  }
+
   return resource;
 };
 
