@@ -1,6 +1,7 @@
 import qs from 'qs';
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ReactResizeDetector from 'react-resize-detector';
 import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
@@ -30,6 +31,13 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
+  formContainer: {
+    padding: theme.spacing(3),
+    paddingTop: 0,
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+  },
   form: {
     height: `calc(100vh - 136px)`,
     width: props => {
@@ -38,7 +46,7 @@ const useStyles = makeStyles(theme => ({
       return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: theme.spacing(3),
+    padding: 0,
   },
   appLogo: {
     paddingRight: '25px',
@@ -87,6 +95,11 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const resForm = useRef(null);
+  const [resourceFormStyle, setResourceFormStyle] = useState({
+    height: `calc(100vh - 136px)`,
+    paddingTop: 24,
+  });
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
   );
@@ -288,6 +301,13 @@ export default function Panel(props) {
     title = 'Create source';
   }
 
+  const resize = useCallback((width, height) => {
+    setResourceFormStyle({
+      height: `calc(100vh - 136px - ${height}px)`,
+      paddingTop: height ? 0 : 24,
+    });
+  }, []);
+
   return (
     <Fragment>
       <div className={classes.root}>
@@ -309,27 +329,34 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          {(resourceType === 'exports' || resourceType === 'imports') && (
-            <OfflineConnectionNotification
+          <div className={classes.formContainer}>
+            <div>
+              {(resourceType === 'exports' || resourceType === 'imports') && (
+                <OfflineConnectionNotification
+                  resourceType={resourceType}
+                  resourceId={id}
+                />
+              )}
+              {resourceType === 'connections' && (
+                <ConnectionNotification connectionId={id} />
+              )}
+              <ReactResizeDetector handleWidth handleHeight onResize={resize} />
+            </div>
+            <ResourceForm
+              style={resourceFormStyle}
+              ref={resForm}
+              className={classes.form}
+              variant={match.isExact ? 'edit' : 'view'}
+              isNew={isNew}
               resourceType={resourceType}
               resourceId={id}
+              cancelButtonLabel="Cancel"
+              submitButtonLabel={submitButtonLabel}
+              onSubmitComplete={handleSubmitComplete}
+              onCancel={abortAndClose}
+              {...props}
             />
-          )}
-          {resourceType === 'connections' && (
-            <ConnectionNotification connectionId={id} />
-          )}
-          <ResourceForm
-            className={classes.form}
-            variant={match.isExact ? 'edit' : 'view'}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            onSubmitComplete={handleSubmitComplete}
-            onCancel={abortAndClose}
-            {...props}
-          />
+          </div>
         </LoadResources>
       </div>
 
