@@ -81,7 +81,7 @@ export default function ConnectionNotification(props) {
   useEffect(() => {
     if ([PING_STATES.ERROR, PING_STATES.SUCCESS].includes(testConnectionStatus))
       setPingStatus(testConnectionStatus);
-  }, [pingStatus, testConnectionStatus]);
+  }, [testConnectionStatus]);
 
   const { variant, statusMsg } = getStatusVariantAndMessage({
     connectionRequestStatus,
