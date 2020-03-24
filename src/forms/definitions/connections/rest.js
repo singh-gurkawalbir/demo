@@ -31,8 +31,9 @@ export default {
     }
 
     if (newValues['/rest/authType'] !== 'basic') {
-      newValues['/rest/basicAuth/username'] = undefined;
-      newValues['/rest/basicAuth/password'] = undefined;
+      delete newValues['/rest/basicAuth/username'];
+      delete newValues['/rest/basicAuth/password'];
+      newValues['/rest/basicAuth'] = undefined;
     }
 
     if (

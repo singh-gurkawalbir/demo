@@ -23,7 +23,19 @@ export default {
       resourceId,
       resourceName,
       flowId,
+      isComposite,
     } = options;
+    let conditionalWhenOptions = isProduction()
+      ? conditionalLookupOptionsforRestProduction
+      : conditionalLookupOptionsforRest;
+
+    if (!isComposite) {
+      conditionalWhenOptions = conditionalWhenOptions.slice(
+        2,
+        conditionalWhenOptions.length + 1
+      );
+    }
+
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -447,13 +459,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
-          options: [
-            {
-              items: isProduction()
-                ? conditionalLookupOptionsforRestProduction
-                : conditionalLookupOptionsforRest,
-            },
-          ],
+          options: [{ items: conditionalWhenOptions }],
         },
 
         'conditional.lookupName': {
