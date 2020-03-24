@@ -65,7 +65,7 @@ export default function ConnectionNotification(props) {
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
 
     return () => {
-      console.log('Refresh');
+      dispatch(actions.resource.connections.testClear(connectionId));
     };
   }, [connectionId, dispatch]);
   const isConnectionOffline = useSelector(
