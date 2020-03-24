@@ -568,7 +568,7 @@ export default {
   },
   skipRetries: {
     type: 'checkbox',
-    label: 'Skip Retries',
+    label: 'Do not store retry data',
     visible: r => !(r && r.isLookup),
   },
   settings: {
