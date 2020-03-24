@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
@@ -20,6 +20,34 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
+const getStatusVariantAndMessage = ({
+  connectionRequestStatus,
+  isConnectionFixFromImpExp,
+  isConnectionOffline,
+  testConnectionStatus,
+}) => {
+  if (testConnectionStatus === PING_STATES.ERROR) {
+    return {
+      variant: 'error',
+      statusMsg:
+        'Your test was not successful. Check your information and try again',
+    };
+  } else if (testConnectionStatus === PING_STATES.SUCCESS) {
+    return {
+      variant: 'success',
+      statusMsg: 'Your connection is working great! Nice Job!',
+    };
+  } else if (connectionRequestStatus !== 'requested' && isConnectionOffline) {
+    return {
+      variant: 'error',
+      statusMsg: isConnectionFixFromImpExp
+        ? ' Review and test this form to bring your connections back online.'
+        : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+    };
+  }
+
+  return {};
+};
 
 export default function ConnectionNotification(props) {
   const { connectionId } = props;
@@ -28,7 +56,6 @@ export default function ConnectionNotification(props) {
   const queryParams = new URLSearchParams(useLocation().search);
   const isConnectionFixFromImpExp =
     queryParams.get('fixConnnection') === 'true';
-  const [pingStatus, setPingStatus] = useState();
 
   useEffect(() => {
     // clear previously stored test result
@@ -45,43 +72,12 @@ export default function ConnectionNotification(props) {
   const testConnectionStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
-
-  useEffect(() => {
-    if ([PING_STATES.ERROR, PING_STATES.SUCCESS].includes(testConnectionStatus))
-      setPingStatus(testConnectionStatus);
-  }, [pingStatus, testConnectionStatus]);
-
-  const getStatusVariantAndMessage = useCallback(() => {
-    let returnVal = {};
-
-    if (pingStatus === PING_STATES.ERROR) {
-      returnVal = {
-        variant: 'error',
-        statusMsg:
-          'Your test was not successful. Check your information and try again',
-      };
-    } else if (pingStatus === PING_STATES.SUCCESS) {
-      returnVal = {
-        variant: 'success',
-        statusMsg: 'Your connection is working great! Nice Job!',
-      };
-    } else if (connectionRequestStatus !== 'requested' && isConnectionOffline) {
-      returnVal = {
-        variant: 'error',
-        statusMsg: isConnectionFixFromImpExp
-          ? ' Review and test this form to bring your connections back online.'
-          : 'The connection is currently offline. Review and test this form to bring your connection back online.',
-      };
-    }
-
-    return returnVal;
-  }, [
+  const { variant, statusMsg } = getStatusVariantAndMessage({
     connectionRequestStatus,
     isConnectionFixFromImpExp,
     isConnectionOffline,
-    pingStatus,
-  ]);
-  const { variant, statusMsg } = getStatusVariantAndMessage();
+    testConnectionStatus,
+  });
 
   if (!statusMsg) {
     return null;
