@@ -94,7 +94,6 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const resForm = useRef(null);
   const [resourceFormStyle, setResourceFormStyle] = useState({
     height: `calc(100vh - 136px)`,
     paddingTop: 24,
@@ -340,7 +339,6 @@ export default function Panel(props) {
             </div>
             <ResourceForm
               style={resourceFormStyle}
-              ref={resForm}
               className={classes.form}
               variant={match.isExact ? 'edit' : 'view'}
               isNew={isNew}
