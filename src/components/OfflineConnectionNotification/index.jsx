@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
@@ -24,8 +24,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
 }));
-const CONN_OFFLINE_TEXT =
-  'The connection associated with this export is currently offline and configuration is limited';
 
 export default function OfflineConnectionNotification(props) {
   const { resourceId, resourceType } = props;
@@ -50,22 +48,24 @@ export default function OfflineConnectionNotification(props) {
   const connectionOffline = useSelector(
     state => selectors.connectionStatus(state, connectionId).offline
   );
-
-  if (!connectionOffline) {
-    return null;
-  }
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     history.push(
       `${
         match.path.split(':')[0]
       }edit/connections/${connectionId}?fixConnnection=true`
     );
-  };
+  }, [connectionId, history, match.path]);
+
+  if (!connectionOffline) {
+    return null;
+  }
 
   return (
     <ShowStatus variant="warning" className={classes.snackbarContent}>
-      <Typography variant="h6">{CONN_OFFLINE_TEXT}</Typography>
+      <Typography variant="h6">
+        The connection associated with this export is currently offline and
+        configuration is limited
+      </Typography>
       <Typography variant="h6">
         <Button
           data-test="fixConnection"
