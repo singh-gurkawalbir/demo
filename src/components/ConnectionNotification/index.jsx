@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
@@ -24,15 +24,15 @@ const getStatusVariantAndMessage = ({
   connectionRequestStatus,
   isConnectionFixFromImpExp,
   isConnectionOffline,
-  testConnectionStatus,
+  pingStatus,
 }) => {
-  if (testConnectionStatus === PING_STATES.ERROR) {
+  if (pingStatus === PING_STATES.ERROR) {
     return {
       variant: 'error',
       statusMsg:
         'Your test was not successful. Check your information and try again',
     };
-  } else if (testConnectionStatus === PING_STATES.SUCCESS) {
+  } else if (pingStatus === PING_STATES.SUCCESS) {
     return {
       variant: 'success',
       statusMsg: 'Your connection is working great! Nice Job!',
@@ -56,6 +56,7 @@ export default function ConnectionNotification(props) {
   const queryParams = new URLSearchParams(useLocation().search);
   const isConnectionFixFromImpExp =
     queryParams.get('fixConnnection') === 'true';
+  const [pingStatus, setPingStatus] = useState();
 
   useEffect(() => {
     // clear previously stored test result
@@ -63,7 +64,9 @@ export default function ConnectionNotification(props) {
     // ping to get connection status
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
 
-    return () => dispatch(actions.resource.connections.testClear(connectionId));
+    return () => {
+      console.log('Refresh');
+    };
   }, [connectionId, dispatch]);
   const isConnectionOffline = useSelector(
     state => selectors.connectionStatus(state, connectionId).offline
@@ -74,11 +77,17 @@ export default function ConnectionNotification(props) {
   const testConnectionStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
+
+  useEffect(() => {
+    if ([PING_STATES.ERROR, PING_STATES.SUCCESS].includes(testConnectionStatus))
+      setPingStatus(testConnectionStatus);
+  }, [pingStatus, testConnectionStatus]);
+
   const { variant, statusMsg } = getStatusVariantAndMessage({
     connectionRequestStatus,
     isConnectionFixFromImpExp,
     isConnectionOffline,
-    testConnectionStatus,
+    pingStatus,
   });
 
   if (!statusMsg) {
