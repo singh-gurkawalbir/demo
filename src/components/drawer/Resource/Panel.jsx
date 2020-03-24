@@ -282,24 +282,19 @@ export default function Panel(props) {
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
   const getTitle = useCallback(() => {
-    let _title = '';
+    if (resourceType === 'pageGenerator') {
+      return 'Create source';
+    }
+
     const queryParams = new URLSearchParams(location.search);
     const isConnectionFixFromImpExp =
       queryParams.get('fixConnnection') === 'true';
 
     if (isConnectionFixFromImpExp && resourceType === 'connections') {
-      _title = `Fix offline connection`;
-    } else {
-      _title = `${
-        isNewId(id) ? `Create` : 'Edit'
-      } ${resourceLabel.toLowerCase()}`;
+      return `Fix offline connection`;
     }
 
-    if (resourceType === 'pageGenerator') {
-      _title = 'Create source';
-    }
-
-    return _title;
+    return `${isNewId(id) ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
   }, [id, location.search, resourceLabel, resourceType]);
   const title = getTitle();
   const resize = useCallback((width, height) => {

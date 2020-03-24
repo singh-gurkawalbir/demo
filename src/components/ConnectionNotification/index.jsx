@@ -62,6 +62,8 @@ export default function ConnectionNotification(props) {
     dispatch(actions.resource.connections.testClear(connectionId));
     // ping to get connection status
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+
+    return () => dispatch(actions.resource.connections.testClear(connectionId));
   }, [connectionId, dispatch]);
   const isConnectionOffline = useSelector(
     state => selectors.connectionStatus(state, connectionId).offline
