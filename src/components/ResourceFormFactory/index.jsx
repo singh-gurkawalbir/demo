@@ -80,13 +80,13 @@ const getConnectionType = resource => {
 };
 
 export function ActionsFactory(props) {
-  const { resource, resourceType, isNew, variant = 'edit' } = props;
+  const { resource, resourceType, isNew, actionVariant = 'edit' } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
 
   // console.log('render: <ActionsFactory>');
 
-  if (variant === 'view') {
+  if (actionVariant === 'view') {
     return <DynaForm {...props} />;
   }
 
@@ -132,6 +132,7 @@ export function ActionsFactory(props) {
 
 export const FormStateManager = props => {
   const { formState, fieldMeta, onSubmitComplete } = props;
+  const { variant, ...otherProps } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
 
@@ -162,7 +163,8 @@ export const FormStateManager = props => {
   return (
     <ActionsFactory
       onCancel={remountForm}
-      {...props}
+      actionVariant={variant}
+      {...otherProps}
       {...formState}
       key={count}
     />

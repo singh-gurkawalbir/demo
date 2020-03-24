@@ -1,8 +1,7 @@
-import qs from 'qs';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -26,14 +25,9 @@ export default function ConnectionNotification(props) {
   const { connectionId } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
-  const history = useHistory();
-  const queryParams = qs.parse(history.location.search, {
-    delimiter: /[?&]/,
-    depth: 0,
-  });
-  const isConnectionFixFromImpExp = !!(
-    queryParams && queryParams.fixConnnection === 'true'
-  );
+  const queryParams = new URLSearchParams(useLocation().search);
+  const isConnectionFixFromImpExp =
+    queryParams.get('fixConnnection') === 'true';
   const [pingStatus, setPingStatus] = useState();
 
   useEffect(() => {
@@ -53,33 +47,45 @@ export default function ConnectionNotification(props) {
   );
 
   useEffect(() => {
-    if (
-      pingStatus === undefined &&
-      (testConnectionStatus === PING_STATES.ERROR ||
-        testConnectionStatus === PING_STATES.SUCCESS)
-    )
+    if ([PING_STATES.ERROR, PING_STATES.SUCCESS].includes(testConnectionStatus))
       setPingStatus(testConnectionStatus);
   }, [pingStatus, testConnectionStatus]);
-  let variant;
-  let statusMsg = '';
 
-  if (pingStatus === PING_STATES.ERROR) {
-    variant = 'error';
-    statusMsg =
-      'Your test was not successful. Check your information and try again';
-  } else if (pingStatus === PING_STATES.SUCCESS) {
-    variant = 'success';
-    statusMsg = 'Your connection is working great! Nice Job!';
-  } else if (
-    connectionRequestStatus !== 'requested' &&
-    isConnectionOffline !== undefined &&
-    isConnectionOffline
-  ) {
-    variant = 'error';
-    statusMsg = isConnectionFixFromImpExp
-      ? ' Review and test this form to bring your connections back online.'
-      : 'The connection is currently offline. Review and test this form to bring your connection back online.';
-  } else return null;
+  const getStatusVariantAndMessage = useCallback(() => {
+    let returnVal = {};
+
+    if (pingStatus === PING_STATES.ERROR) {
+      returnVal = {
+        variant: 'error',
+        statusMsg:
+          'Your test was not successful. Check your information and try again',
+      };
+    } else if (pingStatus === PING_STATES.SUCCESS) {
+      returnVal = {
+        variant: 'success',
+        statusMsg: 'Your connection is working great! Nice Job!',
+      };
+    } else if (connectionRequestStatus !== 'requested' && isConnectionOffline) {
+      returnVal = {
+        variant: 'error',
+        statusMsg: isConnectionFixFromImpExp
+          ? ' Review and test this form to bring your connections back online.'
+          : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+      };
+    }
+
+    return returnVal;
+  }, [
+    connectionRequestStatus,
+    isConnectionFixFromImpExp,
+    isConnectionOffline,
+    pingStatus,
+  ]);
+  const { variant, statusMsg } = getStatusVariantAndMessage();
+
+  if (!statusMsg) {
+    return null;
+  }
 
   return (
     <div className={classes.contentWrapper}>

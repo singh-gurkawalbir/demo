@@ -1,4 +1,3 @@
-import qs from 'qs';
 import { Fragment, useCallback, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
@@ -282,13 +281,9 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  const queryParams = qs.parse(props.history.location.search, {
-    delimiter: /[?&]/,
-    depth: 0,
-  });
-  const isConnectionFixFromImpExp = !!(
-    queryParams && queryParams.fixConnnection === 'true'
-  );
+  const queryParams = new URLSearchParams(location.search);
+  const isConnectionFixFromImpExp =
+    queryParams.get('fixConnnection') === 'true';
   let title = '';
 
   if (isConnectionFixFromImpExp && resourceType === 'connections') {

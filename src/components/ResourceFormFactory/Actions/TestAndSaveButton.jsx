@@ -181,7 +181,7 @@ const TestAndSaveButton = props => {
         size="small"
         variant="outlined"
         color="primary">
-        {label || 'Test and Save'}
+        {label || 'Save'}
       </DynaAction>
     </Fragment>
   );

@@ -146,10 +146,7 @@ class PingSnackbar extends React.Component {
       onHandleCancelTask
     );
 
-    if (
-      !commState ||
-      ![PING_STATES.LOADING, PING_STATES.ERROR].includes(commState)
-    )
+    if (![PING_STATES.LOADING, PING_STATES.ERROR].includes(commState))
       return null;
 
     return (

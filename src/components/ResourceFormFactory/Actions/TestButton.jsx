@@ -65,9 +65,9 @@ const TestButton = props => {
         onClick={handleTestConnection}
         className={classes.actionButton}
         size="small"
-        variant="contained"
+        variant="outlined"
         color="secondary">
-        {label || 'Test'}
+        {label || 'Test connection'}
       </DynaAction>
     </Fragment>
   );
