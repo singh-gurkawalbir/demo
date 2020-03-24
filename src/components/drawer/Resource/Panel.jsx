@@ -281,21 +281,27 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  const queryParams = new URLSearchParams(location.search);
-  const isConnectionFixFromImpExp =
-    queryParams.get('fixConnnection') === 'true';
-  let title = '';
+  const getTitle = useCallback(() => {
+    let _title = '';
+    const queryParams = new URLSearchParams(location.search);
+    const isConnectionFixFromImpExp =
+      queryParams.get('fixConnnection') === 'true';
 
-  if (isConnectionFixFromImpExp && resourceType === 'connections') {
-    title = `Fix offline connection`;
-  } else {
-    title = `${isNewId(id) ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
-  }
+    if (isConnectionFixFromImpExp && resourceType === 'connections') {
+      _title = `Fix offline connection`;
+    } else {
+      _title = `${
+        isNewId(id) ? `Create` : 'Edit'
+      } ${resourceLabel.toLowerCase()}`;
+    }
 
-  if (resourceType === 'pageGenerator') {
-    title = 'Create source';
-  }
+    if (resourceType === 'pageGenerator') {
+      _title = 'Create source';
+    }
 
+    return _title;
+  }, [id, location.search, resourceLabel, resourceType]);
+  const title = getTitle();
   const resize = useCallback((width, height) => {
     setResourceFormStyle({
       height: `calc(100vh - 136px - ${height}px)`,
