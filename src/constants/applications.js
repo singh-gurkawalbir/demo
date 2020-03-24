@@ -202,7 +202,7 @@ const connectors = [
   { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'Bronto', type: 'rest', assistant: 'bronto' },
-  { id: 'redshift', name: 'Redshift', type: 'http', assistant: 'redshift' },
+  { id: 'redshift', name: 'Amazon Redshift', type: 'http', assistant: 'redshift' },
   {
     id: 'campaignmonitor',
     name: 'Campaign Monitor',
