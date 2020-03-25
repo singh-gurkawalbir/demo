@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import TextField from '@material-ui/core/TextField';
+import { useEffect, useRef, Fragment, useCallback, useState } from 'react';
+import Button from '@material-ui/core/Button';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import actions from '../../../actions';
 import {
   getFileReaderOptions,
@@ -10,6 +12,15 @@ import {
   getUploadedFileStatus,
 } from '../../../utils/file';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+
+const useStyles = makeStyles(theme => ({
+  fileInput: {
+    display: 'none',
+  },
+  blockButton: {
+    marginRight: theme.spacing(2),
+  },
+}));
 
 function DynaUploadFile(props) {
   const {
@@ -22,13 +33,15 @@ function DynaUploadFile(props) {
     name,
     resourceId,
     resourceType,
-    placeholder,
     required,
     label,
     formContext,
     onFieldChange,
   } = props;
   const dispatch = useDispatch();
+  const fileInput = useRef(null);
+  const [fileName, setFileName] = useState();
+  const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   /*
    * File types supported for upload are CSV, XML, XLSX and JSON
@@ -42,6 +55,8 @@ function DynaUploadFile(props) {
       const { success, error } = getCsvFromXlsx(fileContent);
 
       if (!success) {
+        setFileName('');
+
         return enqueueSnackbar({
           message: error,
           variant: 'error',
@@ -54,6 +69,8 @@ function DynaUploadFile(props) {
       const { success, error, data } = getJSONContent(fileContent);
 
       if (!success) {
+        setFileName('');
+
         return enqueueSnackbar({
           message: error,
           variant: 'error',
@@ -108,6 +125,7 @@ function DynaUploadFile(props) {
       });
     }
 
+    setFileName(file.name);
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 
@@ -121,21 +139,37 @@ function DynaUploadFile(props) {
     }
   };
 
+  const handleClick = useCallback(() => {
+    fileInput.current.click();
+  }, []);
+
   return (
-    <TextField
-      InputLabelProps={{ shrink: true }}
-      key={id + options}
-      name={name}
-      data-test={id}
-      label={label}
-      type="file"
-      placeholder={placeholder}
-      disabled={disabled}
-      required={required}
-      helperText={isValid ? description : errorMessages}
-      error={!isValid}
-      onChange={handleFileChosen}
-    />
+    <Fragment>
+      <label htmlFor="fileUpload">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleClick}
+          key={id + options}
+          name={name}
+          disabled={disabled}
+          required={required}
+          data-test={id}
+          helperText={isValid ? description : errorMessages}
+          error={!isValid}>
+          Choose File
+        </Button>
+        <input
+          data-test="uploadFile"
+          id="fileUpload"
+          type="file"
+          ref={fileInput}
+          className={classes.fileInput}
+          onChange={handleFileChosen}
+        />
+      </label>
+      <Typography> {fileName} </Typography>
+    </Fragment>
   );
 }
 
