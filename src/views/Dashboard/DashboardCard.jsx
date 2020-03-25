@@ -1,13 +1,16 @@
 import { useCallback, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
+import { isEqual } from 'lodash';
+import { userPreferences } from '../../reducers';
 import actions from '../../actions';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
 
 export default function DashboardCard({ sortedTiles }) {
   const dispatch = useDispatch();
+  const preferences = useSelector(state => userPreferences(state));
   const [dashboardTiles, setDashboardTiles] = useState(sortedTiles);
 
   useEffect(() => {
@@ -30,13 +33,22 @@ export default function DashboardCard({ sortedTiles }) {
   );
   // On Drop of tile, update the preferences with the updatedTilesOrder
   const handleDrop = useCallback(() => {
+    if (isEqual(sortedTiles, dashboardTiles)) return;
     const updatedTilesOrder = dashboardTiles.map(tile =>
       tile._ioConnectionId ? tile._id : tile._integrationId
     );
-    const dashboard = { tilesOrder: updatedTilesOrder };
+    const dashboard = {
+      ...preferences.dashboard,
+      tilesOrder: updatedTilesOrder,
+    };
 
-    dispatch(actions.user.preferences.update({ dashboard }));
-  }, [dashboardTiles, dispatch]);
+    dispatch(
+      actions.user.preferences.update({
+        ...preferences,
+        dashboard,
+      })
+    );
+  }, [dashboardTiles, dispatch, preferences, sortedTiles]);
 
   return (
     <DndProvider backend={HTML5Backend}>
