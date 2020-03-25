@@ -82,3 +82,41 @@ export function suiteScriptTileName(tile) {
 
   return name;
 }
+
+export const dragTileConfig = (index, onDrop) => ({
+  item: { type: 'TILE', index },
+  collect: monitor => ({
+    isDragging: monitor.isDragging(),
+  }),
+  end: dropResult => {
+    if (dropResult) {
+      onDrop();
+    }
+  },
+
+  canDrag: true,
+});
+
+export const dropTileConfig = (ref, index, onMove) => ({
+  accept: 'TILE',
+  hover(item) {
+    if (!ref.current) {
+      return;
+    }
+
+    const dragIndex = item.index;
+    const hoverIndex = index;
+
+    // Don't replace items with themselves
+    if (dragIndex === hoverIndex) {
+      return;
+    }
+
+    onMove(dragIndex, hoverIndex);
+    // eslint-disable-next-line no-param-reassign
+    item.index = hoverIndex;
+  },
+  collect: monitor => ({
+    isOver: monitor.isOver(),
+  }),
+});

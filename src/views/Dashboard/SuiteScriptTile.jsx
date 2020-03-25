@@ -19,7 +19,12 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, suiteScriptTileName } from './util';
+import {
+  tileStatus,
+  suiteScriptTileName,
+  dragTileConfig,
+  dropTileConfig,
+} from './util';
 import getRoutePath from '../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
@@ -107,42 +112,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   );
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
-  const [, drop] = useDrop({
-    accept: 'TILE',
-    hover(item) {
-      if (!ref.current) {
-        return;
-      }
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      onMove(dragIndex, hoverIndex);
-      // eslint-disable-next-line no-param-reassign
-      item.index = hoverIndex;
-    },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-    }),
-  });
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: 'TILE', index },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    end: dropResult => {
-      if (dropResult) {
-        onDrop();
-      }
-    },
-
-    canDrag: true,
-  });
+  const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
+  // Opacity to blur selected tile
   const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
