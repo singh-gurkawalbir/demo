@@ -1,6 +1,7 @@
-import { useCallback, Fragment, useState } from 'react';
+import { useCallback, Fragment, useState, useRef } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, Button } from '@material-ui/core';
+import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -23,7 +24,7 @@ import getRoutePath from '../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
 
-function SuiteScriptTile({ tile, history }) {
+function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
@@ -104,6 +105,47 @@ function SuiteScriptTile({ tile, history }) {
     },
     [isNotYetSupported]
   );
+  const ref = useRef(null);
+  // isOver is set to true when hover happens over component
+  const [, drop] = useDrop({
+    accept: 'TILE',
+    hover(item) {
+      if (!ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      onMove(dragIndex, hoverIndex);
+      // eslint-disable-next-line no-param-reassign
+      item.index = hoverIndex;
+    },
+    collect: monitor => ({
+      isOver: monitor.isOver(),
+    }),
+  });
+  const [{ isDragging }, drag] = useDrag({
+    item: { type: 'TILE', index },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
+    }),
+    end: dropResult => {
+      if (dropResult) {
+        onDrop();
+      }
+    },
+
+    canDrag: true,
+  });
+  const opacity = isDragging ? 0.2 : 1;
+
+  drag(drop(ref));
 
   return (
     <Fragment>
@@ -124,72 +166,74 @@ function SuiteScriptTile({ tile, history }) {
           </Button>
         </ModalDialog>
       )}
-      <HomePageCardContainer onClick={handleTileClick}>
-        <Header>
-          <Status label={status.label} onClick={handleStatusClick}>
-            <StatusCircle variant={status.variant} />
-          </Status>
-        </Header>
-        <Content>
-          <CardTitle>
-            <Typography variant="h3">
-              <Link
-                color="inherit"
-                to={getRoutePath(urlToIntegrationSettings)}
-                onClick={handleLinkClick}>
-                {suiteScriptTileName(tile)}
-              </Link>
-            </Typography>
-          </CardTitle>
-          {tile.connector &&
-            tile.connector.applications &&
-            tile.connector.applications.length > 1 && (
-              <ApplicationImages>
-                <ApplicationImg type={tile.connector.applications[0]} />
-                <span>
-                  <AddIcon />
-                </span>
-                <ApplicationImg type={tile.connector.applications[1]} />
-              </ApplicationImages>
-            )}
-        </Content>
-        <Footer>
-          <FooterActions>
-            {accessLevel && (
-              <Manage>
-                {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                  <Tooltip
-                    title="You have monitor permissions"
-                    placement="bottom">
-                    <Link
-                      color="inherit"
-                      to={getRoutePath(urlToIntegrationSettings)}
-                      onClick={handleLinkClick}>
-                      <PermissionsMonitorIcon />
-                    </Link>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    title="You have manage permissions"
-                    placement="bottom">
-                    <Link
-                      color="inherit"
-                      to={getRoutePath(urlToIntegrationSettings)}
-                      onClick={handleLinkClick}>
-                      <PermissionsManageIcon />
-                    </Link>
-                  </Tooltip>
-                )}
-              </Manage>
-            )}
-            {tile.tag && <Tag variant={`NS Account #${tile.tag}`} />}
-          </FooterActions>
-          <Info
-            variant={tile._connectorId ? 'Integration app' : 'Legacy'}
-            label={tile.connector && tile.connector.owner}
-          />
-        </Footer>
-      </HomePageCardContainer>
+      <div style={{ opacity }} ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick}>
+          <Header>
+            <Status label={status.label} onClick={handleStatusClick}>
+              <StatusCircle variant={status.variant} />
+            </Status>
+          </Header>
+          <Content>
+            <CardTitle>
+              <Typography variant="h3">
+                <Link
+                  color="inherit"
+                  to={getRoutePath(urlToIntegrationSettings)}
+                  onClick={handleLinkClick}>
+                  {suiteScriptTileName(tile)}
+                </Link>
+              </Typography>
+            </CardTitle>
+            {tile.connector &&
+              tile.connector.applications &&
+              tile.connector.applications.length > 1 && (
+                <ApplicationImages>
+                  <ApplicationImg type={tile.connector.applications[0]} />
+                  <span>
+                    <AddIcon />
+                  </span>
+                  <ApplicationImg type={tile.connector.applications[1]} />
+                </ApplicationImages>
+              )}
+          </Content>
+          <Footer>
+            <FooterActions>
+              {accessLevel && (
+                <Manage>
+                  {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
+                    <Tooltip
+                      title="You have monitor permissions"
+                      placement="bottom">
+                      <Link
+                        color="inherit"
+                        to={getRoutePath(urlToIntegrationSettings)}
+                        onClick={handleLinkClick}>
+                        <PermissionsMonitorIcon />
+                      </Link>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      title="You have manage permissions"
+                      placement="bottom">
+                      <Link
+                        color="inherit"
+                        to={getRoutePath(urlToIntegrationSettings)}
+                        onClick={handleLinkClick}>
+                        <PermissionsManageIcon />
+                      </Link>
+                    </Tooltip>
+                  )}
+                </Manage>
+              )}
+              {tile.tag && <Tag variant={`NS Account #${tile.tag}`} />}
+            </FooterActions>
+            <Info
+              variant={tile._connectorId ? 'Integration app' : 'Legacy'}
+              label={tile.connector && tile.connector.owner}
+            />
+          </Footer>
+        </HomePageCardContainer>
+      </div>
     </Fragment>
   );
 }
