@@ -1,11 +1,11 @@
 import clsx from 'clsx';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, IconButton } from '@material-ui/core';
+import { Typography, Grid, IconButton, Chip } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
@@ -14,13 +14,20 @@ import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 // import DataloaderIcon from '../../../../components/icons/DataLoaderIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
-import InfoIconButton from '../InfoIconButton';
+import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import Spinner from '../../../../components/Spinner';
+import { getTemplateUrlName } from '../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     margin: theme.spacing(1, 2),
+  },
+  freeTag: {
+    margin: theme.spacing(1),
+    color: theme.palette.background.paper,
   },
   flowLink: {
     display: 'inline',
@@ -71,6 +78,24 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const isLicenseValidToEnableFlow = useSelector(
+    state => selectors.isLicenseValidToEnableFlow(state),
+    (left, right) =>
+      left.message === right.message && left.enable === right.enable
+  );
+  const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
+  const { onOffInProgress } = useSelector(
+    state => selectors.isOnOffInProgress(state, flowId),
+    (left, right) => left.onOffInProgress === right.onOffInProgress
+  );
+  // TODO: Ashok, Need to  move OnOff functionality to component level.
+
+  useEffect(() => {
+    if (!onOffInProgress) {
+      setOnOffInProgressStatus(false);
+    }
+  }, [dispatch, onOffInProgress]);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const isDataloader = flowDetails.isSimpleImport;
@@ -87,13 +112,36 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
 
     return '';
   });
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      flowDetails && flowDetails._integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const { defaultConfirmDialog } = useConfirmDialog();
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
 
       dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
+      dispatch(
+        actions.resource.commitStaged('flows', flowId, 'value', {
+          action: 'flowEnableDisable',
+        })
+      );
     },
     [dispatch, flowId]
   );
@@ -109,6 +157,11 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           `/pg/integrationapps/${integrationAppName}/${flowDetails._integrationId}/dashboard`
         );
       }
+    } else if (templateName) {
+      history.push(
+        `/pg/templates/${templateName}/${flowDetails._integrationId ||
+          'none'}/dashboard`
+      );
     } else {
       history.push(
         `/pg/integrations/${flowDetails._integrationId || 'none'}/dashboard`
@@ -120,12 +173,15 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
     history,
     integrationAppName,
     storeId,
+    templateName,
   ]);
   const handleDisableClick = useCallback(() => {
     defaultConfirmDialog(
       `${flowDetails.disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
         if (flowDetails._connectorId) {
+          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
+          setOnOffInProgressStatus(true);
           dispatch(
             actions.integrationApp.settings.update(
               flowDetails._integrationId,
@@ -140,6 +196,22 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
             )
           );
         } else {
+          if (
+            flowDetails.disabled &&
+            !flowDetails.free &&
+            !flowDetails.isSimpleImport
+          ) {
+            if (!isLicenseValidToEnableFlow.enable) {
+              return enqueueSnackbar({
+                message: isLicenseValidToEnableFlow.message,
+                variant: 'error',
+              });
+            }
+          }
+
+          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
+          setOnOffInProgressStatus(true);
+
           patchFlow('/disabled', !flowDetails.disabled);
         }
       }
@@ -147,11 +219,17 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   }, [
     defaultConfirmDialog,
     dispatch,
+    enqueueSnackbar,
     flowDetails._connectorId,
     flowDetails._id,
     flowDetails._integrationId,
     flowDetails.disabled,
+    flowDetails.free,
+    flowDetails.isSimpleImport,
+    flowId,
     flowName,
+    isLicenseValidToEnableFlow.enable,
+    isLicenseValidToEnableFlow.message,
     patchFlow,
     storeId,
   ]);
@@ -197,8 +275,16 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
                 {name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
+            {flowDetails.free && (
+              <Chip
+                label="Free"
+                color="primary"
+                size="small"
+                className={classes.freeTag}
+              />
+            )}
 
-            <InfoIconButton info={description} />
+            <InfoIconButton info={description} size="xs" />
           </div>
           <Typography variant="caption" component="span">
             {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
@@ -213,7 +299,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
               Data loader
             </Typography>
           )}
-          {!flowDetails.disableSlider && (
+          {!flowDetails.disableSlider && onOffInProgressStatus && <Spinner />}
+          {!flowDetails.disableSlider && !onOffInProgressStatus && (
             <OnOffSwitch
               data-test={`toggleOnAndOffFlow${flowName}`}
               disabled={disableCard}

@@ -1,8 +1,10 @@
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
+import { getNetSuiteSubrecordImports } from '../../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,7 +24,39 @@ export default function SelectImport({ flowId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const imports = useSelector(state => selectors.flowImports(state, flowId));
+  const imports = useSelector(
+    state => selectors.flowImports(state, flowId),
+    (left, right) => left && right && left.length === right.length
+  );
+  const [subrecordImports, setSubrecordImports] = useState();
+  const [importId, setImportId] = useState();
+
+  useEffect(() => {
+    let srImports;
+
+    if (imports) {
+      imports.forEach(imp => {
+        const currentImportSubrecords = getNetSuiteSubrecordImports(imp);
+
+        if (currentImportSubrecords && currentImportSubrecords.length > 0) {
+          if (!srImports) {
+            srImports = {};
+          }
+
+          srImports[imp._id] = currentImportSubrecords.map(sr => ({
+            ...sr,
+            name: `${imp.name || imp._id} - ${sr.name} (Subrecord)`,
+          }));
+        }
+      });
+
+      if (srImports) {
+        setSubrecordImports(srImports);
+      } else if (imports.length === 1) {
+        setImportId(imports[0]._id);
+      }
+    }
+  }, [imports]);
 
   if (!flow) {
     return <Typography>No flow exists with id: {flowId}</Typography>;
@@ -30,8 +64,8 @@ export default function SelectImport({ flowId }) {
 
   // If there is only one import then we can safely
   // take the user to the mapping of that import
-  if (imports.length === 1) {
-    return <Redirect push={false} to={`${match.url}/${imports[0]._id}`} />;
+  if (importId) {
+    return <Redirect push={false} to={`${match.url}/${importId}`} />;
   }
 
   const flowName = flow.name || flow._id;
@@ -50,17 +84,35 @@ export default function SelectImport({ flowId }) {
         Select which import you would like to edit the mapping for.
       </Typography>
       {imports.map(i => (
-        <div key={i._id}>
-          <Button
-            className={classes.button}
-            component={Link}
-            to={`${match.url}/${i._id}`}>
-            <Typography variant="h6" color="primary">
-              {i.name || i._id}
-            </Typography>
-            {i.description && <Typography>{i.description}</Typography>}
-          </Button>
-        </div>
+        <Fragment key={i._id}>
+          <div key={i._id}>
+            <Button
+              data-key="mapping"
+              className={classes.button}
+              component={Link}
+              to={`${match.url}/${i._id}`}>
+              <Typography variant="h6" color="primary">
+                {i.name || i._id}
+              </Typography>
+              {i.description && <Typography>{i.description}</Typography>}
+            </Button>
+          </div>
+          {subrecordImports &&
+            subrecordImports[i._id] &&
+            subrecordImports[i._id].map((sr, index) => (
+              <div key={`${i._id}-${sr.fieldId}`}>
+                <Button
+                  data-test={`subrecordMapping-${index}`}
+                  className={classes.button}
+                  component={Link}
+                  to={`${match.url}/${i._id}/${sr.fieldId}`}>
+                  <Typography variant="h6" color="primary">
+                    {sr.name}
+                  </Typography>
+                </Button>
+              </div>
+            ))}
+        </Fragment>
       ))}
     </div>
   );

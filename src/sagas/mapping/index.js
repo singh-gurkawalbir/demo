@@ -71,13 +71,14 @@ export function* saveMappings({ id }) {
 
   yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
 
-  const error = yield call(commitStagedChanges, {
+  const resp = yield call(commitStagedChanges, {
     resourceType: 'imports',
     id: resourceId,
     scope: SCOPES.VALUE,
   });
 
-  if (error) return yield put(actions.mapping.saveFailed(id));
+  if (resp && (resp.error || resp.conflict))
+    return yield put(actions.mapping.saveFailed(id));
 
   yield put(actions.mapping.saveComplete(id));
 }
@@ -97,7 +98,9 @@ export function* previewMappings({ id }) {
   let resourceCopy = deepClone(resource);
   let _mappings = mappings
     .filter(mapping => !!mapping.generate)
-    .map(({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others);
+    .map(
+      ({ index, key, hardCodedValueTmp, rowIdentifier, ...others }) => others
+    );
 
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,

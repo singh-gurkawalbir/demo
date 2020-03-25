@@ -2,6 +2,7 @@ import React, { useState, useCallback, useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({
   message: {
@@ -13,6 +14,7 @@ export const ConfirmDialog = props => {
   const {
     message,
     title = 'Confirm',
+    isHtml = false,
     onClose,
     buttons = [
       {
@@ -38,7 +40,11 @@ export const ConfirmDialog = props => {
   return (
     <ModalDialog show onClose={onClose}>
       {title}
-      <div className={classes.message}>{message}</div>
+      {isHtml ? (
+        <RawHtml className={classes.message} html={message} />
+      ) : (
+        <div className={classes.message}>{message}</div>
+      )}
 
       {buttons.map(button => (
         <Button

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -20,13 +20,45 @@ function OAuthButton(props) {
   const { resourceId } = rest;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
+  const iClients = (resource && resource.iClients) || [];
+
+  useEffect(() => {
+    if (
+      !iClients.length &&
+      resource._id &&
+      resource._connectorId &&
+      (resource.assistant === 'shopify' || resource.assistant === 'squareup')
+    ) {
+      dispatch(actions.resource.connections.requestIClients(resource._id));
+    }
+  }, [
+    dispatch,
+    iClients.length,
+    resource._connectorId,
+    resource._id,
+    resource.assistant,
+    resource.type,
+    resourceType,
+  ]);
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
+      const newValues = { ...values };
+
+      if (
+        resource._connectorId &&
+        (resource.assistant === 'shopify' ||
+          resource.assistant === 'squareup') &&
+        values['/http/auth/type'] === 'oauth'
+      ) {
+        newValues['/http/_iClientId'] =
+          iClients && iClients[0] && iClients[0]._id;
+      }
+
       dispatch(
-        actions.resource.connections.saveAndAuthorize(resourceId, values)
+        actions.resource.connections.saveAndAuthorize(resourceId, newValues)
       );
     },
-    [dispatch, resourceId]
+    [dispatch, iClients, resource._connectorId, resource.assistant, resourceId]
   );
 
   window.connectionAuthorized = _connectionId => {
@@ -50,7 +82,14 @@ function OAuthButton(props) {
       ) {
         let showError = false;
 
-        if (resource.assistant === 'ebay') {
+        if (
+          resource._connectorId &&
+          (resource.assistant === 'shopify' ||
+            resource.assistant === 'squareup') &&
+          values['/http/auth/type'] === 'oauth'
+        ) {
+          showError = false;
+        } else if (resource.assistant === 'ebay') {
           if (values['/accountType'] === 'sandbox') {
             if (
               !(
@@ -88,7 +127,7 @@ function OAuthButton(props) {
 
       handleSubmitForm(values);
     },
-    [handleSubmitForm, resource.assistant, snackbar]
+    [handleSubmitForm, resource._connectorId, resource.assistant, snackbar]
   );
 
   return (

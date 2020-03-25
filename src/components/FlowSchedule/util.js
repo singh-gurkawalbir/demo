@@ -508,6 +508,7 @@ export const getMetadata = ({
         label: 'End Time',
         helpKey: 'flow.endTime',
         defaultValue: resource && resource.endTime,
+        omitWhenHidden: true,
         options: [
           {
             items: endTimeOptions,
@@ -521,7 +522,7 @@ export const getMetadata = ({
           },
           {
             field: 'frequency',
-            isNot: ['once_weekly', 'once_daily', ''],
+            isNot: ['once_weekly', 'once_daily', 'twice_daily', ''],
           },
         ],
       },
@@ -945,15 +946,6 @@ export const getScheduleVal = (formVal, scheduleStartMinute) => {
     // Need to handle Cron Editor Changes
     scheduleValue = formVal.schedule;
   } else {
-    if (
-      formVal.startTime &&
-      formVal.endTime &&
-      !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
-    ) {
-      // alert('End Time is invalid');
-      return false;
-    }
-
     scheduleValue =
       getCronExpression(formVal, scheduleStartMinute) === '? * * * * *'
         ? ''

@@ -1,3 +1,4 @@
+import { Chip } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,6 +18,7 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
+import Spinner from '../../Spinner';
 
 const handleAddNewResource = args => {
   const {
@@ -28,6 +30,7 @@ const handleAddNewResource = args => {
     newResourceId,
     expConnId,
     statusExport,
+    assistant,
   } = args;
 
   if (
@@ -38,6 +41,7 @@ const handleAddNewResource = args => {
       'pageProcessor',
       'pageGenerator',
       'asyncHelpers',
+      'iClients',
     ].includes(resourceType)
   ) {
     let values;
@@ -46,7 +50,12 @@ const handleAddNewResource = args => {
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
       });
-    else {
+    else if (['iClients'].includes(resourceType)) {
+      values = {
+        ...values,
+        '/assistant': assistant,
+      };
+    } else {
       values = resourceMeta[resourceType].new.preSave({
         application: options.appType,
       });
@@ -104,6 +113,36 @@ const useStyles = makeStyles({
     overflow: 'hidden',
   },
 });
+
+function ConnectionLoadingChip(props) {
+  const { connectionId } = props;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+  }, [connectionId, dispatch]);
+
+  const connectionOffline = useSelector(
+    state => selectors.connectionStatus(state, connectionId).offline
+  );
+  const connectionRequestStatus = useSelector(
+    state => selectors.connectionStatus(state, connectionId).requestStatus
+  );
+
+  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
+    return null;
+  }
+
+  if (connectionRequestStatus === 'requested') {
+    return <Spinner />;
+  }
+
+  return connectionOffline ? (
+    <Chip color="secondary" label="Offline" />
+  ) : (
+    <Chip color="primary" label="Online" />
+  );
+}
 
 function DynaSelectResource(props) {
   const {
@@ -171,7 +210,7 @@ function DynaSelectResource(props) {
     label: conn.name || conn._id,
     value: conn._id,
   }));
-  const expConnId = useSelector(state => {
+  const { expConnId, assistant } = useSelector(state => {
     const { merged } =
       selectors.resourceData(
         state,
@@ -179,7 +218,10 @@ function DynaSelectResource(props) {
         resourceContext.resourceId
       ) || {};
 
-    return merged && merged._connectionId;
+    return {
+      expConnId: merged && merged._connectionId,
+      assistant: merged.assistant,
+    };
   });
   const handleAddNewResourceMemo = useCallback(
     () =>
@@ -192,16 +234,18 @@ function DynaSelectResource(props) {
         newResourceId,
         statusExport,
         expConnId,
+        assistant,
       }),
     [
-      expConnId,
       dispatch,
       history,
       location,
-      newResourceId,
-      options,
       resourceType,
+      options,
+      newResourceId,
       statusExport,
+      expConnId,
+      assistant,
     ]
   );
   const handleEditResource = useCallback(() => {
@@ -218,7 +262,7 @@ function DynaSelectResource(props) {
       ];
 
       // this not an actual value we would like to commit...this is just to load the right form
-      dispatch(actions.resource.patchStaged(value, patchSet));
+      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
 
     history.push(`${location.pathname}/edit/${resourceType}/${value}`);
@@ -282,6 +326,12 @@ function DynaSelectResource(props) {
             onClick={handleEditResource}>
             <EditIcon />
           </ActionButton>
+        )}
+        {resourceType === 'connections' && !!value && (
+          <ConnectionLoadingChip
+            resourceType={resourceType}
+            connectionId={value}
+          />
         )}
       </div>
     </div>

@@ -28,6 +28,10 @@ export default {
           retValues['/http/relativeURIUpdate'],
           retValues['/http/relativeURICreate'],
         ];
+        retValues['/http/requestType'] = [
+          retValues['/http/requestTypeUpdate'],
+          retValues['/http/requestTypeCreate'],
+        ];
         retValues['/http/method'] = [
           retValues['/http/compositeMethodUpdate'],
           retValues['/http/compositeMethodCreate'],
@@ -118,6 +122,7 @@ export default {
         retValues['/ignoreMissing'] = false;
       } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
+        retValues['/http/requestType'] = [retValues['/http/requestTypeCreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -128,12 +133,48 @@ export default {
           retValues['/http/response/resourceIdPath'] = [
             retValues['/http/resourceIdPathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (retValues['/http/resourcePathCreate']) {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathCreate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
+        }
+
+        if (retValues['/http/successPathCreate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathCreate'],
+          ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
+        }
+
+        if (retValues['/http/failPathCreate']) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathCreate'],
+          ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
+        }
+
+        if (retValues['/http/successValuesCreate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesCreate'],
+          ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
+        }
+
+        if (retValues['/http/failValuesCreate']) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesCreate'],
+          ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
         }
 
         retValues['/http/body'] = [retValues['/http/bodyCreate']];
@@ -153,6 +194,7 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
+        retValues['/http/requestType'] = [retValues['/http/requestTypeUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -163,12 +205,48 @@ export default {
           retValues['/http/response/resourceIdPath'] = [
             retValues['/http/resourceIdPathUpdate'],
           ];
+        } else {
+          retValues['/http/response/resourceIdPath'] = undefined;
         }
 
         if (retValues['/http/resourcePathUpdate']) {
           retValues['/http/response/resourcePath'] = [
             retValues['/http/resourcePathUpdate'],
           ];
+        } else {
+          retValues['/http/response/resourcePath'] = undefined;
+        }
+
+        if (retValues['/http/successPathUpdate']) {
+          retValues['/http/response/successPath'] = [
+            retValues['/http/successPathUpdate'],
+          ];
+        } else {
+          retValues['/http/response/successPath'] = undefined;
+        }
+
+        if (retValues['/http/failPathUpdate']) {
+          retValues['/http/response/failPath'] = [
+            retValues['/http/failPathUpdate'],
+          ];
+        } else {
+          retValues['/http/response/failPath'] = undefined;
+        }
+
+        if (retValues['/http/failValuesUpdate']) {
+          retValues['/http/response/failValues'] = [
+            retValues['/http/failValuesUpdate'],
+          ];
+        } else {
+          retValues['/http/response/failValues'] = undefined;
+        }
+
+        if (retValues['/http/successValuesUpdate']) {
+          retValues['/http/response/successValues'] = [
+            retValues['/http/successValuesUpdate'],
+          ];
+        } else {
+          retValues['/http/response/successValues'] = undefined;
         }
 
         retValues['/http/body'] = [retValues['/http/bodyUpdate']];
@@ -188,6 +266,9 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       }
     } else {
+      if (!retValues['/http/requestType'])
+        retValues['/http/requestType'] =
+          retValues['/http/method'] === 'POST' ? ['CREATE'] : ['UPDATE'];
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
       retValues['/http/body'] = retValues['/http/body']
@@ -353,6 +434,7 @@ export default {
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
+    'http.requestType': { fieldId: 'http.requestType' },
     'http.response.successPath': {
       fieldId: 'http.response.successPath',
       defaultValue: r => {
@@ -490,6 +572,51 @@ export default {
         return '';
       },
     },
+    'http.requestTypeCreate': {
+      id: 'http.requestTypeCreate',
+      type: 'select',
+      label: 'RequestType',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'createandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (r.http.method.length > 1) {
+            return r.http.requestType[1];
+          }
+
+          return r.http.requestType[0];
+        }
+
+        return '';
+      },
+    },
     'http.bodyCreate': {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
@@ -566,11 +693,15 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.failPath &&
-            r.http.response.failPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.failPath
+            )
+          ) {
+            return r.http.response.failPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failPath;
         }
 
         return '';
@@ -609,11 +740,19 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.failValues &&
-            r.http.response.failValues[0]
-          );
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.failValues &&
+                r.http.response.failValues[0]
+            )
+          ) {
+            return r.http.response.failValues[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failValues;
         }
 
         return '';
@@ -644,11 +783,15 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.failPath &&
-            r.http.response.failPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.failPath
+            )
+          ) {
+            return r.http.response.failPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failPath;
         }
 
         return '';
@@ -679,11 +822,19 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.failValues &&
-            r.http.response.failValues[0]
-          );
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.failValues &&
+                r.http.response.failValues[0]
+            )
+          ) {
+            return r.http.response.failValues[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.failValues;
         }
 
         return '';
@@ -807,11 +958,15 @@ export default {
             );
           }
 
-          return (
-            r.http.response &&
-            r.http.response.successPath &&
-            r.http.response.successPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.successPath
+            )
+          ) {
+            return r.http.response.successPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.successPath;
         }
 
         return '';
@@ -850,10 +1005,20 @@ export default {
             );
           }
 
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.successValues &&
+                r.http.response.successValues[0]
+            )
+          ) {
+            return r.http.response.successValues[0];
+          }
+
           return (
-            r.http.response &&
-            r.http.response.successValues &&
-            r.http.response.successValues[0]
+            r && r.http && r.http.response && r.http.response.successValues
           );
         }
 
@@ -948,6 +1113,47 @@ export default {
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return r.http.relativeURI && r.http.relativeURI[0];
+        }
+
+        return '';
+      },
+    },
+    'http.requestTypeUpdate': {
+      id: 'http.requestTypeUpdate',
+      type: 'select',
+      label: 'Request Type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'CREATE', value: 'CREATE' },
+            { label: 'UPDATE', value: 'UPDATE' },
+          ],
+        },
+      ],
+      helpText:
+        'Please specify whether the record is being created or updated using this field.',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['createandupdate', 'updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http || !r.http.method) {
+          return '';
+        }
+
+        if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          return r.http.requestType && r.http.requestType[0];
         }
 
         return '';
@@ -1086,11 +1292,15 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return (
-            r.http.response &&
-            r.http.response.successPath &&
-            r.http.response.successPath[0]
-          );
+          if (
+            Array.isArray(
+              r && r.http && r.http.response && r.http.response.successPath
+            )
+          ) {
+            return r.http.response.successPath[0];
+          }
+
+          return r && r.http && r.http.response && r.http.response.successPath;
         }
 
         return '';
@@ -1121,10 +1331,20 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
+          if (
+            Array.isArray(
+              r &&
+                r.http &&
+                r.http.response &&
+                r.http.response.successValues &&
+                r.http.response.successValues[0]
+            )
+          ) {
+            return r.http.response.successValues[0];
+          }
+
           return (
-            r.http.response &&
-            r.http.response.successValues &&
-            r.http.response.successValues[0]
+            r && r.http && r.http.response && r.http.response.successValues
           );
         }
 
@@ -1304,6 +1524,7 @@ export default {
       'http.compositeType',
       'http.lookups',
       'http.relativeURI',
+      'http.requestType',
       'http.body',
       'http.response.successPath',
       'http.response.successValues',
@@ -1316,6 +1537,7 @@ export default {
       'createNewData',
       'http.compositeMethodCreate',
       'http.relativeURICreate',
+      'http.requestTypeCreate',
       'http.bodyCreate',
       'http.successPathCreate',
       'http.successValuesCreate',
@@ -1326,6 +1548,7 @@ export default {
       'upateExistingData',
       'http.compositeMethodUpdate',
       'http.relativeURIUpdate',
+      'http.requestTypeUpdate',
       'http.bodyUpdate',
       'http.successPathUpdate',
       'http.successValuesUpdate',

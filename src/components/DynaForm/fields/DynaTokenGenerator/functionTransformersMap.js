@@ -130,7 +130,6 @@ export default {
       }","platform":"${form['/http/unencrypted/platform']}"}`,
     }),
   },
-
   grms: {
     responseParser: resp => ({
       'http.auth.token.token': resp && resp.TransactionID,

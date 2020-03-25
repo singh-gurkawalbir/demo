@@ -483,6 +483,17 @@ export function getImportOperationDetails({
           assistantData,
         });
 
+        if (lookupOperationDetails.queryParameters) {
+          lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+            qp =>
+              !(
+                qp.readOnly &&
+                qp.defaultValue &&
+                qp.defaultValue.includes('{{export.')
+              )
+          );
+        }
+
         if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
           Object.keys(
             operationDetails.howToFindIdentifier.lookup.parameterValues
@@ -654,6 +665,17 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
         bodyParams = exportAdaptorSubSchema.postBody;
       }
     }
+  } else if (exportAdaptorSubSchema.body) {
+    if (exportDoc.assistant === 'expensify') {
+      bodyParams = exportAdaptorSubSchema.body.replace(
+        'requestJobDescription=',
+        ''
+      );
+    } else {
+      bodyParams = exportAdaptorSubSchema.body;
+    }
+
+    bodyParams = JSON.parse(bodyParams);
   }
 
   if (!operation) {
@@ -792,44 +814,66 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   exportDoc.relativeURI = relativeURI;
 
-  if (['POST', 'PUT'].includes(exportDoc.method)) {
+  if (adaptorType === 'rest') {
+    if (['POST', 'PUT'].includes(exportDoc.method)) {
+      if (!isEmpty(bodyParams)) {
+        exportDoc.postBody = defaultsDeep(
+          cloneDeep(operationDetails.postBody),
+          bodyParams
+        );
+
+        if (operationDetails.postBodyParamsOrder) {
+          // IO-4570
+          exportDoc.postBody = JSON.parse(
+            JSON.stringify(
+              exportDoc.postBody,
+              operationDetails.postBodyParamsOrder
+            )
+          );
+        }
+      } else if (operationDetails.postBody) {
+        exportDoc.postBody = cloneDeep(operationDetails.postBody);
+      } else {
+        exportDoc.postBody = queryParams;
+      }
+
+      if (exportDoc.postBody) {
+        if (isString(exportDoc.postBody)) {
+          if (exportDoc.postBody.includes('lastExportDateTime')) {
+            exportType = 'delta';
+          }
+        } else if (isObject(exportDoc.postBody)) {
+          if (
+            JSON.stringify(exportDoc.postBody).includes('lastExportDateTime')
+          ) {
+            exportType = 'delta';
+          }
+        }
+
+        if (assistant === 'expensify') {
+          exportDoc.postBody = `requestJobDescription=${JSON.stringify(
+            exportDoc.postBody
+          )}`;
+        }
+      }
+    }
+  } else if (['POST', 'PUT'].includes(exportDoc.method)) {
     if (!isEmpty(bodyParams)) {
-      exportDoc.postBody = defaultsDeep(
-        cloneDeep(operationDetails.postBody),
+      exportDoc.body = defaultsDeep(
+        cloneDeep(operationDetails.body),
         bodyParams
       );
 
-      if (operationDetails.postBodyParamsOrder) {
+      if (operationDetails.bodyParamsOrder) {
         // IO-4570
-        exportDoc.postBody = JSON.parse(
-          JSON.stringify(
-            exportDoc.postBody,
-            operationDetails.postBodyParamsOrder
-          )
+        exportDoc.body = JSON.parse(
+          JSON.stringify(exportDoc.body, operationDetails.bodyParamsOrder)
         );
       }
-    } else if (operationDetails.postBody) {
-      exportDoc.postBody = cloneDeep(operationDetails.postBody);
+    } else if (operationDetails.body) {
+      exportDoc.body = cloneDeep(operationDetails.body);
     } else {
-      exportDoc.postBody = queryParams;
-    }
-
-    if (exportDoc.postBody) {
-      if (isString(exportDoc.postBody)) {
-        if (exportDoc.postBody.includes('lastExportDateTime')) {
-          exportType = 'delta';
-        }
-      } else if (isObject(exportDoc.postBody)) {
-        if (JSON.stringify(exportDoc.postBody).includes('lastExportDateTime')) {
-          exportType = 'delta';
-        }
-      }
-
-      if (assistant === 'expensify') {
-        exportDoc.postBody = `requestJobDescription=${JSON.stringify(
-          exportDoc.postBody
-        )}`;
-      }
+      exportDoc.body = queryParams;
     }
   }
 
@@ -876,6 +920,32 @@ export function convertToExport({ assistantConfig, assistantData }) {
       exportDoc.pagingPostBody || {},
       exportDoc.postBody
     );
+  }
+
+  if (exportDoc.body) {
+    // IO-9428
+    if (operationDetails.mergeBodyToPagingBody) {
+      if (!exportDoc.paging) {
+        exportDoc.paging = {};
+      }
+
+      exportDoc.paging.body = defaultsDeep(
+        exportDoc.paging.body || {},
+        exportDoc.body
+      );
+    }
+
+    if (isObject(exportDoc.body)) {
+      exportDoc.body = JSON.stringify(exportDoc.body);
+    }
+
+    if (exportDoc.body.includes('lastExportDateTime')) {
+      exportType = 'delta';
+    }
+
+    if (assistant === 'expensify') {
+      exportDoc.body = `requestJobDescription=${exportDoc.body}`;
+    }
   }
 
   const assistantMetadata = { resource };
@@ -1065,7 +1135,7 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
           {
             items: field.options
               ? field.options.map(opt => ({
-                  label: opt,
+                  label: opt.toString(),
                   value: opt,
                 }))
               : [],
@@ -1765,55 +1835,55 @@ export function convertToImport({ assistantConfig, assistantData }) {
         );
       }
     });
+  }
 
-    let defaultQueryString = '';
+  let defaultQueryString = '';
 
-    if (operationDetails.queryParameters) {
-      operationDetails.queryParameters.forEach(p => {
-        if (defaultQueryString.length > 0) {
-          defaultQueryString += '&';
+  if (operationDetails.queryParameters) {
+    operationDetails.queryParameters.forEach(p => {
+      if (defaultQueryString.length > 0) {
+        defaultQueryString += '&';
+      }
+
+      defaultQueryString += [p.id, p.defaultValue].join('=');
+    });
+  }
+
+  if (defaultQueryString) {
+    importDoc.relativeURI = importDoc.relativeURI.map(
+      u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
+    );
+  }
+
+  if (operationDetails.headers) {
+    Object.keys(operationDetails.headers).forEach(h => {
+      if (operationDetails.headers[h] !== null) {
+        const hv = operationDetails.headers[h].replace(
+          /RECORD_IDENTIFIER/gi,
+          (identifiers && pathParams[identifiers[0].id]) || ''
+        ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
+
+        importDoc.headers.push({ name: h, value: hv });
+      }
+    });
+  }
+
+  if (adaptorType === 'http') {
+    [
+      'successMediaType',
+      'errorMediaType',
+      'requestMediaType',
+      'batchSize',
+      'ignoreEmptyNodes',
+    ].forEach(p => {
+      if (operationDetails[p]) {
+        if (p === 'batchSize') {
+          importDoc[p] = parseInt(operationDetails[p], 10);
+        } else {
+          importDoc[p] = operationDetails[p];
         }
-
-        defaultQueryString += [p.id, p.defaultValue].join('=');
-      });
-    }
-
-    if (defaultQueryString) {
-      importDoc.relativeURI = importDoc.relativeURI.map(
-        u => u + (u.indexOf('?') === -1 ? '?' : '&') + defaultQueryString
-      );
-    }
-
-    if (operationDetails.headers) {
-      Object.keys(operationDetails.headers).forEach(h => {
-        if (operationDetails.headers[h] !== null) {
-          const hv = operationDetails.headers[h].replace(
-            /RECORD_IDENTIFIER/gi,
-            pathParams[identifiers[0].id] || ''
-          ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
-
-          importDoc.headers.push({ name: h, value: hv });
-        }
-      });
-    }
-
-    if (adaptorType === 'http') {
-      [
-        'successMediaType',
-        'errorMediaType',
-        'requestMediaType',
-        'batchSize',
-        'ignoreEmptyNodes',
-      ].forEach(p => {
-        if (operationDetails[p]) {
-          if (p === 'batchSize') {
-            importDoc[p] = parseInt(operationDetails[p], 10);
-          } else {
-            importDoc[p] = operationDetails[p];
-          }
-        }
-      });
-    }
+      }
+    });
   }
 
   /** We need to set operation only if id is set on endpoint in metadata. Otherwise, the conversion logic in ampersand app fails */

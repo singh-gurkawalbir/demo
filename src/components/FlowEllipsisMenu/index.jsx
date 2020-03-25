@@ -2,6 +2,7 @@ import { useCallback, useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';
@@ -17,7 +18,15 @@ import RefIcon from '../icons/ViewReferencesIcon';
 import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getTemplateUrlName } from '../../utils/template';
 
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    '& > .MuiMenu-paper': {
+      marginLeft: theme.spacing(-2),
+    },
+  },
+}));
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
   clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
@@ -32,6 +41,7 @@ const allActions = {
 export default function FlowEllipsisMenu({ flowId, exclude }) {
   const history = useHistory();
   const dispatch = useDispatch();
+  const classes = useStyles();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
   const patchFlow = useCallback(
@@ -58,6 +68,25 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
     return null;
   });
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template.applications);
+    }
+
+    return null;
+  });
   const [showAudit, setShowAudit] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -79,13 +108,20 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'schedule':
-          flowDetails._connectorId
-            ? history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
-              )
-            : history.push(
-                `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
-              );
+          if (flowDetails._connectorId) {
+            history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else if (templateName) {
+            history.push(
+              `/pg/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else {
+            history.push(
+              `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          }
+
           break;
 
         case 'clone':
@@ -144,6 +180,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       integrationAppName,
       integrationId,
       flowId,
+      templateName,
       dispatch,
       patchFlow,
     ]
@@ -191,6 +228,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         variant="menu"
         id={actionsPopoverId}
         anchorEl={anchorEl}
+        className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
         {availableActions.map(({ action, label, Icon }) => (

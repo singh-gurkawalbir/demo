@@ -23,9 +23,15 @@ const useStyles = makeStyles({
 });
 
 export default function TransformEditor(props) {
-  const { editorId, disabled, layout = 'column' } = props;
+  const {
+    editorId,
+    disabled,
+    optionalSaveParams,
+    resourceId,
+    layout = 'column',
+  } = props;
   const classes = useStyles();
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -40,10 +46,20 @@ export default function TransformEditor(props) {
         data: props.data,
         autoEvaluate: true,
         rule: props.rule,
+        resourceId,
         duplicateKeyToValidate: [valueName],
+        initRule: props.rule,
+        optionalSaveParams,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [
+    dispatch,
+    editorId,
+    optionalSaveParams,
+    props.data,
+    props.rule,
+    resourceId,
+  ]);
   const handleDataChange = useCallback(
     data => {
       dispatch(actions.editor.patch(editorId, { data }));
@@ -58,11 +74,9 @@ export default function TransformEditor(props) {
   const parsedData = result && result.data && result.data[0];
 
   return (
-    <PanelGrid
-      key={`${editorId}-${initChangeIdentifier}`}
-      className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Transform Rules" />
+        <PanelTitle title="Transform rules" />
         <TransformPanel
           keyName={keyName}
           valueName={valueName}
@@ -72,7 +86,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming Data" />
+        <PanelTitle title="Incoming data" />
         <CodePanel
           name="data"
           value={data}
@@ -84,7 +98,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Transformed Data" />
+        <PanelTitle title="Transformed data" />
         <CodePanel
           name="result"
           overrides={{ showGutter: false }}

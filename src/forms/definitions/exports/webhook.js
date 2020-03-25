@@ -1,5 +1,4 @@
 export default {
-  preSave: formValues => ({ ...formValues, '/type': 'webhook' }),
   optionsHandler: (fieldId, fields) => {
     const webHookProviderField =
       fields.find(field => field.id === 'webhook.provider') || {};
@@ -33,7 +32,12 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     security: { fieldId: 'security', type: 'labeltitle', label: 'Security' },
-    'webhook.provider': { fieldId: 'webhook.provider' },
+    publicURL: {
+      fieldId: 'publicURL',
+      type: 'labeltitle',
+      label: 'Public URL & Sample Data',
+    },
+    // 'webhook.provider': { fieldId: 'webhook.provider' },
     'webhook.verify': { fieldId: 'webhook.verify' },
     'webhook.algorithm': { fieldId: 'webhook.algorithm' },
     'webhook.encoding': { fieldId: 'webhook.encoding' },
@@ -61,17 +65,18 @@ export default {
     fields: [
       'common',
       'security',
-      'webhook.provider',
+      // 'webhook.provider',
       'webhook.verify',
       'webhook.algorithm',
       'webhook.encoding',
       'webhook.key',
       'webhook.header',
       'webhook.token',
-      'webhook.url',
       'webhook.path',
       'webhook.username',
       'webhook.password',
+      'publicURL',
+      'webhook.url',
       'webhook.sampledata',
     ],
     type: 'collapse',

@@ -145,6 +145,34 @@ export default {
       },
     ],
   },
+  'rest.requestType': {
+    type: 'select',
+    label: 'Request Type',
+    options: [
+      {
+        items: [
+          {
+            label: 'CREATE',
+            value: 'CREATE',
+          },
+          {
+            label: 'UPDATE',
+            value: 'UPDATE',
+          },
+        ],
+      },
+    ],
+    helpText:
+      'Please specify whether the record is being created or updated using this field.',
+    defaultValue: r =>
+      r && r.rest && r.rest.requestType && r.rest.requestType[0],
+    visibleWhen: [
+      {
+        field: 'rest.method',
+        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+      },
+    ],
+  },
   mapping: {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
@@ -231,7 +259,6 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    saveMode: 'json',
     label: 'If so,please paste it here',
     visibleWhenAll: [
       {
@@ -243,5 +270,7 @@ export default {
         isNot: ['DELETE'],
       },
     ],
+    defaultValue: r =>
+      r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },
 };

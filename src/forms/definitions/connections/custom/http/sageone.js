@@ -5,20 +5,13 @@ export default {
     '/assistant': 'sageone',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI':
-      'https://api.columbus.sage.com/countryCode/sageone/accounts/v3/',
-    '/http/auth/oauth/authURI': 'https://www.sageone.com/oauth2/auth/central',
-    '/http/auth/oauth/tokenURI': 'https://api.sageone.com/oauth2/token',
-    '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/baseURI': 'https://api.accounting.sage.com/v3.1',
+    '/http/auth/oauth/authURI':
+      'https://www.sageone.com/oauth2/auth/central?filter=apiv3.1',
+    '/http/auth/oauth/tokenURI': 'https://oauth.accounting.sage.com/token',
     '/http/auth/oauth/scope': ['full_access'],
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
-    '/http/headers': [
-      {
-        name: 'X-Site',
-        value: '{{{connection.http.encrypted.resourceOwnerId}}}',
-      },
-    ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

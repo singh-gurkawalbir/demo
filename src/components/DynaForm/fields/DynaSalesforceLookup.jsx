@@ -43,9 +43,9 @@ export default function DynaSalesforceLookup(props) {
 
   const dispatch = useDispatch();
   const handleClose = (shouldCommit, editorValues) => {
-    const { rule } = editorValues;
-
     if (shouldCommit) {
+      const { rule } = editorValues;
+
       onFieldChange(id, rule);
     }
 

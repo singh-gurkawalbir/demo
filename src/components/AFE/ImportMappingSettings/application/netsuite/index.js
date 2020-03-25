@@ -1,6 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
 import mappingUtil from '../../../../../utils/mapping';
+import {
+  isProduction,
+  conditionalLookupOptionsforNetsuite,
+  conditionalLookupOptionsforNetsuiteProduction,
+} from '../../../../../forms/utils';
 
 const getNetsuiteSelectFieldValueUrl = ({
   fieldMetadata,
@@ -23,8 +28,14 @@ export default {
       generate,
       generateFields,
       options,
+      lookups,
     } = params;
-    const { connectionId, recordType, isGroupedSampleData = false } = options;
+    const {
+      connectionId,
+      recordType,
+      isComposite,
+      isGroupedSampleData = false,
+    } = options;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]
@@ -32,6 +43,16 @@ export default {
     const fieldMetadata =
       generateFields && generateFields.find(gen => gen.id === generate);
     let generateFieldType;
+    let conditionalWhenOptions = isProduction()
+      ? conditionalLookupOptionsforNetsuiteProduction
+      : conditionalLookupOptionsforNetsuite;
+
+    if (!isComposite) {
+      conditionalWhenOptions = conditionalWhenOptions.slice(
+        2,
+        conditionalWhenOptions.length + 1
+      );
+    }
 
     if (
       fieldMetadata &&
@@ -496,6 +517,48 @@ export default {
           helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: conditionalWhenOptions,
+            },
+          ],
+        },
+        lookups: {
+          name: 'lookups',
+          id: 'lookups',
+          fieldId: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
+
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          label: 'Lookup Name',
+          type: 'textwithlookupextract',
+          fieldType: 'lookupMappings',
+          importType: 'netsuite',
+          connectionId,
+          extractFields,
+          fieldMetadata,
+          fieldId,
+          recordType,
+          refreshOptionsOnChangesTo: ['lookups'],
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
       },
       layout: {
         fields: [
@@ -526,7 +589,16 @@ export default {
           'extractDateTimezone',
           'isKey',
         ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+          },
+        ],
       },
+
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
           const functionsField = fields.find(field => field.id === 'functions');
@@ -629,6 +701,19 @@ export default {
             disableFetch: !recordType,
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
           };
+        } else if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
+          };
         }
 
         return null;
@@ -644,6 +729,10 @@ export default {
     if (generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.isKey;
       fields = fields.filter(el => el !== 'isKey');
+    } else {
+      // delete useAsAnInitializeValue for list items
+      delete fieldMeta.fieldMap.useAsAnInitializeValue;
+      fields = fields.filter(el => el !== 'useAsAnInitializeValue');
     }
 
     if (

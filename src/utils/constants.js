@@ -33,6 +33,8 @@ export const INTEGRATION_MODES = Object.freeze({
   UNINSTALL: 'uninstall',
   SETTINGS: 'settings',
 });
+
+export const UI_FIELD_VALUES = Object.freeze(['/useParentForm', '/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
 export const NETSUITE_BUNDLE_URL =
@@ -311,7 +313,7 @@ export const USAGE_TIER_HOURS = {
 export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
-  'https://celigosuccess.zendesk.com/hc/en-us/sections/115000074091-Release-Notes?latest=true';
+  'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -378,3 +380,41 @@ export const AWS_REGIONS_LIST = [
     value: 'eu-north-1',
   },
 ];
+
+export const C_LOCKED_FIELDS = Object.freeze({
+  exports: [
+    'pageSize',
+    'type',
+    'netsuite.restlet.batchSize',
+    'netsuite.restlet.searchId',
+    'netsuite.distributed.executionContext',
+    'netsuite.distributed.executionType',
+    'netsuite.distributed.qualifier',
+    'netsuite.distributed.sublists',
+    'netsuite.distributed.forceReload',
+    'netsuite.distributed.qualifier',
+    'salesforce.relatedLists.referencedFields,',
+    'salesforce.relatedLists.parentField,',
+    'salesforce.relatedLists.sObjectType,',
+    'salesforce.relatedLists.filter,',
+    'salesforce.relatedLists.orderBy,',
+    'salesforce.relatedLists.userDefined,',
+    'salesforce.distributed.batchSize',
+    'salesforce.soql.query',
+  ],
+  imports: [
+    'lookups',
+    'batchSize',
+    'netsuite_da.batchSize',
+    'netsuite_da.internalIdLookup.extract',
+    'netsuite_da.internalIdLookup.searchField',
+    'netsuite_da.internalIdLookup.operator',
+    'netsuite_da.internalIdLookup.expression',
+    'netsuite_da.mappings.lookups',
+    'salesforce.idLookup.extract',
+    'salesforce.idLookup.whereClause',
+    'salesforce.upsert.externalIdField',
+    'salesforce.lookups',
+  ],
+  flows: ['_runNextFlowIds', 'disabled'],
+});

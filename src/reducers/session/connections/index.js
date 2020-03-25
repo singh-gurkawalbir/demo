@@ -1,21 +1,61 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const updateConnectionStatus = (
+  allConnectionsStatus,
+  connectionId,
+  connStatus
+) => {
+  if (allConnectionsStatus && Array.isArray(allConnectionsStatus)) {
+    const connectionIndex = allConnectionsStatus.findIndex(
+      c => c._id === connectionId
+    );
+
+    if (connectionIndex) {
+      // allConnectionsStatus is a draft... mutating it is fine....hence disabling lint for the next lin
+      // eslint-disable-next-line no-param-reassign
+      allConnectionsStatus[connectionIndex] = {
+        ...allConnectionsStatus[connectionIndex],
+        ...connStatus,
+      };
+    }
+  }
+};
+
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, response } = action;
-  let connection;
+  const { type, debugLogs, connectionId, response, offline } = action;
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.CONNECTION.PING_AND_UPDATE:
+        if (!draft.status) {
+          draft.status = [{ _id: connectionId }];
+        }
+
+        updateConnectionStatus(draft.status, connectionId, {
+          requestStatus: 'requested',
+        });
+
+        break;
+
+      case actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE:
+        updateConnectionStatus(draft.status, connectionId, {
+          requestStatus: 'failure',
+        });
+
+        break;
+      case actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS:
+        updateConnectionStatus(draft.status, connectionId, {
+          requestStatus: 'success',
+          offline: !!offline,
+        });
+
+        break;
       case actionTypes.CONNECTION.AUTHORIZED:
         // On successful authorization of oauth connection, set the connection status to online.
-        if (draft.status && Array.isArray(draft.status)) {
-          connection = draft.status.find(c => c._id === connectionId);
-
-          if (connection) {
-            connection.offline = false;
-          }
-        }
+        updateConnectionStatus(draft.status, connectionId, {
+          offline: false,
+        });
 
         break;
       case actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED:
@@ -44,13 +84,11 @@ export function debugLogs(state) {
 }
 
 export function connectionStatus(state, id) {
-  const defaultStatus = { id, queueSize: 0, offline: false };
-
   if (!state || !state.status || !Array.isArray(state.status)) {
-    return defaultStatus;
+    return null;
   }
 
   const connection = state.status.find(connection => connection._id === id);
 
-  return connection || defaultStatus;
+  return connection;
 }

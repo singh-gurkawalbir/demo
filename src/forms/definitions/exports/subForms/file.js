@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 const alterFileDefinitionRulesVisibility = fields => {
   // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
   const fileDefinitionRulesField = fields.find(
@@ -80,7 +82,16 @@ export default {
     },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
-    'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
+    'file.xlsx.rowsPerRecord': {
+      fieldId: 'file.xlsx.rowsPerRecord',
+      disabledWhenAll: r => {
+        if (isNewId(r._id)) {
+          return [{ field: 'uploadfile', is: [''] }];
+        }
+
+        return [];
+      },
+    },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     'file.xml.resourcePath': {
       fieldId: 'file.xml.resourcePath',

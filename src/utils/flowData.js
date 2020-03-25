@@ -12,27 +12,26 @@ import {
   adaptorTypeMap,
 } from './resource';
 import {
-  LookupResponseMappingExtracts,
-  ImportResponseMappingExtracts,
-} from './mapping';
+  LOOKUP_RESPONSE_MAPPING_EXTRACTS,
+  IMPORT_RESPONSE_MAPPING_EXTRACTS,
+} from './responseMapping';
+import arrayUtils from './array';
 import { isConnector } from './flows';
+import { isJsonString } from './string';
 
 const sampleDataStage = {
   exports: {
-    inputFilter: 'flowInputWithContext',
+    inputFilter: 'flowInput',
     transform: 'raw',
-    hooks: 'transform',
-    transformWithContext: 'transform',
-    outputFilter: 'transformWithContext',
-    responseMappingExtract: 'hooks',
+    preSavePage: 'transform', // preSavePage indicates export hooks
+    outputFilter: 'transform',
+    responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
-    flowInputWithContext: 'flowInput',
   },
   imports: {
-    flowInputWithContext: 'flowInput',
-    inputFilter: 'flowInputWithContext',
+    inputFilter: 'flowInput',
     preMap: 'flowInput',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
@@ -45,12 +44,79 @@ const sampleDataStage = {
     responseTransform: 'sampleResponse',
   },
 };
-const lastExportDateTime = moment()
-  .add(-7, 'd')
-  .toISOString();
-const currentExportDateTime = moment()
-  .add(-24, 'h')
-  .toISOString();
+
+/*
+ * Given stage and resourceType, this util parses through the sampleData stage map and constructs dependency list
+ * Ex: {a: b, b: c, c:d, e: f} is the map of dependencies for a given stage
+ * If the stage requested is 'a', the dependency list is [b, c, d] that infers to get stage 'a', we need to go through all these 4 stages
+ */
+export const getAllDependentSampleDataStages = (
+  stage,
+  resourceType = 'exports'
+) => {
+  const stagesMap = sampleDataStage[resourceType];
+  let endOfIteration = false;
+  let dependentStage = stagesMap[stage];
+
+  if (!dependentStage) return [];
+  const dependentStages = [dependentStage];
+
+  while (!endOfIteration) {
+    dependentStage = stagesMap[dependentStage];
+
+    if (!dependentStage) endOfIteration = true;
+    else dependentStages.push(dependentStage);
+  }
+
+  return dependentStages;
+};
+
+// compare util returns -1, 0, 1 for less, equal and greater respectively
+// returns 2 when both stages need to exist incase of different paths
+const compareSampleDataStage = (prevStage, currStage, resourceType) => {
+  if (prevStage === currStage) return 0;
+  const prevStageRoute = [
+    prevStage,
+    ...getAllDependentSampleDataStages(prevStage, resourceType),
+  ];
+  const currStageRoute = [
+    currStage,
+    ...getAllDependentSampleDataStages(currStage, resourceType),
+  ];
+
+  if (arrayUtils.isContinuousSubSet(prevStageRoute, currStageRoute)) return -1;
+
+  if (arrayUtils.isContinuousSubSet(currStageRoute, prevStageRoute)) return 1;
+
+  return 2;
+};
+
+// Goes through each stage and compares with currStage
+// Returns closest stage from prevStages to currStage i.e., minimum of all statuses
+export const getCurrentSampleDataStageStatus = (
+  prevStages,
+  currStage,
+  resourceType
+) => {
+  let currentStageStatus = 2;
+  let relatedPrevStage;
+
+  prevStages.forEach(prevStage => {
+    const status = compareSampleDataStage(prevStage, currStage, resourceType);
+
+    // min of all stages
+    if (status < currentStageStatus) {
+      currentStageStatus = status;
+      relatedPrevStage = prevStage;
+    }
+  });
+
+  return {
+    currentStageStatus,
+    prevStage: relatedPrevStage,
+  };
+};
+
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
@@ -125,31 +191,6 @@ export const getLastExportDateTime = () =>
     .add(-1, 'y')
     .toISOString();
 
-export const getFormattedResourceForPreview = resourceObj => {
-  const resource = deepClone(resourceObj);
-
-  // type Once need not be passed in preview as it gets executed in preview call
-  // so remove type once
-  if (resource && resource.type === 'once') {
-    delete resource.type;
-    const { adaptorType } = resource;
-    const appType = adaptorType && adaptorTypeMap[adaptorType];
-
-    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
-    if (appType && resource[appType] && resource[appType].once) {
-      delete resource[appType].once;
-    }
-  }
-
-  if (resource && resource.type === 'delta') {
-    resource.postData = {
-      lastExportDateTime: getLastExportDateTime(),
-    };
-  }
-
-  return resource;
-};
-
 export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
   const { pageProcessors = [] } = oldFlow;
   const pageProcessorsPatch = patchSet.find(
@@ -208,10 +249,6 @@ export const isUIDataExpectedForResource = (resource, connection, flow) =>
   isBlobTypeResource(resource) ||
   isConnector(flow);
 
-// A dummy _Context field to expose on each preview data on flows
-export const getContextInfo = () => ({
-  _CONTEXT: { lastExportDateTime, currentExportDateTime },
-});
 /*
  * Gives a sample data for Blob resource
  */
@@ -231,8 +268,8 @@ export const generateDefaultExtractsObject = resourceType => {
   // TODO: @Raghu Confirm the below format to generate default objects
   const defaultExtractsList =
     resourceType === 'imports'
-      ? ImportResponseMappingExtracts
-      : LookupResponseMappingExtracts;
+      ? IMPORT_RESPONSE_MAPPING_EXTRACTS
+      : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
     // eslint-disable-next-line no-param-reassign
@@ -245,9 +282,54 @@ export const generateDefaultExtractsObject = resourceType => {
 /*
  * @Inputs: flowInputData and rawData for the pp
  * This util merges both to generate actual format of Flow Record being passed at runtime
+ * If flowData is Array , then merge rawData to each object in that array
+ * If flowData is an Object, create array wrapped on it and merge rawData
  */
-export const generatePostResponseMapData = (flowData, rawData) => {
-  const flowDataArray = [flowData || {}];
+export const generatePostResponseMapData = (flowData, rawData = {}) => {
+  const flowDataArray = Array.isArray(flowData) ? flowData : [flowData || {}];
 
   return flowDataArray.map(fd => ({ ...fd, ...rawData }));
+};
+
+export const getFormattedResourceForPreview = (
+  resourceObj,
+  resourceType,
+  flowType
+) => {
+  const resource = deepClone(resourceObj);
+
+  // type Once need not be passed in preview as it gets executed in preview call
+  // so remove type once
+  if (resource && resource.type === 'once') {
+    delete resource.type;
+    const { adaptorType } = resource;
+    const appType = adaptorType && adaptorTypeMap[adaptorType];
+
+    // Manually removing once doc incase of preview to restrict execution on once query - Bug fix IO-11988
+    if (appType && resource[appType] && resource[appType].once) {
+      delete resource[appType].once;
+    }
+  }
+
+  if (resource && resource.type === 'delta') {
+    resource.postData = {
+      lastExportDateTime: getLastExportDateTime(),
+    };
+  }
+
+  // Incase of pp , morph sampleResponseData to support Response Mapping
+  if (flowType === 'pageProcessors') {
+    if (resource.sampleResponseData) {
+      // If there is sampleResponseData, update it to json if not a json
+      // @Raghu Make changes to save it as json in the first place, once ampersand is deprecated
+      if (isJsonString(resource.sampleResponseData)) {
+        resource.sampleResponseData = JSON.parse(resource.sampleResponseData);
+      }
+    } else {
+      // If there is no sampleResponseData, add default fields for lookups/imports
+      resource.sampleResponseData = generateDefaultExtractsObject(resourceType);
+    }
+  }
+
+  return resource;
 };

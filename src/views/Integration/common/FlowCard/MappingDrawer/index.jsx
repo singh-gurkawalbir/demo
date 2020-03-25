@@ -40,15 +40,18 @@ function MappingDrawer() {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { flowId, importId } = match.params;
+  const { flowId, importId, subRecordMappingId } = match.params;
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const flowName = flow.name || flow._id;
+  const flowName = flow ? flow.name : flowId;
   const mappingEditorId = `${importId}-${flowId}`;
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const { showSalesforceNetsuiteAssistant } = useSelector(state =>
-    selectors.mapping(state, mappingEditorId)
+  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
+    state => selectors.mapping(state, mappingEditorId)
+  );
+  const showPreview = !!(
+    showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
@@ -59,10 +62,8 @@ function MappingDrawer() {
       open={!!match}
       classes={{
         paper: clsx(classes.drawerPaper, {
-          [classes.fullWidthDrawerClose]:
-            !drawerOpened && showSalesforceNetsuiteAssistant,
-          [classes.fullWidthDrawerOpen]:
-            drawerOpened && showSalesforceNetsuiteAssistant,
+          [classes.fullWidthDrawerClose]: !drawerOpened && showPreview,
+          [classes.fullWidthDrawerOpen]: drawerOpened && showPreview,
         }),
       }}
       onClose={handleClose}>
@@ -81,6 +82,7 @@ function MappingDrawer() {
                 // am importId, this prop should be called as such.
                 resourceId={importId}
                 flowId={flowId}
+                subRecordMappingId={subRecordMappingId}
               />
             </Fragment>
           ) : (
@@ -101,6 +103,7 @@ export default function MappingDrawerRoute(props) {
       path={[
         `${match.url}/:flowId/mapping`,
         `${match.url}/:flowId/mapping/:importId`,
+        `${match.url}/:flowId/mapping/:importId/:subRecordMappingId`,
       ]}>
       <MappingDrawer {...props} />
     </Route>

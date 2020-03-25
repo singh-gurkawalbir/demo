@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
@@ -19,6 +19,15 @@ export default {
       retValues['/http/auth/token/location'] = undefined;
       retValues['/http/auth/token/headerName'] = undefined;
       retValues['/http/auth/token/scheme'] = undefined;
+
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
     }
 
     return {
@@ -29,7 +38,6 @@ export default {
       '/http/ping/relativeURI': '/v2/locations',
       '/http/baseURI': `https://connect.squareup.com`,
       '/http/ping/method': 'GET',
-      // '/http/ping/successPath': 'locations',
     };
   },
   fieldMap: {

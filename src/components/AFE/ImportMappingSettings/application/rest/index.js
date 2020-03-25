@@ -1,6 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
+import {
+  isProduction,
+  conditionalLookupOptionsforRest,
+  conditionalLookupOptionsforRestProduction,
+} from '../../../../../forms/utils';
 
 export default {
   getMetaData: (params = {}) => {
@@ -9,6 +14,7 @@ export default {
       lookup = {},
       extractFields,
       generate,
+      lookups,
       options = {},
     } = params;
     const {
@@ -17,7 +23,19 @@ export default {
       resourceId,
       resourceName,
       flowId,
+      isComposite,
     } = options;
+    let conditionalWhenOptions = isProduction()
+      ? conditionalLookupOptionsforRestProduction
+      : conditionalLookupOptionsforRest;
+
+    if (!isComposite) {
+      conditionalWhenOptions = conditionalWhenOptions.slice(
+        2,
+        conditionalWhenOptions.length + 1
+      );
+    }
+
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -435,6 +453,39 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [{ items: conditionalWhenOptions }],
+        },
+
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          label: 'Lookup name:',
+          type: 'textwithlookupextract',
+          fieldType: 'lookupMappings',
+          connectionId,
+          refreshOptionsOnChangesTo: ['lookups'],
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
+        lookups: {
+          name: 'lookups',
+          fieldId: 'lookups',
+          id: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
       },
       layout: {
         fields: [
@@ -462,6 +513,14 @@ export default {
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -493,6 +552,21 @@ export default {
 
         if (fieldId === 'lookup.relativeURI') {
           return { resourceName };
+        }
+
+        if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
+          };
         }
 
         return null;

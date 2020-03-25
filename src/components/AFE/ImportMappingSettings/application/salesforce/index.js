@@ -1,6 +1,11 @@
 import mappingUtil from '../../../../../utils/mapping';
 import dateTimezones from '../../../../../utils/dateTimezones';
 import dateFormats from '../../../../../utils/dateFormats';
+import {
+  isProduction,
+  conditionalLookupOptionsforSalesforce,
+  conditionalLookupOptionsforSalesforceProduction,
+} from '../../../../../forms/utils';
 
 export default {
   getMetaData: (params = {}) => {
@@ -11,6 +16,7 @@ export default {
       generate,
       generateFields,
       options,
+      lookups,
     } = params;
     const { connectionId } = options;
     const selectedGenerateObj =
@@ -425,6 +431,47 @@ export default {
           helpKey: 'mapping.extractDateTimezone',
           visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
         },
+        'conditional.when': {
+          id: 'conditional.when',
+          name: 'conditionalWhen',
+          type: 'select',
+          label: 'Only perform mapping when:',
+          defaultValue: value.conditional && value.conditional.when,
+          options: [
+            {
+              items: isProduction()
+                ? conditionalLookupOptionsforSalesforceProduction
+                : conditionalLookupOptionsforSalesforce,
+            },
+          ],
+        },
+        lookups: {
+          name: 'lookups',
+          id: 'lookups',
+          fieldId: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
+
+        'conditional.lookupName': {
+          id: 'conditional.lookupName',
+          name: 'conditionalLookupName',
+          type: 'textwithlookupextract',
+          importType: 'salesforce',
+          connectionId,
+          extractFields,
+          refreshOptionsOnChangesTo: ['lookups'],
+          fieldType: 'lookupMappings',
+          label: 'Lookup name:',
+          defaultValue: value.conditional && value.conditional.lookupName,
+          visibleWhen: [
+            {
+              field: 'conditional.when',
+              is: ['lookup_not_empty', 'lookup_empty'],
+            },
+          ],
+          required: true,
+        },
       },
       layout: {
         fields: [
@@ -452,6 +499,14 @@ export default {
           'lookupSFSelect',
           'extractDateFormat',
           'extractDateTimezone',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+          },
         ],
       },
       optionsHandler: (fieldId, fields) => {
@@ -516,6 +571,19 @@ export default {
           return {
             disableFetch: !sObjectType,
             commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`,
+          };
+        } else if (fieldId === 'conditional.lookupName') {
+          const lookupField = fields.find(field => field.fieldId === 'lookups');
+
+          return {
+            lookups: {
+              fieldId: 'lookups',
+              data:
+                (lookupField &&
+                  Array.isArray(lookupField.value) &&
+                  lookupField.value) ||
+                [],
+            },
           };
         }
 

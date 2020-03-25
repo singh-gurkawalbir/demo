@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import produce from 'immer';
 import { differenceWith, isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
@@ -7,18 +8,10 @@ import lookupUtil from '../../../utils/lookup';
 const { deepClone } = require('fast-json-patch');
 
 const emptySet = [];
+const emptyObj = {};
 
 export default function reducer(state = {}, action) {
-  const {
-    id,
-    type,
-    generateFields,
-    lookups,
-    value,
-    index,
-    field,
-    options = {},
-  } = action;
+  const { id, type, lookups, value, field, key, options = {} } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -37,6 +30,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             showSalesforceNetsuiteAssistant,
             subRecordMappingId,
+            importSampleData = [],
             ...additionalOptions
           } = options;
           let formattedMappings;
@@ -69,18 +63,20 @@ export default function reducer(state = {}, action) {
             lookups = lookupUtil.getLookupFromResource(resourceData);
           }
 
-          const initChangeIdentifier =
-            (draft[id] && draft[id].initChangeIdentifier) || 0;
-
-          draft[id] = {
-            mappings: formattedMappings.map(m => ({ ...m, rowIdentifier: 0 })),
+          // key would be unique property associated with each mapping.
+          const tmp = {
+            mappings: formattedMappings.map(m => ({
+              ...m,
+              rowIdentifier: 0,
+              key: shortid.generate(),
+            })),
             incompleteGenerates: [],
             lookups: lookups || [],
-            initChangeIdentifier: initChangeIdentifier + 1,
+            changeIdentifier: 0,
             application,
             resource: resourceData,
             adaptorType,
-            generateFields,
+            importSampleData,
             visible: true,
             isGroupedSampleData,
             flowSampleData: undefined,
@@ -88,19 +84,38 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            // lastModifiedRow helps to set generate field when any field in salesforce mapping assistant is clicked
-            lastModifiedRow: -1,
+            showHttpAssistantPreview: !!resourceData.assistant,
+            // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
+            lastModifiedKey: '',
           };
-          draft[id].mappingsCopy = deepClone(draft[id].mappings);
-          draft[id].lookupsCopy = deepClone(draft[id].lookups);
+
+          tmp.mappingsCopy = deepClone(tmp.mappings);
+          tmp.lookupsCopy = deepClone(tmp.lookups);
+
+          if (resourceData._integrationId && resourceData.http) {
+            tmp.httpAssistantPreview = {
+              rule:
+                resourceData && resourceData.http && resourceData.http.body[0],
+            };
+          }
+
+          draft[id] = tmp;
         }
 
         break;
-      case actionTypes.MAPPING.DELETE: {
-        draft[id].initChangeIdentifier += 1;
-        draft[id].mappings.splice(index, 1);
+      case actionTypes.MAPPING.CHANGE_ORDER: {
+        draft[id].mappings = value;
+        break;
+      }
 
-        if (draft[id].lastModifiedRow === index) draft[id].lastModifiedRow = -1;
+      case actionTypes.MAPPING.DELETE: {
+        draft[id].changeIdentifier += 1;
+        const filteredMapping = draft[id].mappings.filter(m => m.key !== key);
+
+        draft[id].mappings = filteredMapping;
+
+        if (draft[id].lastModifiedKey === key) draft[id].lastModifiedKey = '';
+
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -111,16 +126,24 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.MAPPING.UPDATE_GENERATES: {
-        draft[id].generateFields = generateFields;
+      case actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA: {
+        draft[id].changeIdentifier += 1;
+        draft[id].importSampleData = value;
+        const generateFields = mappingUtil.getFormattedGenerateData(
+          value,
+          draft[id].application
+        );
         const { incompleteGenerates } = draft[id];
 
         // Special case for salesforce
         incompleteGenerates.forEach(generateObj => {
           const {
             value: incompleteGenValue,
-            index: incompleteGenIndex,
+            key: incompleteGenKey,
           } = generateObj;
+          const incompleteGenIndex = draft[id].mappings.findIndex(
+            m => m.key === incompleteGenKey
+          );
           const childSObject =
             generateFields &&
             generateFields.find(
@@ -142,6 +165,9 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_FIELD: {
+        draft[id].changeIdentifier += 1;
+        const index = draft[id].mappings.findIndex(m => m.key === key);
+
         if (draft[id].mappings[index]) {
           const objCopy = { ...draft[id].mappings[index] };
 
@@ -186,10 +212,11 @@ export default function reducer(state = {}, action) {
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,
+            key: shortid.generate(),
           });
         }
 
-        draft[id].lastModifiedRow = index;
+        draft[id].lastModifiedKey = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -201,36 +228,40 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
+        draft[id].changeIdentifier += 1;
         const incompleteGeneObj = draft[id].incompleteGenerates.find(
-          gen => gen.index === index
+          gen => gen.key === key
         );
 
         if (incompleteGeneObj) {
           incompleteGeneObj.value = value;
         } else {
-          draft[id].incompleteGenerates.push({ index, value });
+          draft[id].incompleteGenerates.push({ key, value });
         }
 
         break;
       }
 
-      case actionTypes.MAPPING.PATCH_SETTINGS:
+      case actionTypes.MAPPING.PATCH_SETTINGS: {
+        draft[id].changeIdentifier += 1;
+        const index = draft[id].mappings.findIndex(m => m.key === key);
+
         if (draft[id].mappings[index]) {
           const {
             generate,
             extract,
             isNotEditable,
-            index: mappingIndex,
             isRequired,
             rowIdentifier,
+            key,
           } = draft[id].mappings[index];
           const valueTmp = {
             generate,
             extract,
             isNotEditable,
-            index: mappingIndex,
             isRequired,
             rowIdentifier,
+            key,
           };
 
           Object.assign(valueTmp, value);
@@ -251,7 +282,7 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedRow = index;
+          draft[id].lastModifiedKey = key;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -264,6 +295,8 @@ export default function reducer(state = {}, action) {
         }
 
         break;
+      }
+
       case actionTypes.MAPPING.UPDATE_LOOKUP: {
         draft[id].lookups = lookups;
         const {
@@ -279,18 +312,17 @@ export default function reducer(state = {}, action) {
         if (draft[id]) draft[id].visible = value;
         break;
       case actionTypes.MAPPING.SAVE:
-        draft[id].submitCompleted = false;
-        draft[id].submitFailed = false;
+        draft[id].saveStatus = 'requested';
         break;
       case actionTypes.MAPPING.SAVE_COMPLETE:
-        draft[id].submitCompleted = true;
+        draft[id].saveStatus = 'completed';
         draft[id].validationErrMsg = undefined;
         draft[id].mappingsCopy = deepClone(draft[id].mappings);
         draft[id].lookupsCopy = deepClone(draft[id].lookups);
 
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
-        draft[id].submitFailed = true;
+        draft[id].saveStatus = 'failed';
         draft[id].validationErrMsg = undefined;
 
         break;
@@ -339,32 +371,17 @@ export default function reducer(state = {}, action) {
   });
 }
 
-// #region PUBLIC SELECTORS
-export function mappingSaveProcessTerminate(state, id) {
-  if (!state) {
-    return emptySet;
-  }
-
-  if (!state[id]) return false;
-  const { submitFailed, submitCompleted } = state[id];
-
-  return {
-    saveTerminated: !!(submitFailed || submitCompleted),
-    saveCompleted: !!submitCompleted,
-  };
-}
-
 const isMappingObjEqual = (mapping1, mapping2) => {
   const {
     rowIdentifier: r1,
-    index: i1,
+    key: key1,
     isNotEditable: e1,
     isRequired: req1,
     ...formattedMapping1
   } = mapping1;
   const {
     rowIdentifier: r2,
-    index: i2,
+    key: key2,
     isNotEditable: e2,
     isRequired: req2,
     ...formattedMapping2
@@ -393,20 +410,33 @@ export function mappingsChanged(state, id) {
   }
 
   const { mappings, mappingsCopy, lookups, lookupsCopy } = state[id];
-  const mappingsDiff = differenceWith(
-    mappingsCopy,
-    mappings,
-    isMappingObjEqual
-  );
-  let isMappingsEqual =
-    mappings.length === mappingsCopy.length && !mappingsDiff.length;
+  let isMappingsChanged = mappings.length !== mappingsCopy.length;
 
-  if (isMappingsEqual) {
-    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
-
-    isMappingsEqual =
-      lookupsCopy.length === lookups.length && !lookupsDiff.length;
+  // change of order of mappings is treated as Mapping change
+  for (let i = 0; i < mappings.length && !isMappingsChanged; i += 1) {
+    isMappingsChanged = !isMappingObjEqual(mappings[i], mappingsCopy[i]);
   }
 
-  return !isMappingsEqual;
+  if (!isMappingsChanged) {
+    const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);
+
+    isMappingsChanged =
+      lookupsCopy.length !== lookups.length || lookupsDiff.length;
+  }
+
+  return isMappingsChanged;
+}
+
+export function mappingsSaveStatus(state, id) {
+  if (!state || !state[id]) {
+    return emptyObj;
+  }
+
+  const { saveStatus } = state[id];
+
+  return {
+    saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',
+    saveCompleted: saveStatus === 'completed',
+    saveInProgress: saveStatus === 'requested',
+  };
 }

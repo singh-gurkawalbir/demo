@@ -34,7 +34,9 @@ export default function EnvironmentToggle() {
   });
 
   function handleChange(environment) {
-    dispatch(actions.user.preferences.update({ environment }));
+    const themeName = environment === 'sandbox' ? 'sandbox' : 'light';
+
+    dispatch(actions.user.preferences.update({ environment, themeName }));
     history.push(getRoutePath('/'));
   }
 

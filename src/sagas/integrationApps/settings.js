@@ -1,6 +1,7 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
+import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
 
 export function* requestUpgrade({ integration, options }) {
@@ -169,6 +170,75 @@ export function* getCategoryMappingMetadata({
   }
 }
 
+export function* saveCategoryMappings({ integrationId, flowId }) {
+  const mappingData = yield select(
+    selectors.pendingCategoryMappings,
+    integrationId,
+    flowId
+  );
+  let path = `/integrations/${integrationId}/utilities/saveMarketplaceCategoryMapping`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: { utilities: { options: { _flowId: flowId }, mappingData } },
+        method: 'PUT',
+      },
+      message: `Saving...`,
+    }) || {};
+  } catch (error) {
+    yield put(
+      actions.integrationApp.settings.categoryMappings.saveFailed(
+        integrationId,
+        flowId
+      )
+    );
+
+    return undefined;
+  }
+
+  path = `/integrations/${integrationId}/utilities/loadMarketplaceCategoryMapping`;
+  let response;
+
+  try {
+    ({ response } = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {
+          utilities: {
+            options: {
+              _flowId: flowId,
+              requestOptions: [{ operation: 'mappingData', params: {} }],
+            },
+          },
+        },
+        method: 'PUT',
+      },
+      message: `Fetching...`,
+    }) || {});
+  } catch (error) {
+    yield put(
+      actions.integrationApp.settings.saveCategoryMappingsFailed(
+        integrationId,
+        flowId
+      )
+    );
+
+    return undefined;
+  }
+
+  const updatedMappings = response.find(op => op.operation === 'mappingData');
+
+  yield put(
+    actions.integrationApp.settings.receivedCategoryMappingData(
+      integrationId,
+      flowId,
+      updatedMappings
+    )
+  );
+}
+
 export function* upgrade({ integration, license }) {
   const path = `/integrations/${integration._id}/settings/changeEdition`;
   let upgradeResponse;
@@ -207,6 +277,10 @@ export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_CATEGORY_MAPPING_METADATA,
     getCategoryMappingMetadata
+  ),
+  takeLatest(
+    actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE,
+    saveCategoryMappings
   ),
   takeLatest(
     actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST,

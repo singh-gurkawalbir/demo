@@ -10,6 +10,7 @@ import ebayXml from './ebayXml';
 import openair from './openair';
 import onelogin from './onelogin';
 import quickbooks from './quickbooks';
+import fourcastplus from './fourcastplus';
 import trinet from './trinet';
 import pacejet from './pacejet';
 import paycor from './paycor';
@@ -162,10 +163,14 @@ import messagemedia from './messagemedia';
 import vend from './vend';
 import miva from './miva';
 import target from './target';
+import threeplcentral from './threeplcentral';
+import loopreturns from './loopreturns';
+import saplitmos from './saplitmos';
 
 export default {
   sharepoint,
   vroozi,
+  saplitmos,
   oandav20fxtrade,
   openair,
   onelogin,
@@ -187,6 +192,7 @@ export default {
   parseur,
   paypal,
   returnly,
+  '4castplus': fourcastplus,
   myobessentials,
   expensify,
   wish,
@@ -327,4 +333,6 @@ export default {
   vend,
   miva,
   target,
+  '3plcentral': threeplcentral,
+  loopreturns,
 };

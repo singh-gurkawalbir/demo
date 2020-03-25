@@ -5,7 +5,6 @@ import {
   makeStyles,
   Checkbox,
   Button,
-  Grid,
   FormGroup,
   FormLabel,
   FormControl,
@@ -21,14 +20,29 @@ import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
-    margin: theme.spacing(3),
+    margin: theme.spacing(2),
+    wordBreak: 'break-word',
   },
   filter: {
-    maxWidth: '400px',
+    maxWidth: '350px',
+  },
+  wrapper: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+  },
+  heading: {
+    fontWeight: 'bold',
+    color: theme.palette.secondary.light,
+    marginBottom: 5,
+  },
+  formGroup: {
+    '& > label': {
+      width: '100%',
+    },
   },
 }));
 
-function Filters({ integrationId, flowId }) {
+function Filters({ integrationId, flowId, uiAssistant }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -89,89 +103,87 @@ function Filters({ integrationId, flowId }) {
           open={open}
           anchorEl={anchorEl}>
           <div className={classes.filter}>
-            <Grid container direction="row">
-              <Grid item>
-                <FormControl
-                  component="fieldset"
-                  className={classes.formControl}>
-                  <FormLabel component="legend">Amazon attributes</FormLabel>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={!!attributes.required}
-                          onChange={handleAttributeChange('required')}
-                          value="required"
-                        />
-                      }
-                      label="Required"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={!!attributes.preferred}
-                          onChange={handleAttributeChange('preferred')}
-                          value="preferred"
-                        />
-                      }
-                      label="Preferred"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={!!attributes.conditional}
-                          onChange={handleAttributeChange('conditional')}
-                          value="conditional"
-                        />
-                      }
-                      label="Conditional"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          color="primary"
-                          checked={!!attributes.optional}
-                          onChange={handleAttributeChange('optional')}
-                          value="optional"
-                        />
-                      }
-                      label="Optional"
-                    />
-                  </FormGroup>
-                </FormControl>
-              </Grid>
-              <Grid item>
-                <FormControl
-                  component="fieldset"
-                  className={classes.formControl}>
-                  <FormLabel component="legend">Field mappings</FormLabel>
-                  <RadioGroup
-                    aria-label="mappings"
-                    name="mappings"
-                    value={mappingFilter}
-                    onChange={handleChange}>
-                    <FormControlLabel
-                      value="all"
-                      control={<Radio color="primary" />}
-                      label="All"
-                    />
-                    <FormControlLabel
-                      value="mapped"
-                      control={<Radio color="primary" />}
-                      label="Mapped"
-                    />
-                    <FormControlLabel
-                      value="unmapped"
-                      control={<Radio color="primary" />}
-                      label="Unmapped"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-            </Grid>
+            <div className={classes.wrapper}>
+              <FormControl component="fieldset" className={classes.formControl}>
+                <FormLabel component="legend" className={classes.heading}>
+                  {`${uiAssistant} attributes`}
+                </FormLabel>
+                <FormGroup className={classes.formGroup}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={!!attributes.required}
+                        onChange={handleAttributeChange('required')}
+                        value="required"
+                      />
+                    }
+                    label="Required"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={!!attributes.preferred}
+                        onChange={handleAttributeChange('preferred')}
+                        value="preferred"
+                      />
+                    }
+                    label="Preferred"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={!!attributes.conditional}
+                        onChange={handleAttributeChange('conditional')}
+                        value="conditional"
+                      />
+                    }
+                    label="Conditional"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={!!attributes.optional}
+                        onChange={handleAttributeChange('optional')}
+                        value="optional"
+                      />
+                    }
+                    label="Optional"
+                  />
+                </FormGroup>
+              </FormControl>
+
+              <FormControl component="fieldset" className={classes.formControl}>
+                <FormLabel component="legend" className={classes.heading}>
+                  Field mappings
+                </FormLabel>
+                <RadioGroup
+                  aria-label="mappings"
+                  name="mappings"
+                  value={mappingFilter}
+                  onChange={handleChange}
+                  className={classes.formGroup}>
+                  <FormControlLabel
+                    value="all"
+                    control={<Radio color="primary" />}
+                    label="All"
+                  />
+                  <FormControlLabel
+                    value="mapped"
+                    control={<Radio color="primary" />}
+                    label="Mapped"
+                  />
+                  <FormControlLabel
+                    value="unmapped"
+                    control={<Radio color="primary" />}
+                    label="Unmapped"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </div>
           </div>
         </ArrowPopper>
       </Fragment>

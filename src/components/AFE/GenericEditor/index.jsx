@@ -30,7 +30,6 @@ const Editor = props => {
     handleInit,
     enableAutocomplete,
     disabled,
-    changeIdentifier,
   } = props;
 
   useEffect(() => {
@@ -40,7 +39,7 @@ const Editor = props => {
   const gridTemplate = templateClassName || classes[`${layout}Template`];
 
   return (
-    <PanelGrid key={changeIdentifier} className={gridTemplate}>
+    <PanelGrid className={gridTemplate}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title={ruleTitle} />
         <CodePanel

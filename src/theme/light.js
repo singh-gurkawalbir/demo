@@ -21,7 +21,9 @@ export default {
       paper2: colors.celigoNeutral2,
       default: colors.celigoNeutral1,
       drawer: colors.celigoNeutral9,
-      drawer2: colors.celigoNeutral6,
+      drawer2: colors.celigoNeutral8,
+      drawer3: colors.celigoNeutral7,
+      drawerActive: colors.celigoAccent1,
     },
     primary: {
       light: colors.celigoAccent3,
@@ -32,14 +34,8 @@ export default {
       lightest: colors.celigoNeutral3,
       light: colors.celigoNeutral6,
       main: colors.celigoNeutral8,
-      darkest: colors.celigoNeutral9,
+      dark: colors.celigoNeutral9,
       contrastText: colors.celigoNeutral4,
-    },
-    sandbox: {
-      light: colors.celigoSandbox2,
-      // main: colors.celigoSandbox3, // not used yet.. maybe never?
-      dark: colors.celigoSandbox1,
-      contrastText: colors.celigoNeutral6,
     },
     text: {
       disabled: colors.celigoNeutral4,
@@ -513,7 +509,7 @@ export default {
     },
     MuiCheckbox: {
       root: {
-        color: colors.celigoAccent1,
+        color: colors.celigoNeutral5,
         padding: 0,
         marginRight: 4,
         borderRadius: 0,

@@ -1,6 +1,9 @@
 export default {
   name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
+
+  // UI Specific field
+  formView: { id: 'formView', type: 'formview', label: 'Form View' },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
     type: 'apiidentifier',
@@ -97,6 +100,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -156,6 +160,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
@@ -793,5 +798,12 @@ export default {
   'lookups[*].whereClause': {
     type: 'text',
     label: 'Lookups[*] where Clause',
+  },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };

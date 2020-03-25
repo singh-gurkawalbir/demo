@@ -1,4 +1,4 @@
-import { useState, cloneElement } from 'react';
+import { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -20,6 +20,8 @@ import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
+import useConfirmDialog from '../../ConfirmDialog';
+import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -55,6 +57,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
+ */
 export default function EditorDialog(props) {
   const {
     children,
@@ -70,9 +75,11 @@ export default function EditorDialog(props) {
     disabled,
     dataTest = 'editor',
     hidePreviewAction = false,
+    patchOnSave = false,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [state, setState] = useState({
     layout: props.layout || 'compact',
@@ -80,44 +87,84 @@ export default function EditorDialog(props) {
   });
   const { layout, fullScreen } = state;
   const editor = useSelector(state => selectors.editor(state, id));
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, id).saveInProgress
+  );
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, id)
+  );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
   const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
-  const handleClose = shouldCommit => {
-    if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
-      return;
-    }
+  const handleSave = useCallback(
+    shouldCommit => () => {
+      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+        return;
+      }
 
-    if (onClose) {
-      onClose(shouldCommit, editor);
-    }
-  };
-
-  const patchEditorLayoutChange = () => {
+      if (onClose) {
+        onClose(shouldCommit, editor);
+      }
+    },
+    [editor, enquesnackbar, onClose]
+  );
+  const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
-  };
-
-  const handleLayoutChange = (event, _layout) => {
-    patchEditorLayoutChange();
-    _layout && setState({ ...state, layout: _layout });
-  };
-
+  }, [dispatch, id]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
+  );
+  const handleCancelClick = useCallback(() => {
+    if (isEditorDirty) {
+      confirmDialog({
+        title: 'Confirm',
+        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        buttons: [
+          {
+            label: 'No',
+          },
+          {
+            label: 'Yes',
+            onClick: onClose,
+          },
+        ],
+      });
+    } else {
+      onClose();
+    }
+  }, [confirmDialog, isEditorDirty, onClose]);
+  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
   };
 
-  const size = fullScreen ? { height } : { height, width };
-  const showPreviewAction =
-    !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate;
-  const disableSave = !editor || editorViolations || disabled;
+  const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
+    fullScreen,
+    height,
+    width,
+  ]);
+  const showPreviewAction = useMemo(
+    () =>
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
+  );
+  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
+    disabled,
+    editor,
+    editorViolations,
+  ]);
 
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
-      onClose={() => handleClose()}
+      onClose={handleCancelClick}
       scroll="paper"
       data-test={dataTest}
       maxWidth={false}>
@@ -172,19 +219,33 @@ export default function EditorDialog(props) {
             Preview
           </Button>
         )}
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          disabled={!!disableSave}
-          color="primary"
-          onClick={() => handleClose(true)}>
-          Save
-        </Button>
+        {patchOnSave ? (
+          <EditorSaveButton
+            id={id}
+            variant="outlined"
+            color="primary"
+            dataTest="saveEditor"
+            disabled={disabled}
+            onClose={handleSave(true)}
+            submitButtonLabel="Save"
+          />
+        ) : (
+          <Button
+            variant="outlined"
+            data-test="saveEditor"
+            disabled={!!disableSave}
+            color="primary"
+            onClick={handleSave(true)}>
+            Save
+          </Button>
+        )}
+
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleClose()}>
+          disabled={!!saveInProgress}
+          onClick={handleCancelClick}>
           Cancel
         </Button>
       </DialogActions>

@@ -46,6 +46,9 @@ export default {
     type: 'text',
     label: 'Description',
   },
+
+  // UI Specific field
+  formView: { id: 'formView', type: 'formview', label: 'Form View' },
   asynchronous: {
     type: 'checkbox',
     label: 'Asynchronous',
@@ -139,6 +142,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -198,6 +202,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
@@ -565,5 +570,12 @@ export default {
     type: 'checkbox',
     label: 'Skip Retries',
     visible: r => !(r && r.isLookup),
+  },
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };

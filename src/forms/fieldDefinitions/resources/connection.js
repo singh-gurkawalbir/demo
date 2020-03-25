@@ -50,6 +50,7 @@ export default {
       {
         items: [
           { label: '3dcart', value: '3dcart' },
+          { label: '3PL Central', value: '3plcentral' },
           { label: 'Accelo', value: 'accelo' },
           { label: 'Adp', value: 'adp' },
           { label: 'Amazonaws', value: 'amazonaws' },
@@ -109,6 +110,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
           { label: 'Mediaocean', value: 'mediaocean' },
@@ -1447,6 +1449,12 @@ export default {
       },
     },
   },
+  'as2.partnerStationInfo.mdn.verifyMDNSignature': {
+    type: 'checkbox',
+    label: 'MDN signature verification',
+    helpText:
+      'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
+  },
   'as2.partnerStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
@@ -2046,6 +2054,7 @@ export default {
     type: 'hook',
     label: '',
     required: false,
+    editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
@@ -2502,6 +2511,12 @@ export default {
     label: 'Secret Access Key',
   },
   // #endregion dynamodb
-
+  settings: {
+    type: 'editor',
+    mode: 'json',
+    label: 'Settings',
+    showOnDeveloperMode: true,
+    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+  },
   // #region custom connection
 };

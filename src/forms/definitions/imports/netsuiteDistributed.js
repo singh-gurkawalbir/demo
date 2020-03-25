@@ -1,4 +1,8 @@
-import { isNewId } from '../../../utils/resource';
+import {
+  isNewId,
+  updateMappingsBasedOnNetSuiteSubrecords,
+} from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -10,8 +14,29 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteImport';
     }
 
+    if (Object.hasOwnProperty.call(newValues, '/settings')) {
+      let settings = newValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      newValues['/settings'] = settings;
+    }
+
+    const subrecords = newValues['/netsuite_da/subrecords'];
+    let mapping = newValues['/netsuite_da/mapping'];
+
+    if (subrecords) {
+      mapping = updateMappingsBasedOnNetSuiteSubrecords(mapping, subrecords);
+    }
+
     return {
       ...newValues,
+      '/netsuite_da/subrecords': undefined,
+      '/netsuite_da/mapping': mapping,
     };
   },
   fieldMap: {
@@ -45,6 +70,11 @@ export default {
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
+    'netsuite_da.mapping': { fieldId: 'netsuite_da.mapping' },
+    'netsuite_da.subrecords': {
+      fieldId: 'netsuite_da.subrecords',
+      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
+    },
     'netsuite_da.operation': { fieldId: 'netsuite_da.operation' },
     'netsuite.file.internalId': { fieldId: 'netsuite.file.internalId' },
     'netsuite.file.name': { fieldId: 'netsuite.file.name' },
@@ -94,6 +124,7 @@ export default {
         },
       ],
     },
+    settings: { fieldId: 'settings' },
   },
   layout: {
     fields: [
@@ -103,6 +134,8 @@ export default {
       'blobKeyPath',
       'distributed',
       'netsuite_da.recordType',
+      'netsuite_da.mapping',
+      'netsuite_da.subrecords',
       'netsuite_da.operation',
       'netsuite.operation',
       'ignoreExisting',
@@ -135,6 +168,16 @@ export default {
           ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
           : '',
         resetValue: [],
+      };
+    }
+
+    if (fieldId === 'netsuite_da.subrecords') {
+      const recordTypeField = fields.find(
+        field => field.id === 'netsuite_da.recordType'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
       };
     }
 

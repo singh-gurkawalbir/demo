@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, Collapse, ButtonBase } from '@material-ui/core';
-import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
+import { List, Collapse, ButtonBase, Chip } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -40,9 +39,6 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    // itemIconRoot: {
-    //   width: 300,
-    // },
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
@@ -55,14 +51,16 @@ const useStyles = makeStyles(theme => ({
   toolbar: theme.mixins.toolbar,
 
   menuContainer: {
-    backgroundColor: theme.palette.secondary.darkest,
-    color: theme.palette.secondary.contrastText,
+    backgroundColor: theme.palette.background.drawer,
+    color: theme.palette.common.white,
+    // color: theme.palette.secondary.contrastText,
     overflow: 'hidden',
     height: '100%',
     display: 'grid',
     gridTemplateRows: '75px auto 140px',
     '& > div:first-child': {
       alignSelf: 'center',
+      justifySelf: 'center',
     },
     '& > div:last-child': {
       alignSelf: 'end',
@@ -70,20 +68,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
   menuContainerSandbox: {
-    backgroundColor: theme.palette.sandbox.dark,
-    color: theme.palette.sandbox.contrastText,
+    gridTemplateRows: `${theme.appBarHeight +
+      theme.pageBarHeight}px auto 140px`,
   },
+
   toggleContainer: {
     marginTop: theme.spacing(1),
     textAlign: 'center',
     '& svg': {
       color: theme.palette.text.hint,
-    },
-  },
-  sandboxToggleContainer: {
-    borderColor: theme.palette.secondary.light,
-    '& svg': {
-      color: theme.palette.secondary.light,
     },
   },
   list: {
@@ -96,24 +89,16 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  sandboxList: {
-    backgroundColor: 'rgb(255,255,255,0.3)',
-    '& ul': {
-      '&:last-child': {
-        borderColor: theme.palette.sandbox.dark,
-      },
-    },
-  },
   listItem: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.background.drawer2,
     '& svg > *': {
-      color: theme.palette.text.hint,
+      color: theme.palette.common.white,
     },
     '&:hover': {
-      backgroundColor: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.drawer2,
       color: theme.palette.background.paper,
       '&:before': {
-        background: theme.palette.primary.main,
+        background: theme.palette.background.drawerActive,
       },
       '& svg > *': {
         color: theme.palette.background.paper,
@@ -132,29 +117,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   activeItem: {
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    color: theme.palette.common.white,
-    '& svg > *': {
-      color: theme.palette.background.paper,
-    },
-  },
-  listItemSandbox: {
-    backgroundColor: theme.palette.sandbox.light,
-    '& svg > *': {
-      color: theme.palette.secondary.light,
-    },
-    '&:hover': {
-      backgroundColor: darken(theme.palette.sandbox.dark, 0.1),
-      '&:before': {
-        background: darken(theme.palette.sandbox.dark, 0.4),
-      },
-    },
-    '&:not(:last-child)': {
-      borderColor: theme.palette.sandbox.dark,
-    },
-  },
-  activeItemSandbox: {
-    backgroundColor: `${darken(theme.palette.sandbox.dark, 0.4)} !important`,
+    backgroundColor: `${theme.palette.background.drawerActive} !important`,
     color: theme.palette.common.white,
     '& svg > *': {
       color: theme.palette.background.paper,
@@ -167,23 +130,6 @@ const useStyles = makeStyles(theme => ({
     overflowY: 'auto',
     overflowX: 'hidden',
   },
-  logoContainer: {
-    textAlign: 'center',
-    fill: theme.palette.primary.dark,
-    color: theme.palette.primary.dark,
-    '& svg': {
-      fill: theme.palette.primary.dark,
-    },
-  },
-  sandboxLogoContainer: {
-    '& svg': {
-      fill: theme.palette.secondary.light,
-    },
-  },
-  logo: {
-    width: 90,
-    display: 'inline-block',
-  },
   itemText: {
     fontSize: 13,
     fontFamily: 'unset',
@@ -191,25 +137,48 @@ const useStyles = makeStyles(theme => ({
   },
   drawerToggle: {
     border: '1px solid',
-    borderColor: theme.palette.text.secondary,
+    borderColor: theme.palette.background.drawer2,
     borderRadius: 4,
     width: theme.spacing(3),
     height: theme.spacing(3),
     padding: 0,
   },
-  sandboxDrawerToggle: {
-    borderColor: theme.palette.secondary.light,
-  },
   innerListItems: {
-    background: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.drawer3,
+    // backgroundColor: 'rgb(255,255,255,0.1)',
     '&:hover': {
-      backgroundColor: lighten(theme.palette.text.secondary, 0.1),
+      backgroundColor: theme.palette.background.drawer3,
+      // backgroundColor: theme.palette.background.drawerActive,
     },
   },
-  sandboxInnerListItems: {
-    background: lighten(theme.palette.sandbox.light, 0.2),
-    '&:hover': {
-      backgroundColor: darken(theme.palette.sandbox.dark, 0.1),
+  logoContainer: {
+    alignItems: 'center',
+    display: 'inline-flex',
+    flexDirection: 'column',
+    fill: theme.palette.primary.dark,
+    color: theme.palette.primary.dark,
+    '& svg': {
+      fill: theme.palette.primary.dark,
+    },
+  },
+  logoContainerSandbox: {
+    fill: theme.palette.common.white,
+    color: theme.palette.common.white,
+    '& svg': {
+      fill: theme.palette.common.white,
+    },
+  },
+  logo: {
+    width: 90,
+    display: 'inline-block',
+  },
+  sandboxChip: {
+    color: theme.palette.common.white,
+    borderColor: theme.palette.common.white,
+    height: 'unset',
+    marginTop: theme.spacing(1.5),
+    '& span': {
+      padding: [[0, 5]],
     },
   },
 }));
@@ -219,6 +188,7 @@ export default function CeligoDrawer() {
   const dispatch = useDispatch();
   const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
+  // const themeName = useSelector(state => selectors.themeName(state));
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
   );
@@ -235,7 +205,7 @@ export default function CeligoDrawer() {
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
-  const isSandbox = environment === 'sandbox';
+  const isSandbox = environment === 'sandbox'; // || themeName === 'sandbox';
   const marketplaceConnectors = useSelector(state =>
     selectors.marketplaceConnectors(state, undefined, isSandbox)
   );
@@ -274,7 +244,7 @@ export default function CeligoDrawer() {
         <div>
           <div
             className={clsx(classes.logoContainer, {
-              [classes.sandboxLogoContainer]: isSandbox,
+              [classes.logoContainerSandbox]: isSandbox,
             })}>
             {drawerOpened ? (
               <ButtonBase className={classes.logo} onClick={handleDrawerToggle}>
@@ -288,13 +258,17 @@ export default function CeligoDrawer() {
                 <CeligoMarkIcon color="inherit" />
               </IconButton>
             )}
+            {isSandbox && (
+              <Chip
+                className={classes.sandboxChip}
+                label={drawerOpened ? 'SANDBOX' : 'SB'}
+                variant="outlined"
+              />
+            )}
           </div>
         </div>
         <div className={classes.menuList}>
-          <List
-            className={clsx(classes.list, {
-              [classes.sandboxList]: isSandbox,
-            })}>
+          <List className={clsx(classes.list)}>
             {menuItems(
               userProfile,
               userPermissions,
@@ -305,13 +279,7 @@ export default function CeligoDrawer() {
                 <ListItem
                   button
                   className={clsx(classes.listItem, {
-                    [classes.listItemSandbox]: isSandbox,
                     [classes.activeItem]:
-                      !isSandbox &&
-                      expand !== label &&
-                      matchPath(location.pathname, routeProps || `/pg${path}`),
-                    [classes.activeItemSandbox]:
-                      isSandbox &&
                       expand !== label &&
                       matchPath(location.pathname, routeProps || `/pg${path}`),
                   })}
@@ -333,11 +301,7 @@ export default function CeligoDrawer() {
                 </ListItem>
                 {children && (
                   <Collapse in={expand === label} unmountOnExit timeout="auto">
-                    <List
-                      className={clsx(classes.list, {
-                        [classes.sandboxList]: isSandbox,
-                      })}
-                      disablePadding>
+                    <List className={clsx(classes.list)} disablePadding>
                       {children.map(
                         ({
                           label,
@@ -352,20 +316,10 @@ export default function CeligoDrawer() {
                               classes.listItem,
                               classes.innerListItems,
                               {
-                                [classes.listItemSandbox]: isSandbox,
-                                [classes.sandboxInnerListItems]: isSandbox,
-                                [classes.activeItem]:
-                                  !isSandbox &&
-                                  matchPath(
-                                    location.pathname,
-                                    routeProps || `/pg${path}`
-                                  ),
-                                [classes.activeItemSandbox]:
-                                  isSandbox &&
-                                  matchPath(
-                                    location.pathname,
-                                    routeProps || `/pg${path}`
-                                  ),
+                                [classes.activeItem]: matchPath(
+                                  location.pathname,
+                                  routeProps || `/pg${path}`
+                                ),
                               }
                             )}
                             data-test={label}
@@ -396,17 +350,12 @@ export default function CeligoDrawer() {
           </List>
         </div>
         <div>
-          <div
-            className={clsx(classes.toolbar, classes.toggleContainer, {
-              [classes.sandboxToggleContainer]: isSandbox,
-            })}>
+          <div className={clsx(classes.toolbar, classes.toggleContainer)}>
             <IconButton
               data-test="celigoDrawerToggle"
               color="inherit"
               onClick={handleDrawerToggle}
-              className={clsx(classes.drawerToggle, {
-                [classes.sandboxDrawerToggle]: isSandbox,
-              })}>
+              className={classes.drawerToggle}>
               {drawerOpened ? <ArrowLeftIcon /> : <ArrowRightIcon />}
             </IconButton>
           </div>

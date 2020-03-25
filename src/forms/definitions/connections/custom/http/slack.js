@@ -1,4 +1,5 @@
 import { isProduction } from '../../../../utils';
+import { isJsonString } from '../../../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -18,6 +19,18 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] =
         'https://slack.com/api/oauth.access';
       retValues['/http/auth/oauth/scopeDelimiter'] = ',';
+    }
+
+    if (Object.hasOwnProperty.call(retValues, '/settings')) {
+      let settings = retValues['/settings'];
+
+      if (isJsonString(settings)) {
+        settings = JSON.parse(settings);
+      } else {
+        settings = {};
+      }
+
+      retValues['/settings'] = settings;
     }
 
     return {
@@ -156,6 +169,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    settings: { fieldId: 'settings' },
   },
   layout: {
     fields: [

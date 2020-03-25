@@ -29,6 +29,12 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
+  signInWithGoogle: returnTo =>
+    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+  reSignInWithGoogle: email =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  linkWithGoogle: returnTo =>
+    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),
@@ -173,6 +179,9 @@ const resource = {
       resourceReferences,
     }),
 
+  removeStage: (id, predicateForPatchFilter) =>
+    action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
+
   clearStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
 
@@ -182,8 +191,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
+  commitStaged: (resourceType, id, scope, options) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, {
+      resourceType,
+      id,
+      scope,
+      options,
+    }),
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
@@ -207,6 +221,15 @@ const resource = {
       offset,
     }),
   connections: {
+    pingAndUpdate: connectionId =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
+    pingAndUpdateFailed: connectionId =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE, { connectionId }),
+    pingAndUpdateSuccessful: (connectionId, offline) =>
+      action(actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS, {
+        connectionId,
+        offline,
+      }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
     receivedConnectionStatus: response =>
@@ -417,6 +440,151 @@ const fileDefinitions = {
 };
 const integrationApp = {
   settings: {
+    categoryMappings: {
+      init: (integrationId, flowId, id, options) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.INIT, {
+          integrationId,
+          flowId,
+          id,
+          options,
+        }),
+      clear: (integrationId, flowId) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.CLEAR, {
+          integrationId,
+          flowId,
+        }),
+      clearSaveStatus: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CLEAR_SAVE_STATUS,
+          {
+            integrationId,
+            flowId,
+          }
+        ),
+      patchField: (integrationId, flowId, id, field, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.PATCH_FIELD,
+          {
+            integrationId,
+            flowId,
+            id,
+            field,
+            index,
+            value,
+          }
+        ),
+      patchSettings: (integrationId, flowId, id, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .PATCH_SETTINGS,
+          { integrationId, flowId, id, index, value }
+        ),
+      delete: (integrationId, flowId, id, row) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.DELETE, {
+          integrationId,
+          flowId,
+          id,
+          index: row,
+        }),
+      collapseAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.COLLAPSE_ALL,
+          { integrationId, flowId }
+        ),
+      expandAll: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.EXPAND_ALL,
+          { integrationId, flowId }
+        ),
+      clearCollapseStatus: (integrationId, flowId) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CLEAR_COLLAPSE_STATUS,
+          { integrationId, flowId }
+        ),
+      updateLookup: (integrationId, flowId, id, lookups) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
+          {
+            integrationId,
+            flowId,
+            id,
+            lookups,
+          }
+        ),
+      setVisibility: (integrationId, flowId, id, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .SET_VISIBILITY,
+          {
+            integrationId,
+            flowId,
+            id,
+            value,
+          }
+        ),
+      updateGenerates: (integrationId, flowId, id, generateFields) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .UPDATE_GENERATES,
+          { integrationId, flowId, id, generateFields }
+        ),
+      patchIncompleteGenerates: (integrationId, flowId, id, index, value) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .PATCH_INCOMPLETE_GENERATES,
+          {
+            integrationId,
+            flowId,
+            id,
+            index,
+            value,
+          }
+        ),
+      saveVariationMappings: (integrationId, flowId, id, data = {}) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .SAVE_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+            data,
+          }
+        ),
+      cancelVariationMappings: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
+            .CANCEL_VARIATION_MAPPINGS,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+      save: (integrationId, flowId, closeOnSave) =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE, {
+          integrationId,
+          flowId,
+          closeOnSave,
+        }),
+
+      saveFailed: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_FAILED,
+          { integrationId, flowId, id }
+        ),
+      saveComplete: (integrationId, flowId, id) =>
+        action(
+          actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.SAVE_COMPLETE,
+          {
+            integrationId,
+            flowId,
+            id,
+          }
+        ),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -442,6 +610,11 @@ const integrationApp = {
         integrationId,
         redirectTo,
       }),
+    receivedCategoryMappingData: (integrationId, flowId, mappingData) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.RECEIVED_CATEGORY_MAPPINGS_DATA,
+        { integrationId, flowId, mappingData }
+      ),
     requestCategoryMappingMetadata: (
       integrationId,
       flowId,
@@ -474,11 +647,30 @@ const integrationApp = {
         flowId,
         filters,
       }),
+    clearVariationMappings: (integrationId, flowId, data) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_VARIATION_MAPPINGS, {
+        integrationId,
+        flowId,
+        data,
+      }),
+
     addCategory: (integrationId, flowId, data) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY, {
         integrationId,
         flowId,
         data,
+      }),
+    deleteCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
+      }),
+    restoreCategory: (integrationId, flowId, sectionId) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.RESTORE_CATEGORY, {
+        integrationId,
+        flowId,
+        sectionId,
       }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
@@ -549,6 +741,11 @@ const integrationApp = {
         installerFunction,
         storeId,
         addOnId,
+      }),
+    scriptInstallStep: (integrationId, connectionId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
+        id: integrationId,
+        connectionId,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -636,6 +833,12 @@ const integrationApp = {
         steps,
       }),
   },
+  // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
+  isAddonInstallInprogress: (installInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
+      installInprogress,
+      id,
+    }),
 };
 const ashare = {
   receivedCollection: ashares =>
@@ -734,6 +937,8 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
@@ -776,6 +981,7 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
+    toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>
@@ -919,6 +1125,9 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
+  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
@@ -928,23 +1137,23 @@ const mapping = {
       id,
       options,
     }),
-  patchField: (id, field, index, value) =>
-    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, index, value }),
-  updateGenerates: (id, generateFields) =>
-    action(actionTypes.MAPPING.UPDATE_GENERATES, { id, generateFields }),
+  patchField: (id, field, key, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
+  updateImportSampleData: (id, value) =>
+    action(actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA, { id, value }),
   updateLookup: (id, lookups) =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
-  patchSettings: (id, index, value) =>
-    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, index, value }),
+  patchSettings: (id, key, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, key, value }),
   setVisibility: (id, value) =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
-  patchIncompleteGenerates: (id, index, value) =>
+  patchIncompleteGenerates: (id, key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
       id,
-      index,
+      key,
       value,
     }),
-  delete: (id, index) => action(actionTypes.MAPPING.DELETE, { id, index }),
+  delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
   save: id => action(actionTypes.MAPPING.SAVE, { id }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
@@ -954,6 +1163,8 @@ const mapping = {
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+  changeOrder: (id, value) =>
+    action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
 };
 const searchCriteria = {
   init: (id, value) =>
@@ -1167,6 +1378,11 @@ const flow = {
       fileContent,
       fileType,
     }),
+  isOnOffActionInprogress: (onOffInProgress, flowId) =>
+    action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+      onOffInProgress,
+      flowId,
+    }),
   requestLastExportDateTime: ({ flowId }) =>
     action(actionTypes.FLOW.REQUEST_LAST_EXPORT_DATE_TIME, { flowId }),
   receivedLastExportDateTime: (flowId, response) =>
@@ -1193,6 +1409,31 @@ const analytics = {
         details,
       }),
   },
+};
+const responseMapping = {
+  init: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.INIT, {
+      id,
+      value,
+    }),
+  setFormattedMapping: (id, value) =>
+    action(actionTypes.RESPONSE_MAPPING.SET_FORMATTED_MAPPING, {
+      id,
+      value,
+    }),
+  patchField: (id, field, index, value) =>
+    action(actionTypes.RESPONSE_MAPPING.PATCH_FIELD, {
+      id,
+      field,
+      index,
+      value,
+    }),
+  delete: (id, index) =>
+    action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
+  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: id =>
+    action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 // #endregion
 
@@ -1237,4 +1478,5 @@ export default {
   searchCriteria,
   analytics,
   transfer,
+  responseMapping,
 };

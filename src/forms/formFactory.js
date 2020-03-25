@@ -3,6 +3,7 @@ import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 import { REST_ASSISTANTS } from '../utils/constants';
+import { isJsonString } from '../utils/string';
 
 const getAllOptionsHandlerSubForms = (
   fieldMap,
@@ -58,6 +59,106 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
+const applyCustomSettings = ({
+  fieldMap,
+  layout,
+  preSave,
+  isNew,
+  validationHandler,
+}) => {
+  const fieldMapCopy = cloneDeep(fieldMap);
+  const layoutCopy = cloneDeep(layout);
+  let preSaveCopy = preSave;
+  let validationHandlerCopy;
+
+  if (!isNew) {
+    if (
+      layoutCopy &&
+      layoutCopy.containers &&
+      layoutCopy.containers.length > 0
+    ) {
+      if (layoutCopy.type === 'column') {
+        if (
+          layoutCopy.containers[0].containers &&
+          layoutCopy.containers[0].containers.length
+        )
+          layoutCopy.containers[0].containers.push({
+            collapsed: true,
+            label: 'Custom settings',
+            fields: ['settings'],
+          });
+        else {
+          layoutCopy.containers[0].type = 'collapse';
+
+          layoutCopy.containers[0].containers = [
+            {
+              collapsed: true,
+              label: 'Custom settings',
+              fields: ['settings'],
+            },
+          ];
+        }
+      } else
+        layoutCopy.containers.push({
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        });
+    } else {
+      layoutCopy.type = 'collapse';
+      layoutCopy.containers = [
+        {
+          collapsed: true,
+          label: 'Custom settings',
+          fields: ['settings'],
+        },
+      ];
+    }
+
+    if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
+    preSaveCopy = args => {
+      let retValues;
+
+      if (preSave) {
+        retValues = preSave(args);
+      } else {
+        retValues = args;
+      }
+
+      if (Object.hasOwnProperty.call(retValues, '/settings')) {
+        let settings = retValues['/settings'];
+
+        if (isJsonString(settings)) {
+          settings = JSON.parse(settings);
+        } else {
+          settings = {};
+        }
+
+        retValues['/settings'] = settings;
+      }
+
+      return retValues;
+    };
+
+    validationHandlerCopy = field => {
+      // Handles validity for settings field
+      // Incase of other fields call the existing validationHandler
+      if (field.id === 'settings') {
+        if (
+          field.value &&
+          typeof field.value === 'string' &&
+          !isJsonString(field.value)
+        )
+          return 'Settings must be a valid JSON';
+      }
+
+      if (validationHandler) return validationHandler(field);
+    };
+  }
+
+  return { fieldMapCopy, layoutCopy, preSaveCopy, validationHandlerCopy };
+};
+
 const getResourceFormAssets = ({
   resourceType,
   resource,
@@ -71,6 +172,7 @@ const getResourceFormAssets = ({
   let init;
   let actions;
   let meta;
+  let validationHandler;
   const { type } = getResourceSubType(resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
@@ -123,7 +225,12 @@ const getResourceFormAssets = ({
           meta = meta.netsuiteDistributed;
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
-        } else if (resource && resource.assistant) {
+        } else if (
+          resource &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant)
+        ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,
@@ -147,7 +254,12 @@ const getResourceFormAssets = ({
           meta = meta.new;
         } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
           meta = meta.rdbms;
-        } else if (resource && resource.assistant) {
+        } else if (
+          resource &&
+          (resource.useParentForm !== undefined
+            ? !resource.useParentForm && resource.assistant
+            : resource.assistant)
+        ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
             resource,
@@ -200,11 +312,39 @@ const getResourceFormAssets = ({
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
 
+  // Need to be revisited @Surya
+  validationHandler = meta && meta.validationHandler;
+
+  if (
+    [
+      'integrations',
+      'exports',
+      'imports',
+      'pageProcessor',
+      'pageGenerator',
+      'connections',
+    ].includes(resourceType)
+  ) {
+    ({
+      fieldMapCopy: fieldMap,
+      layoutCopy: layout,
+      preSaveCopy: preSave,
+      validationHandlerCopy: validationHandler,
+    } = applyCustomSettings({
+      fieldMap,
+      validationHandler,
+      layout,
+      preSave,
+      isNew,
+    }));
+  }
+
   return {
     fieldMeta: { fieldMap, layout, actions },
     init,
     preSave,
     optionsHandler,
+    validationHandler,
   };
 };
 
