@@ -1,10 +1,32 @@
 import { isNewId } from '../../../../utils/resource';
 
+const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/;
+
 export default {
   'salesforce.sObjectType': {
     type: 'text',
     label: 'SObject Type',
     required: true,
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'salesforce.distributed.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: batchSizePattern,
+        message: 'Only numbers allowed',
+      },
+    },
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',
