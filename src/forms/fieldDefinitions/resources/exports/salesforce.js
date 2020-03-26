@@ -24,7 +24,7 @@ export default {
     validWhen: {
       matchesRegEx: {
         pattern: batchSizePattern,
-        message: 'Only numbers allowed',
+        message: 'Please enter a value between 4 and 200.',
       },
     },
     visibleWhenAll: [
