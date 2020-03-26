@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { Fragment, useEffect, useState, useMemo } from 'react';
 import { InputAdornment } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import ActionButton from '../../ActionButton';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -133,26 +134,29 @@ function DynaText(props) {
   ]);
 
   return (
-    <TextField
-      autoComplete="off"
-      key={id}
-      data-test={id}
-      name={name}
-      label={label}
-      InputProps={InputProps}
-      type={inputType}
-      placeholder={placeholder}
-      helperText={isValid ? description : errorMessages}
-      disabled={disabled || disableText}
-      multiline={multiline}
-      rowsMax={rowsMax}
-      required={required}
-      error={!isValid}
-      value={inpValue}
-      variant="filled"
-      onChange={handleFieldChange}
-      className={(classes.formField, className)}
-    />
+    <Fragment>
+      <TextField
+        autoComplete="off"
+        key={id}
+        data-test={id}
+        name={name}
+        label={label}
+        InputProps={InputProps}
+        type={inputType}
+        placeholder={placeholder}
+        helperText={isValid ? description : errorMessages}
+        disabled={disabled || disableText}
+        multiline={multiline}
+        rowsMax={rowsMax}
+        required={required}
+        error={!isValid}
+        value={inpValue}
+        variant="filled"
+        onChange={handleFieldChange}
+        className={(classes.formField, className)}
+      />
+      <FieldHelp {...props} />
+    </Fragment>
   );
 }
 
