@@ -64,15 +64,14 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-@withStyles(theme => ({
+@withStyles({
   root: {
-    marginTop: theme.spacing(3),
     overflowX: 'auto',
   },
   table: {
     minWidth: 700,
   },
-}))
+})
 class UserList extends Component {
   componentDidMount() {
     const { integrationId, requestIntegrationAShares, users } = this.props;
