@@ -86,6 +86,22 @@ const determineRequiredResources = type => {
   return resourceType;
 };
 
+const getTitle = ({ resourceType, queryParamStr, resourceLabel, isNew }) => {
+  if (resourceType === 'pageGenerator') {
+    return 'Create source';
+  }
+
+  const queryParams = new URLSearchParams(queryParamStr);
+  const isConnectionFixFromImpExp =
+    queryParams.get('fixConnnection') === 'true';
+
+  if (isConnectionFixFromImpExp && resourceType === 'connections') {
+    return `Fix offline connection`;
+  }
+
+  return `${isNew ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
+};
+
 export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
@@ -280,22 +296,12 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  const getTitle = useCallback(() => {
-    if (resourceType === 'pageGenerator') {
-      return 'Create source';
-    }
-
-    const queryParams = new URLSearchParams(location.search);
-    const isConnectionFixFromImpExp =
-      queryParams.get('fixConnnection') === 'true';
-
-    if (isConnectionFixFromImpExp && resourceType === 'connections') {
-      return `Fix offline connection`;
-    }
-
-    return `${isNewId(id) ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
-  }, [id, location.search, resourceLabel, resourceType]);
-  const title = getTitle();
+  const title = getTitle({
+    resourceType,
+    queryParamStr: location.search,
+    resourceLabel,
+    isNew: isNewId(id),
+  });
   const resize = useCallback((width, height) => {
     setResourceFormStyle({
       height: `calc(100vh - 136px - ${height}px)`,
