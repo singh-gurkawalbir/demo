@@ -33,20 +33,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaEditor(props) {
+export default function DynaEditor({
+  id,
+  mode,
+  options,
+  onFieldChange,
+  value,
+  label,
+  editorClassName,
+  disabled,
+  saveMode,
+  description,
+  errorMessages,
+  isValid,
+}) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
-  const {
-    id,
-    mode,
-    options,
-    onFieldChange,
-    value,
-    label,
-    editorClassName,
-    disabled,
-    saveMode,
-  } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -143,7 +145,11 @@ export default function DynaEditor(props) {
             onChange={value => handleUpdate(value)}
           />
         </div>
-        <ErroredMessageComponent {...props} />
+        <ErroredMessageComponent
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
+        />
       </div>
     </Fragment>
   );

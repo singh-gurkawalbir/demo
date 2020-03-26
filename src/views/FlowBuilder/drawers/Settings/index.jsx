@@ -105,7 +105,7 @@ export default function SettingsDrawer({ flow, isViewMode }) {
         type: 'editor',
         mode: 'json',
         label: 'Settings',
-        showOnDeveloperMode: true,
+        developerModeOnly: true,
         defaultValue:
           (flow && flow.settings && JSON.stringify(flow.settings)) || '{}',
       },

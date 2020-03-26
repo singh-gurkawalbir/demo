@@ -9,9 +9,8 @@ const useStyles = makeStyles({
     },
   },
 });
-const ErroredMessageComponent = props => {
+const ErroredMessageComponent = ({ description, errorMessages, isValid }) => {
   const classes = useStyles();
-  const { description, errorMessages, isValid } = props;
 
   return description || errorMessages ? (
     <FormHelperText error={!isValid} className={classes.error}>

@@ -59,6 +59,11 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
+const settingsContainer = {
+  collapsed: true,
+  label: 'Custom settings',
+  fields: ['settings'],
+};
 const applyCustomSettings = ({
   fieldMap,
   layout,
@@ -82,37 +87,18 @@ const applyCustomSettings = ({
           layoutCopy.containers[0].containers &&
           layoutCopy.containers[0].containers.length
         )
-          layoutCopy.containers[0].containers.push({
-            collapsed: true,
-            label: 'Custom settings',
-            fields: ['settings'],
-          });
+          layoutCopy.containers[0].containers.push(settingsContainer);
         else {
           layoutCopy.containers[0].type = 'collapse';
 
-          layoutCopy.containers[0].containers = [
-            {
-              collapsed: true,
-              label: 'Custom settings',
-              fields: ['settings'],
-            },
-          ];
+          layoutCopy.containers[0].containers = [settingsContainer];
         }
-      } else
-        layoutCopy.containers.push({
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        });
+      } else {
+        layoutCopy.containers.push(settingsContainer);
+      }
     } else {
       layoutCopy.type = 'collapse';
-      layoutCopy.containers = [
-        {
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        },
-      ];
+      layoutCopy.containers = [settingsContainer];
     }
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
@@ -314,17 +300,16 @@ const getResourceFormAssets = ({
 
   // Need to be revisited @Surya
   validationHandler = meta && meta.validationHandler;
+  const resourceTypesWithSettings = [
+    'integrations',
+    'exports',
+    'imports',
+    'pageProcessor',
+    'pageGenerator',
+    'connections',
+  ];
 
-  if (
-    [
-      'integrations',
-      'exports',
-      'imports',
-      'pageProcessor',
-      'pageGenerator',
-      'connections',
-    ].includes(resourceType)
-  ) {
+  if (resourceTypesWithSettings.includes(resourceType)) {
     ({
       fieldMapCopy: fieldMap,
       layoutCopy: layout,
@@ -520,13 +505,7 @@ const flattenedFieldMap = (
         ignoreFunctionTransformations
       );
 
-      if (!developerMode) {
-        if (!merged.showOnDeveloperMode) {
-          resFields.push(fieldReferenceName);
-          // eslint-disable-next-line no-param-reassign
-          resObjectRefs[fieldReferenceName] = value;
-        }
-      } else {
+      if (developerMode || !merged.developerModeOnly) {
         resFields.push(fieldReferenceName);
         // eslint-disable-next-line no-param-reassign
         resObjectRefs[fieldReferenceName] = value;

@@ -800,10 +800,9 @@ export default {
     label: 'Lookups[*] where Clause',
   },
   settings: {
-    type: 'editor',
-    mode: 'json',
+    type: 'settings',
     label: 'Settings',
-    showOnDeveloperMode: true,
+    developerModeOnly: true,
     defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };

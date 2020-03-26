@@ -2515,7 +2515,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Settings',
-    showOnDeveloperMode: true,
+    developerModeOnly: true,
     defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
   // #region custom connection
