@@ -1630,6 +1630,12 @@ export function convertToImport({ assistantConfig, assistantData }) {
   if (adaptorType === 'rest') {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
+      importDoc.requestType = operationDetails.requestType;
+
+      if (!importDoc.requestType) {
+        importDoc.requestType = ['UPDATE', 'CREATE'];
+      }
+
       importDoc.relativeURI = operationDetails.url;
       importDoc.body = operationDetails.body || [null, null];
       importDoc.responseIdPath = operationDetails.responseIdPath;
@@ -1655,6 +1661,11 @@ export function convertToImport({ assistantConfig, assistantData }) {
     if (isArray(operationDetails.method)) {
       importDoc.method = operationDetails.method;
       importDoc.relativeURI = operationDetails.url;
+      importDoc.requestType = operationDetails.requestType;
+
+      if (!importDoc.requestType) {
+        importDoc.requestType = ['UPDATE', 'CREATE'];
+      }
     } else {
       importDoc.method = [operationDetails.method];
       importDoc.relativeURI = [operationDetails.url];
