@@ -1,16 +1,24 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { DndProvider } from 'react-dnd-cjs';
 import HTML5Backend from 'react-dnd-html5-backend-cjs';
-import { isEqual } from 'lodash';
+import { isEqual, difference } from 'lodash';
 import { userPreferences } from '../../reducers';
 import actions from '../../actions';
+import { getTileId } from './util';
 import Tile from './Tile';
 import SuiteScriptTile from './SuiteScriptTile';
 
 export default function DashboardCard({ sortedTiles }) {
   const dispatch = useDispatch();
   const preferences = useSelector(state => userPreferences(state));
+  const tilesFromOtherEnvironment = useMemo(() => {
+    const allSortedTileIds =
+      (preferences.dashboard && preferences.dashboard.tilesOrder) || [];
+    const tileIdsFromCurrEnvironment = sortedTiles.map(tile => getTileId(tile));
+
+    return difference(allSortedTileIds, tileIdsFromCurrEnvironment);
+  }, [preferences.dashboard, sortedTiles]);
   const [dashboardTiles, setDashboardTiles] = useState(sortedTiles);
 
   useEffect(() => {
@@ -34,12 +42,11 @@ export default function DashboardCard({ sortedTiles }) {
   // On Drop of tile, update the preferences with the updatedTilesOrder
   const handleDrop = useCallback(() => {
     if (isEqual(sortedTiles, dashboardTiles)) return;
-    const updatedTilesOrder = dashboardTiles.map(tile =>
-      tile._ioConnectionId ? tile._id : tile._integrationId
-    );
+    // Updated Tiles order merged tiles from other environment and also existing tiles with updated order
+    const updatedTilesOrder = dashboardTiles.map(tile => getTileId(tile));
     const dashboard = {
       ...preferences.dashboard,
-      tilesOrder: updatedTilesOrder,
+      tilesOrder: [...tilesFromOtherEnvironment, ...updatedTilesOrder],
     };
 
     dispatch(
@@ -48,12 +55,18 @@ export default function DashboardCard({ sortedTiles }) {
         dashboard,
       })
     );
-  }, [dashboardTiles, dispatch, preferences, sortedTiles]);
+  }, [
+    dashboardTiles,
+    dispatch,
+    preferences,
+    sortedTiles,
+    tilesFromOtherEnvironment,
+  ]);
 
   return (
     <DndProvider backend={HTML5Backend}>
       {dashboardTiles.map((t, index) => (
-        <div key={t._ioConnectionId ? t._id : t._integrationId}>
+        <div key={getTileId(t)}>
           {t._ioConnectionId ? (
             <SuiteScriptTile
               tile={t}

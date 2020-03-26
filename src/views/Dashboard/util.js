@@ -120,3 +120,6 @@ export const dropTileConfig = (ref, index, onMove) => ({
     isOver: monitor.isOver(),
   }),
 });
+
+export const getTileId = tile =>
+  tile._ioConnectionId ? tile._id : tile._integrationId;
