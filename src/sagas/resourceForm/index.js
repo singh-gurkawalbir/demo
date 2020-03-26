@@ -260,7 +260,12 @@ function* patchSkipRetries({ resourceId }) {
         {
           op: 'replace',
           path: `/pageGenerators`,
-          value: [{ skipRetries: skipRetries.value, _exportId: resourceId }],
+          value: [
+            {
+              skipRetries: skipRetries ? !!skipRetries.value : false,
+              _exportId: resourceId,
+            },
+          ],
         },
       ];
     } else {
@@ -273,7 +278,7 @@ function* patchSkipRetries({ resourceId }) {
         {
           op: 'replace',
           path: `/pageGenerators/${index}/skipRetries`,
-          value: skipRetries.value,
+          value: skipRetries ? !!skipRetries.value : false,
         },
       ];
     }
