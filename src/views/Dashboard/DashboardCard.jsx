@@ -49,12 +49,7 @@ export default function DashboardCard({ sortedTiles }) {
       tilesOrder: [...tilesFromOtherEnvironment, ...updatedTilesOrder],
     };
 
-    dispatch(
-      actions.user.preferences.update({
-        ...preferences,
-        dashboard,
-      })
-    );
+    dispatch(actions.user.preferences.update({ dashboard }));
   }, [
     dashboardTiles,
     dispatch,
