@@ -86,7 +86,7 @@ const determineRequiredResources = type => {
   return resourceType;
 };
 
-const getTitle = ({ resourceType, queryParamStr, resourceLabel, isNew }) => {
+const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (resourceType === 'pageGenerator') {
     return 'Create source';
   }
@@ -99,7 +99,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, isNew }) => {
     return `Fix offline connection`;
   }
 
-  return `${isNew ? `Create` : 'Edit'} ${resourceLabel.toLowerCase()}`;
+  return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
 export default function Panel(props) {
@@ -302,7 +302,7 @@ export default function Panel(props) {
         resourceType,
         queryParamStr: location.search,
         resourceLabel,
-        isNew: isNewId(id),
+        opTitle: isNewId(id) ? 'Create' : 'Edit',
       }),
     [id, location.search, resourceLabel, resourceType]
   );
