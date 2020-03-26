@@ -59,8 +59,6 @@ export default function ConnectionNotification(props) {
   const [pingStatus, setPingStatus] = useState();
 
   useEffect(() => {
-    // clear previously stored test result
-    dispatch(actions.resource.connections.testClear(connectionId));
     // ping to get connection status
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
 
