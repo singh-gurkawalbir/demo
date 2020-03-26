@@ -4,9 +4,10 @@ import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 
 const getTriggerCode = sObjectType => {
-  let triggerCodeText = `trigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExportResult result = integrator_da__.RealTimeExporter.run(); \n}`;
+  const triggerCodeText = `trigger <name> on ${sObjectType} (after insert, after update) 
+  {\n  integrator_da__.RealTimeExportResult res = integrator_da__.RealTimeExporter.processExport(); \n}`;
 
-  triggerCodeText += `\n/* Please use the below code for batch export */\n/*\ntrigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExporter.runBatch();\n}\n*/`;
+  // triggerCodeText += `\n/* Please use the below code for batch export */\n/*\ntrigger <name> on ${sObjectType} (after insert, after update) {\n  integrator_da__.RealTimeExporter.runBatch();\n}\n*/`;
 
   return triggerCodeText;
 };
