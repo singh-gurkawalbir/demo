@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route, useLocation, generatePath } from 'react-router-dom';
@@ -296,12 +296,16 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  const title = getTitle({
-    resourceType,
-    queryParamStr: location.search,
-    resourceLabel,
-    isNew: isNewId(id),
-  });
+  const title = useMemo(
+    () =>
+      getTitle({
+        resourceType,
+        queryParamStr: location.search,
+        resourceLabel,
+        isNew: isNewId(id),
+      }),
+    [id, location.search, resourceLabel, resourceType]
+  );
   const resize = useCallback((width, height) => {
     setResourceFormStyle({
       height: `calc(100vh - 136px - ${height}px)`,
