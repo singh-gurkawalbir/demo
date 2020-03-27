@@ -216,6 +216,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     },
     [history, isNotYetSupported, urlToIntegrationSettings]
   );
+  // #region Drag&Drop related
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
@@ -224,6 +225,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const opacity = isDragging ? 0.2 : 1;
 
   drag(drop(ref));
+  // #endregion
 
   return (
     <Fragment>
