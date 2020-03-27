@@ -471,11 +471,17 @@ function FlowBuilder() {
       />
 
       <ScheduleDrawer
-        isViewMode={isMonitorLevelAccess}
-        isConnector={isConnectorType}
+        integrationId={integrationId}
+        resourceType="flows"
+        resourceId={flowId}
         flow={flow}
       />
-      <SettingsDrawer isViewMode={isViewMode} flow={flow} />
+      <SettingsDrawer
+        integrationId={integrationId}
+        resourceType="flows"
+        resourceId={flowId}
+        flow={flow}
+      />
 
       <CeligoPageBar
         title={
