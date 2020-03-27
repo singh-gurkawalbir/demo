@@ -742,7 +742,7 @@ export const groupApplications = (
   { assistants, appType, isSimpleImport }
 ) => {
   // Here i need to update Connectors
-  const assisatntConnectors = connectors.filter(c => !c.assistant);
+  const assistantConnectors = connectors.filter(c => !c.assistant);
 
   if (
     assistants &&
@@ -750,7 +750,7 @@ export const groupApplications = (
     assistants.rest.applications
   ) {
     assistants.http.applications.forEach(asst => {
-      assisatntConnectors.push({
+      assistantConnectors.push({
         id: asst._id,
         name: asst.name,
         type: 'http',
@@ -770,7 +770,7 @@ export const groupApplications = (
           'constantcontact',
         ].includes(asst._id)
       ) {
-        assisatntConnectors.push({
+        assistantConnectors.push({
           id: asst._id,
           name: asst.name,
           type: 'rest',
@@ -780,7 +780,7 @@ export const groupApplications = (
     });
   }
 
-  assisatntConnectors.sort((a, b) => {
+  assistantConnectors.sort((a, b) => {
     const nameA = a.name ? a.name.toUpperCase() : '';
     const nameB = b.name ? b.name.toUpperCase() : '';
 
@@ -791,7 +791,7 @@ export const groupApplications = (
     return 0; // names must be equal
   });
 
-  const filteredConnectors = assisatntConnectors.filter(connector => {
+  const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
       let assistant = assistants.http.applications.find(
         a => a._id === connector.assistant
