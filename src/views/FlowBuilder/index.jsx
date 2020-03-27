@@ -330,10 +330,22 @@ function FlowBuilder() {
   // #region Add Generator on creation effect
   useEffect(() => {
     if (createdGeneratorId) {
-      patchFlow('/pageGenerators', [
-        ...pageGenerators,
-        { _exportId: createdGeneratorId },
-      ]);
+      // Since flow is patched with new pageGenerator node to include skipRetries,
+      // a pageGenerator may already exist.
+      const existingPG = pageGenerators.find(
+        pg => pg._exportId === newGeneratorId
+      );
+
+      if (existingPG) {
+        existingPG._exportId = createdGeneratorId;
+        patchFlow('/pageGenerators', pageGenerators);
+      } else {
+        patchFlow('/pageGenerators', [
+          ...pageGenerators,
+          { _exportId: createdGeneratorId },
+        ]);
+      }
+
       // in case someone clicks + again to add another resource...
       setNewGeneratorId(generateNewId());
     }
