@@ -286,11 +286,7 @@ function* patchSkipRetries({ resourceId }) {
     yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
 
     if (!isNewId(flowId))
-      yield call(commitStagedChanges, {
-        resourceType: 'flows',
-        id: flowId,
-        scope: SCOPES.VALUE,
-      });
+      yield put(actions.resource.commitStaged('flows', flowId, SCOPES.VALUE));
   }
 }
 
