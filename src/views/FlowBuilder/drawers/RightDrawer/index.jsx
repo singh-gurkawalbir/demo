@@ -16,11 +16,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function RightDrawer({ open, match, history, children }) {
-  const classes = useStyles();
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
   const isOpen = open || !!match;
+  const classes = useStyles();
 
   return (
     <Drawer
