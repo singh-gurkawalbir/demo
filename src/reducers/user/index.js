@@ -46,11 +46,9 @@ export function userPreferences(state) {
   const preferences = fromPreferences.userPreferences(
     state && state.preferences
   );
+  const { defaultAShareId, accounts = {} } = preferences;
 
-  if (
-    !preferences.defaultAShareId ||
-    preferences.defaultAShareId === ACCOUNT_IDS.OWN
-  ) {
+  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
     return preferences;
   }
 
@@ -65,8 +63,8 @@ export function userPreferences(state) {
 
   // eslint-disable-next-line max-len
   /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
-  const { accounts = {} } = state.org;
-  const currentAccount = accounts.find(
+  const { accounts: orgAccounts = {} } = state.org;
+  const currentAccount = orgAccounts.find(
     a => a._id === preferences.defaultAShareId
   );
   let mergedPreferences;
@@ -74,6 +72,7 @@ export function userPreferences(state) {
   if (currentAccount && currentAccount.ownerUser) {
     mergedPreferences = {
       ...preferences,
+      ...accounts[defaultAShareId],
       ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
     };
   } else {
