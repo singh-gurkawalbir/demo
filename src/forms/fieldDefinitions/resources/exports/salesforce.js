@@ -1,6 +1,6 @@
 import { isNewId } from '../../../../utils/resource';
 
-const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/;
+const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular Expression from regexnumericrangegenerator.
 
 export default {
   'salesforce.sObjectType': {
