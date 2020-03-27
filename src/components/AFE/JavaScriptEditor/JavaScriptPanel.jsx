@@ -101,7 +101,7 @@ export default function JavaScriptPanel(props) {
       };
 
       // check if code property existings in editor. If yes, save a copy as initCode for dirty checking
-      if (!(code in editor)) patchObj.initCode = scriptContent;
+      if (!('code' in editor)) patchObj.initCode = scriptContent;
 
       patchEditor(patchObj);
     } else if (scriptContent === undefined && scriptId) {

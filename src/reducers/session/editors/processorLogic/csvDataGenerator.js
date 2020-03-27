@@ -18,8 +18,19 @@ const requestBody = editor => ({
 const validate = editor => ({
   dataError: util.validateJsonString(editor.data),
 });
+const dirty = editor => {
+  const { initRule } = editor || {};
+  let isDirty = false;
+
+  Object.keys(initRule).forEach(key => {
+    if (initRule[key] !== editor[key]) isDirty = true;
+  });
+
+  return isDirty;
+};
 
 export default {
   validate,
   requestBody,
+  dirty,
 };

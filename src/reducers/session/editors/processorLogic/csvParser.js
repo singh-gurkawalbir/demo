@@ -27,8 +27,19 @@ const validate = editor => ({
   dataError:
     (!editor.data || !editor.data.length) && 'Must provide some sample data.',
 });
+const dirty = editor => {
+  const { initRule } = editor || {};
+  let isDirty = false;
+
+  Object.keys(initRule).forEach(key => {
+    if (initRule[key] !== editor[key]) isDirty = true;
+  });
+
+  return isDirty;
+};
 
 export default {
   validate,
   requestBody,
+  dirty,
 };
