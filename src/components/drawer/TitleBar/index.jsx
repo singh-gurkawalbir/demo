@@ -10,11 +10,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 24px',
-    // TODO: Azhar to check
-    // '& > :not(:last-child)': {
-    //   marginRight: theme.spacing(2),
-    // },
+    padding: theme.spacing(0.5, 3),
   },
   title: {
     flexGrow: 1,

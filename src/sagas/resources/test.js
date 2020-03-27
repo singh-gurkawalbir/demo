@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, beforeEach */
 import { call, put, select } from 'redux-saga/effects';
 import actions, { availableResources } from '../../actions';
 import {
@@ -16,6 +16,7 @@ import { status500 } from '../test';
 import * as selectors from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
+import { resourceConflictResolution } from '../utils';
 
 describe('commitStagedChanges saga', () => {
   const id = '1';
@@ -90,10 +91,11 @@ describe('commitStagedChanges saga', () => {
           id,
           scope: undefined,
           resourceType,
+          master,
         })
       );
 
-      const putCallEffect = saga.next({}).value;
+      const putCallEffect = saga.next({ merged, conflict: false }).value;
 
       expect(putCallEffect).toEqual(
         call(apiCallWithRetry, {
@@ -189,90 +191,86 @@ describe('commitStagedChanges saga', () => {
       message: 'Session Expired',
     });
     const path = '/somePath';
-    const merged = {
+    const someMaster = {
+      lastModified: '12',
+      someProp: 'def',
+      commonProp1: 'a',
+      commonProp2: 'b',
+    };
+    const someMerged = {
       lastModified: '12',
       someProp: 'abc',
       commonProp1: 'a',
       commonProp2: 'b',
     };
-    const originWithChangesInCommonProps = {
+    const someOrigin = {
       lastModified: '15',
       commonProp1: 'a',
       commonProp2: 'c',
     };
-    const originWithNoChangesInCommonProps = {
-      lastModified: '15',
-      commonProp1: 'a',
-      commonProp2: 'b',
-    };
     const id = '123';
     const scope = SCOPES.VALUE;
     const resourceType = 'someResourceType';
+    const someConflicts = [
+      { path: '/a', value: 'abcddfdfd', operation: 'replace' },
+    ];
+    let saga;
 
-    test('should report a conflict when the common properties of origin and merged are different ', () => {
-      const saga = resourceConflictDetermination({
+    beforeEach(() => {
+      saga = resourceConflictDetermination({
         path,
-        merged,
+        merged: someMerged,
         id,
         scope,
         resourceType,
+        master: someMaster,
       });
-
-      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
-      expect(saga.next(originWithChangesInCommonProps).value).toEqual(
-        put(
-          actions.resource.received(
-            resourceType,
-            originWithChangesInCommonProps
-          )
-        )
-      );
-      const intersectedPatches = [
-        { op: 'replace', path: '/commonProp2', value: 'c' },
-      ];
-
-      // only  commonProp2 has change
-
-      expect(saga.next().value).toEqual(
-        put(
-          actions.resource.commitConflict(id, intersectedPatches, SCOPES.VALUE)
-        )
-      );
-
-      expect(saga.next()).toEqual({ done: true, value: { conflict: true } });
     });
 
-    test('should not report a conflict when the common properties of origin and merged are the same ', () => {
-      const saga = resourceConflictDetermination({
-        path,
-        merged,
-        id,
-        scope,
-        resourceType,
-      });
-
+    test('should report a conflict when the resourceConflictResolution determines a conflict', () => {
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
-      expect(saga.next(originWithNoChangesInCommonProps).value).toEqual(
-        put(
-          actions.resource.received(
-            resourceType,
-            originWithNoChangesInCommonProps
-          )
-        )
+      expect(saga.next(someOrigin).value).toEqual(
+        put(actions.resource.received(resourceType, someOrigin))
       );
 
-      expect(saga.next()).toEqual({ done: true, value: { conflict: false } });
+      expect(saga.next().value).toEqual(
+        resourceConflictResolution({
+          merged: someMerged,
+          master: someMaster,
+          origin: someOrigin,
+        })
+      );
+
+      expect(
+        saga.next({ conflict: someConflicts, merged: someMerged }).value
+      ).toEqual(put(actions.resource.commitConflict(id, someConflicts, scope)));
+      expect(saga.next()).toEqual({
+        done: true,
+        value: { merged: someMerged, conflict: true },
+      });
+    });
+
+    test('should not report a conflict when the resourceConflictResolution determines there isn`t any conflict ', () => {
+      expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
+      expect(saga.next(someOrigin).value).toEqual(
+        put(actions.resource.received(resourceType, someOrigin))
+      );
+
+      expect(saga.next().value).toEqual(
+        resourceConflictResolution({
+          merged: someMerged,
+          master: someMaster,
+          origin: someOrigin,
+        })
+      );
+
+      expect(saga.next({ conflict: null, merged: someMerged })).toEqual({
+        done: true,
+        value: { merged: someMerged, conflict: false },
+      });
     });
 
     test('should exit the saga and return an error when the call to origin fails', () => {
-      const saga = resourceConflictDetermination({
-        path,
-        merged,
-        id,
-        scope,
-        resourceType,
-      });
-
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
       expect(saga.throw(_400Exception)).toEqual({
         done: true,
