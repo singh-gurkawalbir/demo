@@ -67,16 +67,16 @@ export function userPreferences(state) {
   const currentAccount = orgAccounts.find(
     a => a._id === preferences.defaultAShareId
   );
-  let mergedPreferences;
+  let mergedPreferences = {
+    ...preferences,
+    ...accounts[defaultAShareId],
+  };
 
   if (currentAccount && currentAccount.ownerUser) {
     mergedPreferences = {
-      ...preferences,
-      ...accounts[defaultAShareId],
+      ...mergedPreferences,
       ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
     };
-  } else {
-    mergedPreferences = { ...preferences };
   }
 
   return mergedPreferences;
