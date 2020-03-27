@@ -110,6 +110,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     },
     [isNotYetSupported]
   );
+  // #region Drag&Drop related
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
@@ -119,6 +120,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
 
   drag(drop(ref));
 
+  // #endregion
   return (
     <Fragment>
       {showNotYetSupportedDialog && (
