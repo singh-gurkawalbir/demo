@@ -81,11 +81,11 @@ export default class AppRouting extends Component {
           component={CloneSetup}
         />
         <Route
-          path="/pg/templates/:templateName/:integrationId"
+          path="/pg/templates/:application1-:application2/:integrationId"
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/templates/${match.params.templateName}/${match.params.integrationId}/flows`
+              `/pg/templates/${match.params.application1}-${match.params.application2}/${match.params.integrationId}/flows`
             )
           }
         />
@@ -109,11 +109,11 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/marketplace/templates/:templateName/:templateId"
+          path="/pg/marketplace/templates/:templateId"
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/marketplace/templates/${match.params.templateName}/${match.params.templateId}/preview`
+              `/pg/marketplace/templates/${match.params.templateId}/preview`
             )
           }
         />
@@ -121,9 +121,9 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
-            '/pg/templates/:templateName/:integrationId/flowBuilder/:flowId',
+            '/pg/templates/:application1-:application2/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
-            '/pg/templates/:templateName/:integrationId/dataLoader/:flowId',
+            '/pg/templates/:application1-:application2/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
@@ -157,7 +157,7 @@ export default class AppRouting extends Component {
           component={IntegrationApp}
         />
         <Route
-          path="/pg/templates/:templateName/:integrationId/:tab"
+          path="/pg/templates/:application1-:applilcation2/:integrationId/:tab"
           component={Integration}
         />
 
