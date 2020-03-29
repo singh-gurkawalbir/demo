@@ -61,7 +61,7 @@ export default function TemplatePreview() {
   const template = useSelector(state =>
     selectors.marketplaceTemplate(state, templateId)
   );
-  const { objects: components } =
+  const { objects: components, stackRequired } =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
 
   useEffect(() => {
@@ -91,7 +91,8 @@ export default function TemplatePreview() {
   const { name: username, company } = user || {};
   const installTemplate = () => {
     const { installSteps, connectionMap } =
-      templateUtil.getInstallSteps(components) || {};
+      templateUtil.getInstallSteps({ objects: components, stackRequired }) ||
+      {};
 
     if (installSteps && installSteps.length) {
       dispatch(

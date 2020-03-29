@@ -81,11 +81,11 @@ export default class AppRouting extends Component {
           component={CloneSetup}
         />
         <Route
-          path="/pg/templates/:application1-:application2/:integrationId"
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId"
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/templates/${match.params.application1}-${match.params.application2}/${match.params.integrationId}/flows`
+              `/pg/templates/${match.params.templateName}/${match.params.integrationId}/flows`
             )
           }
         />
@@ -121,9 +121,9 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
-            '/pg/templates/:application1-:application2/:integrationId/flowBuilder/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
-            '/pg/templates/:application1-:application2/:integrationId/dataLoader/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
@@ -157,7 +157,9 @@ export default class AppRouting extends Component {
           component={IntegrationApp}
         />
         <Route
-          path="/pg/templates/:application1-:applilcation2/:integrationId/:tab"
+          // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+          // templateName has structure of application2-application2 will contain atleast 5 characters
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId/:tab"
           component={Integration}
         />
 
