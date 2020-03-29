@@ -73,7 +73,7 @@ const isDirty = editor => {
     return logic.dirty(editor);
   }
 
-  return false;
+  return undefined;
 };
 
 export default {
