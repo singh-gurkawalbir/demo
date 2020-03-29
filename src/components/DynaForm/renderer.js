@@ -4,7 +4,6 @@ import Help from '../Help';
 import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 import * as selectors from '../../reducers';
-import FieldWrapper from '../Form/FieldWrapper';
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -88,9 +87,9 @@ function getRenderer(
   resourceId,
   resourceType
 ) {
-  return function renderer(field) {
+  return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
-
+    const { fieldState: field, ...rest } = props;
     const { id, fieldId, type, helpKey, helpText } = field;
     const DynaField = fields[type];
     const fid = id || fieldId;
@@ -107,9 +106,7 @@ function getRenderer(
 
       <div key={fid} style={wrapper}>
         <div style={fieldStyle}>
-          <FieldWrapper formKey={formKey} {...field}>
-            <DynaField resourceContext={context} />
-          </FieldWrapper>
+          <DynaField {...rest} {...field} resourceContext={context} />
         </div>
         <FieldActions
           key={fid}

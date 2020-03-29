@@ -6,6 +6,7 @@ import actionTypes from '../../../actions/types';
 import {
   getNextStateFromFieldsUpdated,
   processFieldsUpdated,
+  registerFieldsUpdated,
 } from '../../../utils/form';
 import fields, { fieldsState } from './fields';
 
@@ -16,6 +17,7 @@ function form(state = {}, action) {
     conditionalUpdate = false,
     disabled = false,
   } = formSpecificProps;
+  const { fieldsMeta = {} } = formSpecificProps;
 
   // if default fields have changed then reset touched state
   return produce(state, draft => {
@@ -29,6 +31,8 @@ function form(state = {}, action) {
           formIsDisabled: disabled,
           resetTouchedState: false,
         };
+        draft[formKey].fields = registerFieldsUpdated(fieldsMeta.fieldMap);
+        getNextStateFromFieldsUpdated(draft[formKey]);
 
         return;
       case actionTypes.FORM.CLEAR:
@@ -45,10 +49,6 @@ export default reduceReducers(form, fields);
 
 export const getFormState = (state, formKey) => {
   if (!state || !state[formKey]) return null;
-  const updatedState = getNextStateFromFieldsUpdated(state[formKey]);
 
-  return {
-    ...state[formKey],
-    ...updatedState,
-  };
+  return state[formKey];
 };

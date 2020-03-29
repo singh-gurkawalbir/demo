@@ -4,10 +4,12 @@ import actions from '../../actions';
 import * as seletors from '../../reducers';
 import getRenderer from '../DynaForm/renderer';
 
-export const FieldComponent = ({ fieldState, renderer }) => {
-  if (!fieldState.visible) return null;
+export const FieldComponent = props => {
+  const { fieldState, renderer } = props;
 
-  return renderer(fieldState);
+  if (fieldState && !fieldState.visible) return null;
+
+  return renderer(props);
 };
 
 export default function FormFragment({ defaultFields, formKey }) {
@@ -16,12 +18,28 @@ export default function FormFragment({ defaultFields, formKey }) {
     state => seletors.getFormState(state, formKey),
     shallowEqual
   );
+  const onFieldChange = useCallback(
+    (fieldId, value) =>
+      dispatch(actions.form.field.onFieldChange(formKey)(fieldId, value)),
+    [dispatch, formKey]
+  );
+  const onFieldBlur = useCallback(
+    fieldId => dispatch(actions.form.field.onFieldBlur(formKey)(fieldId)),
+    [dispatch, formKey]
+  );
+  const onFieldFocus = useCallback(
+    fieldId => dispatch(actions.form.field.onFieldFocus(formKey)(fieldId)),
+    [dispatch, formKey]
+  );
+  const registerField = useCallback(
+    field => dispatch(actions.form.field.registerField(formKey)(field)),
+    [dispatch, formKey]
+  );
   const renderer = useCallback(
     field => {
-      const { fields, value, ...rest } = formState;
       // rest could mostly be form context such as edit mode what type of resource
       // we change this interface for getRenderer
-      const { editMode, formFieldsMeta, resourceId, resourceType } = rest;
+      const { editMode, formFieldsMeta, resourceId, resourceType } = formState;
 
       // i really may not need this considering metadata is generating this props
       return getRenderer(
@@ -38,16 +56,12 @@ export default function FormFragment({ defaultFields, formKey }) {
   useEffect(() => {
     defaultFields.forEach(field => {
       // if new field register
-      if (
-        !formState ||
-        !formState.fields ||
-        !formState.fields.some(f => f.id === field.id)
-      ) {
-        dispatch(actions.form.field.registerField(formKey)(field));
+      if (!formState || !formState.fields || !formState.fields[field.id]) {
+        registerField(field);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, formKey]);
+  }, [dispatch, registerField]);
 
   if (!formState) return null;
 
@@ -55,13 +69,18 @@ export default function FormFragment({ defaultFields, formKey }) {
     <Fragment>
       {defaultFields.map(field => {
         // maybe .find may not be necessaery ..we can get the fieldState directly
-        const fieldState = formState.fields.find(f => f.id === field.id);
+        const fieldState = formState.fields[field.id];
 
         return (
           <FieldComponent
-            key={fieldState.fieldKey}
+            key={field.id}
             fieldState={fieldState}
             renderer={renderer}
+            onFieldChange={onFieldChange}
+            onFieldBlur={onFieldBlur}
+            onFieldFocus={onFieldFocus}
+            formKey={formKey}
+            registerField={registerField}
           />
         );
       })}

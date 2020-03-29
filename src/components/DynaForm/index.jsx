@@ -32,16 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const DynaForm = props => {
-  const {
-    className,
-    children,
-    editMode,
-    fieldMeta,
-    resourceId,
-    resourceType,
-    full,
-    ...rest
-  } = props;
+  const { className, children, editMode, fieldMeta, full, ...rest } = props;
   const classes = useStyles();
   const { layout, fieldMap } = fieldMeta;
   const { formState, formKey } = rest;

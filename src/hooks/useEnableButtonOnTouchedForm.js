@@ -23,7 +23,7 @@ const useEnableButtonOnTouchedForm = ({
     if (ignoreFormTouchedCheck) return true;
 
     return isFormTouchedForMeta === undefined
-      ? isFormTouched(fields)
+      ? isFormTouched(Object.values(fields))
       : isFormTouchedForMeta;
   }, [fields, ignoreFormTouchedCheck, isFormTouchedForMeta]);
   const onClickWhenValid = useCallback(

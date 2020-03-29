@@ -3,10 +3,11 @@
 import set from 'lodash/set';
 import {
   fieldDefIsValid,
+  fieldDefIsValidUpdated,
   getFirstDefinedValue,
   mapFieldsById,
-  splitDelimitedValue,
   shouldOptionsBeRefreshed,
+  splitDelimitedValue,
 } from './field';
 import { validateAllFields } from './validation';
 
@@ -55,6 +56,28 @@ export const registerFields = (fieldsToValidate, formValue = {}) => {
 
   return fields;
 };
+
+export const registerFieldsUpdated = (fieldMapToValidate, formValue = {}) =>
+  Object.keys(fieldMapToValidate).reduce((fieldsState, key) => {
+    const field = fieldMapToValidate[key];
+
+    if (fieldDefIsValidUpdated(field, fieldsState)) {
+      const { defaultValue, name, value, valueDelimiter } = field;
+      const initialValue = getFirstDefinedValue(
+        formValue[name],
+        value,
+        defaultValue
+      );
+      const fieldToRegister = {
+        ...field,
+        value: splitDelimitedValue(initialValue, valueDelimiter),
+      };
+
+      fieldsState[key] = fieldToRegister;
+    }
+
+    return fieldsState;
+  }, {});
 
 export const setOptionsInFieldInState = (prevState, field, options) => {
   const fieldIndex = prevState.fields.findIndex(
@@ -242,51 +265,44 @@ export const processFields = (
   return updatedFields;
 };
 
-const fieldsByIdToFields = fieldsById => Object.values(fieldsById);
-const fieldHash = fieldProps => JSON.stringify(fieldProps);
+// const fieldHash = fieldProps => JSON.stringify(fieldProps);
 
+// mutate as much as possible to prevent rerenders
 export const processFieldsUpdated = (
   fieldsById,
   formIsDisabled,
   resetTouchedState = false
 ) => {
-  const updatedFields = fieldsByIdToFields(fieldsById).map(field => {
+  Object.keys(fieldsById).forEach(key => {
+    const field = fieldsById[key];
     const { defaultValue, value, touched = false } = field;
     const processedValue = typeof value !== 'undefined' ? value : defaultValue;
-    const updatedField = {
-      ...field,
-      touched: getTouchedStateForField(touched, resetTouchedState),
-      value: processedValue,
-      visible: isVisible(field, fieldsById),
-      required: isRequired(field, fieldsById),
-      disabled: formIsDisabled || isDisabled(field, fieldsById),
-    };
-    const { value: fieldValue, visible, required, disabled } = updatedField;
 
-    updatedField.fieldKey = fieldHash({
-      value: fieldValue,
-      visible,
-      required,
-      disabled,
-    });
-
-    return updatedField;
+    field.touched = getTouchedStateForField(touched, resetTouchedState);
+    field.value = processedValue;
+    field.visible = isVisible(field, fieldsById);
+    field.required = isRequired(field, fieldsById);
+    field.disabled = formIsDisabled || isDisabled(field, fieldsById);
   });
-
-  return updatedFields;
 };
 
 export const processOptions = ({
-  fields,
+  fields: fieldsById,
   lastFieldUpdated,
   optionsHandler,
   parentContext,
 }) =>
-  fields.map(field => {
+  Object.keys(fieldsById).forEach(key => {
+    const field = fieldsById[key];
     const { id, options } = field;
 
     if (!options || shouldOptionsBeRefreshed({ lastFieldUpdated, field })) {
-      const handlerOptions = optionsHandler(id, fields, parentContext);
+      // a fields arrayexpects
+      const handlerOptions = optionsHandler(
+        id,
+        Object.values(fieldsById),
+        parentContext
+      );
 
       if (handlerOptions instanceof Promise) {
         field.options = [];
@@ -296,8 +312,6 @@ export const processOptions = ({
         field.pendingOptions = undefined;
       }
     }
-
-    return field;
   });
 
 // NOTE: Just used for test purposes...
@@ -360,8 +374,6 @@ export const updateFieldValue = (field, value) => {
   } else {
     field.value = updateValue;
   }
-
-  return field;
 };
 
 export const joinDelimitedValue = (value, valueDelimiter) => {
@@ -490,20 +502,23 @@ export const getNextStateFromFields = ({
   return nextState;
 };
 
-export const getNextStateFromFieldsUpdated = ({
-  fields,
-  lastFieldUpdated,
-  showValidationBeforeTouched,
-  formIsDisabled,
-  resetTouchedState,
-  optionsHandler,
-  validationHandler,
-  parentContext,
-}) => {
-  fields = processFieldsUpdated(fields, !!formIsDisabled, resetTouchedState);
+// lot of mutations happening here...pay attentions to any bug
+export const getNextStateFromFieldsUpdated = formState => {
+  const {
+    fields,
+    lastFieldUpdated,
+    showValidationBeforeTouched,
+    formIsDisabled,
+    resetTouchedState,
+    optionsHandler,
+    validationHandler,
+    parentContext,
+  } = formState;
+
+  processFieldsUpdated(fields, !!formIsDisabled, resetTouchedState);
 
   if (optionsHandler) {
-    fields = processOptions({
+    processOptions({
       fields,
       lastFieldUpdated,
       optionsHandler,
@@ -511,21 +526,20 @@ export const getNextStateFromFieldsUpdated = ({
     });
   }
 
-  fields = validateAllFields({
+  validateAllFields({
     fields,
     showValidationBeforeTouched,
     validationHandler,
     parentContext,
   });
 
-  const value = calculateFormValue(fields);
-  const isValid = fields.every(field => field.isValid);
-  const isDiscretelyInvalid = fields.some(field => field.isDiscretelyInvalid);
-  const nextState = {
-    fields,
-    value,
-    isValid: isValid && !isDiscretelyInvalid,
-  };
+  const fieldsArr = Object.values(fields);
 
-  return nextState;
+  formState.value = calculateFormValue(fieldsArr);
+  const isValid = fieldsArr.every(field => field.isValid);
+  const isDiscretelyInvalid = fieldsArr.some(
+    field => field.isDiscretelyInvalid
+  );
+
+  formState.isValid = isValid && !isDiscretelyInvalid;
 };

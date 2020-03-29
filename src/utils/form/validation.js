@@ -186,7 +186,7 @@ export const getValueFromField = field => {
 
 export const validateField = (
   field,
-  fields,
+  fieldsById,
   showValidationBeforeTouched,
   validationHandler,
   parentContext
@@ -222,7 +222,8 @@ export const validateField = (
           const validationConfig = {
             ...validWhen[validator],
             value,
-            allFields: fields,
+
+            allFields: Object.values(fieldsById),
           };
           // $FlowFixMe - covered by tests
           const message = validators[validator](validationConfig);
@@ -240,7 +241,13 @@ export const validateField = (
   }
 
   if (validationHandler) {
-    const message = validationHandler(field, fields, parentContext);
+    const message = validationHandler(
+      field,
+      // think over this part sending the field array like this
+
+      Object.values(fieldsById),
+      parentContext
+    );
 
     if (message) {
       isValid = false;
@@ -269,17 +276,17 @@ export const validateAllFields = ({
   validationHandler,
   parentContext,
 }) => {
-  const validatedFields = fields.map(field =>
-    validateField(
-      field,
+  Object.keys(fields).forEach(fieldKey => {
+    // most of the primitives for each state are scaler values
+    // so when i make changes to draft like this...immer should be smart enough to determine if that field needs to be updated
+    fields[fieldKey] = validateField(
+      fields[fieldKey],
       fields,
       showValidationBeforeTouched,
       validationHandler,
       parentContext
-    )
-  );
-
-  return validatedFields;
+    );
+  });
 };
 
 export const runValidator = (

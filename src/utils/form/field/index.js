@@ -5,6 +5,8 @@
 export const fieldDefIsValid = (field, fields) =>
   !fields.some(currentField => currentField.id === field.id);
 
+export const fieldDefIsValidUpdated = (field, fields) =>
+  !fields || !fields[field.id];
 export const mapFieldsById = fields =>
   fields.reduce((map, field) => {
     map[field.id] = field;

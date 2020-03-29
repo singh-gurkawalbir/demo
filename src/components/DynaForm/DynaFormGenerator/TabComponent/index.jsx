@@ -98,7 +98,12 @@ function FormWithSave(props) {
       <FormGenerator {...props} />
       <IntegrationSettingsSaveButton
         {...rest}
-        isValid={!isExpansionPanelErrored({ layout, fieldMap }, form.fields)}
+        isValid={
+          !isExpansionPanelErrored(
+            { layout, fieldMap },
+            Object.values(form.fields)
+          )
+        }
         isFormTouchedForMeta={isAnyFieldTouchedForMeta(
           { layout, fieldMap },
           form.fields

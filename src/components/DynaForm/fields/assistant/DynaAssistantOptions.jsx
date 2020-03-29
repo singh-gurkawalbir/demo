@@ -50,12 +50,13 @@ function DynaAssistantOptions(props) {
     resourceType,
     resourceId,
     assistantFieldType,
-    fields,
+    fields: fieldsById,
     value,
     id,
     onFieldChange: onFieldChangeFn,
     flowId,
   } = props;
+  const fields = Object.values(fieldsById);
   const formContext = useMemo(
     () =>
       [

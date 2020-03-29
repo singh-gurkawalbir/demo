@@ -1,12 +1,14 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
-  updateFieldValue,
-  updateFieldTouchedState,
-  registerFieldWithCorrectValueUpdated,
   processFieldsUpdated,
+  registerFieldWithCorrectValueUpdated,
+  updateFieldValue,
+  getNextStateFromFieldsUpdated,
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
+
+const generateFieldKey = id => `${id}-${Date.now()}`;
 
 export default function fields(state = {}, action) {
   const { type, formKey, fieldProps = {} } = action;
@@ -36,22 +38,31 @@ export default function fields(state = {}, action) {
           ...fieldProps,
           value: getFirstDefinedValue(value, defaultValue),
           touched: false,
+          fieldKey: generateFieldKey(id),
         };
+
         registerFieldWithCorrectValueUpdated(fieldsRef[id]);
+
+        getNextStateFromFieldsUpdated(draft[formKey]);
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_CHANGE:
         if (!skipFieldTouched) {
-          updateFieldTouchedState(fieldsRef[id], true);
+          // updated field touched state
+          fieldsRef[id].touched = true;
         }
 
+        fieldsRef[id].fieldKey = generateFieldKey(id);
         // update the last modified field id in the form state
         draft[formKey].lastFieldUpdated = id;
 
         updateFieldValue(fieldsRef[id], value);
+        getNextStateFromFieldsUpdated(draft[formKey]);
         break;
 
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
-        updateFieldTouchedState(fieldsRef[id], true);
+        fieldsRef[id].touched = true;
+        fieldsRef[id].fieldKey = generateFieldKey(id);
+        getNextStateFromFieldsUpdated(draft[formKey]);
 
         break;
       default:

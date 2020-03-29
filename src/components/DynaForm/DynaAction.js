@@ -1,8 +1,10 @@
 import { useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
+import actions from '../../actions';
 
 function DynaAction(props) {
   const {
@@ -12,12 +14,18 @@ function DynaAction(props) {
     value,
     id,
     dataTest,
-    registerField,
-    fields,
+    fields: fieldsById,
     visibleWhen,
     visibleWhenAll,
     isValid,
+    formKey,
   } = props;
+  const dispatch = useDispatch();
+  const registerField = useCallback(
+    field => dispatch(actions.form.field.registerField(formKey)(field)),
+    [dispatch, formKey]
+  );
+  const fields = Object.values(fieldsById);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     ...props,
     formIsValid: isValid,

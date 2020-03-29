@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap } = props;
+  const { containers, fieldMap, formKey } = props;
   const form = useFormContext(props);
   const transformedContainers =
     containers &&
@@ -68,6 +68,7 @@ export default function CollapsedComponents(props) {
           classes={classes}
           header={header}
           fieldMap={fieldMap}
+          formKey={formKey}
         />
       );
     });
@@ -90,7 +91,7 @@ const ExpansionPannelExpandOnInValidState = props => {
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isPanelErrored = isExpansionPanelErrored(
     { layout, fieldMap },
-    form.fields
+    Object.values(form.fields)
   );
 
   useEffect(() => {
@@ -106,7 +107,12 @@ const ExpansionPannelExpandOnInValidState = props => {
   // we need to let the component mount and the field state settle before determing if they need to be removed
   useEffect(() => {
     if (componentLoaded) {
-      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields))
+      if (
+        isAnyExpansionPanelFieldVisible(
+          { layout, fieldMap },
+          Object.values(form.fields)
+        )
+      )
         setVisible(true);
       else setVisible(false);
     }
