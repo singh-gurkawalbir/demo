@@ -18,7 +18,7 @@ export const getTemplateUrlName = applications => {
     return `${appName(applications[0])}-${appName(applications[0])}`;
   }
 
-  return `${appName(applications[0])}-${appName(applications[1])}`;
+  return applications.map(appName).join('-');
 };
 
 export default {
