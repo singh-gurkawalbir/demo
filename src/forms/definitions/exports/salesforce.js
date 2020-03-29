@@ -208,6 +208,9 @@ export default {
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },
     'salesforce.id': { fieldId: 'salesforce.id' },
+    'salesforce.distributed.batchSize': {
+      fieldId: 'salesforce.distributed.batchSize',
+    },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -241,6 +244,8 @@ export default {
     'salesforce.objectType': {
       fieldId: 'salesforce.objectType',
     },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -278,7 +283,15 @@ export default {
         ],
         type: 'collapse',
         containers: [
-          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: [
+              'pageSize',
+              'salesforce.distributed.batchSize',
+              'dataURITemplate',
+            ],
+          },
         ],
       },
       {

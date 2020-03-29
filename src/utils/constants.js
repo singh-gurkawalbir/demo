@@ -132,7 +132,7 @@ export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
-    name: 'Salesforce - NetSuite Connector',
+    name: 'Salesforce - NetSuite Connector (V2)',
     ssName: 'Salesforce Connector',
     description:
       'Streamline your Lead-to-Cash process with the Salesforce - NetSuite Connector. Manage sales process effectively and in real-time. Packed with Celigo’s deep domain expertise and best practices, this Connector is the embodiment of several years of customer feedback, learning and growth.  With distributed adapters running only in NetSuite and Salesforce, our connector allows endless customization options.',
