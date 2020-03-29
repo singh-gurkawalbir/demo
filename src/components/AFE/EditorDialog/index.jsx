@@ -158,7 +158,7 @@ export default function EditorDialog(props) {
     [editor, editorViolations, hidePreviewAction]
   );
   const disableSave = useMemo(() => {
-    // isEditorDirty is not implemted for all editors
+    // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
     const val =
       !editor ||
       editorViolations ||

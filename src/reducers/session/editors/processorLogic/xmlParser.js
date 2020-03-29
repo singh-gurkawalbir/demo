@@ -41,10 +41,8 @@ const validate = editor => ({
   dataError:
     (!editor.data || !editor.data.length) && 'Must provide some sample data.',
 });
-const dirty = () => true;
 
 export default {
   validate,
   requestBody,
-  dirty,
 };
