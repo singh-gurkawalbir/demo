@@ -56,6 +56,7 @@ module.exports.sections = [
           'src/components/ShowStatus/index.jsx',
           'src/components/Loader/index.jsx',
           'src/components/ActionButton/index.jsx',
+          'src/components/SystemStatus/index.jsx',
         ],
       },
     ],

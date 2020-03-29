@@ -49,6 +49,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '10px',
   },
   imgBlock: {
+    display: 'flex',
+    justifyContent: 'center',
     '& > img': {
       maxWidth: '100%',
       maxHeight: '100%',

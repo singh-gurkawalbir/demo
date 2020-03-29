@@ -12,6 +12,7 @@ import AddIcon from '../../../icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
+    overflow: 'auto',
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     margin: theme.spacing(2, 0),
     backgroundColor: theme.palette.background.paper,

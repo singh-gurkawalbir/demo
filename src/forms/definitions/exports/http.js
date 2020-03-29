@@ -327,7 +327,6 @@ export default {
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
     'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
-    skipRetries: { fieldId: 'skipRetries' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [

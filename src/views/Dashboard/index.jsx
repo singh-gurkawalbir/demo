@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -11,8 +11,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
-import Tile from './Tile';
-import SuiteScriptTile from './SuiteScriptTile';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import { sortTiles } from './util';
@@ -27,6 +25,7 @@ import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
 import { generateNewId } from '../../utils/resource';
 import OfflineConnectionDrawer from './OfflineConnectionDrawer';
+import DashboardCard from './DashboardCard';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -92,9 +91,13 @@ function Dashboard() {
   const suiteScriptLinkedTiles = useSelector(state =>
     selectors.suiteScriptLinkedTiles(state)
   );
-  const sortedTiles = sortTiles(
-    tiles.concat(suiteScriptLinkedTiles),
-    preferences.dashboard && preferences.dashboard.tilesOrder
+  const sortedTiles = useMemo(
+    () =>
+      sortTiles(
+        tiles.concat(suiteScriptLinkedTiles),
+        preferences.dashboard && preferences.dashboard.tilesOrder
+      ),
+    [preferences.dashboard, suiteScriptLinkedTiles, tiles]
   );
 
   return (
@@ -150,15 +153,7 @@ function Dashboard() {
         required
         resources="published,integrations,connections,marketplacetemplates">
         <div className={classes.container}>
-          {sortedTiles.map(t => (
-            <div key={t._ioConnectionId ? t._id : t._integrationId}>
-              {t._ioConnectionId ? (
-                <SuiteScriptTile tile={t} />
-              ) : (
-                <Tile tile={t} />
-              )}
-            </div>
-          ))}
+          <DashboardCard sortedTiles={sortedTiles} />
         </div>
       </LoadResources>
     </Fragment>
