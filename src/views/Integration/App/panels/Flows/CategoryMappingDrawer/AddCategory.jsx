@@ -38,13 +38,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
-  const uiAssistant = useSelector(state => {
-    const categoryMappingMetadata =
-      selectors.categoryMapping(state, integrationId, flowId) || {};
-    const { uiAssistant = '' } = categoryMappingMetadata;
-
-    return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
-  });
+  const { uiAssistant = '' } =
+    useSelector(state =>
+      selectors.categoryMapping(state, integrationId, flowId)
+    ) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
