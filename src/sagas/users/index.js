@@ -371,7 +371,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
       message: `Accepting ${resourceType} share invite`,
     });
   } catch (e) {
-    return false;
+    return true;
   }
 
   const userPreferences = yield select(selectors.userPreferences);

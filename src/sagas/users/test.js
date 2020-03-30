@@ -312,6 +312,22 @@ describe('all modal sagas', () => {
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
       });
+      test('should generate appropriate error message in case of api failure', () => {
+        const aShare = { resourceType: 'account', id: 'something' };
+        const saga = acceptSharedInvite(aShare);
+        const path = `/ashares/${aShare.id}/accept`;
+        const opts = { method: 'PUT', body: {} };
+
+        expect(saga.next().value).toEqual(
+          call(apiCallWithRetry, {
+            path,
+            opts,
+            message: 'Accepting account share invite',
+          })
+        );
+        expect(saga.throw(new Error()).value).toEqual(true);
+        expect(saga.next().done).toEqual(true);
+      });
     });
     describe('rejecting account share invite', () => {
       test('should update aShare successfuly', () => {
