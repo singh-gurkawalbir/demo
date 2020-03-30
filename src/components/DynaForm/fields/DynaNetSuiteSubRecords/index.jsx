@@ -147,7 +147,10 @@ export default function DynaNetSuiteSubRecords(props) {
 
   useEffect(() => {
     if (subrecords && JSON.stringify(subrecords) !== JSON.stringify(value)) {
-      onFieldChange(id, subrecords);
+      if (value === '') {
+        // shallow update. Form not to be treated as touched
+        onFieldChange(id, subrecords, true);
+      } else onFieldChange(id, subrecords);
     }
   }, [defaultValue, id, onFieldChange, subrecords, value]);
   const match = useRouteMatch();
