@@ -3874,7 +3874,7 @@ export const getScriptContext = createSelector(
     },
   ],
   (contextType, _integrationId) => {
-    if (contextType === 'hook') {
+    if (contextType === 'hook' && _integrationId) {
       return {
         type: 'hook',
         container: 'integration',
