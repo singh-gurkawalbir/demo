@@ -371,13 +371,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
       message: `Accepting ${resourceType} share invite`,
     });
   } catch (e) {
-    return yield put(
-      actions.api.failure(
-        path,
-        opts.method,
-        `Could not accept ${resourceType} share invite`
-      )
-    );
+    return true;
   }
 
   const userPreferences = yield select(selectors.userPreferences);
