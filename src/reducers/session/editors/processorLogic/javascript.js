@@ -1,12 +1,11 @@
 import util from '../../../../utils/json';
 
 export default {
-  requestBody: ({ data, code, entryFunction, context }) => ({
+  requestBody: ({ data, code, entryFunction }) => ({
     rules: {
       function: entryFunction,
       code,
     },
-    options: context,
     data: typeof data === 'string' ? JSON.parse(data) : data,
   }),
   validate: ({ data }) => {

@@ -3858,28 +3858,3 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
-
-/*
- * The selector returns appropriate context for the JS Processor to run
- * For now, it supports contextType: hook
- * Other context types are 'settings' and 'setup'
- */
-export const getScriptContext = createSelector(
-  [
-    (state, { contextType }) => contextType,
-    (state, { flowId }) => {
-      const flow = resource(state, 'flows', flowId) || emptyObject;
-
-      return flow._integrationId;
-    },
-  ],
-  (contextType, _integrationId) => {
-    if (contextType === 'hook') {
-      return {
-        type: 'hook',
-        container: 'integration',
-        _integrationId,
-      };
-    }
-  }
-);

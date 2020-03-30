@@ -27,7 +27,6 @@ export default function JavaScriptEditor(props) {
   const {
     editorId,
     entryFunction,
-    context,
     scriptId,
     insertStubKey,
     disabled,
@@ -56,7 +55,6 @@ export default function JavaScriptEditor(props) {
         fetchScriptContent: true,
         entryFunction: entryFunction || 'main',
         data: props.data,
-        context,
         autoEvaluate: true,
         autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
@@ -69,7 +67,6 @@ export default function JavaScriptEditor(props) {
     scriptId,
     entryFunction,
     props.data,
-    context,
     optionalSaveParams,
   ]);
 

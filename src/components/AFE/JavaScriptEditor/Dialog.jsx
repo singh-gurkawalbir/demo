@@ -9,7 +9,6 @@ export default function JavaScriptEditorDialog(props) {
     scriptId,
     disabled,
     entryFunction,
-    context,
     insertStubKey,
     optionalSaveParams,
     resultMode,
@@ -32,7 +31,6 @@ export default function JavaScriptEditorDialog(props) {
         editorId={id}
         scriptId={scriptId}
         entryFunction={entryFunction}
-        context={context}
         insertStubKey={insertStubKey}
         data={data}
         disabled={disabled}
