@@ -17,8 +17,14 @@ const useStyles = makeStyles(theme => ({
   fileInput: {
     display: 'none',
   },
-  blockButton: {
-    marginRight: theme.spacing(2),
+  fileName: {
+    marginLeft: theme.spacing(1),
+    marginTop: '5px',
+  },
+  uploadContainer: {
+    display: 'flex',
+    flexDirection: `row !important`,
+    width: '100%',
   },
 }));
 
@@ -41,6 +47,7 @@ function DynaUploadFile(props) {
   const dispatch = useDispatch();
   const fileInput = useRef(null);
   const [fileName, setFileName] = useState();
+  let selectedFile;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   /*
@@ -55,8 +62,6 @@ function DynaUploadFile(props) {
       const { success, error } = getCsvFromXlsx(fileContent);
 
       if (!success) {
-        setFileName('');
-
         return enqueueSnackbar({
           message: error,
           variant: 'error',
@@ -69,8 +74,6 @@ function DynaUploadFile(props) {
       const { success, error, data } = getJSONContent(fileContent);
 
       if (!success) {
-        setFileName('');
-
         return enqueueSnackbar({
           message: error,
           variant: 'error',
@@ -80,6 +83,7 @@ function DynaUploadFile(props) {
       fileContent = data;
     }
 
+    setFileName(selectedFile.name);
     onFieldChange(id, fileContent);
 
     // Dispatches an action to process uploaded file data
@@ -125,7 +129,7 @@ function DynaUploadFile(props) {
       });
     }
 
-    setFileName(file.name);
+    selectedFile = file;
     const fileReaderOptions = getFileReaderOptions(options);
     const fileReader = new FileReader();
 
@@ -145,10 +149,11 @@ function DynaUploadFile(props) {
 
   return (
     <Fragment>
-      <label htmlFor="fileUpload">
+      <Typography variant="body3"> {label} </Typography>
+      <div className={classes.uploadContainer}>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={handleClick}
           key={id + options}
           name={name}
@@ -167,8 +172,8 @@ function DynaUploadFile(props) {
           className={classes.fileInput}
           onChange={handleFileChosen}
         />
-      </label>
-      <Typography> {fileName} </Typography>
+        <span className={classes.fileName}>{fileName}</span>
+      </div>
     </Fragment>
   );
 }
