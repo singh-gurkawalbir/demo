@@ -29,7 +29,20 @@ export default {
     };
   },
   dirty: editor => {
-    const { initRule = [], rule = [] } = editor || {};
+    const {
+      initRule = [],
+      data,
+      initData,
+      rule = [],
+      optionalSaveParams = {},
+    } = editor || {};
+    const { processorKey } = optionalSaveParams;
+
+    // in case of response transformation, data change is considered as editor change
+    if (processorKey === 'responseTransform' && initData !== data) {
+      return true;
+    }
+
     const rulesDiff = differenceWith(initRule, rule, isEqual);
     const isRulesEqual = initRule.length === rule.length && !rulesDiff.length;
 

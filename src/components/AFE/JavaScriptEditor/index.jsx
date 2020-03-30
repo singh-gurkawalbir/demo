@@ -56,6 +56,7 @@ export default function JavaScriptEditor(props) {
         fetchScriptContent: true,
         entryFunction: entryFunction || 'main',
         data: props.data,
+        initData: props.data,
         autoEvaluate: true,
         autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
