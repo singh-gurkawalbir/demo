@@ -22,7 +22,7 @@ function flattenChildrenStructrue(
   if (meta) {
     let allChildrenDeleted = false;
 
-    if (meta.children && meta.children.length) {
+    if (deleteChildlessParent && meta.children && meta.children.length) {
       allChildrenDeleted = !meta.children.some(
         child => !deleted.includes(child.id)
       );
