@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { InputAdornment } from '@material-ui/core';
+import { InputAdornment, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
@@ -15,10 +15,9 @@ const useStyles = makeStyles(theme => ({
   formField: {
     width: '100%',
   },
-  startAdornmentWrapper: {
-    display: 'flex',
+  startAdornmentText: {
+    whiteSpace: 'nowrap',
     minWidth: theme.spacing(10),
-    wordBreak: 'break-word',
   },
   subSection: {
     maxWidth: '95%',
@@ -104,10 +103,10 @@ function DynaText(props) {
   const InputProps = useMemo(() => {
     const props = {
       startAdornment: startAdornment ? (
-        <InputAdornment
-          position="start"
-          className={classes.startAdornmentWrapper}>
-          {startAdornment}
+        <InputAdornment position="start">
+          <Typography variant="body2" className={classes.startAdornmentText}>
+            {startAdornment}
+          </Typography>
         </InputAdornment>
       ) : null,
       endAdornment: endAdornment ? (
@@ -125,7 +124,7 @@ function DynaText(props) {
 
     return props;
   }, [
-    classes.startAdornmentWrapper,
+    classes.startAdornmentText,
     endAdornment,
     inputType,
     readOnly,
