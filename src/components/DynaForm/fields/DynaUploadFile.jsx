@@ -106,6 +106,9 @@ function DynaUploadFile(props) {
     if (options) {
       dispatch(actions.sampleData.reset(resourceId));
       onFieldChange(id, '', true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      selectedFile = undefined;
+      setFileName();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId]);
