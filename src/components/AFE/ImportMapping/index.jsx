@@ -234,12 +234,12 @@ export default function ImportMapping(props) {
     selectors.resource(state, 'connections', resource._connectionId)
   );
   const extractLabel = exportResource._connectionId
-    ? `Export Field (${mappingUtil.getApplicationName(
+    ? `Export field (${mappingUtil.getApplicationName(
         exportResource,
         exportConn
       )})`
     : `Source Record Field`;
-  const generateLabel = `Import Field (${mappingUtil.getApplicationName(
+  const generateLabel = `Import field (${mappingUtil.getApplicationName(
     resource,
     importConn
   )})`;
