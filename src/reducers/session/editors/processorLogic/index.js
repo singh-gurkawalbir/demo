@@ -76,8 +76,20 @@ const isDirty = editor => {
   return undefined;
 };
 
+const init = ({ processor }) => {
+  const logic = getLogic({ processor });
+
+  return logic.init;
+};
+
+/**
+ * init is optional for processors and is called during EDITOR_INIT.
+ * data saved during EDITOR.INIT can be modified with it
+ */
+
 export default {
   requestOptions,
   validate,
   isDirty,
+  init,
 };
