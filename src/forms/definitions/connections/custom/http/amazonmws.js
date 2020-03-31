@@ -29,6 +29,7 @@ export default {
         '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
       '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
       '/http/ping/method': 'POST',
+      '/http/rateLimit/failStatusCode': 503,
     };
   },
   fieldMap: {
