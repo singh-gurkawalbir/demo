@@ -23,6 +23,8 @@ export default function useForm({ formKey, ...formSpecificProps }) {
     if (!formKey) {
       formKeyUsedInUseEff = generateNewId();
       setFormKeyUsed(formKeyUsedInUseEff);
+    } else {
+      setFormKeyUsed(formKeyUsedInUseEff);
     }
 
     if (formKeyUsedInUseEff) {
@@ -36,6 +38,7 @@ export default function useForm({ formKey, ...formSpecificProps }) {
     return () => dispatch(actions.form.formClear(formKeyUsedInUseEff));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, formKey]);
+  console.log('check here formkey', formKeyUsed, formKey);
 
   return formKeyUsed;
 }

@@ -110,6 +110,9 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
     preSaveCopy = args => {
+      // formValues
+      // customField1
+      // customField2
       let retValues;
 
       if (preSave) {

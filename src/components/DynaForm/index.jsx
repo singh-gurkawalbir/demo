@@ -36,13 +36,11 @@ const DynaForm = props => {
   const classes = useStyles();
   const { layout, fieldMap } = fieldMeta;
   const { formState, formKey } = rest;
-
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy
   // to identify the source.
   // console.log('RENDER: DynaForm', layout);
-  console.log('check rest ', rest);
   const showValidationBeforeTouched = useMemo(
     () => (formState && formState.showFormValidationsBeforeTouch) || false,
     [formState]

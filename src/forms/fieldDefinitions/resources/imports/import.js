@@ -53,7 +53,10 @@ export default {
     type: 'radiogroup',
     label:
       'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
+    defaultValue: r =>
+      r &&
+      ((typeof r.oneToMany === 'string' && r.oneToMany === 'true') ||
+        !!r.oneToMany),
     options: [
       {
         items: [

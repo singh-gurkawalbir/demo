@@ -56,7 +56,7 @@ export default function FormFragment({ defaultFields, formKey }) {
   useEffect(() => {
     defaultFields.forEach(field => {
       // if new field register
-      if (!formState || !formState.fields || !formState.fields[field.id]) {
+      if (!formState || !formState.fields || !formState.fields[field]) {
         registerField(field);
       }
     });
@@ -69,11 +69,11 @@ export default function FormFragment({ defaultFields, formKey }) {
     <Fragment>
       {defaultFields.map(field => {
         // maybe .find may not be necessaery ..we can get the fieldState directly
-        const fieldState = formState.fields[field.id];
+        const fieldState = formState.fields[field];
 
         return (
           <FieldComponent
-            key={field.id}
+            key={field}
             fieldState={fieldState}
             renderer={renderer}
             onFieldChange={onFieldChange}

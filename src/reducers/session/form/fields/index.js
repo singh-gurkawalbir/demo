@@ -21,6 +21,8 @@ export default function fields(state = {}, action) {
       return;
     }
 
+    const { value: formValue, isValid, onChange } = draft[formKey];
+
     if (!draft[formKey].fields) draft[formKey].fields = {};
     const fieldsRef = draft[formKey].fields;
 
@@ -57,6 +59,11 @@ export default function fields(state = {}, action) {
 
         updateFieldValue(fieldsRef[id], value);
         getNextStateFromFieldsUpdated(draft[formKey]);
+
+        if (onChange) {
+          onChange(formValue, isValid);
+        }
+
         break;
 
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:

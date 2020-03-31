@@ -64,6 +64,7 @@ function DynaText(props) {
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
+  console.log('props', props.id);
   useEffect(() => {
     console.log('check options ', options);
     setValueChanged(true);
