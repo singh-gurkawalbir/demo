@@ -1,6 +1,9 @@
+import produce from 'immer';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
+import DynaForm from '../../DynaForm';
 import EditorField from './DynaEditor';
 
 const useStyles = makeStyles({
@@ -8,18 +11,90 @@ const useStyles = makeStyles({
     height: 50,
   },
 });
+const defaultSettingsMeta = {
+  fieldMap: {
+    storeName: {
+      id: 'storeName',
+      name: 'storeName',
+      type: 'text',
+      helpText: 'Enter your store name, which is also your host subdomain.',
+      label: 'Store Name',
+      required: true,
+    },
+    currency: {
+      id: 'currency',
+      name: 'currency',
+      type: 'radiogroup',
+      label: 'Currency',
+      helpKey: 'What is the default currency of your store?',
+      options: [
+        {
+          items: [{ label: 'US', value: 'us' }, { label: 'CDN', value: 'cdn' }],
+        },
+      ],
+      required: true,
+    },
+  },
+  layout: {
+    fields: ['storeName', 'currency'],
+  },
+};
 
-export default function DynaSettings({ resourceContext, ...rest }) {
+function getFieldMetaWithDefaults(fieldMeta, values) {
+  return produce(fieldMeta, draft => {
+    Object.keys(draft.fieldMap).forEach(key => {
+      const field = draft.fieldMap[key];
+
+      field.defaultValue = values[field.name] || '';
+    });
+  });
+}
+
+export default function DynaSettings({
+  id,
+  // value = { currency: 'cdn' },
+  resourceContext,
+  onFieldChange,
+  ...rest
+}) {
   const classes = useStyles();
   const { resourceType, resourceId } = rest;
-  // form = { form: {[metadata]}, init: {function, _scriptId}}
-  const form = useSelector(state => {
+  const fieldMeta = useSelector(state => {
     const { merged } = selectors.resourceData(state, resourceType, resourceId);
 
-    return merged.settingsForm;
+    // settingsForm = { form: {[metadata]}, init: {function, _scriptId}}
+    // we are going to ignore the init hook for now as there is good chance
+    // devs using custom setting forms don't need this feature.
+    if (!merged.settingsForm) {
+      return defaultSettingsMeta;
+    }
+
+    return merged.settingsForm.form;
   });
+  const value = { currency: 'cdn' };
+  const finalMeta = useMemo(() => getFieldMetaWithDefaults(fieldMeta, value), [
+    fieldMeta,
+    value,
+  ]);
 
-  console.log('DynaSettings form:', form);
+  console.log('DynaSettings settings value:', value, finalMeta);
 
-  return <EditorField {...rest} editorClassName={classes.editor} mode="json" />;
+  function handleSettingFormChange(values, isValid) {
+    console.log(isValid ? 'valid: ' : 'invalid: ', values);
+    onFieldChange(id, values);
+  }
+
+  if (!finalMeta) {
+    return (
+      <EditorField {...rest} editorClassName={classes.editor} mode="json" />
+    );
+  }
+
+  return (
+    <DynaForm
+      onChange={handleSettingFormChange}
+      disabled={rest.disabled}
+      fieldMeta={finalMeta}
+    />
+  );
 }

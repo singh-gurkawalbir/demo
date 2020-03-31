@@ -802,7 +802,7 @@ export default {
   settings: {
     type: 'settings',
     label: 'Settings',
-    developerModeOnly: true,
+    showOnDeveloperMode: true,
     defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
 };
