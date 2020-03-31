@@ -38,6 +38,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
+  const { uiAssistant = '' } =
+    useSelector(state =>
+      selectors.categoryMapping(state, integrationId, flowId)
+    ) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
@@ -76,9 +80,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'childCategory',
         name: 'childCategory',
         type: 'select',
-        required: false,
+        required: uiAssistant !== 'jet',
         defaultValue: '',
-        label: 'Choose Sub-category (Optional)',
+        label: 'Choose Sub-category',
         visible: false,
         refreshOptionsOnChangesTo: ['category'],
       },
@@ -88,7 +92,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         type: 'select',
         required: false,
         visible: false,
-        label: 'Choose Sub-category (Optional)',
+        label: 'Choose nested-category',
         refreshOptionsOnChangesTo: ['category', 'childCategory'],
       },
     },
