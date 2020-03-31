@@ -7,7 +7,6 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import LoadResources from '../../../../../../components/LoadResources';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { isJsonString } from '../../../../../../utils/string';
 
@@ -118,13 +117,11 @@ export default function GeneralSection({ integrationId }) {
     <Fragment>
       <PanelHeader title="General" />
 
-      <LoadResources required resources="notifications,flows,connections">
-        <div className={classes.form}>
-          <DynaForm fieldMeta={fieldMeta} key={count} render>
-            <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
-          </DynaForm>
-        </div>
-      </LoadResources>
+      <div className={classes.form}>
+        <DynaForm fieldMeta={fieldMeta} key={count} render>
+          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+        </DynaForm>
+      </div>
     </Fragment>
   );
 }

@@ -652,6 +652,8 @@ export default {
     "Use the Salesforce Object Query Language (i.e. SOQL) to define what data you would like to export out of Salesforce.  For example: 'SELECT Id, Name FROM Account WHERE SendToBlah = TRUE'.  SOQL is an incredibly powerful query language with all sorts of capabilities, and lots of documentation and examples on the web.  If you need additional help understanding SOQL, or piecing together a specific query, then please contact Salesforce support.",
   'export.salesforce.id':
     'To export raw files out of Salesforce, integrator.io needs to know the ID of the Salesforce record you want to export. You can hard code a specific file by specifying the ID directly. For example: 00530050000ibYc. Or, if the files being exported are dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the ID values. For example: myFileField.ID.',
+  'export.salesforce.distributed.batchSize':
+    'When performing bulk operations create or update, you can use this setting to allow records to be exported in batches. You can provide any value between 4 and 200 to set how many records to export in each batch. Use this setting in combination with Page size to manage data size limits and concurrency.',
   'export.wrapper.function':
     'The name of the extension wrapper function in your code that needs to be invoked as part of the export process.',
   'export.wrapper.configuration':
@@ -1048,7 +1050,7 @@ export default {
   'export.hookType':
     "Please select 'Script' if you want to use the native integrator.io JavaScript runtime engine (where all your code is managed and executed by integrator.io), or choose 'Stack' if you prefer to host your code outside integrator.io (either on your own servers, or on AWS Lambda).",
   'export.skipRetries':
-    'Select this checkbox if you do not want integrator.io to retry importing failed records.',
+    'Check this if you do NOT want integrator.io to store retry data for records that fail in your flow. You should do this if you have sensitive data that you don’t want stored on our platform. You should also check this if you are exporting large data sets, as storing the retry data is not necessary (because the flow is idempotent) and will slow the process.',
   'export.oneToMany':
     'There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you are exporting Sales Order records out of NetSuite but you want to enhance each line item in the Sales Order with addition information stored in NetSuite (i.e. by running a dynamic search for each line item), then you will need to use this option.',
   'export.searchCriteria':
@@ -1404,7 +1406,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping#field-mapping-types+++++++++++++" target="_blank"/> Field Reference Guide.</a>',
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':

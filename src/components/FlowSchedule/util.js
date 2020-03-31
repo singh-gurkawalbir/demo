@@ -638,11 +638,7 @@ export const getMetadata = ({
           flows,
           exports
         ),
-        visible: !!(
-          isDeltaFlowModel(pg, exp, flow, exports) &&
-          pg &&
-          pg._exportId
-        ),
+        visible: isDeltaFlowModel(pg, exp, flow, exports),
         refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
         defaultValue: resource && resource._keepDeltaBehindExportId,
       },

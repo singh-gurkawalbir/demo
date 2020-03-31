@@ -5,7 +5,7 @@ import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import Spinner from '../../../Spinner';
+import SystemStatus from '../../../SystemStatus';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -42,10 +42,9 @@ export default function UploadFile() {
 
   if (uploadInProgress) {
     return (
-      <div>
+      <SystemStatus>
         <Typography variant="h4">Loading preview...</Typography>
-        <Spinner />
-      </div>
+      </SystemStatus>
     );
   }
 

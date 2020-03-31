@@ -12,6 +12,7 @@ import AddIcon from '../../../icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   container: {
+    overflow: 'auto',
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     margin: theme.spacing(2, 0),
     backgroundColor: theme.palette.background.paper,
@@ -60,7 +61,7 @@ export default function TemplatePreview() {
   const template = useSelector(state =>
     selectors.marketplaceTemplate(state, templateId)
   );
-  const { objects: components } =
+  const { objects: components, stackRequired } =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
 
   useEffect(() => {
@@ -90,7 +91,8 @@ export default function TemplatePreview() {
   const { name: username, company } = user || {};
   const installTemplate = () => {
     const { installSteps, connectionMap } =
-      templateUtil.getInstallSteps(components) || {};
+      templateUtil.getInstallSteps({ objects: components, stackRequired }) ||
+      {};
 
     if (installSteps && installSteps.length) {
       dispatch(
