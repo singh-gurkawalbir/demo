@@ -76,7 +76,7 @@ const isDirty = editor => {
   return undefined;
 };
 
-const init = ({ processor }) => {
+const init = processor => {
   const logic = getLogic({ processor });
 
   return logic.init;

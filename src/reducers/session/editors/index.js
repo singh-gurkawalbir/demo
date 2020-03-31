@@ -28,7 +28,7 @@ export default function reducer(state = {}, action) {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
         const saveStatus = draft[id] && draft[id].saveStatus;
-        const init = processorLogic.init({ processor });
+        const init = processorLogic.init(processor);
         const formattedInitOptions = init ? init(options) : options;
 
         draft[id] = {
