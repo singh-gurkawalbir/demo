@@ -12,6 +12,7 @@ export default {
           <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />
         );
       },
+      orderBy: 'email',
     },
     {
       heading: 'Status',
@@ -20,6 +21,7 @@ export default {
     {
       heading: 'Created on',
       value: r => formatLastModified(r.created),
+      orderBy: 'created',
     },
     {
       heading: 'Expires on',
@@ -28,6 +30,7 @@ export default {
           <Typography color="error">{formatLastModified(r.expires)}</Typography>
         );
       },
+      orderBy: 'expires',
     },
     {
       heading: 'Environment',

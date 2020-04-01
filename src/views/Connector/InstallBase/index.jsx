@@ -31,9 +31,10 @@ export default function InstallBase(props) {
   );
   const { match, history } = props;
   const { connectorId } = match.params;
+  const sortFilterKey = 'connectorInstallBase';
   const classes = useStyles();
   const filter =
-    useSelector(state => selectors.filter(state, 'connectorInstallBase')) ||
+    useSelector(state => selectors.filter(state, sortFilterKey)) ||
     defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
@@ -121,6 +122,7 @@ export default function InstallBase(props) {
       <div className={classes.resultContainer}>
         <CeligoTable
           data={resources}
+          filterKey={sortFilterKey}
           onSelectChange={handleSelectChange}
           {...metadata}
           selectableRows
