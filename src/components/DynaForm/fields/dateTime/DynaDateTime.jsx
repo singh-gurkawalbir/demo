@@ -22,7 +22,7 @@ export default function DateTimePicker(props) {
       <KeyboardDateTimePicker
         label={label}
         format={format}
-        value={value}
+        value={dateValue}
         allowKeyboardControl={false}
         inputVariant="outlined"
         InputLabelProps={{
