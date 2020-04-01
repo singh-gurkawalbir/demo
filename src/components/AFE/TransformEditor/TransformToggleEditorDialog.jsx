@@ -32,12 +32,12 @@ export default function TransformToggleEditorDialog({
       showLayoutOptions>
       <TransformEditor
         rule={rule}
-        data={data && data.record}
+        data={data && JSON.stringify(data.record, null, 2)}
         disabled={disabled}
         optionalSaveParams={optionalSaveParams}
       />
       <JavaScriptEditor
-        data={data}
+        data={JSON.stringify(data, null, 2)}
         disabled={disabled}
         scriptId={scriptId}
         entryFunction={entryFunction}

@@ -57,6 +57,7 @@ export default function HandlebarsWithDefaults(props) {
         autoEvaluate: true,
         autoEvaluateDelay: 300,
         template: props.rule,
+        initTemplate: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
       })
