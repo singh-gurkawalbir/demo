@@ -2138,7 +2138,6 @@ export function integratorLicenseWithMetadata(state) {
 
   toReturn.__trialExtensionRequested =
     licenseActionDetails.__trialExtensionRequested;
-  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
 
   if (licenseActionDetails.tier === 'none') {
     toReturn.actions = ['start-free-trial'];

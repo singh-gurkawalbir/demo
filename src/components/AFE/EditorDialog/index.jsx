@@ -96,7 +96,10 @@ export default function EditorDialog(props) {
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
-  const handlePreview = () => dispatch(actions.editor.evaluateRequest(id));
+  const handlePreview = useCallback(
+    () => dispatch(actions.editor.evaluateRequest(id)),
+    [dispatch, id]
+  );
   const handleSave = useCallback(
     shouldCommit => () => {
       if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
@@ -154,11 +157,16 @@ export default function EditorDialog(props) {
       !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
     [editor, editorViolations, hidePreviewAction]
   );
-  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
-    disabled,
-    editor,
-    editorViolations,
-  ]);
+  const disableSave = useMemo(() => {
+    // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
+    const val =
+      !editor ||
+      editorViolations ||
+      disabled ||
+      (isEditorDirty !== undefined && !isEditorDirty);
+
+    return !!val;
+  }, [disabled, editor, editorViolations, isEditorDirty]);
 
   return (
     <Dialog
@@ -225,7 +233,7 @@ export default function EditorDialog(props) {
             variant="outlined"
             color="primary"
             dataTest="saveEditor"
-            disabled={disabled}
+            disabled={disableSave}
             onClose={handleSave(true)}
             submitButtonLabel="Save"
           />
@@ -233,7 +241,7 @@ export default function EditorDialog(props) {
           <Button
             variant="outlined"
             data-test="saveEditor"
-            disabled={!!disableSave}
+            disabled={disableSave}
             color="primary"
             onClick={handleSave(true)}>
             Save
