@@ -109,7 +109,7 @@ function TransferList(props) {
   );
 
   return (
-    <div container className={classes.root}>
+    <div className={classes.root}>
       <div>{customList(left)}</div>
       <div className={classes.actions}>
         <Button

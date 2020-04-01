@@ -53,10 +53,12 @@ export default function JavaScriptEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
         scriptId,
+        initScriptId: scriptId,
         fetchScriptContent: true,
         entryFunction: entryFunction || 'main',
         data: props.data,
         context,
+        initData: props.data,
         autoEvaluate: true,
         autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',

@@ -19,8 +19,36 @@ export default {
     return { dataError: dataError !== null && dataError };
   },
   dirty: editor => {
-    const { entryFunction, initEntryFunction, initCode, code } = editor || {};
+    const {
+      initScriptId,
+      scriptId,
+      entryFunction,
+      initEntryFunction,
+      initCode,
+      code,
+    } = editor || {};
 
-    return entryFunction !== initEntryFunction || initCode !== code;
+    if (entryFunction !== initEntryFunction) {
+      return true;
+    }
+
+    // in case script is used in javascript editor
+    if ('scriptId' in editor) {
+      // special case check where none is selected as scriptId by default and user types in code section and removes it.
+      // TODO: Raghu to check why we have scriptId as undefined when none is selected by defualt and ''(empty quotes) when user selects none manually
+      if (
+        initScriptId === undefined &&
+        (scriptId === '' || scriptId === undefined) &&
+        (code === '' || code === undefined)
+      ) {
+        return false;
+      }
+
+      if (initScriptId !== scriptId) {
+        return true;
+      }
+    }
+
+    return initCode !== code;
   },
 };

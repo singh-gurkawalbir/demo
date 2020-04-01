@@ -120,6 +120,7 @@ export default function Subscription() {
   const integratorLicense = useSelector(state =>
     selectors.integratorLicense(state)
   );
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
   const diyLicense = useSelector(state => selectors.diyLicense(state));
   const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const classes = useStyles();
@@ -179,6 +180,7 @@ export default function Subscription() {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
+    setUpgradeRequested(true);
 
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch]);
@@ -186,6 +188,7 @@ export default function Subscription() {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
+    setUpgradeRequested(true);
 
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch]);
@@ -193,6 +196,7 @@ export default function Subscription() {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
+    setUpgradeRequested(true);
 
     return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
   }, [dispatch]);
@@ -446,10 +450,7 @@ export default function Subscription() {
                       ) > -1 && (
                         <Button
                           onClick={onRequestSubscriptionClick}
-                          disabled={
-                            licenseActionDetails.subscriptionActions
-                              .__upgradeRequested
-                          }
+                          disabled={upgradeRequested}
                           color="primary"
                           variant="outlined">
                           Request subscription
@@ -460,10 +461,7 @@ export default function Subscription() {
                       ) > -1 && (
                         <Button
                           onClick={onRequestUpgradeClick}
-                          disabled={
-                            licenseActionDetails.subscriptionActions
-                              .__upgradeRequested
-                          }
+                          disabled={upgradeRequested}
                           color="primary"
                           variant="outlined">
                           Request upgrade
@@ -477,10 +475,7 @@ export default function Subscription() {
                       ) > -1 && (
                         <Button
                           onClick={onRequestTrialExtensionClick}
-                          disabled={
-                            licenseActionDetails.subscriptionActions
-                              .__upgradeRequested
-                          }
+                          disabled={upgradeRequested}
                           color="primary"
                           variant="outlined">
                           Request trial extension

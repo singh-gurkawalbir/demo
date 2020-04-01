@@ -23,8 +23,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     overflow: 'auto',
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(1),
+    padding: theme.spacing(1, 3, 6, 3),
     marginBottom: theme.spacing(1),
     '& > div:first-child': {
       height: `calc(100vh - 180px)`,
@@ -122,7 +121,7 @@ function ImportMapping({
         title={
           subrecords && subrecords.length > 0 && !selectedMapping
             ? 'Please select which mapping you would like to edit'
-            : 'Define Import Mapping'
+            : 'Define import mapping'
         }
       />
       <div className={classes.content}>

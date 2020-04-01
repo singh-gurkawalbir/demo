@@ -6,6 +6,7 @@ const useStyles = makeStyles(theme => ({
   systemStatusWrapper: {
     display: 'flex',
     justifyContent: 'center',
+    margin: theme.spacing(1),
   },
   wrapper: {
     padding: theme.spacing(2),
