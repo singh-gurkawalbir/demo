@@ -144,6 +144,10 @@ export function* previewMappings({ id }) {
 
     requestBody.data = [requestBody.data];
     requestBody.celigo_resource = 'previewImportMappingFields';
+  } else if (application === adaptorTypeMap.HTTPImport) {
+    resourceCopy.mapping = _mappings;
+
+    if (lookups) resourceCopy.http.lookups = lookups;
   }
 
   requestBody.importConfig = resourceCopy;
