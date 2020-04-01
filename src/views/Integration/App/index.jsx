@@ -56,13 +56,13 @@ const allTabs = [
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
+  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
   {
     path: 'settings',
     label: 'Settings',
     Icon: GeneralIcon,
     Panel: AdminPanel,
   },
-  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -182,10 +182,17 @@ export default function IntegrationApp({ match, history }) {
   // All the code ABOVE this comment should be moved from this component to the data-layer.
   //
   //
-  let availableTabs = hasAddOns
-    ? allTabs
-    : // remove addons tab (end) if IA doesn't have any.
-      allTabs.slice(0, allTabs.length - 1);
+  let availableTabs = allTabs;
+
+  if (!hasAddOns) {
+    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'addons');
+
+    if (addOnTabIndex !== -1)
+      availableTabs = [
+        ...availableTabs.slice(0, addOnTabIndex),
+        ...availableTabs.slice(addOnTabIndex + 1),
+      ];
+  }
 
   if (hideGeneralTab) {
     availableTabs = availableTabs.slice(1);
