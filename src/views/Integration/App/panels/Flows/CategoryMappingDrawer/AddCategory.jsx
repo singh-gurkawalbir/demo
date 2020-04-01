@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -45,6 +45,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
@@ -122,6 +130,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         }
 
         childCategory.visible = true;
+        childCategory.value = undefined;
 
         return [
           {
@@ -163,6 +172,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         }
 
         grandchildCategory.visible = true;
+        grandchildCategory.value = undefined;
 
         return [
           {
@@ -191,8 +201,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         onClose={handleClose}
         backToParent
       />
-      <DynaForm fieldMeta={fieldMeta} optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit data-test="addCategory" onClick={handleSave}>
+      <DynaForm
+        fieldMeta={fieldMeta}
+        formState={formState}
+        optionsHandler={fieldMeta.optionsHandler}>
+        <DynaSubmit
+          showCustomFormValidations={showCustomFormValidations}
+          data-test="addCategory"
+          onClick={handleSave}>
           Add Category
         </DynaSubmit>
         <Button variant="text" color="primary" onClick={handleClose}>
