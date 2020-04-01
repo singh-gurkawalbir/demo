@@ -44,7 +44,8 @@ const SaveFileDefinitionButton = props => {
       } catch (e) {
         // Handle incase of JSON parsing error
         enquesnackbar({
-          message: e && e.message,
+          message:
+            'Filedefinition rules provided is not a valid json, Please correct it.',
           variant: 'error',
         });
       }
