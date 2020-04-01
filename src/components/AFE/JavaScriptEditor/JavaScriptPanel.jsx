@@ -100,12 +100,16 @@ export default function JavaScriptPanel(props) {
         fetchScriptContent: false,
       };
 
-      // check if code property existings in editor. If yes, save a copy as initCode for dirty checking
-      if (!(code in editor)) patchObj.initCode = scriptContent;
+      // check if initCode property existings in editor. If no, save a copy of copy as initCode for dirty checking
+      if (!('initCode' in editor)) patchObj.initCode = scriptContent;
 
       patchEditor(patchObj);
     } else if (scriptContent === undefined && scriptId) {
       requestScript();
+    }
+    // case of scriptId selected as none
+    else if (scriptId === undefined && !('initCode' in editor)) {
+      patchEditor({ initCode: undefined });
     }
   }, [
     code,

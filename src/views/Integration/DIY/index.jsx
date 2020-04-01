@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
@@ -29,6 +29,7 @@ import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
+import { getTemplateUrlName } from '../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -83,7 +84,7 @@ const tabs = [
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
-  const { integrationId } = match.params;
+  const { integrationId, templateName } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -95,6 +96,19 @@ export default function Integration({ history, match }) {
     selectors.currentEnvironment(state)
   );
   const [isDeleting, setIsDeleting] = useState(false);
+  const templateUrlName = useSelector(state => {
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const cantDelete = useSelector(state => {
     const flows = selectors.resourceList(state, {
       type: 'flows',
@@ -178,6 +192,14 @@ export default function Integration({ history, match }) {
       })
     );
   }
+
+  useEffect(() => {
+    if (templateUrlName && !templateName) {
+      history.push(
+        getRoutePath(`templates/${templateUrlName}/${integrationId}/flows`)
+      );
+    }
+  }, [history, integrationId, templateName, templateUrlName]);
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break

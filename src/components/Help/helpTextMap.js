@@ -1050,7 +1050,7 @@ export default {
   'export.hookType':
     "Please select 'Script' if you want to use the native integrator.io JavaScript runtime engine (where all your code is managed and executed by integrator.io), or choose 'Stack' if you prefer to host your code outside integrator.io (either on your own servers, or on AWS Lambda).",
   'export.skipRetries':
-    'Select this checkbox if you do not want integrator.io to retry importing failed records.',
+    'Check this if you do NOT want integrator.io to store retry data for records that fail in your flow. You should do this if you have sensitive data that you don’t want stored on our platform. You should also check this if you are exporting large data sets, as storing the retry data is not necessary (because the flow is idempotent) and will slow the process.',
   'export.oneToMany':
     'There are advanced use cases where a parent record is being passed around in a flow, but you actually need to process child records contained within the parent record context. For example, if you are exporting Sales Order records out of NetSuite but you want to enhance each line item in the Sales Order with addition information stored in NetSuite (i.e. by running a dynamic search for each line item), then you will need to use this option.',
   'export.searchCriteria':

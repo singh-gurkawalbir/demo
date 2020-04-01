@@ -1033,35 +1033,21 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+export function getAllExportIdsUsedInTheFlow(state, flow) {
   const exportIds = [];
-  const importIds = [];
-  const connectionIds = [];
-  const borrowConnectionIds = [];
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const exports = resourceList(state, { type: 'exports' }).resources;
-  const imports = resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
-    return connectionIds;
+    return exportIds;
   }
 
   if (flow._exportId) {
     exportIds.push(flow._exportId);
   }
 
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
   if (flow.pageProcessors && flow.pageProcessors.length > 0) {
     flow.pageProcessors.forEach(pp => {
       if (pp._exportId) {
         exportIds.push(pp._exportId);
-      }
-
-      if (pp._importId) {
-        importIds.push(pp._importId);
       }
     });
   }
@@ -1071,11 +1057,45 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
       if (pg._exportId) {
         exportIds.push(pg._exportId);
       }
+    });
+  }
 
-      if (pg._importId) {
-        importIds.push(pg._importId);
+  return exportIds;
+}
+
+export function getAllImportIdsUsedInTheFlow(state, flow) {
+  const importIds = [];
+
+  if (!flow) {
+    return importIds;
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._importId) {
+        importIds.push(pp._importId);
       }
     });
+  }
+
+  return importIds;
+}
+
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
+  const importIds = getAllImportIdsUsedInTheFlow(state, flow);
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!flow) {
+    return connectionIds;
   }
 
   const attachedExports =
@@ -1212,6 +1232,8 @@ export function integrationAppResourceList(
 
   const flows = [];
   const connections = [];
+  const exports = [];
+  const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
@@ -1222,6 +1244,8 @@ export function integrationAppResourceList(
     const flow = resource(state, 'flows', f) || {};
 
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
+    exports.push(...getAllExportIdsUsedInTheFlow(state, flow));
+    imports.push(...getAllImportIdsUsedInTheFlow(state, flow));
   });
 
   return {
@@ -1229,6 +1253,8 @@ export function integrationAppResourceList(
       connections.includes(c._id)
     ),
     flows,
+    exports,
+    imports,
   };
 }
 
@@ -2112,7 +2138,6 @@ export function integratorLicenseWithMetadata(state) {
 
   toReturn.__trialExtensionRequested =
     licenseActionDetails.__trialExtensionRequested;
-  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
 
   if (licenseActionDetails.tier === 'none') {
     toReturn.actions = ['start-free-trial'];
@@ -2841,8 +2866,46 @@ export function accountOwner(state) {
   return fromUser.accountOwner(state.user);
 }
 
-export function auditLogs(state, resourceType, resourceId, filters) {
-  return fromData.auditLogs(state.data, resourceType, resourceId, filters);
+export function auditLogs(
+  state,
+  resourceType,
+  resourceId,
+  filters,
+  options = {}
+) {
+  const auditLogs = fromData.auditLogs(
+    state.data,
+    resourceType,
+    resourceId,
+    filters
+  );
+
+  if (options.storeId) {
+    const {
+      exports = [],
+      imports = [],
+      flows = [],
+      connections = [],
+    } = integrationAppResourceList(state, resourceId, options.storeId);
+    const resourceIds = [
+      ...exports,
+      ...imports,
+      ...flows,
+      ...map(connections, '_id'),
+    ];
+
+    return auditLogs.filter(log => {
+      if (
+        ['export', 'import', 'connection', 'flow'].includes(log.resourceType)
+      ) {
+        return resourceIds.includes(log._resourceId);
+      }
+
+      return true;
+    });
+  }
+
+  return auditLogs;
 }
 
 export function affectedResourcesAndUsersFromAuditLogs(

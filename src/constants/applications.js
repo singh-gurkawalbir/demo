@@ -209,7 +209,7 @@ const connectors = [
     type: 'rest',
     assistant: 'campaignmonitor',
   },
-  // { id: 'cardknox', name: 'Cardknox', type: 'http', assistant: 'cardknox' },
+  { id: 'bigquery', name: 'BigQuery', type: 'http', assistant: 'bigquery' },
   { id: 'cartrover', name: 'CartRover', type: 'http', assistant: 'cartrover' },
   { id: 'certify', name: 'Certify', type: 'rest', assistant: 'certify' },
   { id: 'chargebee', name: 'Chargebee', type: 'rest', assistant: 'chargebee' },

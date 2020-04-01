@@ -166,8 +166,10 @@ import target from './target';
 import threeplcentral from './threeplcentral';
 import loopreturns from './loopreturns';
 import saplitmos from './saplitmos';
+import bigquery from './bigquery';
 
 export default {
+  bigquery,
   sharepoint,
   vroozi,
   saplitmos,
