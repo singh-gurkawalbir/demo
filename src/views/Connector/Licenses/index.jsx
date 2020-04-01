@@ -43,8 +43,9 @@ export default function Licenses(props) {
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
+  const sortFilterKey = 'connectorLicenses';
   const filter =
-    useSelector(state => selectors.filter(state, 'connectorLicenses')) ||
+    useSelector(state => selectors.filter(state, sortFilterKey)) ||
     defaultFilter;
   const list = useSelector(state =>
     selectors.resourceList(state, {
@@ -96,6 +97,7 @@ export default function Licenses(props) {
         <CeligoTable
           data={list.resources}
           {...metadata}
+          filterKey={sortFilterKey}
           actionProps={{ resourceType: `connectors/${connectorId}/licenses` }}
         />
       </div>
