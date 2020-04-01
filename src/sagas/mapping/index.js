@@ -154,7 +154,7 @@ export function* previewMappings({ id }) {
   };
 
   try {
-    const previewData = yield call(apiCallWithRetry, {
+    const preview = yield call(apiCallWithRetry, {
       path,
       opts,
       message: `Fetching Preview Data`,
@@ -162,18 +162,18 @@ export function* previewMappings({ id }) {
 
     if (application === adaptorTypeMap.NetSuiteDistributedImport) {
       if (
-        previewData &&
-        previewData.data &&
-        previewData.data.returnedObjects &&
-        previewData.data.returnedObjects.mappingErrors &&
-        previewData.data.returnedObjects.mappingErrors[0] &&
-        previewData.data.returnedObjects.mappingErrors[0].error
+        preview &&
+        preview.data &&
+        preview.data.returnedObjects &&
+        preview.data.returnedObjects.mappingErrors &&
+        preview.data.returnedObjects.mappingErrors[0] &&
+        preview.data.returnedObjects.mappingErrors[0].error
       ) {
         return yield put(actions.mapping.previewFailed(id));
       }
     }
 
-    yield put(actions.mapping.previewReceived(id, previewData));
+    yield put(actions.mapping.previewReceived(id, preview));
   } catch (e) {
     yield put(actions.mapping.previewFailed(id));
   }
