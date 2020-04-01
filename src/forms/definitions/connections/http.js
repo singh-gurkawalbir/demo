@@ -242,7 +242,7 @@ export default {
       id: 'http.auth.wsse.headerName',
       type: 'text',
       label: 'Header Name',
-      helpKey: 'connection.http.auth.token.refreshHeaders',
+      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
