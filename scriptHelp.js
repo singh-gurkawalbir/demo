@@ -1,4 +1,4 @@
-import definitions from './src/forms/definitions';
+import definitions from './src/forms/fieldDefinitions';
 
 const checkForHelpText = (fieldMap, resStr) => {
   Object.keys(fieldMap).forEach(key => {
@@ -18,8 +18,8 @@ const checkForHelpText = (fieldMap, resStr) => {
 const recurs = (obj, resStr) => {
   if (!obj) return;
 
-  if (obj.fieldMap) {
-    return checkForHelpText(obj.fieldMap, resStr);
+  if (Object.values(obj).some(val => !!val.label)) {
+    return checkForHelpText(obj, resStr);
   }
 
   Object.keys(obj).forEach(key => {
