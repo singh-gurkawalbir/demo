@@ -17,7 +17,8 @@
     "coverage": "neutrino test --coverage --require dotenv/config",
     "precommit": "neutrino test --no-cache --require dotenv/config && neutrino stage",
     "styleguide": "neutrino styleguide:start --require dotenv/config",
-    "styleguide-build": "neutrino styleguide:build --require dotenv/config"
+    "styleguide-build": "neutrino styleguide:build --require dotenv/config",
+    "script": "babel-node --presets es2015 scriptHelp.js"
   },
   "dependencies": {
     "@date-io/moment": "1.3.11",
@@ -27,6 +28,8 @@
     "@material-ui/pickers": "^3.2.7",
     "abortcontroller-polyfill": "1.3.0",
     "autosuggest-highlight": "^3.1.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "classnames": "2.2.6",
     "clsx": "1.0.4",
     "codemirror": "5.40.2",
@@ -36,6 +39,7 @@
     "dompurify": "2.0.7",
     "error-stack-parser": "2.0.2",
     "fast-json-patch": "2.0.7",
+    "fs": "^0.0.1-security",
     "hookrouter": "1.2.3",
     "immer": "^3.2.0",
     "jQuery-QueryBuilder": "2.5.2",
@@ -85,6 +89,7 @@
     "xlsx": "0.15.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.0",
     "@neutrinojs/jest": "8.3.0",
     "@redux-saga/testing-utils": "1.0.5",
     "@testing-library/react": "8.0.2",
