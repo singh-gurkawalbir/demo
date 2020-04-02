@@ -27,12 +27,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.CONNECTION.PING_AND_UPDATE:
-        if (!draft.status) {
-          draft.status = [{ _id: connectionId }];
-        }
-
-        break;
+      // TODO (Aditya): Check for this
       case actionTypes.CONNECTION.AUTHORIZED:
         // On successful authorization of oauth connection, set the connection status to online.
         updateConnectionStatus(draft.status, connectionId, {
