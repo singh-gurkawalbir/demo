@@ -84,8 +84,6 @@ export default {
         'webstore',
       ],
     required: true,
-    helpText:
-      'The invited user will have permissions to manage the integrations selected here.',
   },
   // executiontype
   'netsuite.distributed.executionType': {
@@ -117,8 +115,6 @@ export default {
         r.netsuite.distributed.executionType) || ['create', 'edit', 'xedit'],
     required: true,
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
-    helpText:
-      'The invited user will have permissions to manage the integrations selected here.',
   },
   // sublists
   'netsuite.distributed.sublists': {

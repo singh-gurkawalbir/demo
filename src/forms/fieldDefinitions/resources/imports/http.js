@@ -162,8 +162,7 @@ export default {
         ],
       },
     ],
-    helpText:
-      'Please specify whether the record is being created or updated using this field.',
+
     visibleWhen: [
       {
         field: 'http.method',

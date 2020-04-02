@@ -1452,14 +1452,12 @@ export default {
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
     label: 'MDN signature verification',
-    helpText:
-      'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   },
   'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
-    helpText: `This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.`,
+
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
@@ -1831,8 +1829,6 @@ export default {
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
     label: 'Partner Requires Asynchronous MDNs?',
-    helpText:
-      'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',

@@ -162,8 +162,7 @@ export default {
         ],
       },
     ],
-    helpText:
-      'Please specify whether the record is being created or updated using this field.',
+
     defaultValue: r =>
       r && r.rest && r.rest.requestType && r.rest.requestType[0],
     visibleWhen: [
