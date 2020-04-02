@@ -11,8 +11,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
-import OfflineConnectionNotification from '../../OfflineConnectionNotification';
-import ConnectionNotification from '../../ConnectionNotification';
+import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -336,14 +335,11 @@ export default function Panel(props) {
         <LoadResources required resources={requiredResources}>
           <div className={classes.formContainer}>
             <div>
-              {(resourceType === 'exports' || resourceType === 'imports') && (
-                <OfflineConnectionNotification
+              {['exports', 'imports', 'connections'].includes(resourceType) && (
+                <ConnectionStatusPanel
                   resourceType={resourceType}
                   resourceId={id}
                 />
-              )}
-              {resourceType === 'connections' && (
-                <ConnectionNotification connectionId={id} />
               )}
               <ReactResizeDetector handleWidth handleHeight onResize={resize} />
             </div>

@@ -899,30 +899,19 @@ export function getNextDataFlows(state, flow) {
   );
 }
 
+export function isConnectionOffline(state, id) {
+  const connection = resource(state, 'connections', id);
+
+  return connection && connection.offline;
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
   list.resources = list.resources.map(r => {
-    const additionalInfo = {};
-
-    additionalInfo.permissions = deepClone(permissions);
-
-    // For connections resource, add the status and queueSize info
-    if (options.type === 'connections') {
-      const status = fromSession.connectionStatus(
-        state && state.session,
-        r._id
-      );
-
-      if (status) {
-        additionalInfo.offline = status.offline;
-        additionalInfo.queueSize = status.queueSize;
-      }
-    }
-
-    const finalRes = { ...r, ...additionalInfo };
+    const finalRes = { ...r, permissions: deepClone(permissions) };
 
     // defaulting queue size to zero when undefined
     finalRes.queueSize = finalRes.queueSize || 0;
@@ -3426,18 +3415,6 @@ export function getUsedActionsForResource(
 
 export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
-}
-
-export function connectionStatus(state, id) {
-  // we are returning the default value here and not in the leaf selector
-  // because we want the leaf selector to return the true state value without the default value
-  return (
-    fromSession.connectionStatus(state && state.session, id) || {
-      id,
-      queueSize: 0,
-      offline: false,
-    }
-  );
 }
 
 export function getLastExportDateTime(state, flowId) {

@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '50px',
     transition: 'max-height .5s ease',
     '& > div:first-child': {
-      width: '85%',
+      width: props => (props.fullWidth ? '100%' : '85%'),
       display: 'flex',
       justifyContent: 'center',
     },
@@ -109,8 +109,11 @@ const variantIcon = {
   info: InfoIcon,
 };
 
+/**
+ * props.fullWidth : set to true for full width notification.
+ */
 function NotificationToaster(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const {
     className,
     message,
