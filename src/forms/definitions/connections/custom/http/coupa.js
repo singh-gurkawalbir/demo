@@ -24,8 +24,6 @@ export default {
       type: 'text',
       id: 'http.coupaSubdomain',
       startAdornment: 'https://',
-      helpText:
-        'Please enter the subdomain of your account here which can be obtained from the login url.',
       endAdornment: '.com',
       label: 'Subdomain',
       required: true,
@@ -51,7 +49,6 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
       required: true,
-      helpText: 'Please enter API Key of your Coupa account',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

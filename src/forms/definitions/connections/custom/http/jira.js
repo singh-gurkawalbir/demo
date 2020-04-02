@@ -32,18 +32,13 @@ export default {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      helpText:
-        'The base URI for JIRA. For example, http://www.company.com/confluence',
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The username of your JIRA account.',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API Token',
-      helpText:
-        'To create an API token for Atlassian account:Login to your Atlassian account– >Go to User management– >Go to Your profile --> Security – > API token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

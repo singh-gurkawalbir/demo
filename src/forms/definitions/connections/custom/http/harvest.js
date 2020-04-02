@@ -27,9 +27,7 @@ export default {
       type: 'text',
       label: 'Account ID',
       defaultValue: '',
-      helpText:
-        'Please enter the Harvest account ID .Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account ID safe. This can be obtained from the Settings section and Account ID subsection.',
-      validWhen: {
+           validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     },

@@ -23,9 +23,7 @@ export default {
       endAdornment: '.tsheets.com/api',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
-      validWhen: {
+           validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',

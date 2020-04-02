@@ -34,9 +34,7 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Please select your environment here. Select Sandbox if the account is created on https://demo.skubana.com/login. Select Production if the account is created on https://app.skubana.com/login.',
-      defaultValue: r => {
+           defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {

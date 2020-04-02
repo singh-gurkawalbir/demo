@@ -46,7 +46,6 @@ export default {
 
         return 'production';
       },
-      helpText: 'Please select your environment here.',
     },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
@@ -55,8 +54,6 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please Enter the access token got from Faire support. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

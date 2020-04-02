@@ -26,9 +26,7 @@ export default {
       defaultValue: '',
       required: true,
       label: 'API Key',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by reaching out to FieldAware support team.',
-    },
+         },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

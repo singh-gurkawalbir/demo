@@ -398,8 +398,6 @@ export default {
           is: ['records'],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       defaultValue: r => {
         if (!r || !r.rest || !r.rest.method) {
           return '';
@@ -687,8 +685,6 @@ export default {
           is: ['records'],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       defaultValue: r => {
         if (!r || !r.rest || !r.rest.method) {
           return '';

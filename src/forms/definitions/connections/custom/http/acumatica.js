@@ -48,8 +48,6 @@ export default {
       endAdornment: '/entity',
       label: 'Instance URI',
       required: true,
-      helpText:
-        'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -62,7 +60,6 @@ export default {
       id: 'http.unencrypted.endpointName',
       type: 'text',
       label: 'Endpoint Name',
-      helpText: 'Please enter endpoint name of your Acumatica account.',
       required: true,
       defaultValue: r =>
         (r &&
@@ -75,7 +72,6 @@ export default {
       id: 'http.unencrypted.endpointVersion',
       type: 'text',
       label: 'Endpoint Version',
-      helpText: 'Please enter endpoint version of your Acumatica account.',
       required: true,
       defaultValue: r =>
         (r &&
@@ -91,7 +87,6 @@ export default {
       required: true,
       defaultValue: r =>
         r && r.http && r.http.unencrypted && r.http.unencrypted.username,
-      helpText: 'Please enter username of your Acumatica account.',
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -99,14 +94,12 @@ export default {
       inputType: 'password',
       label: 'Password',
       required: true,
-      helpText: 'Please enter password of your Acumatica account.',
     },
     'http.unencrypted.company': {
       id: 'http.unencrypted.company',
       type: 'text',
       label: 'Company',
       defaultValue: '',
-      helpText: 'Please enter company name of your Acumatica account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

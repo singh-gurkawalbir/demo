@@ -56,7 +56,6 @@ export default {
           ],
         },
       ],
-      helpText: 'Select either Locate/Identity or Ship.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -74,7 +73,6 @@ export default {
       required: true,
       type: 'text',
       label: 'API Key',
-      helpText: 'Please enter API Key of your Pitney Bowes Account.',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
@@ -83,8 +81,6 @@ export default {
       defaultValue: '',
       label: 'API Secret',
       inputType: 'password',
-      helpText:
-        'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -97,7 +93,6 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
-      helpText: 'The access token of your Pitney Bowes account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

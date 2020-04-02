@@ -28,9 +28,7 @@ export default {
       required: true,
       type: 'text',
       inputType: 'password',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Summary tab in Your Account section.',
-      description:
+           description:
         'Note: for security reasons this field must always be re-entered.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

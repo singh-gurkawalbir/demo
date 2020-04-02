@@ -21,8 +21,6 @@ export default {
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       type: 'text',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
       inputType: 'password',
       defaultValue: '',
       label: 'API Key',

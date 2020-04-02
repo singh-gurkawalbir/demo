@@ -305,8 +305,6 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
-      helpText:
-        'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
     },
     'http.auth.oauth.type': {
       fieldId: 'http.auth.oauth.type',

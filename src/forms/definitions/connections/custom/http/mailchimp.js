@@ -22,8 +22,6 @@ export default {
       type: 'text',
       label: 'Data Center',
       required: true,
-      helpText:
-        'The Data Center name provided by Mailchimp. Click Save & Authorize to open up the Mailchimp login screen where you can enter your username and password to establish the connection with your Mailchimp account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

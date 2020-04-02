@@ -23,8 +23,6 @@ export default {
       type: 'text',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -48,7 +46,6 @@ export default {
       required: true,
       type: 'text',
       label: 'Username',
-      helpText: 'Please enter the Username of your Procurify Account.',
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -57,8 +54,6 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
-      helpText:
-        'Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -69,15 +64,12 @@ export default {
 
       label: 'Generate Client Id &Secret',
       defaultValue: '',
-      helpText:
-        'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
     },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
       label: 'Client Id',
-      helpText: 'The client id of your Procurify account',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
@@ -90,8 +82,6 @@ export default {
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      helpText:
-        'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -103,7 +93,6 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
-      helpText: 'The access token of your Procurify account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

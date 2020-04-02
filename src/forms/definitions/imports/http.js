@@ -599,8 +599,6 @@ export default {
           is: ['records'],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       defaultValue: r => {
         if (!r || !r.http || !r.http.method) {
           return '';
@@ -1131,8 +1129,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       visibleWhenAll: [
         {
           field: 'http.compositeType',

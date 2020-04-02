@@ -38,23 +38,18 @@ export default {
       id: 'http.unencrypted.sellerId',
       type: 'text',
       label: 'Seller Id',
-      helpText:
-        'The account ID for the Amazon seller account you are integrating with. You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you do not know this value you can find it in the "Settings" section in Amazon Seller Central.',
       required: true,
     },
     'http.unencrypted.mwsAuthToken': {
       id: 'http.unencrypted.mwsAuthToken',
       type: 'text',
       label: 'MWS Auth Token',
-      helpText: 'The MWS authorization token.',
       required: false,
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
       label: 'Marketplace Id',
-      helpText:
-        'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
       required: true,
       options: [
         {
@@ -127,8 +122,6 @@ export default {
       id: 'http.unencrypted.marketplaceRegion',
       type: 'select',
       label: 'Marketplace Region',
-      helpText:
-        'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -192,8 +185,6 @@ export default {
       connectorId: r => r && r._connectorId,
       allowNew: true,
       allowEdit: true,
-      helpText:
-        'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

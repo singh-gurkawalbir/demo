@@ -48,7 +48,6 @@ export default {
       type: 'select',
       label: 'Authentication Type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
-      helpText: 'Please select Authentication Type',
       options: [
         {
           items: [
@@ -63,8 +62,6 @@ export default {
       label: 'Access Token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
       required: true,
-      helpText:
-        'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

@@ -24,8 +24,6 @@ export default {
       label: 'API Key',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from Account Settings in REST API section.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

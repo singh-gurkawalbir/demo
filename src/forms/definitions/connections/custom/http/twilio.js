@@ -13,12 +13,10 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The Account Sid of your Twilio account.',
       label: 'Account Sid',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The token of your Twilio account.',
       label: 'Auth Token',
       defaultValue: '',
     },

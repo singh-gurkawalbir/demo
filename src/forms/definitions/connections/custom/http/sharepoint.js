@@ -23,9 +23,7 @@ export default {
       endAdornment: '.sharepoint.com',
       label: 'Subdomain',
       required: true,
-      helpText:
-        "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
-      validWhen: {
+           validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',

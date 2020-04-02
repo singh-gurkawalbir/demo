@@ -17,9 +17,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
-      helpText:
-        'Please enter your API key here. Log into your Loop Returns Account. Go to Settings > Developers, you can generate an API key or use an existing one.\n Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
-      required: true,
+           required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

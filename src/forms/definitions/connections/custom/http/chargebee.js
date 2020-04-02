@@ -18,8 +18,6 @@ export default {
       type: 'text',
       id: 'chargebeeSubdomain',
       startAdornment: 'https://',
-      helpText:
-        "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
       endAdornment: '.chargebee.com/api',
       label: 'Subdomain',
       required: true,
@@ -44,7 +42,6 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
-      helpText: 'The API Key of your Chargebee account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

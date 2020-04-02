@@ -45,8 +45,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Select one of the following, depending on the account you’re connecting to. <br> <b>.</b> Sandbox </br> <b>.</b> Production',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -64,8 +62,6 @@ export default {
       required: true,
       type: 'text',
       label: 'Client ID',
-      helpText:
-        'Please enter Client ID of your Paypal Account.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
@@ -74,8 +70,6 @@ export default {
       defaultValue: '',
       label: 'Client Secret',
       inputType: 'password',
-      helpText:
-        'Please enter Client Secret of your Paypal Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -88,7 +82,6 @@ export default {
       ],
       label: 'Generate Token',
       defaultValue: '',
-      helpText: 'The access token of your Paypal account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

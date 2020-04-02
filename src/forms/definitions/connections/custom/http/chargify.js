@@ -24,8 +24,6 @@ export default {
       type: 'text',
       id: 'http.chargifySubdomain',
       startAdornment: 'https://',
-      helpText:
-        'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
       endAdornment: '.chargify.com',
       label: 'Subdomain',
       required: true,
@@ -54,7 +52,6 @@ export default {
       type: 'text',
       label: 'API Key',
       inputType: 'password',
-      helpText: 'The API key of your Chargify account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

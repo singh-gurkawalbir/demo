@@ -13,7 +13,6 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      helpText: 'Please enter the API Key of your OANDA account.',
       label: 'API Key',
       required: true,
     },

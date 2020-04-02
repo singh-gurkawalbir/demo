@@ -57,12 +57,10 @@ export default {
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
-      helpText: 'Client ID will be the Username.',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
-      helpText: 'Access Token will be the Password.',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.bearerToken': {
@@ -70,7 +68,6 @@ export default {
       defaultValue: '',
       label: 'Access Token',
       required: true,
-      helpText: 'This Access Token works in tandem with the Client ID.',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     'rest.unencrypted.clientId': {
@@ -78,8 +75,6 @@ export default {
       required: true,
       type: 'text',
       label: 'Client ID',
-      helpText:
-        'This Client ID works together with the Access Token to grant authorization.',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     storeHash: {
@@ -105,8 +100,6 @@ export default {
 
         return value;
       },
-      helpText:
-        'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
     },
     restAdvanced: { formId: 'restAdvanced' },
   },

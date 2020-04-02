@@ -50,7 +50,6 @@ export default {
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       label: 'Authentication Type',
-      helpText: 'Please select Authentication Type',
       options: [
         {
           items: [
@@ -62,12 +61,10 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'Client ID will be the Username.',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'Access Token will be the Password.',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.token.token': {
@@ -75,7 +72,6 @@ export default {
       defaultValue: '',
       label: 'Access Token',
       required: true,
-      helpText: 'This Access Token works in tandem with the Client ID.',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.unencrypted.clientId': {
@@ -83,8 +79,6 @@ export default {
       required: true,
       type: 'text',
       label: 'Client ID',
-      helpText:
-        'This Client ID works together with the Access Token to grant authorization.',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     storeHash: {
@@ -110,8 +104,6 @@ export default {
 
         return value;
       },
-      helpText:
-        'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

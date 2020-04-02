@@ -34,7 +34,6 @@ export default {
       required: true,
       type: 'text',
       label: 'Username',
-      helpText: 'Please enter username of your Dun & Bradstreet account.',
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -43,8 +42,6 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
-      helpText:
-        'Please enter password of your Dun & Bradstreet account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -58,7 +55,6 @@ export default {
       label: 'Generate Token',
       defaultValue: '',
       required: true,
-      helpText: 'The access token of your Dun & Bradstreet account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

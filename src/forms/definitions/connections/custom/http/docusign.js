@@ -31,9 +31,7 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
-      defaultValue: r => {
+           defaultValue: r => {
         const authUri =
           r &&
           r.http &&

@@ -29,7 +29,6 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
-      helpText: 'Please enter your account subdomain here.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -45,8 +44,6 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

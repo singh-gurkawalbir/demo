@@ -26,8 +26,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Select either Production or Sandbox based on your requirement.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -45,14 +43,12 @@ export default {
       type: 'text',
       label: 'Company Id',
       required: true,
-      helpText: 'The company ID of your Jobvite account.',
     },
     'http.unencrypted.api': {
       id: 'http.unencrypted.api',
       type: 'text',
       label: 'API key',
       required: true,
-      helpText: 'The API Key of your Jobvite account.',
     },
     'http.encrypted.secret': {
       id: 'http.encrypted.secret',
@@ -61,8 +57,6 @@ export default {
       required: true,
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'The Secret Key of your Jobvite account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe. This can be obtained from the Settings section and user secret subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

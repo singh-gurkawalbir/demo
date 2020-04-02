@@ -52,7 +52,6 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication Type',
-      helpText: 'Please select Authentication Type',
       visible: !isProduction(),
       defaultValue: r => {
         if (isProduction()) {

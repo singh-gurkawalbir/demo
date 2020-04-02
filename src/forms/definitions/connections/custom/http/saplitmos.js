@@ -32,8 +32,6 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
       required: true,
-      helpText:
-        'Please enter API Key of your SAP Litmos Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API Key: Login to SAP Litmos Account -- > Click "My Profile & Settings" from the drop-down menu at the top right corner of the screen -- > View the bottom of your profile.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

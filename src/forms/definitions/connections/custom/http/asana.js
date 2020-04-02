@@ -17,8 +17,6 @@ export default {
       fieldId: 'http.auth.token.token',
       required: true,
       label: 'Personal Access Token',
-      helpText:
-        'Enter your personal access token.Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

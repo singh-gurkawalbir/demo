@@ -29,8 +29,6 @@ export default {
       type: 'select',
       label: 'Account Type',
       required: true,
-      helpText:
-        'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
       options: [
         {
           items: [
@@ -55,7 +53,6 @@ export default {
       id: 'http.auth.token.token',
       type: 'text',
       label: 'X-SELLER-TOKEN',
-      helpText: 'Please enter the x-seller-token provided by Target',
       required: true,
       inputType: 'password',
     },
@@ -63,7 +60,6 @@ export default {
       id: 'http.unencrypted.x-seller-id',
       type: 'text',
       label: 'X-SELLER-ID',
-      helpText: 'Please enter the x-seller-id provided by Target.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

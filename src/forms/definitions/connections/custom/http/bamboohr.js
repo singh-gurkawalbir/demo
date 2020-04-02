@@ -26,8 +26,6 @@ export default {
       type: 'text',
       required: true,
       label: 'Subdomain',
-      helpText:
-        'Please enter your company name here which you configured while signing up for a new BambooHR account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -59,8 +57,6 @@ export default {
       label: 'API Key',
       type: 'text',
       inputType: 'password',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

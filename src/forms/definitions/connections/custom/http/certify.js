@@ -26,7 +26,6 @@ export default {
       type: 'text',
       label: 'API Key',
       inputType: 'password',
-      helpText: 'The API Key of your Certify account.',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
@@ -35,7 +34,6 @@ export default {
       type: 'text',
       label: 'API Secret',
       inputType: 'password',
-      helpText: 'The API Secret of your Certify account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

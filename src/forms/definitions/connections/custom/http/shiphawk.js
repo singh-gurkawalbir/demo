@@ -25,8 +25,6 @@ export default {
       inputType: 'password',
       defaultValue: '',
       required: true,
-      helpText:
-        'The API Key of your ShipHawk account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

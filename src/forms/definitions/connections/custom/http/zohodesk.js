@@ -26,8 +26,6 @@ export default {
       label: 'Organization Id',
       required: true,
       type: 'text',
-      helpText:
-        'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',

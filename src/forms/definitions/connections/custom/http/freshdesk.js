@@ -18,8 +18,6 @@ export default {
     'http.freshdeskSubdomain': {
       type: 'text',
       id: 'http.freshdeskSubdomain',
-      helpText:
-        "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.freshdesk.com',
       label: 'Subdomain',
@@ -44,12 +42,9 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText:
-        'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The password of your Freshdesk account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
