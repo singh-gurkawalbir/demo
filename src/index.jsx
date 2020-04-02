@@ -9,6 +9,7 @@ import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
+import scriptHelp from '../scriptHelp';
 
 const middleware = [];
 let store;
@@ -20,6 +21,9 @@ const sagaMiddleware = createSagaMiddleware({
   },
 });
 
+console.log('see here');
+scriptHelp();
+console.log('ends here');
 middleware.push(sagaMiddleware);
 
 // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
@@ -58,9 +62,9 @@ store = createStore(
 
 sagaMiddleware.run(rootSaga);
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+// render(
+//   <Provider store={store}>
+//     <App />
+//   </Provider>,
+//   document.getElementById('root')
+// );

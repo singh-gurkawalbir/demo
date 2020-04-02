@@ -13,10 +13,11 @@ require('babel-register')({
   ],
   cache: false,
 });
-
+scr
 const themeProvider = require('./src/theme/themeProvider').default;
 const theme = themeProvider();
 const getProxyOpts = () => {
+
   console.log(`API endpoint: [${process.env.API_ENDPOINT}]`);
 
   const target = process.env.API_ENDPOINT || '';

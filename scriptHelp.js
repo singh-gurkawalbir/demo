@@ -1,25 +1,34 @@
 import definitions from './src/forms/definitions';
 
-const checkForHelpText = fieldMap => {
+const checkForHelpText = (fieldMap, resStr) => {
   Object.keys(fieldMap).forEach(key => {
     const { helpText } = fieldMap[key];
 
     if (helpText) {
-      console.log(`${key} : ${helpText}`);
+      const resType = resStr.endsWith('s')
+        ? resStr.substring(0, resStr.length - 1)
+        : resStr;
+      const str = `"${resType}.${key}" : "${helpText}",`;
+
+      console.log(str);
     }
   });
 };
 
-const recurs = obj => {
+const recurs = (obj, resStr) => {
   if (!obj) return;
 
   if (obj.fieldMap) {
-    checkForHelpText(obj.fieldMap);
+    return checkForHelpText(obj.fieldMap, resStr);
   }
 
   Object.keys(obj).forEach(key => {
-    recurs(definitions[key]);
+    recurs(obj[key], resStr || key);
   });
 };
 
-recurs(definitions);
+const func = () => {
+  recurs(definitions, null);
+};
+
+export default func;
