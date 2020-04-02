@@ -11,10 +11,12 @@ export default {
     {
       heading: 'Email',
       value: r => r.email,
+      orderBy: 'email',
     },
     {
       heading: 'Integration ID',
       value: r => r._integrationId,
+      orderBy: '_integrationId',
     },
     {
       heading: 'Expires on',

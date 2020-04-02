@@ -57,6 +57,12 @@ const getConnectionType = resource => {
 
   if (assistant) return assistant;
 
+  if (resource.type === 'netsuite') {
+    if (resource.netsuite.authType === 'token-auto') {
+      return 'netsuite-oauth';
+    }
+  }
+
   return type;
 };
 
@@ -95,6 +101,10 @@ export default function ConnectorInstallation(props) {
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
   const mode = integration && integration.mode;
+  const oAuthApplications = [
+    ...resourceConstants.OAUTH_APPLICATIONS,
+    'netsuite-oauth',
+  ];
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -234,9 +244,7 @@ export default function ConnectorInstallation(props) {
     const step = installSteps.find(s => s.isCurrentStep);
 
     if (
-      resourceConstants.OAUTH_APPLICATIONS.includes(
-        getConnectionType(selectedConnection)
-      ) &&
+      oAuthApplications.includes(getConnectionType(selectedConnection)) &&
       !isAuthorized &&
       !(
         getConnectionType(selectedConnection) === 'shopify' &&

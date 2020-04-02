@@ -166,6 +166,7 @@ export default {
     'myobaccountright',
     'clio',
     'practicepanther',
+    'bigquery',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -176,6 +177,7 @@ export default {
     'doubleclick',
     'smartsheet',
     'shipbob',
+    'bigquery',
     'campaignmonitor',
     'wrike',
     'googlesheets',
