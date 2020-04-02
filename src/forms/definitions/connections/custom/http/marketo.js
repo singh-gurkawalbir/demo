@@ -30,7 +30,7 @@ export default {
       endAdornment: '/rest',
       label: 'Subdomain',
       required: true,
-           validWhen: {
+      validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
@@ -53,7 +53,7 @@ export default {
       type: 'text',
       label: 'Client Id',
       required: true,
-         },
+    },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
@@ -61,7 +61,7 @@ export default {
       required: true,
       defaultValue: '',
       inputType: 'password',
-           description:
+      description:
         'Note: for security reasons this field must always be re-entered.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

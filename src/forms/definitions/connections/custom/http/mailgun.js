@@ -15,7 +15,7 @@ export default {
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API Key',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

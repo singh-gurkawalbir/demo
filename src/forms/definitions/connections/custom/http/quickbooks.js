@@ -57,7 +57,7 @@ export default {
       id: 'http.quickbooksEnvironment',
       type: 'select',
       label: 'Environment',
-           options: [
+      options: [
         {
           items: [
             { label: 'Sandbox Accounting API', value: 'saapi' },

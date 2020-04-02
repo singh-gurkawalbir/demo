@@ -31,7 +31,7 @@ export default {
           ],
         },
       ],
-           defaultValue: r => {
+      defaultValue: r => {
         const authUri =
           r &&
           r.http &&

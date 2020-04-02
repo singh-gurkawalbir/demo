@@ -19,7 +19,7 @@ export default {
       endAdornment: '.recurly.com',
       label: 'Subdomain',
       required: true,
-           validWhen: {
+      validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
@@ -41,7 +41,7 @@ export default {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
       defaultValue: '',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

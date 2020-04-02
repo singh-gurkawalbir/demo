@@ -34,7 +34,7 @@ export default {
           ],
         },
       ],
-           defaultValue: r => {
+      defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
         if (baseUri) {

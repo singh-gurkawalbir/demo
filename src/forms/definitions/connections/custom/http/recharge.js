@@ -17,7 +17,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
-           required: true,
+      required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

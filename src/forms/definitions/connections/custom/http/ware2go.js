@@ -40,21 +40,21 @@ export default {
 
         return 'production';
       },
-         },
+    },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'Access Token',
-         },
+    },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'Access Secret',
-         },
+    },
     'http.unencrypted.merchantId': {
       id: 'http.unencrypted.merchantId',
       label: 'Merchant Id',
       required: true,
       type: 'text',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

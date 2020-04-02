@@ -27,7 +27,7 @@ export default {
       type: 'text',
       label: 'Account ID',
       defaultValue: '',
-           validWhen: {
+      validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     },

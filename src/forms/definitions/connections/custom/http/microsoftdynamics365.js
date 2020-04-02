@@ -24,7 +24,7 @@ export default {
       endAdornment: '.dynamics.com',
       label: 'Subdomain',
       required: true,
-           validWhen: {
+      validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',

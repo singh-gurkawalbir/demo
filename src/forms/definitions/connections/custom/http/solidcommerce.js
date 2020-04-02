@@ -29,7 +29,7 @@ export default {
       type: 'text',
       inputType: 'password',
       required: true,
-           description:
+      description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.encrypted.appKey': {
@@ -38,7 +38,7 @@ export default {
       type: 'text',
       inputType: 'password',
       required: true,
-           description:
+      description:
         'Note: for security reasons this field must always be re-entered.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

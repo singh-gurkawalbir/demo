@@ -26,7 +26,7 @@ export default {
       defaultValue: '',
       required: true,
       label: 'API Key',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

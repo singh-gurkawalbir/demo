@@ -18,7 +18,7 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'API Key',
       required: true,
-           description:
+      description:
         'Note: for security reasons this field must always be re-entered.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -13,7 +13,7 @@ require('babel-register')({
   ],
   cache: false,
 });
-scr
+
 const themeProvider = require('./src/theme/themeProvider').default;
 const theme = themeProvider();
 const getProxyOpts = () => {

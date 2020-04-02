@@ -21,7 +21,7 @@ export default {
       id: 'http.unencrypted.adminUser',
       label: 'Admin User',
       type: 'checkbox',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

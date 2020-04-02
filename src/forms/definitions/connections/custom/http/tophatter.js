@@ -19,7 +19,7 @@ export default {
       defaultValue: '',
       required: true,
       inputType: 'password',
-           description:
+      description:
         'Note: for security reasons this field must always be re-entered.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

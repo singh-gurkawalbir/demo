@@ -34,7 +34,7 @@ export default {
       startAdornment: 'https://',
       label: 'API Endpoint',
       required: true,
-           validWhen: {
+      validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',
@@ -52,13 +52,13 @@ export default {
       id: 'http.unencrypted.Store_Code',
       type: 'text',
       label: 'Store Code',
-           required: true,
+      required: true,
     },
     xMivaAPIToken: {
       id: 'xMivaAPIToken',
       type: 'text',
       label: 'API Token',
-           required: true,
+      required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

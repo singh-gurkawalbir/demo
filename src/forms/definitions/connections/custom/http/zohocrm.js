@@ -30,7 +30,7 @@ export default {
       endAdornment: '/crm',
       label: 'Subdomain',
       required: true,
-           validWhen: {
+      validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
           message: 'Subdomain should not contain spaces.',

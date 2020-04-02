@@ -14,11 +14,11 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API Key',
-         },
+    },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API Secret',
-         },
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
