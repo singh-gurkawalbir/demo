@@ -3,7 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
-import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
+import {
+  getUnionObject,
+  getJSONPathArrayWithSpecialCharactersWrapped,
+} from '../../../utils/jsonPaths';
 import { isJsonString } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +49,23 @@ export default function TransformPanel(props) {
     parsedData = data;
   }
 
-  const dataFields = getJSONPaths(pickFirstObject(parsedData || {}));
+  let isGroupedData = false;
+
+  if (Array.isArray(parsedData) && parsedData.length) {
+    parsedData = getUnionObject(parsedData);
+    isGroupedData = true;
+  }
+
+  let dataFields =
+    getJSONPathArrayWithSpecialCharactersWrapped(
+      parsedData || {},
+      null,
+      true
+    ) || [];
+
+  dataFields = dataFields.map(e => ({
+    id: isGroupedData ? `*.${e}` : e,
+  }));
   const suggestionConfig = {
     keyConfig: {
       suggestions: dataFields,
