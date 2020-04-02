@@ -121,15 +121,15 @@ function ConnectionLoadingChip(props) {
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
   }, [connectionId, dispatch]);
 
-  const connectionOffline = useSelector(state =>
+  const isConnectionOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (connectionOffline === undefined) {
+  if (isConnectionOffline === undefined) {
     return null;
   }
 
-  return connectionOffline ? (
+  return isConnectionOffline ? (
     <Chip color="secondary" label="Offline" />
   ) : (
     <Chip color="primary" label="Online" />

@@ -11,7 +11,7 @@ export const PING_STATES = {
 Object.freeze(PING_STATES);
 
 export default (state = {}, action) => {
-  const { type, resourceId, message } = action;
+  const { type, resourceId, message, retainStatus = false } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -45,7 +45,9 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.CONNECTION.TEST_CLEAR: {
-        draft[resourceId] = {};
+        if (retainStatus) {
+          delete draft[resourceId].message;
+        } else draft[resourceId] = {};
 
         break;
       }

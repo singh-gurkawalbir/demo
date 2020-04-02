@@ -248,9 +248,10 @@ const resource = {
         resourceId,
         message,
       }),
-    testClear: resourceId =>
+    testClear: (resourceId, retainStatus) =>
       action(actionTypes.CONNECTION.TEST_CLEAR, {
         resourceId,
+        retainStatus,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {

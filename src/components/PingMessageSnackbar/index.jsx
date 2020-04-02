@@ -128,11 +128,11 @@ const CancellableSpinner = props => (
   </div>
 );
 
-class PingSnackbar extends React.Component {
+class PingMessageSnackbar extends React.Component {
   generateMessageBasedOnState = (commState, messages, onHandleCancel) => {
     if (commState === PING_STATES.LOADING)
       return <CancellableSpinner onHandleCancel={onHandleCancel} />;
-    else if (commState === PING_STATES.ERROR) {
+    else if (commState === PING_STATES.ERROR && messages) {
       return <ErroredMessageList messages={messages} />;
     }
   };
@@ -146,8 +146,7 @@ class PingSnackbar extends React.Component {
       onHandleCancelTask
     );
 
-    if (![PING_STATES.LOADING, PING_STATES.ERROR].includes(commState))
-      return null;
+    if (!msg) return null;
 
     return (
       <div>
@@ -169,4 +168,4 @@ class PingSnackbar extends React.Component {
   }
 }
 
-export default withStyles(styles2)(PingSnackbar);
+export default withStyles(styles2)(PingMessageSnackbar);

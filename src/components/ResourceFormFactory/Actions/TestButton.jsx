@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 // import Chip from '@material-ui/core/Chip';
 // import CircularProgress from '@material-ui/core/CircularProgress';
-import PingSnackbar from '../../PingSnackbar';
+import PingMessageSnackbar from '../../PingMessageSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers/index';
 import DynaAction from '../../DynaForm/DynaAction';
@@ -30,15 +30,17 @@ export const PingMessage = props => {
     () => dispatch(actions.resource.connections.testCancelled(resourceId)),
     [dispatch, resourceId]
   );
-  const handleTestClear = useCallback(
-    () => dispatch(actions.resource.connections.testClear(resourceId)),
+  const handleTestMessageClear = useCallback(
+    () =>
+      // passing true retains status. Message is cleared off
+      dispatch(actions.resource.connections.testClear(resourceId, true)),
     [dispatch, resourceId]
   );
 
   return (
-    <PingSnackbar
+    <PingMessageSnackbar
       commStatus={testConnectionCommState}
-      onHandleClose={handleTestClear}
+      onHandleClose={handleTestMessageClear}
       onHandleCancelTask={handleCancelTest}
     />
   );

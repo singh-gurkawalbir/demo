@@ -96,7 +96,7 @@ const TestAndSaveButton = props => {
   const handleTestConnection = values =>
     dispatch(actions.resource.connections.test(resourceId, values));
   const testClear = useCallback(
-    () => dispatch(actions.resource.connections.testClear(resourceId)),
+    () => dispatch(actions.resource.connections.testClear(resourceId, true)),
     [dispatch, resourceId]
   );
   const testConnectionCommState = useSelector(state =>
