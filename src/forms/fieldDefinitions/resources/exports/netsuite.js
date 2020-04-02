@@ -193,7 +193,7 @@ export default {
     },
   },
   'netsuite.netsuiteExportlabel': {
-    label: 'What would you like to export from NetSuite?',
+    label: 'What would you like to export from netsuite?',
     type: 'labeltitle',
   },
   'netsuite.searches': {
@@ -210,7 +210,7 @@ export default {
   },
   'netsuite.export.forceReload': {
     type: 'checkbox',
-    label: 'Reload Record Before Export',
+    label: 'Reload record before export',
   },
   'netsuite.selectoption': {
     type: 'text',
@@ -218,20 +218,20 @@ export default {
   },
   'netsuite.customFieldMetadata': {
     type: 'text',
-    label: 'NetSuite custom Field Metadata',
+    label: 'NetSuite custom field metadata',
   },
   'netsuite.statsOnly': {
     type: 'checkbox',
-    label: 'NetSuite stats Only',
+    label: 'NetSuite stats only',
   },
   'netsuite.internalId': {
     type: 'text',
     required: true,
-    label: 'Internal Id',
+    label: 'Internal id',
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',
-    label: 'Purge File After Export',
+    label: 'Purge file after export',
   },
   'netsuite.restlet.criteria.field': {
     type: 'text',
@@ -247,15 +247,15 @@ export default {
   },
   'netsuite.restlet.criteria.searchValue': {
     type: 'text',
-    label: 'NetSuite restlet criteria search Value',
+    label: 'NetSuite restlet criteria search value',
   },
   'netsuite.restlet.criteria.searchValue2': {
     type: 'text',
-    label: 'NetSuite restlet criteria search Value2',
+    label: 'NetSuite restlet criteria search value2',
   },
   'netsuite.restlet.batchSize': {
     type: 'text',
-    label: 'Batch Size Limit',
+    label: 'Batch size limit',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -264,14 +264,14 @@ export default {
   },
   'netsuite.restlet.criteria': {
     type: 'nssearchcriteria',
-    label: 'Define Search Criteria',
+    label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
     filterKey: 'suitescript-searchFilters',
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.criteria': {
     type: 'nssearchcriteria',
-    label: 'Define Search Criteria',
+    label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
     filterKey: 'webservices-searchFilters',
     connectionId: r => r && r._connectionId,
@@ -285,7 +285,7 @@ export default {
   },
   'netsuite.restlet.hooks.batchSize': {
     type: 'text',
-    label: 'NetSuite restlet hooks batch Size',
+    label: 'NetSuite restlet hooks batch size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -294,22 +294,22 @@ export default {
   },
   'netsuite.restlet.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'NetSuite restlet hooks pre Send file Internal Id',
+    label: 'NetSuite restlet hooks pre send file internal id',
   },
   'netsuite.restlet.hooks.preSend.function': {
     type: 'text',
-    label: 'NetSuite restlet hooks pre Send function',
+    label: 'NetSuite restlet hooks pre send function',
   },
   'netsuite.restlet.hooks.preSend.configuration': {
     type: 'text',
-    label: 'NetSuite restlet hooks pre Send configuration',
+    label: 'NetSuite restlet hooks pre send configuration',
   },
   'netsuite.distributed.disabled': {
     type: 'checkbox',
     label: 'NetSuite distributed disabled',
   },
   'netsuite.distributed.qualifier': {
-    label: 'Field Specific Qualification Criteria',
+    label: 'Field specific qualification criteria',
     type: 'netsuitequalifier',
     placeholder: 'Define Qualification Criteria',
     helpKey: 'export.netsuite.qualifier',
@@ -321,31 +321,31 @@ export default {
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'NetSuite distributed hooks pre Send file Internal Id',
+    label: 'NetSuite distributed hooks pre send file internal id',
   },
   'netsuite.distributed.hooks.preSend.function': {
     type: 'text',
-    label: 'NetSuite distributed hooks pre Send function',
+    label: 'NetSuite distributed hooks pre send function',
   },
   'netsuite.distributed.hooks.preSend.configuration': {
     type: 'text',
-    label: 'NetSuite distributed hooks pre Send configuration',
+    label: 'NetSuite distributed hooks pre send configuration',
   },
   'netsuite.distributed.forceReload': {
     type: 'checkbox',
-    label: 'Reload Record Before Export',
+    label: 'Reload record before export',
   },
   'netsuite.distributed.skipExportFieldId': {
     type: 'text',
-    label: 'Skip Export Field Id',
+    label: 'Skip export field id',
   },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',
-    label: 'NetSuite distributed io Environment',
+    label: 'NetSuite distributed io environment',
   },
   'netsuite.distributed.lastSyncedDate': {
     type: 'text',
-    label: 'NetSuite distributed last Synced Date',
+    label: 'NetSuite distributed last synced date',
   },
   'netsuite.distributed.settings': {
     type: 'text',
@@ -353,23 +353,23 @@ export default {
   },
   'netsuite.getList[].typeId': {
     type: 'text',
-    label: 'NetSuite get List type Id',
+    label: 'NetSuite get list type id',
   },
   'netsuite.getList.internalId': {
     type: 'text',
-    label: 'NetSuite get List internal Id',
+    label: 'NetSuite get list internal id',
   },
   'netsuite.getList.externalId': {
     type: 'text',
-    label: 'NetSuite get List external Id',
+    label: 'NetSuite get list external id',
   },
   'netsuite.searchPreferences.bodyFieldsOnly': {
     type: 'checkbox',
-    label: 'NetSuite search Preferences body Fields Only',
+    label: 'NetSuite search preferences body fields only',
   },
   'netsuite.searchPreferences.pageSize': {
     type: 'text',
-    label: 'NetSuite search Preferences page Size',
+    label: 'NetSuite search preferences page size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -378,6 +378,6 @@ export default {
   },
   'netsuite.searchPreferences.returnSearchColumns': {
     type: 'checkbox',
-    label: 'NetSuite search Preferences return Search Columns',
+    label: 'NetSuite search preferences return search columns',
   },
 };

@@ -1,7 +1,7 @@
 export default {
   'rdbms.queryType': {
     type: 'radiogroupforresetfields',
-    label: 'Query Type',
+    label: 'Query type',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
@@ -39,7 +39,7 @@ export default {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
     arrayIndex: 0,
-    label: 'Launch Query Builder',
+    label: 'Launch query builder',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -56,7 +56,7 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
-    label: 'Launch Query Builder for Insert',
+    label: 'Launch query builder for insert',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -73,7 +73,7 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    label: 'Launch Query Builder for Update',
+    label: 'Launch query builder for update',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -88,7 +88,7 @@ export default {
     ],
   },
   'rdbms.ignoreExtract': {
-    label: 'Existing Data Id',
+    label: 'Existing data id',
     required: true,
     defaultValue: r => {
       const val =
@@ -110,7 +110,7 @@ export default {
     ],
   },
   'rdbms.updateExtract': {
-    label: 'Existing Data Id',
+    label: 'Existing data id',
     required: true,
     defaultValue: r => {
       const val =

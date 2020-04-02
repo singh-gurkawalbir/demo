@@ -6,13 +6,13 @@ export default {
   },
   'oauth2.clientId': {
     type: 'text',
-    label: 'Client Id',
+    label: 'Client id',
     required: true,
     visible: r => ![r.provider, r.assistant].includes('amazonmws'),
   },
   'oauth2.clientSecret': {
     type: 'text',
-    label: 'Client Secret',
+    label: 'Client secret',
     inputType: 'password',
     defaultValue: '',
     required: true,
@@ -20,13 +20,13 @@ export default {
   },
   'amazonmws.accessKeyId': {
     type: 'text',
-    label: 'Access Key Id:',
+    label: 'Access key id:',
     required: true,
     visible: r => [r.provider, r.assistant].includes('amazonmws'),
   },
   'amazonmws.secretKey': {
     type: 'text',
-    label: 'Secret Key:',
+    label: 'Secret key:',
     defaultValue: '',
     required: true,
     visible: r => [r.provider, r.assistant].includes('amazonmws'),

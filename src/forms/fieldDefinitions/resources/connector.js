@@ -14,12 +14,12 @@ export default {
   },
   imageURL: {
     type: 'text',
-    label: 'Image URL',
+    label: 'Image url',
     required: true,
   },
   websiteURL: {
     type: 'text',
-    label: 'Website URL',
+    label: 'Website url',
     validWhen: {
       matchesRegEx: {
         pattern:
@@ -30,7 +30,7 @@ export default {
   },
   contactEmail: {
     type: 'text',
-    label: 'Contact Emails',
+    label: 'Contact emails',
     required: true,
     placeholder: 'Comma separated list of emails',
     validWhen: {
@@ -42,7 +42,7 @@ export default {
   },
   installerFunction: {
     type: 'text',
-    label: 'Installer Function',
+    label: 'Installer function',
     required: true,
   },
   _stackId: {
@@ -53,12 +53,12 @@ export default {
   },
   uninstallerFunction: {
     type: 'text',
-    label: 'Uninstaller Function',
+    label: 'Uninstaller function',
     required: true,
   },
   updateFunction: {
     type: 'text',
-    label: 'Update Function',
+    label: 'Update function',
     required: true,
   },
   applications: {

@@ -25,17 +25,17 @@ export default {
   },
   'dynamodb.tableName': {
     type: 'text',
-    label: 'Table Name',
+    label: 'Table name',
     required: true,
   },
   'dynamodb.keyConditionExpression': {
     type: 'text',
-    label: 'Key Condition Expression',
+    label: 'Key condition expression',
     required: true,
   },
   'dynamodb.filterExpression': {
     type: 'text',
-    label: 'Filter Expression',
+    label: 'Filter expression',
   },
   'dynamodb.projectionExpression': {
     type: 'text',
@@ -44,7 +44,7 @@ export default {
   },
   'dynamodb.expressionAttributeNames': {
     type: 'editor',
-    label: 'Expression Attribute Names',
+    label: 'Expression attribute names',
     mode: 'json',
     required: true,
     defaultValue: r =>
@@ -53,7 +53,7 @@ export default {
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
-    label: 'Expression Attribute Values',
+    label: 'Expression attribute values',
     mode: 'json',
     required: true,
     defaultValue: r =>
@@ -62,11 +62,11 @@ export default {
   },
   'dynamodb.onceExportPartitionKey': {
     type: 'text',
-    label: 'Once Export Partition Key',
+    label: 'Once export partition key',
     required: true,
   },
   'dynamodb.onceExportSortKey': {
     type: 'text',
-    label: 'Once Export Sort Key',
+    label: 'Once export sort key',
   },
 };

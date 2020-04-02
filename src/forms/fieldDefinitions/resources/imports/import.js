@@ -5,13 +5,13 @@ export default {
   // UI Specific field
   formView: { id: 'formView', type: 'formview', label: 'Form View' },
   apiIdentifier: {
-    label: 'Invoke this Import [POST]',
+    label: 'Invoke this import [post]',
     type: 'apiidentifier',
   },
   mapping: {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
-    label: 'Manage Import Mapping',
+    label: 'Manage import mapping',
   },
   sampleData: { type: 'text', label: 'Sample Data' },
   distributed: {
@@ -22,7 +22,7 @@ export default {
   },
   maxAttempts: {
     type: 'text',
-    label: 'Max Attempts',
+    label: 'Max attempts',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -31,21 +31,21 @@ export default {
   },
   ignoreExisting: {
     type: 'checkbox',
-    label: 'Ignore Existing',
+    label: 'Ignore existing',
     defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
-    label: 'Ignore Missing',
+    label: 'Ignore missing',
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
     type: 'relativeuri',
-    label: 'Concurrency Id Lock Template',
+    label: 'Concurrency id lock template',
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Override Data URI Template',
+    label: 'Override data uri template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },
@@ -86,7 +86,7 @@ export default {
   },
   blobKeyPath: {
     type: 'text',
-    label: 'Blob Key Path',
+    label: 'Blob key path',
     placeholder: 'Blob Key Path',
     visibleWhen: [
       {
@@ -306,20 +306,20 @@ export default {
   },
   deleteAfterImport: {
     type: 'checkbox',
-    label: 'Purge Blob data immediately?',
+    label: 'Purge blob data immediately?',
   },
   assistantMetadata: {
     type: 'text',
-    label: 'Assistant Metadata',
+    label: 'Assistant metadata',
   },
   useTechAdaptorForm: {
     type: 'checkbox',
-    label: 'Use Tech Adaptor Form',
+    label: 'Use tech adaptor form',
     defaultValue: false,
   },
   sampleResponseData: {
     type: 'text',
-    label: 'Sample Response Data',
+    label: 'Sample response data',
   },
   modelMetadata: { type: 'text', label: 'Model metadata' },
   adaptorType: { type: 'text', label: 'Adaptor type' },
@@ -336,7 +336,7 @@ export default {
   },
   'filter.script._scriptId': {
     type: 'text',
-    label: 'Filter script _script Id',
+    label: 'Filter script _script id',
   },
   'filter.script.function': {
     type: 'text',
@@ -356,7 +356,7 @@ export default {
   // #region hooks
   hookType: {
     type: 'radiogroup',
-    label: 'Hook Type',
+    label: 'Hook type',
     defaultValue: 'script',
     options: [
       {
@@ -369,7 +369,7 @@ export default {
   },
   'hooks.preMap.function': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -390,7 +390,7 @@ export default {
   },
   'hooks.preMap._scriptId': {
     type: 'selectresource',
-    label: 'Pre Map Script',
+    label: 'Pre map script',
     resourceType: 'scripts',
     visibleWhen: [
       {
@@ -400,7 +400,7 @@ export default {
     ],
   },
   'hooks.preMap._stackId': {
-    label: 'Pre Map Stack',
+    label: 'Pre map stack',
     type: 'selectresource',
     resourceType: 'stacks',
     visibleWhen: [
@@ -412,7 +412,7 @@ export default {
   },
   'hooks.preMap.configuration': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -423,7 +423,7 @@ export default {
   },
   'hooks.postMap.function': {
     type: 'text',
-    label: 'Post Map',
+    label: 'Post map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -443,7 +443,7 @@ export default {
     ],
   },
   'hooks.postMap._scriptId': {
-    label: 'Post Map Script',
+    label: 'Post map script',
     type: 'selectresource',
     resourceType: 'scripts',
     visibleWhen: [
@@ -454,7 +454,7 @@ export default {
     ],
   },
   'hooks.postMap._stackId': {
-    label: 'Post Map Stack',
+    label: 'Post map stack',
     type: 'selectresource',
     resourceType: 'stacks',
     visibleWhen: [
@@ -466,7 +466,7 @@ export default {
   },
   'hooks.postMap.configuration': {
     type: 'text',
-    label: 'Post Map',
+    label: 'Post map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -477,7 +477,7 @@ export default {
   },
   'hooks.postSubmit.function': {
     type: 'text',
-    label: 'Post Submit',
+    label: 'Post submit',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -497,7 +497,7 @@ export default {
     ],
   },
   'hooks.postSubmit._scriptId': {
-    label: 'Post Submit Script',
+    label: 'Post submit script',
     type: 'selectresource',
     resourceType: 'scripts',
     visibleWhen: [
@@ -508,7 +508,7 @@ export default {
     ],
   },
   'hooks.postSubmit._stackId': {
-    label: 'Post Submit Stack',
+    label: 'Post submit stack',
     type: 'selectresource',
     resourceType: 'stacks',
     visibleWhen: [
@@ -520,7 +520,7 @@ export default {
   },
   'hooks.postSubmit.configuration': {
     type: 'text',
-    label: 'Post Submit',
+    label: 'Post submit',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -531,7 +531,7 @@ export default {
   },
   'hooks.postAggregate.function': {
     type: 'text',
-    label: 'Post Aggregate',
+    label: 'Post aggregate',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -553,7 +553,7 @@ export default {
   'hooks.postAggregate._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    label: 'Post Aggregate Script',
+    label: 'Post aggregate script',
     visibleWhen: [
       {
         field: 'hookType',
@@ -564,7 +564,7 @@ export default {
   'hooks.postAggregate._stackId': {
     type: 'selectresource',
     resourceType: 'stacks',
-    label: 'Post Aggregate Stack',
+    label: 'Post aggregate stack',
     visibleWhen: [
       {
         field: 'hookType',
@@ -574,7 +574,7 @@ export default {
   },
   'hooks.postAggregate.configuration': {
     type: 'text',
-    label: 'Post Aggregate',
+    label: 'Post aggregate',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -587,20 +587,20 @@ export default {
   // #region responseTransform
   'responseTransform.expression.version': {
     type: 'radiogroup',
-    label: 'Response Transform expression version',
+    label: 'Response transform expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'responseTransform.expression.rules': {
     type: 'text',
-    label: 'Response Transform expression rules',
+    label: 'Response transform expression rules',
   },
   'responseTransform.script._scriptId': {
     type: 'text',
-    label: 'Response Transform script _script Id',
+    label: 'Response transform script _script id',
   },
   'responseTransform.script.function': {
     type: 'text',
-    label: 'Response Transform script function',
+    label: 'Response transform script function',
   },
   // #endregion responseTransform
   // #region mapping
@@ -610,11 +610,11 @@ export default {
   },
   'mapping.fields[*].extractDateFormat': {
     type: 'text',
-    label: 'Mapping fields[*] extract Date Format',
+    label: 'Mapping fields[*] extract date format',
   },
   'mapping.fields[*].extractDateTimezone': {
     type: 'text',
-    label: 'Mapping fields[*] extract Date Timezone',
+    label: 'Mapping fields[*] extract date timezone',
   },
   'mapping.fields[*].generate': {
     type: 'text',
@@ -622,15 +622,15 @@ export default {
   },
   'mapping.fields[*].generateDateFormat': {
     type: 'text',
-    label: 'Mapping fields[*] generate Date Format',
+    label: 'Mapping fields[*] generate date format',
   },
   'mapping.fields[*].generateDateTimezone': {
     type: 'text',
-    label: 'Mapping fields[*] generate Date Timezone',
+    label: 'Mapping fields[*] generate date timezone',
   },
   'mapping.fields[*].hardCodedValue': {
     type: 'text',
-    label: 'Mapping fields[*] hard Coded Value',
+    label: 'Mapping fields[*] hard coded value',
   },
   'mapping.fields[*].immutable': {
     type: 'text',
@@ -638,11 +638,11 @@ export default {
   },
   'mapping.fields[*].lookupName': {
     type: 'text',
-    label: 'Mapping fields[*] lookup Name',
+    label: 'Mapping fields[*] lookup name',
   },
   'mapping.fields[*].dataType': {
     type: 'text',
-    label: 'Mapping fields[*] data Type',
+    label: 'Mapping fields[*] data type',
   },
   'mapping.fields[*].default': {
     type: 'text',
@@ -650,7 +650,7 @@ export default {
   },
   'mapping.fields[*].conditional.lookupName': {
     type: 'text',
-    label: 'Mapping fields[*] conditional lookup Name',
+    label: 'Mapping fields[*] conditional lookup name',
   },
   'mapping.fields[*].conditional.when': {
     type: 'text',
@@ -662,7 +662,7 @@ export default {
   },
   'mapping.fields[*].discardIfEmpty': {
     type: 'text',
-    label: 'Mapping fields[*] discard If Empty',
+    label: 'Mapping fields[*] discard if empty',
   },
   'mapping.lists[*].generate': {
     type: 'text',
@@ -674,11 +674,11 @@ export default {
   },
   'mapping.lists[*].fields[*].extractDateFormat': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] extract Date Format',
+    label: 'Mapping lists[*] fields[*] extract date format',
   },
   'mapping.lists[*].fields[*].extractDateTimezone': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] extract Date Timezone',
+    label: 'Mapping lists[*] fields[*] extract date timezone',
   },
   'mapping.lists[*].fields[*].generate': {
     type: 'text',
@@ -686,15 +686,15 @@ export default {
   },
   'mapping.lists[*].fields[*].generateDateFormat': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] generate Date Format',
+    label: 'Mapping lists[*] fields[*] generate date format',
   },
   'mapping.lists[*].fields[*].generateDateTimezone': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] generate Date Timezone',
+    label: 'Mapping lists[*] fields[*] generate date timezone',
   },
   'mapping.lists[*].fields[*].hardCodedValue': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] hard Coded Value',
+    label: 'Mapping lists[*] fields[*] hard coded value',
   },
   'mapping.lists[*].fields[*].immutable': {
     type: 'text',
@@ -702,11 +702,11 @@ export default {
   },
   'mapping.lists[*].fields[*].lookupName': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] lookup Name',
+    label: 'Mapping lists[*] fields[*] lookup name',
   },
   'mapping.lists[*].fields[*].dataType': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] data Type',
+    label: 'Mapping lists[*] fields[*] data type',
   },
   'mapping.lists[*].fields[*].default': {
     type: 'text',
@@ -714,7 +714,7 @@ export default {
   },
   'mapping.lists[*].fields[*].conditional.lookupName': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] conditional lookup Name',
+    label: 'Mapping lists[*] fields[*] conditional lookup name',
   },
   'mapping.lists[*].fields[*].conditional.when': {
     type: 'text',
@@ -726,7 +726,7 @@ export default {
   },
   'mapping.lists[*].fields[*].discardIfEmpty': {
     type: 'text',
-    label: 'Mapping lists[*] fields[*] discard If Empty',
+    label: 'Mapping lists[*] fields[*] discard if empty',
   },
   // #endregion mapping
   // #region lookups[*]

@@ -63,11 +63,11 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure HTTP Headers',
+    label: 'Configure http headers',
   },
   'rest.compositeType': {
     type: 'select',
-    label: 'Composite Type',
+    label: 'Composite type',
     options: [
       {
         items: [
@@ -127,7 +127,7 @@ export default {
   'rest.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
-    label: 'Relative URI',
+    label: 'Relative uri',
     required: true,
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
@@ -147,7 +147,7 @@ export default {
   },
   'rest.requestType': {
     type: 'select',
-    label: 'Request Type',
+    label: 'Request type',
     options: [
       {
         items: [
@@ -175,7 +175,7 @@ export default {
   mapping: {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
-    label: 'Manage Import Mapping',
+    label: 'Manage import mapping',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -189,7 +189,7 @@ export default {
     type: 'httprequestbody',
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
-    label: 'Build HTTP Request Body',
+    label: 'Build http request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     refreshOptionsOnChangesTo: ['rest.lookups'],
@@ -206,7 +206,7 @@ export default {
   },
   'rest.successPath': {
     type: 'text',
-    label: 'Success Path',
+    label: 'Success path',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -223,7 +223,7 @@ export default {
   },
   'rest.successValues': {
     type: 'text',
-    label: 'Success Values',
+    label: 'Success values',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -240,7 +240,7 @@ export default {
   },
   'rest.responseIdPath': {
     type: 'text',
-    label: 'Response Id Path',
+    label: 'Response id path',
     placeholder: 'Optional',
     visibleWhen: [
       {
