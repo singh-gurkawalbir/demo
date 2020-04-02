@@ -37,14 +37,14 @@ const useStyles = makeStyles(theme => ({
     borderWidth: '1px 0 0 0',
   },
   form: {
-    height: `calc(100vh - 136px)`,
+    height: props => `calc(100vh - 136px - ${props.notificationPanelHeight}px)`,
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
       return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: 0,
+    padding: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
   },
   appLogo: {
     paddingRight: '25px',
@@ -105,13 +105,14 @@ export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
-  const classes = useStyles({ ...props, occupyFullWidth });
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const [resourceFormStyle, setResourceFormStyle] = useState({
-    height: `calc(100vh - 136px)`,
-    paddingTop: 24,
+  const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+  const classes = useStyles({
+    ...props,
+    occupyFullWidth,
+    notificationPanelHeight,
   });
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
@@ -305,12 +306,9 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-  const resize = useCallback((width, height) => {
-    setResourceFormStyle({
-      height: `calc(100vh - 136px - ${height}px)`,
-      paddingTop: height ? 0 : 24,
-    });
-  }, []);
+  const resize = (width, height) => {
+    setNotificationPanelHeight(height);
+  };
 
   return (
     <Fragment>
@@ -341,10 +339,9 @@ export default function Panel(props) {
                   resourceId={id}
                 />
               )}
-              <ReactResizeDetector handleWidth handleHeight onResize={resize} />
+              <ReactResizeDetector handleHeight onResize={resize} />
             </div>
             <ResourceForm
-              style={resourceFormStyle}
               className={classes.form}
               variant={match.isExact ? 'edit' : 'view'}
               isNew={isNew}

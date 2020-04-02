@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
 const DynaForm = props => {
   const {
     className,
-    style,
     children,
     editMode,
     fieldMeta,
@@ -67,7 +66,7 @@ const DynaForm = props => {
       {...rest}
       showValidationBeforeTouched={showValidationBeforeTouched}
       renderer={renderer}>
-      <div style={style} className={clsx(classes.fieldContainer, className)}>
+      <div className={clsx(classes.fieldContainer, className)}>
         <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
       </div>
       {/* The children are action buttons for the form */}

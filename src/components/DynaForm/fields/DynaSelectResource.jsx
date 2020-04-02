@@ -18,7 +18,6 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
-import Spinner from '../../Spinner';
 
 const handleAddNewResource = args => {
   const {
@@ -122,19 +121,12 @@ function ConnectionLoadingChip(props) {
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
   }, [connectionId, dispatch]);
 
-  const connectionOffline = useSelector(
-    state => selectors.connectionStatus(state, connectionId).offline
-  );
-  const connectionRequestStatus = useSelector(
-    state => selectors.connectionStatus(state, connectionId).requestStatus
+  const connectionOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
+  if (connectionOffline === undefined) {
     return null;
-  }
-
-  if (connectionRequestStatus === 'requested') {
-    return <Spinner />;
   }
 
   return connectionOffline ? (

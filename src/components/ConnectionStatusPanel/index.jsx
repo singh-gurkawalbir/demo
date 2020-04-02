@@ -107,27 +107,29 @@ export default function ConnectionStatusPanel(props) {
   }
 
   return (
-    <ShowStatus variant={variant} fullWidth>
-      {resourceType === 'connections' ? (
-        <Typography variant="h6">{message}</Typography>
-      ) : (
-        <div>
-          <Typography variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited
-          </Typography>
-          <Typography variant="h6">
-            <Button
-              data-test="fixConnection"
-              size="small"
-              className={classes.fixConnectionBtn}
-              onClick={handleConnectionFixClick}>
-              Fix your connection
-            </Button>
-            {` to bring it back online`}
-          </Typography>
-        </div>
-      )}
-    </ShowStatus>
+    <div>
+      <ShowStatus variant={variant} fullWidth>
+        {resourceType === 'connections' ? (
+          <Typography variant="h6">{message}</Typography>
+        ) : (
+          <div>
+            <Typography variant="h6">
+              The connection associated with this export is currently offline
+              and configuration is limited
+            </Typography>
+            <Typography variant="h6">
+              <Button
+                data-test="fixConnection"
+                size="small"
+                className={classes.fixConnectionBtn}
+                onClick={handleConnectionFixClick}>
+                Fix your connection
+              </Button>
+              {` to bring it back online`}
+            </Typography>
+          </div>
+        )}
+      </ShowStatus>
+    </div>
   );
 }
