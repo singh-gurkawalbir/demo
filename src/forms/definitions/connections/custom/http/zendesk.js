@@ -30,7 +30,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       defaultValue: r =>
         r &&
         r.http &&
@@ -101,7 +101,7 @@ export default {
       id: 'http.apiToken',
       required: true,
       type: 'text',
-      label: 'API Token',
+      label: 'API token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },

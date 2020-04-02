@@ -25,7 +25,7 @@ export default {
     'http.encrypted.accountId': {
       id: 'http.encrypted.accountId',
       type: 'text',
-      label: 'Account ID',
+      label: 'Account id',
       defaultValue: '',
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

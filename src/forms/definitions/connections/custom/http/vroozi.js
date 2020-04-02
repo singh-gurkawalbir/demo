@@ -26,7 +26,7 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
       options: [
         {
@@ -51,12 +51,12 @@ export default {
     'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       required: true,
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Access Token',
+      label: 'Access token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

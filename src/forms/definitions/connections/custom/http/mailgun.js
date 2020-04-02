@@ -14,7 +14,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Key',
+      label: 'API key',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

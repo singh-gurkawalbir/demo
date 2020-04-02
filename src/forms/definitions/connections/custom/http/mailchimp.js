@@ -20,7 +20,7 @@ export default {
     'http.mailchimpDataCenter': {
       id: 'http.mailchimpDataCenter',
       type: 'text',
-      label: 'Data Center',
+      label: 'Data center',
       required: true,
       validWhen: {
         matchesRegEx: {

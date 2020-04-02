@@ -16,11 +16,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Consumer Key',
+      label: 'Consumer key',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'Consumer Secret',
+      label: 'Consumer secret',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

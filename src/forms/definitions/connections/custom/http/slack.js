@@ -51,7 +51,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       visible: !isProduction(),
       defaultValue: r => {
         if (isProduction()) {
@@ -188,7 +188,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'http.auth.type',

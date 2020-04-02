@@ -20,7 +20,7 @@ export default {
     'http.accountType': {
       id: 'http.accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -43,15 +43,15 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Access Token',
+      label: 'Access token',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'Access Secret',
+      label: 'Access secret',
     },
     'http.unencrypted.merchantId': {
       id: 'http.unencrypted.merchantId',
-      label: 'Merchant Id',
+      label: 'Merchant id',
       required: true,
       type: 'text',
     },

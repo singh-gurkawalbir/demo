@@ -23,7 +23,7 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.organizationId': {
       id: 'http.unencrypted.organizationId',
-      label: 'Organization Id',
+      label: 'Organization id',
       required: true,
       type: 'text',
     },

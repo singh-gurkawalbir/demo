@@ -56,7 +56,7 @@ export default {
       id: 'http.unencrypted.applicationKey',
       required: true,
       type: 'text',
-      label: 'Application Key',
+      label: 'Application key',
     },
     'http.encrypted.subscriptionKey': {
       id: 'http.encrypted.subscriptionKey',
@@ -75,7 +75,7 @@ export default {
         { field: 'http.unencrypted.applicationKey', is: [''] },
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       required: true,
       defaultValue: '',
     },

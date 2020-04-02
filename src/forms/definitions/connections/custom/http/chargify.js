@@ -50,7 +50,7 @@ export default {
       required: true,
       defaultValue: '',
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       inputType: 'password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

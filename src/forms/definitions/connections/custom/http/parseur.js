@@ -23,7 +23,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Token Key',
+      label: 'API token key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

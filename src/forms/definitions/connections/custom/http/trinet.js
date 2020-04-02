@@ -18,13 +18,13 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
-      label: 'Company ID',
+      label: 'Company id',
       required: true,
       type: 'text',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key',
+      label: 'API key',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

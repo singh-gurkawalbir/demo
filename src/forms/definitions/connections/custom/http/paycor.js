@@ -14,13 +14,13 @@ export default {
     'http.unencrypted.publicKey': {
       id: 'http.unencrypted.publicKey',
       type: 'text',
-      label: 'Public Key',
+      label: 'Public key',
       required: true,
     },
     'http.encrypted.secretKey': {
       id: 'http.encrypted.secretKey',
       type: 'text',
-      label: 'Private Key',
+      label: 'Private key',
       defaultValue: '',
       required: true,
       inputType: 'password',

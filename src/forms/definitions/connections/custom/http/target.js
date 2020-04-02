@@ -27,7 +27,7 @@ export default {
     accType: {
       id: 'accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
       options: [
         {

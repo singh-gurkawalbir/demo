@@ -58,7 +58,7 @@ export default {
       id: 'http.unencrypted.clientID',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
     },
     'http.unencrypted.platform': {
       id: 'http.unencrypted.platform',
@@ -87,7 +87,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      label: 'Client Secret',
+      label: 'Client secret',
       placeholder: 'Optional if Client Secret is empty',
     },
     'http.auth.token.token': {
@@ -99,7 +99,7 @@ export default {
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
     },

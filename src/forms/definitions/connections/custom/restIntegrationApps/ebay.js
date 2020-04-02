@@ -59,7 +59,7 @@ export default {
     'rest.scopeSandbox': {
       id: 'rest.scopeSandbox',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       visibleWhen: [
         {
           field: 'accountType',
@@ -96,7 +96,7 @@ export default {
     'rest.scopeProduction': {
       id: 'rest.scopeProduction',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
         // 'https://api.ebay.com/oauth/api_scope/buy.order.readonly',

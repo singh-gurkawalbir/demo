@@ -19,7 +19,7 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.adminUser': {
       id: 'http.unencrypted.adminUser',
-      label: 'Admin User',
+      label: 'Admin user',
       type: 'checkbox',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

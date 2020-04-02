@@ -15,7 +15,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Access Token',
+      label: 'Access token',
       defaultValue: '',
       required: true,
       inputType: 'password',

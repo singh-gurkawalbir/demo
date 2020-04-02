@@ -27,7 +27,7 @@ export default {
     'http.refreshTokenBody.user': {
       id: 'http.refreshTokenBody.user',
       type: 'text',
-      label: 'API User',
+      label: 'API user',
       required: true,
       defaultValue: r => {
         let toReturn = '';
@@ -47,7 +47,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      label: 'Secret Key',
+      label: 'Secret key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

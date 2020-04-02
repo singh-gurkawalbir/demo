@@ -62,14 +62,14 @@ export default {
       type: 'tokengen',
       inputType: 'password',
 
-      label: 'Generate Client Id &Secret',
+      label: 'Generate client id &secret',
       defaultValue: '',
     },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client Id',
+      label: 'Client id',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
@@ -77,7 +77,7 @@ export default {
       type: 'tokengen',
       defaultValue: '',
       inputType: 'password',
-      label: 'Generate Client Id &Secret',
+      label: 'Generate client id &secret',
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
@@ -91,7 +91,7 @@ export default {
         { field: 'http.unencrypted.clientId', is: [''] },
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

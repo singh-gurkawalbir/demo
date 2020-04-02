@@ -49,7 +49,7 @@ export default {
       required: true,
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
-      label: 'Authentication Type',
+      label: 'Authentication type',
       options: [
         {
           items: [
@@ -70,7 +70,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'Access Token',
+      label: 'Access token',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
@@ -78,14 +78,14 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     storeHash: {
       id: 'storeHash',
       required: true,
       type: 'text',
-      label: 'Store HASH',
+      label: 'Store hash',
       visibleWhen: [{ field: 'http.auth.type', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';

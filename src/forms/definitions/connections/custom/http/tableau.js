@@ -35,7 +35,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.online.tableau.com/api',
       type: 'text',
-      label: 'My Server',
+      label: 'My server',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -60,7 +60,7 @@ export default {
       id: 'http.unencrypted.contentUrl',
       required: true,
       type: 'text',
-      label: 'Content URL',
+      label: 'Content url',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -71,13 +71,13 @@ export default {
         { field: 'http.unencrypted.userName', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
     },
     'http.unencrypted.siteId': {
       id: 'http.unencrypted.siteId',
       type: 'text',
-      label: 'Site ID',
+      label: 'Site id',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

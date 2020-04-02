@@ -35,7 +35,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       options: [
         {
@@ -49,7 +49,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'HAPI Key',
+      label: 'HAPI key',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
@@ -88,7 +88,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'http.auth.type',

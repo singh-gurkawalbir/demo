@@ -57,7 +57,7 @@ export default {
         { field: 'rest.encrypted.password', is: [''] },
         { field: 'rest.baseURI', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
     },

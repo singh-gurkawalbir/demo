@@ -79,13 +79,13 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company Id',
+      label: 'Company id',
       required: true,
     },
     'http.unencrypted.userId': {
       id: 'http.unencrypted.userId',
       type: 'text',
-      label: 'User Id',
+      label: 'User id',
       required: true,
     },
     'http.encrypted.password': {
@@ -100,7 +100,7 @@ export default {
     'http.unencrypted.namespace': {
       id: 'http.unencrypted.namespace',
       type: 'text',
-      label: 'API Namespace',
+      label: 'API namespace',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.namespace) ||
         'default',

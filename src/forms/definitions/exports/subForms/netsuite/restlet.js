@@ -67,7 +67,7 @@ export default {
     'restlet.type': {
       id: 'restlet.type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -116,7 +116,7 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       type: 'refreshableselect',
       placeholder: 'Please select a Boolean field',
       filterKey: 'suitescript-booleanField',

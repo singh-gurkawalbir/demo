@@ -27,7 +27,7 @@ export default {
     'http.threedcartSecureUrl': {
       id: 'http.threedcartSecureUrl',
       type: 'text',
-      label: 'Secure URL',
+      label: 'Secure url',
       required: true,
       defaultValue: r =>
         r &&
@@ -39,7 +39,7 @@ export default {
     'http.encrypted.PrivateKey': {
       id: 'http.encrypted.PrivateKey',
       type: 'text',
-      label: 'Private Key',
+      label: 'Private key',
       defaultValue: '',
       required: true,
       description:

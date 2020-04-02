@@ -46,7 +46,7 @@ export default {
       id: 'instanceURI',
       type: 'text',
       endAdornment: '/entity',
-      label: 'Instance URI',
+      label: 'Instance uri',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -59,7 +59,7 @@ export default {
     'http.unencrypted.endpointName': {
       id: 'http.unencrypted.endpointName',
       type: 'text',
-      label: 'Endpoint Name',
+      label: 'Endpoint name',
       required: true,
       defaultValue: r =>
         (r &&
@@ -71,7 +71,7 @@ export default {
     'http.unencrypted.endpointVersion': {
       id: 'http.unencrypted.endpointVersion',
       type: 'text',
-      label: 'Endpoint Version',
+      label: 'Endpoint version',
       required: true,
       defaultValue: r =>
         (r &&

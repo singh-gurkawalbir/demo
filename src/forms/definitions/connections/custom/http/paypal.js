@@ -36,7 +36,7 @@ export default {
       id: 'http.accountType',
       type: 'select',
       required: true,
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -61,14 +61,14 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'Client Secret',
+      label: 'Client secret',
       inputType: 'password',
     },
     'http.auth.token.token': {
@@ -80,7 +80,7 @@ export default {
         { field: 'http.unencrypted.clientId', is: [''] },
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -377,7 +377,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input Mode',
+      label: 'Input mode',
       options: [
         {
           items: [
@@ -474,7 +474,7 @@ export default {
     createNewData: {
       id: 'createNewData',
       type: 'labeltitle',
-      label: 'Create New Data',
+      label: 'Create new data',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -493,7 +493,7 @@ export default {
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       type: 'select',
-      label: 'HTTP Method',
+      label: 'HTTP method',
       options: [
         {
           items: [
@@ -540,7 +540,7 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
-      label: 'Relative URI',
+      label: 'Relative uri',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -619,7 +619,7 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP Request Body For Create',
+      label: 'Build http request body for create',
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -661,7 +661,7 @@ export default {
     'http.failPathCreate': {
       id: 'http.failPathCreate',
       type: 'text',
-      label: 'Fail Path',
+      label: 'Fail path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -708,7 +708,7 @@ export default {
     'http.failValuesCreate': {
       id: 'http.failValuesCreate',
       type: 'text',
-      label: 'Fail Values',
+      label: 'Fail values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -759,7 +759,7 @@ export default {
     'http.failPathUpdate': {
       id: 'http.failPathUpdate',
       type: 'text',
-      label: 'Fail Path',
+      label: 'Fail path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -798,7 +798,7 @@ export default {
     'http.failValuesUpdate': {
       id: 'http.failValuesUpdate',
       type: 'text',
-      label: 'Fail Values',
+      label: 'Fail values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -841,7 +841,7 @@ export default {
     'http.resourceIdPathCreate': {
       id: 'http.resourceIdPathCreate',
       type: 'text',
-      label: 'Response Id Path',
+      label: 'Response id path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -884,7 +884,7 @@ export default {
     'http.resourcePathCreate': {
       id: 'http.resourcePathCreate',
       type: 'text',
-      label: 'Response Path',
+      label: 'Response path',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -926,7 +926,7 @@ export default {
     'http.successPathCreate': {
       id: 'http.successPathCreate',
       type: 'text',
-      label: 'Success Path',
+      label: 'Success path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -973,7 +973,7 @@ export default {
     'http.successValuesCreate': {
       id: 'http.successValuesCreate',
       type: 'text',
-      label: 'Success Values',
+      label: 'Success values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -1026,7 +1026,7 @@ export default {
     upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
-      label: 'Update Existing Data',
+      label: 'Update existing data',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1045,7 +1045,7 @@ export default {
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
       type: 'select',
-      label: 'HTTP Method',
+      label: 'HTTP method',
       options: [
         {
           items: [
@@ -1088,7 +1088,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
-      label: 'Relative URI',
+      label: 'Relative uri',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1119,7 +1119,7 @@ export default {
     'http.requestTypeUpdate': {
       id: 'http.requestTypeUpdate',
       type: 'select',
-      label: 'Request Type',
+      label: 'Request type',
       required: true,
       options: [
         {
@@ -1159,7 +1159,7 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP Request Body For Update',
+      label: 'Build http request body for update',
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -1197,7 +1197,7 @@ export default {
     'http.resourceIdPathUpdate': {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
-      label: 'Response Id Path',
+      label: 'Response id path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1232,7 +1232,7 @@ export default {
     'http.resourcePathUpdate': {
       id: 'http.resourcePathUpdate',
       type: 'text',
-      label: 'Response Path',
+      label: 'Response path',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1266,7 +1266,7 @@ export default {
     'http.successPathUpdate': {
       id: 'http.successPathUpdate',
       type: 'text',
-      label: 'Success Path',
+      label: 'Success path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1305,7 +1305,7 @@ export default {
     'http.successValuesUpdate': {
       id: 'http.successValuesUpdate',
       type: 'text',
-      label: 'Success Values',
+      label: 'Success values',
       delimiter: ',',
       visibleWhenAll: [
         {
@@ -1350,7 +1350,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore Existing Data',
+      label: 'Ignore existing data',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1369,7 +1369,7 @@ export default {
     ignoreNewData: {
       id: 'ignoreNewData',
       type: 'labeltitle',
-      label: 'Ignore New Data',
+      label: 'Ignore new data',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1389,7 +1389,7 @@ export default {
       id: 'http.existingDataId',
       type: 'textwithlookupextract',
       fieldType: 'ignoreExistingData',
-      label: 'Existing Data Id',
+      label: 'Existing data id',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
@@ -1443,7 +1443,7 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample File (that would be imported)',
+      label: 'Sample file (that would be imported)',
       mode: r => r && r.file && r.file.type,
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },
@@ -1465,7 +1465,7 @@ export default {
     },
     'file.csv.customHeaderRows': {
       id: 'file.csv.customHeaderRows',
-      label: 'Custom Header Rows',
+      label: 'Custom header rows',
       type: 'textarea',
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },

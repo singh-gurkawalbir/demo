@@ -68,13 +68,13 @@ export default {
     'http.unencrypted.p3plUserID': {
       id: 'http.unencrypted.p3plUserID',
       type: 'text',
-      label: 'P3PL User ID',
+      label: 'P3PL user id',
       required: true,
     },
     'http.encrypted.p3plUserPassword': {
       id: 'http.encrypted.p3plUserPassword',
       type: 'text',
-      label: 'P3PL User Password',
+      label: 'P3PL user password',
       required: true,
       inputType: 'password',
       description:

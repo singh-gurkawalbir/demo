@@ -51,13 +51,13 @@ export default {
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       type: 'text',
-      label: 'Client Id',
+      label: 'Client id',
       required: true,
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
-      label: 'Client Secret',
+      label: 'Client secret',
       required: true,
       defaultValue: '',
       inputType: 'password',

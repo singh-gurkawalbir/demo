@@ -24,13 +24,13 @@ export default {
     'http.unencrypted.pacejetLocation': {
       id: 'http.unencrypted.pacejetLocation',
       type: 'text',
-      label: 'Pacejet Location',
+      label: 'Pacejet location',
       required: true,
     },
     'http.encrypted.pacejetLicenseKey': {
       id: 'http.encrypted.pacejetLicenseKey',
       type: 'text',
-      label: 'Pacejet License Key',
+      label: 'Pacejet license key',
       required: true,
       inputType: 'password',
       description:

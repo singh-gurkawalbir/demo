@@ -207,12 +207,12 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -259,7 +259,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -339,7 +339,7 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'Configure CSV Parse Options',
+      label: 'Configure csv parse options',
       defaultValue: r =>
         (r.file && r.file.csv) || {
           rowsToSkip: 0,

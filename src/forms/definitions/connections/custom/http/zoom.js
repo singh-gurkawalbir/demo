@@ -15,7 +15,7 @@ export default {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',
@@ -24,7 +24,7 @@ export default {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
-      label: 'API Secret',
+      label: 'API secret',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',

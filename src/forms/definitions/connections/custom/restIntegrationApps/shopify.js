@@ -65,7 +65,7 @@ export default {
     'rest.authType': {
       id: 'rest.authType',
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       options: [
         {
           items: [
@@ -80,7 +80,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
       type: 'text',
-      label: 'Store URL',
+      label: 'Store url',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.rest && r.rest.baseURI;
@@ -102,7 +102,7 @@ export default {
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
-      label: 'API Key',
+      label: 'API key',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.basicAuth.password': {
@@ -176,7 +176,7 @@ export default {
     { id: 'cancel' },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
@@ -186,7 +186,7 @@ export default {
     },
     {
       id: 'save',
-      label: 'Test and Save',
+      label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],

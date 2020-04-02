@@ -52,7 +52,7 @@ export default {
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
     },

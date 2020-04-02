@@ -49,7 +49,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input Mode',
+      label: 'Input mode',
       options: [
         {
           items: [

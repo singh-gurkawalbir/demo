@@ -44,7 +44,7 @@ export default {
     accType: {
       id: 'accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
       options: [
         {
@@ -70,29 +70,29 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'Client Secret',
+      label: 'Client secret',
       inputType: 'password',
     },
     'http.clientCertificates.cert': {
       fieldId: 'http.clientCertificates.cert',
-      label: 'SSL Certificate',
+      label: 'SSL certificate',
       type: 'uploadfile',
     },
     'http.clientCertificates.key': {
       fieldId: 'http.clientCertificates.key',
-      label: 'SSL Client Key',
+      label: 'SSL client key',
       type: 'uploadfile',
     },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
-      label: 'SSL Passphrase',
+      label: 'SSL passphrase',
       type: 'textarea',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

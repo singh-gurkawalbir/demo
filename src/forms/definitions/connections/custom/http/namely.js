@@ -26,7 +26,7 @@ export default {
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.namely.com',
-      label: 'Company Name',
+      label: 'Company name',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -48,7 +48,7 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Personal Access Token',
+      label: 'Personal access token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

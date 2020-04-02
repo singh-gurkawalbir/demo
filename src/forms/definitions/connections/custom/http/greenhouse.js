@@ -26,7 +26,7 @@ export default {
       fieldId: 'http.auth.basic.username',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Token',
+      label: 'API token',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,
@@ -34,7 +34,7 @@ export default {
     'http.unencrypted.userID': {
       type: 'text',
       id: 'http.unencrypted.userID',
-      label: 'User ID',
+      label: 'User id',
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },

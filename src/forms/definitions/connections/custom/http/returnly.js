@@ -23,7 +23,7 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key',
+      label: 'API key',
       defaultValue: '',
       required: true,
       type: 'text',

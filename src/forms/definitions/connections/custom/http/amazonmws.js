@@ -37,19 +37,19 @@ export default {
     'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
-      label: 'Seller Id',
+      label: 'Seller id',
       required: true,
     },
     'http.unencrypted.mwsAuthToken': {
       id: 'http.unencrypted.mwsAuthToken',
       type: 'text',
-      label: 'MWS Auth Token',
+      label: 'MWS auth token',
       required: false,
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
-      label: 'Marketplace Id',
+      label: 'Marketplace id',
       required: true,
       options: [
         {
@@ -121,7 +121,7 @@ export default {
     'http.unencrypted.marketplaceRegion': {
       id: 'http.unencrypted.marketplaceRegion',
       type: 'select',
-      label: 'Marketplace Region',
+      label: 'Marketplace region',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;

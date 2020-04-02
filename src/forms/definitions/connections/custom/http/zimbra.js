@@ -20,7 +20,7 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
       endAdornment: '/home',
-      label: 'Base URI',
+      label: 'Base uri',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -32,7 +32,7 @@ export default {
     'http.unencrypted.userAccount': {
       id: 'http.unencrypted.userAccount',
       type: 'text',
-      label: 'User Account',
+      label: 'User account',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -45,7 +45,7 @@ export default {
       id: 'rest.encrypted.password',
       type: 'text',
       inputType: 'password',
-      label: 'Secret Key:',
+      label: 'Secret key:',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

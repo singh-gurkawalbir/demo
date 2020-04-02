@@ -20,7 +20,7 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.serverToken': {
       id: 'http.encrypted.serverToken',
-      label: 'Server Token',
+      label: 'Server token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
@@ -30,7 +30,7 @@ export default {
     },
     'http.encrypted.accountToken': {
       id: 'http.encrypted.accountToken',
-      label: 'Account Token',
+      label: 'Account token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',

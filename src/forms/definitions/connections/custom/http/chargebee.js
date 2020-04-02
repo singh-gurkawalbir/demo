@@ -41,7 +41,7 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API Key',
+      label: 'API key',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

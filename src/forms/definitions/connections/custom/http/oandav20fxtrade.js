@@ -17,7 +17,7 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [

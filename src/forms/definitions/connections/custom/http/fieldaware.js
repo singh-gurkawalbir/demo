@@ -25,7 +25,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       required: true,
-      label: 'API Key',
+      label: 'API key',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

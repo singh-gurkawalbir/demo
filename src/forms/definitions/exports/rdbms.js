@@ -43,7 +43,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 

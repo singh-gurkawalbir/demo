@@ -30,7 +30,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key',
+      label: 'API key',
       required: true,
       description:
         'Note: for security reasons this field must always be re-entered.',

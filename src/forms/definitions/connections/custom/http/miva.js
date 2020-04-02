@@ -32,7 +32,7 @@ export default {
       id: 'http.apiEndpoint',
       type: 'text',
       startAdornment: 'https://',
-      label: 'API Endpoint',
+      label: 'API endpoint',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -51,13 +51,13 @@ export default {
     'http.unencrypted.Store_Code': {
       id: 'http.unencrypted.Store_Code',
       type: 'text',
-      label: 'Store Code',
+      label: 'Store code',
       required: true,
     },
     xMivaAPIToken: {
       id: 'xMivaAPIToken',
       type: 'text',
-      label: 'API Token',
+      label: 'API token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

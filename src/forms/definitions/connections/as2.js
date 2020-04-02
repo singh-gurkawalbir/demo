@@ -56,7 +56,7 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
-      label: 'AS2 IP Addresses: ',
+      label: 'AS2 ip addresses: ',
       value: (
         <span>
           Click{' '}
@@ -166,7 +166,7 @@ export default {
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh',
+      label: 'Configure token refresh',
       visibleWhenAll: [
         {
           field: 'as2.partnerStationInfo.auth.type',
@@ -189,14 +189,14 @@ export default {
     },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
-      label: 'How to Refresh Token?',
+      label: 'How to refresh token?',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureTokenRefresh', is: [true] }],
     },
     configureApiRateLimits: {
       id: 'configureApiRateLimits',
       type: 'checkbox',
-      label: 'Configure API Rate Limits',
+      label: 'Configure api rate limits',
       defaultValue: r =>
         !!(
           r &&
@@ -208,7 +208,7 @@ export default {
     },
     apiRateLimits: {
       id: 'apiRateLimits',
-      label: 'API Rate Limits',
+      label: 'API rate limits',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
     },

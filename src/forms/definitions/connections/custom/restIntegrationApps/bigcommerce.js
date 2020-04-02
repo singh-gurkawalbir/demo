@@ -66,7 +66,7 @@ export default {
     'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       defaultValue: '',
-      label: 'Access Token',
+      label: 'Access token',
       required: true,
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
@@ -74,14 +74,14 @@ export default {
       id: 'rest.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     storeHash: {
       id: 'storeHash',
       required: true,
       type: 'text',
-      label: 'Store HASH',
+      label: 'Store hash',
       visibleWhen: [{ field: 'rest.authType', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';

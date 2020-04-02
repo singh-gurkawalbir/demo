@@ -24,7 +24,7 @@ export default {
       defaultValue: '',
       required: true,
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       inputType: 'password',
     },
     'http.encrypted.apiSecret': {
@@ -32,7 +32,7 @@ export default {
       defaultValue: '',
       required: true,
       type: 'text',
-      label: 'API Secret',
+      label: 'API secret',
       inputType: 'password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

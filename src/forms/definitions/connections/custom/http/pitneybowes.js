@@ -47,7 +47,7 @@ export default {
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -72,14 +72,14 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'API Secret',
+      label: 'API secret',
       inputType: 'password',
     },
     'http.auth.token.token': {
@@ -91,7 +91,7 @@ export default {
         { field: 'http.unencrypted.apiKey', is: [''] },
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

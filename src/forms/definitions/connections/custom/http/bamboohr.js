@@ -54,7 +54,7 @@ export default {
     },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key',
+      label: 'API key',
       type: 'text',
       inputType: 'password',
       description:

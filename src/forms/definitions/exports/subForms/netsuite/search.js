@@ -72,7 +72,7 @@ export default {
     },
     'once.booleanField': {
       id: 'once.booleanField',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       type: 'refreshableselect',
       placeholder: 'Please select a Boolean field',
       required: true,
@@ -89,7 +89,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);

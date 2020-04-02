@@ -106,13 +106,13 @@ export default {
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
       type: 'text',
       defaultValue: r => r && r.netsuite && r.netsuite.account,
-      label: 'Account ID',
+      label: 'Account id',
       uppercase: true,
     },
     'netsuite.token.auto.account': {
       id: 'netsuite.token.auto.account',
       type: 'text',
-      label: 'Account ID',
+      label: 'Account id',
       uppercase: true,
       required: true,
       defaultValue: r => r && r.netsuite && r.netsuite.account,
@@ -218,7 +218,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'netsuite.authType',

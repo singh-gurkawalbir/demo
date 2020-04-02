@@ -20,7 +20,7 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'Ocp Apim Subscription Key',
+      label: 'Ocp apim subscription key',
       required: true,
       type: 'text',
       inputType: 'password',

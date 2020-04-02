@@ -31,14 +31,14 @@ export default {
     'http.unencrypted.partnerUserId': {
       id: 'http.unencrypted.partnerUserId',
       type: 'text',
-      label: 'Partner User ID',
+      label: 'Partner user id',
       required: true,
     },
     'http.encrypted.partnerUserSecret': {
       id: 'http.encrypted.partnerUserSecret',
       type: 'text',
       inputType: 'password',
-      label: 'Partner User Secret',
+      label: 'Partner user secret',
       required: true,
       description:
         'Note: for security reasons this field must always be re-entered.',

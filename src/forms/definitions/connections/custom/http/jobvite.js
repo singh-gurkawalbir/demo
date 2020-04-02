@@ -41,7 +41,7 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company Id',
+      label: 'Company id',
       required: true,
     },
     'http.unencrypted.api': {
