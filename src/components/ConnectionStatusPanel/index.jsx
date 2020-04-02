@@ -50,6 +50,11 @@ const getStatusVariantAndMessage = ({
 
 export default function ConnectionStatusPanel(props) {
   const { resourceId, resourceType } = props;
+  const classes = useStyles();
+  const match = useRouteMatch();
+  const location = useLocation();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const connectionId = useSelector(state => {
     if (resourceType === 'connections') return resourceId;
     const { merged: resource } = selectors.resourceData(
@@ -60,21 +65,6 @@ export default function ConnectionStatusPanel(props) {
 
     return resource._connectionId;
   });
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const match = useRouteMatch();
-  const history = useHistory();
-  const queryParams = new URLSearchParams(useLocation().search);
-
-  useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-    dispatch(actions.resource.connections.testClear(connectionId));
-
-    return () => {
-      dispatch(actions.resource.connections.testClear(connectionId));
-    };
-  }, [connectionId, dispatch]);
-
   const testStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
@@ -89,6 +79,7 @@ export default function ConnectionStatusPanel(props) {
     );
   }, [connectionId, history, match.path]);
   const { variant, message } = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
     const isConnectionFix = queryParams.get('fixConnnection') === 'true';
 
     return getStatusVariantAndMessage({
@@ -97,7 +88,16 @@ export default function ConnectionStatusPanel(props) {
       testStatus,
       resourceType,
     });
-  }, [isOffline, queryParams, resourceType, testStatus]);
+  }, [isOffline, location.search, resourceType, testStatus]);
+
+  useEffect(() => {
+    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    dispatch(actions.resource.connections.testClear(connectionId));
+
+    return () => {
+      dispatch(actions.resource.connections.testClear(connectionId));
+    };
+  }, [connectionId, dispatch]);
 
   if (
     (resourceType !== 'connections' && !isOffline) ||
@@ -115,7 +115,7 @@ export default function ConnectionStatusPanel(props) {
           <div>
             <Typography variant="h6">
               The connection associated with this export is currently offline
-              and configuration is limited
+              and configuration is limited.
             </Typography>
             <Typography variant="h6">
               <Button
@@ -124,8 +124,8 @@ export default function ConnectionStatusPanel(props) {
                 className={classes.fixConnectionBtn}
                 onClick={handleConnectionFixClick}>
                 Fix your connection
-              </Button>
-              {` to bring it back online`}
+              </Button>{' '}
+              to bring it back online
             </Typography>
           </div>
         )}

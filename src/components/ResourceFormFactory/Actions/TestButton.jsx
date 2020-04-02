@@ -40,8 +40,8 @@ export const PingMessage = props => {
   return (
     <PingMessageSnackbar
       commStatus={testConnectionCommState}
-      onHandleClose={handleTestMessageClear}
-      onHandleCancelTask={handleCancelTest}
+      onClose={handleTestMessageClear}
+      onCancelTask={handleCancelTest}
     />
   );
 };

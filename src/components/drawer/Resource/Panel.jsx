@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   formContainer: {
     padding: theme.spacing(3),
-    paddingTop: 0,
+    paddingTop: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
       return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
+    padding: 0,
   },
   appLogo: {
     paddingRight: '25px',
