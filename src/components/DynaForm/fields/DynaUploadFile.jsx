@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import actions from '../../../actions';
 import {
   getFileReaderOptions,
@@ -11,7 +12,6 @@ import {
   getJSONContent,
   getUploadedFileStatus,
 } from '../../../utils/file';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: '5px',
   },
   uploadContainer: {
+    marginTop: 5,
     display: 'flex',
     flexDirection: `row !important`,
     width: '100%',
@@ -34,7 +35,6 @@ function DynaUploadFile(props) {
     disabled,
     id,
     isValid,
-    description,
     errorMessages,
     name,
     resourceId,
@@ -47,42 +47,34 @@ function DynaUploadFile(props) {
   const dispatch = useDispatch();
   const fileInput = useRef(null);
   const [fileName, setFileName] = useState();
+  const [uploadError, setUploadError] = useState();
   let selectedFile;
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   /*
    * File types supported for upload are CSV, XML, XLSX and JSON
+   * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
+   * For JSON file, content should be parsed from String to JSON
    */
   const handleFileRead = event => {
     const { result } = event.target;
     let fileContent = result;
 
-    // For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
-    if (options === 'xlsx') {
-      const { success, error } = getCsvFromXlsx(fileContent);
+    if (['xlsx', 'json'].includes(options)) {
+      const { error, data } =
+        options === 'xlsx'
+          ? getCsvFromXlsx(fileContent)
+          : getJSONContent(fileContent);
 
-      if (!success) {
-        return enqueueSnackbar({
-          message: error,
-          variant: 'error',
-        });
+      if (error) {
+        return setUploadError(error);
+      }
+
+      if (options === 'json') {
+        fileContent = data;
       }
     }
 
-    // For JSON file, content should be parsed from String to JSON
-    if (options === 'json') {
-      const { success, error, data } = getJSONContent(fileContent);
-
-      if (!success) {
-        return enqueueSnackbar({
-          message: error,
-          variant: 'error',
-        });
-      }
-
-      fileContent = data;
-    }
-
+    setUploadError();
     setFileName(selectedFile.name);
     onFieldChange(id, fileContent);
 
@@ -106,9 +98,8 @@ function DynaUploadFile(props) {
     if (options) {
       dispatch(actions.sampleData.reset(resourceId));
       onFieldChange(id, '', true);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      selectedFile = undefined;
       setFileName();
+      setUploadError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId]);
@@ -121,15 +112,12 @@ function DynaUploadFile(props) {
 
     if (!file) return;
     // Checks for file size and file types
-    const fileStatus = getUploadedFileStatus(file, options);
+    const { error } = getUploadedFileStatus(file, options);
 
-    if (!fileStatus.success) {
+    if (error) {
       onFieldChange(id, '');
 
-      return enqueueSnackbar({
-        message: fileStatus.error,
-        variant: 'error',
-      });
+      return setUploadError(error);
     }
 
     selectedFile = file;
@@ -147,6 +135,7 @@ function DynaUploadFile(props) {
   };
 
   const handleClick = useCallback(() => {
+    fileInput.current.value = '';
     fileInput.current.click();
   }, []);
 
@@ -158,12 +147,11 @@ function DynaUploadFile(props) {
           variant="contained"
           color="secondary"
           onClick={handleClick}
-          key={id + options}
           name={name}
           disabled={disabled}
           required={required}
           data-test={id}
-          helperText={isValid ? description : errorMessages}
+          isValid={isValid}
           error={!isValid}>
           Choose File
         </Button>
@@ -177,6 +165,12 @@ function DynaUploadFile(props) {
         />
         <span className={classes.fileName}>{fileName}</span>
       </div>
+      {!isValid && (
+        <FormHelperText error="true">{errorMessages}</FormHelperText>
+      )}
+      {uploadError && (
+        <FormHelperText error="true">{uploadError}</FormHelperText>
+      )}
     </Fragment>
   );
 }
