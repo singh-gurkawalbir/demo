@@ -102,6 +102,22 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
+  let app1;
+  let app2;
+
+  if (
+    tile.connector &&
+    tile.connector.applications &&
+    tile.connector.applications.length
+  ) {
+    [app1, app2] = tile.connector.applications;
+
+    if (app1 === 'netsuite') {
+      // Make NetSuite always the second application
+      [app1, app2] = [app2, app1];
+    }
+  }
+
   const isNotYetSupported =
     tile._connectorId &&
     getDomain() === 'integrator.io' &&
@@ -270,11 +286,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
                 <ApplicationImages>
-                  <ApplicationImg type={tile.connector.applications[0]} />
+                  <ApplicationImg type={app1} />
                   <span>
                     <AddIcon />
                   </span>
-                  <ApplicationImg type={tile.connector.applications[1]} />
+                  <ApplicationImg type={app2} />
                 </ApplicationImages>
               )}
           </Content>

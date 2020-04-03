@@ -311,6 +311,12 @@ export const getFormattedResourceForPreview = (
     }
   }
 
+  if (resource && resource.type === 'delta') {
+    resource.postData = {
+      lastExportDateTime: getLastExportDateTime(),
+    };
+  }
+
   // Incase of pp , morph sampleResponseData to support Response Mapping
   if (flowType === 'pageProcessors') {
     if (resource.sampleResponseData) {
