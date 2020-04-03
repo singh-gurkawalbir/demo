@@ -1,28 +1,26 @@
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { makeStyles } from '@material-ui/core/styles';
 // TODO: Azhar : Replace icons
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import CloseIcon from '@material-ui/icons/Close';
-import WarningIcon from '@material-ui/icons/Warning';
 import classNames from 'classnames';
 import IconButton from '@material-ui/core/IconButton';
-import green from '@material-ui/core/colors/green';
-import amber from '@material-ui/core/colors/amber';
+import CloseIcon from '../icons/CloseIcon';
+import ErrorIcon from '../icons/ErrorIcon';
+import InfoIcon from '../icons/InfoIcon';
+import WarningIcon from '../icons/WarningIcon';
+import CheckCircleIcon from '../icons/SuccessIcon';
 
 const useStyles = makeStyles(theme => ({
   success: {
-    backgroundColor: green[600],
+    backgroundColor: theme.palette.success.main,
   },
   error: {
-    backgroundColor: theme.palette.error.dark,
+    backgroundColor: theme.palette.error.main,
   },
   info: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.info.main,
   },
   warning: {
-    backgroundColor: amber[700],
+    backgroundColor: theme.palette.warning.main,
   },
   icon: {
     fontSize: 20,
