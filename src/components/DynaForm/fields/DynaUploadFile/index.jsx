@@ -23,14 +23,13 @@ function DynaUploadFile(props) {
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
   const [uploadError, setUploadError] = useState();
-  let selectedFile;
   /*
    * File types supported for upload are CSV, XML, XLSX and JSON
    * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
    * For JSON file, content should be parsed from String to JSON
    */
   const handleFileRead = useCallback(
-    event => {
+    (event, fileName) => {
       const { result } = event.target;
       let fileContent = result;
 
@@ -50,7 +49,7 @@ function DynaUploadFile(props) {
       }
 
       setUploadError();
-      setFileName(selectedFile.name);
+      setFileName(fileName);
       onFieldChange(id, fileContent);
 
       // Dispatches an action to process uploaded file data
@@ -75,7 +74,6 @@ function DynaUploadFile(props) {
       options,
       resourceId,
       resourceType,
-      selectedFile,
     ]
   );
 
@@ -93,33 +91,36 @@ function DynaUploadFile(props) {
   /*
    * Gets the uploaded file and reads it based on the options provided
    */
-  const handleFileChosen = useCallback(event => {
-    const file = event.target.files[0];
+  const handleFileChosen = useCallback(
+    event => {
+      const file = event.target.files[0];
 
-    if (!file) return;
-    // Checks for file size and file types
-    const { error } = getUploadedFileStatus(file, options);
+      if (!file) return;
+      // Checks for file size and file types
+      const { error } = getUploadedFileStatus(file, options);
 
-    if (error) {
-      onFieldChange(id, '');
+      if (error) {
+        onFieldChange(id, '');
 
-      return setUploadError(error);
-    }
+        return setUploadError(error);
+      }
 
-    // TODO @Raghu come up with a better approach
-    selectedFile = file;
-    const fileReaderOptions = getFileReaderOptions(options);
-    const fileReader = new FileReader();
+      const fileReaderOptions = getFileReaderOptions(options);
+      const fileReader = new FileReader();
+      const curriedFileNameFn = fileName => event =>
+        handleFileRead(event, fileName);
 
-    fileReader.onload = handleFileRead;
+      fileReader.onload = curriedFileNameFn(file.name);
 
-    if (fileReaderOptions.readAsArrayBuffer) {
-      // Incase of XLSX file
-      fileReader.readAsArrayBuffer(file);
-    } else {
-      fileReader.readAsText(file);
-    }
-  }, []);
+      if (fileReaderOptions.readAsArrayBuffer) {
+        // Incase of XLSX file
+        fileReader.readAsArrayBuffer(file);
+      } else {
+        fileReader.readAsText(file);
+      }
+    },
+    [handleFileRead, id, onFieldChange, options]
+  );
 
   return (
     <FileUploader
