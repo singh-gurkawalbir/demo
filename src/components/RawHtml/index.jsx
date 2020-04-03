@@ -1,6 +1,8 @@
-import { sanitize } from 'dompurify';
+import getDomPurify from '../../utils/domPurify';
 
 export default function RawHtml({ html, ...props }) {
+  const { sanitize } = getDomPurify();
+
   return (
     <div
       {...props}
