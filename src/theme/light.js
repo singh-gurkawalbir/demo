@@ -378,6 +378,9 @@ export default {
     MuiFormLabel: {
       root: {
         fontFamily: 'source sans pro',
+        fontWeight: 'bold',
+        fontSize: 14,
+        lineHeight: '24px',
         '&$disabled': {
           color: colors.celigoNeutral6,
         },
@@ -400,8 +403,10 @@ export default {
       input: {
         background: colors.celigoWhite,
         border: '1px solid',
+        width: 486,
+        padding: '11px 15px',
         borderColor: colors.celigoNeutral3,
-        height: 50,
+        height: 42,
         boxSizing: 'border-box',
         borderRadius: 2,
         '&:hover': {

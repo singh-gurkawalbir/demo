@@ -1,5 +1,5 @@
-import { Fragment, useEffect, useState, useMemo } from 'react';
-import { InputAdornment } from '@material-ui/core';
+import { useEffect, useState, useMemo } from 'react';
+import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   formField: {
-    width: '100%',
+    width: '398px',
   },
   startAdornmentWrapper: {
     display: 'flex',
@@ -35,6 +35,14 @@ const useStyles = makeStyles(theme => ({
   },
   copybtn: {
     marginLeft: 6,
+  },
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  innerWrapper: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -134,29 +142,35 @@ function DynaText(props) {
   ]);
 
   return (
-    <Fragment>
-      <TextField
-        autoComplete="off"
-        key={id}
-        data-test={id}
-        name={name}
-        label={label}
-        InputProps={InputProps}
-        type={inputType}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled || disableText}
-        multiline={multiline}
-        rowsMax={rowsMax}
-        required={required}
-        error={!isValid}
-        value={inpValue}
-        variant="filled"
-        onChange={handleFieldChange}
-        className={(classes.formField, className)}
-      />
-      <FieldHelp {...props} />
-    </Fragment>
+    <FormControl>
+      <div className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id} required={required}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div>
+        <TextField
+          autoComplete="off"
+          key={id}
+          data-test={id}
+          name={name}
+          InputProps={InputProps}
+          type={inputType}
+          placeholder={placeholder}
+          helperText={isValid ? description : errorMessages}
+          disabled={disabled || disableText}
+          multiline={multiline}
+          rowsMax={rowsMax}
+          required={required}
+          error={!isValid}
+          value={inpValue}
+          variant="filled"
+          onChange={handleFieldChange}
+          className={(classes.formField, className)}
+        />
+      </div>
+    </FormControl>
   );
 }
 
