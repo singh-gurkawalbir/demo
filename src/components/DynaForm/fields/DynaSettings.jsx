@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
@@ -52,12 +52,13 @@ function getFieldMetaWithDefaults(fieldMeta, values) {
 
 export default function DynaSettings({
   id,
-  // value = { currency: 'cdn' },
+  value,
   resourceContext,
   onFieldChange,
   ...rest
 }) {
   const classes = useStyles();
+  const [finalMeta, setFinalMeta] = useState();
   const { resourceType, resourceId } = rest;
   const fieldMeta = useSelector(state => {
     const { merged } = selectors.resourceData(state, resourceType, resourceId);
@@ -71,13 +72,13 @@ export default function DynaSettings({
 
     return merged.settingsForm.form;
   });
-  const value = { currency: 'cdn' };
-  const finalMeta = useMemo(() => getFieldMetaWithDefaults(fieldMeta, value), [
-    fieldMeta,
-    value,
-  ]);
 
-  console.log('DynaSettings settings value:', value, finalMeta);
+  // we only need to do this once as an "init"...
+  useEffect(() => {
+    console.log('DynaSettings value, meta:', value, fieldMeta);
+    setFinalMeta(getFieldMetaWithDefaults(fieldMeta, value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleSettingFormChange(values, isValid) {
     console.log(isValid ? 'valid: ' : 'invalid: ', values);
@@ -86,7 +87,12 @@ export default function DynaSettings({
 
   if (!finalMeta) {
     return (
-      <EditorField {...rest} editorClassName={classes.editor} mode="json" />
+      <EditorField
+        label="Settings"
+        {...rest}
+        editorClassName={classes.editor}
+        mode="json"
+      />
     );
   }
 

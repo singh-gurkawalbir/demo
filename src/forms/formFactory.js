@@ -1,4 +1,5 @@
-import { get, cloneDeep } from 'lodash';
+import { get } from 'lodash';
+import produce from 'immer';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -68,81 +69,74 @@ const applyCustomSettings = ({
   fieldMap,
   layout,
   preSave,
-  isNew,
   validationHandler,
 }) => {
-  const fieldMapCopy = cloneDeep(fieldMap);
-  const layoutCopy = cloneDeep(layout);
-  let preSaveCopy = preSave;
-  let validationHandlerCopy;
+  const newLayout = produce(layout, draft => {
+    if (draft && draft.containers && draft.containers.length > 0) {
+      if (draft.type === 'column') {
+        const firstContainer = draft.containers[0];
 
-  if (!isNew) {
-    if (
-      layoutCopy &&
-      layoutCopy.containers &&
-      layoutCopy.containers.length > 0
-    ) {
-      if (layoutCopy.type === 'column') {
-        if (
-          layoutCopy.containers[0].containers &&
-          layoutCopy.containers[0].containers.length
-        )
-          layoutCopy.containers[0].containers.push(settingsContainer);
+        if (firstContainer.containers && firstContainer.containers.length)
+          firstContainer.containers.push(settingsContainer);
         else {
-          layoutCopy.containers[0].type = 'collapse';
+          firstContainer.type = 'collapse';
 
-          layoutCopy.containers[0].containers = [settingsContainer];
+          firstContainer.containers = [settingsContainer];
         }
       } else {
-        layoutCopy.containers.push(settingsContainer);
+        draft.containers.push(settingsContainer);
       }
     } else {
-      layoutCopy.type = 'collapse';
-      layoutCopy.containers = [settingsContainer];
+      draft.type = 'collapse';
+      draft.containers = [settingsContainer];
     }
+  });
+  const newFieldMap = produce(fieldMap, draft => {
+    if (draft) {
+      draft.settings = { fieldId: 'settings' };
+    }
+  });
+  const preSaveProxy = values => {
+    const newValues = preSave ? preSave(values) : values;
 
-    if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
-    preSaveCopy = args => {
-      let retValues;
-
-      if (preSave) {
-        retValues = preSave(args);
-      } else {
-        retValues = args;
-      }
-
-      if (Object.hasOwnProperty.call(retValues, '/settings')) {
-        let settings = retValues['/settings'];
+    return produce(newValues, draft => {
+      // why not use:
+      // retValues.hasOwnProperty('/settings');
+      if (Object.hasOwnProperty.call(draft, '/settings')) {
+        let settings = draft['/settings'];
 
         if (isJsonString(settings)) {
           settings = JSON.parse(settings);
-        } else {
+        } else if (typeof settings !== 'object') {
           settings = {};
         }
 
-        retValues['/settings'] = settings;
+        draft['/settings'] = settings;
       }
+    });
+  };
 
-      return retValues;
-    };
+  const validationHandlerProxy = field => {
+    // Handles validity for settings field (when in string form)
+    // Incase of other fields call the existing validationHandler
+    if (field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Settings must be a valid JSON';
+    }
 
-    validationHandlerCopy = field => {
-      // Handles validity for settings field
-      // Incase of other fields call the existing validationHandler
-      if (field.id === 'settings') {
-        if (
-          field.value &&
-          typeof field.value === 'string' &&
-          !isJsonString(field.value)
-        )
-          return 'Settings must be a valid JSON';
-      }
+    if (validationHandler) return validationHandler(field);
+  };
 
-      if (validationHandler) return validationHandler(field);
-    };
-  }
-
-  return { fieldMapCopy, layoutCopy, preSaveCopy, validationHandlerCopy };
+  return {
+    fieldMap: newFieldMap,
+    layout: newLayout,
+    preSave: preSaveProxy,
+    validationHandler: validationHandlerProxy,
+  };
 };
 
 const getResourceFormAssets = ({
@@ -309,18 +303,12 @@ const getResourceFormAssets = ({
     'connections',
   ];
 
-  if (resourceTypesWithSettings.includes(resourceType)) {
-    ({
-      fieldMapCopy: fieldMap,
-      layoutCopy: layout,
-      preSaveCopy: preSave,
-      validationHandlerCopy: validationHandler,
-    } = applyCustomSettings({
+  if (!isNew && resourceTypesWithSettings.includes(resourceType)) {
+    ({ fieldMap, layout, preSave, validationHandler } = applyCustomSettings({
       fieldMap,
       validationHandler,
       layout,
       preSave,
-      isNew,
     }));
   }
 
@@ -373,16 +361,16 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = cloneDeep(field);
+      const fieldCopy = produce(field, draft => {
+        if (f.visibleWhen) {
+          draft.visibleWhen = draft.visibleWhen || [];
+          draft.visibleWhen.push(...f.visibleWhen);
+        } else if (f.visibleWhenAll) {
+          draft.visibleWhenAll = draft.visibleWhenAll || [];
 
-      if (f.visibleWhen) {
-        fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
-        fieldCopy.visibleWhen.push(...f.visibleWhen);
-      } else if (f.visibleWhenAll) {
-        fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
-
-        fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
-      }
+          draft.visibleWhenAll.push(...f.visibleWhenAll);
+        }
+      });
 
       return { field: fieldCopy, key };
     })

@@ -20,6 +20,7 @@ import {
 import ActionButton from '../../../components/ActionButton';
 import Spinner from '../../Spinner';
 
+const emptyArray = [];
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -167,11 +168,12 @@ function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
-  const { resources = [] } = useSelector(state =>
-    selectors.resourceList(state, {
-      type: resourceType,
-      ignoreEnvironmentFilter,
-    })
+  const resources = useSelector(
+    state =>
+      selectors.resourceList(state, {
+        type: resourceType,
+        ignoreEnvironmentFilter,
+      }).resources || emptyArray
   );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
