@@ -43,7 +43,7 @@ export default function DateTimePicker(props) {
         variant="dialog"
         invalidLabel={null}
         invalidDateMessage={null}
-        onChange={value => setDateValue(value)}
+        onChange={setDateValue}
         disabled={disabled}
         clearable
         keyboardIcon={<CalendarIcon />}

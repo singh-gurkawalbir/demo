@@ -28,7 +28,7 @@ export default function DatePicker(props) {
         invalidDateMessage={null}
         inputVariant="outlined"
         InputLabelProps={{ shrink: true }}
-        onChange={value => setDateValue(value)}
+        onChange={setDateValue}
         disabled={disabled}
         clearable
         keyboardIcon={<CalendarIcon />}
