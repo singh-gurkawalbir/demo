@@ -59,6 +59,11 @@ const ConnectorInstallBase = loadable(() =>
 const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
+const SuiteScriptIntegration = loadable(() =>
+  import(
+    /* webpackChunkName: 'Integration' */ '../../views/SuiteScript/Integration/DIY'
+  )
+);
 
 @hot(module)
 export default class AppRouting extends Component {
@@ -187,6 +192,10 @@ export default class AppRouting extends Component {
           path="/pg/tokens"
           exact
           render={({ history }) => history.replace('/pg/accesstokens')}
+        />
+        <Route
+          path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab"
+          component={SuiteScriptIntegration}
         />
         <Route path="/pg/:resourceType" component={ResourceList} />
         <Route component={NotFound} />

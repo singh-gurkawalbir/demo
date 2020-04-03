@@ -256,3 +256,34 @@ export const getFileDefinition = (state, definitionId, options) =>
     definitionId,
     options
   );
+
+export const hasSuiteScriptData = (
+  state,
+  { ssLinkedConnectionId, integrationId, resourceType }
+) =>
+  fromSuiteScript.hasData(state && state.suiteScript, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType,
+  });
+
+export const suiteScriptResource = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId }
+) =>
+  fromSuiteScript.resource(state && state.suiteScript, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export const suiteScriptResourceList = (
+  state,
+  { resourceType, ssLinkedConnectionId, integrationId }
+) =>
+  fromSuiteScript.resourceList(state && state.suiteScript, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });

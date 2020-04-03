@@ -22,6 +22,7 @@ import { tileStatus, suiteScriptTileName } from './util';
 import getRoutePath from '../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
+import { getDomain } from '../../utils/resource';
 
 function SuiteScriptTile({ tile, history }) {
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
@@ -33,17 +34,17 @@ function SuiteScriptTile({ tile, history }) {
     tile.integration.permissions.accessLevel;
   const integrationAppName = getIntegrationAppUrlName(tile.name, true);
   const status = tileStatus(tile);
-  let urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`;
+  let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/settings`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
   }
 
-  const isNotYetSupported = true;
+  const isNotYetSupported = getDomain() !== 'localhost.io';
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
@@ -59,13 +60,13 @@ function SuiteScriptTile({ tile, history }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
           )
         );
       } else {
         history.push(
           getRoutePath(
-            `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/dashboard`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`
           )
         );
       }
@@ -75,7 +76,7 @@ function SuiteScriptTile({ tile, history }) {
       integrationAppName,
       isNotYetSupported,
       tile._integrationId,
-      tile._ioConnectionId,
+      tile.ssLinkedConnectionId,
       tile.status,
     ]
   );

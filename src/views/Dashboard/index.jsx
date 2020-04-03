@@ -151,8 +151,13 @@ function Dashboard() {
         resources="published,integrations,connections,marketplacetemplates">
         <div className={classes.container}>
           {sortedTiles.map(t => (
-            <div key={t._ioConnectionId ? t._id : t._integrationId}>
-              {t._ioConnectionId ? (
+            <div
+              key={
+                t.ssLinkedConnectionId
+                  ? `${t.ssLinkedConnectionId}_${t._integrationId}`
+                  : t._integrationId
+              }>
+              {t.ssLinkedConnectionId ? (
                 <SuiteScriptTile tile={t} />
               ) : (
                 <Tile tile={t} />

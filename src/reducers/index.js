@@ -3858,3 +3858,97 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
+
+export function suiteScriptResourceStatus(
+  state,
+  {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+    resourceReqMethod = 'GET',
+  }
+) {
+  let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
+
+  if (resourceType === 'flows') {
+    path += `integrations/${integrationId}/flows`;
+  } else {
+    path += `${resourceType}`;
+  }
+
+  const commKey = commKeyGen(path, resourceReqMethod);
+  const method = resourceReqMethod;
+  const hasData = fromData.hasSuiteScriptData(state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const isLoading = fromComms.isLoading(state.comms, commKey);
+  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
+
+  return {
+    resourceType,
+    hasData,
+    isLoading,
+    retryCount,
+    method,
+    isReady,
+  };
+}
+
+export const suiteScriptResource = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId }
+) =>
+  fromData.suiteScriptResource(state && state.data, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export const suiteScriptResourceList = (
+  state,
+  { resourceType, ssLinkedConnectionId, integrationId }
+) =>
+  fromData.suiteScriptResourceList(state && state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export function suiteScriptIntegrationConnectionList(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  const { flows = [] } = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const { connections = [] } = suiteScriptResourceList(state, {
+    resourceType: 'connections',
+    ssLinkedConnectionId,
+  });
+  const connectionIdsInUse = [];
+
+  if (integrationId) {
+    flows.each(f => {
+      if (f.export._connectionId) {
+        connectionIdsInUse.push(f.export._connectionId);
+      }
+
+      if (f.import._connectionId) {
+        connectionIdsInUse.push(f.import._connectionId);
+      }
+
+      // TODO: Shiva
+      if (f.isJavaFlow) {
+        connectionIdsInUse.push('CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
+      }
+    });
+  }
+  
+  return connections.filter(c => connectionIdsInUse.includes(c._id));
+}
