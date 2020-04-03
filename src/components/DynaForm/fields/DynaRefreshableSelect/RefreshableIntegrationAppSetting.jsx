@@ -12,15 +12,17 @@ export default function RefreshableIntegrationAppSetting(props) {
     value,
     properties,
     onFieldChange,
+    disabled,
   } = props;
   const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
   const dispatch = useDispatch();
+  const [autofill, setAutofill] = useState(false);
   const handleRefreshResource = useCallback(() => {
     dispatch(
       actions.connectors.refreshMetadata(null, fieldName, _integrationId)
     );
   }, [_integrationId, dispatch, fieldName]);
-  const { isLoading, options } = useSelector(state =>
+  const { isLoading, options, value: newValue } = useSelector(state =>
     selectors.connectorFieldOptions(
       state,
       fieldName,
@@ -56,6 +58,13 @@ export default function RefreshableIntegrationAppSetting(props) {
       onFieldChange(fieldName, { id: value, label }, true);
     }
   }, [fieldName, onFieldChange, options, value, valueAndLabel]);
+
+  useEffect(() => {
+    if (!value && newValue && !autofill && disabled) {
+      setAutofill(true);
+      onFieldChange(fieldName, newValue, true);
+    }
+  }, [newValue, autofill, onFieldChange, fieldName, disabled, value]);
 
   useEffect(() => {
     if (netSuiteSystemDomain && value && value.id) {
