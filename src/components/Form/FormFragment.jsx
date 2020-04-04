@@ -13,6 +13,7 @@ export const FieldComponent = props => {
 };
 
 export default function FormFragment({ defaultFields, formKey }) {
+  console.log('all fields ', defaultFields);
   const dispatch = useDispatch();
   const formState = useSelector(
     state => seletors.getFormState(state, formKey),
@@ -56,7 +57,7 @@ export default function FormFragment({ defaultFields, formKey }) {
   useEffect(() => {
     defaultFields.forEach(field => {
       // if new field register
-      if (!formState || !formState.fields || !formState.fields[field]) {
+      if (!formState || !formState.fields || !formState.fields[field.id]) {
         registerField(field);
       }
     });
@@ -69,11 +70,13 @@ export default function FormFragment({ defaultFields, formKey }) {
     <Fragment>
       {defaultFields.map(field => {
         // maybe .find may not be necessaery ..we can get the fieldState directly
-        const fieldState = formState.fields[field];
+        const fieldState = formState.fields[field.id];
+
+        console.log('see ', fieldState, formState.fields, field);
 
         return (
           <FieldComponent
-            key={field}
+            key={field.id}
             fieldState={fieldState}
             renderer={renderer}
             onFieldChange={onFieldChange}

@@ -48,20 +48,28 @@ export default function fields(state = {}, action) {
         getNextStateFromFieldsUpdated(draft[formKey]);
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_CHANGE:
-        if (!skipFieldTouched) {
-          // updated field touched state
-          fieldsRef[id].touched = true;
-        }
+        console.log('see here 2', formKey, fieldsRef, id);
 
-        fieldsRef[id].fieldKey = generateFieldKey(id);
-        // update the last modified field id in the form state
-        draft[formKey].lastFieldUpdated = id;
+        try {
+          if (!skipFieldTouched) {
+            // updated field touched state
+            fieldsRef[id].touched = true;
+          }
 
-        updateFieldValue(fieldsRef[id], value);
-        getNextStateFromFieldsUpdated(draft[formKey]);
+          fieldsRef[id].fieldKey = generateFieldKey(id);
 
-        if (onChange) {
-          onChange(formValue, isValid);
+          // update the last modified field id in the form state
+          draft[formKey].lastFieldUpdated = id;
+
+          updateFieldValue(fieldsRef[id], value);
+
+          getNextStateFromFieldsUpdated(draft[formKey]);
+
+          if (onChange) {
+            onChange(formValue, isValid);
+          }
+        } catch (e) {
+          console.log('see here 1', e);
         }
 
         break;

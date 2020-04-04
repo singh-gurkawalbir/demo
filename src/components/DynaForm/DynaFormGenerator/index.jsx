@@ -28,19 +28,20 @@ const useStyles = makeStyles({
     marginBottom: 6,
   },
 });
-// const getCorrespondingFieldMap = (fields, fieldMap) =>
-//   fields.map(field => {
-//     const transformedFieldValue = fieldMap[field];
 
-//     if (!transformedFieldValue) {
-//       // eslint-disable-next-line no-console
-//       console.warn('no field reference found for field ', field);
+export const getCorrespondingFieldMap = (fields, fieldMap) =>
+  fields.map(field => {
+    const transformedFieldValue = fieldMap[field];
 
-//       return {};
-//     }
+    if (!transformedFieldValue) {
+      // eslint-disable-next-line no-console
+      console.warn('no field reference found for field ', field);
 
-//     return { key: field, ...transformedFieldValue };
-//   });
+      return {};
+    }
+
+    return { key: field, ...transformedFieldValue };
+  });
 
 export default function FormGenerator(props) {
   const classes = useStyles();
@@ -52,7 +53,7 @@ export default function FormGenerator(props) {
     <FormFragment
       className={classes.child}
       formKey={formKey}
-      defaultFields={fields}
+      defaultFields={getCorrespondingFieldMap(fields, fieldMap)}
     />
   );
   let ConvertedContainer;

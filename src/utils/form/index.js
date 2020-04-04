@@ -62,7 +62,7 @@ export const registerFieldsUpdated = (fieldMapToValidate, formValue = {}) =>
     const field = fieldMapToValidate[key];
 
     if (fieldDefIsValidUpdated(field, fieldsState)) {
-      const { defaultValue, name, value, valueDelimiter } = field;
+      const { defaultValue, name, value, valueDelimiter, id } = field;
       const initialValue = getFirstDefinedValue(
         formValue[name],
         value,
@@ -73,7 +73,7 @@ export const registerFieldsUpdated = (fieldMapToValidate, formValue = {}) =>
         value: splitDelimitedValue(initialValue, valueDelimiter),
       };
 
-      fieldsState[key] = fieldToRegister;
+      fieldsState[id] = fieldToRegister;
     }
 
     return fieldsState;
