@@ -11,7 +11,7 @@ const updateConnectionStatus = (
       c => c._id === connectionId
     );
 
-    if (connectionIndex) {
+    if (connectionIndex !== -1) {
       // allConnectionsStatus is a draft... mutating it is fine....hence disabling lint for the next lin
       // eslint-disable-next-line no-param-reassign
       allConnectionsStatus[connectionIndex] = {
@@ -23,34 +23,11 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, response, offline } = action;
+  const { type, debugLogs, connectionId } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.CONNECTION.PING_AND_UPDATE:
-        if (!draft.status) {
-          draft.status = [{ _id: connectionId }];
-        }
-
-        updateConnectionStatus(draft.status, connectionId, {
-          requestStatus: 'requested',
-        });
-
-        break;
-
-      case actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE:
-        updateConnectionStatus(draft.status, connectionId, {
-          requestStatus: 'failure',
-        });
-
-        break;
-      case actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS:
-        updateConnectionStatus(draft.status, connectionId, {
-          requestStatus: 'success',
-          offline: !!offline,
-        });
-
-        break;
+      // TODO (Aditya): Check for this
       case actionTypes.CONNECTION.AUTHORIZED:
         // On successful authorization of oauth connection, set the connection status to online.
         updateConnectionStatus(draft.status, connectionId, {
@@ -67,9 +44,6 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.CONNECTION.RECEIVED_STATUS:
-        draft.status = response;
-        break;
       default:
     }
   });
@@ -81,14 +55,4 @@ export function debugLogs(state) {
   }
 
   return state.debugLogs;
-}
-
-export function connectionStatus(state, id) {
-  if (!state || !state.status || !Array.isArray(state.status)) {
-    return null;
-  }
-
-  const connection = state.status.find(connection => connection._id === id);
-
-  return connection;
 }

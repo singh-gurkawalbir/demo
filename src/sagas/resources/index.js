@@ -700,21 +700,10 @@ export function* refreshConnectionStatus({ integrationId }) {
       path: url,
       hidden: true,
     });
+    yield put(actions.resource.connections.updateStatus(response));
   } catch (e) {
-    return;
+    // do nothing
   }
-
-  const finalResponse = Array.isArray(response)
-    ? response.map(({ _id, offline, queues }) => ({
-        _id,
-        offline: !!offline,
-        queueSize: queues[0].size,
-      }))
-    : [];
-
-  yield put(
-    actions.resource.connections.receivedConnectionStatus(finalResponse)
-  );
 }
 
 export const resourceSagas = [
