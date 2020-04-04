@@ -16,6 +16,7 @@ import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
+import Spinner from '../../../../../../../components/Spinner';
 
 const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
@@ -147,6 +148,9 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
   });
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
   const firstVariation =
     useSelector(state => {
       // property being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
@@ -219,65 +223,69 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           addCategory
           onClose={handleClose}
         />
-        <div className={classes.root}>
-          <div className={classes.variationMapWrapper}>
-            <div className={classes.subNav}>
-              <VariationAttributesList
-                integrationId={integrationId}
-                flowId={flowId}
-                categoryId={subCategoryId}
-              />
-            </div>
-            <div className={classes.content}>
-              <PanelHeader
-                className={classes.header}
-                title="Map variant attributes"
-              />
-              <div className={classes.mappingHeader}>
-                <div className={classes.mappingChild}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    {uiAssistant}
-                  </Typography>
-                  <ApplicationImg
-                    assistant={uiAssistant.toLowerCase()}
-                    size="small"
-                  />
-                </div>
-                <div className={classes.mappingChild}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    NetSuite
-                  </Typography>
-                  <ApplicationImg assistant="netsuite" />
-                </div>
-              </div>
-              <div className={classes.mappingWrapper}>
-                <VariationMappings
+        {metadataLoaded ? (
+          <div className={classes.root}>
+            <div className={classes.variationMapWrapper}>
+              <div className={classes.subNav}>
+                <VariationAttributesList
                   integrationId={integrationId}
                   flowId={flowId}
-                  categoryId={categoryId}
-                  sectionId={subCategoryId}
-                  variation={variation}
+                  categoryId={subCategoryId}
                 />
               </div>
-              <ButtonGroup className={classes.saveButtonGroup}>
-                <Button
-                  id={flowId}
-                  variant="outlined"
-                  color="primary"
-                  data-test="saveImportMapping"
-                  onClick={handleSave}>
-                  Save
-                </Button>
-                <Button
-                  variant="text"
-                  data-test="saveImportMapping"
-                  onClick={handleCancel}>
-                  Close
-                </Button>
-              </ButtonGroup>
+              <div className={classes.content}>
+                <PanelHeader
+                  className={classes.header}
+                  title="Map variant attributes"
+                />
+                <div className={classes.mappingHeader}>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      {uiAssistant}
+                    </Typography>
+                    <ApplicationImg
+                      assistant={uiAssistant.toLowerCase()}
+                      size="small"
+                    />
+                  </div>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      NetSuite
+                    </Typography>
+                    <ApplicationImg assistant="netsuite" />
+                  </div>
+                </div>
+                <div className={classes.mappingWrapper}>
+                  <VariationMappings
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    categoryId={categoryId}
+                    sectionId={subCategoryId}
+                    variation={variation}
+                  />
+                </div>
+                <ButtonGroup className={classes.saveButtonGroup}>
+                  <Button
+                    id={flowId}
+                    variant="outlined"
+                    color="primary"
+                    data-test="saveImportMapping"
+                    onClick={handleSave}>
+                    Save
+                  </Button>
+                  <Button
+                    variant="text"
+                    data-test="saveImportMapping"
+                    onClick={handleCancel}>
+                    Close
+                  </Button>
+                </ButtonGroup>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <Spinner />
+        )}
       </Drawer>
     </Fragment>
   );
