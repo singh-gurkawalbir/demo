@@ -8,6 +8,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ShowStatus from '../ShowStatus';
 import { PING_STATES } from '../../reducers/comms/ping';
+import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   fixConnectionBtn: {
@@ -91,7 +92,14 @@ export default function ConnectionStatusPanel(props) {
   }, [isOffline, location.search, resourceType, testStatus]);
 
   useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
+    // TODO: Aditya please verify if this fix is okay...it was making ping calls when we are creating a new resource ...
+    // at that point we haven't assigned a connectionId to it yet
+
+    if (connectionId && !isNewId(connectionId)) {
+      dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    }
+
     dispatch(actions.resource.connections.testClear(connectionId));
 
     return () => {
