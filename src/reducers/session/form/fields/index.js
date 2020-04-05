@@ -1,10 +1,10 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
-  processFieldsUpdated,
-  registerFieldWithCorrectValueUpdated,
+  processFields,
+  registerField,
   updateFieldValue,
-  getNextStateFromFieldsUpdated,
+  getNextStateFromFields,
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
@@ -43,33 +43,27 @@ export default function fields(state = {}, action) {
           fieldKey: generateFieldKey(id),
         };
 
-        registerFieldWithCorrectValueUpdated(fieldsRef[id]);
+        registerField(fieldsRef[id]);
 
-        getNextStateFromFieldsUpdated(draft[formKey]);
+        getNextStateFromFields(draft[formKey]);
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_CHANGE:
-        console.log('see here 2', formKey, fieldsRef, id);
+        if (!skipFieldTouched) {
+          // updated field touched state
+          fieldsRef[id].touched = true;
+        }
 
-        try {
-          if (!skipFieldTouched) {
-            // updated field touched state
-            fieldsRef[id].touched = true;
-          }
+        fieldsRef[id].fieldKey = generateFieldKey(id);
 
-          fieldsRef[id].fieldKey = generateFieldKey(id);
+        // update the last modified field id in the form state
+        draft[formKey].lastFieldUpdated = id;
 
-          // update the last modified field id in the form state
-          draft[formKey].lastFieldUpdated = id;
+        updateFieldValue(fieldsRef[id], value);
 
-          updateFieldValue(fieldsRef[id], value);
+        getNextStateFromFields(draft[formKey]);
 
-          getNextStateFromFieldsUpdated(draft[formKey]);
-
-          if (onChange) {
-            onChange(formValue, isValid);
-          }
-        } catch (e) {
-          console.log('see here 1', e);
+        if (onChange) {
+          onChange(formValue, isValid);
         }
 
         break;
@@ -77,7 +71,7 @@ export default function fields(state = {}, action) {
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         fieldsRef[id].touched = true;
         fieldsRef[id].fieldKey = generateFieldKey(id);
-        getNextStateFromFieldsUpdated(draft[formKey]);
+        getNextStateFromFields(draft[formKey]);
 
         break;
       default:
@@ -86,4 +80,4 @@ export default function fields(state = {}, action) {
 }
 
 export const fieldsState = (state, formIsDisabled, resetTouchedState = false) =>
-  processFieldsUpdated(state, formIsDisabled, resetTouchedState);
+  processFields(state, formIsDisabled, resetTouchedState);

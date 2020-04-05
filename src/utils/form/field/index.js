@@ -7,12 +7,6 @@ export const fieldDefIsValid = (field, fields) =>
 
 export const fieldDefIsValidUpdated = (field, fields) =>
   !fields || !fields[field.id];
-export const mapFieldsById = fields =>
-  fields.reduce((map, field) => {
-    map[field.id] = field;
-
-    return map;
-  }, {});
 
 export const getFirstDefinedValue = (...values) => {
   let valueToReturn;

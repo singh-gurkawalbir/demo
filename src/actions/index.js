@@ -707,6 +707,7 @@ const integrationApp = {
           response,
         }
       ),
+
     requestMappingMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,

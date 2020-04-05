@@ -3,11 +3,7 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import actionTypes from '../../../actions/types';
-import {
-  getNextStateFromFieldsUpdated,
-  processFieldsUpdated,
-  registerFieldsUpdated,
-} from '../../../utils/form';
+import { getNextStateFromFields, registerFields } from '../../../utils/form';
 import fields, { fieldsState } from './fields';
 
 function form(state = {}, action) {
@@ -16,6 +12,7 @@ function form(state = {}, action) {
     showValidationBeforeTouched = false,
     conditionalUpdate = false,
     disabled = false,
+    value,
   } = formSpecificProps;
   const { fieldsMeta = {} } = formSpecificProps;
 
@@ -28,11 +25,19 @@ function form(state = {}, action) {
           showValidationBeforeTouched,
           conditionalUpdate,
           disabled,
-          formIsDisabled: disabled,
           resetTouchedState: false,
         };
-        draft[formKey].fields = registerFieldsUpdated(fieldsMeta.fieldMap);
-        getNextStateFromFieldsUpdated(draft[formKey]);
+
+        // if it was externally driven that would take precendence ...and if you stop providing a value it would revert back to form state
+        if (value) {
+          draft[formKey].value = value;
+        }
+
+        draft[formKey].fields = registerFields(
+          fieldsMeta.fieldMap,
+          draft[formKey].value
+        );
+        getNextStateFromFields(draft[formKey]);
 
         return;
       case actionTypes.FORM.CLEAR:

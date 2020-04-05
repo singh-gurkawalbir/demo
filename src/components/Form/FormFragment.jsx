@@ -13,7 +13,6 @@ export const FieldComponent = props => {
 };
 
 export default function FormFragment({ defaultFields, formKey }) {
-  console.log('all fields ', defaultFields);
   const dispatch = useDispatch();
   const formState = useSelector(
     state => seletors.getFormState(state, formKey),
@@ -71,8 +70,6 @@ export default function FormFragment({ defaultFields, formKey }) {
       {defaultFields.map(field => {
         // maybe .find may not be necessaery ..we can get the fieldState directly
         const fieldState = formState.fields[field.id];
-
-        console.log('see ', fieldState, formState.fields, field);
 
         return (
           <FieldComponent
