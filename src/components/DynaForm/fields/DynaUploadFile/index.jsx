@@ -1,14 +1,10 @@
 import { FormContext } from 'react-forms-processor/dist';
 import { useEffect, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
-import {
-  getFileReaderOptions,
-  getCsvFromXlsx,
-  getJSONContent,
-  getUploadedFileStatus,
-} from '../../../../utils/file';
+import { getUploadedFile } from '../../../../reducers';
+import { generateNewId } from '../../../../utils/resource';
 
 function DynaUploadFile(props) {
   const {
@@ -20,113 +16,62 @@ function DynaUploadFile(props) {
     onFieldChange,
   } = props;
   const DEFAULT_PLACEHOLDER = 'No file chosen';
+  const [fileId] = useState(generateNewId());
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
-  const [uploadError, setUploadError] = useState();
-  /*
-   * File types supported for upload are CSV, XML, XLSX and JSON
-   * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
-   * For JSON file, content should be parsed from String to JSON
-   */
-  const handleFileRead = useCallback(
-    (event, fileName) => {
-      const { result } = event.target;
-      let fileContent = result;
+  const uploadedFile = useSelector(
+    state => getUploadedFile(state, fileId) || {},
+    shallowEqual
+  );
 
-      if (['xlsx', 'json'].includes(options)) {
-        const { error, data } =
-          options === 'xlsx'
-            ? getCsvFromXlsx(fileContent)
-            : getJSONContent(fileContent);
+  useEffect(() => {
+    const { status, file, fileType, name } = uploadedFile || {};
 
-        if (error) {
-          return setUploadError(error);
-        }
-
-        if (options === 'json') {
-          fileContent = data;
-        }
-      }
-
-      setUploadError();
-      setFileName(fileName);
-      onFieldChange(id, fileContent);
-
-      // Dispatches an action to process uploaded file data
+    if (status === 'received') {
+      setFileName(name);
+      onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(
           resourceId,
           resourceType,
           {
-            type: options,
-            file: fileContent,
+            type: fileType,
+            file,
             formValues: formContext.value,
           },
           'file'
         )
       );
-    },
-    [
-      dispatch,
-      formContext.value,
-      id,
-      onFieldChange,
-      options,
-      resourceId,
-      resourceType,
-    ]
-  );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, id, options, resourceId, resourceType, uploadedFile]);
 
   useEffect(() => {
     // resets sample data on change of file type
     if (options) {
       dispatch(actions.sampleData.reset(resourceId));
+      dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
       setFileName(DEFAULT_PLACEHOLDER);
-      setUploadError();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, id, options, resourceId]);
+  }, [dispatch, id, options, resourceId, fileId]);
 
-  /*
-   * Gets the uploaded file and reads it based on the options provided
-   */
   const handleFileChosen = useCallback(
     event => {
       const file = event.target.files[0];
 
       if (!file) return;
-      // Checks for file size and file types
-      const { error } = getUploadedFileStatus(file, options);
-
-      if (error) {
-        onFieldChange(id, '');
-
-        return setUploadError(error);
-      }
-
-      const fileReaderOptions = getFileReaderOptions(options);
-      const fileReader = new FileReader();
-      const curriedFileNameFn = fileName => event =>
-        handleFileRead(event, fileName);
-
-      fileReader.onload = curriedFileNameFn(file.name);
-
-      if (fileReaderOptions.readAsArrayBuffer) {
-        // Incase of XLSX file
-        fileReader.readAsArrayBuffer(file);
-      } else {
-        fileReader.readAsText(file);
-      }
+      dispatch(actions.file.processFile({ fileId, file, fileType: options }));
     },
-    [handleFileRead, id, onFieldChange, options]
+    [dispatch, fileId, options]
   );
 
   return (
     <FileUploader
       {...props}
       fileName={fileName}
-      uploadError={uploadError}
+      uploadError={uploadedFile.error || ''}
       handleFileChosen={handleFileChosen}
     />
   );

@@ -901,6 +901,21 @@ const file = {
       fileType,
       file,
     }),
+  processFile: ({ fileId, file, fileType }) =>
+    action(actionTypes.FILE.PROCESS, {
+      fileId,
+      file,
+      fileType,
+    }),
+  processedFile: ({ fileId, file, props }) =>
+    action(actionTypes.FILE.PROCESSED, {
+      fileId,
+      file,
+      props,
+    }),
+  uploadError: ({ fileId, error }) =>
+    action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
+  reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
 };
 const transfer = {
   cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),

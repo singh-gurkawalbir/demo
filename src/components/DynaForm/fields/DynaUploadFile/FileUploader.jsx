@@ -59,9 +59,7 @@ function FileUploader(props) {
           name={name}
           disabled={disabled}
           required={required}
-          data-test={id}
-          isValid={isValid}
-          error={!isValid}>
+          data-test={id}>
           Choose File
         </Button>
         <input

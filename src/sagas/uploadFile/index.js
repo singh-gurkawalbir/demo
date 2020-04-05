@@ -2,6 +2,12 @@ import { call, takeEvery, put } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import {
+  getFileReaderOptions,
+  getCsvFromXlsx,
+  getJSONContent,
+  getUploadedFileStatus,
+} from '../../utils/file';
 
 export function* uploadFile({
   resourceType,
@@ -68,7 +74,63 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
   }
 }
 
+function configureFileReader(file, fileType) {
+  const fileReaderOptions = getFileReaderOptions(fileType);
+
+  return new Promise(resolve => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+
+    if (fileReaderOptions.readAsArrayBuffer) {
+      // Incase of XLSX file
+      reader.readAsArrayBuffer(file);
+    } else {
+      reader.readAsText(file);
+    }
+  });
+}
+
+/*
+ * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
+ * For JSON file, content should be parsed from String to JSON
+ */
+function* processFile({ fileId, file, fileType }) {
+  const { error } = getUploadedFileStatus(file, fileType);
+  const { name, size } = file;
+
+  if (error) {
+    return yield put(actions.file.uploadError({ fileId, error }));
+  }
+
+  let fileContent = yield call(configureFileReader, file, fileType);
+
+  if (['xlsx', 'json'].includes(fileType)) {
+    const { error, data } =
+      fileType === 'xlsx'
+        ? getCsvFromXlsx(fileContent)
+        : getJSONContent(fileContent);
+
+    if (error) {
+      return yield put(actions.file.uploadError({ fileId, error }));
+    }
+
+    if (fileType === 'json') {
+      fileContent = data;
+    }
+  }
+
+  yield put(
+    actions.file.processedFile({
+      fileId,
+      file: fileContent,
+      props: { name, size, fileType },
+    })
+  );
+}
+
 export const uploadFileSagas = [
   takeEvery(actionTypes.FILE.UPLOAD, uploadFile),
   takeEvery(actionTypes.FILE.PREVIEW_ZIP, previewZip),
+  takeEvery(actionTypes.FILE.PROCESS, processFile),
 ];

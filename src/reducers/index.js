@@ -3898,3 +3898,7 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
+
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
