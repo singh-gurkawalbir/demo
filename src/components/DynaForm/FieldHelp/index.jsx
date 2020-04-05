@@ -3,9 +3,11 @@ import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import Help from '../../Help';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   iconButton: {
-    marginLeft: 6,
+    marginLeft: 8,
+    padding: 0,
+    color: theme.palette.text.hint,
   },
 }));
 
