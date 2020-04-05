@@ -77,13 +77,14 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
 function configureFileReader(file, fileType) {
   const fileReaderOptions = getFileReaderOptions(fileType);
 
+  // wrapped inside promise to handle the file content returned after onload callback
   return new Promise(resolve => {
     const reader = new FileReader();
 
     reader.onload = () => resolve(reader.result);
 
     if (fileReaderOptions.readAsArrayBuffer) {
-      // Incase of XLSX file
+      // Incase of xlsx file
       reader.readAsArrayBuffer(file);
     } else {
       reader.readAsText(file);
@@ -92,6 +93,7 @@ function configureFileReader(file, fileType) {
 }
 
 /*
+ * Reads and processes the uploaded file based on file type and saves fileContent/error on state
  * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
  * For JSON file, content should be parsed from String to JSON
  */
