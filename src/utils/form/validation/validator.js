@@ -1,4 +1,4 @@
-import { checkConditions } from './validation';
+import { checkConditions } from '.';
 
 export const noneAreTrue = ({ value, allFields, message, conditions }) => {
   const allConditionsPass = conditions.some(condition =>

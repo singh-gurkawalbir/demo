@@ -27,7 +27,8 @@ import {
   splitDelimitedValue,
 } from './field';
 
-const createField = field => {
+// eslint-disable-next-line import/prefer-default-export
+export const createField = field => {
   const {
     id = '',
     name = '',
@@ -793,7 +794,9 @@ describe('calculateFormValue', () => {
     value: '     trimmed     ',
     trimValue: true,
   };
-  const value = calculateFormValue({ field1, field2, field3, field4 });
+  const value = calculateFormValue(
+    Object.values({ field1, field2, field3, field4 })
+  );
 
   test('two field values should be omitted', () => {
     expect(Object.keys(value).length).toEqual(2);
@@ -809,7 +812,7 @@ describe('calculateFormValue', () => {
   });
 
   test('dot-notation names can be provided', () => {
-    const value = calculateFormValue({ field5 });
+    const value = calculateFormValue([field5]);
 
     expect(value.test.dot.notation).toEqual('ted');
   });
@@ -823,7 +826,7 @@ describe('calculateFormValue', () => {
       valueDelimiter: ',',
       useChangesAsValues: true,
     };
-    const value = calculateFormValue({ field1 });
+    const value = calculateFormValue(Object.values({ field1 }));
 
     expect(value.test_added).toEqual('4,5');
     expect(value.test_removed).toEqual('1,3');
@@ -840,7 +843,7 @@ describe('calculateFormValue', () => {
   // });
 
   test('field value can be trimmed', () => {
-    const value = calculateFormValue({ fieldToTrim });
+    const value = calculateFormValue(Object.values({ fieldToTrim }));
 
     expect(value.testTrim).toBe('trimmed');
   });
@@ -865,8 +868,9 @@ describe('updateFieldValue', () => {
     type: 'text',
     value: 'woof',
   };
-  const fields = updateFieldValue('B', 'oink', { A, B, C });
-  const fieldsById = fields;
+  const fieldsById = deepClone({ A, B, C });
+
+  updateFieldValue(fieldsById.B, 'oink');
 
   test('field is updated with new value', () => {
     expect(fieldsById.B.value).toEqual('oink');
