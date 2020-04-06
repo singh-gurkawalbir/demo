@@ -74,6 +74,7 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
   }
 }
 
+// TODO @Raghu - Check for other file reader apis which suites better if any
 function configureFileReader(file, fileType) {
   const fileReaderOptions = getFileReaderOptions(fileType);
 
