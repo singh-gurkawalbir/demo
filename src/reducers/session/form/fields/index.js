@@ -1,10 +1,9 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
 import {
-  processFields,
+  getNextStateFromFields,
   registerField,
   updateFieldValue,
-  getNextStateFromFields,
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
@@ -78,6 +77,3 @@ export default function fields(state = {}, action) {
     }
   });
 }
-
-export const fieldsState = (state, formIsDisabled, resetTouchedState = false) =>
-  processFields(state, formIsDisabled, resetTouchedState);

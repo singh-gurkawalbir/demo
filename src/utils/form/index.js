@@ -220,11 +220,17 @@ export const processFields = (
 ) => {
   Object.keys(fieldsById).forEach(key => {
     const field = fieldsById[key];
-    const { defaultValue, value, touched = false } = field;
+    const { defaultValue, value } = field;
     const processedValue = typeof value !== 'undefined' ? value : defaultValue;
 
-    field.touched = getTouchedStateForField(touched, resetTouchedState);
     field.value = processedValue;
+  });
+
+  Object.keys(fieldsById).forEach(key => {
+    const field = fieldsById[key];
+    const { touched = false } = field;
+
+    field.touched = getTouchedStateForField(touched, resetTouchedState);
     field.visible = isVisible(field, fieldsById);
     field.required = isRequired(field, fieldsById);
     field.disabled = formIsDisabled || isDisabled(field, fieldsById);
