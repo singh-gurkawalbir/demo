@@ -10,8 +10,10 @@ import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    margin: theme.spacing(1, 0),
+  },
   fixConnectionBtn: {
-    padding: 0,
     color: theme.palette.primary.main,
   },
 }));
@@ -107,27 +109,23 @@ export default function ConnectionStatusPanel(props) {
   }
 
   return (
-    <div>
+    <div className={classes.root}>
       <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
           <Typography variant="h6">{message}</Typography>
         ) : (
-          <div>
-            <Typography variant="h6">
-              The connection associated with this export is currently offline
-              and configuration is limited.
-            </Typography>
-            <Typography variant="h6" component="span">
-              <Button
-                data-test="fixConnection"
-                size="small"
-                className={classes.fixConnectionBtn}
-                onClick={handleConnectionFixClick}>
-                Fix your connection
-              </Button>{' '}
-              to bring it back online
-            </Typography>
-          </div>
+          <Typography component="div" variant="h6">
+            The connection associated with this export is currently offline and
+            configuration is limited,
+            <Button
+              data-test="fixConnection"
+              size="small"
+              className={classes.fixConnectionBtn}
+              onClick={handleConnectionFixClick}>
+              Fix your connection
+            </Button>
+            to bring it back online
+          </Typography>
         )}
       </NotificationToaster>
     </div>
