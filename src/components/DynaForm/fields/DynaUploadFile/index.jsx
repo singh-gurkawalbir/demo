@@ -15,7 +15,7 @@ function DynaUploadFile(props) {
     onFieldChange,
   } = props;
   const DEFAULT_PLACEHOLDER = 'No file chosen';
-  const [fileId] = useState(`${resourceId}-${id}`);
+  const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
   const uploadedFile = useSelector(

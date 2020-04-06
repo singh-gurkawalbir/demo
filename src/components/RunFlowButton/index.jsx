@@ -27,7 +27,6 @@ export default function RunFlowButton({
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const fileInput = useRef(null);
-  const [fileId] = useState(flowId);
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
@@ -73,7 +72,7 @@ export default function RunFlowButton({
     selectors.isFormAMonitorLevelAccess(state, flowDetails.integrationId)
   );
   const uploadedFile = useSelector(
-    state => selectors.getUploadedFile(state, fileId) || {},
+    state => selectors.getUploadedFile(state, flowId),
     shallowEqual
   );
   const handleRunFlow = useCallback(
@@ -118,10 +117,14 @@ export default function RunFlowButton({
       if (!file) return;
 
       dispatch(
-        actions.file.processFile({ fileId, file, fileType: dataLoaderFileType })
+        actions.file.processFile({
+          fileId: flowId,
+          file,
+          fileType: dataLoaderFileType,
+        })
       );
     },
-    [dataLoaderFileType, dispatch, fileId]
+    [dataLoaderFileType, dispatch, flowId]
   );
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
