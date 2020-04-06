@@ -69,8 +69,8 @@ export default {
     type: 'checkbox',
     label: 'Same As Status Export',
   },
-  rules: {
-    type: 'text',
+  'http.submit.transform': {
+    type: 'transformrules',
     label: 'Transform Rules for Submit Response',
   },
 };
