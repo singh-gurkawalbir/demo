@@ -43,7 +43,7 @@ function DynaUploadFile(props) {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, id, options, resourceId, resourceType, uploadedFile]);
+  }, [dispatch, id, resourceId, resourceType, uploadedFile]);
 
   useEffect(() => {
     // resets sample data on change of file type
