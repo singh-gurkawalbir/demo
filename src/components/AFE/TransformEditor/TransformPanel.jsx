@@ -1,9 +1,13 @@
+import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
-import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
+import {
+  getUnionObject,
+  getJSONPathArrayWithSpecialCharactersWrapped,
+} from '../../../utils/jsonPaths';
 import { isJsonString } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
@@ -36,17 +40,35 @@ export default function TransformPanel(props) {
     dispatch(actions.editor.patch(editorId, { rule: value }));
   };
 
-  let parsedData;
+  const dataFields = useMemo(() => {
+    let parsedData;
 
-  // We are supporting passing of string and json to editor. Check if we want to have a consistency.
-  // The change to be made in other editors too
-  if (data && typeof data === 'string' && isJsonString(data)) {
-    parsedData = JSON.parse(data);
-  } else if (data && typeof data === 'object') {
-    parsedData = data;
-  }
+    // We are supporting passing of string and json to editor. Check if we want to have a consistency.
+    // The change to be made in other editors too
+    if (data && typeof data === 'string' && isJsonString(data)) {
+      parsedData = JSON.parse(data);
+    } else if (data && typeof data === 'object') {
+      parsedData = data;
+    }
 
-  const dataFields = getJSONPaths(pickFirstObject(parsedData || {}));
+    let isGroupedData = false;
+
+    if (Array.isArray(parsedData) && parsedData.length) {
+      parsedData = getUnionObject(parsedData);
+      isGroupedData = true;
+    }
+
+    const extractOptions =
+      getJSONPathArrayWithSpecialCharactersWrapped(
+        parsedData || {},
+        null,
+        true
+      ) || [];
+
+    return extractOptions.map(e => ({
+      id: isGroupedData ? `*.${e}` : e,
+    }));
+  }, [data]);
   const suggestionConfig = {
     keyConfig: {
       suggestions: dataFields,
