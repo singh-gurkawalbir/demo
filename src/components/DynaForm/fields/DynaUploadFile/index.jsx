@@ -4,7 +4,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
-import { generateNewId } from '../../../../utils/resource';
 
 function DynaUploadFile(props) {
   const {
@@ -16,11 +15,11 @@ function DynaUploadFile(props) {
     onFieldChange,
   } = props;
   const DEFAULT_PLACEHOLDER = 'No file chosen';
-  const [fileId] = useState(generateNewId());
+  const [fileId] = useState(`${resourceId}-${id}`);
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
   const uploadedFile = useSelector(
-    state => getUploadedFile(state, fileId) || {},
+    state => getUploadedFile(state, fileId),
     shallowEqual
   );
 
@@ -71,7 +70,7 @@ function DynaUploadFile(props) {
     <FileUploader
       {...props}
       fileName={fileName}
-      uploadError={uploadedFile.error || ''}
+      uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}
     />
   );

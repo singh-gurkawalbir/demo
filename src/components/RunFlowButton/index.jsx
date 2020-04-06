@@ -8,7 +8,6 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 import { EMPTY_RAW_DATA } from '../../utils/constants';
-import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -28,7 +27,7 @@ export default function RunFlowButton({
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const fileInput = useRef(null);
-  const [fileId] = useState(generateNewId());
+  const [fileId] = useState(flowId);
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
