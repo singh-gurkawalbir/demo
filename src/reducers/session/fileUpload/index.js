@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default function(state = {}, action) {
-  const { type, fileId, file, error, props = {} } = action;
+  const { type, fileId, file, error, fileProps = {} } = action;
 
   return produce(state, draft => {
     if (!type || !fileId) return draft;
@@ -18,7 +18,7 @@ export default function(state = {}, action) {
         draft[fileId] = {
           status: 'received',
           file,
-          ...props,
+          ...fileProps,
         };
         break;
       case actionTypes.FILE.PROCESS_ERROR:

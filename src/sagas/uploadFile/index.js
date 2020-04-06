@@ -127,7 +127,7 @@ function* processFile({ fileId, file, fileType }) {
     actions.file.processedFile({
       fileId,
       file: fileContent,
-      props: { name, size, fileType },
+      fileProps: { name, size, fileType },
     })
   );
 }

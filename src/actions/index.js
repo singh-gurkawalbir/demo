@@ -907,11 +907,11 @@ const file = {
       file,
       fileType,
     }),
-  processedFile: ({ fileId, file, props }) =>
+  processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
       fileId,
       file,
-      props,
+      fileProps,
     }),
   processError: ({ fileId, error }) =>
     action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
