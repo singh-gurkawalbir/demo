@@ -82,3 +82,51 @@ export function suiteScriptTileName(tile) {
 
   return name;
 }
+
+/*
+ * The below utils dragTileConfig and dropTileConfig are used for Tile, SuiteScript Tile Components
+ * It supplies required config to support drag and drop functionality among tiles
+ */
+
+export const dragTileConfig = (index, onDrop) => ({
+  item: { type: 'TILE', index },
+  collect: monitor => ({
+    isDragging: monitor.isDragging(),
+  }),
+  end: dropResult => {
+    if (dropResult) {
+      onDrop();
+    }
+  },
+
+  canDrag: true,
+});
+
+export const dropTileConfig = (ref, index, onMove) => ({
+  accept: 'TILE',
+  hover(item) {
+    if (!ref.current) {
+      return;
+    }
+
+    const dragIndex = item.index;
+    const hoverIndex = index;
+
+    // Don't replace items with themselves
+    if (dragIndex === hoverIndex) {
+      return;
+    }
+
+    onMove(dragIndex, hoverIndex);
+    // eslint-disable-next-line no-param-reassign
+    item.index = hoverIndex;
+  },
+  collect: monitor => ({
+    isOver: monitor.isOver(),
+  }),
+});
+
+export const getTileId = tile =>
+  tile.ssLinkedConnectionId
+    ? `${tile.ssLinkedConnectionId}_${tile._integrationId}`
+    : tile._integrationId;

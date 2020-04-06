@@ -86,7 +86,7 @@ export default class AppRouting extends Component {
           component={CloneSetup}
         />
         <Route
-          path="/pg/templates/:templateName/:integrationId"
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId"
           exact
           render={({ history, match }) =>
             history.replace(
@@ -114,11 +114,11 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/marketplace/templates/:templateName/:templateId"
+          path="/pg/marketplace/templates/:templateId"
           exact
           render={({ history, match }) =>
             history.replace(
-              `/pg/marketplace/templates/${match.params.templateName}/${match.params.templateId}/preview`
+              `/pg/marketplace/templates/${match.params.templateId}/preview`
             )
           }
         />
@@ -126,9 +126,9 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
-            '/pg/templates/:templateName/:integrationId/flowBuilder/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
-            '/pg/templates/:templateName/:integrationId/dataLoader/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
@@ -162,7 +162,9 @@ export default class AppRouting extends Component {
           component={IntegrationApp}
         />
         <Route
-          path="/pg/templates/:templateName/:integrationId/:tab"
+          // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+          // templateName has structure of application2-application2 will contain atleast 5 characters
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId/:tab"
           component={Integration}
         />
 

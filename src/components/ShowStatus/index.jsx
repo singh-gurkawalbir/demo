@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     '& div:first-child': {
       justifyContent: 'flex-start',
-      maxWidth: '80%',
+      maxWidth: props => (props.fullWidth ? '100%' : '80%'),
       paddingLeft: 0,
       '& > a': {
         margin: '0px 5px',
@@ -63,12 +63,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ShowStatus(props) {
-  const { children, className, variant } = props;
+  const { children, className, variant, fullWidth } = props;
   const classes = useStyles(props);
 
   return (
     <NotificationToaster
       variant={variant}
+      fullWidth={fullWidth}
       className={clsx(classes.customWrapper, classes[variant], className)}>
       <div className={classes.children}>{children}</div>
     </NotificationToaster>

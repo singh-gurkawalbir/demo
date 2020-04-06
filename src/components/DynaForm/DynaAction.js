@@ -17,6 +17,8 @@ function DynaAction(props) {
     visibleWhen,
     visibleWhenAll,
     isValid,
+    variant = 'outlined',
+    color = 'primary',
   } = props;
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     ...props,
@@ -52,8 +54,8 @@ function DynaAction(props) {
   return (
     <Button
       data-test={id || dataTest}
-      variant="outlined"
-      color="primary"
+      variant={variant}
+      color={color}
       className={className}
       disabled={disabled || !formTouched}
       onClick={onClick}>
