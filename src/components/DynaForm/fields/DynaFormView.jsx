@@ -1,6 +1,6 @@
 import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import actions from '../../../actions';
 import {
   defaultPatchSetConverter,
@@ -17,7 +17,7 @@ const emptyObj = {};
 const isParent = true;
 
 export function FormView(props) {
-  const { resourceType, flowId, resourceId, formContext } = props;
+  const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();
   const staggedResource = useSelector(state => {
     const { merged } =
@@ -118,13 +118,14 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && staggedResource.assistant;
+  const [isAssistant] = useState(staggedResource.assistant);
+  const isFlowBuilderAssistant = flowId && isAssistant;
 
   return isFlowBuilderAssistant ? (
     <DynaRadio
       {...props}
       onFieldChange={onFieldChangeFn}
-      value={`${!!staggedResource.useParentForm}`}
+      value={value}
       options={options}
     />
   ) : null;
