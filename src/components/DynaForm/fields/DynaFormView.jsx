@@ -97,10 +97,15 @@ export function FormView(props) {
       actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
     );
 
-    const allTouchedFields = formContext.fields
+    let allTouchedFields = formContext.fields
       .filter(field => !!field.touched)
       .map(field => ({ id: field.id, value: field.value }));
 
+    // When we initialize we always have the selected form view field touched
+    allTouchedFields = [
+      ...allTouchedFields,
+      { id, value: selectedApplication },
+    ];
     dispatch(
       actions.resourceForm.init(
         resourceType,
