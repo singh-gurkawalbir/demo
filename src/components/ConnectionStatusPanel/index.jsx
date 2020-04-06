@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import ShowStatus from '../ShowStatus';
+import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 
 const useStyles = makeStyles(theme => ({
@@ -108,7 +108,7 @@ export default function ConnectionStatusPanel(props) {
 
   return (
     <div>
-      <ShowStatus variant={variant} fullWidth>
+      <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
           <Typography variant="h6">{message}</Typography>
         ) : (
@@ -117,7 +117,7 @@ export default function ConnectionStatusPanel(props) {
               The connection associated with this export is currently offline
               and configuration is limited.
             </Typography>
-            <Typography variant="h6">
+            <Typography variant="h6" component="span">
               <Button
                 data-test="fixConnection"
                 size="small"
@@ -129,7 +129,7 @@ export default function ConnectionStatusPanel(props) {
             </Typography>
           </div>
         )}
-      </ShowStatus>
+      </NotificationToaster>
     </div>
   );
 }
