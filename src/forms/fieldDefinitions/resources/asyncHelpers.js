@@ -71,6 +71,7 @@ export default {
   },
   'http.submit.transform': {
     type: 'transformrules',
+    helpKey: 'asynchelper.rules',
     label: 'Transform Rules for Submit Response',
   },
 };

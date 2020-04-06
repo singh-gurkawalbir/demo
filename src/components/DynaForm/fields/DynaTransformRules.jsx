@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { deepClone } from 'fast-json-patch';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import TransformEditorDialog from '../../AFE/TransformEditor/Dialog';
 import ActionButton from '../../ActionButton';
@@ -6,6 +8,10 @@ import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor';
 
 const useStyles = makeStyles({
+  label: {
+    fontSize: 15,
+    padding: 0,
+  },
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -22,31 +28,42 @@ const useStyles = makeStyles({
     alignItems: 'flex-start',
   },
 });
-const constructTransformData = (originalVal, modifiedFirstRule) => {
-  const updatedRule = originalVal && originalVal.rules ? originalVal : [];
+const constructTransformData = (rule, modifiedFirstRule) => {
+  const _rule = deepClone(rule);
 
-  updatedRule[0] = modifiedFirstRule;
+  _rule[0] = modifiedFirstRule;
 
   return {
     version: 1,
-    rules: updatedRule ? [updatedRule] : [[]],
-    rulesCollection: { mappings: [updatedRule] },
+    rules: _rule,
+    rulesCollection: { mappings: _rule },
   };
 };
 
+const getTransformRule = value => {
+  if (!value || !value.rules) {
+    return undefined;
+  }
+
+  return value.rules && Array.isArray(value.rules[0])
+    ? value.rules
+    : value.rules[0];
+};
+
+// TODO (Azhar) Work on styling
 export default function DynaTransformRules(props) {
   const classes = useStyles();
-  const { id, resourceId, value, onFieldChange, disabled } = props;
-  const firstRuleSet = value && value.rules ? value.rules[0] : null;
+  const { id, resourceId, value, label, onFieldChange, disabled } = props;
+  const rule = getTransformRule(value);
   const [showEditor, setShowEditor] = useState(false);
   const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { rule } = editorValues;
-
-      onFieldChange(id, constructTransformData(value, rule));
-    }
-
     setShowEditor(false);
+
+    if (shouldCommit) {
+      const { rule: newRule } = editorValues;
+
+      onFieldChange(id, constructTransformData(rule || [], newRule));
+    }
   };
 
   const toggleEditor = () => {
@@ -60,19 +77,15 @@ export default function DynaTransformRules(props) {
           title="Transform Mapping"
           id={id + resourceId}
           data=""
-          rule={firstRuleSet}
+          rule={rule && rule[0]}
           onClose={handleClose}
           disabled={disabled}
         />
       )}
+      <Typography className={classes.label}>{label}</Typography>
       <div className={classes.root}>
         <div className={classes.editorContainer}>
-          <CodeEditor
-            name={id}
-            value={JSON.stringify(value && value.rules, null, 2)}
-            mode="json"
-            readOnly
-          />
+          <CodeEditor name={id} value={rule} mode="json" readOnly />
         </div>
         <div>
           <ActionButton
