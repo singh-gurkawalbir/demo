@@ -913,7 +913,7 @@ const file = {
       file,
       props,
     }),
-  uploadError: ({ fileId, error }) =>
+  processError: ({ fileId, error }) =>
     action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
   reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
 };

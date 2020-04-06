@@ -102,7 +102,7 @@ function* processFile({ fileId, file, fileType }) {
   const { name, size } = file;
 
   if (error) {
-    return yield put(actions.file.uploadError({ fileId, error }));
+    return yield put(actions.file.processError({ fileId, error }));
   }
 
   let fileContent = yield call(configureFileReader, file, fileType);
@@ -114,7 +114,7 @@ function* processFile({ fileId, file, fileType }) {
         : getJSONContent(fileContent);
 
     if (error) {
-      return yield put(actions.file.uploadError({ fileId, error }));
+      return yield put(actions.file.processError({ fileId, error }));
     }
 
     if (fileType === 'json') {
