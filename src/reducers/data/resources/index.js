@@ -14,12 +14,48 @@ const resourceTypesToIgnore = [
   ...accountResources,
   'audit',
 ];
+const convertOldFlowSchemaToNewOne = flow => {
+  const {
+    pageGenerators,
+    pageProcessors,
+    _exportId,
+    _importId,
+    ...rest
+  } = flow;
+  const updatedFlow = {
+    ...rest,
+    pageGenerators,
+    pageProcessors,
+    flowConvertedToNewSchema: true,
+  };
+
+  // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
+  if (!pageGenerators && _exportId) {
+    updatedFlow.pageGenerators = [
+      {
+        type: 'export',
+        _exportId,
+      },
+    ];
+  }
+
+  if (!pageProcessors && _importId) {
+    updatedFlow.pageProcessors = [
+      {
+        type: 'import',
+        _importId,
+      },
+    ];
+  }
+
+  return updatedFlow;
+};
 
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
   let type = resourceType;
   // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
-  const resource = resourceValue || {};
+  let resource = resourceValue || {};
 
   if (type.indexOf('/licenses') >= 0) {
     const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
@@ -32,6 +68,8 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
   if (type.indexOf('integrations/') >= 0) {
     type = type.split('/').pop();
   }
+
+  if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
 
   if (!state[type]) {
     return { ...state, [type]: [resource] };
@@ -176,42 +214,12 @@ export default (state = {}, action) => {
       // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
       // about it when you have time to refactor.
       if (resourceType === 'flows') {
-        const newCollection =
-          collection &&
-          collection.map &&
-          collection.map(flow => {
-            const {
-              pageGenerators,
-              pageProcessors,
-              _exportId,
-              _importId,
-              ...rest
-            } = flow;
-            const updatedFlow = { ...rest, pageGenerators, pageProcessors };
-
-            // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
-            if (!pageGenerators && _exportId) {
-              updatedFlow.pageGenerators = [
-                {
-                  type: 'export',
-                  _exportId,
-                },
-              ];
-            }
-
-            if (!pageProcessors && _importId) {
-              updatedFlow.pageProcessors = [
-                {
-                  type: 'import',
-                  _importId,
-                },
-              ];
-            }
-
-            return updatedFlow;
-          });
-
         return produce(state, draft => {
+          const newCollection =
+            collection &&
+            collection.map &&
+            collection.map(convertOldFlowSchemaToNewOne);
+
           draft.flows = newCollection || [];
         });
       }
