@@ -52,7 +52,7 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form View',
-    defaultValue: 'false',
+    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   asynchronous: {
     type: 'checkbox',

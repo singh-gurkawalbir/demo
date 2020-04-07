@@ -7,7 +7,7 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form View',
-    defaultValue: 'false',
+    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
