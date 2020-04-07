@@ -15,6 +15,7 @@ export default {
       url: item.url,
       hasSubRecord: item.hasSubRecord,
       subRecordConfig: item.subRecordConfig,
+      doesNotSupportUpdate: item.doesNotSupportUpdate,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
