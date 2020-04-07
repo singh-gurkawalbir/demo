@@ -45,9 +45,7 @@ const getTransformRule = value => {
     return undefined;
   }
 
-  return value.rules && Array.isArray(value.rules[0])
-    ? value.rules
-    : value.rules[0];
+  return value.rules;
 };
 
 // TODO (Azhar) Work on styling
