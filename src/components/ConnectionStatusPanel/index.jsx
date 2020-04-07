@@ -93,9 +93,7 @@ export default function ConnectionStatusPanel(props) {
 
   useEffect(() => {
     // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
-    // TODO: Aditya please verify if this fix is okay...it was making ping calls when we are creating a new resource ...
-    // at that point we haven't assigned a connectionId to it yet
-
+    // and if it is a new connection resource you are creating then there is no point in making ping calls
     if (connectionId && !isNewId(connectionId)) {
       dispatch(actions.resource.connections.pingAndUpdate(connectionId));
     }
