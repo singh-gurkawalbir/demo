@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, Fragment, useRef, useCallback } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
@@ -16,11 +16,14 @@ import Spinner from '../Spinner';
 import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
+import { generateNewId } from '../../utils/resource';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ButtonsGroup from '../ButtonGroup';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
+  fileInput: { display: 'none' },
   spinner: {
     left: '0px',
     right: '0px',
@@ -83,7 +86,10 @@ function JobErrorTable({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const [currentPage, setCurrentPage] = useState(0);
+  const [fileId] = useState(generateNewId());
+  const uploadFileRef = useRef(null);
   const isJobInProgress = job.status === JOB_STATUS.RETRYING;
   const hasRetriableErrors =
     jobErrors.filter(
@@ -139,6 +145,36 @@ function JobErrorTable({
   function handleDownloadAllErrorsClick() {
     dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'errors' }));
   }
+
+  const handleUploadProcessedErrors = useCallback(() => {
+    uploadFileRef.current.value = '';
+    uploadFileRef.current.click();
+  }, []);
+  const handleFileChosen = useCallback(
+    event => {
+      const file = event.target.files[0];
+
+      if (!file) return;
+      confirmDialog({
+        title: 'Confirm',
+        message: `The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always 'Download All Errors' and work from the latest error file. Are you sure you want to proceed with this upload?`,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              dispatch(
+                actions.file.processFile({ fileId, file, fileType: 'csv' })
+              );
+            },
+          },
+        ],
+      });
+    },
+    [confirmDialog, dispatch, fileId]
+  );
 
   function handleRetryClick() {
     if (selectedErrorIds.length === 0) {
@@ -254,12 +290,33 @@ function JobErrorTable({
 
     return selectors.jobErrorRetryObject(state, editDataOfRetryId);
   });
+  const uploadedFile = useSelector(
+    state => selectors.getUploadedFile(state, fileId),
+    shallowEqual
+  );
 
   useEffect(() => {
     if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
       dispatch(actions.job.requestRetryData({ retryId: editDataOfRetryId }));
     }
   }, [dispatch, editDataOfRetryId, retryObject]);
+
+  useEffect(() => {
+    const { status, error } = uploadedFile || {};
+
+    switch (status) {
+      case 'error':
+        enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+        break;
+      case 'received':
+        // perform action once file is ready
+        break;
+      default:
+    }
+  }, [dispatch, enqueueSnackbar, uploadedFile]);
 
   function handleRetryDataChange(data) {
     const updatedData = { ...retryObject.retryData, data };
@@ -362,9 +419,18 @@ function JobErrorTable({
               data-test="uploadProcessedErrors"
               variant="outlined"
               color="secondary"
-              disabled={isJobInProgress}>
+              disabled={isJobInProgress}
+              onClick={handleUploadProcessedErrors}>
               Upload processed errors
             </Button>
+            <input
+              data-test="uploadFile"
+              id="fileUpload"
+              type="file"
+              ref={uploadFileRef}
+              className={classes.fileInput}
+              onChange={handleFileChosen}
+            />
           </ButtonsGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (
