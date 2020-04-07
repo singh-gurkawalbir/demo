@@ -5,9 +5,7 @@ export default {
     '/assistant': 'microsoftbusinesscentral',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.businesscentral.dynamics.com/v2.0/${
-      formValues['/http/unencrypted/environmentName']
-    }/api/v1.0/`,
+    '/http/baseURI': 'https://api.businesscentral.dynamics.com',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':
@@ -22,18 +20,10 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.unencrypted.environmentName': {
-      type: 'text',
-      id: 'http.unencrypted.environmentName',
-      helpText:
-        "Enter your Microsoft Dynamics 365 Business Central's enviornment.",
-      label: 'Environment Name',
-      required: true,
-    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.unencrypted.environmentName'],
+    fields: ['name'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
