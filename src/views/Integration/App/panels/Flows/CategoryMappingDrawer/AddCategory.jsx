@@ -13,6 +13,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
+import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -34,6 +35,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
   const categoryRelationshipData =
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
@@ -201,20 +205,24 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         onClose={handleClose}
         backToParent
       />
-      <DynaForm
-        fieldMeta={fieldMeta}
-        formState={formState}
-        optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit
-          showCustomFormValidations={showCustomFormValidations}
-          data-test="addCategory"
-          onClick={handleSave}>
-          Add Category
-        </DynaSubmit>
-        <Button variant="text" color="primary" onClick={handleClose}>
-          Cancel
-        </Button>
-      </DynaForm>
+      {metadataLoaded ? (
+        <DynaForm
+          fieldMeta={fieldMeta}
+          formState={formState}
+          optionsHandler={fieldMeta.optionsHandler}>
+          <DynaSubmit
+            showCustomFormValidations={showCustomFormValidations}
+            data-test="addCategory"
+            onClick={handleSave}>
+            Add Category
+          </DynaSubmit>
+          <Button variant="text" color="primary" onClick={handleClose}>
+            Cancel
+          </Button>
+        </DynaForm>
+      ) : (
+        <Spinner />
+      )}
     </Drawer>
   );
 }

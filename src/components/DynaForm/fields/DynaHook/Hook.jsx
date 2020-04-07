@@ -56,6 +56,7 @@ export default function DynaHook(props) {
   );
   const {
     id,
+    flowId,
     disabled,
     name,
     onFieldChange,
@@ -69,6 +70,12 @@ export default function DynaHook(props) {
     editorResultMode,
     requestForPreHookData,
   } = props;
+  const scriptContext = useSelector(state =>
+    selectors.getScriptContext(state, {
+      contextType: 'hook',
+      flowId,
+    })
+  );
   const handleEditorClick = useCallback(() => {
     if (requestForPreHookData && isFunction(requestForPreHookData)) {
       requestForPreHookData();
@@ -181,6 +188,7 @@ export default function DynaHook(props) {
           scriptId={value._scriptId}
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
+          context={scriptContext}
           onClose={handleClose}
           resultMode={editorResultMode}
           optionalSaveParams={optionalSaveParams}

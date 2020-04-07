@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -26,28 +26,32 @@ const SaveFileDefinitionButton = props => {
   const saveTerminated = useSelector(state =>
     resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const handleSubmitForm = values => {
-    let definitionRules = values['/file/filedefinition/rules'];
+  const handleSubmitForm = useCallback(
+    values => {
+      let definitionRules = values['/file/filedefinition/rules'];
 
-    try {
-      definitionRules = JSON.parse(definitionRules);
+      try {
+        definitionRules = JSON.parse(definitionRules);
 
-      dispatch(
-        actions.fileDefinitions.definition.userDefined.save(definitionRules, {
-          resourceId,
-          resourceType,
-          values,
-        })
-      );
-      setDisableSave(true);
-    } catch (e) {
-      // Handle incase of JSON parsing error
-      enquesnackbar({
-        message: e,
-        variant: 'error',
-      });
-    }
-  };
+        dispatch(
+          actions.fileDefinitions.definition.userDefined.save(definitionRules, {
+            resourceId,
+            resourceType,
+            values,
+          })
+        );
+        setDisableSave(true);
+      } catch (e) {
+        // Handle incase of JSON parsing error
+        enquesnackbar({
+          message:
+            'Filedefinition rules provided is not a valid json, Please correct it.',
+          variant: 'error',
+        });
+      }
+    },
+    [dispatch, enquesnackbar, resourceId, resourceType]
+  );
 
   useEffect(() => {
     if (saveTerminated) setDisableSave(false);
