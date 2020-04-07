@@ -106,7 +106,7 @@ export default function DynaEditor({
           value={value}
           mode={resultantMode}
           readOnly={disabled}
-          onChange={value => handleUpdate(value)}
+          onChange={handleUpdate}
         />
       </div>
       <div>
@@ -142,7 +142,7 @@ export default function DynaEditor({
             name={`${id}-inline`}
             value={value}
             mode={mode}
-            onChange={value => handleUpdate(value)}
+            onChange={handleUpdate}
           />
         </div>
         <ErroredMessageComponent

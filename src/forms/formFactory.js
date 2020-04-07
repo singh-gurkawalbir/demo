@@ -100,8 +100,6 @@ const applyCustomSettings = ({
     const newValues = preSave ? preSave(values) : values;
 
     return produce(newValues, draft => {
-      // why not use:
-      // retValues.hasOwnProperty('/settings');
       if (Object.hasOwnProperty.call(draft, '/settings')) {
         let settings = draft['/settings'];
 
@@ -116,6 +114,10 @@ const applyCustomSettings = ({
     });
   };
 
+  // TODO: this level of input specific validation should not be within the
+  // formFactory.. this needs to be within the form meta (validWhen rules) or
+  // just JS within the Dyna[Input] component mapped to manage the value.
+  // This will be easiest after refactor of react-forms-processor to use redux.
   const validationHandlerProxy = field => {
     // Handles validity for settings field (when in string form)
     // Incase of other fields call the existing validationHandler
@@ -126,6 +128,10 @@ const applyCustomSettings = ({
         !isJsonString(field.value)
       )
         return 'Settings must be a valid JSON';
+
+      if (field.value && field.value.__invalid) {
+        return 'Some of your settings are not valid.';
+      }
     }
 
     if (validationHandler) return validationHandler(field);
