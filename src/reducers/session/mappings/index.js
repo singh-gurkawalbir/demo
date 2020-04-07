@@ -25,6 +25,7 @@ export default function reducer(state = {}, action) {
             adaptorType,
             resourceData,
             application,
+            connection,
             isGroupedSampleData,
             salesforceMasterRecordTypeId,
             netsuiteRecordType,
@@ -84,7 +85,6 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            showHttpAssistantPreview: !!resourceData.assistant,
             // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedKey: '',
           };
@@ -92,7 +92,12 @@ export default function reducer(state = {}, action) {
           tmp.mappingsCopy = deepClone(tmp.mappings);
           tmp.lookupsCopy = deepClone(tmp.lookups);
 
-          if (resourceData._integrationId && resourceData.http) {
+          if (
+            resourceData._integrationId &&
+            resourceData.http &&
+            (resourceData.http.requestMediaType === 'xml' ||
+              connection.http.mediaType === 'xml')
+          ) {
             tmp.httpAssistantPreview = {
               rule:
                 resourceData && resourceData.http && resourceData.http.body[0],
