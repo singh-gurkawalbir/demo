@@ -16,6 +16,15 @@ const useStyles = makeStyles({
 // const defaultSettingsMeta = {
 //   fieldMap: {
 //     storeName: {
+//       id: 'conenction',
+//       name: 'connetionId',
+//       type: 'cron',
+//       resourceType: 'connections',
+//       helpText: 'Enter your store name, which is also your host subdomain.',
+//       label: 'Store Name',
+//       required: true,
+//     },
+//     storeName: {
 //       id: 'storeName',
 //       name: 'storeName',
 //       type: 'text',
@@ -38,7 +47,7 @@ const useStyles = makeStyles({
 //     },
 //   },
 //   layout: {
-//     fields: ['storeName', 'currency'],
+//     fields: ['connection', 'storeName', 'currency'],
 //   },
 // };
 
@@ -52,13 +61,8 @@ function getFieldMetaWithDefaults(fieldMeta, values) {
   });
 }
 
-export default function DynaSettings({
-  id,
-  value,
-  resourceContext,
-  onFieldChange,
-  ...rest
-}) {
+export default function DynaSettings(props) {
+  const { id, value, disabled, resourceContext, onFieldChange } = props;
   const { resourceType, resourceId } = resourceContext;
   const classes = useStyles();
   const [settingsFormVersion, setSettingsFormVersion] = useState(0);
@@ -67,6 +71,9 @@ export default function DynaSettings({
   const [alteredMeta, setAlteredMeta] = useState();
   const [metaError, setMetaError] = useState();
   const dispatch = useDispatch();
+  // const fieldMeta = useSelector(state => {
+  //   selectors.customFrom.meta(state);
+  // });
   const fieldMeta = useSelector(state => {
     // settingsForm = { form: {[metadata]}, init: {function, _scriptId}}
     // We are going to ignore the init hook for now as there is good chance
@@ -128,7 +135,7 @@ export default function DynaSettings({
   }, [editFormMode, fieldMeta, value]);
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
-      console.log(isValid ? 'valid: ' : 'invalid: ', values);
+      // console.log(isValid ? 'valid: ' : 'invalid: ', values);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       onFieldChange(id, { ...values, __invalid: !isValid });
@@ -148,7 +155,7 @@ export default function DynaSettings({
     setAlteredMeta(value);
   }, []);
   const handleSaveFormMeta = useCallback(() => {
-    console.log('save form meta!', alteredMeta);
+    // console.log('save form meta!', alteredMeta);
     let meta;
 
     try {
@@ -165,7 +172,7 @@ export default function DynaSettings({
       patchSet.push({ op: 'add', path: '/settingsForm', value: {} });
     }
 
-    patchSet.push({ op: 'replace', path: '/settingsForm/form', value: meta });
+    patchSet.push({ op: 'add', path: '/settingsForm/form', value: meta });
 
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'form-meta'));
     dispatch(
@@ -177,7 +184,7 @@ export default function DynaSettings({
   // we only need to do this once as an "init"... value changes don't matter.
   // form metadata does matter.
   useEffect(() => {
-    console.log('Init DynaSettings fieldMeta:', value, fieldMeta);
+    // console.log('Init DynaSettings fieldMeta:', value, fieldMeta);
 
     if (fieldMeta) {
       setFinalMeta(getFieldMetaWithDefaults(fieldMeta, value));
@@ -218,17 +225,14 @@ export default function DynaSettings({
       <Fragment>
         <Button onClick={handleToggleFormEditClick}>Toggle form editor</Button>
         <EditorField
-          {...rest}
+          {...props}
           label="Settings"
-          value={value} // TODO: convert to string.
           editorClassName={classes.editor}
           mode="json"
         />
       </Fragment>
     );
   }
-
-  console.log(settingsFormVersion);
 
   return (
     <Fragment>
@@ -238,7 +242,7 @@ export default function DynaSettings({
       <DynaForm
         key={settingsFormVersion}
         onChange={handleSettingFormChange}
-        disabled={rest.disabled}
+        disabled={disabled}
         fieldMeta={finalMeta}
       />
     </Fragment>
