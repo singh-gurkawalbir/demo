@@ -6,12 +6,14 @@ import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import ShowStatus from '../ShowStatus';
+import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    margin: theme.spacing(1, 0),
+  },
   fixConnectionBtn: {
-    padding: 0,
     color: theme.palette.primary.main,
   },
 }));
@@ -107,29 +109,25 @@ export default function ConnectionStatusPanel(props) {
   }
 
   return (
-    <div>
-      <ShowStatus variant={variant} fullWidth>
+    <div className={classes.root}>
+      <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
           <Typography variant="h6">{message}</Typography>
         ) : (
-          <div>
-            <Typography variant="h6">
-              The connection associated with this export is currently offline
-              and configuration is limited.
-            </Typography>
-            <Typography variant="h6">
-              <Button
-                data-test="fixConnection"
-                size="small"
-                className={classes.fixConnectionBtn}
-                onClick={handleConnectionFixClick}>
-                Fix your connection
-              </Button>{' '}
-              to bring it back online
-            </Typography>
-          </div>
+          <Typography component="div" variant="h6">
+            The connection associated with this export is currently offline and
+            configuration is limited,
+            <Button
+              data-test="fixConnection"
+              size="small"
+              className={classes.fixConnectionBtn}
+              onClick={handleConnectionFixClick}>
+              Fix your connection
+            </Button>
+            to bring it back online
+          </Typography>
         )}
-      </ShowStatus>
+      </NotificationToaster>
     </div>
   );
 }

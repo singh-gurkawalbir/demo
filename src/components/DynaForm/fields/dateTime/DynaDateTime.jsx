@@ -22,7 +22,7 @@ export default function DateTimePicker(props) {
       <KeyboardDateTimePicker
         label={label}
         format={format}
-        value={value}
+        value={dateValue}
         allowKeyboardControl={false}
         inputVariant="outlined"
         InputLabelProps={{
@@ -43,7 +43,7 @@ export default function DateTimePicker(props) {
         variant="dialog"
         invalidLabel={null}
         invalidDateMessage={null}
-        onChange={value => setDateValue(value)}
+        onChange={setDateValue}
         disabled={disabled}
         clearable
         keyboardIcon={<CalendarIcon />}
