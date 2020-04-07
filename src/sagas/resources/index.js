@@ -101,6 +101,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
 
     if (resourceIsDataLoaderFlow || merged.flowConvertedToNewSchema) {
+      // this values has been at the time of caching a flow collection we convert it to the new schema
+      // and set this flag flowConvertedToNewSchema to true ...now when we are actually commiting the resource
+      // we reverse this process and convert it back to the old schema ...also we delete this flag
       delete merged.flowConvertedToNewSchema;
 
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
