@@ -60,7 +60,7 @@ export default function ApplicationImg({
   const dbConnectors = map(getDatabaseConnectors(), 'id');
 
   if (!assistant) {
-    if (dbConnectors.includes(iconMap(type))) {
+    if (dbConnectors.includes(iconMap(type)) && markOnly) {
       path += `marketplace/small/${iconMap(type)}.png`;
     } else {
       path += `flow-builder/company-logos/integration-icon-${iconMap(
