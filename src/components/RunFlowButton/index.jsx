@@ -153,6 +153,8 @@ export default function RunFlowButton({
             fileType: dataLoaderFileType,
           })
         );
+        // Removes uploaded file from session as it is no longer needed once triggered flow run
+        dispatch(actions.file.reset(flowId));
         enqueueSnackbar({
           message: `${flowDetails.name} has been added to your queue.`,
         });

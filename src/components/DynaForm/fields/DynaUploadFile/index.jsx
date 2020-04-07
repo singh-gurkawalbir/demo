@@ -53,6 +53,8 @@ function DynaUploadFile(props) {
       onFieldChange(id, '', true);
       setFileName(DEFAULT_PLACEHOLDER);
     }
+
+    return () => dispatch(actions.file.reset(fileId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId, fileId]);
 
