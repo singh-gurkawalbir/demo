@@ -449,7 +449,6 @@ export default {
             label: 'Advanced',
             fields: [
               'advancedSettings',
-              'skipRetries',
               'configureAsyncHelper',
               'http._asyncHelperId',
             ],
