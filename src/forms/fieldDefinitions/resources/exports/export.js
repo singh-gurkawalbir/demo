@@ -48,7 +48,12 @@ export default {
   },
 
   // UI Specific field
-  formView: { id: 'formView', type: 'formview', label: 'Form View' },
+  formView: {
+    id: 'formView',
+    type: 'formview',
+    label: 'Form View',
+    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+  },
   asynchronous: {
     type: 'checkbox',
     label: 'Asynchronous',
