@@ -269,11 +269,11 @@ function* patchSkipRetries({ resourceId }) {
         },
       ];
     } else {
-      const index = flow.pageGenerators.findIndex(
-        pg => pg._exportId === resourceId
-      );
+      const index =
+        flow.pageGenerators &&
+        flow.pageGenerators.findIndex(pg => pg._exportId === resourceId);
 
-      if (index === -1) return;
+      if (!index || index === -1) return;
       patchSet = [
         {
           op: 'replace',
