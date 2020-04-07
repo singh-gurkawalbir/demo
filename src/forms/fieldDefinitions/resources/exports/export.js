@@ -567,8 +567,8 @@ export default {
     type: 'exportpanel',
   },
   skipRetries: {
-    type: 'checkbox',
-    label: 'Skip Retries',
+    type: 'skipRetries',
+    label: 'Do not store retry data',
     visible: r => !(r && r.isLookup),
   },
   settings: {

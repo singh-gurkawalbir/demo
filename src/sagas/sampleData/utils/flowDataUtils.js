@@ -387,7 +387,9 @@ export function* getFlowStageData({
   });
 
   try {
-    if (!flowStageData.status) {
+    // @BugFix 13750: Check for received status to make an api call or fetch from above
+    // Used to be !flowStageData.status but there can be a case where status is requested, so safe to check for received status
+    if (flowStageData.status !== 'received') {
       yield call(requestSampleData, {
         flowId,
         resourceId,

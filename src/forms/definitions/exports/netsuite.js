@@ -343,6 +343,9 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
     },
+    skipRetries: {
+      fieldId: 'skipRetries',
+    },
     pageSize: {
       fieldId: 'pageSize',
       visibleWhenAll: [
@@ -384,6 +387,7 @@ export default {
             fields: [
               'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
+              'skipRetries',
               'netsuite.distributed.forceReload',
               'pageSize',
               'netsuite.restlet.batchSize',

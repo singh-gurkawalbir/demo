@@ -174,11 +174,16 @@ export default function ToggleEditorDialog(props) {
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
-  const disableSave = useMemo(() => !editor || editorViolations || disabled, [
-    disabled,
-    editor,
-    editorViolations,
-  ]);
+  const disableSave = useMemo(() => {
+    // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
+    const val =
+      !editor ||
+      editorViolations ||
+      disabled ||
+      (isEditorDirty !== undefined && !isEditorDirty);
+
+    return !!val;
+  }, [disabled, editor, editorViolations, isEditorDirty]);
 
   return (
     <Dialog
@@ -266,7 +271,7 @@ export default function ToggleEditorDialog(props) {
           variant="outlined"
           color="primary"
           dataTest="saveEditor"
-          disabled={!!disableSave}
+          disabled={disableSave}
           onClose={handleClose}
           submitButtonLabel="Save"
         />

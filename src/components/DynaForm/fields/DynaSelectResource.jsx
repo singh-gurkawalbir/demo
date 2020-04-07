@@ -18,7 +18,6 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
-import Spinner from '../../Spinner';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -123,22 +122,15 @@ function ConnectionLoadingChip(props) {
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
   }, [connectionId, dispatch]);
 
-  const connectionOffline = useSelector(
-    state => selectors.connectionStatus(state, connectionId).offline
-  );
-  const connectionRequestStatus = useSelector(
-    state => selectors.connectionStatus(state, connectionId).requestStatus
+  const isConnectionOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
+  if (isConnectionOffline === undefined) {
     return null;
   }
 
-  if (connectionRequestStatus === 'requested') {
-    return <Spinner />;
-  }
-
-  return connectionOffline ? (
+  return isConnectionOffline ? (
     <Chip color="secondary" label="Offline" />
   ) : (
     <Chip color="primary" label="Online" />
@@ -330,10 +322,7 @@ function DynaSelectResource(props) {
           </ActionButton>
         )}
         {resourceType === 'connections' && !!value && (
-          <ConnectionLoadingChip
-            resourceType={resourceType}
-            connectionId={value}
-          />
+          <ConnectionLoadingChip connectionId={value} />
         )}
       </div>
     </div>

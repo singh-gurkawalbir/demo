@@ -12,7 +12,7 @@ import {
 import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
-import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 
 const bannerHeight = 57;
@@ -136,7 +136,7 @@ export default function RightDrawer({
                 data-test="backRightDrawer"
                 aria-label="Close"
                 onClick={handleBack}>
-                <ArrowLeftIcon />
+                <BackArrowIcon />
               </IconButton>
             )}
             <Typography variant="h3" className={classes.title}>
