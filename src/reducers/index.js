@@ -3899,6 +3899,10 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
+
 /*
  * The selector returns appropriate context for the JS Processor to run
  * For now, it supports contextType: hook
