@@ -1,4 +1,3 @@
-import { isArray } from 'lodash';
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
@@ -22,7 +21,7 @@ export default (state = {}, action) => {
             const [, , ssLinkedConnectionId] = resourceType.split('/');
 
             if (!draft[ssLinkedConnectionId]) {
-              draft[ssLinkedConnectionId] = { tiles: [], flows: [] };
+              draft[ssLinkedConnectionId] = { tiles: [] };
             }
 
             if (resourceType.endsWith('/tiles')) {
@@ -80,6 +79,10 @@ export default (state = {}, action) => {
             } else if (resourceType.endsWith('/connections')) {
               draft[ssLinkedConnectionId].connections = collection;
             } else if (resourceType.endsWith('/flows')) {
+              if (!draft[ssLinkedConnectionId].flows) {
+                draft[ssLinkedConnectionId].flows = [];
+              }
+
               collection.forEach(flow => {
                 const index = draft[ssLinkedConnectionId].flows.findIndex(
                   f => f.type === flow.type && f._id === flow._id
@@ -269,7 +272,7 @@ export function resourceList(
     !resourceType ||
     !state[ssLinkedConnectionId]
   ) {
-    return null;
+    return emptyList;
   }
 
   if (resourceType === 'flows' && integrationId) {

@@ -284,8 +284,6 @@ export default function JobActionsMenu({
         showUndo: true,
         autoHideDuration: UNDO_TIME.RETRY,
         handleClose(event, reason) {
-          window.JOB = job;
-
           if (reason === 'undo') {
             return dispatch(
               actions.job.retryUndo({

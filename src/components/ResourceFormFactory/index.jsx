@@ -9,7 +9,10 @@ import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
 import { getResourceSubType } from '../../utils/resource';
 
-const mapStateToProps = (state, { resourceType, resourceId }) => {
+const mapStateToProps = (
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId }
+) => {
   const formState = selectors.resourceFormState(
     state,
     resourceType,
@@ -45,7 +48,13 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew, flowId) => {
+  handleInitForm: (
+    resourceType,
+    resourceId,
+    isNew,
+    flowId,
+    ssLinkedConnectionId
+  ) => {
     const skipCommit =
       isNew &&
       [
@@ -62,7 +71,9 @@ const mapDispatchToProps = dispatch => ({
         resourceId,
         isNew,
         skipCommit,
-        flowId
+        flowId,
+        undefined,
+        ssLinkedConnectionId
       )
     );
   },
@@ -181,12 +192,20 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     flowId,
     connection,
+    ssLinkedConnectionId,
   } = props;
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew, flowId);
+    handleInitForm(
+      resourceType,
+      resourceId,
+      isNew,
+      flowId,
+      ssLinkedConnectionId
+    );
 
-    return () => handleClearResourceForm(resourceType, resourceId);
+    return () =>
+      handleClearResourceForm(resourceType, resourceId, ssLinkedConnectionId);
   }, [
     flowId,
     handleClearResourceForm,
@@ -195,6 +214,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
+    ssLinkedConnectionId,
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
@@ -204,8 +224,9 @@ export const ResourceFormFactory = props => {
         resource,
         isNew,
         connection,
+        ssLinkedConnectionId,
       }),
-    [connection, isNew, resource, resourceType]
+    [connection, isNew, resource, resourceType, ssLinkedConnectionId]
   );
   const { fieldMeta } = formState;
 

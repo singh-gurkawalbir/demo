@@ -3952,6 +3952,60 @@ export const suiteScriptResource = (
     integrationId,
   });
 
+export const suiteScriptResourceData = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId, scope }
+) => {
+  if (!state || !resourceType || !id || !ssLinkedConnectionId)
+    return emptyObject;
+
+  // // For accesstokens and connections within an integration
+  // if (resourceType.indexOf('integrations/') >= 0) {
+  //   type = resourceType.split('/').pop();
+  // }
+
+  const master = suiteScriptResource(state, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    id,
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+};
+
 export const suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
@@ -3966,19 +4020,21 @@ export function suiteScriptIntegrationConnectionList(
   state,
   { ssLinkedConnectionId, integrationId }
 ) {
-  const { flows = [] } = suiteScriptResourceList(state, {
+  const flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
     ssLinkedConnectionId,
     integrationId,
   });
-  const { connections = [] } = suiteScriptResourceList(state, {
+
+  const connections = suiteScriptResourceList(state, {
     resourceType: 'connections',
     ssLinkedConnectionId,
   });
+
   const connectionIdsInUse = [];
 
   if (integrationId) {
-    flows.each(f => {
+    flows.forEach(f => {
       if (f.export._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);
       }
@@ -3994,5 +4050,7 @@ export function suiteScriptIntegrationConnectionList(
     });
   }
 
-  return connections.filter(c => connectionIdsInUse.includes(c._id));
+  return connections.filter(
+    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+  );
 }

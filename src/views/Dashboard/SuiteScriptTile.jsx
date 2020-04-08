@@ -1,6 +1,6 @@
 import { useCallback, Fragment, useState, useRef } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, Button } from '@material-ui/core';
+import { Typography, Tooltip, Button, makeStyles } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -30,7 +30,30 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
 
+const useStyles = makeStyles(theme => ({
+  tileName: {
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  action: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  status: {
+    '& > * :hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
+
 function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
+  const classes = useStyles();
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
@@ -144,7 +167,10 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
       <div style={{ opacity }} ref={ref}>
         <HomePageCardContainer onClick={handleTileClick}>
           <Header>
-            <Status label={status.label} onClick={handleStatusClick}>
+            <Status
+              label={status.label}
+              onClick={handleStatusClick}
+              className={classes.status}>
               <StatusCircle variant={status.variant} />
             </Status>
           </Header>
@@ -154,6 +180,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                 <Link
                   color="inherit"
                   to={getRoutePath(urlToIntegrationSettings)}
+                  className={classes.tileName}
                   onClick={handleLinkClick}>
                   {suiteScriptTileName(tile)}
                 </Link>
@@ -181,6 +208,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                       placement="bottom">
                       <Link
                         color="inherit"
+                        className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
                         onClick={handleLinkClick}>
                         <PermissionsMonitorIcon />
@@ -192,6 +220,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                       placement="bottom">
                       <Link
                         color="inherit"
+                        className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
                         onClick={handleLinkClick}>
                         <PermissionsManageIcon />

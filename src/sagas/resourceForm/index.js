@@ -484,19 +484,29 @@ export function* initFormValues({
   isNew,
   skipCommit,
   flowId,
+  ssLinkedConnectionId,
 }) {
   const developerMode = yield select(selectors.developerMode);
-  const { merged: resource } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId,
-    SCOPES.VALUE
-  );
-  const { merged: flow } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+  let resource;
+  let flow;
+
+  if (ssLinkedConnectionId) {
+    ({ merged: resource } = yield select(selectors.suiteScriptResourceData, {
+      resourceType,
+      id: resourceId,
+      ssLinkedConnectionId,
+      scope: SCOPES.VALUE,
+    }));
+    // ({ merged: flow } = yield select(selectors.resourceData, 'flows', flowId));
+  } else {
+    ({ merged: resource } = yield select(
+      selectors.resourceData,
+      resourceType,
+      resourceId,
+      SCOPES.VALUE
+    ));
+    ({ merged: flow } = yield select(selectors.resourceData, 'flows', flowId));
+  }
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;
@@ -549,7 +559,9 @@ export function* initFormValues({
     isNew,
     assistantData,
     connection,
+    ssLinkedConnectionId,
   });
+
   const { customForm } = resource;
   const form =
     customForm && customForm.form

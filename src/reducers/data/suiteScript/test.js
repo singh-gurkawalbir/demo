@@ -28,8 +28,19 @@ describe('suiteScript reducer', () => {
 
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, tilesReceivedAction);
+      const expected = { tiles: [], integrations: [] };
 
-      expect(newState).toEqual({ [connectionId]: { tiles } });
+      tiles.forEach(t => {
+        expected.tiles.push({ ...t, ssLinkedConnectionId: connectionId });
+        const { _integrationId, ...otherIntegrationProps } = t;
+
+        expected.integrations.push({
+          ...otherIntegrationProps,
+          _id: _integrationId,
+        });
+      });
+
+      expect(newState).toEqual({ [connectionId]: expected });
     });
     test('should update the state properly when the current state is not empty', () => {
       const state = {
@@ -40,6 +51,20 @@ describe('suiteScript reducer', () => {
       const expected = { ...state };
 
       expected[connectionId].tiles = tiles;
+      expected[connectionId].integrations = [];
+
+      tiles.forEach(t => {
+        const { _integrationId, ...otherIntegrationProps } = t;
+
+        expected[connectionId].integrations.push({
+          ...otherIntegrationProps,
+          _id: _integrationId,
+        });
+      });
+      expected[connectionId].tiles.forEach(t => {
+        // eslint-disable-next-line no-param-reassign
+        t.ssLinkedConnectionId = connectionId;
+      });
 
       expect(newState).toEqual(expected);
     });
@@ -56,69 +81,73 @@ describe('tiles selector', () => {
   describe('should return correct results for different connectionIds', () => {
     const state = {
       c1: {
-        tiles: [
-          { _integrationId: 'i1', name: 'i one' },
-          { _integrationId: 'i2', name: 'i two' },
-        ],
         something: ['something else'],
       },
       c2: {
-        tiles: [
-          { _integrationId: 'i2', name: 'i two' },
-          { _integrationId: 'i3', name: 'i three' },
-          { _integrationId: 'i4', name: SUITESCRIPT_CONNECTORS[0].name },
-          { _integrationId: 'i5', name: SUITESCRIPT_CONNECTORS[1].name },
-        ],
         somethingElse: ['something'],
       },
     };
+    const tiles = {
+      c1: [
+        { _integrationId: 'i1', name: 'i one' },
+        { _integrationId: 'i2', name: 'i two' },
+      ],
+      c2: [
+        { _integrationId: 'i2', name: 'i two' },
+        { _integrationId: 'i3', name: 'i three' },
+        { _integrationId: 'i4', name: SUITESCRIPT_CONNECTORS[0].name },
+        { _integrationId: 'i5', name: SUITESCRIPT_CONNECTORS[1].name },
+      ],
+    };
 
     test('should return correct results for connection c1 [diy integrations only]', () => {
-      const newState = reducer(state, 'some action');
+      const tilesReceivedAction = actions.resource.receivedCollection(
+        `suitescript/connections/c1/tiles`,
+        tiles.c1
+      );
+      const newState = reducer(state, tilesReceivedAction);
 
       expect(selectors.tiles(newState, 'c1')).toEqual([
         {
-          _ioConnectionId: 'c1',
-          _id: 'c1_i1',
           _integrationId: 'i1',
           name: 'i one',
+          ssLinkedConnectionId: 'c1',
         },
         {
-          _ioConnectionId: 'c1',
-          _id: 'c1_i2',
           _integrationId: 'i2',
           name: 'i two',
+          ssLinkedConnectionId: 'c1',
         },
       ]);
     });
     test('should return correct results for connection c2 [diy + connector integrations]', () => {
-      const newState = reducer(state, 'some action');
+      const tilesReceivedAction = actions.resource.receivedCollection(
+        `suitescript/connections/c2/tiles`,
+        tiles.c2
+      );
+      const newState = reducer(state, tilesReceivedAction);
 
       expect(selectors.tiles(newState, 'c2')).toEqual([
         {
-          _ioConnectionId: 'c2',
-          _id: 'c2_i2',
           _integrationId: 'i2',
           name: 'i two',
+          ssLinkedConnectionId: 'c2',
         },
         {
-          _ioConnectionId: 'c2',
-          _id: 'c2_i3',
           _integrationId: 'i3',
           name: 'i three',
+          ssLinkedConnectionId: 'c2',
         },
         {
-          _ioConnectionId: 'c2',
-          _id: 'c2_i4',
           _integrationId: 'i4',
           name: SUITESCRIPT_CONNECTORS[0].name,
+          ssLinkedConnectionId: 'c2',
           _connectorId: SUITESCRIPT_CONNECTORS[0]._id,
         },
         {
-          _ioConnectionId: 'c2',
-          _id: 'c2_i5',
           _integrationId: 'i5',
           name: SUITESCRIPT_CONNECTORS[1].name,
+          ssLinkedConnectionId: 'c2',
           _connectorId: SUITESCRIPT_CONNECTORS[1]._id,
         },
       ]);
@@ -136,70 +165,74 @@ describe('integrations selector', () => {
   describe('should return correct results for different connectionIds', () => {
     const state = {
       c1: {
-        tiles: [
-          { _integrationId: 'i1', name: 'i one' },
-          { _integrationId: 'i2', name: 'i two' },
-        ],
         something: ['something else'],
       },
       c2: {
-        tiles: [
-          { _integrationId: 'i2', name: 'i two' },
-          { _integrationId: 'i3', name: 'i three' },
-          {
-            _integrationId: 'i4',
-            name: SUITESCRIPT_CONNECTORS[0].name,
-            mode: 'something',
-          },
-          {
-            _integrationId: 'i5',
-            name: SUITESCRIPT_CONNECTORS[1].name,
-            mode: 'somethingElse',
-          },
-        ],
         somethingElse: ['something'],
       },
     };
+    const tiles = {
+      c1: [
+        { _integrationId: 'i1', name: 'i one' },
+        { _integrationId: 'i2', name: 'i two' },
+      ],
+      c2: [
+        { _integrationId: 'i2', name: 'i two' },
+        { _integrationId: 'i3', name: 'i three' },
+        {
+          _integrationId: 'i4',
+          name: SUITESCRIPT_CONNECTORS[0].name,
+          mode: 'something',
+        },
+        {
+          _integrationId: 'i5',
+          name: SUITESCRIPT_CONNECTORS[1].name,
+          mode: 'somethingElse',
+        },
+      ],
+    };
 
     test('should return correct results for connection c1 [diy integrations only]', () => {
-      const newState = reducer(state, 'some action');
+      const tilesReceivedAction = actions.resource.receivedCollection(
+        `suitescript/connections/c1/tiles`,
+        tiles.c1
+      );
+      const newState = reducer(state, tilesReceivedAction);
 
       expect(selectors.integrations(newState, 'c1')).toEqual([
         {
-          _ioConnectionId: 'c1',
           _id: 'i1',
           name: 'i one',
         },
         {
-          _ioConnectionId: 'c1',
           _id: 'i2',
           name: 'i two',
         },
       ]);
     });
     test('should return correct results for connection c2 [diy + connector integrations]', () => {
-      const newState = reducer(state, 'some action');
+      const tilesReceivedAction = actions.resource.receivedCollection(
+        `suitescript/connections/c2/tiles`,
+        tiles.c2
+      );
+      const newState = reducer(state, tilesReceivedAction);
 
       expect(selectors.integrations(newState, 'c2')).toEqual([
         {
-          _ioConnectionId: 'c2',
           _id: 'i2',
           name: 'i two',
         },
         {
-          _ioConnectionId: 'c2',
           _id: 'i3',
           name: 'i three',
         },
         {
-          _ioConnectionId: 'c2',
           _id: 'i4',
           name: SUITESCRIPT_CONNECTORS[0].name,
           _connectorId: SUITESCRIPT_CONNECTORS[0]._id,
           mode: 'something',
         },
         {
-          _ioConnectionId: 'c2',
           _id: 'i5',
           name: SUITESCRIPT_CONNECTORS[1].name,
           _connectorId: SUITESCRIPT_CONNECTORS[1]._id,

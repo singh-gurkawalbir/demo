@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import cronstrue from 'cronstrue';
 import { useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Grid, IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
@@ -91,7 +90,7 @@ export default function FlowCard({
     return integrationApp.name;
   });
   const flowName = flowDetails.name || flowDetails._id;
-  const { name, lastModified } = flowDetails;
+  const { ioFlowName, name } = flowDetails;
   // TODO: set status based on flow criteria...
   const status = 'success';
   // TODO: this property was copied from the old flow list page... i don't know what its for...
@@ -129,12 +128,12 @@ export default function FlowCard({
                 color="primary"
                 variant="h4"
                 className={classes.flowLink}>
-                {name || `Unnamed (id: ${flowId})`}
+                {ioFlowName || name || `Unnamed (id: ${flowId})`}
               </Typography>
             </Link>
           </div>
           <Typography variant="caption" component="span">
-            {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
+            {getRunLabel()}
           </Typography>
         </Grid>
         <Grid container item xs={4} justify="flex-end" alignItems="center">

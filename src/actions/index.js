@@ -1178,7 +1178,15 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData) =>
+  init: (
+    resourceType,
+    resourceId,
+    isNew,
+    skipCommit,
+    flowId,
+    initData,
+    ssLinkedConnectionId
+  ) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1186,6 +1194,7 @@ const resourceForm = {
       skipCommit,
       flowId,
       initData,
+      ssLinkedConnectionId,
     }),
   initComplete: (
     resourceType,

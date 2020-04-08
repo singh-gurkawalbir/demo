@@ -165,6 +165,7 @@ const getResourceFormAssets = ({
   isNew = false,
   assistantData,
   connection,
+  ssLinkedConnectionId,
 }) => {
   let fieldMap;
   let layout = [];
@@ -175,139 +176,147 @@ const getResourceFormAssets = ({
   let validationHandler;
   const { type } = getResourceSubType(resource);
 
-  // FormMeta generic pattern: fromMeta[resourceType][sub-type]
-  // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
-  switch (resourceType) {
-    case 'connections':
-      if (isNew) {
-        meta = formMeta.connections.new;
-      } else if (resource && resource.assistant) {
-        meta = formMeta.connections.custom[type];
+  if (ssLinkedConnectionId) {
+    meta = formMeta.suiteScript[resourceType].salesforce;
 
-        /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
+    if (meta) {
+      ({ fieldMap, layout, preSave, init, actions } = meta);
+    }
+  } else {
+    // FormMeta generic pattern: fromMeta[resourceType][sub-type]
+    // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
+    switch (resourceType) {
+      case 'connections':
+        if (isNew) {
+          meta = formMeta.connections.new;
+        } else if (resource && resource.assistant) {
+          meta = formMeta.connections.custom[type];
+
+          /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
         perspective and when all assistant metadata files are moved over to HTTP adaptor */
-        if (
-          resource.assistant &&
-          REST_ASSISTANTS.indexOf(resource.assistant) > -1
-        ) {
-          meta = formMeta.connections.custom.http;
-        }
-
-        if (meta) {
-          meta = meta[resource.assistant];
-        }
-      } else if (resource && resource.type === 'rdbms') {
-        const rdbmsSubType = resource.rdbms.type;
-
-        // when editing rdms connection we lookup for the resource subtype
-        meta = formMeta.connections.rdbms[rdbmsSubType];
-      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
-        meta = formMeta.connections.rdbms[type];
-      } else {
-        meta = formMeta.connections[type];
-      }
-
-      if (meta) {
-        ({ fieldMap, layout, preSave, init, actions } = meta);
-      }
-
-      break;
-
-    case 'imports':
-      meta = formMeta[resourceType];
-
-      if (meta) {
-        if (isNew) {
-          meta = meta.new;
-        }
-        // get edit form meta branch
-        else if (type === 'netsuite') {
-          meta = meta.netsuiteDistributed;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
-          meta = meta.rdbms;
-        } else if (
-          resource &&
-          (resource.useParentForm !== undefined
-            ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
-        ) {
-          meta = meta.custom.http.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
-        } else {
-          meta = meta[type];
-        }
-
-        if (meta) {
-          ({ fieldMap, layout, init, preSave, actions } = meta);
-        }
-      }
-
-      break;
-    case 'exports':
-      meta = formMeta[resourceType];
-
-      if (meta) {
-        if (isNew) {
-          meta = meta.new;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
-          meta = meta.rdbms;
-        } else if (
-          resource &&
-          (resource.useParentForm !== undefined
-            ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
-        ) {
-          meta = meta.custom.http.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
-        } else if (type === 'rest') {
-          const { mediaType } = (connection && connection[type]) || {};
-
-          meta = meta[type];
-
-          if (mediaType === 'csv') {
-            meta = meta.csv;
-          } else {
-            meta = meta.json;
+          if (
+            resource.assistant &&
+            REST_ASSISTANTS.indexOf(resource.assistant) > -1
+          ) {
+            meta = formMeta.connections.custom.http;
           }
+
+          if (meta) {
+            meta = meta[resource.assistant];
+          }
+        } else if (resource && resource.type === 'rdbms') {
+          const rdbmsSubType = resource.rdbms.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          meta = formMeta.connections.rdbms[rdbmsSubType];
+        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+          meta = formMeta.connections.rdbms[type];
         } else {
-          meta = meta[type];
+          meta = formMeta.connections[type];
         }
 
         if (meta) {
-          ({ fieldMap, layout, init, preSave, actions } = meta);
+          ({ fieldMap, layout, preSave, init, actions } = meta);
         }
-      }
 
-      break;
+        break;
 
-    case 'agents':
-    case 'scripts':
-    case 'accesstokens':
-    case 'connectorLicenses':
-    case 'integrations':
-      meta = formMeta[resourceType];
-      ({ fieldMap, preSave, init, layout } = meta);
-      break;
-    case 'stacks':
-    case 'templates':
-    case 'connectors':
-    case 'iClients':
-    case 'asyncHelpers':
-    case 'pageProcessor':
-    case 'pageGenerator':
-      meta = formMeta[resourceType];
-      ({ fieldMap, layout, init, preSave, actions } = meta);
-      break;
+      case 'imports':
+        meta = formMeta[resourceType];
 
-    default:
-      meta = formMeta.default;
-      break;
+        if (meta) {
+          if (isNew) {
+            meta = meta.new;
+          }
+          // get edit form meta branch
+          else if (type === 'netsuite') {
+            meta = meta.netsuiteDistributed;
+          } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+            meta = meta.rdbms;
+          } else if (
+            resource &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant)
+          ) {
+            meta = meta.custom.http.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta[type];
+          }
+
+          if (meta) {
+            ({ fieldMap, layout, init, preSave, actions } = meta);
+          }
+        }
+
+        break;
+      case 'exports':
+        meta = formMeta[resourceType];
+
+        if (meta) {
+          if (isNew) {
+            meta = meta.new;
+          } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+            meta = meta.rdbms;
+          } else if (
+            resource &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant)
+          ) {
+            meta = meta.custom.http.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else if (type === 'rest') {
+            const { mediaType } = (connection && connection[type]) || {};
+
+            meta = meta[type];
+
+            if (mediaType === 'csv') {
+              meta = meta.csv;
+            } else {
+              meta = meta.json;
+            }
+          } else {
+            meta = meta[type];
+          }
+
+          if (meta) {
+            ({ fieldMap, layout, init, preSave, actions } = meta);
+          }
+        }
+
+        break;
+
+      case 'agents':
+      case 'scripts':
+      case 'accesstokens':
+      case 'connectorLicenses':
+      case 'integrations':
+        meta = formMeta[resourceType];
+        ({ fieldMap, preSave, init, layout } = meta);
+        break;
+      case 'stacks':
+      case 'templates':
+      case 'connectors':
+      case 'iClients':
+      case 'asyncHelpers':
+      case 'pageProcessor':
+      case 'pageGenerator':
+        meta = formMeta[resourceType];
+        ({ fieldMap, layout, init, preSave, actions } = meta);
+        break;
+
+      default:
+        meta = formMeta.default;
+        break;
+    }
   }
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
@@ -316,6 +325,7 @@ const getResourceFormAssets = ({
   validationHandler = meta && meta.validationHandler;
 
   if (
+    !ssLinkedConnectionId &&
     [
       'integrations',
       'exports',

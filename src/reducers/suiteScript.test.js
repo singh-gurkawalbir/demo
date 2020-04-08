@@ -5,7 +5,7 @@ import reducer, {
   suiteScriptLinkedConnections,
   suiteScriptTiles,
 } from '.';
-// import actions from '../actions';
+import actions from '../actions';
 import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
@@ -240,19 +240,16 @@ describe('suiteScriptIntegrations selector', () => {
       { _id: 'connection1', permissions: { accessLevel: 'manage' } },
       [
         {
-          _ioConnectionId: 'connection1',
           _id: 'i1',
           name: 'i one',
           permissions: { accessLevel: 'manage', connections: { edit: true } },
         },
         {
-          _ioConnectionId: 'connection1',
           _id: 'i2',
           name: 'i two',
           permissions: { accessLevel: 'manage', connections: { edit: true } },
         },
         {
-          _ioConnectionId: 'connection1',
           _id: 'i3',
           _connectorId: SUITESCRIPT_CONNECTORS[0]._id,
           name: SUITESCRIPT_CONNECTORS[0].name,
@@ -282,10 +279,20 @@ describe('suiteScriptIntegrations selector', () => {
       ],
     ],
   ];
-  const state = reducer({ data }, 'some action');
+  const state = reducer({}, 'some action');
+  const tilesReceivedAction = actions.resource.receivedCollection(
+    `suitescript/connections/connection1/tiles`,
+    data.connection1.tiles
+  );
+  const newState = reducer(state, tilesReceivedAction);
+  const tilesReceivedAction2 = actions.resource.receivedCollection(
+    `suitescript/connections/connection2/tiles`,
+    data.connection2.tiles
+  );
+  const newState2 = reducer(newState, tilesReceivedAction2);
 
   each(testCases).test('%s', (name, connection, expected) => {
-    expect(suiteScriptIntegrations(state, connection)).toEqual(expected);
+    expect(suiteScriptIntegrations(newState2, connection)).toEqual(expected);
   });
 });
 
