@@ -1376,6 +1376,17 @@ const job = {
   error: {
     clear: () => action(actionTypes.JOB.ERROR.CLEAR),
   },
+  processedErrors: {
+    requestPreview: ({ jobId, errorFile }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, { jobId, errorFile }),
+    receivedPreview: ({ jobId, previewData }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.RECEIVED, {
+        jobId,
+        previewData,
+      }),
+    previewError: ({ jobId, error }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),
+  },
 };
 const flow = {
   run: ({ flowId, customStartDate, options }) =>

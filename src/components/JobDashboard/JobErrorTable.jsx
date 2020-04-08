@@ -294,6 +294,10 @@ function JobErrorTable({
     state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
+  const jobErrorsPreview = useSelector(
+    state => selectors.getJobErrorsPreview(state, job._id),
+    shallowEqual
+  );
 
   useEffect(() => {
     if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
@@ -302,7 +306,7 @@ function JobErrorTable({
   }, [dispatch, editDataOfRetryId, retryObject]);
 
   useEffect(() => {
-    const { status, error } = uploadedFile || {};
+    const { status, error, file: errorFile } = uploadedFile || {};
 
     switch (status) {
       case 'error':
@@ -312,11 +316,19 @@ function JobErrorTable({
         });
         break;
       case 'received':
-        // perform action once file is ready
+        // request for preview on uploaded errors file for this job
+        dispatch(
+          actions.job.processedErrors.requestPreview({
+            jobId: job._id,
+            errorFile,
+          })
+        );
+        // reset file session as it is no longer needed
+        dispatch(actions.file.reset(fileId));
         break;
       default:
     }
-  }, [dispatch, enqueueSnackbar, uploadedFile]);
+  }, [dispatch, enqueueSnackbar, fileId, job._id, uploadedFile]);
 
   function handleRetryDataChange(data) {
     const updatedData = { ...retryObject.retryData, data };
@@ -357,6 +369,7 @@ function JobErrorTable({
             <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
+      {jobErrorsPreview && jobErrorsPreview.previewData && <div> Checked </div>}
       <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
