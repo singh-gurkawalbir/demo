@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaSelect from './DynaSelect';
 
-const isOnceNotSupported = (recordTypes, recordType) => {
+const isOnceNotSupported = (recordTypes, recordTypeVal) => {
   if (!recordTypes) {
     return;
   }
 
-  const recordTypeObj = recordTypes.find(r => r.value === recordType);
+  const recordTypeObj = recordTypes.find(r => r.value === recordTypeVal);
 
   return (
     recordTypeObj &&
@@ -27,7 +27,7 @@ export default function DynaNetsuiteExportType(props) {
     options = {},
     selectOptions,
   } = props;
-  const { recordType, commMetaPath } = options;
+  const { recordType: selectedRecordType, commMetaPath } = options;
   const recordTypes = useSelector(
     state =>
       selectors.metadataOptionsAndResources({
@@ -38,19 +38,22 @@ export default function DynaNetsuiteExportType(props) {
       }).data
   );
   const optionsSupported = useMemo(() => {
-    if (isOnceNotSupported(recordTypes, recordType)) {
+    if (isOnceNotSupported(recordTypes, selectedRecordType)) {
       return selectOptions.filter(item => item.value !== 'once');
     }
 
     return selectOptions;
-  }, [recordType, recordTypes, selectOptions]);
+  }, [recordTypes, selectOptions, selectedRecordType]);
 
   useEffect(() => {
     // Export type is pre-set to once and User selects record type not supporting create or update
-    if (value === 'once' && isOnceNotSupported(recordTypes, recordType)) {
+    if (
+      value === 'once' &&
+      isOnceNotSupported(recordTypes, selectedRecordType)
+    ) {
       onFieldChange(id, defaultValue);
     }
-  }, [defaultValue, id, onFieldChange, recordType, recordTypes, value]);
+  }, [defaultValue, id, onFieldChange, recordTypes, selectedRecordType, value]);
 
   return <DynaSelect {...props} options={[{ items: optionsSupported }]} />;
 }
