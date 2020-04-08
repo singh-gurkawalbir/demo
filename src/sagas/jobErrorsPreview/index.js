@@ -6,14 +6,14 @@ import { apiCallWithRetry } from '../index';
 
 function* requestJobErrorPreview({ jobId, errorFile }) {
   // fetches s3 run key for the error file once stored
-  const runKey = yield call(uploadRawData, {
+  const errorFileId = yield call(uploadRawData, {
     file: errorFile,
     fileType: 'application/csv',
   });
 
   try {
     const previewData = yield call(apiCallWithRetry, {
-      path: `/jobs/${jobId}/jobErrorFile/preview?runKey=${runKey}`,
+      path: `/jobs/${jobId}/jobErrorFile/preview?runKey=${errorFileId}`,
       opts: { method: 'GET' },
       message: ' Fetching Preview for Job Errors',
     });
@@ -22,7 +22,7 @@ function* requestJobErrorPreview({ jobId, errorFile }) {
       actions.job.processedErrors.receivedPreview({
         jobId,
         previewData,
-        s3Key: runKey,
+        errorFileId,
       })
     );
   } catch (e) {
