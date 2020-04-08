@@ -3,14 +3,17 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaSelect from './DynaSelect';
 
-const isUpdateNotSupported = (recordTypes, recordType) => {
+const isOnceNotSupported = (recordTypes, recordType) => {
   if (!recordTypes) {
     return;
   }
 
   const recordTypeObj = recordTypes.find(r => r.value === recordType);
 
-  return recordTypeObj && recordTypeObj.doesNotSupportUpdate;
+  return (
+    recordTypeObj &&
+    (recordTypeObj.doesNotSupportUpdate || recordTypeObj.doesNotSupportCreate)
+  );
 };
 
 export default function DynaNetsuiteExportType(props) {
@@ -35,7 +38,7 @@ export default function DynaNetsuiteExportType(props) {
       }).data
   );
   const optionsSupported = useMemo(() => {
-    if (isUpdateNotSupported(recordTypes, recordType)) {
+    if (isOnceNotSupported(recordTypes, recordType)) {
       return selectOptions.filter(item => item.value !== 'once');
     }
 
@@ -43,8 +46,8 @@ export default function DynaNetsuiteExportType(props) {
   }, [recordType, recordTypes, selectOptions]);
 
   useEffect(() => {
-    // Export type is pre-set to once and User selects record type not supporting update
-    if (value === 'once' && isUpdateNotSupported(recordTypes, recordType)) {
+    // Export type is pre-set to once and User selects record type not supporting create or update
+    if (value === 'once' && isOnceNotSupported(recordTypes, recordType)) {
       onFieldChange(id, defaultValue);
     }
   }, [defaultValue, id, onFieldChange, recordType, recordTypes, value]);

@@ -16,6 +16,7 @@ export default {
       hasSubRecord: item.hasSubRecord,
       subRecordConfig: item.subRecordConfig,
       doesNotSupportUpdate: item.doesNotSupportUpdate,
+      doesNotSupportCreate: item.doesNotSupportCreate,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
