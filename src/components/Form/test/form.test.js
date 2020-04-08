@@ -211,15 +211,7 @@ describe('changing form value prop', () => {
   };
 
   describe('form touched behavior', () => {
-    let queryByDisplayValue;
-    let rerender;
     const formKey = '123';
-    const formValue1 = {
-      field1: 'value1',
-    };
-    const formValue2 = {
-      field1: 'value2',
-    };
     let store;
 
     beforeAll(() => {
@@ -228,13 +220,13 @@ describe('changing form value prop', () => {
         user: { profile: { name: 'profile 1' } },
       });
 
-      ({ rerender, queryByDisplayValue } = render(
+      render(
         reduxWrappedComponent({
           Component,
           store,
-          componentProps: { formKey, fieldsMeta, value: formValue1 },
+          componentProps: { formKey, fieldsMeta },
         })
-      ));
+      );
     });
     test('field has not been touched', () => {
       const formState = selectors.getFormState(store.getState(), 123);
@@ -259,25 +251,6 @@ describe('changing form value prop', () => {
       const formState = selectors.getFormState(store.getState(), formKey);
 
       expect(formState.fields.FIELD1.touched).toBe(true);
-    });
-
-    test('field should not be touched after form value update', () => {
-      expect(queryByDisplayValue('value1')).toBeTruthy();
-
-      // new form value causes the field to reregister and the touched state state to be reset
-      rerender(
-        reduxWrappedComponent({
-          Component,
-          store,
-          componentProps: { formKey, fieldsMeta, value: formValue2 },
-        })
-      );
-
-      const formState = selectors.getFormState(store.getState(), formKey);
-
-      expect(formState.fields.FIELD1.touched).toBe(false);
-      expect(queryByDisplayValue('value2')).toBeTruthy();
-      expect(formState.value).toEqual(formValue2);
     });
   });
 });

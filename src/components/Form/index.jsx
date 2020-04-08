@@ -5,7 +5,7 @@ import { generateNewId } from '../../utils/resource';
 
 export default function useForm({ formKey, ...formSpecificProps }) {
   const [formKeyUsed, setFormKeyUsed] = useState();
-  const { value, disabled, showValidationBeforeTouched } = formSpecificProps;
+  const { disabled, showValidationBeforeTouched } = formSpecificProps;
   const dispatch = useDispatch();
   // form specific props could be
 
@@ -38,7 +38,7 @@ export default function useForm({ formKey, ...formSpecificProps }) {
 
     return () => dispatch(actions.form.formClear(formKeyUsedInUseEff));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, formKey, value, disabled, showValidationBeforeTouched]);
+  }, [dispatch, formKey, disabled, showValidationBeforeTouched]);
 
   return formKeyUsed;
 }

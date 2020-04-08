@@ -12,7 +12,6 @@ function form(state = {}, action) {
     showValidationBeforeTouched = false,
     conditionalUpdate = false,
     disabled = false,
-    value,
   } = formSpecificProps;
   const { fieldsMeta = {} } = formSpecificProps;
 
@@ -27,12 +26,6 @@ function form(state = {}, action) {
           disabled,
           resetTouchedState: false,
         };
-
-        // if it was externally driven that would take precendence ...and if you stop providing a value it would revert back to form state
-        if (value) {
-          draft[formKey].value = value;
-        }
-
         draft[formKey].fields = registerFields(
           fieldsMeta.fieldMap,
           draft[formKey].value
