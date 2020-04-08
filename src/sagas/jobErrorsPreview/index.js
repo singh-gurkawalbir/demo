@@ -22,6 +22,7 @@ function* requestJobErrorPreview({ jobId, errorFile }) {
       actions.job.processedErrors.receivedPreview({
         jobId,
         previewData,
+        s3Key: runKey,
       })
     );
   } catch (e) {

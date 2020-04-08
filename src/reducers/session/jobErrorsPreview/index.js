@@ -2,7 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default function(state = {}, action) {
-  const { type, jobId, previewData, error } = action;
+  const { type, jobId, previewData, error, s3Key } = action;
 
   return produce(state, draft => {
     if (!type || !jobId) return draft;
@@ -18,6 +18,7 @@ export default function(state = {}, action) {
         draft[jobId] = {
           status: 'received',
           previewData,
+          s3Key,
         };
         break;
       case actionTypes.JOB.ERROR.PREVIEW.ERROR:

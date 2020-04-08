@@ -1379,13 +1379,16 @@ const job = {
   processedErrors: {
     requestPreview: ({ jobId, errorFile }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, { jobId, errorFile }),
-    receivedPreview: ({ jobId, previewData }) =>
+    receivedPreview: ({ jobId, previewData, s3Key }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.RECEIVED, {
         jobId,
         previewData,
+        s3Key,
       }),
     previewError: ({ jobId, error }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),
+    clearPreview: jobId =>
+      action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
 const flow = {

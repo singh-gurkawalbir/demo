@@ -20,6 +20,7 @@ import { generateNewId } from '../../utils/resource';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ButtonsGroup from '../ButtonGroup';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -330,6 +331,31 @@ function JobErrorTable({
     }
   }, [dispatch, enqueueSnackbar, fileId, job._id, uploadedFile]);
 
+  useEffect(() => {
+    const { status, previewData } = jobErrorsPreview || {};
+
+    if (status === 'received' && previewData) {
+      confirmDialog({
+        title: 'Confirm',
+        message: <JobErrorPreviewDialogContent previewData={previewData} />,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              // dispatch action that retries this current job with uploaded file stored at s3Key
+              // console.log('s3Key is ', s3Key);
+            },
+          },
+        ],
+      });
+      // Once the dialog is open, clear the preview result as it is no longer needed
+      dispatch(actions.job.processedErrors.clearPreview(job._id));
+    }
+  }, [confirmDialog, dispatch, job._id, jobErrorsPreview]);
+
   function handleRetryDataChange(data) {
     const updatedData = { ...retryObject.retryData, data };
 
@@ -369,7 +395,6 @@ function JobErrorTable({
             <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
-      {jobErrorsPreview && jobErrorsPreview.previewData && <div> Checked </div>}
       <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
