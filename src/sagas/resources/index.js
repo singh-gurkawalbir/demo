@@ -12,6 +12,7 @@ import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
+import { isConnector } from '../../utils/flows';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -99,13 +100,14 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (resourceType === 'flows') {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
+    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
+    // we reverse this process and convert it back to the old schema ...also we delete this flag
 
-    if (resourceIsDataLoaderFlow || merged.flowConvertedToNewSchema) {
-      // this value has been at the time of caching a flow collection.... we convert it to the new schema
-      // and set this flag 'flowConvertedToNewSchema' to true ...now when we are actually commiting the resource
-      // we reverse this process and convert it back to the old schema ...also we delete this flag
-      delete merged.flowConvertedToNewSchema;
-
+    if (
+      resourceIsDataLoaderFlow ||
+      (merged.flowConvertedToNewSchema && isConnector(merged))
+    ) {
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;
         delete merged.pageGenerators;
@@ -120,6 +122,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
         }
       }
     }
+
+    delete merged.flowConvertedToNewSchema;
   }
   // #endregion
 

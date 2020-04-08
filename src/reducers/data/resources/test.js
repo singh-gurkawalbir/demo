@@ -2,18 +2,6 @@
 import reducer, * as selectors from './';
 import actions, { availableResources } from '../../../actions';
 
-const expectedResultForResource = (resourceType, resource) =>
-  resourceType === 'flows'
-    ? {
-        ...resource,
-        flowConvertedToNewSchema: true,
-        pageGenerators: undefined,
-        pageProcessors: undefined,
-      }
-    : resource;
-const expectedResultForCollection = (resourceType, collection) =>
-  collection.map(ele => expectedResultForResource(resourceType, ele));
-
 describe('resources reducer', () => {
   availableResources.forEach(resourceType => {
     describe(`${resourceType} received resource action`, () => {
@@ -24,9 +12,7 @@ describe('resources reducer', () => {
           actions.resource.received(resourceType, resource)
         );
 
-        expect(state[resourceType]).toContainEqual(
-          expectedResultForResource(resourceType, resource)
-        );
+        expect(state[resourceType]).toContainEqual(resource);
       });
 
       test('should store the new resource if some exist', () => {
@@ -43,10 +29,7 @@ describe('resources reducer', () => {
           actions.resource.received(resourceType, resource)
         );
 
-        expect(state[resourceType]).toEqual([
-          ...expectedResultForCollection(resourceType, collection),
-          expectedResultForResource(resourceType, resource),
-        ]);
+        expect(state[resourceType]).toEqual([...collection, resource]);
       });
 
       test('should replace an existing resource if one already exists', () => {
@@ -63,13 +46,11 @@ describe('resources reducer', () => {
           actions.resource.received(resourceType, resource)
         );
 
-        expect(state[resourceType]).toEqual(
-          expectedResultForCollection(resourceType, [
-            collection[0],
-            resource,
-            collection[2],
-          ])
-        );
+        expect(state[resourceType]).toEqual([
+          collection[0],
+          resource,
+          collection[2],
+        ]);
       });
     });
 
@@ -81,9 +62,7 @@ describe('resources reducer', () => {
           actions.resource.receivedCollection(resourceType, data)
         );
 
-        expect(state[resourceType]).toEqual(
-          expectedResultForCollection(resourceType, data)
-        );
+        expect(state[resourceType]).toEqual(data);
       });
 
       test('should replace existing collection with the new colletion', () => {
@@ -95,17 +74,13 @@ describe('resources reducer', () => {
           state,
           actions.resource.receivedCollection(resourceType, data1)
         );
-        expect(state[resourceType]).toEqual(
-          expectedResultForCollection(resourceType, data1)
-        );
+        expect(state[resourceType]).toEqual(data1);
 
         state = reducer(
           state,
           actions.resource.receivedCollection(resourceType, data2)
         );
-        expect(state[resourceType]).toEqual(
-          expectedResultForCollection(resourceType, data2)
-        );
+        expect(state[resourceType]).toEqual(data2);
       });
     });
     describe(`${resourceType} delete resource action`, () => {
@@ -120,9 +95,7 @@ describe('resources reducer', () => {
         );
 
         state = reducer(state, actions.resource.deleted(resourceType, 'id2'));
-        expect(state[resourceType]).toEqual([
-          expectedResultForResource(resourceType, collection[0]),
-        ]);
+        expect(state[resourceType]).toEqual([collection[0]]);
       });
       test('should not delete any resource if there is no resource with given id', () => {
         const collection = [
@@ -135,9 +108,7 @@ describe('resources reducer', () => {
         );
 
         state = reducer(state, actions.resource.deleted(resourceType, 'id3'));
-        expect(state[resourceType]).toEqual(
-          expectedResultForCollection(resourceType, collection)
-        );
+        expect(state[resourceType]).toEqual(collection);
       });
     });
   });

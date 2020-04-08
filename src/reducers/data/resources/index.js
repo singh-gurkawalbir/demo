@@ -1,8 +1,9 @@
 import produce from 'immer';
+import { get } from 'lodash';
 import moment from 'moment';
 import sift from 'sift';
-import { get } from 'lodash';
 import actionTypes from '../../../actions/types';
+import { isOldFlowSchema } from '../../../utils/flows';
 
 const emptyObject = {};
 const emptyList = [];
@@ -22,10 +23,17 @@ const convertOldFlowSchemaToNewOne = flow => {
     _importId,
     ...rest
   } = flow;
+
+  // a new schema just return the flow unaltered
+  if (!isOldFlowSchema(flow)) {
+    return flow;
+  }
+
   const updatedFlow = {
     ...rest,
     pageGenerators,
     pageProcessors,
+    // set this flag when converting it to new schema
     flowConvertedToNewSchema: true,
   };
 
