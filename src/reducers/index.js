@@ -3903,6 +3903,30 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
+/* The selector returns appropriate context for the JS Processor to run
+ * For now, it supports contextType: hook
+ * Other context types are 'settings' and 'setup'
+ */
+export const getScriptContext = createSelector(
+  [
+    (state, { contextType }) => contextType,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return flow._integrationId;
+    },
+  ],
+  (contextType, _integrationId) => {
+    if (contextType === 'hook' && _integrationId) {
+      return {
+        type: 'hook',
+        container: 'integration',
+        _integrationId,
+      };
+    }
+  }
+);
+
 export function suiteScriptResourceStatus(
   state,
   {
@@ -4025,15 +4049,13 @@ export function suiteScriptIntegrationConnectionList(
     ssLinkedConnectionId,
     integrationId,
   });
-
   const connections = suiteScriptResourceList(state, {
     resourceType: 'connections',
     ssLinkedConnectionId,
   });
-
   const connectionIdsInUse = [];
 
-  if (integrationId) {
+  if (integrationId && flows) {
     flows.forEach(f => {
       if (f.export._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);

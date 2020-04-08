@@ -1,17 +1,17 @@
+import { useMemo } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMemo } from 'react';
 import actions from '../../../actions';
+import { getApp } from '../../../constants/applications';
+import formFactory from '../../../forms/formFactory';
 import {
   defaultPatchSetConverter,
   sanitizePatchSet,
 } from '../../../forms/utils';
-import DynaRadio from './radiogroup/DynaRadioGroup';
 import * as selectors from '../../../reducers';
-import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import { SCOPES } from '../../../sagas/resourceForm';
-import formFactory from '../../../forms/formFactory';
-import { getApp } from '../../../constants/applications';
+import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
+import DynaSelect from './DynaSelect';
 
 const emptyObj = {};
 const isParent = true;
@@ -47,10 +47,11 @@ export function FormView(props) {
     if (matchingApplication) {
       const { name, type } = matchingApplication;
 
+      // all types are lower case...lets upper case them
       return [
         {
           items: [
-            { label: type, value: `${isParent}` },
+            { label: type && type.toUpperCase(), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -116,7 +117,7 @@ export function FormView(props) {
   const isFlowBuilderAssistant = flowId && staggedResource.assistant;
 
   return isFlowBuilderAssistant ? (
-    <DynaRadio
+    <DynaSelect
       {...props}
       onFieldChange={onFieldChangeFn}
       value={`${!!staggedResource.useParentForm}`}

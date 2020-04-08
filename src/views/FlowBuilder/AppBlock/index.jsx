@@ -191,6 +191,18 @@ function AppBlock({
       return resource.rdbms.type;
     }
   });
+  const connAssistant = useSelector(state => {
+    if (blockType === 'dataLoader' || !resource || !resource._connectionId)
+      return;
+
+    const connection = selectors.resource(
+      state,
+      'connections',
+      resource._connectionId
+    );
+
+    return connection ? connection.assistant : '';
+  });
 
   useEffect(() => {
     if (expanded && !isOver) {
@@ -315,7 +327,7 @@ function AppBlock({
               className={classes.appLogo}
               size="large"
               type={iconType}
-              assistant={assistant}
+              assistant={connAssistant || assistant}
             />
           )}
         </div>
