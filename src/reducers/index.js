@@ -4076,3 +4076,15 @@ export function suiteScriptIntegrationConnectionList(
     c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
   );
 }
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptResourceFormState(state && state.session, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}

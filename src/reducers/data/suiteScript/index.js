@@ -99,7 +99,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.SUITESCRIPT_RESOURCE.RECEIVED:
+      case actionTypes.SUITESCRIPT.RESOURCE.RECEIVED:
         {
           const { ssLinkedConnectionId, resource } = action;
 

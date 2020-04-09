@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
-import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
-import ResourceForm from '../../../../components/ResourceFormFactory';
+import LoadSuiteScriptResources from '../../LoadResources';
+import ResourceForm from '../../ResourceFormFactory';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -108,7 +108,8 @@ export default function Panel(props) {
   } = props;
   const { id, resourceType, operation } = match.params;
 
-  console.log(`ss match.params ${JSON.stringify(match.params)}`);
+  console.log(`ss Panel match.params ${JSON.stringify(match.params)}`);
+  console.log(`ss Panel props ${JSON.stringify(props)}`);
 
   const isNew = operation === 'add';
   const location = useLocation();
@@ -121,7 +122,12 @@ export default function Panel(props) {
     notificationPanelHeight,
   });
   const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, id)
+    selectors.suiteScriptResourceFormState(state, {
+      resourceType,
+      resourceId: id,
+      ssLinkedConnectionId,
+      integrationId,
+    })
   );
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)

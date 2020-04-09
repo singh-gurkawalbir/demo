@@ -1,25 +1,28 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import actions from '../../actions';
-import * as selectors from '../../reducers';
-import resourceConstants from '../../forms/constants/connection';
-import formFactory from '../../forms/formFactory';
-import DynaForm from '../DynaForm';
-import consolidatedActions from './Actions';
-import { getResourceSubType } from '../../utils/resource';
+import actions from '../../../actions';
+import * as selectors from '../../../reducers';
+import resourceConstants from '../../../forms/constants/connection';
+import formFactory from '../../../forms/formFactory';
+import DynaForm from '../../DynaForm';
+import consolidatedActions from '../../ResourceFormFactory/Actions';
+import { getResourceSubType } from '../../../utils/resource';
 
-const mapStateToProps = (state, { resourceType, resourceId }) => {
-  const formState = selectors.resourceFormState(
-    state,
+const mapStateToProps = (
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId }
+) => {
+  const formState = selectors.suiteScriptResourceFormState(state, {
     resourceType,
-    resourceId
-  );
-  const { merged: resource } = selectors.resourceData(
-    state,
+    resourceId,
+    ssLinkedConnectionId,
+  });
+  const { merged: resource } = selectors.suiteScriptResourceData(state, {
     resourceType,
-    resourceId
-  );
+    id: resourceId,
+    ssLinkedConnectionId,
+  });
   const connection = selectors.resource(
     state,
     'connections',
@@ -45,7 +48,13 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew, flowId) => {
+  handleInitForm: (
+    resourceType,
+    resourceId,
+    isNew,
+    flowId,
+    ssLinkedConnectionId
+  ) => {
     const skipCommit =
       isNew &&
       [
@@ -57,12 +66,14 @@ const mapDispatchToProps = dispatch => ({
       ].includes(resourceType);
 
     dispatch(
-      actions.resourceForm.init(
+      actions.suiteScript.resourceForm.init(
         resourceType,
         resourceId,
         isNew,
         skipCommit,
-        flowId
+        flowId,
+        undefined,
+        ssLinkedConnectionId
       )
     );
   },
@@ -170,6 +181,8 @@ export const FormStateManager = props => {
 };
 
 export const ResourceFormFactory = props => {
+  console.log(`ss ResourceFormFactory props ${JSON.stringify(props)}`);
+
   const {
     resourceType,
     formState,
@@ -181,12 +194,20 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     flowId,
     connection,
+    ssLinkedConnectionId,
   } = props;
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew, flowId);
+    handleInitForm(
+      resourceType,
+      resourceId,
+      isNew,
+      flowId,
+      ssLinkedConnectionId
+    );
 
-    return () => handleClearResourceForm(resourceType, resourceId);
+    return () =>
+      handleClearResourceForm(resourceType, resourceId, ssLinkedConnectionId);
   }, [
     flowId,
     handleClearResourceForm,
@@ -195,6 +216,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
+    ssLinkedConnectionId,
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
@@ -204,8 +226,9 @@ export const ResourceFormFactory = props => {
         resource,
         isNew,
         connection,
+        ssLinkedConnectionId,
       }),
-    [connection, isNew, resource, resourceType]
+    [connection, isNew, resource, resourceType, ssLinkedConnectionId]
   );
   const { fieldMeta } = formState;
 

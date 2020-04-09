@@ -1,24 +1,19 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
-import actions from '../../actions';
-import actionTypes from '../../actions/types';
-import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import actions from '../../../actions';
+import actionTypes from '../../../actions/types';
+import { apiCallWithRetry } from '../../index';
+import * as selectors from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
-  getPatchPathForCustomForms,
-  getFieldWithReferenceById,
-} from '../../forms/utils';
-import factory from '../../forms/formFactory';
-import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
-import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas from '../resourceForm/connections';
-import { requestAssistantMetadata } from '../resources/meta';
-import { isNewId } from '../../utils/resource';
-import { fileTypeToApplicationTypeMap } from '../../utils/file';
-import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
-import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES } from '../../utils/constants';
+} from '../../../forms/utils';
+import factory from '../../../forms/formFactory';
+import { getResource, commitStagedChanges } from '../../resources';
+import connectionSagas from '../../resourceForm/connections';
+import { isNewId } from '../../../utils/resource';
+import { fileTypeToApplicationTypeMap } from '../../../utils/file';
+import { uploadRawData } from '../../uploadFile';
+import { UI_FIELD_VALUES } from '../../../utils/constants';
 
 export const SCOPES = {
   META: 'meta',
@@ -27,152 +22,54 @@ export const SCOPES = {
 };
 Object.freeze(SCOPES);
 
-export function* patchFormField({
-  resourceType,
-  resourceId,
-  fieldId,
-  value,
-  op = 'replace',
-  offset = 0,
-}) {
-  const { merged } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId
-  );
-
-  if (!merged) return; // nothing to do.
-
-  const meta = merged.customForm && merged.customForm.form;
-
-  if (!meta) return; // nothing to do
-
-  const path = getPatchPathForCustomForms(meta, fieldId, offset);
-  // we try to get the corresponding fieldReference for the field so that we can patch fieldReference
-  const { fieldReference } = getFieldWithReferenceById({
-    meta,
-    id: fieldId,
-  });
-
-  if (!path) return; // nothing to do.
-  let patchFieldReference = [];
-  let patchLayout = [];
-
-  // patch the entire value into the fieldReference
-  if (op === 'add') {
-    // when adding a new field reference use field Id to generate the name of the field reference
-    patchFieldReference = [
-      {
-        op,
-        path: `/customForm/form/fieldMap/${value && value.id}`,
-        value,
-      },
-    ];
-    patchLayout = [{ op, path, value: value && value.id }];
-  } else {
-    patchFieldReference = [
-      { op, path: `/customForm/form/fieldMap/${fieldReference}`, value },
-    ];
-  }
-
-  // patch layout field with the reference
-  const patchSet = [...patchFieldReference, ...patchLayout];
-
-  // Apply the new patch to the session
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.META));
-}
-
-export function* runHook({ hook, data }) {
-  const { entryFunction, scriptId } = hook;
-  const { merged } = yield select(selectors.resourceData, 'scripts', scriptId);
-
-  // okay extracting script from the session
-  // if it isn't there, make a call to receive the resource
-  // Aren't we loading all the scripts?
-  if (!merged) return; // nothing to do.
-
-  let code = merged.content;
-
-  if (code === undefined) {
-    const origin = yield call(getResource, {
-      resourceType: 'scripts',
-      id: scriptId,
-      message: `Loading ${merged.name} script content.`,
-    });
-
-    yield put(actions.resource.received('scripts', origin));
-    code = origin.content;
-  }
-
-  const path = `/processors/javascript`;
-  const opts = {
-    method: 'post',
-    body: processorLogic.requestBody({
-      data,
-      code,
-      entryFunction,
-    }),
-  };
-  const results = yield call(apiCallWithRetry, { path, opts });
-
-  return yield results.data;
-}
-
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
   values,
   scope,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
-  const { merged: resource } = yield select(
-    selectors.resourceData,
+  const { merged: resource } = yield select(selectors.suiteScriptResourceData, {
     resourceType,
-    resourceId,
-    scope
-  );
+    id: resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+    scope,
+  });
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
 
   // This has the fieldMeta
-  const formState = yield select(
-    selectors.resourceFormState,
+  const formState = yield select(selectors.suiteScriptResourceFormState, {
+    ssLinkedConnectionId,
+    integrationId,
     resourceType,
-    resourceId
-  );
-  const { customForm } = resource;
+    resourceId,
+  });
   let finalValues = values;
+  let connection;
 
-  if (customForm && customForm.preSave) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
-
-    finalValues = yield call(runHook, {
-      hook: customForm.preSave,
-      data: values,
+  if (resource && resource._connectionId) {
+    connection = yield select(selectors.suiteScriptResource, {
+      resourceType: 'connections',
+      id: resource._connectionId,
+      ssLinkedConnectionId,
     });
-  } else {
-    let connection;
+  }
 
-    if (resource && resource._connectionId) {
-      connection = yield select(
-        selectors.resource,
-        'connections',
-        resource._connectionId
-      );
-    }
+  const { preSave } = factory.getResourceFormAssets({
+    resourceType,
+    resource,
+    connection,
+    isNew: formState.isNew,
+    ssLinkedConnectionId,
+  });
 
-    const { preSave } = factory.getResourceFormAssets({
-      resourceType,
-      resource,
-      connection,
-      isNew: formState.isNew,
-    });
+  if (typeof preSave === 'function') {
+    // stock preSave handler present...
 
-    if (typeof preSave === 'function') {
-      // stock preSave handler present...
-
-      finalValues = preSave(values, resource);
-    }
+    finalValues = preSave(values, resource);
   }
 
   const patchSet = sanitizePatchSet({
@@ -484,19 +381,23 @@ export function* initFormValues({
   isNew,
   skipCommit,
   flowId,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
   const developerMode = yield select(selectors.developerMode);
-  const { merged: resource } = yield select(
-    selectors.resourceData,
+
+  console.log(`ss initFormValues developerMode `, developerMode);
+  let flow;
+  const { merged: resource } = yield select(selectors.suiteScriptResourceData, {
     resourceType,
-    resourceId,
-    SCOPES.VALUE
-  );
-  const { merged: flow } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+    id: resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+    scope: SCOPES.VALUE,
+  });
+
+  console.log(`ss initFormValues resource `, resource);
+  // ({ merged: flow } = yield select(selectors.resourceData, 'flows', flowId));
 
   if (isNewId(resourceId)) {
     resource._id = resourceId;
@@ -504,43 +405,15 @@ export function* initFormValues({
 
   if (!resource) return; // nothing to do.
   let assistantData;
-
-  if (['exports', 'imports'].includes(resourceType) && resource.assistant) {
-    if (!resource.assistantMetadata) {
-      yield put(
-        actions.resource.patchStaged(
-          resourceId,
-          [{ op: 'add', path: '/assistantMetadata', value: {} }],
-          SCOPES.VALUE
-        )
-      );
-    }
-
-    assistantData = yield select(selectors.assistantData, {
-      adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
-        ? 'rest'
-        : 'http',
-      assistant: resource.assistant,
-    });
-
-    if (!assistantData) {
-      assistantData = yield call(requestAssistantMetadata, {
-        adaptorType: ['RESTExport', 'RESTImport'].includes(resource.adaptorType)
-          ? 'rest'
-          : 'http',
-        assistant: resource.assistant,
-      });
-    }
-  }
-
   let connection;
 
   if (resource && resource._connectionId) {
-    connection = yield select(
-      selectors.resource,
-      'connections',
-      resource._connectionId
-    );
+    connection = yield select(selectors.suiteScriptResource, {
+      resourceType: 'connections',
+      id: resource._connectionId,
+      ssLinkedConnectionId,
+      integrationId,
+    });
   }
 
   const defaultFormAssets = factory.getResourceFormAssets({
@@ -549,6 +422,7 @@ export function* initFormValues({
     isNew,
     assistantData,
     connection,
+    ssLinkedConnectionId,
   });
   const { customForm } = resource;
   const form =
@@ -564,17 +438,7 @@ export function* initFormValues({
   );
   let finalFieldMeta = fieldMeta;
 
-  if (customForm && customForm.init) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
-    // TODO: if there is an error here we should show that message
-    // in the UI.....and point them to the link to edit the
-    // script or maybe prevent them from saving the script
-    finalFieldMeta = yield call(runHook, {
-      hook: customForm.init,
-      data: fieldMeta,
-    });
-  } else if (typeof defaultFormAssets.init === 'function') {
+  if (typeof defaultFormAssets.init === 'function') {
     // standard form init fn...
 
     finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
@@ -582,13 +446,14 @@ export function* initFormValues({
 
   // console.log('finalFieldMeta', finalFieldMeta);
   yield put(
-    actions.resourceForm.initComplete(
+    actions.suiteScript.resourceForm.initComplete(
       resourceType,
       resourceId,
       finalFieldMeta,
       isNew,
       skipCommit,
-      flowId
+      flowId,
+      ssLinkedConnectionId
     )
   );
 }
@@ -645,9 +510,8 @@ export function* initCustomForm({ resourceType, resourceId }) {
 
 export const resourceFormSagas = [
   takeEvery(actionTypes.RESOURCE.INIT_CUSTOM_FORM, initCustomForm),
-  takeEvery(actionTypes.RESOURCE.PATCH_FORM_FIELD, patchFormField),
-  takeEvery(actionTypes.RESOURCE_FORM.INIT, initFormValues),
-  takeEvery(actionTypes.RESOURCE_FORM.SUBMIT, submitResourceForm),
+  takeEvery(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT, initFormValues),
+  takeEvery(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT, submitResourceForm),
   takeEvery(
     actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE,
     saveAndContinueResourceForm

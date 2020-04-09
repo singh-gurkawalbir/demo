@@ -22,6 +22,7 @@ import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 
 export default combineReducers({
   stage,
@@ -47,6 +48,7 @@ export default combineReducers({
   flows,
   transfers,
   responseMapping,
+  suiteScript,
 });
 
 // #region PUBLIC SELECTORS
@@ -495,3 +497,15 @@ export function getTransferPreviewData(state) {
 }
 
 // #endregion
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormState(state && state.suiteScript, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}

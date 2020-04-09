@@ -9,7 +9,7 @@ import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
-import ResourceDrawer from '../../../../components/drawer/SuiteScript/Resource';
+import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
 import EditableText from '../../../../components/EditableText';
 import SettingsPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';

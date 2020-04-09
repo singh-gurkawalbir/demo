@@ -1178,15 +1178,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (
-    resourceType,
-    resourceId,
-    isNew,
-    skipCommit,
-    flowId,
-    initData,
-    ssLinkedConnectionId
-  ) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1194,7 +1186,6 @@ const resourceForm = {
       skipCommit,
       flowId,
       initData,
-      ssLinkedConnectionId,
     }),
   initComplete: (
     resourceType,
@@ -1439,6 +1430,52 @@ const responseMapping = {
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 // #endregion
+const suiteScript = {
+  resourceForm: {
+    init: (
+      resourceType,
+      resourceId,
+      isNew,
+      skipCommit,
+      flowId,
+      initData,
+      ssLinkedConnectionId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT, {
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId,
+        initData,
+        ssLinkedConnectionId,
+      }),
+    initComplete: (
+      resourceType,
+      resourceId,
+      fieldMeta,
+      isNew,
+      skipCommit,
+      flowId,
+      ssLinkedConnectionId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_COMPLETE, {
+        resourceId,
+        resourceType,
+        fieldMeta,
+        isNew,
+        skipCommit,
+        flowId,
+        ssLinkedConnectionId,
+      }),
+    clearInitData: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR_INIT_DATA, {
+        resourceId,
+        resourceType,
+        ssLinkedConnectionId,
+      }),
+  },
+};
 
 export default {
   postFeedback,
@@ -1482,4 +1519,5 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  suiteScript,
 };
