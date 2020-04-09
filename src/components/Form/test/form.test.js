@@ -189,6 +189,179 @@ describe('validation warnings', () => {
   });
 });
 
+describe('visible behavior', () => {
+  const formKey = '123';
+  let store;
+  const fieldsMeta = {
+    fieldMap: {
+      visibleField: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+        visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+      },
+
+      validField: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: '123',
+        label: 'field2',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Numbers only',
+          },
+        },
+      },
+    },
+
+    layout: { fields: ['visibleField', 'validField'] },
+  };
+  let queryByDisplayValue;
+
+  beforeAll(() => {
+    // build up the state
+    store = createStore(reducer, {
+      user: { profile: { name: 'profile 1' } },
+    });
+
+    ({ queryByDisplayValue } = render(
+      reduxWrappedComponent({
+        Component,
+        store,
+        componentProps: { formKey, fieldsMeta },
+      })
+    ));
+  });
+
+  test('visibleField should be initially invisible since it does not meet its visible expression criteria', () => {
+    // find a field with that default value
+    const formState = selectors.getFormState(store.getState(), '123');
+
+    expect(formState.fields.FIELD1.visible).toBe(false);
+    expect(queryByDisplayValue('test')).not.toBeTruthy();
+  });
+
+  test('visibleField should be visible after it visible expression criteria ', () => {
+    // find a field with that default value
+    const ele = queryByDisplayValue('123');
+
+    fireEvent.change(ele, {
+      target: {
+        value: 'standard',
+      },
+    });
+    expect(queryByDisplayValue('test')).toBeTruthy();
+  });
+
+  test('visibleField should be again invisible after it visible expression criteria is not met ', () => {
+    // find a field with that default value
+    const ele = queryByDisplayValue('standard');
+
+    fireEvent.change(ele, {
+      target: {
+        value: 'something else',
+      },
+    });
+    expect(queryByDisplayValue('test')).not.toBeTruthy();
+  });
+});
+
+describe('required behavior', () => {
+  const formKey = '123';
+  let store;
+  const fieldsMeta = {
+    fieldMap: {
+      requiredField: {
+        id: 'FIELD1',
+        type: 'text',
+        name: 'field1',
+        defaultValue: 'test',
+        label: 'field1',
+        requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+      },
+
+      validField: {
+        id: 'FIELD2',
+        type: 'text',
+        name: 'field2',
+        defaultValue: '123',
+        label: 'field2',
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^[\\d]+$',
+            message: 'Numbers only',
+          },
+        },
+      },
+    },
+
+    layout: { fields: ['requiredField', 'validField'] },
+  };
+  let queryByDisplayValue;
+  let debug;
+
+  beforeAll(() => {
+    // build up the state
+    store = createStore(reducer, {
+      user: { profile: { name: 'profile 1' } },
+    });
+
+    ({ debug, queryByDisplayValue } = render(
+      reduxWrappedComponent({
+        Component,
+        store,
+        componentProps: {
+          formKey,
+          fieldsMeta,
+          showValidationBeforeTouched: true,
+        },
+      })
+    ));
+  });
+
+  test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
+    // find a field with that default value
+    const formState = selectors.getFormState(store.getState(), '123');
+
+    expect(formState.fields.FIELD1.required).toBe(false);
+    expect(queryByDisplayValue('A value must be provided')).not.toBeTruthy();
+  });
+
+  test('requiredField should be required after it requiredWhen expression criteria is met ', () => {
+    // find a field with that default value
+
+    const ele = queryByDisplayValue('123');
+
+    fireEvent.change(ele, {
+      target: {
+        value: 'standard',
+      },
+    });
+
+    const formState = selectors.getFormState(store.getState(), '123');
+
+    debug();
+    expect(formState.fields.FIELD1.required).toBe(true);
+    expect(queryByDisplayValue('A value must be provided')).toBeTruthy();
+  });
+
+  test('requiredField should be again not required after it required expression criteria is not met ', () => {
+    // find a field with that default value
+    const ele = queryByDisplayValue('standard');
+
+    fireEvent.change(ele, {
+      target: {
+        value: 'something else',
+      },
+    });
+    expect(queryByDisplayValue('A value must be provided')).not.toBeTruthy();
+  });
+});
+
 describe('changing form value prop', () => {
   const fieldsMeta = {
     fieldMap: {
