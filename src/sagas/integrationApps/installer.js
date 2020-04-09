@@ -2,6 +2,8 @@ import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
+import { isOauth } from '../../utils/resource';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -71,7 +73,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   }
 }
 
-export function* installScriptStep({ id, connectionId }) {
+export function* installScriptStep({ id, connectionId, connectionDoc }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
 
@@ -80,7 +82,9 @@ export function* installScriptStep({ id, connectionId }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body: connectionId ? { _connectionId: connectionId } : {},
+        body: connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc },
         method: 'POST',
       },
       hidden: true,
@@ -94,6 +98,27 @@ export function* installScriptStep({ id, connectionId }) {
 
   if (!stepCompleteResponse) {
     return yield put(actions.resource.request('integrations', id));
+  }
+
+  yield put(actions.resource.requestCollection('connections'));
+  const oAuthConnectionStep =
+    stepCompleteResponse &&
+    stepCompleteResponse.find(
+      temp =>
+        temp.completed === false &&
+        temp._connectionId &&
+        temp.type === 'connection'
+    );
+
+  if (oAuthConnectionStep && isOauth(connectionDoc)) {
+    try {
+      yield call(
+        openOAuthWindowForConnection,
+        oAuthConnectionStep._connectionId
+      );
+    } catch (e) {
+      // could not close the window
+    }
   }
 
   yield put(

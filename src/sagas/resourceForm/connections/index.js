@@ -21,7 +21,7 @@ import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
 
-function* createPayload({ values, resourceId }) {
+export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   let connectionResource = yield select(
@@ -379,6 +379,19 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     // if there is conflict let conflict dialog show up
     // and oauth authorize be skipped
     if (conflict) return;
+  }
+
+  const { patch: allPatches } = yield select(
+    selectors.stagedResource,
+    resourceId
+  );
+
+  if (
+    allPatches &&
+    allPatches.find(item => item.path === '/newIA') &&
+    allPatches.find(item => item.path === '/newIA').value
+  ) {
+    return true;
   }
 
   try {

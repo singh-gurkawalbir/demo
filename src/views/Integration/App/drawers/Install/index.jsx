@@ -18,7 +18,11 @@ import {
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import { getResourceSubType } from '../../../../../utils/resource';
+import {
+  getResourceSubType,
+  generateNewId,
+  isOauth,
+} from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
@@ -27,6 +31,8 @@ import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import jsonUtil from '../../../../../utils/json';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -70,7 +76,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
-  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
+  const [connection, setSelectedConnectionId] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
@@ -81,7 +87,11 @@ export default function ConnectorInstallation(props) {
     selectors.integrationInstallSteps(state, integrationId)
   );
   const selectedConnection = useSelector(state =>
-    selectors.resource(state, 'connections', selectedConnectionId)
+    selectors.resource(
+      state,
+      'connections',
+      connection && connection._connectionId
+    )
   );
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
@@ -167,16 +177,40 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction, type } = step;
+  const handleConnectionClose = () => {
+    setSelectedConnectionId(false);
+  };
 
-    // handle connection step click
+  const handleStepClick = step => {
+    const {
+      _connectionId,
+      installURL,
+      installerFunction,
+      type,
+      sourceConnection,
+    } = step;
+
     if (_connectionId || type === 'connection') {
       if (step.isTriggered) {
         return false;
       }
 
-      setSelectedConnectionId(_connectionId);
+      const newId = generateNewId();
+      const connObj = sourceConnection;
+
+      delete connObj._id;
+      dispatch(
+        actions.resource.patchStaged(
+          newId,
+          jsonUtil.objectToPatchSet({ ...sourceConnection, newIA: true }),
+          SCOPES.VALUE
+        )
+      );
+      setSelectedConnectionId({
+        newId,
+        doc: sourceConnection,
+        _connectionId,
+      });
     } else if (isFrameWork2 && !step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -240,10 +274,11 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg`);
   };
 
-  const handleSubmitComplete = (connId, isAuthorized) => {
+  const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
     const step = installSteps.find(s => s.isCurrentStep);
 
     if (
+      selectedConnection &&
       oAuthApplications.includes(getConnectionType(selectedConnection)) &&
       !isAuthorized &&
       !(
@@ -269,7 +304,8 @@ export default function ConnectorInstallation(props) {
       dispatch(
         actions.integrationApp.installer.scriptInstallStep(
           integrationId,
-          selectedConnectionId
+          connection && connection._connectionId,
+          connectionDoc
         )
       );
     } else {
@@ -277,12 +313,12 @@ export default function ConnectorInstallation(props) {
         actions.integrationApp.installer.installStep(
           integrationId,
           (step || {}).installerFunction,
-          selectedConnectionId
+          connection && connection._connectionId
         )
       );
     }
 
-    setSelectedConnectionId(false);
+    if (!isOauth(connectionDoc)) setSelectedConnectionId(false);
   };
 
   const handleClose = () => {
@@ -291,10 +327,21 @@ export default function ConnectorInstallation(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {selectedConnectionId && (
+      {connection && connection._connectionId && (
         <ConnectionSetupDialog
-          resourceId={selectedConnectionId}
+          resourceId={connection._connectionId}
           onClose={handleClose}
+          onSubmitComplete={handleSubmitComplete}
+        />
+      )}
+      {connection && connection.doc && !connection._connectionId && (
+        <ConnectionSetupDialog
+          resourceId={connection.newId}
+          resource={connection.doc}
+          resourceType="connections"
+          environment="production"
+          connectionType={connection.doc.type}
+          onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
         />
       )}

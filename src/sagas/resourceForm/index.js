@@ -12,7 +12,7 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas from '../resourceForm/connections';
+import connectionSagas, { createPayload } from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -298,6 +298,30 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
+  const { patch: allPatches } = yield select(
+    selectors.stagedResource,
+    resourceId
+  );
+
+  if (
+    allPatches &&
+    allPatches.find(item => item.path === '/newIA') &&
+    allPatches.find(item => item.path === '/newIA').value
+  ) {
+    const connectionPayload = yield call(createPayload, {
+      values,
+      resourceType: 'connections',
+      resourceId,
+    });
+
+    return yield put(
+      actions.resourceForm.submitComplete(
+        resourceType,
+        resourceId,
+        connectionPayload
+      )
+    );
+  }
 
   formValues = yield call(deleteUISpecificValues, {
     values: formValues,

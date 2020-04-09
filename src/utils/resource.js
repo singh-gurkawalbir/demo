@@ -696,3 +696,14 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   return mapping;
 };
+
+export const isOauth = connectionDoc =>
+  connectionDoc &&
+  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
+    (connectionDoc.http &&
+      connectionDoc.http.auth &&
+      connectionDoc.http.auth.type === 'oauth') ||
+    (connectionDoc.http &&
+      connectionDoc.netsuite &&
+      connectionDoc.netsuite.authType === 'oauth') ||
+    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType));
