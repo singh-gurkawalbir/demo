@@ -124,6 +124,31 @@ function JobErrorTable({
   ).length;
   const [editDataOfRetryId, setEditDataOfRetryId] = useState();
   const [expanded, setExpanded] = useState({});
+  // #region derived props from selectors
+  const retryObject = useSelector(state => {
+    if (!editDataOfRetryId) {
+      return undefined;
+    }
+
+    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
+  });
+  const uploadedFile = useSelector(
+    state => selectors.getUploadedFile(state, fileId),
+    shallowEqual
+  );
+  const jobErrorsPreview = useSelector(
+    state => selectors.getJobErrorsPreview(state, job._id),
+    shallowEqual
+  );
+  // Extract errorFile Id from the target Job i.e., one of the children of parent job ( job._flowJobId )
+  const existingErrorFileId = useSelector(state => {
+    const { children = [] } =
+      selectors.flowJob(state, { jobId: job._flowJobId }) || {};
+    const childJob = children.find(cJob => cJob._id === job._id) || {};
+
+    return childJob.errorFile && childJob.errorFile.id;
+  });
+  // #end region
   const jobErrorsData = [];
 
   jobErrorsInCurrentPage.forEach(j => {
@@ -156,6 +181,16 @@ function JobErrorTable({
       const file = event.target.files[0];
 
       if (!file) return;
+
+      // If file name uploaded matches the existing fileId with csv extension, process right away
+      // File name is preferred not to be changed
+      if (file.name === `${existingErrorFileId}.csv`) {
+        dispatch(actions.file.processFile({ fileId, file, fileType: 'csv' }));
+
+        return;
+      }
+
+      // else take the confirmation from the user for the same and proceed if yes
       confirmDialog({
         title: 'Confirm',
         message: `The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always 'Download All Errors' and work from the latest error file. Are you sure you want to proceed with this upload?`,
@@ -174,7 +209,7 @@ function JobErrorTable({
         ],
       });
     },
-    [confirmDialog, dispatch, fileId]
+    [confirmDialog, dispatch, existingErrorFileId, fileId]
   );
 
   function handleRetryClick() {
@@ -283,22 +318,6 @@ function JobErrorTable({
   function handleEditRetryDataClick(retryId) {
     setEditDataOfRetryId(retryId);
   }
-
-  const retryObject = useSelector(state => {
-    if (!editDataOfRetryId) {
-      return undefined;
-    }
-
-    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
-  });
-  const uploadedFile = useSelector(
-    state => selectors.getUploadedFile(state, fileId),
-    shallowEqual
-  );
-  const jobErrorsPreview = useSelector(
-    state => selectors.getJobErrorsPreview(state, job._id),
-    shallowEqual
-  );
 
   useEffect(() => {
     if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
