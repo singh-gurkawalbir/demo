@@ -6,7 +6,7 @@ import * as selectors from '../../../reducers';
 import resourceConstants from '../../../forms/constants/connection';
 import formFactory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
-import consolidatedActions from '../../ResourceFormFactory/Actions';
+import consolidatedActions from './Actions';
 import { getResourceSubType } from '../../../utils/resource';
 
 const mapStateToProps = (
@@ -114,18 +114,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     return <DynaForm {...props}>{ActionButtons}</DynaForm>;
   }
 
-  let actionButtons;
-
-  // When action button metadata isn't provided we infer the action buttons.
-  if (resourceType === 'connections' && !isNew) {
-    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['oauth', 'cancel'];
-    } else {
-      actionButtons = ['test', 'testandsave', 'cancel'];
-    }
-  } else {
-    actionButtons = ['save', 'cancel'];
-  }
+  const actionButtons = ['test', 'save', 'cancel'];
 
   return (
     <DynaForm {...props}>

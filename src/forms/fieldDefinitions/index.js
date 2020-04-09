@@ -10,6 +10,7 @@ import connectorLicenses from './resources/connectorLicense';
 import integrations from './resources/integration';
 import asyncHelpers from './resources/asyncHelpers';
 import iClients from './resources/iClient';
+import suiteScript from './suiteScript';
 
 export default {
   connections,
@@ -24,4 +25,5 @@ export default {
   accesstokens,
   connectorLicenses,
   integrations,
+  ...suiteScript,
 };

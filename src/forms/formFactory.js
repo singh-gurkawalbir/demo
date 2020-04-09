@@ -177,7 +177,7 @@ const getResourceFormAssets = ({
   const { type } = getResourceSubType(resource);
 
   if (ssLinkedConnectionId) {
-    meta = formMeta.suiteScript[resourceType].salesforce;
+    meta = formMeta.suiteScript[resourceType][resource.type];
 
     if (meta) {
       ({ fieldMap, layout, preSave, init, actions } = meta);
@@ -512,6 +512,8 @@ const flattenedFieldMap = (
           }
         );
       }
+
+      window.debug_masterFieldHash = masterFieldHash;
 
       const masterFields = masterFieldHash[resourceType]
         ? masterFieldHash[resourceType][f.fieldId]

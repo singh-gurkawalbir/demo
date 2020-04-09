@@ -432,7 +432,7 @@ export function* initFormValues({
   //
   const fieldMeta = factory.getFieldsWithDefaults(
     form,
-    resourceType,
+    `ss-${resourceType}`,
     resource,
     { developerMode, flowId }
   );

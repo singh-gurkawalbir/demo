@@ -349,12 +349,12 @@ export default function Panel(props) {
           resources={requiredResources}>
           <div className={classes.formContainer}>
             <div>
-              {['exports', 'imports', 'connections'].includes(resourceType) && (
+              {/* {['exports', 'imports', 'connections'].includes(resourceType) && (
                 <ConnectionStatusPanel
                   resourceType={resourceType}
                   resourceId={id}
                 />
-              )}
+              )} */}
               <ReactResizeDetector handleHeight onResize={resize} />
             </div>
             <ResourceForm
