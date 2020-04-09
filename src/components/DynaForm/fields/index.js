@@ -90,6 +90,7 @@ import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
+import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 
 export default {
   mode: DynaMode,
@@ -193,4 +194,5 @@ export default {
   formview: DynaFormView,
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
+  netsuiteexporttype: DynaNetsuiteExportType,
 };
