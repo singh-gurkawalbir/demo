@@ -169,6 +169,8 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   // type
+  // TODO(Mounika): Check if this is a ghost code. There is reference for type in subForms/netsuite/search.js
+
   type: {
     type: 'select',
     label: 'Export type',
