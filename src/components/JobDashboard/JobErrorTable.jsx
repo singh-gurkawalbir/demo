@@ -345,6 +345,7 @@ function JobErrorTable({
       confirmDialog({
         title: 'Confirm',
         message: <JobErrorPreviewDialogContent previewData={previewData} />,
+        maxWidth: 'md',
         buttons: [
           {
             label: 'Cancel',
