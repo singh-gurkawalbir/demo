@@ -1367,6 +1367,12 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
+    action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
+      jobId,
+      flowJobId,
+      errorFileId,
+    }),
   paging: {
     setRowsPerPage: rowsPerPage =>
       action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
@@ -1378,12 +1384,15 @@ const job = {
   },
   processedErrors: {
     requestPreview: ({ jobId, errorFile }) =>
-      action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, { jobId, errorFile }),
-    receivedPreview: ({ jobId, previewData, s3Key }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, {
+        jobId,
+        errorFile,
+      }),
+    receivedPreview: ({ jobId, previewData, errorFileId }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.RECEIVED, {
         jobId,
         previewData,
-        s3Key,
+        errorFileId,
       }),
     previewError: ({ jobId, error }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),

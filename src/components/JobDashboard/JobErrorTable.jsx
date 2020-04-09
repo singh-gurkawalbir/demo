@@ -329,10 +329,17 @@ function JobErrorTable({
         break;
       default:
     }
-  }, [dispatch, enqueueSnackbar, fileId, job._id, uploadedFile]);
+  }, [
+    dispatch,
+    enqueueSnackbar,
+    fileId,
+    job._flowJobId,
+    job._id,
+    uploadedFile,
+  ]);
 
   useEffect(() => {
-    const { status, previewData } = jobErrorsPreview || {};
+    const { status, previewData, errorFileId } = jobErrorsPreview || {};
 
     if (status === 'received' && previewData) {
       confirmDialog({
@@ -346,7 +353,15 @@ function JobErrorTable({
             label: 'Yes',
             onClick: () => {
               // dispatch action that retries this current job with uploaded file stored at s3Key
-              // console.log('s3Key is ', s3Key);
+              dispatch(
+                actions.job.retryForProcessedErrors({
+                  jobId: job._id,
+                  flowJobId: job._flowJobId,
+                  errorFileId,
+                })
+              );
+              // Once retried with uploaded processedErrors, the main error table dialog can be closed
+              onCloseClick();
             },
           },
         ],
@@ -354,7 +369,14 @@ function JobErrorTable({
       // Once the dialog is open, clear the preview result as it is no longer needed
       dispatch(actions.job.processedErrors.clearPreview(job._id));
     }
-  }, [confirmDialog, dispatch, job._id, jobErrorsPreview]);
+  }, [
+    confirmDialog,
+    dispatch,
+    job._flowJobId,
+    job._id,
+    jobErrorsPreview,
+    onCloseClick,
+  ]);
 
   function handleRetryDataChange(data) {
     const updatedData = { ...retryObject.retryData, data };
@@ -395,6 +417,11 @@ function JobErrorTable({
             <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
+      {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
+        <div className={classes.spinner}>
+          <Spinner size={20} /> <span>Uploading...</span>
+        </div>
+      )}
       <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
