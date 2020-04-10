@@ -204,6 +204,12 @@ const connectors = [
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
+    id: 'redshift',
+    name: 'Amazon Redshift',
+    type: 'http',
+    assistant: 'redshift',
+  },
+  {
     id: 'campaignmonitor',
     name: 'Campaign Monitor',
     type: 'rest',

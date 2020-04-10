@@ -89,6 +89,7 @@ import DynaMarketplaceId from './DynaMarketplaceId';
 import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
+import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 
 export default {
@@ -192,5 +193,6 @@ export default {
   netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
   formview: DynaFormView,
   skipRetries: DynaSkipRetries,
+  transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
 };
