@@ -703,7 +703,4 @@ export const isOauth = connectionDoc =>
     (connectionDoc.http &&
       connectionDoc.http.auth &&
       connectionDoc.http.auth.type === 'oauth') ||
-    (connectionDoc.http &&
-      connectionDoc.netsuite &&
-      connectionDoc.netsuite.authType === 'oauth') ||
     (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType));
