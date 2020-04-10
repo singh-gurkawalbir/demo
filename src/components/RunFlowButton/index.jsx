@@ -1,6 +1,5 @@
-import { Fragment, useCallback, useState, useRef } from 'react';
+import { Fragment, useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-// import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -8,12 +7,6 @@ import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
-import {
-  getUploadedFileStatus,
-  getFileReaderOptions,
-  getCsvFromXlsx,
-  getJSONContent,
-} from '../../utils/file';
 import { EMPTY_RAW_DATA } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
@@ -78,6 +71,10 @@ export default function RunFlowButton({
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, flowDetails.integrationId)
   );
+  const uploadedFile = useSelector(
+    state => selectors.getUploadedFile(state, flowId),
+    shallowEqual
+  );
   const handleRunFlow = useCallback(
     customStartDate => {
       if (isDataLoaderFlow) {
@@ -113,91 +110,21 @@ export default function RunFlowButton({
     hasRunKey,
     isDataLoaderFlow,
   ]);
-  /*
-   * File types supported for upload are CSV, XML, XLSX and JSON
-   */
-  const handleFileRead = useCallback(
-    event => {
-      const { result } = event.target;
-      let fileContent = result;
-
-      // For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
-      if (dataLoaderFileType === 'xlsx') {
-        const { success, error } = getCsvFromXlsx(fileContent);
-
-        if (!success) {
-          return enqueueSnackbar({
-            message: error,
-            variant: 'error',
-          });
-        }
-      }
-
-      // For JSON file, content should be parsed from String to JSON
-      if (dataLoaderFileType === 'json') {
-        const { success, error, data } = getJSONContent(fileContent);
-
-        if (!success) {
-          return enqueueSnackbar({
-            message: error,
-            variant: 'error',
-          });
-        }
-
-        fileContent = data;
-      }
-
-      dispatch(
-        actions.flow.runDataLoader({
-          flowId,
-          fileContent,
-          fileType: dataLoaderFileType,
-        })
-      );
-      enqueueSnackbar({
-        message: `${flowDetails.name} has been added to your queue.`,
-      });
-
-      if (onRunStart) onRunStart();
-    },
-    [
-      dataLoaderFileType,
-      dispatch,
-      enqueueSnackbar,
-      flowDetails.name,
-      flowId,
-      onRunStart,
-    ]
-  );
   const handleFileChange = useCallback(
     e => {
       const file = e.target.files[0];
 
       if (!file) return;
 
-      // Checks for file size and file types
-      const fileStatus = getUploadedFileStatus(file, dataLoaderFileType);
-
-      if (!fileStatus.success) {
-        return enqueueSnackbar({
-          message: fileStatus.error,
-          variant: 'error',
-        });
-      }
-
-      const fileReaderOptions = getFileReaderOptions(dataLoaderFileType);
-      const fileReader = new FileReader();
-
-      fileReader.onload = handleFileRead;
-
-      if (fileReaderOptions.readAsArrayBuffer) {
-        // Incase of XLSX file
-        fileReader.readAsArrayBuffer(file);
-      } else {
-        fileReader.readAsText(file);
-      }
+      dispatch(
+        actions.file.processFile({
+          fileId: flowId,
+          file,
+          fileType: dataLoaderFileType,
+        })
+      );
     },
-    [dataLoaderFileType, enqueueSnackbar, handleFileRead]
+    [dataLoaderFileType, dispatch, flowId]
   );
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
@@ -206,6 +133,45 @@ export default function RunFlowButton({
     isNewFlow ||
     !(flowDetails && flowDetails.isRunnable) ||
     isMonitorLevelAccess;
+
+  useEffect(() => {
+    const { status, file, error } = uploadedFile || {};
+
+    switch (status) {
+      case 'error':
+        enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+        break;
+
+      case 'received':
+        dispatch(
+          actions.flow.runDataLoader({
+            flowId,
+            fileContent: file,
+            fileType: dataLoaderFileType,
+          })
+        );
+        // Removes uploaded file from session as it is no longer needed once triggered flow run
+        dispatch(actions.file.reset(flowId));
+        enqueueSnackbar({
+          message: `${flowDetails.name} has been added to your queue.`,
+        });
+
+        if (onRunStart) onRunStart();
+        break;
+      default:
+    }
+  }, [
+    dataLoaderFileType,
+    dispatch,
+    enqueueSnackbar,
+    flowDetails.name,
+    flowId,
+    onRunStart,
+    uploadedFile,
+  ]);
 
   return (
     <Fragment>

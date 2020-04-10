@@ -10,7 +10,6 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Close from '../../../../components/icons/CloseIcon';
 import ApplicationImg from '../../../icons/ApplicationImg';
-import ConnectionStatusPanel from '../../../ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {

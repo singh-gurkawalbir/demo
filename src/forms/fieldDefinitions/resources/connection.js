@@ -1284,7 +1284,16 @@ export default {
     type: 'text',
     label: 'Password',
     inputType: 'password',
-    required: true,
+    requiredWhen: [
+      {
+        field: 'ftp.type',
+        is: ['ftp'],
+      },
+      {
+        field: 'ftp.authKey',
+        is: [''],
+      },
+    ],
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',

@@ -2,6 +2,17 @@ import { isNewId } from '../../../../../utils/resource';
 
 export default {
   optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'restlet.type') {
+      const recordTypeField = fields.find(
+        field => field.fieldId === 'netsuite.restlet.recordType'
+      );
+
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes`,
+      };
+    }
+
     if (
       fieldId === 'restlet.delta.dateField' ||
       fieldId === 'restlet.once.booleanField'
@@ -66,9 +77,12 @@ export default {
     },
     'restlet.type': {
       id: 'restlet.type',
-      type: 'select',
+      type: 'netsuiteexporttype',
       label: 'Export Type',
       required: true,
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+      filterKey: 'suitescript-recordTypes',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -78,15 +92,11 @@ export default {
 
         return output || 'all';
       },
-      options: [
-        {
-          items: [
-            { label: 'All', value: 'all' },
-            { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
-          ],
-        },
+      selectOptions: [
+        { label: 'All', value: 'all' },
+        { label: 'Test', value: 'test' },
+        { label: 'Delta', value: 'delta' },
+        { label: 'Once', value: 'once' },
       ],
     },
     'restlet.delta.dateField': {

@@ -2,7 +2,6 @@ import { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import isEqual from 'lodash/isEqual';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import CodePanel from '../GenericEditor/CodePanel';
@@ -38,7 +37,7 @@ export default function HttpMappingAssistant(props) {
           strict: false,
           autoEvaluate: true,
           template: rule,
-          data: dataInput && JSON.stringify(dataInput),
+          data: dataInput,
         })
       );
     setInitTriggered(true);
@@ -55,8 +54,8 @@ export default function HttpMappingAssistant(props) {
   ]);
 
   useEffect(() => {
-    if (data && dataInput && !isEqual(data, dataInput)) {
-      actions.editor.patch(editorId, { data: JSON.stringify(dataInput) });
+    if (data && dataInput && data !== dataInput) {
+      dispatch(actions.editor.patch(editorId, { data: dataInput }));
     }
   });
 

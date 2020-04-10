@@ -344,6 +344,7 @@ export function connectorFieldOptions(
   // should select options from either defaultOptions or the refreshed metadata options
   return {
     isLoading,
+    value: data && data.value,
     options:
       (data &&
         data.options &&
@@ -3903,7 +3904,12 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
-/* The selector returns appropriate context for the JS Processor to run
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
+
+/*
+ * The selector returns appropriate context for the JS Processor to run
  * For now, it supports contextType: hook
  * Other context types are 'settings' and 'setup'
  */

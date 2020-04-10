@@ -26,7 +26,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SettingsDrawer({ flow, isViewMode }) {
+export default function SettingsDrawer({
+  flow,
+  integrationId,
+  resourceType,
+  resourceId,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -175,7 +180,12 @@ export default function SettingsDrawer({ flow, isViewMode }) {
   return (
     <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
       <div className={classes.scheduleContainer}>
-        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta} render>
+        <DynaForm
+          integrationId={integrationId}
+          resourceType={resourceType}
+          resourceId={resourceId}
+          fieldMeta={fieldMeta}
+          render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
             Save
           </DynaSubmit>

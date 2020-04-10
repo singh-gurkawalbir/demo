@@ -1,9 +1,7 @@
-import { Fragment, useCallback, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
 import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
@@ -15,10 +13,7 @@ import SettingsPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
-import getRoutePath from '../../../../utils/routePaths';
 // import IntegrationTabs from '../common/Tabs';
-import useConfirmDialog from '../../../../components/ConfirmDialog';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import IntegrationTabs from '../common/Tabs';
 
