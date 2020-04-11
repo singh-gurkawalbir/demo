@@ -1,6 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptySet = [];
 const updateConnectionStatus = (
   allConnectionsStatus,
   connectionId,
@@ -23,7 +24,14 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, response, offline } = action;
+  const {
+    type,
+    debugLogs,
+    connectionId,
+    response,
+    offline,
+    queuedJobs,
+  } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -70,6 +78,9 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.RECEIVED_STATUS:
         draft.status = response;
         break;
+      case actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED:
+        draft.queuedJobs = { ...draft.queuedJobs, [connectionId]: queuedJobs };
+        break;
       default:
     }
   });
@@ -81,6 +92,14 @@ export function debugLogs(state) {
   }
 
   return state.debugLogs;
+}
+
+export function queuedJobs(state, connectionId) {
+  if (!state || !state.queuedJobs || !connectionId) {
+    return emptySet;
+  }
+
+  return state.queuedJobs[connectionId] || emptySet;
 }
 
 export function connectionStatus(state, id) {

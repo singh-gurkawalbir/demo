@@ -102,6 +102,15 @@ const connection = {
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
+  requestQueuedJobs: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  receivedQueuedJobs: (queuedJobs, connectionId) =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
+      queuedJobs,
+      connectionId,
+    }),
+  cancelQueuedJob: jobId =>
+    action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
 };
 const marketplace = {
   requestConnectors: () =>

@@ -481,6 +481,10 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
+export function queuedJobs(state, connectionId) {
+  return fromConnections.queuedJobs(state && state.connections, connectionId);
+}
+
 export function connectionStatus(state, id) {
   return fromConnections.connectionStatus(state && state.connections, id);
 }

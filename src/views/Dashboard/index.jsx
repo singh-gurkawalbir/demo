@@ -23,6 +23,7 @@ import UploadFileDialog from '../../views/InstallIntegration';
 import AddIcon from '../../components/icons/AddIcon';
 import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
+import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobsDialog';
 import { generateNewId } from '../../utils/resource';
 import OfflineConnectionDrawer from './OfflineConnectionDrawer';
 import DashboardCard from './DashboardCard';
@@ -118,6 +119,7 @@ function Dashboard() {
       <DownloadIntegrationDrawer />
       <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
+      <QueuedJobsDrawer />
 
       <CeligoPageBar title="My integrations">
         <IconTextButton
