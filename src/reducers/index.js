@@ -344,6 +344,7 @@ export function connectorFieldOptions(
   // should select options from either defaultOptions or the refreshed metadata options
   return {
     isLoading,
+    value: data && data.value,
     options:
       (data &&
         data.options &&

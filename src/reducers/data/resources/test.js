@@ -12,7 +12,7 @@ describe('resources reducer', () => {
           actions.resource.received(resourceType, resource)
         );
 
-        expect(state[resourceType]).toContain(resource);
+        expect(state[resourceType]).toContainEqual(resource);
       });
 
       test('should store the new resource if some exist', () => {
