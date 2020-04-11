@@ -1489,6 +1489,12 @@ const suiteScript = {
         resourceType,
         ssLinkedConnectionId,
       }),
+    clear: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+      }),
   },
 };
 

@@ -77,8 +77,14 @@ const mapDispatchToProps = dispatch => ({
     );
   },
 
-  handleClearResourceForm: (resourceType, resourceId) => {
-    dispatch(actions.resourceForm.clear(resourceType, resourceId));
+  handleClearResourceForm: (resourceType, resourceId, ssLinkedConnectionId) => {
+    dispatch(
+      actions.suiteScript.resourceForm.clear(
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId
+      )
+    );
   },
 });
 const getConnectionType = resource => {
