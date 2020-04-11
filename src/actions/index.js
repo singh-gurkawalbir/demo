@@ -232,17 +232,10 @@ const resource = {
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
-    pingAndUpdateFailed: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE, { connectionId }),
-    pingAndUpdateSuccessful: (connectionId, offline) =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS, {
-        connectionId,
-        offline,
-      }),
+    updateStatus: collection =>
+      action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    receivedConnectionStatus: response =>
-      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
@@ -264,9 +257,10 @@ const resource = {
         resourceId,
         message,
       }),
-    testClear: resourceId =>
+    testClear: (resourceId, retainStatus) =>
       action(actionTypes.CONNECTION.TEST_CLEAR, {
         resourceId,
+        retainStatus,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
@@ -916,6 +910,21 @@ const file = {
       fileType,
       file,
     }),
+  processFile: ({ fileId, file, fileType }) =>
+    action(actionTypes.FILE.PROCESS, {
+      fileId,
+      file,
+      fileType,
+    }),
+  processedFile: ({ fileId, file, fileProps }) =>
+    action(actionTypes.FILE.PROCESSED, {
+      fileId,
+      file,
+      fileProps,
+    }),
+  processError: ({ fileId, error }) =>
+    action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
+  reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
 };
 const transfer = {
   cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),

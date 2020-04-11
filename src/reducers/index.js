@@ -344,6 +344,7 @@ export function connectorFieldOptions(
   // should select options from either defaultOptions or the refreshed metadata options
   return {
     isLoading,
+    value: data && data.value,
     options:
       (data &&
         data.options &&
@@ -899,30 +900,19 @@ export function getNextDataFlows(state, flow) {
   );
 }
 
+export function isConnectionOffline(state, id) {
+  const connection = resource(state, 'connections', id);
+
+  return connection && connection.offline;
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
   list.resources = list.resources.map(r => {
-    const additionalInfo = {};
-
-    additionalInfo.permissions = deepClone(permissions);
-
-    // For connections resource, add the status and queueSize info
-    if (options.type === 'connections') {
-      const status = fromSession.connectionStatus(
-        state && state.session,
-        r._id
-      );
-
-      if (status) {
-        additionalInfo.offline = status.offline;
-        additionalInfo.queueSize = status.queueSize;
-      }
-    }
-
-    const finalRes = { ...r, ...additionalInfo };
+    const finalRes = { ...r, permissions: deepClone(permissions) };
 
     // defaulting queue size to zero when undefined
     finalRes.queueSize = finalRes.queueSize || 0;
@@ -3511,18 +3501,6 @@ export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
 }
 
-export function connectionStatus(state, id) {
-  // we are returning the default value here and not in the leaf selector
-  // because we want the leaf selector to return the true state value without the default value
-  return (
-    fromSession.connectionStatus(state && state.session, id) || {
-      id,
-      queueSize: 0,
-      offline: false,
-    }
-  );
-}
-
 export function getLastExportDateTime(state, flowId) {
   return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
@@ -3939,5 +3917,34 @@ export const getSampleDataWrapper = createSelector(
 
     // For all other stages, return basic sampleData
     return { status, data };
+  }
+);
+
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
+
+/*
+ * The selector returns appropriate context for the JS Processor to run
+ * For now, it supports contextType: hook
+ * Other context types are 'settings' and 'setup'
+ */
+export const getScriptContext = createSelector(
+  [
+    (state, { contextType }) => contextType,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return flow._integrationId;
+    },
+  ],
+  (contextType, _integrationId) => {
+    if (contextType === 'hook' && _integrationId) {
+      return {
+        type: 'hook',
+        container: 'integration',
+        _integrationId,
+      };
+    }
   }
 );

@@ -12,6 +12,7 @@ import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
+import { isConnector } from '../../utils/flows';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -97,8 +98,14 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (resourceType === 'flows') {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
+    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
+    // we reverse this process and convert it back to the old schema ...also we delete this flag
 
-    if (resourceIsDataLoaderFlow) {
+    if (
+      resourceIsDataLoaderFlow ||
+      (merged.flowConvertedToNewSchema && isConnector(merged))
+    ) {
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;
         delete merged.pageGenerators;
@@ -113,6 +120,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
         }
       }
     }
+
+    delete merged.flowConvertedToNewSchema;
   }
   // #endregion
 
@@ -700,21 +709,10 @@ export function* refreshConnectionStatus({ integrationId }) {
       path: url,
       hidden: true,
     });
+    yield put(actions.resource.connections.updateStatus(response));
   } catch (e) {
-    return;
+    // do nothing
   }
-
-  const finalResponse = Array.isArray(response)
-    ? response.map(({ _id, offline, queues }) => ({
-        _id,
-        offline: !!offline,
-        queueSize: queues[0].size,
-      }))
-    : [];
-
-  yield put(
-    actions.resource.connections.receivedConnectionStatus(finalResponse)
-  );
 }
 
 export function* requestQueuedJobs({ connectionId }) {

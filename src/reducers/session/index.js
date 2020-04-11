@@ -22,6 +22,7 @@ import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
+import fileUpload, * as fromFileUpload from './fileUpload';
 
 export default combineReducers({
   stage,
@@ -47,6 +48,7 @@ export default combineReducers({
   flows,
   transfers,
   responseMapping,
+  fileUpload,
 });
 
 // #region PUBLIC SELECTORS
@@ -500,6 +502,10 @@ export function getLastExportDateTime(state, flowId) {
 
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
+}
+
+export function getUploadedFile(state, fileId) {
+  return fromFileUpload.getUploadedFile(state && state.fileUpload, fileId);
 }
 
 // #endregion

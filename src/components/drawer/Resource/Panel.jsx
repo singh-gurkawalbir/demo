@@ -1,5 +1,6 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import ReactResizeDetector from 'react-resize-detector';
 import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
@@ -10,6 +11,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
+import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,15 +29,22 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
+  formContainer: {
+    padding: theme.spacing(3),
+    paddingTop: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+  },
   form: {
-    height: `calc(100vh - 136px)`,
+    height: props => `calc(100vh - 136px - ${props.notificationPanelHeight}px)`,
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
       return props.match.isExact ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: theme.spacing(3),
+    padding: 0,
   },
   appLogo: {
     paddingRight: '25px',
@@ -76,14 +85,35 @@ const determineRequiredResources = type => {
   return resourceType;
 };
 
+const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
+  if (resourceType === 'pageGenerator') {
+    return 'Create source';
+  }
+
+  const queryParams = new URLSearchParams(queryParamStr);
+  const isConnectionFixFromImpExp =
+    queryParams.get('fixConnnection') === 'true';
+
+  if (isConnectionFixFromImpExp && resourceType === 'connections') {
+    return `Fix offline connection`;
+  }
+
+  return `${opTitle} ${resourceLabel.toLowerCase()}`;
+};
+
 export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
-  const classes = useStyles({ ...props, occupyFullWidth });
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
+  const classes = useStyles({
+    ...props,
+    occupyFullWidth,
+    notificationPanelHeight,
+  });
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
   );
@@ -266,13 +296,19 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  let title = `${
-    isNewId(id) ? `Create` : 'Edit'
-  } ${resourceLabel.toLowerCase()}`;
-
-  if (resourceType === 'pageGenerator') {
-    title = 'Create source';
-  }
+  const title = useMemo(
+    () =>
+      getTitle({
+        resourceType,
+        queryParamStr: location.search,
+        resourceLabel,
+        opTitle: isNewId(id) ? 'Create' : 'Edit',
+      }),
+    [id, location.search, resourceLabel, resourceType]
+  );
+  const resize = (width, height) => {
+    setNotificationPanelHeight(height);
+  };
 
   return (
     <Fragment>
@@ -295,18 +331,29 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          <ResourceForm
-            className={classes.form}
-            variant={match.isExact ? 'edit' : 'view'}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            onSubmitComplete={handleSubmitComplete}
-            onCancel={abortAndClose}
-            {...props}
-          />
+          <div className={classes.formContainer}>
+            <div>
+              {['exports', 'imports', 'connections'].includes(resourceType) && (
+                <ConnectionStatusPanel
+                  resourceType={resourceType}
+                  resourceId={id}
+                />
+              )}
+              <ReactResizeDetector handleHeight onResize={resize} />
+            </div>
+            <ResourceForm
+              className={classes.form}
+              variant={match.isExact ? 'edit' : 'view'}
+              isNew={isNew}
+              resourceType={resourceType}
+              resourceId={id}
+              cancelButtonLabel="Cancel"
+              submitButtonLabel={submitButtonLabel}
+              onSubmitComplete={handleSubmitComplete}
+              onCancel={abortAndClose}
+              {...props}
+            />
+          </div>
         </LoadResources>
       </div>
 

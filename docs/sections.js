@@ -53,7 +53,6 @@ module.exports.sections = [
           'src/components/Status/index.jsx',
           'src/components/StatusCircle/index.jsx',
           'src/components/StatusTag/index.jsx',
-          'src/components/ShowStatus/index.jsx',
           'src/components/Loader/index.jsx',
           'src/components/ActionButton/index.jsx',
           'src/components/SystemStatus/index.jsx',
