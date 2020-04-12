@@ -1,15 +1,15 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Route, useHistory } from 'react-router-dom';
 import { Button, Drawer, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import { getStatus, getPages } from '../util';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
-import LoadResources from '../../LoadResources';
-import DrawerTitleBar from './TitleBar';
 import CancelIcon from '../../icons/CancelIcon';
+import LoadResources from '../../LoadResources';
+import { getStatus, getPages } from '../util';
+import DrawerTitleBar from './TitleBar';
 
 const metadata = {
   columns: [
@@ -47,12 +47,12 @@ const metadata = {
       label: 'Cancel',
       component: function CancelQueuedJobAction({ resource }) {
         const dispatch = useDispatch();
+        const handleCancelJob = useCallback(() => {
+          dispatch(actions.connection.cancelQueuedJob(resource._id));
+        }, [dispatch, resource._id]);
 
         return (
-          <Button
-            onClick={() =>
-              dispatch(actions.connection.cancelQueuedJob(resource._id))
-            }>
+          <Button onClick={handleCancelJob}>
             <CancelIcon />
           </Button>
         );
@@ -149,17 +149,17 @@ function QueuedJobs({ parentUrl }) {
           parentUrl={parentUrl}
         />
         <div className={classes.content}>
-          <Fragment>
+          <div>
             Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
             Queue: {queueSize}
-          </Fragment>
-          <Fragment>
+          </div>
+          <div>
             {connectionJobs && connectionJobs.length > 0 ? (
               <CeligoTable data={connectionJobs} {...metadata} />
             ) : (
               <Typography>{NO_PENDING_QUEUED_JOBS}</Typography>
             )}
-          </Fragment>
+          </div>
         </div>
       </Drawer>
     </Fragment>
