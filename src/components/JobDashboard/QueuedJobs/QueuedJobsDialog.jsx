@@ -31,7 +31,7 @@ const metadata = {
     },
     {
       heading: 'Status',
-      value: job => getStatus(job),
+      value: job => getStatus({ ...job, uiStatus: job.status }),
     },
     {
       heading: 'Success',
@@ -126,7 +126,6 @@ function QueuedJobs({ parentUrl }) {
     return connection ? connection.queueSize : 0;
   });
 
-  console.log('connectionJobs', connectionJobs);
   useEffect(() => {
     if (requestJobs && connections && connections.length > 0) {
       setConnectionId(connections[0].id);
