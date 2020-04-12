@@ -23,31 +23,11 @@ const metadata = {
   columns: [
     {
       heading: 'Integration',
-      value: function IntegrationName(job) {
-        const integration = useSelector(state =>
-          selectors.resource(state, 'integrations', job && job._integrationId)
-        );
-
-        if (!job || !job._integrationId) {
-          return 'Unknown';
-        }
-
-        return integration ? integration.name : job._integrationId;
-      },
+      value: job => job._integrationId && job._integrationId.name,
     },
     {
       heading: 'Flow',
-      value: function FlowName(job) {
-        const flow = useSelector(state =>
-          selectors.resource(state, 'integrations', job && job._flowId)
-        );
-
-        if (!job || !job._flowId) {
-          return 'Unknown';
-        }
-
-        return flow ? flow.name : job._flowId;
-      },
+      value: job => job._flowId && job._flowId.name,
     },
     {
       heading: 'Status',
@@ -146,6 +126,7 @@ function QueuedJobs({ parentUrl }) {
     return connection ? connection.queueSize : 0;
   });
 
+  console.log('connectionJobs', connectionJobs);
   useEffect(() => {
     if (requestJobs && connections && connections.length > 0) {
       setConnectionId(connections[0].id);
@@ -160,7 +141,7 @@ function QueuedJobs({ parentUrl }) {
         dispatch(actions.connection.requestQueuedJobs(connectionId));
         dispatch(actions.resource.connections.refreshStatus());
       }
-    }, 1000);
+    }, 5 * 1000);
 
     return () => {
       clearInterval(interval);
