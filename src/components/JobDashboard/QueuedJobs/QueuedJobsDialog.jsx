@@ -9,6 +9,7 @@ import { getStatus, getPages } from '../util';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import LoadResources from '../../LoadResources';
 import DrawerTitleBar from './TitleBar';
+import CancelIcon from '../../icons/CancelIcon';
 
 const metadata = {
   columns: [
@@ -52,7 +53,7 @@ const metadata = {
             onClick={() =>
               dispatch(actions.connection.cancelQueuedJob(resource._id))
             }>
-            Cancel
+            <CancelIcon />
           </Button>
         );
       },
