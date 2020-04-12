@@ -90,25 +90,7 @@ function QueuedJobs({ parentUrl }) {
   const dispatch = useDispatch();
   const [connectionId, setConnectionId] = useState(null);
   const connections = useSelector(
-    state => {
-      const flow = selectors.resource(state, 'flows', flowId);
-      const connections = [];
-      const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(
-        state,
-        flow,
-        {
-          ignoreBorrowedConnections: true,
-        }
-      );
-
-      connectionIds.forEach(c => {
-        const conn = selectors.resource(state, 'connections', c);
-
-        connections.push({ id: conn._id, name: conn.name });
-      });
-
-      return connections;
-    },
+    state => selectors.flowJobConnections(state, flowId),
     (left, right) => left.length === right.length
   );
   const connectionJobs = useSelector(state =>

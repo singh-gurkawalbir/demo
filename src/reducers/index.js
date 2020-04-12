@@ -3252,6 +3252,22 @@ export function assistantPreviewData(state, resourceId) {
   return fromSession.assistantPreviewData(state && state.session, resourceId);
 }
 
+export function flowJobConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+  const connections = [];
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow, {
+    ignoreBorrowedConnections: true,
+  });
+
+  connectionIds.forEach(c => {
+    const conn = resource(state, 'connections', c);
+
+    connections.push({ id: conn._id, name: conn.name });
+  });
+
+  return connections;
+}
+
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
