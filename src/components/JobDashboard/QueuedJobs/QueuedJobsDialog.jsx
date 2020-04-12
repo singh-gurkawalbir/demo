@@ -10,14 +10,14 @@ import {
   Typography,
   makeStyles,
 } from '@material-ui/core';
-import CeligoSelect from '../../components/CeligoSelect';
-import CeligoTable from '../CeligoTable';
-import actions from '../../actions';
-import * as selectors from '../../reducers';
-import { getStatus, getPages } from './util';
-import { NO_PENDING_QUEUED_JOBS } from '../../utils/messageStore';
-import LoadResources from '../LoadResources';
-import DrawerTitleBar from '../drawer/TitleBar';
+import CeligoSelect from '../../CeligoSelect';
+import CeligoTable from '../../CeligoTable';
+import actions from '../../../actions';
+import * as selectors from '../../../reducers';
+import { getStatus, getPages } from '../util';
+import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
+import LoadResources from '../../LoadResources';
+import DrawerTitleBar from '../../drawer/TitleBar';
 
 const metadata = {
   columns: [
