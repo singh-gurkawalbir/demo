@@ -48,7 +48,6 @@ const useStyles = makeStyles(theme => ({
 export default function DrawerTitleBar({
   connectionId,
   flowId,
-  onClose,
   onConnChange,
   parentUrl,
   backToParent,
@@ -77,12 +76,8 @@ export default function DrawerTitleBar({
     [onConnChange]
   );
   const handleClose = useCallback(() => {
-    if (onClose && typeof onClose === 'function') {
-      onClose();
-    } else {
-      history.push(parentUrl);
-    }
-  }, [history, onClose, parentUrl]);
+    history.push(parentUrl);
+  }, [history, parentUrl]);
 
   return (
     <div className={classes.titleBar}>

@@ -152,7 +152,6 @@ function QueuedJobs({ parentUrl }) {
           backToParent
           onConnChange={handleConnectionChange}
           parentUrl={parentUrl}
-          onClose={handleClose}
         />
         <Fragment>
           Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
