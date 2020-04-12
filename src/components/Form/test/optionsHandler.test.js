@@ -53,7 +53,6 @@ describe('options handler', () => {
   });
   const formKey = 123;
   let store;
-  let debug;
   let queryByDisplayValue;
 
   beforeAll(() => {
@@ -62,7 +61,7 @@ describe('options handler', () => {
       user: { profile: { name: 'profile 1' } },
     });
 
-    ({ queryByDisplayValue, debug } = render(
+    ({ queryByDisplayValue } = render(
       reduxWrappedComponent({
         Component,
         store,
@@ -77,7 +76,6 @@ describe('options handler', () => {
   });
 
   test('options handler is called initially for each field', () => {
-    debug();
     expect(optionsHandler.mock.calls.length).toBe(3); // Called for each field
   });
 

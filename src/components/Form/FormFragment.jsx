@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import * as seletors from '../../reducers';
@@ -53,6 +53,9 @@ export default function FormFragment({ defaultFields, formKey }) {
     [formKey, formState]
   );
 
+  // both useForm hook and the FormFragment were getting executed simultaneously
+  /*
+
   useEffect(() => {
     defaultFields.forEach(field => {
       // if new field register
@@ -62,7 +65,7 @@ export default function FormFragment({ defaultFields, formKey }) {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, registerField]);
-
+*/
   if (!formState) return null;
 
   return (
