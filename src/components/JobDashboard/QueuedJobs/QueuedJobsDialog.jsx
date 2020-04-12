@@ -1,16 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Route, useHistory } from 'react-router-dom';
-import {
-  MenuItem,
-  FormControl,
-  Button,
-  Drawer,
-  InputLabel,
-  Typography,
-  makeStyles,
-} from '@material-ui/core';
-import CeligoSelect from '../../CeligoSelect';
+import { Button, Drawer, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -69,6 +60,9 @@ const metadata = {
   ],
 };
 const useStyles = makeStyles(theme => ({
+  content: {
+    margin: theme.spacing(1),
+  },
   drawerPaper: {
     marginTop: theme.appBarHeight,
     width: `90%`,
@@ -153,32 +147,19 @@ function QueuedJobs({ parentUrl }) {
           onConnChange={handleConnectionChange}
           parentUrl={parentUrl}
         />
-        <Fragment>
-          Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
-          Queue: {queueSize}
-          <FormControl>
-            <InputLabel htmlFor="connections">Connection:</InputLabel>
-            <CeligoSelect
-              id="connections"
-              value={connectionId}
-              onChange={handleConnectionChange}
-              margin="dense">
-              {connections &&
-                connections.map(conn => (
-                  <MenuItem key={conn.id} value={conn.id}>
-                    {conn.name}
-                  </MenuItem>
-                ))}
-            </CeligoSelect>
-          </FormControl>
-        </Fragment>
-        <Fragment>
-          {connectionJobs && connectionJobs.length > 0 ? (
-            <CeligoTable data={connectionJobs} {...metadata} />
-          ) : (
-            <Typography>{NO_PENDING_QUEUED_JOBS}</Typography>
-          )}
-        </Fragment>
+        <div className={classes.content}>
+          <Fragment>
+            Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
+            Queue: {queueSize}
+          </Fragment>
+          <Fragment>
+            {connectionJobs && connectionJobs.length > 0 ? (
+              <CeligoTable data={connectionJobs} {...metadata} />
+            ) : (
+              <Typography>{NO_PENDING_QUEUED_JOBS}</Typography>
+            )}
+          </Fragment>
+        </div>
       </Drawer>
     </Fragment>
   );
