@@ -23,11 +23,31 @@ const metadata = {
   columns: [
     {
       heading: 'Integration',
-      value: job => job._integrationId && job._integrationId.name,
+      value: function IntegrationName(job) {
+        const integration = useSelector(state =>
+          selectors.resource(state, 'integrations', job && job._integrationId)
+        );
+
+        if (!job || !job._integrationId) {
+          return 'Unknown';
+        }
+
+        return integration ? integration.name : job._integrationId;
+      },
     },
     {
       heading: 'Flow',
-      value: job => job._flowId && job._flowId.name,
+      value: function FlowName(job) {
+        const flow = useSelector(state =>
+          selectors.resource(state, 'integrations', job && job._flowId)
+        );
+
+        if (!job || !job._flowId) {
+          return 'Unknown';
+        }
+
+        return flow ? flow.name : job._flowId;
+      },
     },
     {
       heading: 'Status',
@@ -80,7 +100,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
   },
 }));
-const emptySet = [];
 
 function QueuedJobs({ parentUrl }) {
   const classes = useStyles();
@@ -90,14 +109,28 @@ function QueuedJobs({ parentUrl }) {
   const [requestJobs, setRequestJobs] = useState(true);
   const dispatch = useDispatch();
   const [connectionId, setConnectionId] = useState(null);
-  const connections = useSelector(state => {
-    const flow = selectors.resource(state, 'flows', flowId);
+  const connections = useSelector(
+    state => {
+      const flow = selectors.resource(state, 'flows', flowId);
+      const connections = [];
+      const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(
+        state,
+        flow,
+        {
+          ignoreBorrowedConnections: true,
+        }
+      );
 
-    return flow ? emptySet : emptySet;
-    // return selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-    //   ignoreBorrowedConnections: true,
-    // });
-  });
+      connectionIds.forEach(c => {
+        const conn = selectors.resource(state, 'connections', c);
+
+        connections.push({ id: conn._id, name: conn.name });
+      });
+
+      return connections;
+    },
+    (left, right) => left.length === right.length
+  );
   const connectionJobs = useSelector(state =>
     selectors.queuedJobs(state, connectionId)
   );
@@ -115,8 +148,8 @@ function QueuedJobs({ parentUrl }) {
 
   useEffect(() => {
     if (requestJobs && connections && connections.length > 0) {
-      setConnectionId(connections[0]);
-      dispatch(actions.connection.requestQueuedJobs(connections[0]));
+      setConnectionId(connections[0].id);
+      dispatch(actions.connection.requestQueuedJobs(connections[0].id));
       setRequestJobs(false);
     }
   }, [connections, dispatch, requestJobs]);
@@ -164,8 +197,8 @@ function QueuedJobs({ parentUrl }) {
               margin="dense">
               {connections &&
                 connections.map(conn => (
-                  <MenuItem key={conn} value={conn}>
-                    {conn}
+                  <MenuItem key={conn.id} value={conn.id}>
+                    {conn.name}
                   </MenuItem>
                 ))}
             </CeligoSelect>
