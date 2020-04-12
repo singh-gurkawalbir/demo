@@ -17,7 +17,7 @@ import * as selectors from '../../../reducers';
 import { getStatus, getPages } from '../util';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import LoadResources from '../../LoadResources';
-import DrawerTitleBar from '../../drawer/TitleBar';
+import DrawerTitleBar from './TitleBar';
 
 const metadata = {
   columns: [
@@ -128,9 +128,9 @@ function QueuedJobs({ parentUrl }) {
       clearInterval(interval);
     };
   }, [connectionId, dispatch]);
-  const onConnectionChange = e => {
-    setConnectionId(e.target.value);
-    dispatch(actions.connection.requestQueuedJobs(e.target.value));
+  const handleConnectionChange = value => {
+    setConnectionId(value);
+    dispatch(actions.connection.requestQueuedJobs(value));
   };
 
   const handleClose = () => {
@@ -146,16 +146,23 @@ function QueuedJobs({ parentUrl }) {
           paper: classes.drawerPaper,
         }}
         onClose={handleClose}>
-        <DrawerTitleBar title="Queued Jobs Dialog" onClose={handleClose} />
+        <DrawerTitleBar
+          flowId={flowId}
+          connectionId={connectionId}
+          backToParent
+          onConnChange={handleConnectionChange}
+          parentUrl={parentUrl}
+          onClose={handleClose}
+        />
         <Fragment>
-          Queue Stats: Jobs in Queue: {connectionJobs && connectionJobs.length}{' '}
-          Messages in Queue: {queueSize}
+          Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
+          Queue: {queueSize}
           <FormControl>
             <InputLabel htmlFor="connections">Connection:</InputLabel>
             <CeligoSelect
               id="connections"
               value={connectionId}
-              onChange={onConnectionChange}
+              onChange={handleConnectionChange}
               margin="dense">
               {connections &&
                 connections.map(conn => (
