@@ -9,7 +9,7 @@ import {
 } from '../../../forms/utils';
 import factory from '../../../forms/formFactory';
 import { getResource, commitStagedChanges } from '../../resources';
-import connectionSagas from '../../resourceForm/connections';
+import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../../utils/file';
 import { uploadRawData } from '../../uploadFile';

@@ -4094,3 +4094,25 @@ export function suiteScriptResourceFormState(
     integrationId,
   });
 }
+
+export function suiteScriptTestConnectionCommState(
+  state,
+  resourceId,
+  ssLinkedConnectionId
+) {
+  const status = fromComms.suiteScriptTestConnectionStatus(
+    state && state.comms,
+    resourceId,
+    ssLinkedConnectionId
+  );
+  const message = fromComms.suiteScriptTestConnectionMessage(
+    state && state.comms,
+    resourceId,
+    ssLinkedConnectionId
+  );
+
+  return {
+    commState: status,
+    message,
+  };
+}

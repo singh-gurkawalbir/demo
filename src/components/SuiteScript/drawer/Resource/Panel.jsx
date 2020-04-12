@@ -10,6 +10,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Close from '../../../../components/icons/CloseIcon';
 import ApplicationImg from '../../../icons/ApplicationImg';
+import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -348,12 +349,13 @@ export default function Panel(props) {
           resources={requiredResources}>
           <div className={classes.formContainer}>
             <div>
-              {/* {['exports', 'imports', 'connections'].includes(resourceType) && (
+              {['exports', 'imports', 'connections'].includes(resourceType) && (
                 <ConnectionStatusPanel
                   resourceType={resourceType}
                   resourceId={id}
+                  ssLinkedConnectionId={ssLinkedConnectionId}
                 />
-              )} */}
+              )}
               <ReactResizeDetector handleHeight onResize={resize} />
             </div>
             <ResourceForm

@@ -21,20 +21,37 @@ const styles = theme => ({
 });
 
 export const PingMessage = props => {
-  const { resourceId } = props;
+  const { resourceId, ssLinkedConnectionId } = props;
   const dispatch = useDispatch();
   const testConnectionCommState = useSelector(state =>
-    selectors.testConnectionCommState(state, resourceId)
+    selectors.suiteScriptTestConnectionCommState(
+      state,
+      resourceId,
+      ssLinkedConnectionId
+    )
   );
   const handleCancelTest = useCallback(
-    () => dispatch(actions.resource.connections.testCancelled(resourceId)),
-    [dispatch, resourceId]
+    () =>
+      dispatch(
+        actions.suiteScript.resource.connections.testCancelled(
+          resourceId,
+          undefined,
+          ssLinkedConnectionId
+        )
+      ),
+    [dispatch, resourceId, ssLinkedConnectionId]
   );
   const handleTestMessageClear = useCallback(
     () =>
       // passing true retains status. Message is cleared off
-      dispatch(actions.resource.connections.testClear(resourceId, true)),
-    [dispatch, resourceId]
+      dispatch(
+        actions.suiteScript.resource.connections.testClear(
+          resourceId,
+          true,
+          ssLinkedConnectionId
+        )
+      ),
+    [dispatch, resourceId, ssLinkedConnectionId]
   );
 
   return (
@@ -47,20 +64,38 @@ export const PingMessage = props => {
 };
 
 const TestButton = props => {
-  const { classes, resourceId, label } = props;
+  console.log(`SS TestButton props`, props);
+  const { classes, resourceId, label, ssLinkedConnectionId } = props;
   const dispatch = useDispatch();
   const handleTestConnection = useCallback(
-    values => dispatch(actions.resource.connections.test(resourceId, values)),
-    [dispatch, resourceId]
+    values =>
+      dispatch(
+        actions.suiteScript.resource.connections.test(
+          resourceId,
+          values,
+          ssLinkedConnectionId
+        )
+      ),
+    [dispatch, resourceId, ssLinkedConnectionId]
   );
   const testConnectionCommState = useSelector(state =>
-    selectors.testConnectionCommState(state, resourceId)
+    selectors.suiteScriptTestConnectionCommState(
+      state,
+      resourceId,
+      ssLinkedConnectionId
+    )
   );
+
+  console.log(`SS testConnectionCommState`, testConnectionCommState);
+
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
 
   return (
     <Fragment>
-      <PingMessage resourceId={resourceId} />
+      <PingMessage
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        resourceId={resourceId}
+      />
       <DynaAction
         {...props}
         disabled={pingLoading}

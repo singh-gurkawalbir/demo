@@ -2,15 +2,18 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
+    required: true,
   },
   'salesforce.username': {
     type: 'text',
     label: 'Username',
+    required: true,
   },
   'salesforce.password': {
     type: 'text',
     inputType: 'password',
     label: 'Password',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -19,6 +22,7 @@ export default {
     type: 'text',
     inputType: 'password',
     label: 'Security Token',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -26,6 +30,7 @@ export default {
   'salesforce.sandbox': {
     type: 'select',
     label: 'Account Type',
+    required: true,
     options: [
       {
         items: [
@@ -38,15 +43,18 @@ export default {
   'sears.sellerId': {
     type: 'text',
     label: 'Seller Id',
+    required: true,
   },
   'sears.username': {
     type: 'text',
     label: 'Username',
+    required: true,
   },
   'sears.password': {
     type: 'text',
     inputType: 'password',
     label: 'Secret Key',
+    required: true,
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',

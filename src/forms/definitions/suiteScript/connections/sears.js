@@ -9,7 +9,7 @@ export default {
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name', required: true },
+    name: { fieldId: 'name' },
     'sears.sellerId': { fieldId: 'sears.sellerId' },
     'sears.username': { fieldId: 'sears.username' },
     'sears.password': { fieldId: 'sears.password' },

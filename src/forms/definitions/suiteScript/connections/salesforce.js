@@ -9,7 +9,7 @@ export default {
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name', required: true },
+    name: { fieldId: 'name' },
     'salesforce.username': { fieldId: 'salesforce.username' },
     'salesforce.password': { fieldId: 'salesforce.password' },
     'salesforce.securityKey': { fieldId: 'salesforce.securityKey' },

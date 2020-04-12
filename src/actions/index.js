@@ -1489,12 +1489,55 @@ const suiteScript = {
         resourceType,
         ssLinkedConnectionId,
       }),
+    showFormValidations: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(
+        actionTypes.SUITESCRIPT.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS,
+        {
+          resourceType,
+          resourceId,
+          ssLinkedConnectionId,
+        }
+      ),
     clear: (resourceType, resourceId, ssLinkedConnectionId) =>
       action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR, {
         resourceType,
         resourceId,
         ssLinkedConnectionId,
       }),
+  },
+  resource: {
+    connections: {
+      test: (resourceId, values, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST, {
+          resourceId,
+          values,
+          ssLinkedConnectionId,
+        }),
+      testErrored: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_ERRORED, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testCancelled: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_CANCELLED, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testSuccessful: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_SUCCESSFUL, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testClear: (resourceId, retainStatus, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_CLEAR, {
+          resourceId,
+          retainStatus,
+          ssLinkedConnectionId,
+        }),
+    },
   },
 };
 
