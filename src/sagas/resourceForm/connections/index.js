@@ -437,10 +437,22 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId }) {
+function* requestIClients({ connectionId, integration }) {
+  let path;
+
+  if (integration) {
+    path = `/integrations/${integration.id}/iclients?type=${integration.connectionType}`;
+
+    if (integration.assistant) {
+      path += `&assistant=${integration.assistant}`;
+    }
+  } else {
+    path = `/connections/${connectionId}/iclients`;
+  }
+
   try {
     const { iclients } = yield apiCallWithRetry({
-      path: `/connections/${connectionId}/iclients`,
+      path,
       opts: {
         method: 'GET',
       },

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -16,24 +16,50 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, resource, ...rest } = props;
+  const {
+    label,
+    classes,
+    resourceType,
+    disabled,
+    resource,
+    assistant,
+    ...rest
+  } = props;
   const { resourceId } = rest;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const iClients = (resource && resource.iClients) || [];
+  const [requested, setRequested] = useState(false);
+  let integrationDoc;
+
+  if (resource && resource.newIA) {
+    integrationDoc = {
+      id: resource._integrationId,
+      connectionType: resource.type,
+      assistant: resource.assistant,
+    };
+  }
 
   useEffect(() => {
     if (
       !iClients.length &&
-      resource._id &&
       resource._connectorId &&
-      (resource.assistant === 'shopify' || resource.assistant === 'squareup')
+      (resource.assistant === 'shopify' || resource.assistant === 'squareup') &&
+      !requested
     ) {
-      dispatch(actions.resource.connections.requestIClients(resource._id));
+      setRequested(true);
+      dispatch(
+        actions.resource.connections.requestIClients(
+          resource._id,
+          integrationDoc
+        )
+      );
     }
   }, [
     dispatch,
     iClients.length,
+    integrationDoc,
+    requested,
     resource._connectorId,
     resource._id,
     resource.assistant,

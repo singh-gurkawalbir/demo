@@ -202,7 +202,12 @@ export default function ConnectorInstallation(props) {
       dispatch(
         actions.resource.patchStaged(
           newId,
-          jsonUtil.objectToPatchSet({ ...sourceConnection, newIA: true }),
+          jsonUtil.objectToPatchSet({
+            ...sourceConnection,
+            newIA: true,
+            _integrationId: integration._id,
+            _connectorId: integration._connectorId,
+          }),
           SCOPES.VALUE
         )
       );
