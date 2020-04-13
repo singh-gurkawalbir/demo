@@ -1,4 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -100,7 +101,10 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
     return yield put(actions.resource.request('integrations', id));
   }
 
-  yield put(actions.resource.requestCollection('connections'));
+  if (!isEmpty(connectionDoc)) {
+    yield put(actions.resource.requestCollection('connections'));
+  }
+
   const oAuthConnectionStep =
     stepCompleteResponse &&
     stepCompleteResponse.find(
