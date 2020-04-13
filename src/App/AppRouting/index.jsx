@@ -1,14 +1,12 @@
-import { Component } from 'react';
-import { hot } from 'react-hot-loader';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
-import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
+import CloneSetup from '../../views/Clone/Setup';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
+import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
-import CloneSetup from '../../views/Clone/Setup';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')

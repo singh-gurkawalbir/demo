@@ -321,7 +321,8 @@ export const updateFieldValue = (field, value) => {
   const updateValue = typeof value !== 'undefined' && value;
 
   if (field.omitWhenHidden && !field.visible) {
-    console.log('Not updating field value for', field);
+    // eslint-disable-next-line no-console
+    console.warn('Not updating field value for', field);
   } else {
     field.value = updateValue;
   }

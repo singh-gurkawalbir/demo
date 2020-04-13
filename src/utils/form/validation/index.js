@@ -25,6 +25,7 @@ export const findFieldsToCompareTo = (fieldsToFind, allFields) => {
       const target = allFields.find(currField => targetField === currField.id);
 
       if (!target) {
+        // eslint-disable-next-line no-console
         console.warn(`Could not find field ${targetField} to compare against`);
       } else if (target.visible === true) {
         // TODO: Only comparing against visible fields at the moment, but is there a case where
@@ -248,6 +249,7 @@ export const validateField = (
             errorMessages.push(message);
           }
         } else {
+          // eslint-disable-next-line no-console
           console.warn('The requested validator does not exist', validator);
         }
 
