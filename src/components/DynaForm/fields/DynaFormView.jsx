@@ -11,7 +11,7 @@ import {
 import * as selectors from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
-import DynaRadio from './radiogroup/DynaRadioGroup';
+import DynaSelect from './DynaSelect';
 
 const emptyObj = {};
 const isParent = true;
@@ -47,10 +47,11 @@ export function FormView(props) {
     if (matchingApplication) {
       const { name, type } = matchingApplication;
 
+      // all types are lower case...lets upper case them
       return [
         {
           items: [
-            { label: type, value: `${isParent}` },
+            { label: type && type.toUpperCase(), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -128,7 +129,7 @@ export function FormView(props) {
   const isFlowBuilderAssistant = flowId && assistantName;
 
   return isFlowBuilderAssistant ? (
-    <DynaRadio
+    <DynaSelect
       {...props}
       onFieldChange={onFieldChangeFn}
       value={value}
