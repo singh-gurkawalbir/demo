@@ -8,12 +8,13 @@ import {
   defaultPatchSetConverter,
 } from '../../../forms/utils';
 import factory from '../../../forms/formFactory';
-import { getResource, commitStagedChanges } from '../../resources';
+import { commitStagedChanges } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../../utils/file';
 import { uploadRawData } from '../../uploadFile';
 import { UI_FIELD_VALUES } from '../../../utils/constants';
+import suiteScriptResourceKey from '../../../utils/suiteScript';
 
 export const SCOPES = {
   META: 'meta',
@@ -193,13 +194,15 @@ export function* submitFormValues({
   values,
   match,
   isGenerate,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
   let formValues = { ...values };
 
-  formValues = yield call(deleteUISpecificValues, {
-    values: formValues,
-    resourceId,
-  });
+  // formValues = yield call(deleteUISpecificValues, {
+  //   values: formValues,
+  //   resourceId,
+  // });
 
   if (resourceType === 'exports') {
     delete formValues['/rawData'];
@@ -220,17 +223,29 @@ export function* submitFormValues({
     resourceId,
     values: formValues,
     scope: SCOPES.VALUE,
+    ssLinkedConnectionId,
+    integrationId,
   });
 
   if (patchSet && patchSet.length > 0) {
-    yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+    yield put(
+      actions.suiteScript.resource.patchStaged(
+        resourceId,
+        patchSet,
+        SCOPES.VALUE,
+        ssLinkedConnectionId,
+        integrationId,
+        resourceType
+      )
+    );
   }
 
-  const { skipCommit } = yield select(
-    selectors.resourceFormState,
+  const { skipCommit } = yield select(selectors.suiteScriptResourceFormState, {
     resourceType,
-    resourceId
-  );
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
 
   // fetch all possible pending patches.
   if (!skipCommit) {
@@ -238,13 +253,14 @@ export function* submitFormValues({
       yield call(patchSkipRetries, { resourceId });
     }
 
-    if (resourceType === 'exports' && isNewId(resourceId)) {
-      yield call(patchTransformationRulesForXMLResource, { resourceId });
-    }
-
     const { patch } = yield select(
       selectors.stagedResource,
-      resourceId,
+      suiteScriptResourceKey({
+        ssLinkedConnectionId,
+        integrationId,
+        resourceType,
+        resourceId,
+      }),
       SCOPES.VALUE
     );
     // In most cases there would be no other pending staged changes, since most
@@ -252,53 +268,38 @@ export function* submitFormValues({
     // component has staged some changes, even if the patchSet above is empty,
     // we need to check the store for these un-committed ones and still call
     // the commit saga.
-    let type = resourceType;
-
-    if (resourceType === 'connectorLicenses') {
-      // construct url for licenses
-      const connectorUrlStr = '/connectors/';
-      const startIndex =
-        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
-
-      if (startIndex !== -1) {
-        const connectorId = match.url.substring(
-          startIndex,
-          match.url.indexOf('/', startIndex)
-        );
-
-        type = `connectors/${connectorId}/licenses`;
-      }
-    }
-
-    const integrationIdPatch =
-      patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
-
-    if (
-      integrationIdPatch &&
-      integrationIdPatch.value &&
-      (resourceType === 'accesstokens' || resourceType === 'connections')
-    ) {
-      type = `integrations/${integrationIdPatch.value}/${resourceType}`;
-    }
 
     if (patch && patch.length) {
       const resp = yield call(commitStagedChanges, {
-        resourceType: type,
+        resourceType,
         id: resourceId,
         scope: SCOPES.VALUE,
         isGenerate,
+        ssLinkedConnectionId,
+        integrationId,
       });
 
       if (resp && (resp.error || resp.conflict)) {
         return yield put(
-          actions.resourceForm.submitFailed(resourceType, resourceId)
+          actions.suiteScript.resourceForm.submitFailed(
+            resourceType,
+            resourceId,
+            ssLinkedConnectionId,
+            integrationId
+          )
         );
       }
     }
   }
 
   yield put(
-    actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
+    actions.suiteScript.resourceForm.submitComplete(
+      resourceType,
+      resourceId,
+      finalValues,
+      ssLinkedConnectionId,
+      integrationId
+    )
   );
 }
 

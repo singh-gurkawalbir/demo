@@ -53,6 +53,7 @@ import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import suiteScriptResourceKey from '../utils/suiteScript';
 
 const emptySet = [];
 const emptyObject = {};
@@ -4002,7 +4003,12 @@ export const suiteScriptResourceData = (
   });
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
-    id,
+    suiteScriptResourceKey({
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType,
+      resourceId: id,
+    }),
     scope
   );
 
@@ -4115,4 +4121,14 @@ export function suiteScriptTestConnectionCommState(
     commState: status,
     message,
   };
+}
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptResourceFormSaveProcessTerminated(
+    state && state.session,
+    { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+  );
 }

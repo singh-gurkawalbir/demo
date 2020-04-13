@@ -515,3 +515,18 @@ export function suiteScriptResourceFormState(
     integrationId,
   });
 }
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormSaveProcessTerminated(
+    state && state.suiteScript,
+    {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    }
+  );
+}

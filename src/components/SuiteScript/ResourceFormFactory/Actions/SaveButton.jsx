@@ -21,25 +21,42 @@ const SaveButton = props => {
     match,
     disabled = false,
     isGenerate = false,
+    ssLinkedConnectionId,
+    integrationId,
   } = props;
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
-    selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
+    selectors.suiteScriptResourceFormSaveProcessTerminated(state, {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    })
   );
   const onSave = useCallback(
     values => {
       dispatch(
-        actions.resourceForm.submit(
+        actions.suiteScript.resourceForm.submit(
           resourceType,
           resourceId,
           values,
           match,
           false,
-          isGenerate
+          isGenerate,
+          ssLinkedConnectionId,
+          integrationId
         )
       );
     },
-    [dispatch, isGenerate, match, resourceId, resourceType]
+    [
+      dispatch,
+      integrationId,
+      isGenerate,
+      match,
+      resourceId,
+      resourceType,
+      ssLinkedConnectionId,
+    ]
   );
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,

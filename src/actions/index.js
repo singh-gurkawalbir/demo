@@ -1,4 +1,5 @@
 import actionTypes from './types';
+import suiteScriptResourceKey from '../utils/suiteScript';
 
 export const availableResources = [
   'exports',
@@ -1504,6 +1505,64 @@ const suiteScript = {
         resourceId,
         ssLinkedConnectionId,
       }),
+    submit: (
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT, {
+        resourceType,
+        resourceId,
+        values,
+        match,
+        skipClose,
+        isGenerate,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitComplete: (
+      resourceType,
+      resourceId,
+      formValues,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_COMPLETE, {
+        resourceType,
+        resourceId,
+        formValues,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitFailed: (
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_FAILED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitAborted: (
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_ABORTED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
   },
   resource: {
     connections: {
@@ -1538,6 +1597,63 @@ const suiteScript = {
           ssLinkedConnectionId,
         }),
     },
+    patchStaged: (
+      id,
+      patch,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.RESOURCE.STAGE_PATCH, {
+        patch,
+        id: suiteScriptResourceKey({
+          ssLinkedConnectionId,
+          integrationId,
+          resourceType,
+          resourceId: id,
+        }),
+        scope,
+      }),
+    clearStaged: (
+      id,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.RESOURCE.STAGE_CLEAR, {
+        id: suiteScriptResourceKey({
+          ssLinkedConnectionId,
+          integrationId,
+          resourceType,
+          resourceId: id,
+        }),
+        scope,
+      }),
+    received: (resourceType, resource, ssLinkedConnectionId, integrationId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.RECEIVED, {
+        resourceType,
+        resource,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    updated: (
+      resourceType,
+      resourceId,
+      master,
+      patch,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.UPDATED, {
+        resourceType,
+        resourceId,
+        master,
+        patch,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
   },
 };
 

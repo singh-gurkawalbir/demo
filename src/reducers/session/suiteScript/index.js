@@ -16,3 +16,18 @@ export function resourceFormState(
     integrationId,
   });
 }
+
+export function resourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromResourceForm.resourceFormSaveProcessTerminated(
+    state && state.resourceForm,
+    {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    }
+  );
+}

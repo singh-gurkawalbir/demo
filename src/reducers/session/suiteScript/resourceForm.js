@@ -1,5 +1,6 @@
 import actionTypes from '../../../actions/types';
 import { fieldsTouchedForMeta } from '../../../forms/utils';
+import suiteScriptResourceKey from '../../../utils/suiteScript';
 
 export default (state = {}, action) => {
   const {
@@ -16,9 +17,12 @@ export default (state = {}, action) => {
     ssLinkedConnectionId,
     integrationId,
   } = action;
-  const key = `${ssLinkedConnectionId}-${
-    integrationId ? `${integrationId}-` : ''
-  }${resourceType}-${resourceId}`;
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType,
+    resourceId,
+  });
   const stateCopy = { ...state, [key]: { ...state[key] } };
 
   switch (type) {
@@ -116,9 +120,12 @@ export function resourceFormState(
     return {};
   }
 
-  const key = `${ssLinkedConnectionId}-${
-    integrationId ? `${integrationId}-` : ''
-  }${resourceType}-${resourceId}`;
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType,
+    resourceId,
+  });
 
   return state[key] || {};
 }
@@ -128,9 +135,12 @@ export function resourceFormSaveProcessTerminated(
   { ssLinkedConnectionId, integrationId, resourceType, resourceId }
 ) {
   if (!state) return false;
-  const key = `${ssLinkedConnectionId}-${
-    integrationId ? `${integrationId}-` : ''
-  }${resourceType}-${resourceId}`;
+  const key = suiteScriptResourceKey({
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType,
+    resourceId,
+  });
 
   if (!state[key]) return false;
   const { submitFailed, submitComplete, submitAborted } = state[key];

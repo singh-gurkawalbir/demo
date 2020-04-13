@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave1: formValues => {
     const newValues = Object.assign({}, formValues);
 
     if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
