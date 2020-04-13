@@ -25,9 +25,12 @@ const NetsuiteValidateButton = props => {
     visibleWhenAll,
     value,
     disabled,
-    onFieldChange,
     formKey,
   } = props;
+  const onFieldChange = useCallback(
+    field => dispatch(actions.form.field.onFieldChange(formKey)(field)),
+    [dispatch, formKey]
+  );
   const registerField = useCallback(
     field => dispatch(actions.form.field.registerField(formKey)(field)),
     [dispatch, formKey]
@@ -84,9 +87,9 @@ const NetsuiteValidateButton = props => {
     message,
     status,
     resourceId,
-    onFieldChange,
     id,
     fieldsIsVisible,
+    onFieldChange,
   ]);
 
   useEffect(() => {
