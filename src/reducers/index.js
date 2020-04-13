@@ -3928,3 +3928,7 @@ export const getScriptContext = createSelector(
     }
   }
 );
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromSession.getJobErrorsPreview(state && state.session, jobId);
+}
