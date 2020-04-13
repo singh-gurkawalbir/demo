@@ -28,7 +28,7 @@ import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
-import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDialog';
+import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },

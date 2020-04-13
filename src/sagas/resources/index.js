@@ -722,7 +722,7 @@ export function* requestQueuedJobs({ connectionId }) {
   try {
     response = yield call(apiCallWithRetry, { path });
   } catch (error) {
-    return;
+    return undefined;
   }
 
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
@@ -740,6 +740,8 @@ export function* cancelQueuedJob({ jobId }) {
       },
     });
   } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
     return undefined;
   }
 }

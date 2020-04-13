@@ -84,7 +84,7 @@ export default function DrawerTitleBar({
       <LoadResources required resources="flows">
         {backToParent && (
           <IconButton
-            data-test="openBasicMapping"
+            data-test="backToDashboard"
             aria-label="back"
             onClick={handleClose}
             className={classes.arrowLeft}>
@@ -107,7 +107,7 @@ export default function DrawerTitleBar({
 
         <Divider orientation="veritical" className={classes.divider} />
         <IconButton
-          data-test="closeCategoryMapping"
+          data-test="closeQueuedJobs"
           aria-label="Close"
           onClick={handleClose}
           className={classes.closeIcon}>

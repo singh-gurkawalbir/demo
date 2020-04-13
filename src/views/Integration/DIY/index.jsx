@@ -30,7 +30,7 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import { getTemplateUrlName } from '../../../utils/template';
-import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDialog';
+import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
