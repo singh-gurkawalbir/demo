@@ -1146,11 +1146,14 @@ export function shouldRedirect(state, integrationId) {
 }
 
 export function integrationAppAddOnState(state, integrationId) {
-  return fromSession.integrationAppAddOnState(state.session, integrationId);
+  return fromSession.integrationAppAddOnState(
+    state && state.session,
+    integrationId
+  );
 }
 
 export function isAddOnInstallInProgress(state, id) {
-  return fromSession.isAddOnInstallInProgress(state.session, id);
+  return fromSession.isAddOnInstallInProgress(state && state.session, id);
 }
 
 export function checkUpgradeRequested(state, licenseId) {
