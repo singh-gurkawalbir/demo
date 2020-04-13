@@ -199,18 +199,21 @@ export default function ConnectorInstallation(props) {
       const connObj = sourceConnection;
 
       delete connObj._id;
-      dispatch(
-        actions.resource.patchStaged(
-          newId,
-          jsonUtil.objectToPatchSet({
-            ...sourceConnection,
-            newIA: true,
-            _integrationId: integration._id,
-            _connectorId: integration._connectorId,
-          }),
-          SCOPES.VALUE
-        )
-      );
+
+      if (!_connectionId)
+        dispatch(
+          actions.resource.patchStaged(
+            newId,
+            jsonUtil.objectToPatchSet({
+              ...sourceConnection,
+              newIA: true,
+              _id: newId,
+              _integrationId: integration._id,
+              _connectorId: integration._connectorId,
+            }),
+            SCOPES.VALUE
+          )
+        );
       setSelectedConnectionId({
         newId,
         doc: sourceConnection,

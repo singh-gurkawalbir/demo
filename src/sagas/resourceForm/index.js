@@ -318,14 +318,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
   );
 }
 
-export function* submitFormValues({
-  resourceType,
-  resourceId,
-  values,
-  match,
-  isGenerate,
-}) {
-  let formValues = { ...values };
+export function* isNewIAFrameWork({ resourceId }) {
   const { patch: allPatches } = yield select(
     selectors.stagedResource,
     resourceId
@@ -336,6 +329,32 @@ export function* submitFormValues({
     allPatches.find(item => item.path === '/newIA') &&
     allPatches.find(item => item.path === '/newIA').value
   ) {
+    return {
+      id: (allPatches.find(item => item.path === '/_integrationId') || {})
+        .value,
+      connectionType: (allPatches.find(item => item.path === '/type') || {})
+        .value,
+      assistant: (allPatches.find(item => item.path === '/assistant') || {})
+        .value,
+    };
+  }
+
+  return false;
+}
+
+export function* submitFormValues({
+  resourceType,
+  resourceId,
+  values,
+  match,
+  isGenerate,
+}) {
+  let formValues = { ...values };
+  const isNewIA = yield call(isNewIAFrameWork, {
+    resourceId,
+  });
+
+  if (isNewIA) {
     const connectionPayload = yield call(createPayload, {
       values,
       resourceType: 'connections',

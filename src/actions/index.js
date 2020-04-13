@@ -288,8 +288,8 @@ const resource = {
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
     clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
-    requestIClients: (connectionId, integration) =>
-      action(actionTypes.ICLIENTS, { connectionId, integration }),
+    requestIClients: connectionId =>
+      action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
       requestUserRoles: (connectionId, values) =>

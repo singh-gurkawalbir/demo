@@ -16,49 +16,27 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const {
-    label,
-    classes,
-    resourceType,
-    disabled,
-    resource,
-    assistant,
-    ...rest
-  } = props;
+  const { label, classes, resourceType, disabled, resource, ...rest } = props;
   const { resourceId } = rest;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const iClients = (resource && resource.iClients) || [];
   const [requestedOnLoad, setRequestedOnLoad] = useState(false);
-  let integrationDoc;
-
-  if (resource && resource.newIA) {
-    integrationDoc = {
-      id: resource._integrationId,
-      connectionType: resource.type,
-      assistant: resource.assistant,
-    };
-  }
 
   useEffect(() => {
     if (
       !iClients.length &&
+      resource._id &&
       resource._connectorId &&
       (resource.assistant === 'shopify' || resource.assistant === 'squareup') &&
       !requestedOnLoad
     ) {
       setRequestedOnLoad(true);
-      dispatch(
-        actions.resource.connections.requestIClients(
-          resource._id,
-          integrationDoc
-        )
-      );
+      dispatch(actions.resource.connections.requestIClients(resource._id));
     }
   }, [
     dispatch,
     iClients.length,
-    integrationDoc,
     requestedOnLoad,
     resource._connectorId,
     resource._id,

@@ -12,7 +12,12 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
-import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
+import {
+  createFormValuesPatchSet,
+  submitFormValues,
+  SCOPES,
+  isNewIAFrameWork,
+} from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
@@ -437,14 +442,17 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId, integration }) {
+function* requestIClients({ connectionId }) {
   let path;
+  const newIAConnDoc = yield call(isNewIAFrameWork, {
+    resourceId: connectionId,
+  });
 
-  if (integration) {
-    path = `/integrations/${integration.id}/iclients?type=${integration.connectionType}`;
+  if (newIAConnDoc) {
+    path = `/integrations/${newIAConnDoc.id}/iclients?type=${newIAConnDoc.connectionType}`;
 
-    if (integration.assistant) {
-      path += `&assistant=${integration.assistant}`;
+    if (newIAConnDoc.assistant) {
+      path += `&assistant=${newIAConnDoc.assistant}`;
     }
   } else {
     path = `/connections/${connectionId}/iclients`;
