@@ -76,7 +76,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
-  const [connection, setSelectedConnectionId] = useState(null);
+  const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
@@ -96,12 +96,11 @@ export default function ConnectorInstallation(props) {
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const handleClose = useCallback(() => {
+    setConnection(false);
+  }, []);
   const isFrameWork2 =
     integration && integration.installSteps && integration.installSteps.length;
-  const handleConnectionClose = useCallback(
-    () => setSelectedConnectionId(false),
-    []
-  );
 
   useEffect(() => {
     if (
@@ -119,6 +118,64 @@ export default function ConnectorInstallation(props) {
     ...resourceConstants.OAUTH_APPLICATIONS,
     'netsuite-oauth',
   ];
+  const handleSubmitComplete = useCallback(
+    (connId, isAuthorized, connectionDoc = {}) => {
+      // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
+      const step = installSteps.find(s => s.isCurrentStep);
+
+      if (
+        selectedConnection &&
+        oAuthApplications.includes(getConnectionType(selectedConnection)) &&
+        !isAuthorized &&
+        !(
+          getConnectionType(selectedConnection) === 'shopify' &&
+          selectedConnection &&
+          selectedConnection.http &&
+          selectedConnection.http.auth &&
+          selectedConnection.http.auth.type === 'basic'
+        )
+      ) {
+        return;
+      }
+
+      dispatch(
+        actions.integrationApp.installer.updateStep(
+          integrationId,
+          (step || {}).installerFunction,
+          'inProgress'
+        )
+      );
+
+      if (isFrameWork2) {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(
+            integrationId,
+            connection && connection._connectionId,
+            connectionDoc
+          )
+        );
+      } else {
+        dispatch(
+          actions.integrationApp.installer.installStep(
+            integrationId,
+            (step || {}).installerFunction,
+            connection && connection._connectionId
+          )
+        );
+      }
+
+      if (!isOauth(connectionDoc)) setConnection(false);
+    },
+    [
+      connection,
+      dispatch,
+      installSteps,
+      integrationId,
+      isFrameWork2,
+      oAuthApplications,
+      selectedConnection,
+    ]
+  );
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -214,7 +271,7 @@ export default function ConnectorInstallation(props) {
             SCOPES.VALUE
           )
         );
-      setSelectedConnectionId({
+      setConnection({
         newId,
         doc: sourceConnection,
         _connectionId,
@@ -282,58 +339,6 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg`);
   };
 
-  const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
-    // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
-    const step = installSteps.find(s => s.isCurrentStep);
-
-    if (
-      selectedConnection &&
-      oAuthApplications.includes(getConnectionType(selectedConnection)) &&
-      !isAuthorized &&
-      !(
-        getConnectionType(selectedConnection) === 'shopify' &&
-        selectedConnection &&
-        selectedConnection.http &&
-        selectedConnection.http.auth &&
-        selectedConnection.http.auth.type === 'basic'
-      )
-    ) {
-      return;
-    }
-
-    dispatch(
-      actions.integrationApp.installer.updateStep(
-        integrationId,
-        (step || {}).installerFunction,
-        'inProgress'
-      )
-    );
-
-    if (isFrameWork2) {
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(
-          integrationId,
-          connection && connection._connectionId,
-          connectionDoc
-        )
-      );
-    } else {
-      dispatch(
-        actions.integrationApp.installer.installStep(
-          integrationId,
-          (step || {}).installerFunction,
-          connection && connection._connectionId
-        )
-      );
-    }
-
-    if (!isOauth(connectionDoc)) setSelectedConnectionId(false);
-  };
-
-  const handleClose = () => {
-    setSelectedConnectionId(false);
-  };
-
   return (
     <LoadResources required resources="connections,integrations">
       {connection && connection._connectionId && (
@@ -350,7 +355,7 @@ export default function ConnectorInstallation(props) {
           resourceType="connections"
           environment="production"
           connectionType={connection.doc.type}
-          onClose={handleConnectionClose}
+          onClose={handleClose}
           onSubmitComplete={handleSubmitComplete}
         />
       )}

@@ -107,7 +107,7 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
     yield put(actions.resource.requestCollection('connections'));
   }
 
-  const oAuthConnectionStep =
+  const currentConnectionStep =
     stepCompleteResponse &&
     stepCompleteResponse.find(
       temp =>
@@ -116,11 +116,11 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
         temp.type === 'connection'
     );
 
-  if (oAuthConnectionStep && isOauth(connectionDoc)) {
+  if (currentConnectionStep && isOauth(connectionDoc)) {
     try {
       yield call(
         openOAuthWindowForConnection,
-        oAuthConnectionStep._connectionId
+        currentConnectionStep._connectionId
       );
     } catch (e) {
       // could not close the window

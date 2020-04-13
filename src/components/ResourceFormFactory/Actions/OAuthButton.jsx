@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -20,7 +20,9 @@ function OAuthButton(props) {
   const { resourceId } = rest;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const iClients = (resource && resource.iClients) || [];
+  const iClients = useMemo(() => (resource && resource.iClients) || [], [
+    resource,
+  ]);
   const [requestedOnLoad, setRequestedOnLoad] = useState(false);
 
   useEffect(() => {
