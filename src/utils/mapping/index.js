@@ -89,12 +89,11 @@ const setVariationMappingData = (
   flowId,
   recordMappings,
   mappings,
-  relationshipData
+  relationshipData = []
 ) => {
   recordMappings.forEach(mapping => {
-    const relation = Array.isArray(relationshipData)
-      ? relationshipData.find(rel => rel.id === mapping.id)
-      : relationshipData;
+    const relation =
+      relationshipData && relationshipData.find(rel => rel.id === mapping.id);
 
     if (!relation) return;
     const variationTheme =
@@ -154,6 +153,7 @@ const setVariationMappingData = (
           if (mappingFound) {
             mapping.children.push({
               id: child.id,
+              children: [],
               variation_themes: [],
             });
           }
@@ -164,7 +164,7 @@ const setVariationMappingData = (
         flowId,
         mapping.children,
         mappings,
-        relation.children
+        relationshipData
       );
     }
   });
