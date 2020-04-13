@@ -16,8 +16,8 @@ const useStyles = makeStyles({
 // const defaultSettingsMeta = {
 //   fieldMap: {
 //     storeName: {
-//       id: 'conenction',
-//       name: 'connetionId',
+//       id: 'connection',
+//       name: 'connectionId',
 //       type: 'cron',
 //       resourceType: 'connections',
 //       helpText: 'Enter your store name, which is also your host subdomain.',
@@ -244,6 +244,7 @@ export default function DynaSettings(props) {
         onChange={handleSettingFormChange}
         disabled={disabled}
         fieldMeta={finalMeta}
+        // resourceContext={resourceContext}
       />
     </Fragment>
   );
