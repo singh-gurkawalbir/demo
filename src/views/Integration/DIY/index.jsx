@@ -92,14 +92,13 @@ export default function Integration({ history, match }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const accessLevel = useSelector(state => {
-    const permission = selectors.resourcePermissions(state, {
-      resourceType: 'integrations',
-      resourceId: integrationId,
-    });
-
-    return permission ? permission.accessLevel : undefined;
-  });
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, {
+        resourceType: 'integrations',
+        resourceId: integrationId,
+      }).accessLevel
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
