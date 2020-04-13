@@ -335,16 +335,20 @@ export default (state = {}, action) => {
       });
     case actionTypes.CONNECTION.UPDATE_STATUS: {
       // cant implement immer here with current implementation. Sort being used in selector.
-      collection.forEach(({ _id: cId, offline, queues }) => {
-        resourceIndex = newState.connections.findIndex(r => r._id === cId);
+      if (newState.connections && newState.connections.length) {
+        collection.forEach(({ _id: cId, offline, queues }) => {
+          resourceIndex = newState.connections.findIndex(r => r._id === cId);
 
-        if (resourceIndex !== -1) {
-          newState.connections[resourceIndex].offline = !!offline;
-          newState.connections[resourceIndex].queueSize = queues[0].size;
-        }
-      });
+          if (resourceIndex !== -1) {
+            newState.connections[resourceIndex].offline = !!offline;
+            newState.connections[resourceIndex].queueSize = queues[0].size;
+          }
+        });
 
-      return newState;
+        return newState;
+      }
+
+      return state;
     }
 
     case actionTypes.CONNECTION.MADE_ONLINE:
