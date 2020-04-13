@@ -23,6 +23,7 @@ import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
+import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 
 export default combineReducers({
   stage,
@@ -49,6 +50,7 @@ export default combineReducers({
   transfers,
   responseMapping,
   fileUpload,
+  jobErrorsPreview,
 });
 
 // #region PUBLIC SELECTORS
@@ -502,6 +504,13 @@ export function getTransferPreviewData(state) {
 
 export function getUploadedFile(state, fileId) {
   return fromFileUpload.getUploadedFile(state && state.fileUpload, fileId);
+}
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromJobErrorsPreview.getJobErrorsPreview(
+    state && state.jobErrorsPreview,
+    jobId
+  );
 }
 
 // #endregion
