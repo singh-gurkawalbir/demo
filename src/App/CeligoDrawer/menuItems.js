@@ -163,7 +163,7 @@ export default function menuItems(
     userPermissions.accessLevel === 'monitor' ||
     userPermissions.accessLevel === 'tile'
   ) {
-    items = items.filter(i => i.label !== 'Resources');
+    items = items.filter(i => !['Resources', 'Tools'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
