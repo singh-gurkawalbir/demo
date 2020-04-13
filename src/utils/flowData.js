@@ -260,6 +260,22 @@ export const isOneToManyResource = resource =>
   !!(resource && resource.oneToMany && resource.pathToMany);
 
 /*
+ * Cases where postData needs to be passed in resource while previewing
+ * 1. Incase of Delta export , postData needs to be sent
+ * 2. Incase of Schedules Salesforce Export, user can add a SOQL Query using {{data.lastExportDateTime}},
+ *  for which BE expects that "lastExportDateTime" to be passed as part of postData inside resource
+ */
+export const isPostDataNeededInResource = resource => {
+  const { adaptorType, salesforce = {}, type } = resource || {};
+  const isDeltaExport = type === 'delta';
+  const isScheduledSFExport =
+    adaptorTypeMap[adaptorType] === 'salesforce' &&
+    salesforce.executionType === 'scheduled';
+
+  return isDeltaExport || isScheduledSFExport;
+};
+
+/*
  * Based on resource type fetch the default extracts list
  * Ex: For Lookups: [ 'data','errors','ignored','statusCode']
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
@@ -311,7 +327,7 @@ export const getFormattedResourceForPreview = (
     }
   }
 
-  if (resource && resource.type === 'delta') {
+  if (isPostDataNeededInResource(resource)) {
     resource.postData = {
       lastExportDateTime: getLastExportDateTime(),
     };

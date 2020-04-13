@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys, isEmpty } from 'lodash';
+import { some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -1076,17 +1076,16 @@ export function getAllImportIdsUsedInTheFlow(state, flow) {
   return importIds;
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
   const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
   const importIds = getAllImportIdsUsedInTheFlow(state, flow);
   const connectionIds = [];
-  const borrowConnectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;
   const imports = resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
-    return connectionIds;
+    return emptySet;
   }
 
   const attachedExports =
@@ -1095,26 +1094,40 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
     imports && imports.filter(i => importIds.indexOf(i._id) > -1);
 
   attachedExports.forEach(exp => {
-    if (exp && exp._connectionId) {
+    if (
+      exp &&
+      exp._connectionId &&
+      !connectionIds.includes(exp._connectionId)
+    ) {
       connectionIds.push(exp._connectionId);
     }
   });
   attachedImports.forEach(imp => {
-    if (imp && imp._connectionId) {
+    if (
+      imp &&
+      imp._connectionId &&
+      !connectionIds.includes(imp._connectionId)
+    ) {
       connectionIds.push(imp._connectionId);
     }
   });
+
   const attachedConnections =
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  attachedConnections.forEach(conn => {
-    if (conn && conn._borrowConcurrencyFromConnectionId) {
-      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
-    }
-  });
+  if (!options.ignoreBorrowedConnections)
+    attachedConnections.forEach(conn => {
+      if (
+        conn &&
+        conn._borrowConcurrencyFromConnectionId &&
+        !connectionIds.includes(conn._borrowConcurrencyFromConnectionId)
+      ) {
+        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
 
-  return uniq(connectionIds.concat(borrowConnectionIds));
+  return connectionIds;
 }
 
 export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
@@ -1155,12 +1168,19 @@ export function shouldRedirect(state, integrationId) {
   return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
+export function queuedJobs(state, connectionId) {
+  return fromSession.queuedJobs(state && state.session, connectionId);
+}
+
 export function integrationAppAddOnState(state, integrationId) {
-  return fromSession.integrationAppAddOnState(state.session, integrationId);
+  return fromSession.integrationAppAddOnState(
+    state && state.session,
+    integrationId
+  );
 }
 
 export function isAddOnInstallInProgress(state, id) {
-  return fromSession.isAddOnInstallInProgress(state.session, id);
+  return fromSession.isAddOnInstallInProgress(state && state.session, id);
 }
 
 export function checkUpgradeRequested(state, licenseId) {
@@ -3237,6 +3257,22 @@ export function assistantPreviewData(state, resourceId) {
   return fromSession.assistantPreviewData(state && state.session, resourceId);
 }
 
+export function flowJobConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+  const connections = [];
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow, {
+    ignoreBorrowedConnections: true,
+  });
+
+  connectionIds.forEach(c => {
+    const conn = resource(state, 'connections', c);
+
+    connections.push({ id: conn._id, name: conn.name });
+  });
+
+  return connections;
+}
+
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
@@ -4131,4 +4167,8 @@ export function suiteScriptResourceFormSaveProcessTerminated(
     state && state.session,
     { resourceType, resourceId, ssLinkedConnectionId, integrationId }
   );
+}
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromSession.getJobErrorsPreview(state && state.session, jobId);
 }

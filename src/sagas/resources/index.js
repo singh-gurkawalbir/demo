@@ -715,6 +715,37 @@ export function* refreshConnectionStatus({ integrationId }) {
   }
 }
 
+export function* requestQueuedJobs({ connectionId }) {
+  const path = `/connections/${connectionId}/jobs`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return undefined;
+  }
+
+  yield put(actions.connection.receivedQueuedJobs(response, connectionId));
+}
+
+export function* cancelQueuedJob({ jobId }) {
+  const path = `/jobs/${jobId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {},
+        method: 'PUT',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
+    return undefined;
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
@@ -735,6 +766,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
 
   ...metadataSagas,
 ];
