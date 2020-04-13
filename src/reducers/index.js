@@ -2259,6 +2259,35 @@ export function userPermissions(state) {
   return fromUser.permissions(state.user);
 }
 
+export const resourcePermissions = createSelector(
+  [
+    (state, { resourceType }) => resourceType,
+    (state, { resourceId }) => resourceId,
+    state => userPermissions(state),
+  ],
+  (resourceType, resourceId, permissions) => {
+    if (!permissions) return emptyObject;
+
+    if (resourceId) {
+      if (resourceType === 'integrations') {
+        if (
+          [
+            USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+            USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+            USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          ].includes(permissions.accessLevel)
+        ) {
+          return permissions.integrations.all;
+        }
+      }
+
+      return permissions[resourceType][resourceId] || emptyObject;
+    }
+
+    return permissions[resourceType] || emptyObject;
+  }
+);
+
 const parentResourceToLookUpTo = {
   flows: 'integrations',
 };
@@ -2301,25 +2330,25 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
 };
 
-export function resourcePermissions(state, resourceType, resourceId) {
-  const permissions = userPermissions(state);
+// export function resourcePermissions(state, resourceType, resourceId) {
+//   const permissions = userPermissions(state);
 
-  if (resourceType === 'integrations') {
-    if (
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(permissions.accessLevel)
-    ) {
-      return permissions.integrations.all;
-    }
+//   if (resourceType === 'integrations') {
+//     if (
+//       [
+//         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+//         USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+//         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+//       ].includes(permissions.accessLevel)
+//     ) {
+//       return permissions.integrations.all;
+//     }
 
-    return permissions.integrations[resourceId] || {};
-  }
+//     return permissions.integrations[resourceId] || {};
+//   }
 
-  return emptyObject;
-}
+//   return emptyObject;
+// }
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
   const { accessLevel } = userPermissions(state);

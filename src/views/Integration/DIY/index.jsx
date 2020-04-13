@@ -92,6 +92,14 @@ export default function Integration({ history, match }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const accessLevel = useSelector(state => {
+    const permission = selectors.resourcePermissions(state, {
+      resourceType: 'integrations',
+      resourceId: integrationId,
+    });
+
+    return permission ? permission.accessLevel : undefined;
+  });
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
@@ -240,7 +248,7 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {integration && (
+          {accessLevel === 'owner' && integration && (
             <IconTextButton
               component={Link}
               to={getRoutePath(
@@ -252,12 +260,14 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
 
-          <IconTextButton
-            variant="text"
-            data-test="deleteIntegration"
-            onClick={handleDelete}>
-            <TrashIcon /> Delete integration
-          </IconTextButton>
+          {accessLevel === 'owner' && (
+            <IconTextButton
+              variant="text"
+              data-test="deleteIntegration"
+              onClick={handleDelete}>
+              <TrashIcon /> Delete integration
+            </IconTextButton>
+          )}
         </CeligoPageBar>
 
         <IntegrationTabs

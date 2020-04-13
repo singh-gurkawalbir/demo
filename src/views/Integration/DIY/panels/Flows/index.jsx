@@ -28,6 +28,13 @@ export default function FlowsPanel({ integrationId }) {
   let flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, {
+        resourceType: 'integrations',
+        resourceId: integrationId,
+      }).accessLevel
+  );
 
   flows =
     flows &&
@@ -52,30 +59,40 @@ export default function FlowsPanel({ integrationId }) {
       <MappingDrawer integrationId={integrationId} />
 
       <PanelHeader title="Integration flows" infoText={infoTextFlow}>
-        <IconTextButton
-          component={Link}
-          to="flowBuilder/new"
-          data-test="createFlow">
-          <AddIcon /> Create flow
-        </IconTextButton>
-        {!isStandalone && (
+        {['owner', 'manage'].includes(accessLevel) && (
+          <IconTextButton
+            component={Link}
+            to="flowBuilder/new"
+            data-test="createFlow">
+            <AddIcon /> Create flow
+          </IconTextButton>
+        )}
+
+        {accessLevel === 'owner' && !isStandalone && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
             <AttachIcon /> Attach flow
           </IconTextButton>
         )}
-        <IconTextButton
-          component={Link}
-          to="dataLoader/new"
-          data-test="loadData">
-          <AddIcon /> Load data
-        </IconTextButton>
+        {['owner', 'manage'].includes(accessLevel) && (
+          <IconTextButton
+            component={Link}
+            to="dataLoader/new"
+            data-test="loadData">
+            <AddIcon /> Load data
+          </IconTextButton>
+        )}
       </PanelHeader>
 
       <LoadResources required resources="flows,exports">
         {flows.map(f => (
-          <FlowCard key={f._id} flowId={f._id} excludeActions={['schedule']} />
+          <FlowCard
+            key={f._id}
+            integrationId={integrationId}
+            flowId={f._id}
+            excludeActions={['schedule']}
+          />
         ))}
       </LoadResources>
     </div>

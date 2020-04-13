@@ -55,6 +55,11 @@ function Dashboard() {
   const ssLinkedConnections = useSelector(state =>
     selectors.suiteScriptLinkedConnections(state)
   );
+  const accessLevel = useSelector(state => {
+    const permission = selectors.userPermissions(state);
+
+    return permission && permission.accessLevel;
+  });
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
   );
@@ -120,34 +125,38 @@ function Dashboard() {
       <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
-        <IconTextButton
-          data-test="newIntegration"
-          component={Link}
-          to={`${location.pathname}/add/integrations/${generateNewId()}`}
-          variant="text"
-          color="primary">
-          <AddIcon />
-          Create integration
-        </IconTextButton>
+        {['owner', 'manage'].includes(accessLevel) && (
+          <div>
+            <IconTextButton
+              data-test="newIntegration"
+              component={Link}
+              to={`${location.pathname}/add/integrations/${generateNewId()}`}
+              variant="text"
+              color="primary">
+              <AddIcon />
+              Create integration
+            </IconTextButton>
 
-        <IconTextButton
-          data-test="installZip"
-          component={Link}
-          to={`${location.pathname}/installIntegration`}
-          variant="text"
-          color="primary">
-          <ZipUpIcon />
-          Install integration
-        </IconTextButton>
-        <IconTextButton
-          data-test="downloadIntegration"
-          component={Link}
-          to={`${location.pathname}/downloadIntegration`}
-          variant="text"
-          color="primary">
-          <ZipDownIcon />
-          Download integration
-        </IconTextButton>
+            <IconTextButton
+              data-test="installZip"
+              component={Link}
+              to={`${location.pathname}/installIntegration`}
+              variant="text"
+              color="primary">
+              <ZipUpIcon />
+              Install integration
+            </IconTextButton>
+            <IconTextButton
+              data-test="downloadIntegration"
+              component={Link}
+              to={`${location.pathname}/downloadIntegration`}
+              variant="text"
+              color="primary">
+              <ZipDownIcon />
+              Download integration
+            </IconTextButton>
+          </div>
+        )}
       </CeligoPageBar>
       <LoadResources
         required
