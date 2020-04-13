@@ -388,6 +388,13 @@ export function* initFormValues({
   const developerMode = yield select(selectors.developerMode);
 
   console.log(`ss initFormValues developerMode `, developerMode);
+  console.log(`ss initFormValues ssLinkedConnectionId `, {
+    resourceType,
+    id: resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+    scope: SCOPES.VALUE,
+  });
   let flow;
   const { merged: resource } = yield select(selectors.suiteScriptResourceData, {
     resourceType,

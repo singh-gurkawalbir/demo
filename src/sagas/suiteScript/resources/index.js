@@ -32,7 +32,7 @@ export function* commitStagedChanges({
 
   let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
 
-  if (resourceType !== 'connections') {
+  if (!['connections', 'integrations'].includes(resourceType)) {
     path += `integrations/${integrationId}/`;
   }
 

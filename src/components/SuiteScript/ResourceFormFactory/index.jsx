@@ -119,7 +119,11 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     return <DynaForm {...props}>{ActionButtons}</DynaForm>;
   }
 
-  const actionButtons = ['test', 'save', 'cancel'];
+  let actionButtons = ['test', 'save', 'cancel'];
+
+  if (resourceType === 'integrations') {
+    actionButtons = ['save'];
+  }
 
   return (
     <DynaForm {...props}>

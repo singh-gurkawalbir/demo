@@ -114,7 +114,7 @@ export default function FlowCard({
   const flowBuilderPathName = isDataloader ? 'dataLoader' : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
-    : `${flowBuilderPathName}/${flowId}`;
+    : `${flowBuilderPathName}/${flowDetails.type}/${flowId}`;
 
   return (
     <div className={classes.root}>

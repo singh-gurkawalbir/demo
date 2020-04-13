@@ -61,7 +61,12 @@ const ConnectorLicenses = loadable(() =>
 );
 const SuiteScriptIntegration = loadable(() =>
   import(
-    /* webpackChunkName: 'Integration' */ '../../views/SuiteScript/Integration/DIY'
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
+  )
+);
+const SuiteScriptFlowBuilder = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
   )
 );
 
@@ -186,6 +191,12 @@ export default class AppRouting extends Component {
           exact
           render={({ history }) => history.replace('/pg/accesstokens')}
         />
+        <Route
+          path={[
+            '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowType/:flowId',
+          ]}>
+          <SuiteScriptFlowBuilder />
+        </Route>
         <Route
           path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab"
           component={SuiteScriptIntegration}

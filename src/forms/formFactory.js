@@ -177,7 +177,11 @@ const getResourceFormAssets = ({
   const { type } = getResourceSubType(resource);
 
   if (ssLinkedConnectionId) {
-    meta = formMeta.suiteScript[resourceType][resource.type];
+    meta = formMeta.suiteScript[resourceType];
+
+    if (resource.type) {
+      meta = meta[resource.type];
+    }
 
     if (meta) {
       ({ fieldMap, layout, preSave, init, actions } = meta);
