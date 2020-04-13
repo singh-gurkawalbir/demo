@@ -7,7 +7,7 @@ import getRenderer from '../DynaForm/renderer';
 export const FieldComponent = props => {
   const { fieldState, renderer } = props;
 
-  if (fieldState && !fieldState.visible) return null;
+  if (!fieldState || !fieldState.visible) return null;
 
   return renderer(props);
 };
