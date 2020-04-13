@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -9,68 +9,6 @@ import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
 import { getResourceSubType } from '../../utils/resource';
 
-const mapStateToProps = (state, { resourceType, resourceId }) => {
-  const formState = selectors.resourceFormState(
-    state,
-    resourceType,
-    resourceId
-  );
-  const { merged: resource } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(
-    state,
-    'connections',
-    resource && resource._connectionId
-  );
-  const { patch: allPatches } = selectors.stagedResource(
-    state,
-    resourceId,
-    'meta'
-  );
-  const lastPatchtimestamp =
-    allPatches &&
-    allPatches[allPatches.length - 1] &&
-    allPatches[allPatches.length - 1].timestamp;
-
-  return {
-    formState,
-    resource,
-    lastPatchtimestamp,
-    connection,
-    /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew, flowId) => {
-    const skipCommit =
-      isNew &&
-      [
-        'imports',
-        'exports',
-        'connections',
-        'pageGenerator',
-        'pageProcessor',
-      ].includes(resourceType);
-
-    dispatch(
-      actions.resourceForm.init(
-        resourceType,
-        resourceId,
-        isNew,
-        skipCommit,
-        flowId
-      )
-    );
-  },
-
-  handleClearResourceForm: (resourceType, resourceId) => {
-    dispatch(actions.resourceForm.clear(resourceType, resourceId));
-  },
-});
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
 
@@ -170,18 +108,58 @@ export const FormStateManager = props => {
 };
 
 export const ResourceFormFactory = props => {
-  const {
-    resourceType,
-    formState,
-    handleInitForm,
-    handleClearResourceForm,
-    resource,
-    resourceId,
-    isNew,
-    lastPatchtimestamp,
-    flowId,
-    connection,
-  } = props;
+  const { resourceType, resourceId, isNew, flowId } = props;
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+  const resource = useSelector(
+    state => selectors.resourceData(state, resourceType, resourceId).merged,
+    shallowEqual
+  );
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', resource && resource._connectionId)
+  );
+  const allPatches = useSelector(
+    state => selectors.stagedResource(state, resourceId, 'meta').patch
+  );
+  const lastPatchtimestamp = useMemo(
+    () =>
+      allPatches &&
+      allPatches[allPatches.length - 1] &&
+      allPatches[allPatches.length - 1].timestamp,
+    [allPatches]
+  );
+  const dispatch = useDispatch();
+  const handleInitForm = useCallback(
+    (resourceType, resourceId, isNew, flowId) => {
+      const skipCommit =
+        isNew &&
+        [
+          'imports',
+          'exports',
+          'connections',
+          'pageGenerator',
+          'pageProcessor',
+        ].includes(resourceType);
+
+      dispatch(
+        actions.resourceForm.init(
+          resourceType,
+          resourceId,
+          isNew,
+          skipCommit,
+          flowId
+        )
+      );
+    },
+    [dispatch]
+  );
+  const handleClearResourceForm = useCallback(
+    (resourceType, resourceId) => {
+      dispatch(actions.resourceForm.clear(resourceType, resourceId));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     handleInitForm(resourceType, resourceId, isNew, flowId);
@@ -212,6 +190,8 @@ export const ResourceFormFactory = props => {
   return (
     <FormStateManager
       {...props}
+      resource={resource}
+      formState={formState}
       fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}
@@ -219,7 +199,4 @@ export const ResourceFormFactory = props => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResourceFormFactory);
+export default ResourceFormFactory;
