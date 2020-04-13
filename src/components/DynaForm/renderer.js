@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Help from '../Help';
-import EditFieldButton from './EditFieldButton';
 import fields from './fields';
 import * as selectors from '../../reducers';
 
@@ -36,14 +35,7 @@ const fieldStyle = {
 };
 const fieldsToSkipHelpPopper = ['labeltitle'];
 const FieldActions = props => {
-  const {
-    field,
-    editMode,
-    helpKey,
-    helpText,
-    formFieldsMeta,
-    resourceContext,
-  } = props;
+  const { field, helpKey, helpText, resourceContext } = props;
   const classes = useStyles();
   const { type: fieldType, hideFromUI } = field;
   const { developer } = useSelector(state => selectors.userProfile(state));
@@ -53,16 +45,6 @@ const FieldActions = props => {
 
   return (
     <div className={classes.root}>
-      {editMode && (
-        <EditFieldButton
-          key={`edit-${field.id}`}
-          data-test={`edit-${field.id}`}
-          formFieldsMeta={formFieldsMeta}
-          field={field}
-          className={classes.iconButton}
-          resourceContext={resourceContext}
-        />
-      )}
       {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
         <Help
           key={`help-${field.id}`}
@@ -80,13 +62,7 @@ const FieldActions = props => {
   );
 };
 
-function getRenderer(
-  formKey,
-  editMode = false,
-  formFieldsMeta,
-  resourceId,
-  resourceType
-) {
+function getRenderer(formKey, resourceId, resourceType) {
   return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
     const { fieldState: field, ...rest } = props;
@@ -110,10 +86,8 @@ function getRenderer(
         </div>
         <FieldActions
           key={fid}
-          editMode={editMode}
           field={field}
           helpKey={helpKey}
-          formFieldsMeta={formFieldsMeta}
           resourceContext={context}
           helpText={helpText}
         />

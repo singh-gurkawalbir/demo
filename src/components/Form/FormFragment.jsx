@@ -39,16 +39,10 @@ export default function FormFragment({ defaultFields, formKey }) {
     field => {
       // rest could mostly be form context such as edit mode what type of resource
       // we change this interface for getRenderer
-      const { editMode, formFieldsMeta, resourceId, resourceType } = formState;
+      const { resourceId, resourceType } = formState;
 
       // i really may not need this considering metadata is generating this props
-      return getRenderer(
-        formKey,
-        editMode,
-        formFieldsMeta,
-        resourceId,
-        resourceType
-      )(field);
+      return getRenderer(formKey, resourceId, resourceType)(field);
     },
     [formKey, formState]
   );
