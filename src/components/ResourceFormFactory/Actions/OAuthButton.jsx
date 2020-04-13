@@ -29,7 +29,7 @@ function OAuthButton(props) {
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const iClients = (resource && resource.iClients) || [];
-  const [requested, setRequested] = useState(false);
+  const [requestedOnLoad, setRequestedOnLoad] = useState(false);
   let integrationDoc;
 
   if (resource && resource.newIA) {
@@ -45,9 +45,9 @@ function OAuthButton(props) {
       !iClients.length &&
       resource._connectorId &&
       (resource.assistant === 'shopify' || resource.assistant === 'squareup') &&
-      !requested
+      !requestedOnLoad
     ) {
-      setRequested(true);
+      setRequestedOnLoad(true);
       dispatch(
         actions.resource.connections.requestIClients(
           resource._id,
@@ -59,7 +59,7 @@ function OAuthButton(props) {
     dispatch,
     iClients.length,
     integrationDoc,
-    requested,
+    requestedOnLoad,
     resource._connectorId,
     resource._id,
     resource.assistant,

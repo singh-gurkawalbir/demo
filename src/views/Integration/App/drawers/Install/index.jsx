@@ -3,7 +3,7 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -98,6 +98,10 @@ export default function ConnectorInstallation(props) {
   );
   const isFrameWork2 =
     integration && integration.installSteps && integration.installSteps.length;
+  const handleConnectionClose = useCallback(
+    () => setSelectedConnectionId(false),
+    []
+  );
 
   useEffect(() => {
     if (
@@ -175,10 +179,6 @@ export default function ConnectorInstallation(props) {
         },
       ],
     });
-  };
-
-  const handleConnectionClose = () => {
-    setSelectedConnectionId(false);
   };
 
   const handleStepClick = step => {

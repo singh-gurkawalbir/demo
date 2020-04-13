@@ -77,6 +77,8 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
 export function* installScriptStep({ id, connectionId, connectionDoc }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
+  // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
+  // create a connection If step doesn't contain a  connection Id.
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {

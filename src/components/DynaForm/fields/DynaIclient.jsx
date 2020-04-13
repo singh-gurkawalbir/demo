@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useMemo, useEffect, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
@@ -32,12 +32,14 @@ export default function DynaIclient(props) {
     };
   }
 
-  const [requested, setRequested] = useState(false);
-  const iClients = (connection && connection.iClients) || [];
+  const [requestedOnLoad, setRequestedOnLoad] = useState(false);
+  const iClients = useMemo(() => (connection && connection.iClients) || [], [
+    connection,
+  ]);
 
   useEffect(() => {
-    if (!iClients.length && connectionId && connectorId && !requested) {
-      setRequested(true);
+    if (!iClients.length && connectionId && connectorId && !requestedOnLoad) {
+      setRequestedOnLoad(true);
       dispatch(
         actions.resource.connections.requestIClients(
           connectionId,
@@ -51,7 +53,7 @@ export default function DynaIclient(props) {
     dispatch,
     iClients.length,
     integrationDoc,
-    requested,
+    requestedOnLoad,
   ]);
 
   return hideFromUI ? null : (
