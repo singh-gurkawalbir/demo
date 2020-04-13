@@ -48,7 +48,12 @@ export default {
   },
 
   // UI Specific field
-  formView: { id: 'formView', type: 'formview', label: 'Form View' },
+  formView: {
+    id: 'formView',
+    type: 'formview',
+    label: 'Form View',
+    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+  },
   asynchronous: {
     type: 'checkbox',
     label: 'Asynchronous',
@@ -119,12 +124,18 @@ export default {
     label:
       'If records being processed are represented by Objects then please specify the JSON path to the child objects that should be used to parameterize each export',
     placeholder: 'Optional. Not needed for row/array formats.',
-    visibleWhen: [
-      {
-        field: 'oneToMany',
-        is: [true],
-      },
-    ],
+    visible: r => !!(r && r.isLookup),
+    visibleWhenAll: r => {
+      if (r && r.isLookup)
+        return [
+          {
+            field: 'oneToMany',
+            is: ['true'],
+          },
+        ];
+
+      return [];
+    },
   },
   // sampleData: {
   //   type: 'editor',

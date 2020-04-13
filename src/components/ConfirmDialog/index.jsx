@@ -17,6 +17,7 @@ export const ConfirmDialog = props => {
     title = 'Confirm',
     isHtml = false,
     onClose,
+    maxWidth,
     buttons = [
       {
         label: 'No',
@@ -38,7 +39,7 @@ export const ConfirmDialog = props => {
   const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
         <RawHtml className={classes.message} html={message} />

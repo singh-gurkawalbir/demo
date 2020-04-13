@@ -109,15 +109,6 @@ export default class AppRouting extends Component {
           }
         />
         <Route
-          path="/pg/marketplace/templates/:templateId"
-          exact
-          render={({ history, match }) =>
-            history.replace(
-              `/pg/marketplace/templates/${match.params.templateId}/preview`
-            )
-          }
-        />
-        <Route
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
