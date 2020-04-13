@@ -68,7 +68,7 @@ export default function FlowsPanel({ integrationId }) {
           </IconTextButton>
         )}
 
-        {accessLevel === 'owner' && !isStandalone && (
+        {['owner', 'manage'].includes(accessLevel) && !isStandalone && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
