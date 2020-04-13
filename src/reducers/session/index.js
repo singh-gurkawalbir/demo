@@ -23,6 +23,8 @@ import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import stage, * as fromStage from './stage';
 import templates, * as fromTemplates from './templates';
 import transfers, * as fromTransfers from './transfers';
+import fileUpload, * as fromFileUpload from './fileUpload';
+import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 
 export default combineReducers({
   form: formReducer,
@@ -49,6 +51,8 @@ export default combineReducers({
   flows,
   transfers,
   responseMapping,
+  fileUpload,
+  jobErrorsPreview,
 });
 
 // #region PUBLIC SELECTORS
@@ -335,6 +339,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function isAddOnInstallInProgress(state, id) {
+  return fromIntegrationApps.isAddOnInstallInProgress(
+    state && state.integrationApps,
+    id
+  );
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromIntegrationApps.checkUpgradeRequested(
     state && state.integrationApps,
@@ -480,10 +491,6 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
-export function connectionStatus(state, id) {
-  return fromConnections.connectionStatus(state && state.connections, id);
-}
-
 const lastExportDateTime = {};
 
 export function getLastExportDateTime(state, flowId) {
@@ -495,6 +502,17 @@ export function getLastExportDateTime(state, flowId) {
 
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
+}
+
+export function getUploadedFile(state, fileId) {
+  return fromFileUpload.getUploadedFile(state && state.fileUpload, fileId);
+}
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromJobErrorsPreview.getJobErrorsPreview(
+    state && state.jobErrorsPreview,
+    jobId
+  );
 }
 
 // #endregion

@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 export default function XmlParseEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles(props);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -49,9 +49,7 @@ export default function XmlParseEditor(props) {
   }, [handleInit]);
 
   return (
-    <PanelGrid
-      key={`${editorId}-${initChangeIdentifier}`}
-      className={classes.template}>
+    <PanelGrid key={editorId} className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="XML parse options" />
         <XmlParsePanel disabled={disabled} editorId={editorId} />

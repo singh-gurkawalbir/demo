@@ -1,12 +1,10 @@
-import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
+import jsonPatch, { applyPatch } from 'fast-json-patch';
 import util from '../../utils/array';
 
 const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
     patches.length &&
-    util
-      .removeItem(patches, p => p.path === '/lastModified')
-      .filter(patch => patch.op === 'replace')) ||
+    util.removeItem(patches, p => p.path === '/lastModified')) ||
   [];
 const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
@@ -34,32 +32,30 @@ export function resourceConflictResolution({ merged, master, origin }) {
   }
 
   // if there is no difference between merged vs master
-  // then with origin changes we auto merge
+  // then with use origin directly
 
   if (!hasPatch(masterVsMerged)) {
-    const updatedMerged = applyPatch(deepClone(merged), masterVsOrigin)
-      .newDocument;
+    const updatedMerged = origin;
 
     return { merged: updatedMerged, conflict: null };
   }
   // there is a conflict here
-  // resolution required
 
-  const resolutionPatches = masterVsOrigin.filter(
-    patch => !isPathPresentAndValueDiff(masterVsMerged)(patch)
+  const conflictPatches = masterVsMerged.filter(
+    isPathPresentAndValueDiff(masterVsOrigin)
   );
-  const conflictPatches = masterVsOrigin.filter(
-    isPathPresentAndValueDiff(masterVsMerged)
-  );
-  // apply the resolution patches to merged
-  const updatedMerged = applyPatch(deepClone(merged), resolutionPatches)
-    .newDocument;
 
   if (conflictPatches && conflictPatches.length) {
     // in fact if there is any conflict then there is no point resolving it
 
-    return { conflict: conflictPatches, merged: updatedMerged };
+    return { conflict: conflictPatches, merged: null };
   }
+
+  // resolution required
+  // apply the staged patches over origin
+  // mutate document set to false
+  const updatedMerged = applyPatch(origin, masterVsMerged, false, false)
+    .newDocument;
 
   return { conflict: null, merged: updatedMerged };
 }

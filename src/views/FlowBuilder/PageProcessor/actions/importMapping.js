@@ -14,6 +14,7 @@ import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -21,9 +22,12 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(0, 0, 0, 0),
-    width: '100%',
-    display: 'flex',
+    overflow: 'auto',
+    padding: theme.spacing(1, 3, 6, 3),
+    marginBottom: theme.spacing(1),
+    '& > div:first-child': {
+      height: `calc(100vh - 180px)`,
+    },
   },
   // TODO:check for better way to handle width when drawer open and closes
   fullWidthDrawerClose: {
@@ -117,7 +121,7 @@ function ImportMapping({
         title={
           subrecords && subrecords.length > 0 && !selectedMapping
             ? 'Please select which mapping you would like to edit'
-            : 'Define Import Mapping'
+            : 'Define import mapping'
         }
       />
       <div className={classes.content}>

@@ -89,6 +89,19 @@ export default function ClonePreview(props) {
         },
       }).resources
   );
+  const selectedAccountHasSandbox = useSelector(state => {
+    const accounts = selectors.accountSummary(state);
+    const selectedAccount = accounts && accounts.find(a => a.selected);
+
+    if (
+      selectedAccount &&
+      (selectedAccount.hasSandbox || selectedAccount.hasConnectorSandbox)
+    ) {
+      return true;
+    }
+
+    return false;
+  });
   const components = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
   );
@@ -162,6 +175,7 @@ export default function ClonePreview(props) {
         type: 'radiogroup',
         label: 'Environment',
         fullWidth: true,
+        visible: selectedAccountHasSandbox,
         options: [
           {
             items: [

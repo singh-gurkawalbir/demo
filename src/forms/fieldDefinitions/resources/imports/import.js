@@ -3,7 +3,12 @@ export default {
   description: { type: 'text', label: 'Description' },
 
   // UI Specific field
-  formView: { id: 'formView', type: 'formview', label: 'Form View' },
+  formView: {
+    id: 'formView',
+    type: 'formview',
+    label: 'Form View',
+    defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+  },
   apiIdentifier: {
     label: 'Invoke this Import [POST]',
     type: 'apiidentifier',

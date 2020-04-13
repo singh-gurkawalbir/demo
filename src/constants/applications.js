@@ -9,6 +9,7 @@
 // keyword: any words in combination with the name that will be used for search.
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
+
 const connectors = [
   // tech connectors
   {
@@ -120,7 +121,7 @@ const connectors = [
   },
   {
     id: 'mysql',
-    name: 'MySQL',
+    name: 'My SQL',
     type: 'mysql',
     keywords: 'database,rdbms,db',
     group: 'db',
@@ -164,8 +165,8 @@ const connectors = [
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
-  { id: 'aptrinsic', name: 'Aptrinsic', type: 'rest', assistant: 'aptrinsic' },
-  { id: 'ariba', name: 'Ariba', type: 'http', assistant: 'ariba' },
+  { id: 'aptrinsic', name: 'Gainsight', type: 'rest', assistant: 'aptrinsic' },
+  { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
   {
@@ -190,7 +191,7 @@ const connectors = [
     type: 'http',
     assistant: 'azureactivedirectory',
   },
-  { id: 'bamboohr', name: 'BambooHr', type: 'http', assistant: 'bamboohr' },
+  { id: 'bamboohr', name: 'Bamboo HR', type: 'http', assistant: 'bamboohr' },
   { id: 'banking', name: 'Banking', type: 'http', assistant: 'banking' },
   {
     id: 'bigcommerce',
@@ -201,14 +202,20 @@ const connectors = [
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
   { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
-  { id: 'bronto', name: 'Bronto', type: 'rest', assistant: 'bronto' },
+  { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
+  {
+    id: 'redshift',
+    name: 'Amazon Redshift',
+    type: 'http',
+    assistant: 'redshift',
+  },
   {
     id: 'campaignmonitor',
     name: 'Campaign Monitor',
     type: 'rest',
     assistant: 'campaignmonitor',
   },
-  // { id: 'cardknox', name: 'Cardknox', type: 'http', assistant: 'cardknox' },
+  { id: 'bigquery', name: 'BigQuery', type: 'http', assistant: 'bigquery' },
   { id: 'cartrover', name: 'CartRover', type: 'http', assistant: 'cartrover' },
   { id: 'certify', name: 'Certify', type: 'rest', assistant: 'certify' },
   { id: 'chargebee', name: 'Chargebee', type: 'rest', assistant: 'chargebee' },
@@ -223,13 +230,13 @@ const connectors = [
   //   assistant: 'concurall',
   //   icon: 'concur',
   // },
-  // {
-  //   id: 'concurv4',
-  //   name: 'Concur',
-  //   type: 'rest',
-  //   assistant: 'concurv4',
-  //   icon: 'concur',
-  // },
+  {
+    id: 'concurv4',
+    name: 'Concur v4 ',
+    type: 'rest',
+    assistant: 'concurv4',
+    icon: 'concur',
+  },
   {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
@@ -245,7 +252,7 @@ const connectors = [
     icon: 'constantcontactv3',
   },
   { id: 'coupa', name: 'Coupa', type: 'rest', assistant: 'coupa' },
-  { id: 'dcl', name: 'Dcl', type: 'http', assistant: 'dcl' },
+  { id: 'dcl', name: 'DCL Logistics', type: 'http', assistant: 'dcl' },
   // { id: 'desk', name: 'Desk', type: 'rest', assistant: 'desk' },
   // { id: 'dnb', name: 'dnb', type: 'http', assistant: 'dnb' },
   { id: 'docusign', name: 'DocuSign', type: 'rest', assistant: 'docusign' },
@@ -285,7 +292,7 @@ const connectors = [
   { id: 'expensify', name: 'Expensify', type: 'rest', assistant: 'expensify' },
   {
     id: 'facebookads',
-    name: 'Facebook ads',
+    name: 'Facebook Ads',
     type: 'http',
     assistant: 'facebookads',
   },
@@ -309,7 +316,7 @@ const connectors = [
     type: 'rest',
     assistant: 'freshbooks',
   },
-  { id: 'freshdesk', name: 'Freshdesk', type: 'rest', assistant: 'freshdesk' },
+  { id: 'freshdesk', name: 'FreshDesk', type: 'rest', assistant: 'freshdesk' },
   {
     id: 'github',
     name: 'GitHub',
@@ -337,12 +344,12 @@ const connectors = [
   //   type: 'rest',
   //   assistant: 'googledrive',
   // },
-  // {
-  // id: 'googlemail',
-  //   name: 'Googl Email',
-  // type: 'rest',
-  // assistant: 'googlemail',
-  // },
+  {
+    id: 'googlemail',
+    name: 'Gmail',
+    type: 'rest',
+    assistant: 'googlemail',
+  },
   {
     id: 'googlesheets',
     name: 'Google Sheets',
@@ -387,7 +394,13 @@ const connectors = [
   //  webhook: true,
   // },
   { id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet' },
-  { id: 'jira', name: 'Jira', type: 'rest', assistant: 'jira', webhook: true },
+  {
+    id: 'jira',
+    name: 'Jira Software',
+    type: 'rest',
+    assistant: 'jira',
+    webhook: true,
+  },
   { id: 'jobvite', name: 'Jobvite', type: 'rest', assistant: 'jobvite' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'rest', assistant: 'klaviyo' },
   {
@@ -399,7 +412,7 @@ const connectors = [
   // { id: 'linkedin', name: 'linkedin', type: 'http', assistant: 'linkedin' },
   {
     id: 'liquidplanner',
-    name: 'LiquidPlanner',
+    name: 'Liquid Planner',
     type: 'rest',
     assistant: 'liquidplanner',
   },
@@ -412,7 +425,7 @@ const connectors = [
   { id: 'magento', name: 'Magento 2', type: 'rest', assistant: 'magento' },
   {
     id: 'mailchimp',
-    name: 'Mailchimp',
+    name: 'MailChimp',
     type: 'rest',
     assistant: 'mailchimp',
     webhook: true,
@@ -495,7 +508,7 @@ const connectors = [
   { id: 'namely', name: 'Namely', type: 'rest', assistant: 'namely' },
   { id: 'netsuite', name: 'NetSuite', type: 'netsuite' },
   { id: 'newegg', name: 'Newegg', type: 'http', assistant: 'newegg' },
-  { id: 'newrelic', name: 'Newrelic', type: 'rest', assistant: 'newrelic' },
+  { id: 'newrelic', name: 'New Relic', type: 'rest', assistant: 'newrelic' },
   { id: 'nextag', name: 'Nextag', type: 'http', assistant: 'nextag' },
   // { id: 'nimble', name: 'Nimble', type: 'http', assistant: 'nimble' },
   {
@@ -506,7 +519,7 @@ const connectors = [
   },
   {
     id: 'oandav20fxtrade',
-    name: 'OANDA v20 fxTrade',
+    name: 'OANDA v20 fXTrade',
     type: 'rest',
     assistant: 'oandav20fxtrade',
   },
@@ -528,7 +541,7 @@ const connectors = [
   { id: 'paycor', name: 'Paycor', type: 'http', assistant: 'paycor' },
   // { id: 'paylocity', name: 'paylocity',
   // type: 'http', assistant: 'paylocity' },
-  { id: 'paypal', name: 'Paypal', type: 'http', assistant: 'paypal' },
+  { id: 'paypal', name: 'PayPal', type: 'http', assistant: 'paypal' },
   { id: 'pdffiller', name: 'PDFfiller', type: 'rest', assistant: 'pdffiller' },
   {
     id: 'pitneybowes',
@@ -587,7 +600,7 @@ const connectors = [
   // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment', webhook: true },
   {
     id: 'servicenow',
-    name: 'Service Now',
+    name: 'ServiceNow',
     type: 'rest',
     assistant: 'servicenow',
   },
@@ -619,9 +632,9 @@ const connectors = [
     assistant: 'shopify',
     webhook: true,
   },
-  // { id: 'signnow', name: 'SignNow', type: 'http', assistant: 'signnow' },
+  { id: 'signnow', name: 'SignNow', type: 'http', assistant: 'signnow' },
   { id: 'skubana', name: 'Skubana', type: 'rest', assistant: 'skubana' },
-  { id: 'skuvault', name: 'Skuvault', type: 'http', assistant: 'skuvault' },
+  { id: 'skuvault', name: 'SkuVault', type: 'http', assistant: 'skuvault' },
   {
     id: 'slack',
     name: 'Slack',
@@ -637,7 +650,7 @@ const connectors = [
   },
   {
     id: 'snapfulfil',
-    name: 'Snapfulfil',
+    name: 'SnapFulfil',
     type: 'rest',
     assistant: 'snapfulfil',
   },
@@ -670,14 +683,14 @@ const connectors = [
     webhook: true,
   },
   { id: 'sugarcrm', name: 'SugarCRM', type: 'rest', assistant: 'sugarcrm' },
-  // {
-  // id: 'surveymonkey',
-  // name: 'SurveyMonkey',
-  // type: 'rest',
-  // assistant: 'surveymonkey',
-  // webhook: true,
-  // },
-  { id: 'svb', name: 'Svb', type: 'http', assistant: 'svb' },
+  {
+    id: 'surveymonkey',
+    name: 'SurveyMonkey',
+    type: 'rest',
+    assistant: 'surveymonkey',
+    webhook: true,
+  },
+  { id: 'svb', name: 'SVB', type: 'http', assistant: 'svb' },
   { id: 'tableau', name: 'Tableau', type: 'rest', assistant: 'tableau' },
   { id: 'target', name: 'Target', type: 'http', assistant: 'target' },
   { id: 'taxjar', name: 'TaxJar', type: 'rest', assistant: 'taxjar' },
@@ -685,12 +698,12 @@ const connectors = [
   { id: 'tophatter', name: 'Tophatter', type: 'rest', assistant: 'tophatter' },
   {
     id: 'travis',
-    name: 'Travis',
+    name: 'Travis CI',
     type: 'http',
     assistant: 'travis',
     webhook: true,
   },
-  { id: 'trinet', name: 'Trinet', type: 'http', assistant: 'trinet' },
+  { id: 'trinet', name: 'TriNet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
   { id: 'twilio', name: 'Twilio', type: 'rest', assistant: 'twilio' },
   { id: 'vend', name: 'Vend', type: 'http', assistant: 'vend' },
@@ -705,7 +718,7 @@ const connectors = [
     assistant: 'woocommerce',
   },
   { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
-  // { id: 'xcart', name: 'X-Cart', type: 'http', assistant: 'xcart' },
+  { id: 'xcart', name: 'XCart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
   // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
   { id: 'zendesk', name: 'Zendesk', type: 'rest', assistant: 'zendesk' },
@@ -734,7 +747,57 @@ export const groupApplications = (
   resourceType,
   { assistants, appType, isSimpleImport }
 ) => {
-  const filteredConnectors = connectors.filter(connector => {
+  // Here i need to update Connectors
+  const assistantConnectors = connectors.filter(c => !c.assistant);
+
+  if (
+    assistants &&
+    assistants.http.applications &&
+    assistants.rest.applications
+  ) {
+    assistants.http.applications.forEach(asst => {
+      assistantConnectors.push({
+        id: asst._id,
+        name: asst.name,
+        type: 'http',
+        assistant: asst._id,
+      });
+    });
+    assistants.rest.applications.forEach(asst => {
+      if (
+        ![
+          'surveymonkey',
+          'yammer',
+          'hybris',
+          'etsy',
+          'concur',
+          'concurall',
+          'concurv4',
+          'constantcontact',
+        ].includes(asst._id)
+      ) {
+        assistantConnectors.push({
+          id: asst._id,
+          name: asst.name,
+          type: 'rest',
+          assistant: asst._id,
+        });
+      }
+    });
+  }
+
+  assistantConnectors.sort((a, b) => {
+    const nameA = a.name ? a.name.toUpperCase() : '';
+    const nameB = b.name ? b.name.toUpperCase() : '';
+
+    if (nameA < nameB) return -1;
+
+    if (nameA > nameB) return 1;
+
+    return 0; // names must be equal
+  });
+
+  const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
       let assistant = assistants.http.applications.find(
         a => a._id === connector.assistant
@@ -818,6 +881,8 @@ export const groupApplications = (
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);
 export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+export const getDatabaseConnectors = () =>
+  connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
   connectors.filter(c => !!c.webhookOnly);
 

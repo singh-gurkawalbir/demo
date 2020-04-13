@@ -11,7 +11,7 @@ export const PING_STATES = {
 Object.freeze(PING_STATES);
 
 export default (state = {}, action) => {
-  const { type, resourceId, message } = action;
+  const { type, resourceId, message, retainStatus = false } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -23,7 +23,7 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_ERRORED: {
         draft[resourceId] = {
           status: PING_STATES.ERROR,
-          message: message || 'test errored',
+          message,
         };
 
         break;
@@ -32,8 +32,6 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_SUCCESSFUL: {
         draft[resourceId] = {
           status: PING_STATES.SUCCESS,
-
-          message: message || 'test successful',
         };
 
         break;
@@ -42,14 +40,14 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_CANCELLED: {
         draft[resourceId] = {
           status: PING_STATES.ABORTED,
-
-          message: message || 'test cancelled',
         };
         break;
       }
 
       case actionTypes.CONNECTION.TEST_CLEAR: {
-        draft[resourceId] = {};
+        if (retainStatus) {
+          delete draft[resourceId].message;
+        } else draft[resourceId] = {};
 
         break;
       }

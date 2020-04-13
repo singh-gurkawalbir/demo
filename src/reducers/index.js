@@ -348,6 +348,7 @@ export function connectorFieldOptions(
   // should select options from either defaultOptions or the refreshed metadata options
   return {
     isLoading,
+    value: data && data.value,
     options:
       (data &&
         data.options &&
@@ -523,6 +524,8 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
   } = { ...profile, ...preferences };
 
   return {
@@ -537,13 +540,24 @@ export function userProfilePreferencesProps(state) {
     timezone,
     timeFormat,
     scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
   };
 }
 
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
-// #endregion
+
+export function userProfileLinkedWithGoogle(state) {
+  return !!(
+    state &&
+    state.user &&
+    state.user.profile &&
+    state.user.profile.auth_type_google &&
+    state.user.profile.auth_type_google.id
+  );
+}
+// #endregiod
 
 // #region AUTHENTICATION SELECTORS
 export function isAuthenticated(state) {
@@ -687,6 +701,10 @@ export function testConnectionCommState(state, resourceId) {
 
 export function themeName(state) {
   return fromUser.appTheme((state && state.user) || null);
+}
+
+export function editorTheme(state) {
+  return fromUser.editorTheme((state && state.user) || null);
 }
 
 export function hasPreferences(state) {
@@ -886,30 +904,19 @@ export function getNextDataFlows(state, flow) {
   );
 }
 
+export function isConnectionOffline(state, id) {
+  const connection = resource(state, 'connections', id);
+
+  return connection && connection.offline;
+}
+
 export function resourceListWithPermissions(state, options) {
   const list = resourceList(state, options);
   // eslint-disable-next-line no-use-before-define
   const permissions = userPermissions(state);
 
   list.resources = list.resources.map(r => {
-    const additionalInfo = {};
-
-    additionalInfo.permissions = deepClone(permissions);
-
-    // For connections resource, add the status and queueSize info
-    if (options.type === 'connections') {
-      const status = fromSession.connectionStatus(
-        state && state.session,
-        r._id
-      );
-
-      if (status) {
-        additionalInfo.offline = status.offline;
-        additionalInfo.queueSize = status.queueSize;
-      }
-    }
-
-    const finalRes = { ...r, ...additionalInfo };
+    const finalRes = { ...r, permissions: deepClone(permissions) };
 
     // defaulting queue size to zero when undefined
     finalRes.queueSize = finalRes.queueSize || 0;
@@ -1020,35 +1027,21 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+export function getAllExportIdsUsedInTheFlow(state, flow) {
   const exportIds = [];
-  const importIds = [];
-  const connectionIds = [];
-  const borrowConnectionIds = [];
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const exports = resourceList(state, { type: 'exports' }).resources;
-  const imports = resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
-    return connectionIds;
+    return exportIds;
   }
 
   if (flow._exportId) {
     exportIds.push(flow._exportId);
   }
 
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
   if (flow.pageProcessors && flow.pageProcessors.length > 0) {
     flow.pageProcessors.forEach(pp => {
       if (pp._exportId) {
         exportIds.push(pp._exportId);
-      }
-
-      if (pp._importId) {
-        importIds.push(pp._importId);
       }
     });
   }
@@ -1058,11 +1051,45 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
       if (pg._exportId) {
         exportIds.push(pg._exportId);
       }
+    });
+  }
 
-      if (pg._importId) {
-        importIds.push(pg._importId);
+  return exportIds;
+}
+
+export function getAllImportIdsUsedInTheFlow(state, flow) {
+  const importIds = [];
+
+  if (!flow) {
+    return importIds;
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._importId) {
+        importIds.push(pp._importId);
       }
     });
+  }
+
+  return importIds;
+}
+
+export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+  const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
+  const importIds = getAllImportIdsUsedInTheFlow(state, flow);
+  const connectionIds = [];
+  const borrowConnectionIds = [];
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const exports = resourceList(state, { type: 'exports' }).resources;
+  const imports = resourceList(state, { type: 'imports' }).resources;
+
+  if (!flow) {
+    return connectionIds;
   }
 
   const attachedExports =
@@ -1135,6 +1162,10 @@ export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(state.session, integrationId);
 }
 
+export function isAddOnInstallInProgress(state, id) {
+  return fromSession.isAddOnInstallInProgress(state.session, id);
+}
+
 export function checkUpgradeRequested(state, licenseId) {
   return fromSession.checkUpgradeRequested(state && state.session, licenseId);
 }
@@ -1195,6 +1226,8 @@ export function integrationAppResourceList(
 
   const flows = [];
   const connections = [];
+  const exports = [];
+  const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
@@ -1205,6 +1238,8 @@ export function integrationAppResourceList(
     const flow = resource(state, 'flows', f) || {};
 
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
+    exports.push(...getAllExportIdsUsedInTheFlow(state, flow));
+    imports.push(...getAllImportIdsUsedInTheFlow(state, flow));
   });
 
   return {
@@ -1212,6 +1247,8 @@ export function integrationAppResourceList(
       connections.includes(c._id)
     ),
     flows,
+    exports,
+    imports,
   };
 }
 
@@ -2095,7 +2132,6 @@ export function integratorLicenseWithMetadata(state) {
 
   toReturn.__trialExtensionRequested =
     licenseActionDetails.__trialExtensionRequested;
-  toReturn.__upgradeRequested = licenseActionDetails.__upgradeRequested;
 
   if (licenseActionDetails.tier === 'none') {
     toReturn.actions = ['start-free-trial'];
@@ -2824,8 +2860,46 @@ export function accountOwner(state) {
   return fromUser.accountOwner(state.user);
 }
 
-export function auditLogs(state, resourceType, resourceId, filters) {
-  return fromData.auditLogs(state.data, resourceType, resourceId, filters);
+export function auditLogs(
+  state,
+  resourceType,
+  resourceId,
+  filters,
+  options = {}
+) {
+  const auditLogs = fromData.auditLogs(
+    state.data,
+    resourceType,
+    resourceId,
+    filters
+  );
+
+  if (options.storeId) {
+    const {
+      exports = [],
+      imports = [],
+      flows = [],
+      connections = [],
+    } = integrationAppResourceList(state, resourceId, options.storeId);
+    const resourceIds = [
+      ...exports,
+      ...imports,
+      ...flows,
+      ...map(connections, '_id'),
+    ];
+
+    return auditLogs.filter(log => {
+      if (
+        ['export', 'import', 'connection', 'flow'].includes(log.resourceType)
+      ) {
+        return resourceIds.includes(log._resourceId);
+      }
+
+      return true;
+    });
+  }
+
+  return auditLogs;
 }
 
 export function affectedResourcesAndUsersFromAuditLogs(
@@ -3411,18 +3485,6 @@ export function debugLogs(state) {
   return fromSession.debugLogs(state && state.session);
 }
 
-export function connectionStatus(state, id) {
-  // we are returning the default value here and not in the leaf selector
-  // because we want the leaf selector to return the true state value without the default value
-  return (
-    fromSession.connectionStatus(state && state.session, id) || {
-      id,
-      queueSize: 0,
-      offline: false,
-    }
-  );
-}
-
 export function getLastExportDateTime(state, flowId) {
   return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
@@ -3841,3 +3903,36 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
+
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
+
+/*
+ * The selector returns appropriate context for the JS Processor to run
+ * For now, it supports contextType: hook
+ * Other context types are 'settings' and 'setup'
+ */
+export const getScriptContext = createSelector(
+  [
+    (state, { contextType }) => contextType,
+    (state, { flowId }) => {
+      const flow = resource(state, 'flows', flowId) || emptyObject;
+
+      return flow._integrationId;
+    },
+  ],
+  (contextType, _integrationId) => {
+    if (contextType === 'hook' && _integrationId) {
+      return {
+        type: 'hook',
+        container: 'integration',
+        _integrationId,
+      };
+    }
+  }
+);
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromSession.getJobErrorsPreview(state && state.session, jobId);
+}

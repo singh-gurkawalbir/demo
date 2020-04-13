@@ -7,14 +7,25 @@ import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import { getDomain } from '../../utils/resource';
 
 const mapStateToProps = state => ({
   error: selectors.authenticationErrored(state),
   userEmail: selectors.userProfileEmail(state),
+  userProfileLinkedWithGoogle: selectors.userProfileLinkedWithGoogle(state),
 });
 const mapDispatchToProps = dispatch => ({
   handleAuthentication: (email, password) => {
     dispatch(actions.auth.request(email, password));
+  },
+  handleSignInWithGoogle: returnTo => {
+    dispatch(actions.auth.signInWithGoogle(returnTo));
+  },
+  handleReSignInWithGoogle: email => {
+    dispatch(actions.auth.reSignInWithGoogle(email));
+  },
+  handleReSignInWithGoogleCompleted: () => {
+    dispatch(actions.auth.initSession());
   },
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
@@ -152,9 +163,40 @@ class SignIn extends Component {
 
     this.props.handleAuthentication(email, password);
   };
+  handleSignInWithGoogle = e => {
+    e.preventDefault();
+
+    this.props.handleSignInWithGoogle(e.target.attemptedRoute.value);
+  };
+
+  handleReSignInWithGoogle = e => {
+    e.preventDefault();
+
+    this.props.handleReSignInWithGoogle(this.props.userEmail);
+  };
 
   render() {
-    const { classes, error, dialogOpen, userEmail } = this.props;
+    window.signedInWithGoogle = () => {
+      this.props.handleReSignInWithGoogleCompleted();
+    };
+
+    const {
+      classes,
+      dialogOpen,
+      userEmail,
+      location,
+      userProfileLinkedWithGoogle,
+    } = this.props;
+    let { error } = this.props;
+    const attemptedRoute =
+      location && location.state && location.state.attemptedRoute;
+
+    if (error) {
+      error = 'Oops! Something went wrong. Try again.';
+    } else if (window.signInError) {
+      error = window.signInError;
+    }
+
     const { email } = this.state;
 
     return (
@@ -187,7 +229,7 @@ class SignIn extends Component {
                 color="error"
                 variant="h5"
                 className={classes.alertMsg}>
-                <ErrorIcon /> Oops! Something went wrong. Try again.
+                <ErrorIcon /> {error}
               </Typography>
             </div>
           )}
@@ -205,18 +247,42 @@ class SignIn extends Component {
               Forgot password?
             </Link>
           </div>
-          <div className={classes.hidden}>
+        </form>
+        {getDomain() !== 'eu.integrator.io' && (
+          <div>
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
             </div>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.googleBtn}>
-              Sign in with Google
-            </Button>
+            {!dialogOpen && (
+              <form onSubmit={this.handleSignInWithGoogle}>
+                <TextField
+                  type="hidden"
+                  id="attemptedRoute"
+                  name="attemptedRoute"
+                  value={attemptedRoute || '/pg/'}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}>
+                  Sign in with Google
+                </Button>
+              </form>
+            )}
+            {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+              <form onSubmit={this.handleReSignInWithGoogle}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}>
+                  Sign in with Google
+                </Button>
+              </form>
+            )}
           </div>
-        </form>
+        )}
       </div>
     );
   }

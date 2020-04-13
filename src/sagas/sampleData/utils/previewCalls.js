@@ -8,10 +8,7 @@ import {
   fetchResourceDataForNewFlowResource,
   filterPendingResources,
 } from './flowDataUtils';
-import {
-  getLastExportDateTime,
-  getFormattedResourceForPreview,
-} from '../../../utils/flowData';
+import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
 
 export function* pageProcessorPreview({
@@ -116,12 +113,6 @@ export function* exportPreview({
     resourceId
   );
   let body = deepClone(resource);
-
-  if (body.type === 'delta') {
-    body.postData = {
-      lastExportDateTime: getLastExportDateTime(),
-    };
-  }
 
   // getFormattedResourceForPreview util removes unnecessary props of resource that should not be sent in preview calls
   // Example: type: once should not be sent while previewing

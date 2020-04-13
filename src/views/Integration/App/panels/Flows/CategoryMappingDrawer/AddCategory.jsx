@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -13,6 +13,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
+import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -34,13 +35,28 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
   const categoryRelationshipData =
     useSelector(state =>
       selectors.categoryRelationshipData(state, integrationId, flowId)
     ) || [];
+  const { uiAssistant = '' } =
+    useSelector(state =>
+      selectors.categoryMapping(state, integrationId, flowId)
+    ) || {};
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
@@ -76,9 +92,9 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'childCategory',
         name: 'childCategory',
         type: 'select',
-        required: false,
+        required: uiAssistant !== 'jet',
         defaultValue: '',
-        label: 'Choose Sub-category (Optional)',
+        label: 'Choose Sub-category',
         visible: false,
         refreshOptionsOnChangesTo: ['category'],
       },
@@ -88,7 +104,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         type: 'select',
         required: false,
         visible: false,
-        label: 'Choose Sub-category (Optional)',
+        label: 'Choose nested-category',
         refreshOptionsOnChangesTo: ['category', 'childCategory'],
       },
     },
@@ -118,6 +134,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         }
 
         childCategory.visible = true;
+        childCategory.value = undefined;
 
         return [
           {
@@ -159,6 +176,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         }
 
         grandchildCategory.visible = true;
+        grandchildCategory.value = undefined;
 
         return [
           {
@@ -187,14 +205,24 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         onClose={handleClose}
         backToParent
       />
-      <DynaForm fieldMeta={fieldMeta} optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit data-test="addCategory" onClick={handleSave}>
-          Add Category
-        </DynaSubmit>
-        <Button variant="text" color="primary" onClick={handleClose}>
-          Cancel
-        </Button>
-      </DynaForm>
+      {metadataLoaded ? (
+        <DynaForm
+          fieldMeta={fieldMeta}
+          formState={formState}
+          optionsHandler={fieldMeta.optionsHandler}>
+          <DynaSubmit
+            showCustomFormValidations={showCustomFormValidations}
+            data-test="addCategory"
+            onClick={handleSave}>
+            Add Category
+          </DynaSubmit>
+          <Button variant="text" color="primary" onClick={handleClose}>
+            Cancel
+          </Button>
+        </DynaForm>
+      ) : (
+        <Spinner />
+      )}
     </Drawer>
   );
 }

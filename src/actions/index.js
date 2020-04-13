@@ -55,6 +55,12 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
+  signInWithGoogle: returnTo =>
+    action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
+  reSignInWithGoogle: email =>
+    action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
+  linkWithGoogle: returnTo =>
+    action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
   failure: message => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),
@@ -211,8 +217,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_COMMIT, { resourceType, id, scope }),
+  commitStaged: (resourceType, id, scope, options) =>
+    action(actionTypes.RESOURCE.STAGE_COMMIT, {
+      resourceType,
+      id,
+      scope,
+      options,
+    }),
 
   commitConflict: (id, conflict, scope) =>
     action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
@@ -238,17 +249,10 @@ const resource = {
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
-    pingAndUpdateFailed: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE, { connectionId }),
-    pingAndUpdateSuccessful: (connectionId, offline) =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS, {
-        connectionId,
-        offline,
-      }),
+    updateStatus: collection =>
+      action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    receivedConnectionStatus: response =>
-      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
@@ -270,9 +274,10 @@ const resource = {
         resourceId,
         message,
       }),
-    testClear: resourceId =>
+    testClear: (resourceId, retainStatus) =>
       action(actionTypes.CONNECTION.TEST_CLEAR, {
         resourceId,
+        retainStatus,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
@@ -849,6 +854,12 @@ const integrationApp = {
         steps,
       }),
   },
+  // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
+  isAddonInstallInprogress: (installInprogress, id) =>
+    action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
+      installInprogress,
+      id,
+    }),
 };
 const ashare = {
   receivedCollection: ashares =>
@@ -917,6 +928,21 @@ const file = {
       fileType,
       file,
     }),
+  processFile: ({ fileId, file, fileType }) =>
+    action(actionTypes.FILE.PROCESS, {
+      fileId,
+      file,
+      fileType,
+    }),
+  processedFile: ({ fileId, file, fileProps }) =>
+    action(actionTypes.FILE.PROCESSED, {
+      fileId,
+      file,
+      fileProps,
+    }),
+  processError: ({ fileId, error }) =>
+    action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
+  reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
 };
 const transfer = {
   cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
@@ -947,6 +973,8 @@ const user = {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
     update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
+    unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
@@ -1366,6 +1394,12 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
+    action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
+      jobId,
+      flowJobId,
+      errorFileId,
+    }),
   paging: {
     setRowsPerPage: rowsPerPage =>
       action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
@@ -1374,6 +1408,23 @@ const job = {
   },
   error: {
     clear: () => action(actionTypes.JOB.ERROR.CLEAR),
+  },
+  processedErrors: {
+    requestPreview: ({ jobId, errorFile }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, {
+        jobId,
+        errorFile,
+      }),
+    receivedPreview: ({ jobId, previewData, errorFileId }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.RECEIVED, {
+        jobId,
+        previewData,
+        errorFileId,
+      }),
+    previewError: ({ jobId, error }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),
+    clearPreview: jobId =>
+      action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
 const flow = {

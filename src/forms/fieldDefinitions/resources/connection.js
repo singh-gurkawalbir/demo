@@ -1283,8 +1283,17 @@ export default {
   'ftp.password': {
     type: 'text',
     label: 'Password',
-    required: true,
     inputType: 'password',
+    requiredWhen: [
+      {
+        field: 'ftp.type',
+        is: ['ftp'],
+      },
+      {
+        field: 'ftp.authKey',
+        is: [''],
+      },
+    ],
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1455,7 +1464,7 @@ export default {
     helpText:
       'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   },
-  'as2.partnerStationInfo.mdn.mdnURL': {
+  'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
@@ -1883,10 +1892,6 @@ export default {
         ],
       },
     ],
-  },
-  'as2.userStationInfo.mdn.mdnURL': {
-    type: 'text',
-    label: 'As2 user Station Info mdn mdn URL',
   },
   'as2.encrypted.userPrivateKey': {
     type: 'editor',

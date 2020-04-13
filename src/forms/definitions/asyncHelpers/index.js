@@ -39,7 +39,7 @@ export default {
     'http.status.doneValues': { fieldId: 'http.status.doneValues' },
     'http.result._exportId': { fieldId: 'http.result._exportId' },
     'http.submit.sameAsStatus': { fieldId: 'http.submit.sameAsStatus' },
-    rules: { fieldId: 'rules' },
+    'http.submit.transform': { fieldId: 'http.submit.transform' },
   },
   layout: {
     fields: [
@@ -55,7 +55,7 @@ export default {
       'submit',
       'http.submit.sameAsStatus',
       'http.submit.resourcePath',
-      'rules',
+      'http.submit.transform',
       'result',
       'http.result._exportId',
     ],

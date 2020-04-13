@@ -11,10 +11,12 @@ export default {
     {
       heading: 'Email',
       value: r => r.email,
+      orderBy: 'email',
     },
     {
       heading: 'Integration ID',
       value: r => r._integrationId,
+      orderBy: '_integrationId',
     },
     {
       heading: 'Expires on',
@@ -25,6 +27,7 @@ export default {
           </Typography>
         );
       },
+      orderBy: 'license.expires',
     },
     {
       heading: 'Environment',
@@ -33,6 +36,7 @@ export default {
     {
       heading: 'Version',
       value: r => r.version,
+      orderBy: 'version',
     },
   ],
 };

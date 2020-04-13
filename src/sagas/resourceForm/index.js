@@ -236,6 +236,88 @@ function* deleteUISpecificValues({ values, resourceId }) {
   return valuesCopy;
 }
 
+function* patchSkipRetries({ resourceId }) {
+  const { patch } = yield select(
+    selectors.stagedResource,
+    resourceId,
+    SCOPES.VALUE
+  );
+  const { flowId } = yield select(
+    selectors.resourceFormState,
+    'exports',
+    resourceId
+  );
+
+  if (flowId) {
+    const skipRetries = patch.find(
+      p => p.path === '/skipRetries' && p.op === 'replace'
+    );
+    const flow = yield select(selectors.resource, 'flows', flowId);
+    let patchSet;
+
+    if (!flow) {
+      patchSet = [
+        {
+          op: 'replace',
+          path: `/pageGenerators`,
+          value: [
+            {
+              skipRetries: skipRetries ? !!skipRetries.value : false,
+              _exportId: resourceId,
+            },
+          ],
+        },
+      ];
+    } else {
+      const index =
+        flow.pageGenerators &&
+        flow.pageGenerators.findIndex(pg => pg._exportId === resourceId);
+
+      if (!index || index === -1) return;
+      patchSet = [
+        {
+          op: 'replace',
+          path: `/pageGenerators/${index}/skipRetries`,
+          value: skipRetries ? !!skipRetries.value : false,
+        },
+      ];
+    }
+
+    yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
+
+    if (!isNewId(flowId))
+      yield put(actions.resource.commitStaged('flows', flowId, SCOPES.VALUE));
+  }
+}
+
+const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
+const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
+
+function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId,
+    SCOPES.VALUE
+  );
+
+  if (resource && resource.useParentForm)
+    yield put(
+      actions.resource.patchStaged(
+        resourceId,
+        removeAssistantPatch,
+        SCOPES.VALUE
+      )
+    );
+  yield put(
+    actions.resource.patchStaged(
+      resourceId,
+      removeParentFormPatch,
+      SCOPES.VALUE
+    )
+  );
+}
+
 export function* submitFormValues({
   resourceType,
   resourceId,
@@ -244,6 +326,11 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
+
+  yield call(deleteFormViewAssistantValue, {
+    resourceType,
+    resourceId,
+  });
 
   formValues = yield call(deleteUISpecificValues, {
     values: formValues,
@@ -283,6 +370,10 @@ export function* submitFormValues({
 
   // fetch all possible pending patches.
   if (!skipCommit) {
+    if (resourceType === 'exports') {
+      yield call(patchSkipRetries, { resourceId });
+    }
+
     if (resourceType === 'exports' && isNewId(resourceId)) {
       yield call(patchTransformationRulesForXMLResource, { resourceId });
     }

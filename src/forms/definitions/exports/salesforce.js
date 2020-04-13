@@ -28,6 +28,22 @@ export default {
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
     }
+
+    const soqlField = fields.find(field => field.id === 'salesforce.soql');
+    const dateField = fields.find(field => field.id === 'delta.dateField');
+
+    if (dateField) {
+      if (
+        soqlField &&
+        soqlField.value &&
+        soqlField.value.query &&
+        soqlField.value.query.includes('lastExportDateTime')
+      ) {
+        dateField.required = false;
+      } else {
+        dateField.required = true;
+      }
+    }
   },
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -182,6 +198,7 @@ export default {
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
       connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.soql', 'delta.dateField'],
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
@@ -208,6 +225,9 @@ export default {
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },
     'salesforce.id': { fieldId: 'salesforce.id' },
+    'salesforce.distributed.batchSize': {
+      fieldId: 'salesforce.distributed.batchSize',
+    },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -241,6 +261,8 @@ export default {
     'salesforce.objectType': {
       fieldId: 'salesforce.objectType',
     },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -278,7 +300,15 @@ export default {
         ],
         type: 'collapse',
         containers: [
-          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: [
+              'pageSize',
+              'salesforce.distributed.batchSize',
+              'dataURITemplate',
+            ],
+          },
         ],
       },
       {

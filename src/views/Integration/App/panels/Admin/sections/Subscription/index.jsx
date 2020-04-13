@@ -4,10 +4,10 @@ import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
-import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
-import CeligoTable from '../../../../../components/CeligoTable';
+import PanelHeader from '../../../../../../../components/PanelHeader';
+import actions from '../../../../../../../actions';
+import * as selectors from '../../../../../../../reducers';
+import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 
 const metadata = {
@@ -35,13 +35,6 @@ const metadata = {
   ],
 };
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    paddingBottom: theme.spacing(1),
-  },
   header: {
     background: theme.palette.background.paper,
     textAlign: 'left',
@@ -88,7 +81,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const { supportsMultiStore } = !!storeId;
+  const supportsMultiStore = !!storeId;
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
@@ -158,7 +151,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   };
 
   return (
-    <div className={classes.root}>
+    <Fragment>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
         <div className={classes.content}>
@@ -243,6 +236,6 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           </Fragment>
         )}
       </div>
-    </div>
+    </Fragment>
   );
 }

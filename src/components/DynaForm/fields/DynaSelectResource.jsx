@@ -18,7 +18,6 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
-import Spinner from '../../Spinner';
 
 const handleAddNewResource = args => {
   const {
@@ -30,7 +29,7 @@ const handleAddNewResource = args => {
     newResourceId,
     expConnId,
     statusExport,
-    assistantName,
+    assistant,
   } = args;
 
   if (
@@ -53,7 +52,7 @@ const handleAddNewResource = args => {
     else if (['iClients'].includes(resourceType)) {
       values = {
         ...values,
-        '/assistantName': assistantName,
+        '/assistant': assistant,
       };
     } else {
       values = resourceMeta[resourceType].new.preSave({
@@ -122,22 +121,15 @@ function ConnectionLoadingChip(props) {
     dispatch(actions.resource.connections.pingAndUpdate(connectionId));
   }, [connectionId, dispatch]);
 
-  const connectionOffline = useSelector(
-    state => selectors.connectionStatus(state, connectionId).offline
-  );
-  const connectionRequestStatus = useSelector(
-    state => selectors.connectionStatus(state, connectionId).requestStatus
+  const isConnectionOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
   );
 
-  if (!connectionRequestStatus || connectionRequestStatus === 'failed') {
+  if (isConnectionOffline === undefined) {
     return null;
   }
 
-  if (connectionRequestStatus === 'requested') {
-    return <Spinner />;
-  }
-
-  return connectionOffline ? (
+  return isConnectionOffline ? (
     <Chip color="secondary" label="Offline" />
   ) : (
     <Chip color="primary" label="Online" />
@@ -210,7 +202,7 @@ function DynaSelectResource(props) {
     label: conn.name || conn._id,
     value: conn._id,
   }));
-  const { expConnId, assistantName } = useSelector(state => {
+  const { expConnId, assistant } = useSelector(state => {
     const { merged } =
       selectors.resourceData(
         state,
@@ -220,7 +212,7 @@ function DynaSelectResource(props) {
 
     return {
       expConnId: merged && merged._connectionId,
-      assistantName: merged.assistant,
+      assistant: merged.assistant,
     };
   });
   const handleAddNewResourceMemo = useCallback(
@@ -234,7 +226,7 @@ function DynaSelectResource(props) {
         newResourceId,
         statusExport,
         expConnId,
-        assistantName,
+        assistant,
       }),
     [
       dispatch,
@@ -245,7 +237,7 @@ function DynaSelectResource(props) {
       newResourceId,
       statusExport,
       expConnId,
-      assistantName,
+      assistant,
     ]
   );
   const handleEditResource = useCallback(() => {
@@ -328,10 +320,7 @@ function DynaSelectResource(props) {
           </ActionButton>
         )}
         {resourceType === 'connections' && !!value && (
-          <ConnectionLoadingChip
-            resourceType={resourceType}
-            connectionId={value}
-          />
+          <ConnectionLoadingChip connectionId={value} />
         )}
       </div>
     </div>

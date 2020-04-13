@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,9 +14,10 @@ import {
   MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
-import { prompt } from '../../components/Prompt';
 import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
+import LoadResources from '../../components/LoadResources';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -129,10 +130,11 @@ export default function MarketplaceList() {
       setFetchedCollection(true);
     }
   }, [connectors.length, dispatch, fetchedCollection, templates.length]);
-
+  const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
     if (connector.installed) {
-      prompt({
+      confirmDialog({
+        isPrompt: true,
         title: 'Multiple Installs',
         label: 'Tag',
         message: MULTIPLE_INSTALLS,
@@ -167,7 +169,7 @@ export default function MarketplaceList() {
   };
 
   return (
-    <Fragment>
+    <LoadResources required resources="integrations">
       <InstallTemplateDrawer />
 
       <CeligoPageBar
@@ -269,6 +271,6 @@ export default function MarketplaceList() {
           </div>
         </ModalDialog>
       )}
-    </Fragment>
+    </LoadResources>
   );
 }

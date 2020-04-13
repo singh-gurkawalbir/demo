@@ -1,8 +1,9 @@
 import produce from 'immer';
+import { get } from 'lodash';
 import moment from 'moment';
 import sift from 'sift';
-import { get } from 'lodash';
 import actionTypes from '../../../actions/types';
+import { isOldFlowSchema } from '../../../utils/flows';
 
 const emptyObject = {};
 const emptyList = [];
@@ -14,12 +15,55 @@ const resourceTypesToIgnore = [
   ...accountResources,
   'audit',
 ];
+const convertOldFlowSchemaToNewOne = flow => {
+  const {
+    pageGenerators,
+    pageProcessors,
+    _exportId,
+    _importId,
+    ...rest
+  } = flow;
+
+  // a new schema just return the flow unaltered
+  if (!isOldFlowSchema(flow)) {
+    return flow;
+  }
+
+  const updatedFlow = {
+    ...rest,
+    pageGenerators,
+    pageProcessors,
+    // set this flag when converting it to new schema
+    flowConvertedToNewSchema: true,
+  };
+
+  // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
+  if (!pageGenerators && _exportId) {
+    updatedFlow.pageGenerators = [
+      {
+        type: 'export',
+        _exportId,
+      },
+    ];
+  }
+
+  if (!pageProcessors && _importId) {
+    updatedFlow.pageProcessors = [
+      {
+        type: 'import',
+        _importId,
+      },
+    ];
+  }
+
+  return updatedFlow;
+};
 
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
   let type = resourceType;
   // RESOURCE_RECEIVED is being called with null on some GET resource calls when api doesnt return anything.
-  const resource = resourceValue || {};
+  let resource = resourceValue || {};
 
   if (type.indexOf('/licenses') >= 0) {
     const id = type.substring('connectors/'.length, type.indexOf('/licenses'));
@@ -32,6 +76,8 @@ function replaceOrInsertResource(state, resourceType, resourceValue) {
   if (type.indexOf('integrations/') >= 0) {
     type = type.split('/').pop();
   }
+
+  if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
 
   if (!state[type]) {
     return { ...state, [type]: [resource] };
@@ -61,11 +107,17 @@ function getIntegrationAppsNextState(state, action) {
   return produce(state, draft => {
     const integration = draft.integrations.find(i => i._id === id);
 
-    if (!integration || !(integration.install || integration.installSteps)) {
+    if (
+      !integration ||
+      !(
+        (integration.install && integration.install.length) ||
+        (integration.installSteps && integration.installSteps.length)
+      )
+    ) {
       return;
     }
 
-    if (integration && integration.installSteps) {
+    if (integration.installSteps && integration.installSteps.length) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.installSteps.findIndex(
@@ -170,42 +222,12 @@ export default (state = {}, action) => {
       // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
       // about it when you have time to refactor.
       if (resourceType === 'flows') {
-        const newCollection =
-          collection &&
-          collection.map &&
-          collection.map(flow => {
-            const {
-              pageGenerators,
-              pageProcessors,
-              _exportId,
-              _importId,
-              ...rest
-            } = flow;
-            const updatedFlow = { ...rest, pageGenerators, pageProcessors };
-
-            // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
-            if (!pageGenerators && _exportId) {
-              updatedFlow.pageGenerators = [
-                {
-                  type: 'export',
-                  _exportId,
-                },
-              ];
-            }
-
-            if (!pageProcessors && _importId) {
-              updatedFlow.pageProcessors = [
-                {
-                  type: 'import',
-                  _importId,
-                },
-              ];
-            }
-
-            return updatedFlow;
-          });
-
         return produce(state, draft => {
+          const newCollection =
+            collection &&
+            collection.map &&
+            collection.map(convertOldFlowSchemaToNewOne);
+
           draft.flows = newCollection || [];
         });
       }
@@ -311,6 +333,20 @@ export default (state = {}, action) => {
             !token.autoPurgeAt || new Date(token.autoPurgeAt) > new Date()
         );
       });
+    case actionTypes.CONNECTION.UPDATE_STATUS: {
+      // cant implement immer here with current implementation. Sort being used in selector.
+      collection.forEach(({ _id: cId, offline, queues }) => {
+        resourceIndex = newState.connections.findIndex(r => r._id === cId);
+
+        if (resourceIndex !== -1) {
+          newState.connections[resourceIndex].offline = !!offline;
+          newState.connections[resourceIndex].queueSize = queues[0].size;
+        }
+      });
+
+      return newState;
+    }
+
     case actionTypes.CONNECTION.MADE_ONLINE:
       if (!state.tiles) {
         return state;
@@ -399,11 +435,17 @@ export function connectionHasAs2Routing(state, id) {
 export function integrationInstallSteps(state, id) {
   const integration = resource(state, 'integrations', id);
 
-  if (!integration || !(integration.install || integration.installSteps)) {
+  if (
+    !integration ||
+    !(
+      (integration.install && integration.install.length) ||
+      (integration.installSteps && integration.installSteps.length)
+    )
+  ) {
     return emptyList;
   }
 
-  if (integration && integration.installSteps) {
+  if (integration.installSteps && integration.installSteps.length) {
     return produce(integration.installSteps, draft => {
       if (draft.find(step => !step.completed)) {
         draft.find(step => !step.completed).isCurrentStep = true;

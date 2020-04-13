@@ -12,7 +12,7 @@ describe('resources reducer', () => {
           actions.resource.received(resourceType, resource)
         );
 
-        expect(state[resourceType]).toContain(resource);
+        expect(state[resourceType]).toContainEqual(resource);
       });
 
       test('should store the new resource if some exist', () => {
@@ -502,6 +502,7 @@ describe('intetgrationApps installer reducer', () => {
         {
           _id: 1,
           name: 'bob',
+          installSteps: [],
           install: [
             {
               a: 1,
@@ -585,6 +586,7 @@ describe('intetgrationApps installer reducer', () => {
         {
           _id: 1,
           name: 'bob',
+          installSteps: [],
           install: [
             {
               a: 1,

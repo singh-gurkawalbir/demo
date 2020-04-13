@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     padding: theme.spacing(2, 3, 0),
+    marginBottom: theme.spacing(6),
   },
 }));
 const DynaForm = props => {

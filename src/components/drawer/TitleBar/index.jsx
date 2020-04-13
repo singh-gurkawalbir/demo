@@ -11,10 +11,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',
-    // TODO: Azhar to check
-    // '& > :not(:last-child)': {
-    //   marginRight: theme.spacing(2),
-    // },
   },
   title: {
     flexGrow: 1,
@@ -22,6 +18,9 @@ const useStyles = makeStyles(theme => ({
   helpTextButton: {
     float: 'right',
     padding: theme.spacing(1),
+  },
+  closeIcon: {
+    padding: 0,
   },
 }));
 
@@ -52,6 +51,7 @@ export default function DrawerTitleBar({ title, helpKey, helpTitle, onClose }) {
       <IconButton
         data-test="closeFlowSchedule"
         aria-label="Close"
+        className={classes.closeIcon}
         onClick={handleClick}>
         <CloseIcon />
       </IconButton>

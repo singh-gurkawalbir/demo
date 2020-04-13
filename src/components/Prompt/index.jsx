@@ -1,33 +1,21 @@
-import { Fragment, useState } from 'react';
+import { TextField, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { render, unmountComponentAtNode } from 'react-dom';
-import { Typography, TextField } from '@material-ui/core';
-
-const rootElementId = 'react-prompt-dialog';
+import { Fragment, useState } from 'react';
 
 export default function Prompt(props) {
-  const { title, message, buttons, label } = props;
+  const { title, message, buttons, label, onClose } = props;
   const [state, setState] = useState('');
-  const close = () => {
-    const target = document.getElementById(rootElementId);
-
-    if (target) {
-      unmountComponentAtNode(target);
-      target.parentNode.removeChild(target);
-    }
-  };
-
   const focusOut = e => {
     setState(e.target.value);
   };
 
   const handleButtonClick = button => {
-    close();
+    onClose();
 
     if (button.onClick) button.onClick(state);
   };
@@ -61,20 +49,4 @@ export default function Prompt(props) {
       </DialogActions>
     </Dialog>
   );
-}
-
-function createElementReconfirm(properties) {
-  let divTarget = document.getElementById(rootElementId);
-
-  if (!divTarget) {
-    divTarget = document.createElement('div');
-    divTarget.id = rootElementId;
-    document.body.appendChild(divTarget);
-  }
-
-  render(<Prompt {...properties} />, divTarget);
-}
-
-export function prompt(props) {
-  createElementReconfirm(props);
 }

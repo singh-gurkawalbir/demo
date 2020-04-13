@@ -87,8 +87,8 @@ export default {
     partnerrequireasynchronousmdns: {
       fieldId: 'partnerrequireasynchronousmdns',
     },
-    'as2.partnerStationInfo.mdn.mdnURL': {
-      fieldId: 'as2.partnerStationInfo.mdn.mdnURL',
+    'as2.userStationInfo.mdn.mdnURL': {
+      fieldId: 'as2.userStationInfo.mdn.mdnURL',
     },
     'as2.partnerStationInfo.mdn.mdnSigning': {
       fieldId: 'as2.partnerStationInfo.mdn.mdnSigning',
@@ -282,7 +282,7 @@ export default {
           'as2.partnerStationInfo.as2URI',
           'as2.partnerId',
           'partnerrequireasynchronousmdns',
-          'as2.partnerStationInfo.mdn.mdnURL',
+          'as2.userStationInfo.mdn.mdnURL',
           'as2.partnerStationInfo.mdn.mdnSigning',
           // 'as2.partnerStationInfo.mdn.verifyMDNSignature',
           'as2.partnerStationInfo.encryptionType',

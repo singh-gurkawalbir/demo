@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -7,9 +8,15 @@ export default {
     const lookup =
       lookups &&
       lookups.find(l => l.name === retValues['/rest/existingDataId']);
+    const sampleData = retValues['/sampleData'];
 
-    if (retValues['/sampleData'] === '') {
+    if (sampleData === '') {
       retValues['/sampleData'] = undefined;
+    } else {
+      // Save sampleData in JSON format with a fail safe condition
+      retValues['/sampleData'] = isJsonString(sampleData)
+        ? JSON.parse(sampleData)
+        : undefined;
     }
 
     if (retValues['/inputMode'] === 'blob') {
@@ -73,8 +80,6 @@ export default {
         retValues['/ignoreExisting'] = false;
         retValues['/ignoreMissing'] = false;
       } else if (retValues['/rest/compositeType'] === 'createandignore') {
-        retValues['/rest/requestType'] = [retValues['/rest/requestTypeCreate']];
-
         retValues['/rest/relativeURI'] = [retValues['/rest/relativeURICreate']];
         retValues['/rest/method'] = [retValues['/rest/compositeMethodCreate']];
 
@@ -119,8 +124,6 @@ export default {
           ];
         }
       } else if (retValues['/rest/compositeType'] === 'updateandignore') {
-        retValues['/rest/requestType'] = [retValues['/rest/requestTypeUpdate']];
-
         retValues['/rest/relativeURI'] = [retValues['/rest/relativeURIUpdate']];
         retValues['/rest/method'] = [retValues['/rest/compositeMethodUpdate']];
 
@@ -162,10 +165,6 @@ export default {
         retValues['/rest/existingDataId'] = undefined;
       }
     } else {
-      if (!retValues['/rest/requestType'])
-        retValues['/rest/requestType'] =
-          retValues['/rest/method'] === 'POST' ? ['CREATE'] : ['UPDATE'];
-
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
       retValues['/rest/body'] = retValues['/rest/body']
@@ -181,6 +180,18 @@ export default {
     return {
       ...retValues,
     };
+  },
+  validationHandler: field => {
+    // Used to validate sampleData field
+    // Incase of invalid json throws error to be shown on the field
+    if (field && field.id === 'sampleData') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Sample Data must be a valid JSON';
+    }
   },
   optionsHandler: (fieldId, fields) => {
     if (
@@ -244,7 +255,6 @@ export default {
     'rest.compositeType': { fieldId: 'rest.compositeType' },
     'rest.lookups': { fieldId: 'rest.lookups', visible: false },
     'rest.relativeURI': { fieldId: 'rest.relativeURI' },
-    'rest.requestType': { fieldId: 'rest.requestType' },
     'rest.body': { fieldId: 'rest.body' },
     'rest.successPath': { fieldId: 'rest.successPath' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
@@ -368,7 +378,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate'],
         },
         {
           field: 'rest.method',
@@ -657,7 +667,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandupdate', 'updateandignore'],
+          is: ['createandupdate'],
         },
         {
           field: 'rest.method',
@@ -899,7 +909,9 @@ export default {
         },
       ],
     },
-    sampleData: { fieldId: 'sampleData' },
+    sampleData: {
+      fieldId: 'sampleData',
+    },
     dataMappings: {
       formId: 'dataMappings',
     },
@@ -935,7 +947,6 @@ export default {
       'rest.lookups',
       // 'mapping',
       'rest.relativeURI',
-      'rest.requestType',
       'rest.body',
       'rest.successPath',
       'rest.successValues',

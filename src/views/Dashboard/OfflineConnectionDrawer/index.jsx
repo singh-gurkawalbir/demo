@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
     width: 624,
   },
   drawerPaper: {
-    marginTop: theme.appBarHeight,
     border: 'solid 1px',
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
@@ -30,16 +29,19 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: 'flex',
+    height: '100%',
+    borderTop: `1px solid ${theme.palette.background.paper2}`,
   },
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
+    background: theme.palette.background.paper2,
   },
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 3, 3, 0),
+    padding: theme.spacing(0, 3, 3, 3),
     overflowX: 'scroll',
   },
   listItem: {

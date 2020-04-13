@@ -6,8 +6,8 @@ import Editor from '../GenericEditor';
 
 export default function MergeEditor(props) {
   const { editorId, layout = 'column', disabled } = props;
-  const { data, result, rule, error, initChangeIdentifier } = useSelector(
-    state => selectors.editor(state, editorId)
+  const { data, result, rule, error } = useSelector(state =>
+    selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -34,7 +34,6 @@ export default function MergeEditor(props) {
 
   return (
     <Editor
-      changeIdentifier={initChangeIdentifier}
       data={data}
       rule={rule}
       error={error}

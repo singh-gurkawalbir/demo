@@ -31,7 +31,7 @@ export default function TransformEditor(props) {
     layout = 'column',
   } = props;
   const classes = useStyles();
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -48,6 +48,7 @@ export default function TransformEditor(props) {
         rule: props.rule,
         resourceId,
         duplicateKeyToValidate: [valueName],
+        initData: props.data,
         initRule: props.rule,
         optionalSaveParams,
       })
@@ -74,9 +75,7 @@ export default function TransformEditor(props) {
   const parsedData = result && result.data && result.data[0];
 
   return (
-    <PanelGrid
-      key={`${editorId}-${initChangeIdentifier}`}
-      className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform rules" />
         <TransformPanel

@@ -1,5 +1,4 @@
 import { isNewId } from '../../../utils/resource';
-import { isJsonString } from '../../../utils/string';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -112,18 +111,6 @@ export default {
       );
     } catch (ex) {
       newValues['/netsuite/distributed/qualifier'] = undefined;
-    }
-
-    if (Object.hasOwnProperty.call(newValues, '/settings')) {
-      let settings = newValues['/settings'];
-
-      if (isJsonString(settings)) {
-        settings = JSON.parse(settings);
-      } else {
-        settings = {};
-      }
-
-      newValues['/settings'] = settings;
     }
 
     return newValues;
@@ -343,6 +330,9 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
     },
+    skipRetries: {
+      fieldId: 'skipRetries',
+    },
     pageSize: {
       fieldId: 'pageSize',
       visibleWhenAll: [
@@ -384,6 +374,7 @@ export default {
             fields: [
               'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
+              'skipRetries',
               'netsuite.distributed.forceReload',
               'pageSize',
               'netsuite.restlet.batchSize',

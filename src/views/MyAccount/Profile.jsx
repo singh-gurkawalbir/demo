@@ -1,13 +1,33 @@
 import { useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button, InputLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
+import { getDomain } from '../../utils/resource';
+import getImageUrl from '../../utils/image';
+import getRoutePath from '../../utils/routePaths';
+
+const useStyles = makeStyles(theme => ({
+  googleBtn: {
+    borderRadius: 4,
+    width: 180,
+    background: `url(${getImageUrl(
+      'images/googlelogo.png'
+    )}) 20% center no-repeat`,
+    backgroundSize: theme.spacing(2),
+    height: 48,
+    fontSize: 16,
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export default function ProfileComponent() {
+  const classes = useStyles();
   const dateFormats = useMemo(
     () => [
       { value: 'MM/DD/YYYY', label: '12/31/1900' },
@@ -80,6 +100,14 @@ export default function ProfileComponent() {
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
     dispatch(actions.user.profile.update(completePayloadCopy));
+  };
+
+  const handleLinkWithGoogle = () => {
+    dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));
+  };
+
+  const handleUnLinkWithGoogle = () => {
+    dispatch(actions.user.profile.unlinkWithGoogle());
   };
 
   const fieldMeta = {
@@ -182,6 +210,41 @@ export default function ProfileComponent() {
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
       </DynaForm>
+      {getDomain() !== 'eu.integrator.io' && (
+        <div>
+          <PanelHeader title="Sign in via Google" />
+          {preferences &&
+            (!preferences.auth_type_google ||
+              !preferences.auth_type_google.id) && (
+              <InputLabel>
+                Link to:
+                <Button
+                  data-test="linkWithGoogle"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}
+                  onClick={handleLinkWithGoogle}>
+                  Google
+                </Button>
+              </InputLabel>
+            )}
+          {preferences &&
+            preferences.auth_type_google &&
+            preferences.auth_type_google.id && (
+              <InputLabel>
+                Unlink to:
+                <Button
+                  data-test="unlinkWithGoogle"
+                  variant="contained"
+                  color="secondary"
+                  className={classes.googleBtn}
+                  onClick={handleUnLinkWithGoogle}>
+                  Google
+                </Button>
+              </InputLabel>
+            )}
+        </div>
+      )}
     </Fragment>
   );
 }

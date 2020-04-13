@@ -34,7 +34,7 @@ export const INTEGRATION_MODES = Object.freeze({
   SETTINGS: 'settings',
 });
 
-export const UI_FIELD_VALUES = Object.freeze(['/useParentForm', '/formView']);
+export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
 export const NETSUITE_BUNDLE_URL =
@@ -132,7 +132,7 @@ export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
-    name: 'Salesforce - NetSuite Connector',
+    name: 'Salesforce - NetSuite Connector (V2)',
     ssName: 'Salesforce Connector',
     description:
       'Streamline your Lead-to-Cash process with the Salesforce - NetSuite Connector. Manage sales process effectively and in real-time. Packed with Celigo’s deep domain expertise and best practices, this Connector is the embodiment of several years of customer feedback, learning and growth.  With distributed adapters running only in NetSuite and Salesforce, our connector allows endless customization options.',

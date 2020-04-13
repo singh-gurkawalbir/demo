@@ -19,6 +19,8 @@ function DynaAction(props) {
     visibleWhenAll,
     isValid,
     formKey,
+    variant = 'outlined',
+    color = 'primary',
   } = props;
   const dispatch = useDispatch();
   const registerField = useCallback(
@@ -60,8 +62,8 @@ function DynaAction(props) {
   return (
     <Button
       data-test={id || dataTest}
-      variant="outlined"
-      color="primary"
+      variant={variant}
+      color={color}
       className={className}
       disabled={disabled || !formTouched}
       onClick={onClick}>

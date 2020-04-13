@@ -22,7 +22,7 @@ export default function DateTimePicker(props) {
       <KeyboardDateTimePicker
         label={label}
         format={format}
-        value={value}
+        value={dateValue}
         allowKeyboardControl={false}
         inputVariant="outlined"
         InputLabelProps={{
@@ -40,9 +40,12 @@ export default function DateTimePicker(props) {
 
           e.preventDefault();
         }}
-        variant="inline"
-        onChange={value => setDateValue(value)}
+        variant="dialog"
+        invalidLabel={null}
+        invalidDateMessage={null}
+        onChange={setDateValue}
         disabled={disabled}
+        clearable
         keyboardIcon={<CalendarIcon />}
       />
       <ErroredMessageComponent {...props} />

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,6 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';
-import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
@@ -18,12 +17,10 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
 import AuditLogPanel from './panels/AuditLog';
-import ReadmePanel from './panels/Readme';
-import SettingsPanel from './panels/Settings';
+import SettingsPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
-import NotificationsPanel from './panels/Notifications';
 import DashboardPanel from './panels/Dashboard';
 import getRoutePath from '../../../utils/routePaths';
 import IntegrationTabs from '../common/Tabs';
@@ -32,6 +29,7 @@ import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
+import { getTemplateUrlName } from '../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -70,23 +68,12 @@ const tabs = [
     Panel: UsersPanel,
   },
   {
-    path: 'notifications',
-    label: 'Notifications',
-    Icon: NotificationsIcon,
-    Panel: NotificationsPanel,
-  },
-  {
     path: 'auditlog',
     label: 'Audit Log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
-  {
-    path: 'readme',
-    label: 'Read me',
-    Icon: ConnectionsIcon,
-    Panel: ReadmePanel,
-  },
+
   {
     path: 'settings',
     label: 'Settings',
@@ -97,7 +84,7 @@ const tabs = [
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
-  const { integrationId } = match.params;
+  const { integrationId, templateName } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -109,6 +96,19 @@ export default function Integration({ history, match }) {
     selectors.currentEnvironment(state)
   );
   const [isDeleting, setIsDeleting] = useState(false);
+  const templateUrlName = useSelector(state => {
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template && template.applications);
+    }
+
+    return null;
+  });
   const cantDelete = useSelector(state => {
     const flows = selectors.resourceList(state, {
       type: 'flows',
@@ -193,6 +193,14 @@ export default function Integration({ history, match }) {
     );
   }
 
+  useEffect(() => {
+    if (templateUrlName && !templateName) {
+      history.push(
+        getRoutePath(`templates/${templateUrlName}/${integrationId}/flows`)
+      );
+    }
+  }, [history, integrationId, templateName, templateUrlName]);
+
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
@@ -200,7 +208,7 @@ export default function Integration({ history, match }) {
     <Fragment>
       <ResourceDrawer match={match} />
 
-      <LoadResources required resources="integrations">
+      <LoadResources required resources="integrations,marketplacetemplates">
         <CeligoPageBar
           title={
             integration ? (

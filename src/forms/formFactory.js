@@ -59,10 +59,17 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
-const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
+const applyCustomSettings = ({
+  fieldMap,
+  layout,
+  preSave,
+  isNew,
+  validationHandler,
+}) => {
   const fieldMapCopy = cloneDeep(fieldMap);
   const layoutCopy = cloneDeep(layout);
   let preSaveCopy = preSave;
+  let validationHandlerCopy;
 
   if (!isNew) {
     if (
@@ -135,9 +142,24 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
 
       return retValues;
     };
+
+    validationHandlerCopy = field => {
+      // Handles validity for settings field
+      // Incase of other fields call the existing validationHandler
+      if (field.id === 'settings') {
+        if (
+          field.value &&
+          typeof field.value === 'string' &&
+          !isJsonString(field.value)
+        )
+          return 'Settings must be a valid JSON';
+      }
+
+      if (validationHandler) return validationHandler(field);
+    };
   }
 
-  return { fieldMapCopy, layoutCopy, preSaveCopy };
+  return { fieldMapCopy, layoutCopy, preSaveCopy, validationHandlerCopy };
 };
 
 const getResourceFormAssets = ({
@@ -153,6 +175,7 @@ const getResourceFormAssets = ({
   let init;
   let actions;
   let meta;
+  let validationHandler;
   const { type } = getResourceSubType(resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
@@ -292,6 +315,9 @@ const getResourceFormAssets = ({
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
 
+  // Need to be revisited @Surya
+  validationHandler = meta && meta.validationHandler;
+
   if (
     [
       'integrations',
@@ -306,7 +332,14 @@ const getResourceFormAssets = ({
       fieldMapCopy: fieldMap,
       layoutCopy: layout,
       preSaveCopy: preSave,
-    } = applyCustomSettings({ fieldMap, layout, preSave, isNew }));
+      validationHandlerCopy: validationHandler,
+    } = applyCustomSettings({
+      fieldMap,
+      validationHandler,
+      layout,
+      preSave,
+      isNew,
+    }));
   }
 
   return {
@@ -314,6 +347,7 @@ const getResourceFormAssets = ({
     init,
     preSave,
     optionsHandler,
+    validationHandler,
   };
 };
 

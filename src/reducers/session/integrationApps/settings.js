@@ -13,13 +13,26 @@ function flattenChildrenStructrue(
   isRoot = true,
   options = {}
 ) {
-  const { deleted = [], isParentDeleted = false } = options;
+  const {
+    deleted = [],
+    isParentDeleted = false,
+    deleteChildlessParent = false,
+  } = options;
 
   if (meta) {
+    let allChildrenDeleted = false;
+
+    if (deleteChildlessParent && meta.children && meta.children.length) {
+      allChildrenDeleted = !meta.children.some(
+        child => !deleted.includes(child.id)
+      );
+    }
+
     result.push({
       ...meta,
       isRoot,
-      deleted: deleted.includes(meta.id) || isParentDeleted,
+      deleted:
+        allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -27,6 +40,7 @@ function flattenChildrenStructrue(
         flattenChildrenStructrue(result, child, false, {
           deleted,
           isParentDeleted: deleted.includes(meta.id),
+          deleteChildlessParent,
         })
       );
     }
@@ -64,6 +78,7 @@ export default (state = {}, action) => {
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
   const cKey = getCategoryKey(integrationId, flowId);
+  const addOnKey = `${integrationId}-addOns`;
   let mappingIndex;
   let categoryMappingData;
   let generatesMetadata;
@@ -91,11 +106,11 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
-          if (!draft[integrationId]) {
-            draft[integrationId] = {};
+          if (!draft[addOnKey]) {
+            draft[addOnKey] = {};
           }
 
-          draft[integrationId].addOns = {
+          draft[addOnKey].addOns = {
             addOnMetaData: response.addOns && response.addOns.addOnMetaData,
             addOnLicenses: response.addOns && response.addOns.addOnLicenses,
           };
@@ -716,7 +731,7 @@ export function categoryMappingData(state, integrationId, flowId) {
     return null;
   }
 
-  const { response = [], deleted = [] } = state[cKey] || emptyObj;
+  const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -729,7 +744,10 @@ export function categoryMappingData(state, integrationId, flowId) {
   }
 
   mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta, true, { deleted });
+    flattenChildrenStructrue(mappings, meta, true, {
+      deleted,
+      deleteChildlessParent: uiAssistant !== 'jet',
+    });
   });
 
   return mappings;
@@ -817,7 +835,9 @@ export function integrationAppAddOnState(state, integrationId) {
     return emptyObj;
   }
 
-  return state[integrationId] || emptyObj;
+  const addOnKey = `${integrationId}-addOns`;
+
+  return state[addOnKey] || emptyObj;
 }
 
 export function shouldRedirect(state, integrationId) {

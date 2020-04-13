@@ -30,7 +30,12 @@ export default {
       options,
       lookups,
     } = params;
-    const { connectionId, recordType, isGroupedSampleData = false } = options;
+    const {
+      connectionId,
+      recordType,
+      isComposite,
+      isGroupedSampleData = false,
+    } = options;
     const fieldId =
       generate && generate.indexOf('[*].') !== -1
         ? generate.split('[*].')[1]
@@ -38,6 +43,16 @@ export default {
     const fieldMetadata =
       generateFields && generateFields.find(gen => gen.id === generate);
     let generateFieldType;
+    let conditionalWhenOptions = isProduction()
+      ? conditionalLookupOptionsforNetsuiteProduction
+      : conditionalLookupOptionsforNetsuite;
+
+    if (!isComposite) {
+      conditionalWhenOptions = conditionalWhenOptions.slice(
+        2,
+        conditionalWhenOptions.length + 1
+      );
+    }
 
     if (
       fieldMetadata &&
@@ -510,9 +525,7 @@ export default {
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
-              items: isProduction()
-                ? conditionalLookupOptionsforNetsuiteProduction
-                : conditionalLookupOptionsforNetsuite,
+              items: conditionalWhenOptions,
             },
           ],
         },
