@@ -97,9 +97,9 @@ const setVariationMappingData = (
       : relationshipData;
 
     if (!relation) return;
-    const variationTheme = relation.variation_themes.find(
-      theme => theme.id === 'variation_theme'
-    );
+    const variationTheme =
+      relation.variation_themes &&
+      relation.variation_themes.find(theme => theme.id === 'variation_theme');
 
     if (variationTheme) {
       variationTheme.variation_attributes.forEach(vm => {

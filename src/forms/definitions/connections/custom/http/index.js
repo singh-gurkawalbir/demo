@@ -166,10 +166,12 @@ import target from './target';
 import threeplcentral from './threeplcentral';
 import loopreturns from './loopreturns';
 import saplitmos from './saplitmos';
+import redshift from './redshift';
 import bigquery from './bigquery';
 
 export default {
   bigquery,
+  redshift,
   sharepoint,
   vroozi,
   saplitmos,

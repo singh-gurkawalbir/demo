@@ -290,6 +290,34 @@ function* patchSkipRetries({ resourceId }) {
   }
 }
 
+const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
+const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
+
+function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
+  const { merged: resource } = yield select(
+    selectors.resourceData,
+    resourceType,
+    resourceId,
+    SCOPES.VALUE
+  );
+
+  if (resource && resource.useParentForm)
+    yield put(
+      actions.resource.patchStaged(
+        resourceId,
+        removeAssistantPatch,
+        SCOPES.VALUE
+      )
+    );
+  yield put(
+    actions.resource.patchStaged(
+      resourceId,
+      removeParentFormPatch,
+      SCOPES.VALUE
+    )
+  );
+}
+
 export function* submitFormValues({
   resourceType,
   resourceId,
@@ -298,6 +326,11 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
+
+  yield call(deleteFormViewAssistantValue, {
+    resourceType,
+    resourceId,
+  });
 
   formValues = yield call(deleteUISpecificValues, {
     values: formValues,

@@ -8,6 +8,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
+import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,7 +94,12 @@ export default function ConnectionStatusPanel(props) {
   }, [isOffline, location.search, resourceType, testStatus]);
 
   useEffect(() => {
-    dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
+    // and if it is a new connection resource you are creating then there is no point in making ping calls
+    if (connectionId && !isNewId(connectionId)) {
+      dispatch(actions.resource.connections.pingAndUpdate(connectionId));
+    }
+
     dispatch(actions.resource.connections.testClear(connectionId));
 
     return () => {
