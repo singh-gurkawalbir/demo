@@ -280,6 +280,7 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
+    // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
     const step = installSteps.find(s => s.isCurrentStep);
 
     if (
