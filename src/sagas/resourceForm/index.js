@@ -355,6 +355,8 @@ export function* submitFormValues({
   });
 
   if (isNewIA) {
+    // UI will not create a connection in New IA installer. Connection payload will be given to backend.
+    // Backend will create a connection and connection id will get back in reponse.
     const connectionPayload = yield call(createPayload, {
       values,
       resourceType: 'connections',

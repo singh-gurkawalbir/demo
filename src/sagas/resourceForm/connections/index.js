@@ -386,16 +386,9 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     if (conflict) return;
   }
 
-  const { patch: allPatches } = yield select(
-    selectors.stagedResource,
-    resourceId
-  );
-
-  if (
-    allPatches &&
-    allPatches.find(item => item.path === '/newIA') &&
-    allPatches.find(item => item.path === '/newIA').value
-  ) {
+  // For New IA framework, UI will not create a connection and backend does it.
+  // Open Oauth window logic handled as part of install integration app sagas.
+  if (isNewIAFrameWork(resourceId)) {
     return true;
   }
 
