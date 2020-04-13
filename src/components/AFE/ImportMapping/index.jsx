@@ -113,13 +113,28 @@ export default function ImportMapping(props) {
     mappings,
     lookups,
     changeIdentifier,
-    previewData,
+    preview = {},
     lastModifiedKey,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
     importSampleData,
     httpAssistantPreview,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const salesforceNetsuitePreviewData = useMemo(() => {
+    if (showSalesforceNetsuiteAssistant) {
+      const { data } = preview;
+
+      if (data && Array.isArray(data) && data.length) {
+        const [_val] = data;
+
+        return _val;
+      }
+
+      return data;
+    }
+
+    return undefined;
+  }, [preview, showSalesforceNetsuiteAssistant]);
   const showPreviewPane = !!(
     showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
@@ -332,13 +347,23 @@ export default function ImportMapping(props) {
     );
   }
 
-  const httpAssistantPreviewData = useMemo(
-    () =>
-      JSON.stringify(
-        (previewData && previewData.data) || [importSampleData] || {}
-      ),
-    [importSampleData, previewData]
-  );
+  const httpAssistantPreviewData = useMemo(() => {
+    const model = {
+      connection: importConn,
+      data: [],
+    };
+    const { data: previewData } = preview;
+
+    if (previewData) {
+      model.data = previewData;
+    } else if (importSampleData) {
+      model.data = Array.isArray(importSampleData)
+        ? importSampleData
+        : [importSampleData];
+    }
+
+    return JSON.stringify(model);
+  }, [importConn, importSampleData, preview]);
 
   return (
     <div className={classes.root}>
@@ -478,7 +503,7 @@ export default function ImportMapping(props) {
               sObjectLabel={sObjectType}
               layoutId={salesforceMasterRecordTypeId}
               onFieldClick={handleSalesforceAssistantFieldClick}
-              data={previewData && previewData.data}
+              data={salesforceNetsuitePreviewData}
             />
           )}
           {showSalesforceNetsuiteAssistant && recordType && (
@@ -490,7 +515,7 @@ export default function ImportMapping(props) {
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
               onFieldClick={handleNetSuiteAssistantFieldClick}
-              data={previewData && previewData.data}
+              data={salesforceNetsuitePreviewData}
             />
           )}
           {httpAssistantPreview && (

@@ -25,6 +25,7 @@ export default function reducer(state = {}, action) {
             adaptorType,
             resourceData,
             application,
+            connection,
             isGroupedSampleData,
             salesforceMasterRecordTypeId,
             netsuiteRecordType,
@@ -84,7 +85,6 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            showHttpAssistantPreview: !!resourceData.assistant,
             // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
             lastModifiedKey: '',
           };
@@ -92,7 +92,12 @@ export default function reducer(state = {}, action) {
           tmp.mappingsCopy = deepClone(tmp.mappings);
           tmp.lookupsCopy = deepClone(tmp.lookups);
 
-          if (resourceData._integrationId && resourceData.http) {
+          if (
+            resourceData._integrationId &&
+            resourceData.http &&
+            (resourceData.http.requestMediaType === 'xml' ||
+              connection.http.mediaType === 'xml')
+          ) {
             tmp.httpAssistantPreview = {
               rule:
                 resourceData && resourceData.http && resourceData.http.body[0],
@@ -332,37 +337,26 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.MAPPING.PREVIEW_REQUESTED:
-        if (draft[id].previewData) {
-          draft[id].previewData.status = 'requested';
+        if (draft[id].preview) {
+          draft[id].preview.status = 'requested';
         } else {
-          draft[id].previewData = { status: 'requested' };
+          draft[id].preview = { status: 'requested' };
         }
 
         break;
       case actionTypes.MAPPING.PREVIEW_RECEIVED: {
-        let val;
+        const { preview } = draft[id];
 
-        if (value && Array.isArray(value) && value.length) {
-          const [_val] = value;
-
-          val = _val;
-        } else {
-          val = value;
-        }
-
-        const { previewData } = draft[id];
-
-        previewData.data = val;
-        previewData.status = 'received';
-
+        preview.data = value;
+        preview.status = 'received';
         break;
       }
 
       case actionTypes.MAPPING.PREVIEW_FAILED: {
-        const { previewData } = draft[id];
+        const { preview } = draft[id];
 
-        delete previewData.data;
-        previewData.status = 'error';
+        delete preview.data;
+        preview.status = 'error';
         break;
       }
 
