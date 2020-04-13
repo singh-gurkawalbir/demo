@@ -172,6 +172,7 @@ function DynaAssistantOptions(props) {
         .filter(field => !!field.touched)
         .map(field => ({ id: field.id, value: field.value }));
 
+      allTouchedFields.push({ id, value });
       dispatch(
         actions.resourceForm.init(
           resourceType,

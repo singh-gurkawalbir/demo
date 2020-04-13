@@ -105,7 +105,7 @@ export function FormView(props) {
       actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
     );
 
-    let allTouchedFields = formContext.fields
+    let allTouchedFields = Object.values(formContext.fields)
       .filter(field => !!field.touched)
       .map(field => ({ id: field.id, value: field.value }));
 

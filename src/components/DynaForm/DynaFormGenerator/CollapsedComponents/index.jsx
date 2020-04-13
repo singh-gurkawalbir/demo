@@ -91,7 +91,7 @@ const ExpansionPannelExpandOnInValidState = props => {
   const [componentLoaded, setComponentLoaded] = useState(false);
   const isPanelErrored = isExpansionPanelErrored(
     { layout, fieldMap },
-    Object.values(form.fields)
+    form.fields ? Object.values(form.fields) : []
   );
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const ExpansionPannelExpandOnInValidState = props => {
       if (
         isAnyExpansionPanelFieldVisible(
           { layout, fieldMap },
-          Object.values(form.fields)
+          form.fields ? Object.values(form.fields) : []
         )
       )
         setVisible(true);

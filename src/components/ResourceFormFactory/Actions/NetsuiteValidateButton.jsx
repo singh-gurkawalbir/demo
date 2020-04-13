@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -21,13 +21,17 @@ const NetsuiteValidateButton = props => {
     classes,
     fields,
     id,
-    registerField,
     visibleWhen,
     visibleWhenAll,
     value,
     disabled,
     onFieldChange,
+    formKey,
   } = props;
+  const registerField = useCallback(
+    field => dispatch(actions.form.field.registerField(formKey)(field)),
+    [dispatch, formKey]
+  );
   const handleValidate = values => {
     dispatch(
       actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
@@ -41,7 +45,9 @@ const NetsuiteValidateButton = props => {
     selectors.isValidatingNetsuiteUserRoles(state)
   );
   const { message, status } = netsuiteUserRolesState || {};
-  const matchingActionField = fields.find(field => field.id === id);
+  const matchingActionField = Object.values(fields).find(
+    field => field.id === id
+  );
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
   const [enquesnackbar] = useEnqueueSnackbar();
 
@@ -98,7 +104,7 @@ const NetsuiteValidateButton = props => {
         omitWhenValueIs: [undefined, 'false', 'true'],
       });
     }
-  }, [registerField, fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible]);
+  }, [fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible, registerField]);
 
   if (id) {
     if (!fieldsIsVisible) return null;

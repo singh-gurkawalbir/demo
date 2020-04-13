@@ -101,12 +101,12 @@ function FormWithSave(props) {
         isValid={
           !isExpansionPanelErrored(
             { layout, fieldMap },
-            Object.values(form.fields)
+            form.fields ? Object.values(form.fields) : []
           )
         }
         isFormTouchedForMeta={isAnyFieldTouchedForMeta(
           { layout, fieldMap },
-          form.fields
+          form.fields ? Object.values(form.fields) : []
         )}
         postProcessValuesFn={postProcessValuesFn}
       />
