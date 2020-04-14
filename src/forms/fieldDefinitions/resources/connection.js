@@ -1884,6 +1884,8 @@ export default {
   'as2.partnerStationInfo.signatureEncoding': {
     type: 'select',
     label: 'Signature Encoding',
+    helpText:
+      'Choose the way your partner is expecting the signature to be encoded on receiving side. We have multiple ways of data encoding like binary, base64, etc. This field is used to encode the signature in that respective format. Your partner will have shared this info with you already.',
     options: [
       {
         items: [
