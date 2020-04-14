@@ -90,7 +90,21 @@ export function userOwnPreferences(state) {
 }
 
 export function appTheme(state) {
-  return userPreferences(state).themeName;
+  const preferences = fromPreferences.userPreferences(
+    state && state.preferences
+  );
+  const currentAccount = preferences.defaultAShareId;
+
+  if (currentAccount) {
+    const accountPrefs =
+      preferences.accounts && preferences.accounts[currentAccount];
+
+    if (accountPrefs) {
+      return accountPrefs.themeName;
+    }
+  }
+
+  return preferences.themeName;
 }
 
 export function editorTheme(state) {

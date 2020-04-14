@@ -45,6 +45,10 @@ export default (state = { environment: 'production' }, action) => {
           if (GLOBAL_PREFERENCES.includes(key)) {
             newState[key] = preference;
           } else {
+            if (!accounts[defaultAShareId]) {
+              accounts[defaultAShareId] = {};
+            }
+
             accounts[defaultAShareId][key] = preference;
           }
         });
