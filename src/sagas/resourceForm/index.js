@@ -318,7 +318,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
   );
 }
 
-export function* isNewIAFrameWork({ resourceId }) {
+export function* newIAFrameWorkPayload({ resourceId }) {
   const { patch: allPatches } = yield select(
     selectors.stagedResource,
     resourceId
@@ -339,7 +339,7 @@ export function* isNewIAFrameWork({ resourceId }) {
     };
   }
 
-  return false;
+  return null;
 }
 
 export function* submitFormValues({
@@ -350,7 +350,7 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
-  const isNewIA = yield call(isNewIAFrameWork, {
+  const isNewIA = yield call(newIAFrameWorkPayload, {
     resourceId,
   });
 

@@ -16,7 +16,7 @@ import {
   createFormValuesPatchSet,
   submitFormValues,
   SCOPES,
-  isNewIAFrameWork,
+  newIAFrameWorkPayload,
 } from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
@@ -388,7 +388,7 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
 
   // For New IA framework, UI will not create a connection and backend does it.
   // Open Oauth window logic handled as part of install integration app sagas.
-  if (isNewIAFrameWork(resourceId)) {
+  if (newIAFrameWorkPayload(resourceId)) {
     return true;
   }
 
@@ -437,7 +437,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 
 function* requestIClients({ connectionId }) {
   let path;
-  const newIAConnDoc = yield call(isNewIAFrameWork, {
+  const newIAConnDoc = yield call(newIAFrameWorkPayload, {
     resourceId: connectionId,
   });
 

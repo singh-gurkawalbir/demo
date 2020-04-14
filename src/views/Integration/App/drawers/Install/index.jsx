@@ -67,6 +67,14 @@ const getConnectionType = resource => {
     if (resource.netsuite.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
+  } else if (resource.type === 'shopify') {
+    if (((resource.http || {}).auth || {}).type === 'oauth') {
+      return 'shopify-oauth';
+    } else if ((resource.rest || {}).authType === 'oauth') {
+      return 'shopify-oauth';
+    }
+
+    return '';
   }
 
   return type;
@@ -117,6 +125,7 @@ export default function ConnectorInstallation(props) {
   const oAuthApplications = [
     ...resourceConstants.OAUTH_APPLICATIONS,
     'netsuite-oauth',
+    'shopify-oauth',
   ];
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
@@ -126,14 +135,7 @@ export default function ConnectorInstallation(props) {
       if (
         selectedConnection &&
         oAuthApplications.includes(getConnectionType(selectedConnection)) &&
-        !isAuthorized &&
-        !(
-          getConnectionType(selectedConnection) === 'shopify' &&
-          selectedConnection &&
-          selectedConnection.http &&
-          selectedConnection.http.auth &&
-          selectedConnection.http.auth.type === 'basic'
-        )
+        !isAuthorized
       ) {
         return;
       }
@@ -341,24 +343,24 @@ export default function ConnectorInstallation(props) {
 
   return (
     <LoadResources required resources="connections,integrations">
-      {connection && connection._connectionId && (
-        <ConnectionSetupDialog
-          resourceId={connection._connectionId}
-          onClose={handleClose}
-          onSubmitComplete={handleSubmitComplete}
-        />
-      )}
-      {connection && connection.doc && !connection._connectionId && (
-        <ConnectionSetupDialog
-          resourceId={connection.newId}
-          resource={connection.doc}
-          resourceType="connections"
-          environment="production"
-          connectionType={connection.doc.type}
-          onClose={handleClose}
-          onSubmitComplete={handleSubmitComplete}
-        />
-      )}
+      {connection &&
+        (connection._connectionId ? (
+          <ConnectionSetupDialog
+            resourceId={connection._connectionId}
+            onClose={handleClose}
+            onSubmitComplete={handleSubmitComplete}
+          />
+        ) : (
+          <ConnectionSetupDialog
+            resourceId={connection.newId}
+            resource={connection.doc}
+            resourceType="connections"
+            environment="production"
+            connectionType={connection.doc.type}
+            onClose={handleClose}
+            onSubmitComplete={handleSubmitComplete}
+          />
+        ))}
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>

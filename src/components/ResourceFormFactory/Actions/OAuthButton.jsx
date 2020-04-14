@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
@@ -7,6 +7,7 @@ import * as selectors from '../../../reducers';
 import resourceConstants from '../../../forms/constants/connection';
 import { useLoadingSnackbarOnSave } from '.';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
 
 const styles = theme => ({
   actionButton: {
@@ -20,32 +21,12 @@ function OAuthButton(props) {
   const { resourceId } = rest;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const iClients = useMemo(() => (resource && resource.iClients) || [], [
-    resource,
-  ]);
-  const [requestedOnLoad, setRequestedOnLoad] = useState(false);
-
-  useEffect(() => {
-    if (
-      !iClients.length &&
-      resource._id &&
-      resource._connectorId &&
-      (resource.assistant === 'shopify' || resource.assistant === 'squareup') &&
-      !requestedOnLoad
-    ) {
-      setRequestedOnLoad(true);
-      dispatch(actions.resource.connections.requestIClients(resource._id));
-    }
-  }, [
-    dispatch,
-    iClients.length,
-    requestedOnLoad,
-    resource._connectorId,
-    resource._id,
-    resource.assistant,
-    resource.type,
-    resourceType,
-  ]);
+  const { iClients } = useLoadIClientOnce({
+    connectionId: resource._id,
+    disableLoad:
+      !resource._connectorId ||
+      !['shopify', 'squareup'].includes(resource.assistant),
+  });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
       const newValues = { ...values };

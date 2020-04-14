@@ -6,23 +6,32 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import { isProduction } from '../../../forms/utils';
 
-export default function DynaIclient(props) {
-  const { connectionId, connectorId, connType, hideFromUI } = props;
-  const dispatch = useDispatch();
+export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-  const [requestedOnLoad, setRequestedOnLoad] = useState(false);
+  const dispatch = useDispatch();
+  const [requestedOnLoad, setRequestedOnLoad] = useState(disableLoad);
   const iClients = useMemo(() => (connection && connection.iClients) || [], [
     connection,
   ]);
 
   useEffect(() => {
-    if (!iClients.length && connectionId && connectorId && !requestedOnLoad) {
+    if (!iClients.length && connectionId && !requestedOnLoad) {
       setRequestedOnLoad(true);
       dispatch(actions.resource.connections.requestIClients(connectionId));
     }
-  }, [connectionId, connectorId, dispatch, iClients.length, requestedOnLoad]);
+  }, [iClients.length, connectionId, requestedOnLoad, dispatch]);
+
+  return { iClients };
+};
+
+export default function DynaIclient(props) {
+  const { connectionId, connectorId, connType, hideFromUI } = props;
+  const { iClients } = useLoadIClientOnce({
+    connectionId,
+    disableLoad: !connectorId,
+  });
 
   return hideFromUI ? null : (
     <Fragment>
