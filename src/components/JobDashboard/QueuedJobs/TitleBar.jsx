@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
   },
   closeIcon: {
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(0),
   },
   arrowLeft: {
     float: 'left',
@@ -42,6 +42,10 @@ const useStyles = makeStyles(theme => ({
       background: 'none',
       color: theme.palette.secondary.dark,
     },
+  },
+  dynaSelect: {
+    minWidth: 350,
+    margin: theme.spacing(0, 2),
   },
 }));
 
@@ -98,6 +102,7 @@ export default function DrawerTitleBar({
         <DynaSelect
           id="queuedJobs_connection"
           label="Connection"
+          className={classes.dynaSelect}
           value={connectionId}
           onFieldChange={handleConnectionChange}
           options={[
