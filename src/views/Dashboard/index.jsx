@@ -58,8 +58,6 @@ function Dashboard() {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
-
-  console.log('accessLevel', accessLevel);
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
   );

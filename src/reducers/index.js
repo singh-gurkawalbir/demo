@@ -2333,7 +2333,7 @@ export const resourcePermissions = createSelector(
 );
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
-  const { accessLevel } = userPermissions(state);
+  const { accessLevel } = resourcePermissions(state);
 
   // if all forms is monitor level
   if (accessLevel === 'monitor') return true;
