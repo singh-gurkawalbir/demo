@@ -55,8 +55,8 @@ function Dashboard() {
   const ssLinkedConnections = useSelector(state =>
     selectors.suiteScriptLinkedConnections(state)
   );
-  const accessLevel = useSelector(
-    state => selectors.resourcePermissions(state).accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations')
   );
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
@@ -123,37 +123,39 @@ function Dashboard() {
       <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
-        {['owner', 'manage'].includes(accessLevel) && (
-          <div>
-            <IconTextButton
-              data-test="newIntegration"
-              component={Link}
-              to={`${location.pathname}/add/integrations/${generateNewId()}`}
-              variant="text"
-              color="primary">
-              <AddIcon />
-              Create integration
-            </IconTextButton>
-
-            <IconTextButton
-              data-test="installZip"
-              component={Link}
-              to={`${location.pathname}/installIntegration`}
-              variant="text"
-              color="primary">
-              <ZipUpIcon />
-              Install integration
-            </IconTextButton>
-            <IconTextButton
-              data-test="downloadIntegration"
-              component={Link}
-              to={`${location.pathname}/downloadIntegration`}
-              variant="text"
-              color="primary">
-              <ZipDownIcon />
-              Download integration
-            </IconTextButton>
-          </div>
+        {permission.create && (
+          <IconTextButton
+            data-test="newIntegration"
+            component={Link}
+            to={`${location.pathname}/add/integrations/${generateNewId()}`}
+            variant="text"
+            color="primary">
+            <AddIcon />
+            Create integration
+          </IconTextButton>
+        )}
+        {permission.install && (
+          <IconTextButton
+            data-test="installZip"
+            component={Link}
+            to={`${location.pathname}/installIntegration`}
+            variant="text"
+            color="primary">
+            <ZipUpIcon />
+            Install integration
+          </IconTextButton>
+        )}
+        {/* TODO: What condition to use for download Integration */}
+        {permission.create && (
+          <IconTextButton
+            data-test="downloadIntegration"
+            component={Link}
+            to={`${location.pathname}/downloadIntegration`}
+            variant="text"
+            color="primary">
+            <ZipDownIcon />
+            Download integration
+          </IconTextButton>
         )}
       </CeligoPageBar>
       <LoadResources

@@ -2312,22 +2312,21 @@ export const resourcePermissions = createSelector(
     if (!permissions) return emptyObject;
     let value = permissions;
 
-    if (
-      resourceType === 'integrations' &&
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(permissions.accessLevel)
-    ) {
-      value = permissions.integrations.all;
-    } else {
-      value = permissions;
-
-      if (resourceType) value = value[resourceType];
-
-      if (resourceId) value = value[resourceId];
-    }
+    if (resourceId) {
+      if (
+        resourceId &&
+        resourceType === 'integrations' &&
+        [
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+          USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        ].includes(permissions.accessLevel)
+      ) {
+        value = permissions.integrations.all;
+      } else {
+        value = value[resourceType][resourceId];
+      }
+    } else if (resourceType) value[resourceType];
 
     return (
       (subResourceType ? value && value[subResourceType] : value) || emptyObject
