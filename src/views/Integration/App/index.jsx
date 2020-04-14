@@ -126,10 +126,8 @@ export default function IntegrationApp({ match, history }) {
   );
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   //
   //

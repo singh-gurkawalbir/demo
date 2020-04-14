@@ -56,8 +56,10 @@ function Dashboard() {
     selectors.suiteScriptLinkedConnections(state)
   );
   const accessLevel = useSelector(
-    state => selectors.userPermissions(state).accessLevel
+    state => selectors.resourcePermissions(state).accessLevel
   );
+
+  console.log('accessLevel', accessLevel);
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
   );

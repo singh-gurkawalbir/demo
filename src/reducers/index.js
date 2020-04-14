@@ -2303,8 +2303,8 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
 
 export const resourcePermissions = createSelector(
   [
-    (state, { resourceType }) => resourceType,
-    (state, { resourceId }) => resourceId,
+    (state, resourceType) => resourceType,
+    (state, resourceType, resourceId) => resourceId,
     state => userPermissions(state),
   ],
   (resourceType, resourceId, permissions) => {
@@ -2326,7 +2326,9 @@ export const resourcePermissions = createSelector(
       return permissions[resourceType][resourceId] || emptyObject;
     }
 
-    return permissions[resourceType] || emptyObject;
+    return (
+      (resourceType ? permissions[resourceType] : permissions) || emptyObject
+    );
   }
 );
 
@@ -2337,10 +2339,11 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
   if (accessLevel === 'monitor') return true;
 
   // check integration level is monitor level
-  const { accessLevel: accessLevelIntegration } = resourcePermissions(state, {
-    resourceType: 'integrations',
-    resourceId: integrationId,
-  });
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
 
   if (accessLevelIntegration === 'monitor') return true;
 
@@ -2355,10 +2358,11 @@ export function formAccessLevel(state, integrationId, resource, disabled) {
   if (isMonitorLevelAccess) return { disableAllFields: true };
 
   // check integration access level
-  const { accessLevel: accessLevelIntegration } = resourcePermissions(state, {
-    resourceType: 'integrations',
-    resourceId: integrationId,
-  });
+  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
   const isIntegrationApp = resource && resource._connectorId;
 
   if (

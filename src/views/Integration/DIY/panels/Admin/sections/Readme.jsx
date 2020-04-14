@@ -36,10 +36,8 @@ export default function ReadmeSection({ integrationId }) {
   );
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   const disableForm = accessLevel === 'monitor';
   // TODO: Shiva, can you please enhance the permission api to return

@@ -43,10 +43,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   );
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   const canManageConnections =
     !(integration && integration._connectorId) &&

@@ -101,10 +101,8 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const integrationId = flowDetails._integrationId;
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   const isDataloader = flowDetails.isSimpleImport;
   const integrationAppName = useSelector(state => {

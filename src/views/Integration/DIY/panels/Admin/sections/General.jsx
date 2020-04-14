@@ -29,10 +29,8 @@ export default function GeneralSection({ integrationId }) {
     ) || {};
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   const disableForm = accessLevel === 'monitor';
   const developerModeOn = useSelector(state => selectors.developerMode(state));

@@ -57,10 +57,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const integrationId = flowDetails._integrationId;
   const accessLevel = useSelector(
     state =>
-      selectors.resourcePermissions(state, {
-        resourceType: 'integrations',
-        resourceId: integrationId,
-      }).accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   const integrationAppName = useSelector(state => {
     const integration = selectors.resource(
