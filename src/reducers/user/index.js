@@ -6,6 +6,8 @@ import notifications, * as fromNotifications from './notifications';
 import profile, * as fromProfile from './profile';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
+export const DEFAULT_EDITOR_THEME = 'tomorrow';
+
 export default combineReducers({
   preferences,
   profile,
@@ -88,15 +90,23 @@ export function userOwnPreferences(state) {
 }
 
 export function appTheme(state) {
-  return fromPreferences.appTheme(state && state.preferences);
+  return userPreferences(state).themeName;
+}
+
+export function editorTheme(state) {
+  if (!state) return DEFAULT_EDITOR_THEME;
+
+  // props = ui theme, values = editor theme.
+  const themeMap = {
+    light: 'tomorrow',
+    dark: 'monokai',
+  };
+
+  return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
 }
 
 export function accountShareHeader(state, path) {
   return fromPreferences.accountShareHeader(state && state.preferences, path);
-}
-
-export function editorTheme(state) {
-  return fromPreferences.editorTheme(state && state.preferences);
 }
 // #endregion PREFERENCES
 

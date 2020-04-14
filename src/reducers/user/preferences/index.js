@@ -15,8 +15,6 @@ export const GLOBAL_PREFERENCES = [
   'debug',
 ];
 
-export const DEFAULT_EDITOR_THEME = 'tomorrow';
-
 export default (state = { environment: 'production' }, action) => {
   const { type, resourceType, resource, preferences } = action;
   let newState = { ...state };
@@ -64,25 +62,7 @@ export default (state = { environment: 'production' }, action) => {
 export function userPreferences(state) {
   if (!state) return {};
 
-  return { ...state };
-}
-
-export function appTheme(state) {
-  const { themeName } = userPreferences(state);
-
-  return themeName;
-}
-
-export function editorTheme(state) {
-  if (!state) return DEFAULT_EDITOR_THEME;
-
-  // props = ui theme, values = editor theme.
-  const themeMap = {
-    light: 'tomorrow',
-    dark: 'monokai',
-  };
-
-  return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
+  return state;
 }
 
 export function accountShareHeader(preferences, path) {
