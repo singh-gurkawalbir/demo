@@ -328,10 +328,11 @@ function CategoryMappings({
           {!!variationThemes && !!variationThemes.length && (
             <Tooltip title="Configure variations" placement="bottom">
               <IconButton
+                onClick={handleVariation}
                 size="small"
                 color="inherit"
                 className={classes.variationIcon}>
-                <VariationIcon onClick={handleVariation} />
+                <VariationIcon />
               </IconButton>
             </Tooltip>
           )}
@@ -340,19 +341,21 @@ function CategoryMappings({
               {deleted ? (
                 <Tooltip title="Restore category" placement="bottom">
                   <IconButton
+                    onClick={handleRestore}
                     size="small"
                     color="inherit"
                     className={classes.deleteIcon}>
-                    <RestoreIcon onClick={handleRestore} />
+                    <RestoreIcon />
                   </IconButton>
                 </Tooltip>
               ) : (
                 <Tooltip title="Delete category" placement="bottom">
                   <IconButton
+                    onClick={handleDelete}
                     size="small"
                     color="inherit"
                     className={classes.deleteIcon}>
-                    <TrashIcon onClick={handleDelete} />
+                    <TrashIcon />
                   </IconButton>
                 </Tooltip>
               )}
