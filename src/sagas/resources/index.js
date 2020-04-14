@@ -706,6 +706,22 @@ export function* refreshConnectionStatus({ integrationId }) {
   }
 }
 
+export function* updateCustomSettings({ resourceId, resourceType, payload }) {
+  const patchSet = [];
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!resource.settingsForm) {
+    patchSet.push({ op: 'add', path: '/settingsForm', value: {} });
+  }
+
+  patchSet.push({ op: 'add', path: '/settingsForm/form', value: payload });
+
+  yield put(actions.resource.patchStaged(resourceId, patchSet, 'form-meta'));
+  yield put(
+    actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
+  );
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
   takeEvery(
@@ -726,6 +742,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeEvery(actionTypes.RESOURCE.UPDATE_META, updateCustomSettings),
 
   ...metadataSagas,
 ];

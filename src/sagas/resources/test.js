@@ -10,6 +10,7 @@ import {
   requestDeregister,
   normalizeFlow,
   resourceConflictDetermination,
+  updateCustomSettings,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -485,8 +486,10 @@ availableResources.forEach(type => {
       );
       const path = `/${type}/${id}/dependencies`;
       const mockResourceReferences = {
+        // eslint-disable-next-line prettier/prettier
         imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
-        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
+        // eslint-disable-next-line prettier/prettier
+        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }]
       };
       const callEffect = saga.next().value;
 
@@ -576,5 +579,54 @@ describe(`Deregister connection Saga`, () => {
     const final = saga.throw(new Error('some API exception'));
 
     expect(final.done).toBe(true);
+  });
+});
+
+describe('updateCustomSettings saga', () => {
+  const resourceId = '1234';
+  const resourceType = 'imports';
+  const payload = 'dummy';
+
+  test('should add settingsForm path if missing in the resource', () => {
+    const saga = updateCustomSettings({ resourceId, resourceType, payload });
+    const expectedPatchSet = [
+      { op: 'add', path: '/settingsForm', value: {} },
+      { op: 'add', path: '/settingsForm/form', value: payload },
+    ];
+
+    expect(saga.next().value).toEqual(
+      select(selectors.resource, resourceType, resourceId)
+    );
+
+    expect(saga.next({}).value).toEqual(
+      put(
+        actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
+      )
+    );
+
+    expect(saga.next({}).value).toEqual(
+      put(actions.resource.commitStaged(resourceType, resourceId, 'form-meta'))
+    );
+  });
+
+  test('should not add settingsForm if already present in resource selector', () => {
+    const saga = updateCustomSettings({ resourceId, resourceType, payload });
+    const expectedPatchSet = [
+      { op: 'add', path: '/settingsForm/form', value: payload },
+    ];
+
+    expect(saga.next().value).toEqual(
+      select(selectors.resource, resourceType, resourceId)
+    );
+
+    expect(saga.next({ settingsForm: {} }).value).toEqual(
+      put(
+        actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
+      )
+    );
+
+    expect(saga.next({}).value).toEqual(
+      put(actions.resource.commitStaged(resourceType, resourceId, 'form-meta'))
+    );
   });
 });

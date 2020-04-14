@@ -166,9 +166,12 @@ export default function DynaSettings(props) {
       return;
     }
 
-    const patchSet = [];
+    dispatch(actions.resource.updateMeta(resourceId, resourceType, meta));
+
+    /* const patchSet = [];
 
     if (!fieldMeta) {
+      console.log('!fieldMeta');
       patchSet.push({ op: 'add', path: '/settingsForm', value: {} });
     }
 
@@ -177,9 +180,9 @@ export default function DynaSettings(props) {
     dispatch(actions.resource.patchStaged(resourceId, patchSet, 'form-meta'));
     dispatch(
       actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
-    );
+    ); */
     setEditFormMode(false);
-  }, [alteredMeta, dispatch, fieldMeta, resourceId, resourceType]);
+  }, [alteredMeta, dispatch, resourceId, resourceType]);
 
   // we only need to do this once as an "init"... value changes don't matter.
   // form metadata does matter.

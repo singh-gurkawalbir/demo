@@ -220,6 +220,12 @@ const resource = {
       op,
       offset,
     }),
+  updateMeta: (resourceId, resourceType, payload) =>
+    action(actionTypes.RESOURCE.UPDATE_META, {
+      resourceId,
+      resourceType,
+      payload,
+    }),
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
