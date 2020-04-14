@@ -27,12 +27,10 @@ export default function GeneralSection({ integrationId }) {
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
-  const accessLevel = useSelector(
+  const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const disableForm = accessLevel === 'monitor';
   const developerModeOn = useSelector(state => selectors.developerMode(state));
   const fieldMeta = {
     fieldMap: {
@@ -123,11 +121,11 @@ export default function GeneralSection({ integrationId }) {
 
       <div className={classes.form}>
         <DynaForm
-          disabled={disableForm}
+          disabled={!canEditIntegration}
           fieldMeta={fieldMeta}
           key={count}
           render>
-          <DynaSubmit disabled={disableForm} onClick={handleSubmit}>
+          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>

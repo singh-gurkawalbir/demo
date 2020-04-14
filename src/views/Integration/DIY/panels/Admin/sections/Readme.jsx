@@ -34,17 +34,10 @@ export default function ReadmeSection({ integrationId }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const accessLevel = useSelector(
+  const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+      selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const disableForm = accessLevel === 'monitor';
-  // TODO: Shiva, can you please enhance the permission api to return
-  // the necessary tile lever perms to show/hide the readme code editor.
-  // const permissions = useSelector(state =>
-  //   selectors.permissions(state, 'account1')
-  // );
   const [value, setValue] = useState(integration && integration.readme);
 
   function handleChange(value) {
@@ -78,7 +71,7 @@ export default function ReadmeSection({ integrationId }) {
             name="readme"
             value={value}
             mode="html"
-            readOnly={disableForm}
+            readOnly={!canEditIntegration}
             onChange={handleChange}
           />
         </div>
@@ -88,7 +81,7 @@ export default function ReadmeSection({ integrationId }) {
 
         <Button
           data-test="saveReadme"
-          disabled={disableForm}
+          disabled={!canEditIntegration}
           variant="contained"
           color="primary"
           onClick={handleSave}>

@@ -219,6 +219,7 @@ export default function Integration({ history, match }) {
             integration ? (
               <EditableText
                 text={integration.name}
+                disabled={!permission.edit}
                 defaultText={`Unnamed: (${integration}) Click to add name`}
                 onChange={handleTitleChange}
                 inputClassName={
