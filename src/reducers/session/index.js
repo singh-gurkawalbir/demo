@@ -22,6 +22,8 @@ import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
+import fileUpload, * as fromFileUpload from './fileUpload';
+import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 
 export default combineReducers({
   stage,
@@ -47,6 +49,8 @@ export default combineReducers({
   flows,
   transfers,
   responseMapping,
+  fileUpload,
+  jobErrorsPreview,
 });
 
 // #region PUBLIC SELECTORS
@@ -481,8 +485,8 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
-export function connectionStatus(state, id) {
-  return fromConnections.connectionStatus(state && state.connections, id);
+export function queuedJobs(state, connectionId) {
+  return fromConnections.queuedJobs(state && state.connections, connectionId);
 }
 
 const lastExportDateTime = {};
@@ -496,6 +500,17 @@ export function getLastExportDateTime(state, flowId) {
 
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
+}
+
+export function getUploadedFile(state, fileId) {
+  return fromFileUpload.getUploadedFile(state && state.fileUpload, fileId);
+}
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromJobErrorsPreview.getJobErrorsPreview(
+    state && state.jobErrorsPreview,
+    jobId
+  );
 }
 
 // #endregion

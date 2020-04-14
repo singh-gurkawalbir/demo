@@ -28,6 +28,22 @@ export default {
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
     }
+
+    const soqlField = fields.find(field => field.id === 'salesforce.soql');
+    const dateField = fields.find(field => field.id === 'delta.dateField');
+
+    if (dateField) {
+      if (
+        soqlField &&
+        soqlField.value &&
+        soqlField.value.query &&
+        soqlField.value.query.includes('lastExportDateTime')
+      ) {
+        dateField.required = false;
+      } else {
+        dateField.required = true;
+      }
+    }
   },
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -182,6 +198,7 @@ export default {
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
       connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.soql', 'delta.dateField'],
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },

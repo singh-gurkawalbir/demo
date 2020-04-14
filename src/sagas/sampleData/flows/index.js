@@ -10,7 +10,11 @@ import {
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import { keys } from 'lodash';
-import { resourceData, getSampleData } from '../../../reducers';
+import {
+  resourceData,
+  getSampleData,
+  getScriptContext,
+} from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -427,11 +431,16 @@ export function* requestProcessorData({
           resourceType: 'scripts',
           id: scriptId,
         });
+        const context = yield select(getScriptContext, {
+          flowId,
+          contextType: 'hook',
+        });
         const { content: code } = script;
 
         processorData = {
           data: preProcessedData,
           code,
+          context,
           entryFunction: hook.function,
           removeDataPropFromProcessedData: stage === 'preMap',
           processor: 'javascript',

@@ -122,7 +122,6 @@ export default {
         retValues['/ignoreMissing'] = false;
       } else if (retValues['/http/compositeType'] === 'createandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURICreate']];
-        retValues['/http/requestType'] = [retValues['/http/requestTypeCreate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodCreate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -194,7 +193,6 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       } else if (retValues['/http/compositeType'] === 'updateandignore') {
         retValues['/http/relativeURI'] = [retValues['/http/relativeURIUpdate']];
-        retValues['/http/requestType'] = [retValues['/http/requestTypeUpdate']];
         retValues['/http/method'] = [retValues['/http/compositeMethodUpdate']];
 
         retValues['/http/resourceId'] = undefined;
@@ -266,9 +264,6 @@ export default {
         retValues['/http/existingDataId'] = undefined;
       }
     } else {
-      if (!retValues['/http/requestType'])
-        retValues['/http/requestType'] =
-          retValues['/http/method'] === 'POST' ? ['CREATE'] : ['UPDATE'];
       retValues['/ignoreExisting'] = false;
       retValues['/ignoreMissing'] = false;
       retValues['/http/body'] = retValues['/http/body']
@@ -434,7 +429,6 @@ export default {
     'http.compositeType': { fieldId: 'http.compositeType' },
     'http.lookups': { fieldId: 'http.lookups', visible: false },
     'http.relativeURI': { fieldId: 'http.relativeURI' },
-    'http.requestType': { fieldId: 'http.requestType' },
     'http.response.successPath': {
       fieldId: 'http.response.successPath',
       defaultValue: r => {
@@ -588,7 +582,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
+          is: ['createandupdate'],
         },
         {
           field: 'http.method',
@@ -1132,7 +1126,7 @@ export default {
       visibleWhenAll: [
         {
           field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
+          is: ['createandupdate'],
         },
         {
           field: 'http.method',
@@ -1520,7 +1514,6 @@ export default {
       'http.compositeType',
       'http.lookups',
       'http.relativeURI',
-      'http.requestType',
       'http.body',
       'http.response.successPath',
       'http.response.successValues',

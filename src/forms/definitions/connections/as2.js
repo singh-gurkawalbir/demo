@@ -44,6 +44,9 @@ export default {
     'as2.userStationInfo.mdn.mdnSigning': {
       fieldId: 'as2.userStationInfo.mdn.mdnSigning',
     },
+    'as2.userStationInfo.mdn.mdnEncoding': {
+      fieldId: 'as2.userStationInfo.mdn.mdnEncoding',
+    },
     'as2.userStationInfo.encoding': { fieldId: 'as2.userStationInfo.encoding' },
     'as2.userStationInfo.encryptionType': {
       fieldId: 'as2.userStationInfo.encryptionType',
@@ -267,6 +270,7 @@ export default {
           'requiremdnspartners',
           'requireasynchronousmdns',
           'as2.userStationInfo.mdn.mdnSigning',
+          'as2.userStationInfo.mdn.mdnEncoding',
           'as2.userStationInfo.encryptionType',
           'as2.userStationInfo.signing',
           'as2.userStationInfo.encoding',
