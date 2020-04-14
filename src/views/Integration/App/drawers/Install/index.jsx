@@ -3,7 +3,7 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -68,9 +68,11 @@ const getConnectionType = resource => {
       return 'netsuite-oauth';
     }
   } else if (resource.type === 'shopify') {
-    if (((resource.http || {}).auth || {}).type === 'oauth') {
-      return 'shopify-oauth';
-    } else if ((resource.rest || {}).authType === 'oauth') {
+    if (
+      resource.http &&
+      resource.http.auth &&
+      resource.http.auth.type === 'oauth'
+    ) {
       return 'shopify-oauth';
     }
 
@@ -122,11 +124,14 @@ export default function ConnectorInstallation(props) {
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
   const mode = integration && integration.mode;
-  const oAuthApplications = [
-    ...resourceConstants.OAUTH_APPLICATIONS,
-    'netsuite-oauth',
-    'shopify-oauth',
-  ];
+  const oAuthApplications = useMemo(
+    () => [
+      ...resourceConstants.OAUTH_APPLICATIONS,
+      'netsuite-oauth',
+      'shopify-oauth',
+    ],
+    []
+  );
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
       // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
