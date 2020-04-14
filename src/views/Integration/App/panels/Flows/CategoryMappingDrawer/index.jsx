@@ -189,7 +189,12 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const { fields: generateFields, name, variation_themes: variationThemes } =
+  const {
+    fields: generateFields,
+    name,
+    variation_themes: variationThemes,
+    variation_attributes: variationAttributes,
+  } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
@@ -205,6 +210,9 @@ function CategoryMappings({
         sectionId,
       })
     ) || {};
+  const hasVariationMappings =
+    (variationThemes && !!variationThemes.length) ||
+    (variationAttributes && !!variationAttributes.length);
 
   useEffect(() => {
     setRequestedGenerateFields(false);
@@ -325,7 +333,7 @@ function CategoryMappings({
             </span>
           </div>
 
-          {!!variationThemes && !!variationThemes.length && (
+          {hasVariationMappings && (
             <Tooltip title="Configure variations" placement="bottom">
               <IconButton
                 onClick={handleVariation}

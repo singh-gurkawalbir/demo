@@ -464,7 +464,13 @@ export default {
       return `{{${value.extract}}}`;
     }
   },
-  addVariationMap: (draft = {}, categoryId, childCategoryId, variation) => {
+  addVariationMap: (
+    draft = {},
+    categoryId,
+    childCategoryId,
+    variation,
+    isVariationAttributes
+  ) => {
     const { response = [] } = draft;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
 
@@ -484,16 +490,18 @@ export default {
 
       if (category) {
         if (categoryId === childCategoryId) {
-          variationMapping = category.variation_themes.find(
-            vm => vm.variation_theme === variation
-          );
+          if (!isVariationAttributes) {
+            variationMapping = category.variation_themes.find(
+              vm => vm.variation_theme === variation
+            );
 
-          if (!variationMapping) {
-            category.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: variation,
-              fieldMappings: [],
-            });
+            if (!variationMapping) {
+              category.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: variation,
+                fieldMappings: [],
+              });
+            }
           }
         }
 
@@ -508,16 +516,18 @@ export default {
         }
 
         if (subCategory) {
-          variationMapping = subCategory.variation_themes.find(
-            vm => vm.variation_theme === variation
-          );
+          if (!isVariationAttributes) {
+            variationMapping = subCategory.variation_themes.find(
+              vm => vm.variation_theme === variation
+            );
 
-          if (!variationMapping) {
-            subCategory.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: variation,
-              fieldMappings: [],
-            });
+            if (!variationMapping) {
+              subCategory.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: variation,
+                fieldMappings: [],
+              });
+            }
           }
         }
       }
@@ -609,7 +619,7 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId } = data;
+    const { categoryId, subCategoryId, isVariationAttributes } = data;
     const { response = [] } = draft[cKey];
     const mappingData = response.find(sec => sec.operation === 'mappingData');
     let categoryMappings;
@@ -630,7 +640,7 @@ export default {
         recordMappings.push({
           id: categoryId,
           children: [],
-          variation_themes: [],
+          [isVariationAttributes ? 'fieldMappings' : 'variation_themes']: [],
         });
         categoryMappings = recordMappings.find(
           mapping => mapping.id === categoryId
@@ -649,7 +659,7 @@ export default {
         categoryMappings.children.push({
           id: subCategoryId,
           children: [],
-          variation_themes: [],
+          [isVariationAttributes ? 'fieldMappings' : 'variation_themes']: [],
         });
       }
     }
