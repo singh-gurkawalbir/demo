@@ -55,10 +55,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   );
   const { defaultConfirmDialog } = useConfirmDialog();
   const integrationId = flowDetails._integrationId;
-  const accessLevel = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
   );
   const integrationAppName = useSelector(state => {
     const integration = selectors.resource(
@@ -194,12 +192,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  // TODO: Aditya: Does order of action matters?
-  if (['manage', 'owner'].includes(accessLevel)) {
-    if (integrationId) availableActions.push(allActions.detach);
-    availableActions.push(allActions.clone);
-    availableActions.push(allActions.delete);
-  }
+  if (integrationId && permission.detach)
+    availableActions.push(allActions.detach);
 
   if (!flowDetails._connectorId || flowDetails.showMapping)
     availableActions.push(allActions.mapping);
@@ -208,7 +202,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
+
+  if (permission.clone) availableActions.push(allActions.clone);
+
   availableActions.push(allActions.download);
+
+  if (permission.delete) availableActions.push(allActions.delete);
 
   // remove any actions that have explicitly been excluded.
   if (exclude && exclude.length) {

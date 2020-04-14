@@ -38,14 +38,15 @@ export default function ConnectionsPanel({ integrationId }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const accessLevel = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    )
   );
-  const canManageConnections =
-    !(integration && integration._connectorId) &&
-    ['manage', 'owner'].includes(accessLevel);
+  const isNotConnector = !(integration && integration._connectorId);
   const [tempId, setTempId] = useState(null);
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, tempId)
@@ -82,7 +83,7 @@ export default function ConnectionsPanel({ integrationId }) {
 
       <PanelHeader title="Connections">
         <Fragment>
-          {canManageConnections && (
+          {isNotConnector && permission.create && (
             <IconTextButton
               onClick={() => {
                 const newId = generateNewId();
@@ -105,7 +106,7 @@ export default function ConnectionsPanel({ integrationId }) {
               <AddIcon /> Create connection
             </IconTextButton>
           )}
-          {canManageConnections && !isStandalone && (
+          {isNotConnector && permission.register && !isStandalone && (
             <IconTextButton onClick={() => setShowRegister(true)}>
               <ConnectionsIcon /> Register connections
             </IconTextButton>

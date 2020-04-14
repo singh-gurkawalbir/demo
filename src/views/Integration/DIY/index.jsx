@@ -86,16 +86,15 @@ const tabs = [
 export default function Integration({ history, match }) {
   const classes = useStyles();
   const { integrationId, templateName } = match.params;
+  const isStandalone = integrationId === 'none';
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const accessLevel = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId)
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
@@ -245,7 +244,7 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {accessLevel === 'owner' && integration && (
+          {permission.clone && integration && (
             <IconTextButton
               component={Link}
               to={getRoutePath(
@@ -257,7 +256,7 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
 
-          {accessLevel === 'owner' && (
+          {!isStandalone && permission.delete && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"

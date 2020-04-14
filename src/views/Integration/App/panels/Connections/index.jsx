@@ -41,14 +41,16 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
-  const accessLevel = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    )
   );
-  const canManageConnections =
-    !(integration && integration._connectorId) &&
-    ['manage', 'owner'].includes(accessLevel);
+  // TODO: Do we need this check
+  const isNotConnector = !(integration && integration._connectorId);
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
@@ -72,8 +74,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       )}
 
       <PanelHeader title="Connections">
-        {canManageConnections && (
-          <Fragment>
+        <Fragment>
+          {isNotConnector && permission.create && (
             <IconTextButton
               component={Link}
               to={`${
@@ -81,11 +83,13 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
               }/add/connections/new-${shortid.generate()}`}>
               <AddIcon /> Create connection
             </IconTextButton>
+          )}
+          {isNotConnector && permission.register && (
             <IconTextButton onClick={() => setShowRegister(true)}>
               <ConnectionsIcon /> Register connections
             </IconTextButton>
-          </Fragment>
-        )}
+          )}
+        </Fragment>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">

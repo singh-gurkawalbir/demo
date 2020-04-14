@@ -28,10 +28,8 @@ export default function FlowsPanel({ integrationId }) {
   let flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
-  const accessLevel = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId)
-        .accessLevel
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
   );
 
   flows =
@@ -57,7 +55,7 @@ export default function FlowsPanel({ integrationId }) {
       <MappingDrawer integrationId={integrationId} />
 
       <PanelHeader title="Integration flows" infoText={infoTextFlow}>
-        {['owner', 'manage'].includes(accessLevel) && (
+        {permission.create && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -65,15 +63,15 @@ export default function FlowsPanel({ integrationId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-
-        {['owner', 'manage'].includes(accessLevel) && !isStandalone && (
+        {permission.attach && !isStandalone && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
             <AttachIcon /> Attach flow
           </IconTextButton>
         )}
-        {['owner', 'manage'].includes(accessLevel) && (
+        {/* check if this condition is correct */}
+        {permission.edit && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"
