@@ -90,6 +90,7 @@ export default function SwitchOnOff({
       <input
         type="checkbox"
         {...rest}
+        disabled={disabled}
         checked={on}
         className={classes.switchCheck}
         onChange={onClick}
