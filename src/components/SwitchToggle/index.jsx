@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles, fade } from '@material-ui/core/styles';
 
 const useStyle = makeStyles(theme => ({
@@ -65,13 +66,27 @@ const useStyle = makeStyles(theme => ({
       },
     },
   },
+  disabled: {
+    opacity: 0.5,
+    '& input': {
+      cursor: 'unset',
+    },
+  },
 }));
 
-export default function SwitchOnOff({ on = false, onClick, ...rest }) {
+export default function SwitchOnOff({
+  on = false,
+  disabled,
+  onClick,
+  ...rest
+}) {
   const classes = useStyle();
 
   return (
-    <div className={classes.switchSlider}>
+    <div
+      className={clsx(classes.switchSlider, {
+        [classes.disabled]: disabled,
+      })}>
       <input
         type="checkbox"
         {...rest}
