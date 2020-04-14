@@ -89,12 +89,11 @@ const setVariationMappingData = (
   flowId,
   recordMappings,
   mappings,
-  relationshipData
+  relationshipData = []
 ) => {
   recordMappings.forEach(mapping => {
-    const relation = Array.isArray(relationshipData)
-      ? relationshipData.find(rel => rel.id === mapping.id)
-      : relationshipData;
+    const relation =
+      relationshipData && relationshipData.find(rel => rel.id === mapping.id);
 
     if (!relation) return;
     const variationTheme =
@@ -140,12 +139,32 @@ const setVariationMappingData = (
       });
     }
 
-    if (mapping.children && mapping.children.length) {
+    if (relation.children && relation.children.length) {
+      const mappingKeys = Object.keys(mappings);
+
+      relation.children.forEach(child => {
+        const childExists = mapping.children.find(c => c.id === child.id);
+
+        if (!childExists) {
+          const mappingFound = mappingKeys.some(key =>
+            key.startsWith(`${flowId}-${child.id}`)
+          );
+
+          if (mappingFound) {
+            mapping.children.push({
+              id: child.id,
+              children: [],
+              variation_themes: [],
+            });
+          }
+        }
+      });
+
       setVariationMappingData(
         flowId,
         mapping.children,
         mappings,
-        relation.children
+        relationshipData
       );
     }
   });
@@ -593,6 +612,7 @@ export default {
     const { categoryId, subCategoryId } = data;
     const { response = [] } = draft[cKey];
     const mappingData = response.find(sec => sec.operation === 'mappingData');
+    let categoryMappings;
 
     if (
       mappingData.data &&
@@ -601,7 +621,8 @@ export default {
       mappingData.data.mappingData.variationMappings.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
-      const categoryMappings = recordMappings.find(
+
+      categoryMappings = recordMappings.find(
         mapping => mapping.id === categoryId
       );
 
@@ -611,6 +632,9 @@ export default {
           children: [],
           variation_themes: [],
         });
+        categoryMappings = recordMappings.find(
+          mapping => mapping.id === categoryId
+        );
       }
 
       if (!subCategoryId) {

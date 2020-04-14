@@ -1304,13 +1304,11 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
+    state && state.session,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,

@@ -13,13 +13,26 @@ function flattenChildrenStructrue(
   isRoot = true,
   options = {}
 ) {
-  const { deleted = [], isParentDeleted = false } = options;
+  const {
+    deleted = [],
+    isParentDeleted = false,
+    deleteChildlessParent = false,
+  } = options;
 
   if (meta) {
+    let allChildrenDeleted = false;
+
+    if (deleteChildlessParent && meta.children && meta.children.length) {
+      allChildrenDeleted = !meta.children.some(
+        child => !deleted.includes(child.id)
+      );
+    }
+
     result.push({
       ...meta,
       isRoot,
-      deleted: deleted.includes(meta.id) || isParentDeleted,
+      deleted:
+        allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -27,6 +40,7 @@ function flattenChildrenStructrue(
         flattenChildrenStructrue(result, child, false, {
           deleted,
           isParentDeleted: deleted.includes(meta.id),
+          deleteChildlessParent,
         })
       );
     }
@@ -716,7 +730,7 @@ export function categoryMappingData(state, integrationId, flowId) {
     return null;
   }
 
-  const { response = [], deleted = [] } = state[cKey] || emptyObj;
+  const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -729,7 +743,10 @@ export function categoryMappingData(state, integrationId, flowId) {
   }
 
   mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta, true, { deleted });
+    flattenChildrenStructrue(mappings, meta, true, {
+      deleted,
+      deleteChildlessParent: uiAssistant !== 'jet',
+    });
   });
 
   return mappings;
@@ -777,13 +794,11 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = categoryMappingGeneratesMetadata(
+    state,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,
@@ -792,7 +807,6 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     deleted,
     categoryRelationshipData
   );
-
   const initData = state[cKey].initMappingData;
 
   if (!initData || !initData.data || !initData.data.mappingData) {
