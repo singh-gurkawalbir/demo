@@ -255,9 +255,6 @@ export default function ConnectorInstallation(props) {
       }
 
       const newId = generateNewId();
-      const connObj = sourceConnection;
-
-      delete connObj._id;
 
       if (!_connectionId)
         dispatch(
