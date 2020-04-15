@@ -401,6 +401,10 @@ const metadata = {
       resourceId,
       previewData,
     }),
+  failedAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
+      resourceId,
+    }),
   resetAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,

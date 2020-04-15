@@ -1336,23 +1336,23 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
+    state && state.session,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
+  // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
+  const sessionMappings = deepClone(sessionMappedData);
 
   mappingUtil.setCategoryMappingData(
     flowId,
-    sessionMappedData,
+    sessionMappings,
     mappings,
     deleted,
     categoryRelationshipData
   );
 
-  return sessionMappedData;
+  return sessionMappings;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
