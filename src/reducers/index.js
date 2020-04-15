@@ -1465,7 +1465,7 @@ export function categoryRelationshipData(state, integrationId, flowId) {
 }
 
 export function mappingsForVariation(state, integrationId, flowId, filters) {
-  const { sectionId, variation } = filters;
+  const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};
   const recordMappings =
     fromSession.variationMappingData(
@@ -1476,6 +1476,10 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 
   if (recordMappings) {
     mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  if (isVariationAttributes) {
+    return mappings;
   }
 
   // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
