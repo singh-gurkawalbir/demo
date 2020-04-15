@@ -20,9 +20,6 @@ const NotFound = loadable(() =>
 const Permissions = loadable(() =>
   import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions')
 );
-const Resources = loadable(() =>
-  import(/* webpackChunkName: 'Resources' */ '../../views/Resources')
-);
 const Editors = loadable(() =>
   import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
 );
@@ -163,7 +160,6 @@ function AppRouting() {
 
       <Route path="/pg/dashboard" component={Dashboard} />
       <Route path="/pg/recycleBin" component={RecycleBin} />
-      <Route path="/pg/resources" component={Resources} />
       <Route path="/pg/editors" component={Editors} />
       <Route path="/pg/permissions" component={Permissions} />
       <Route path="/pg/myAccount/:tab" component={MyAccount} />
