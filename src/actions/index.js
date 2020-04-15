@@ -837,6 +837,19 @@ const integrationApp = {
         steps,
       }),
   },
+  clone: {
+    receivedIntegrationClonedStatus: (id, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: true,
+        integrationId,
+      }),
+    clearIntegrationClonedStatus: id =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: false,
+      }),
+  },
   // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
   isAddonInstallInprogress: (installInprogress, id) =>
     action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {

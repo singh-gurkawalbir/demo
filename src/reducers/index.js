@@ -3968,3 +3968,7 @@ export const getScriptContext = createSelector(
 export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);
 }
+
+export function integrationClonedDeatils(state, id) {
+  return fromSession.integrationClonedDeatils(state && state.session, id);
+}

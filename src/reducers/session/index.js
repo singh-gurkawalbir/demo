@@ -454,6 +454,13 @@ export function addNewStoreSteps(state, id) {
   );
 }
 
+export function integrationClonedDeatils(state, id) {
+  return fromIntegrationApps.integrationClonedDeatils(
+    state && state.integrationApps,
+    id
+  );
+}
+
 export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
