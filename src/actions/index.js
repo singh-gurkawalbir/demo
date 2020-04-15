@@ -402,6 +402,10 @@ const metadata = {
       resourceId,
       previewData,
     }),
+  failedAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
+      resourceId,
+    }),
   resetAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
@@ -746,10 +750,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId) =>
+    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
+        connectionDoc,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
