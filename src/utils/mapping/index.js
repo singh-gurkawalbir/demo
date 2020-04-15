@@ -96,47 +96,77 @@ const setVariationMappingData = (
       relationshipData && relationshipData.find(rel => rel.id === mapping.id);
 
     if (!relation) return;
-    const variationTheme =
-      relation.variation_themes &&
-      relation.variation_themes.find(theme => theme.id === 'variation_theme');
 
-    if (variationTheme) {
-      variationTheme.variation_attributes.forEach(vm => {
-        const key = `${flowId}-${mapping.id}-${vm}`;
+    if (relation.variation_attributes && relation.variation_attributes.length) {
+      const key = `${flowId}-${mapping.id}-variationAttributes`;
 
-        if (mappings[key]) {
-          const stagedMappings = mappings[key].staged || mappings[key].mappings;
-
-          if (!mapping.variation_themes.find(vt => vt.variation_theme === vm)) {
-            mapping.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: vm,
-              fieldMappings: [],
-            });
-          }
-
-          const variationMapping = mapping.variation_themes.find(
-            vt => vt.variation_theme === vm
+      if (mappings[key]) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.fieldMappings = mappings[key].mappings
+          .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
+          .map(
+            ({
+              index,
+              rowIdentifier,
+              hardCodedValueTmp,
+              visible,
+              ...rest
+            }) => ({
+              ...rest,
+            })
           );
 
+        if (mappings[key].lookups && mappings[key].lookups.length) {
           // eslint-disable-next-line no-param-reassign
-          variationMapping.fieldMappings = stagedMappings
-            .filter(
-              el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
-            )
-            .map(
-              ({
-                index,
-                rowIdentifier,
-                hardCodedValueTmp,
-                visible,
-                ...rest
-              }) => ({
-                ...rest,
-              })
-            );
+          mapping.lookups = mappings[key].lookups;
         }
-      });
+      }
+    } else {
+      const variationTheme =
+        relation.variation_themes &&
+        relation.variation_themes.find(theme => theme.id === 'variation_theme');
+
+      if (variationTheme) {
+        variationTheme.variation_attributes.forEach(vm => {
+          const key = `${flowId}-${mapping.id}-${vm}`;
+
+          if (mappings[key]) {
+            const stagedMappings =
+              mappings[key].staged || mappings[key].mappings;
+
+            if (
+              !mapping.variation_themes.find(vt => vt.variation_theme === vm)
+            ) {
+              mapping.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: vm,
+                fieldMappings: [],
+              });
+            }
+
+            const variationMapping = mapping.variation_themes.find(
+              vt => vt.variation_theme === vm
+            );
+
+            // eslint-disable-next-line no-param-reassign
+            variationMapping.fieldMappings = stagedMappings
+              .filter(
+                el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
+              )
+              .map(
+                ({
+                  index,
+                  rowIdentifier,
+                  hardCodedValueTmp,
+                  visible,
+                  ...rest
+                }) => ({
+                  ...rest,
+                })
+              );
+          }
+        });
+      }
     }
 
     if (relation.children && relation.children.length) {
