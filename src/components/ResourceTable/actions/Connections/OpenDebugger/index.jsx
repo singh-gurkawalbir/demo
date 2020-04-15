@@ -1,13 +1,25 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import moment from 'moment';
+import * as selectors from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 import actions from '../../../../../actions';
 
 export default {
   label: 'Open debugger',
-  component: function OpenDebugger({ resource }) {
+  component: function OpenDebugger({ resource, integrationId }) {
     const dispatch = useDispatch();
+    const canAccess = useSelector(
+      state =>
+        selectors.resourcePermissions(
+          state,
+          'integrations',
+          integrationId,
+          'connections'
+        ).edit
+    );
+
+    if (!canAccess) return null;
     const handleOpenDebuggerClick = () => {
       dispatch(actions.connection.requestDebugLogs(resource._id));
 
