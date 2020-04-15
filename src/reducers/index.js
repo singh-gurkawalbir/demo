@@ -2310,7 +2310,7 @@ export const resourcePermissions = createSelector(
   ],
   (resourceType, resourceId, subResourceType, permissions) => {
     if (!permissions) return emptyObject;
-    let value = permissions;
+    let value;
 
     if (resourceId) {
       if (
@@ -2324,9 +2324,13 @@ export const resourcePermissions = createSelector(
       ) {
         value = permissions.integrations.all;
       } else {
-        value = value[resourceType][resourceId];
+        value = permissions[resourceType][resourceId];
       }
-    } else if (resourceType) value[resourceType];
+    } else if (resourceType) {
+      value = permissions[resourceType];
+    } else {
+      value = permissions;
+    }
 
     return (
       (subResourceType ? value && value[subResourceType] : value) || emptyObject
