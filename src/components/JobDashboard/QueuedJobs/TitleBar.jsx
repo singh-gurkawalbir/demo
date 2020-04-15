@@ -8,6 +8,7 @@ import CloseIcon from '../../../components/icons/CloseIcon';
 import LoadResources from '../../../components/LoadResources';
 import BackArrowIcon from '../../../components/icons/BackArrowIcon';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -46,6 +47,11 @@ const useStyles = makeStyles(theme => ({
   dynaSelect: {
     minWidth: 350,
     margin: theme.spacing(0, 2),
+  },
+  helpTextButton: {
+    float: 'right',
+    padding: 1,
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -98,7 +104,6 @@ export default function DrawerTitleBar({
         <Typography variant="h3" className={classes.title}>
           {`Queue Stats : ${connectionName}`}
         </Typography>
-
         <DynaSelect
           id="queuedJobs_connection"
           label="Connection"
@@ -109,7 +114,13 @@ export default function DrawerTitleBar({
             { items: connections.map(c => ({ label: c.name, value: c.id })) },
           ]}
         />
-
+        {/* TODO: Sravan please add the helptext here */}
+        <Help
+          title="Queued Jobs"
+          className={classes.helpTextButton}
+          helpKey="test"
+          helpText="Dummy content here now, just to give styling to the element"
+        />
         <Divider orientation="veritical" className={classes.divider} />
         <IconButton
           data-test="closeQueuedJobs"
