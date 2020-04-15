@@ -6,6 +6,7 @@ import {
   useHistory,
   Route,
   useLocation,
+  Switch,
 } from 'react-router-dom';
 import * as selectors from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
@@ -151,6 +152,15 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
   );
+  const isVariationAttributes = useSelector(state => {
+    // eslint-disable-next-line camelcase
+    const { variation_attributes = [] } =
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId: subCategoryId,
+      }) || {};
+
+    return !!variation_attributes.length;
+  });
   const firstVariation =
     useSelector(state => {
       // property being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
@@ -177,18 +187,31 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       actions.integrationApp.settings.categoryMappings.cancelVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${variation}`
+        `${flowId}-${subCategoryId}-${
+          isVariationAttributes ? 'variationAttributes' : variation
+        }`
       )
     );
     handleClose();
-  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
+  }, [
+    dispatch,
+    flowId,
+    handleClose,
+    integrationId,
+    isVariationAttributes,
+    subCategoryId,
+    variation,
+  ]);
   const handleSave = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.saveVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${variation}`,
-        { categoryId, subCategoryId }
+        `${flowId}-${subCategoryId}-${
+          isVariationAttributes ? 'variationAttributes' : variation
+        }`,
+        { categoryId, subCategoryId, isVariationAttributes },
+        isVariationAttributes
       )
     );
     handleClose();
@@ -198,11 +221,12 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     flowId,
     handleClose,
     integrationId,
+    isVariationAttributes,
     subCategoryId,
     variation,
   ]);
 
-  if (!variation) {
+  if (!variation && !isVariationAttributes) {
     history.push(`${match.url}/${firstVariation}`);
 
     return null;
@@ -226,13 +250,15 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
         {metadataLoaded ? (
           <div className={classes.root}>
             <div className={classes.variationMapWrapper}>
-              <div className={classes.subNav}>
-                <VariationAttributesList
-                  integrationId={integrationId}
-                  flowId={flowId}
-                  categoryId={subCategoryId}
-                />
-              </div>
+              {!isVariationAttributes && (
+                <div className={classes.subNav}>
+                  <VariationAttributesList
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    categoryId={subCategoryId}
+                  />
+                </div>
+              )}
               <div className={classes.content}>
                 <PanelHeader
                   className={classes.header}
@@ -262,6 +288,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                     categoryId={categoryId}
                     sectionId={subCategoryId}
                     variation={variation}
+                    isVariationAttributes={isVariationAttributes}
                   />
                 </div>
                 <ButtonGroup className={classes.saveButtonGroup}>
@@ -296,18 +323,33 @@ export default function VariationMappingDrawerRoute(props) {
   const location = useLocation();
 
   return (
-    <Route
-      exact
-      path={[
-        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
-        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
-      ]}>
-      <LoadResources required resources="flows,exports,imports,connections">
-        <VariationMappingDrawer
-          {...props}
-          parentUrl={location.pathname.replace(/\/variations\/.*$/, '')}
-        />
-      </LoadResources>
-    </Route>
+    <LoadResources required resources="flows,exports,imports,connections">
+      <Switch>
+        <Route
+          exact
+          path={[
+            `${match.url}/:flowId/utilitymapping/:categoryId/variationAttributes/:subCategoryId`,
+          ]}>
+          <VariationMappingDrawer
+            {...props}
+            parentUrl={location.pathname.replace(
+              /\/variationAttributes\/.*$/,
+              ''
+            )}
+          />
+        </Route>
+        <Route
+          exact
+          path={[
+            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
+            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
+          ]}>
+          <VariationMappingDrawer
+            {...props}
+            parentUrl={location.pathname.replace(/\/variations\/.*$/, '')}
+          />
+        </Route>
+      </Switch>
+    </LoadResources>
   );
 }

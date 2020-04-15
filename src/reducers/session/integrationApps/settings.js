@@ -234,6 +234,7 @@ export default (state = {}, action) => {
             categoryId,
             childCategoryId,
             variation,
+            isVariationAttributes,
             netsuiteRecordType,
             ...additionalOptions
           } = options;
@@ -243,7 +244,8 @@ export default (state = {}, action) => {
               draft[cKey],
               categoryId,
               childCategoryId,
-              variation
+              variation,
+              isVariationAttributes
             );
           }
 
