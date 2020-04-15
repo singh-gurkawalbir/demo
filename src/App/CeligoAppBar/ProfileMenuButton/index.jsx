@@ -49,7 +49,9 @@ export default function ProfileMenuButton() {
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
   const avatarUrl = useSelector(state => selectors.avatarUrl(state));
-  const permissions = useSelector(state => selectors.userPermissions(state));
+  const userAccessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
   const accountOwnerEmail = useSelector(state => {
     const owner = selectors.accountOwner(state);
 
@@ -107,9 +109,8 @@ export default function ProfileMenuButton() {
               {accountOwnerEmail && (
                 <Fragment>
                   Account owner
-                  {permissions.accessLevel &&
-                    permissions.accessLevel !==
-                      USER_ACCESS_LEVELS.ACCOUNT_OWNER &&
+                  {userAccessLevel &&
+                    userAccessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER &&
                     `: ${accountOwnerEmail}`}
                 </Fragment>
               )}
@@ -124,11 +125,11 @@ export default function ProfileMenuButton() {
             color="secondary"
             component={Link}
             to={getRoutePath(
-              permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+              userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
                 ? '/myAccount/subscription'
                 : '/myAccount/profile'
             )}>
-            {permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+            {userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
               ? 'My account'
               : 'My profile'}
           </Button>

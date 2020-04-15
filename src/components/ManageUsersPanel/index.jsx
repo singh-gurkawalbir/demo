@@ -22,9 +22,10 @@ export default function ManageUsersPanel({ integrationId }) {
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
   const [userId, setUserId] = useState();
-  const permissions = useSelector(state => selectors.userPermissions(state));
-  const isAccountOwner =
-    permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+  const userAccessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
+  const isAccountOwner = userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
   const handleCloseDialog = useCallback(() => {
     setShowDialog(false);
   }, []);
