@@ -192,6 +192,8 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
+  'connection.rdbms.snowflake.warehouse':
+    'Warehouse used for executing compute process.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -1224,6 +1226,8 @@ export default {
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
   'connection.http.auth.oauth.scope':
+    'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
+  'connection.generic.http.auth.oauth.scope':
     'These are the scopes of access being requested from the authorization server. Use comma(,) to separate values.',
   'connection.http.auth.oauth.accessTokenHeaders':
     "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",

@@ -322,6 +322,7 @@ export default {
       type: 'text',
       label: 'Scopes',
       delimiter: ',',
+      helpKey: 'connection.generic.http.auth.oauth.scope',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
