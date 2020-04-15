@@ -61,40 +61,6 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
-const determineRequiredResources = type => {
-  const resourceType = [];
-
-  // Handling virtual resources types Page processor and Page generators
-  if (type === 'pageProcessor') {
-    resourceType.push('exports', 'imports');
-  } else if (type === 'pageGenerator') {
-    resourceType.push('exports');
-  } else {
-    resourceType.push(type);
-  }
-
-  // if its exports or imports then we need associated connections to be loaded
-  if (resourceType.includes('exports') || resourceType.includes('imports'))
-    return [...resourceType, 'connections'];
-
-  return resourceType;
-};
-
-const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
-  if (resourceType === 'pageGenerator') {
-    return 'Create source';
-  }
-
-  const queryParams = new URLSearchParams(queryParamStr);
-  const isConnectionFixFromImpExp =
-    queryParams.get('fixConnnection') === 'true';
-
-  if (isConnectionFixFromImpExp && resourceType === 'connections') {
-    return `Fix offline connection`;
-  }
-
-  return `${opTitle} ${resourceLabel.toLowerCase()}`;
-};
 
 export default function Panel(props) {
   const {
@@ -105,8 +71,16 @@ export default function Panel(props) {
     flowId,
     integrationId,
     ssLinkedConnectionId,
+    flowType,
   } = props;
-  const { id, resourceType, operation } = match.params;
+  const { resourceType, operation } = match.params;
+  let { id } = match.params;
+
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (!id) {
+      id = flowId;
+    }
+  }
 
   console.log(`ss Panel match.params ${JSON.stringify(match.params)}`);
   console.log(`ss Panel props ${JSON.stringify(props)}`);
@@ -127,16 +101,7 @@ export default function Panel(props) {
       resourceId: id,
       ssLinkedConnectionId,
       integrationId,
-    })
-  );
-  const newResourceId = useSelector(state =>
-    selectors.createdResourceId(state, id)
-  );
-  const resourceLabel = useSelector(state =>
-    selectors.getCustomResourceLabel(state, {
-      resourceId: id,
-      resourceType,
-      flowId,
+      flowType,
     })
   );
   const abortAndClose = useCallback(() => {
@@ -144,180 +109,8 @@ export default function Panel(props) {
     onClose();
     dispatch(actions.resource.clearStaged(id));
   }, [dispatch, id, onClose, resourceType]);
-  // if this form is for a page processor, we don't know if
-  // the new resource is an export or import. We determine this by
-  // peeking into the patch set from the first step in PP/PG creation.
-  // The patch set should have a value for /adaptorType which
-  // contains [*Import|*Export].
-  const stagedProcessor = useSelector(state =>
-    selectors.stagedResource(state, id)
-  );
-  const applicationType = useSelector(state => {
-    const stagedResource = selectors.stagedResource(state, id);
-
-    if (!stagedResource || !stagedResource.patch) {
-      return '';
-    }
-
-    function getStagedValue(key) {
-      const result = stagedResource.patch.find(
-        p => p.op === 'replace' && p.path === key
-      );
-
-      return result && result.value;
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = getStagedValue('/adaptorType');
-    const assistant = getStagedValue('/assistant');
-
-    if (adaptorType === 'WebhookExport') {
-      return getStagedValue('/webhook/provider');
-    }
-
-    if (adaptorType && adaptorType.startsWith('RDBMS')) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        getStagedValue('/_connectionId')
-      );
-
-      return connection && connection.rdbms && connection.rdbms.type;
-    }
-
-    return assistant || adaptorType;
-  });
-  const isMultiStepSaveResource = [
-    'imports',
-    'exports',
-    'connections',
-    'pageGenerator',
-    'pageProcessor',
-  ].includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
-
-  function lookupProcessorResourceType() {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      // TODO: we need a better pattern for logging warnings. We need a common util method
-      // which logs these warning only if the build is dev... if build is prod, these
-      // console.warn/logs should not even be bundled by webpack...
-      // eslint-disable-next-line
-      return console.warn(
-        'No patch-set available to determine new Page Processor resourceType.'
-      );
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/adaptorType'
-    );
-
-    // console.log(`adaptorType-${id}`, adaptorType);
-
-    if (!adaptorType || !adaptorType.value) {
-      // eslint-disable-next-line
-      console.warn(
-        'No replace operation against /adaptorType found in the patch-set.'
-      );
-    }
-
-    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }
-
-  function getEditUrl(id) {
-    // console.log(location);
-    const segments = location.pathname.split('/');
-    const { length } = segments;
-
-    segments[length - 1] = id;
-    segments[length - 3] = 'edit';
-
-    if (resourceType === 'pageGenerator') {
-      segments[length - 2] = 'exports';
-    } else if (resourceType === 'pageProcessor') {
-      segments[length - 2] = lookupProcessorResourceType();
-    }
-
-    const url = segments.join('/');
-
-    return url;
-  }
-
-  function handleSubmitComplete() {
-    if (isNew) {
-      // The following block of logic is used specifically for pageProcessor
-      // and pageGenerator forms. These forms allow a user to choose an
-      // existing resource. In this case we dont have any more work to do,
-      // we just need to match the temp 'new-xxx' id with the one the user
-      // selected.
-
-      if (resourceType === 'integrations') {
-        return props.history.replace(
-          `/pg/${resourceType}/${newResourceId}/flows`
-        );
-      }
-
-      const resourceIdPatch = stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/resourceId'
-      );
-      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
-
-      if (isMultiStepSaveResource) {
-        if (!resourceId) {
-          return props.history.replace(getEditUrl(id));
-        }
-
-        // Take care of existing resource selection.
-        enqueueSnackbar({
-          message: `${resourceLabel} added`,
-          variant: 'success',
-        });
-      }
-      // this is NOT a case where a user selected an existing resource,
-      // so move to step 2 of the form...
-
-      dispatch(actions.resource.created(resourceId, id));
-      onClose();
-    } else {
-      // For web hook generate URL case
-      // Form should re render with created new Id
-      // Below code just replaces url with created Id and form re initializes
-      if (formState.skipClose) {
-        props.history.replace(
-          generatePath(match.path, {
-            id: newResourceId || id,
-            resourceType,
-            operation,
-          })
-        );
-
-        return;
-      }
-
-      if (newResourceId)
-        enqueueSnackbar({
-          message: `${resourceLabel} created`,
-          variant: 'success',
-        });
-      onClose();
-    }
-  }
-
-  const showApplicationLogo =
-    flowId &&
-    ['exports', 'imports'].includes(resourceType) &&
-    !!applicationType;
-  const requiredResources = determineRequiredResources(resourceType);
-  const title = useMemo(
-    () =>
-      getTitle({
-        resourceType,
-        queryParamStr: location.search,
-        resourceLabel,
-        opTitle: 'Edit',
-      }),
-    [location.search, resourceLabel, resourceType]
-  );
+  const submitButtonLabel = 'Save';
+  const requiredResources = []; // determineRequiredResources(resourceType);
   const resize = (width, height) => {
     setNotificationPanelHeight(height);
   };
@@ -326,14 +119,7 @@ export default function Panel(props) {
     <Fragment>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">{title}</Typography>
-          {showApplicationLogo && (
-            <ApplicationImg
-              className={classes.appLogo}
-              size="small"
-              type={applicationType}
-            />
-          )}
+          <Typography variant="h3">{`Edit ${resourceType}`}</Typography>
           <IconButton
             data-test="closeFlowSchedule"
             aria-label="Close"
@@ -366,7 +152,7 @@ export default function Panel(props) {
               resourceId={id}
               cancelButtonLabel="Cancel"
               submitButtonLabel={submitButtonLabel}
-              onSubmitComplete={handleSubmitComplete}
+              // onSubmitComplete={handleSubmitComplete}
               onCancel={abortAndClose}
               {...props}
             />

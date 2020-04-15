@@ -73,7 +73,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
   }
 
-  const isNotYetSupported = getDomain() !== 'localhost.io';
+  const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(
+    getDomain()
+  );
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();

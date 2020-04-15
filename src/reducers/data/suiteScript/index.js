@@ -181,7 +181,7 @@ export function integrations(state, ssLinkedConnectionId) {
 
 export function resource(
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId }
+  { resourceType, id, ssLinkedConnectionId, integrationId, flowType }
 ) {
   if (
     !state ||
@@ -214,8 +214,17 @@ export function resource(
   if (suiteScriptResourceType === 'flows') {
     // match = resources.find(r => [r.type, r._id].join('-') === id);
     match = resources.find(
-      r => r._id === id && r._integrationId === integrationId
+      r =>
+        r._id === id &&
+        r.type === flowType &&
+        r._integrationId === integrationId
     );
+
+    if (resourceType === 'ss-exports') {
+      match = match.export;
+    } else if (resourceType === 'ss-imports') {
+      match = match.import;
+    }
   } else {
     match = resources.find(r => r._id === id);
   }

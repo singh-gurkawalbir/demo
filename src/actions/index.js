@@ -1635,7 +1635,8 @@ const suiteScript = {
       scope,
       ssLinkedConnectionId,
       integrationId,
-      resourceType
+      resourceType,
+      flowType
     ) =>
       action(actionTypes.RESOURCE.STAGE_PATCH, {
         patch,
@@ -1644,6 +1645,7 @@ const suiteScript = {
           integrationId,
           resourceType,
           resourceId: id,
+          flowType,
         }),
         scope,
       }),
@@ -1652,7 +1654,8 @@ const suiteScript = {
       scope,
       ssLinkedConnectionId,
       integrationId,
-      resourceType
+      resourceType,
+      flowType
     ) =>
       action(actionTypes.RESOURCE.STAGE_CLEAR, {
         id: suiteScriptResourceKey({
@@ -1660,6 +1663,7 @@ const suiteScript = {
           integrationId,
           resourceType,
           resourceId: id,
+          flowType,
         }),
         scope,
       }),

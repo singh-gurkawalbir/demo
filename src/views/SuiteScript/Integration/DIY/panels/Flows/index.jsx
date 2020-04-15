@@ -37,6 +37,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
           <FlowCard
             key={f._id}
             flowId={f._id}
+            flowType={f.type}
             integrationId={integrationId}
             ssLinkedConnectionId={ssLinkedConnectionId}
             excludeActions={['schedule']}

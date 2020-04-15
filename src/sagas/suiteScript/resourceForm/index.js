@@ -196,6 +196,7 @@ export function* submitFormValues({
   isGenerate,
   ssLinkedConnectionId,
   integrationId,
+  flowType,
 }) {
   let formValues = { ...values };
 
@@ -260,6 +261,7 @@ export function* submitFormValues({
         integrationId,
         resourceType,
         resourceId,
+        flowType,
       }),
       SCOPES.VALUE
     );

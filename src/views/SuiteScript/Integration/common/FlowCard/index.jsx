@@ -64,6 +64,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowCard({
   flowId,
+  flowType,
   integrationId,
   ssLinkedConnectionId,
   excludeActions,
@@ -77,6 +78,7 @@ export default function FlowCard({
         id: flowId,
         integrationId,
         ssLinkedConnectionId,
+        flowType,
       })
     ) || {};
   const isDataloader = flowDetails.isSimpleImport;
