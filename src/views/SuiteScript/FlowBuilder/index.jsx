@@ -102,12 +102,7 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const match = useRouteMatch();
-  const {
-    ssLinkedConnectionId,
-    integrationId,
-    flowType,
-    flowId,
-  } = match.params;
+  const { ssLinkedConnectionId, integrationId, flowId } = match.params;
   const isNewFlow = false;
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
@@ -119,7 +114,6 @@ function FlowBuilder() {
         id: flowId,
         ssLinkedConnectionId,
         integrationId,
-        flowType,
       }).merged,
     shallowEqual
   );
@@ -155,7 +149,6 @@ function FlowBuilder() {
       {JSON.stringify({
         ssLinkedConnectionId,
         integrationId,
-        flowType,
         flowId,
       })}
       <ResourceDrawer
@@ -163,7 +156,6 @@ function FlowBuilder() {
         disabled={isViewMode}
         integrationId={integrationId}
         ssLinkedConnectionId={ssLinkedConnectionId}
-        flowType={flowType}
       />
       <CeligoPageBar
         title={
@@ -212,17 +204,7 @@ function FlowBuilder() {
             </Typography>
 
             <div className={classes.generatorContainer}>
-              <PageGenerator
-                // onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-                ssLinkedConnectionId={ssLinkedConnectionId}
-                flowType={flow.type}
-                flowId={flowId}
-                integrationId={integrationId}
-                key={`${flowId}-export`}
-                index={0}
-                isViewMode={isViewMode}
-                isLast
-              />
+              <PageGenerator isViewMode={isViewMode} />
             </div>
           </div>
           <div className={classes.processorRoot}>
@@ -234,13 +216,8 @@ function FlowBuilder() {
             </Typography>
             <div className={classes.processorContainer}>
               <PageProcessor
-                flowId={flowId}
-                integrationId={integrationId}
-                key={`${flowId}-import`}
-                index={0}
                 isViewMode={isViewMode}
                 isMonitorLevelAccess={false}
-                isLast
               />
             </div>
           </div>

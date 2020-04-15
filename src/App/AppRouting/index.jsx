@@ -193,7 +193,7 @@ export default class AppRouting extends Component {
         />
         <Route
           path={[
-            '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowType/:flowId',
+            '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId',
           ]}>
           <SuiteScriptFlowBuilder />
         </Route>

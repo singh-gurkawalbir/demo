@@ -16,14 +16,11 @@ export default (state = {}, action) => {
     initData,
     ssLinkedConnectionId,
     integrationId,
-    flowType,
   } = action;
   const key = suiteScriptResourceKey({
     ssLinkedConnectionId,
-    integrationId,
     resourceType,
     resourceId,
-    flowType,
   });
   const stateCopy = { ...state, [key]: { ...state[key] } };
 
@@ -116,7 +113,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function resourceFormState(
   state,
-  { ssLinkedConnectionId, integrationId, resourceType, resourceId, flowType }
+  { ssLinkedConnectionId, integrationId, resourceType, resourceId }
 ) {
   if (!state) {
     return {};
@@ -124,10 +121,8 @@ export function resourceFormState(
 
   const key = suiteScriptResourceKey({
     ssLinkedConnectionId,
-    integrationId,
     resourceType,
     resourceId,
-    flowType,
   });
 
   return state[key] || {};
@@ -135,15 +130,13 @@ export function resourceFormState(
 
 export function resourceFormSaveProcessTerminated(
   state,
-  { ssLinkedConnectionId, integrationId, resourceType, resourceId, flowType }
+  { ssLinkedConnectionId, integrationId, resourceType, resourceId }
 ) {
   if (!state) return false;
   const key = suiteScriptResourceKey({
     ssLinkedConnectionId,
-    integrationId,
     resourceType,
     resourceId,
-    flowType,
   });
 
   if (!state[key]) return false;

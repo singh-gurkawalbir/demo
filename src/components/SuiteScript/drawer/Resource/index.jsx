@@ -83,12 +83,11 @@ export default function ResourceDrawerRoute() {
     integrationId,
     flowId,
     disabled,
-    flowType,
   } = match.params;
 
   return (
     <Route
-      path={`${match.url}/:operation(edit)/:resourceType/:id?`}
+      path={`${match.url}/:operation(edit)/:resourceType/:id`}
       // Note that we disable the eslint warning since Route
       // uses "children" as a prop and this is the intended
       // use (per their docs)
@@ -109,7 +108,6 @@ export default function ResourceDrawerRoute() {
             integrationId={integrationId}
             ssLinkedConnectionId={ssLinkedConnectionId}
             disabled={!isConnectionUnderFlowContext && disabled}
-            flowType={flowType}
           />
         );
       }}

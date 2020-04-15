@@ -87,11 +87,26 @@ export default (state = {}, action) => {
                 const index = draft[ssLinkedConnectionId].flows.findIndex(
                   f => f.type === flow.type && f._id === flow._id
                 );
+                const flowId = `${
+                  {
+                    EXPORT: 'e',
+                    IMPORT: 'i',
+                    REALTIME_EXPORT: 're',
+                  }[flow.type]
+                }${flow._id}`;
 
                 if (index === -1) {
-                  draft[ssLinkedConnectionId].flows.push(flow);
+                  draft[ssLinkedConnectionId].flows.push({
+                    ...flow,
+                    ssLinkedConnectionId,
+                    _id: flowId,
+                  });
                 } else {
-                  draft[ssLinkedConnectionId].flows[index] = flow;
+                  draft[ssLinkedConnectionId].flows[index] = {
+                    ...flow,
+                    ssLinkedConnectionId,
+                    _id: flowId,
+                  };
                 }
               });
             }
@@ -179,10 +194,7 @@ export function integrations(state, ssLinkedConnectionId) {
   return state[ssLinkedConnectionId].integrations;
 }
 
-export function resource(
-  state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, flowType }
-) {
+export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -195,39 +207,15 @@ export function resource(
 
   let suiteScriptResourceType = resourceType;
 
-  if (
-    ['suitescriptexports', 'suitescriptimports'].includes(
-      suiteScriptResourceType
-    )
-  ) {
+  if (['exports', 'imports'].includes(suiteScriptResourceType)) {
     suiteScriptResourceType = 'flows';
-  } else if (suiteScriptResourceType === 'suitescriptconnections') {
-    suiteScriptResourceType = 'connections';
   }
 
   const resources = state[ssLinkedConnectionId][suiteScriptResourceType];
 
   if (!resources) return null;
 
-  let match;
-
-  if (suiteScriptResourceType === 'flows') {
-    // match = resources.find(r => [r.type, r._id].join('-') === id);
-    match = resources.find(
-      r =>
-        r._id === id &&
-        r.type === flowType &&
-        r._integrationId === integrationId
-    );
-
-    if (resourceType === 'ss-exports') {
-      match = match.export;
-    } else if (resourceType === 'ss-imports') {
-      match = match.import;
-    }
-  } else {
-    match = resources.find(r => r._id === id);
-  }
+  const match = resources.find(r => r._id === id);
 
   if (!match) return null;
 

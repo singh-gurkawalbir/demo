@@ -269,14 +269,13 @@ export const hasSuiteScriptData = (
 
 export const suiteScriptResource = (
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, flowType }
+  { resourceType, id, ssLinkedConnectionId, integrationId }
 ) =>
   fromSuiteScript.resource(state && state.suiteScript, {
     resourceType,
     id,
     ssLinkedConnectionId,
     integrationId,
-    flowType,
   });
 
 export const suiteScriptResourceList = (

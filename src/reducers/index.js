@@ -4010,19 +4010,18 @@ export function suiteScriptResourceStatus(
 
 export const suiteScriptResource = (
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, flowType }
+  { resourceType, id, ssLinkedConnectionId, integrationId }
 ) =>
   fromData.suiteScriptResource(state && state.data, {
     resourceType,
     id,
     ssLinkedConnectionId,
     integrationId,
-    flowType,
   });
 
 export const suiteScriptResourceData = (
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, scope, flowType }
+  { resourceType, id, ssLinkedConnectionId, integrationId, scope }
 ) => {
   if (!state || !resourceType || !id || !ssLinkedConnectionId)
     return emptyObject;
@@ -4037,16 +4036,13 @@ export const suiteScriptResourceData = (
     id,
     ssLinkedConnectionId,
     integrationId,
-    flowType,
   });
   const { patch, conflict } = fromSession.stagedResource(
     state.session,
     suiteScriptResourceKey({
       ssLinkedConnectionId,
-      integrationId,
       resourceType,
       resourceId: id,
-      flowType,
     }),
     scope
   );

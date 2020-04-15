@@ -144,7 +144,6 @@ export default function AppBlock({
   schedule,
   index,
   ssLinkedConnectionId,
-  flowType,
   ...rest
 }) {
   const classes = useStyles();

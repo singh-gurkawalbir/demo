@@ -123,6 +123,8 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
 
   if (resourceType === 'integrations') {
     actionButtons = ['save'];
+  } else if (['exports', 'imports'].includes(resourceType)) {
+    actionButtons = ['save', 'cancel'];
   }
 
   return (
@@ -193,6 +195,7 @@ export const ResourceFormFactory = props => {
     flowId,
     connection,
     ssLinkedConnectionId,
+    integrationId,
   } = props;
 
   useEffect(() => {

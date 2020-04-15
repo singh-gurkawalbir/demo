@@ -71,7 +71,6 @@ export default function Panel(props) {
     flowId,
     integrationId,
     ssLinkedConnectionId,
-    flowType,
   } = props;
   const { resourceType, operation } = match.params;
   let { id } = match.params;
@@ -101,7 +100,6 @@ export default function Panel(props) {
       resourceId: id,
       ssLinkedConnectionId,
       integrationId,
-      flowType,
     })
   );
   const abortAndClose = useCallback(() => {

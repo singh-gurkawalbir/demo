@@ -179,8 +179,22 @@ const getResourceFormAssets = ({
   if (ssLinkedConnectionId) {
     meta = formMeta.suiteScript[resourceType];
 
-    if (resource.type) {
-      meta = meta[resource.type];
+    if (resourceType === 'connections') {
+      if (resource.type) {
+        meta = meta[resource.type];
+      }
+    } else if (resourceType === 'exports') {
+      const ssExport = resource.export;
+
+      if (ssExport.netsuite && ssExport.netsuite.type) {
+        meta = meta.netsuite[ssExport.netsuite.type];
+      } else if (ssExport.type === 'salesforce') {
+        if (ssExport.salesforce.type === 'sobject') {
+        } else {
+        }
+      } else {
+        meta = meta[ssExport.type];
+      }
     }
 
     if (meta) {

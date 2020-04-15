@@ -31,16 +31,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const PageGenerator = ({ history, match }) => {
+  const { flowId } = match.params;
   const classes = useStyles();
   const handleBlockClick = useCallback(() => {
-    const to = `${match.url}/edit/exports/123`;
+    const to = `${match.url}/edit/exports/${flowId}`;
 
     if (match.isExact) {
       history.push(to);
     } else {
       history.replace(to);
     }
-  }, [history, match.isExact, match.url]);
+  }, [flowId, history, match.isExact, match.url]);
 
   return (
     <div className={classes.pgContainer}>

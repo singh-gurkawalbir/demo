@@ -64,7 +64,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function FlowCard({
   flowId,
-  flowType,
   integrationId,
   ssLinkedConnectionId,
   excludeActions,
@@ -78,7 +77,6 @@ export default function FlowCard({
         id: flowId,
         integrationId,
         ssLinkedConnectionId,
-        flowType,
       })
     ) || {};
   const isDataloader = flowDetails.isSimpleImport;
@@ -116,7 +114,7 @@ export default function FlowCard({
   const flowBuilderPathName = isDataloader ? 'dataLoader' : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${integrationAppName}/${flowDetails._integrationId}/${flowBuilderPathName}/${flowId}`
-    : `${flowBuilderPathName}/${flowDetails.type}/${flowId}`;
+    : `${flowBuilderPathName}/${flowId}`;
 
   return (
     <div className={classes.root}>
