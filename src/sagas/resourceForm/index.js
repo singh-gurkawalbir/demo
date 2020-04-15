@@ -12,7 +12,7 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas from '../resourceForm/connections';
+import connectionSagas, { createPayload } from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -318,6 +318,30 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
   );
 }
 
+export function* newIAFrameWorkPayload({ resourceId }) {
+  const { patch: allPatches } = yield select(
+    selectors.stagedResource,
+    resourceId
+  );
+
+  if (
+    allPatches &&
+    allPatches.find(item => item.path === '/newIA') &&
+    allPatches.find(item => item.path === '/newIA').value
+  ) {
+    return {
+      id: (allPatches.find(item => item.path === '/_integrationId') || {})
+        .value,
+      connectionType: (allPatches.find(item => item.path === '/type') || {})
+        .value,
+      assistant: (allPatches.find(item => item.path === '/assistant') || {})
+        .value,
+    };
+  }
+
+  return null;
+}
+
 export function* submitFormValues({
   resourceType,
   resourceId,
@@ -326,6 +350,27 @@ export function* submitFormValues({
   isGenerate,
 }) {
   let formValues = { ...values };
+  const isNewIA = yield call(newIAFrameWorkPayload, {
+    resourceId,
+  });
+
+  if (isNewIA) {
+    // UI will not create a connection in New IA installer. Connection payload will be given to backend.
+    // Backend will create a connection and connection id will get back in reponse.
+    const connectionPayload = yield call(createPayload, {
+      values,
+      resourceType: 'connections',
+      resourceId,
+    });
+
+    return yield put(
+      actions.resourceForm.submitComplete(
+        resourceType,
+        resourceId,
+        connectionPayload
+      )
+    );
+  }
 
   yield call(deleteFormViewAssistantValue, {
     resourceType,

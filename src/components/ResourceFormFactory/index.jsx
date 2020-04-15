@@ -83,8 +83,7 @@ export const FormStateManager = props => {
 
   useEffect(() => {
     if (formState.submitComplete && onSubmitComplete) {
-      // console.log('fired onSubmitComplete');
-      onSubmitComplete();
+      onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.submitComplete /* , onSubmitComplete */]);

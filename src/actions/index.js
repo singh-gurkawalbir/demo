@@ -128,6 +128,15 @@ const connection = {
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
+  requestQueuedJobs: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  receivedQueuedJobs: (queuedJobs, connectionId) =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
+      queuedJobs,
+      connectionId,
+    }),
+  cancelQueuedJob: jobId =>
+    action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -417,6 +426,10 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
+    }),
+  failedAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
+      resourceId,
     }),
   resetAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
@@ -763,10 +776,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId) =>
+    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
+        connectionDoc,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {

@@ -497,6 +497,10 @@ export function debugLogs(state) {
   return fromConnections.debugLogs(state && state.connections);
 }
 
+export function queuedJobs(state, connectionId) {
+  return fromConnections.queuedJobs(state && state.connections, connectionId);
+}
+
 const lastExportDateTime = {};
 
 export function getLastExportDateTime(state, flowId) {
