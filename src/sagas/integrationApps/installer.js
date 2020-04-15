@@ -1,7 +1,10 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
+import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
+import { isOauth } from '../../utils/resource';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -71,16 +74,20 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   }
 }
 
-export function* installScriptStep({ id, connectionId }) {
+export function* installScriptStep({ id, connectionId, connectionDoc }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
+  // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
+  // create a connection If step doesn't contain a connection Id.
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body: connectionId ? { _connectionId: connectionId } : {},
+        body: connectionId
+          ? { _connectionId: connectionId }
+          : { connection: connectionDoc },
         method: 'POST',
       },
       hidden: true,
@@ -94,6 +101,30 @@ export function* installScriptStep({ id, connectionId }) {
 
   if (!stepCompleteResponse) {
     return yield put(actions.resource.request('integrations', id));
+  }
+
+  if (!isEmpty(connectionDoc)) {
+    yield put(actions.resource.requestCollection('connections'));
+  }
+
+  const currentConnectionStep =
+    stepCompleteResponse &&
+    stepCompleteResponse.find(
+      temp =>
+        temp.completed === false &&
+        temp._connectionId &&
+        temp.type === 'connection'
+    );
+
+  if (currentConnectionStep && isOauth(connectionDoc)) {
+    try {
+      yield call(
+        openOAuthWindowForConnection,
+        currentConnectionStep._connectionId
+      );
+    } catch (e) {
+      // could not close the window
+    }
   }
 
   yield put(
