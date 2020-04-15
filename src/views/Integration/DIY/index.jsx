@@ -86,7 +86,6 @@ const tabs = [
 export default function Integration({ history, match }) {
   const classes = useStyles();
   const { integrationId, templateName } = match.params;
-  const isStandalone = integrationId === 'none';
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();

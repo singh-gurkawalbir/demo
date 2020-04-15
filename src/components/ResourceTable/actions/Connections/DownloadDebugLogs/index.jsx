@@ -6,11 +6,22 @@ import openExternalUrl from '../../../../../utils/window';
 
 export default {
   label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource }) {
+  component: function DownloadDebugLogs({ resource, integrationId }) {
     let url = `/connections/${resource._id}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
     );
+    const canAccess = useSelector(
+      state =>
+        selectors.resourcePermissions(
+          state,
+          'integrations',
+          integrationId,
+          'connections'
+        ).edit
+    );
+
+    if (!canAccess) return null;
     const handleDownloadDebugLogsClick = () => {
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
         url += `?integrator-ashareid=${
