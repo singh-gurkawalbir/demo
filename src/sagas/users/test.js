@@ -390,6 +390,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -407,6 +408,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -426,6 +428,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -446,6 +449,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -468,6 +472,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );

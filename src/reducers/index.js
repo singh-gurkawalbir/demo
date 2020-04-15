@@ -1341,16 +1341,18 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
     integrationId,
     flowId
   );
+  // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
+  const sessionMappings = deepClone(sessionMappedData);
 
   mappingUtil.setCategoryMappingData(
     flowId,
-    sessionMappedData,
+    sessionMappings,
     mappings,
     deleted,
     categoryRelationshipData
   );
 
-  return sessionMappedData;
+  return sessionMappings;
 }
 
 export function categoryMapping(state, integrationId, flowId) {

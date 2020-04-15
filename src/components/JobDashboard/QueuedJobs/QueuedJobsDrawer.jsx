@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Route, useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 import { Button, Drawer, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
@@ -62,17 +63,33 @@ const metadata = {
 };
 const useStyles = makeStyles(theme => ({
   content: {
-    margin: theme.spacing(1),
+    padding: theme.spacing(1, 2),
   },
   drawerPaper: {
     marginTop: theme.appBarHeight,
-    width: `90%`,
+    width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     overflowX: 'hidden',
+  },
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
+  },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
+  },
+  info: {
+    padding: theme.spacing(1, 0),
+  },
+  infoNumber: {
+    fontWeight: 'bold',
+    paddingLeft: theme.spacing(0.5),
+  },
+  infoBlock: {
+    marginRight: 12,
   },
 }));
 
@@ -132,13 +149,18 @@ function QueuedJobs({ parentUrl }) {
     history.push(parentUrl);
   };
 
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
   return (
     <Fragment>
       <Drawer
         anchor="right"
         open={!!match}
         classes={{
-          paper: classes.drawerPaper,
+          paper: clsx(classes.drawerPaper, {
+            [classes.fullWidthDrawerClose]: !drawerOpened,
+            [classes.fullWidthDrawerOpen]: drawerOpened,
+          }),
         }}
         onClose={handleClose}>
         <DrawerTitleBar
@@ -149,15 +171,25 @@ function QueuedJobs({ parentUrl }) {
           parentUrl={parentUrl}
         />
         <div className={classes.content}>
-          <div>
-            Jobs in Queue: {connectionJobs && connectionJobs.length} Messages in
-            Queue: {queueSize}
+          <div className={classes.info}>
+            <Typography variant="body1" component="div">
+              <span className={classes.infoBlock}>
+                Jobs in Queue:
+                <span className={classes.infoNumber}>
+                  {connectionJobs && connectionJobs.length}
+                </span>
+              </span>
+              <span className={classes.infoBlock}>
+                Messages in Queue:
+                <span className={classes.infoNumber}>{queueSize}</span>
+              </span>
+            </Typography>
           </div>
-          <div>
+          <div className={classes.info}>
             {connectionJobs && connectionJobs.length > 0 ? (
               <CeligoTable data={connectionJobs} {...metadata} />
             ) : (
-              <Typography>{NO_PENDING_QUEUED_JOBS}</Typography>
+              <Typography variant="body1">{NO_PENDING_QUEUED_JOBS}</Typography>
             )}
           </div>
         </div>

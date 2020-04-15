@@ -3,7 +3,7 @@
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,7 +18,11 @@ import {
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import { getResourceSubType } from '../../../../../utils/resource';
+import {
+  getResourceSubType,
+  generateNewId,
+  isOauth,
+} from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
@@ -27,6 +31,8 @@ import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import jsonUtil from '../../../../../utils/json';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,6 +67,16 @@ const getConnectionType = resource => {
     if (resource.netsuite.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
+  } else if (resource.type === 'shopify') {
+    if (
+      resource.http &&
+      resource.http.auth &&
+      resource.http.auth.type === 'oauth'
+    ) {
+      return 'shopify-oauth';
+    }
+
+    return '';
   }
 
   return type;
@@ -70,7 +86,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
-  const [selectedConnectionId, setSelectedConnectionId] = useState(null);
+  const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
@@ -81,11 +97,18 @@ export default function ConnectorInstallation(props) {
     selectors.integrationInstallSteps(state, integrationId)
   );
   const selectedConnection = useSelector(state =>
-    selectors.resource(state, 'connections', selectedConnectionId)
+    selectors.resource(
+      state,
+      'connections',
+      connection && connection._connectionId
+    )
   );
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const handleClose = useCallback(() => {
+    setConnection(false);
+  }, []);
   const isFrameWork2 =
     integration && integration.installSteps && integration.installSteps.length;
 
@@ -101,10 +124,65 @@ export default function ConnectorInstallation(props) {
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
   const mode = integration && integration.mode;
-  const oAuthApplications = [
-    ...resourceConstants.OAUTH_APPLICATIONS,
-    'netsuite-oauth',
-  ];
+  const oAuthApplications = useMemo(
+    () => [
+      ...resourceConstants.OAUTH_APPLICATIONS,
+      'netsuite-oauth',
+      'shopify-oauth',
+    ],
+    []
+  );
+  const handleSubmitComplete = useCallback(
+    (connId, isAuthorized, connectionDoc = {}) => {
+      // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
+      const step = installSteps.find(s => s.isCurrentStep);
+
+      if (
+        selectedConnection &&
+        oAuthApplications.includes(getConnectionType(selectedConnection)) &&
+        !isAuthorized
+      ) {
+        return;
+      }
+
+      dispatch(
+        actions.integrationApp.installer.updateStep(
+          integrationId,
+          (step || {}).installerFunction,
+          'inProgress'
+        )
+      );
+
+      if (isFrameWork2) {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(
+            integrationId,
+            connection && connection._connectionId,
+            connectionDoc
+          )
+        );
+      } else {
+        dispatch(
+          actions.integrationApp.installer.installStep(
+            integrationId,
+            (step || {}).installerFunction,
+            connection && connection._connectionId
+          )
+        );
+      }
+
+      if (!isOauth(connectionDoc)) setConnection(false);
+    },
+    [
+      connection,
+      dispatch,
+      installSteps,
+      integrationId,
+      isFrameWork2,
+      oAuthApplications,
+      selectedConnection,
+    ]
+  );
 
   useEffect(() => {
     if (isSetupComplete) {
@@ -168,15 +246,40 @@ export default function ConnectorInstallation(props) {
   };
 
   const handleStepClick = step => {
-    const { _connectionId, installURL, installerFunction, type } = step;
+    const {
+      _connectionId,
+      installURL,
+      installerFunction,
+      type,
+      sourceConnection,
+    } = step;
 
-    // handle connection step click
     if (_connectionId || type === 'connection') {
       if (step.isTriggered) {
         return false;
       }
 
-      setSelectedConnectionId(_connectionId);
+      const newId = generateNewId();
+
+      if (!_connectionId)
+        dispatch(
+          actions.resource.patchStaged(
+            newId,
+            jsonUtil.objectToPatchSet({
+              ...sourceConnection,
+              newIA: true,
+              _id: newId,
+              _integrationId: integration._id,
+              _connectorId: integration._connectorId,
+            }),
+            SCOPES.VALUE
+          )
+        );
+      setConnection({
+        newId,
+        doc: sourceConnection,
+        _connectionId,
+      });
     } else if (isFrameWork2 && !step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -240,64 +343,26 @@ export default function ConnectorInstallation(props) {
     props.history.push(`/pg`);
   };
 
-  const handleSubmitComplete = (connId, isAuthorized) => {
-    const step = installSteps.find(s => s.isCurrentStep);
-
-    if (
-      oAuthApplications.includes(getConnectionType(selectedConnection)) &&
-      !isAuthorized &&
-      !(
-        getConnectionType(selectedConnection) === 'shopify' &&
-        selectedConnection &&
-        selectedConnection.http &&
-        selectedConnection.http.auth &&
-        selectedConnection.http.auth.type === 'basic'
-      )
-    ) {
-      return;
-    }
-
-    dispatch(
-      actions.integrationApp.installer.updateStep(
-        integrationId,
-        (step || {}).installerFunction,
-        'inProgress'
-      )
-    );
-
-    if (isFrameWork2) {
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(
-          integrationId,
-          selectedConnectionId
-        )
-      );
-    } else {
-      dispatch(
-        actions.integrationApp.installer.installStep(
-          integrationId,
-          (step || {}).installerFunction,
-          selectedConnectionId
-        )
-      );
-    }
-
-    setSelectedConnectionId(false);
-  };
-
-  const handleClose = () => {
-    setSelectedConnectionId(false);
-  };
-
   return (
     <LoadResources required resources="connections,integrations">
-      {selectedConnectionId && (
-        <ConnectionSetupDialog
-          resourceId={selectedConnectionId}
-          onClose={handleClose}
-          onSubmitComplete={handleSubmitComplete}
-        />
-      )}
+      {connection &&
+        (connection._connectionId ? (
+          <ConnectionSetupDialog
+            resourceId={connection._connectionId}
+            onClose={handleClose}
+            onSubmitComplete={handleSubmitComplete}
+          />
+        ) : (
+          <ConnectionSetupDialog
+            resourceId={connection.newId}
+            resource={connection.doc}
+            resourceType="connections"
+            environment="production"
+            connectionType={connection.doc.type}
+            onClose={handleClose}
+            onSubmitComplete={handleSubmitComplete}
+          />
+        ))}
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
