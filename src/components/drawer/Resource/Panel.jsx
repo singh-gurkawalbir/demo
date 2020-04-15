@@ -53,6 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    position: 'relative',
     background: theme.palette.background.paper,
   },
   closeButton: {
