@@ -208,6 +208,7 @@ export function* switchAccount({ id }) {
       actions.user.preferences.update({
         defaultAShareId: id,
         environment: 'production',
+        themeName: 'light',
       })
     );
   } catch (ex) {
