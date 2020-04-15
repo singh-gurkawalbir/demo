@@ -4,7 +4,7 @@ import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import actionTypes from '../../../actions/types';
 import { getNextStateFromFields, registerFields } from '../../../utils/form';
-import fields, { fieldsState } from './fields';
+import fields from './fields';
 
 function form(state = {}, action) {
   const { type, formKey, formSpecificProps = {} } = action;
@@ -49,4 +49,20 @@ export const getFormState = (state, formKey) => {
   if (!state || !state[formKey]) return null;
 
   return state[formKey];
+};
+
+export const getFormParentContext = (state, formKey) => {
+  const formState = getFormState(state, formKey);
+
+  if (!formState) return null;
+
+  return formState.parentContext;
+};
+
+export const getFieldState = (state, formKey, fieldId) => {
+  const formState = getFormState(state, formKey);
+
+  if (!formState) return null;
+
+  return formState.fields && formState.fields[fieldId];
 };

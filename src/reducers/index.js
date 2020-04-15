@@ -156,6 +156,12 @@ export function commStatusPerPath(state, path, method) {
 export const getFormState = (state, formKey) =>
   fromSession.getFormState(state && state.session, formKey);
 
+export const getFormParentContext = (state, formKey) =>
+  fromSession.getFormParentContext(state && state.session, formKey);
+
+export const getFieldState = (state, formKey, fieldId) =>
+  fromSession.getFieldState(state && state.session, formKey, fieldId);
+
 export function resourceFormState(state, resourceType, resourceId) {
   return fromSession.resourceFormState(
     state && state.session,

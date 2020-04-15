@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { useMemo } from 'react';
 import FormFragment from '../../Form/FormFragment';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
@@ -43,6 +44,22 @@ export const getCorrespondingFieldMap = (fields, fieldMap) =>
     return { key: field, ...transformedFieldValue };
   });
 
+const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap }) => {
+  const classes = useStyles();
+  const defaultFields = useMemo(
+    () => getCorrespondingFieldMap(fields, fieldMap),
+    [fields, fieldMap]
+  );
+
+  return (
+    <FormFragment
+      className={classes.child}
+      formKey={formKey}
+      defaultFields={defaultFields}
+    />
+  );
+};
+
 export default function FormGenerator(props) {
   const classes = useStyles();
 
@@ -50,10 +67,10 @@ export default function FormGenerator(props) {
   const { fieldMap, layout, formKey } = props;
   const { fields, containers, type } = layout;
   const fieldsComponent = fields && (
-    <FormFragment
-      className={classes.child}
+    <FormFragmentWithDefaultFields
       formKey={formKey}
-      defaultFields={getCorrespondingFieldMap(fields, fieldMap)}
+      fields={fields}
+      fieldMap={fieldMap}
     />
   );
   let ConvertedContainer;

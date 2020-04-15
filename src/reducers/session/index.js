@@ -60,6 +60,12 @@ export default combineReducers({
 export const getFormState = (state, formKey) =>
   fromForm.getFormState(state && state.form, formKey);
 
+export const getFormParentContext = (state, formKey) =>
+  fromForm.getFormParentContext(state && state.form, formKey);
+
+export const getFieldState = (state, formKey, fieldId) =>
+  fromForm.getFieldState(state && state.form, formKey, fieldId);
+
 export function netsuiteUserRoles(
   state,
   connectionId,

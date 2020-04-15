@@ -1,21 +1,27 @@
 import { Fragment, useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import * as seletors from '../../reducers';
+import * as selectors from '../../reducers';
 import getRenderer from '../DynaForm/renderer';
 
 export const FieldComponent = props => {
-  const { fieldState, renderer } = props;
+  const { formKey, id, renderer } = props;
+  const fieldState = useSelector(
+    state => selectors.getFieldState(state, formKey, id),
+    shallowEqual
+  );
+
+  console.log('rerenderd ', id, fieldState);
 
   if (!fieldState || !fieldState.visible) return null;
 
-  return renderer(props);
+  return renderer({ ...props, ...props.parentContext, fieldState });
 };
 
 export default function FormFragment({ defaultFields, formKey }) {
   const dispatch = useDispatch();
-  const formState = useSelector(
-    state => seletors.getFormState(state, formKey),
+  const formParentContext = useSelector(
+    state => selectors.getFormParentContext(state, formKey),
     shallowEqual
   );
   const onFieldChange = useCallback(
@@ -39,12 +45,12 @@ export default function FormFragment({ defaultFields, formKey }) {
     field => {
       // rest could mostly be form context such as edit mode what type of resource
       // we change this interface for getRenderer
-      const { resourceId, resourceType } = formState;
+      const { resourceId, resourceType } = formParentContext;
 
       // i really may not need this considering metadata is generating this props
       return getRenderer(formKey, resourceId, resourceType)(field);
     },
-    [formKey, formState]
+    [formKey, formParentContext]
   );
 
   // both useForm hook and the FormFragment were getting executed simultaneously
@@ -60,28 +66,22 @@ export default function FormFragment({ defaultFields, formKey }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, registerField]);
 */
-
-  if (!formState) return null;
+  console.log('see rerender form ', formParentContext);
 
   return (
     <Fragment>
-      {defaultFields.map(field => {
-        // maybe .find may not be necessaery ..we can get the fieldState directly
-        const fieldState = formState.fields[field.id];
-
-        return (
-          <FieldComponent
-            key={field.id}
-            fieldState={fieldState}
-            renderer={renderer}
-            onFieldChange={onFieldChange}
-            onFieldBlur={onFieldBlur}
-            onFieldFocus={onFieldFocus}
-            formKey={formKey}
-            registerField={registerField}
-          />
-        );
-      })}
+      {defaultFields.map(field => (
+        <FieldComponent
+          key={field.id}
+          id={field.id}
+          renderer={renderer}
+          onFieldChange={onFieldChange}
+          onFieldBlur={onFieldBlur}
+          onFieldFocus={onFieldFocus}
+          formKey={formKey}
+          registerField={registerField}
+        />
+      ))}
     </Fragment>
   );
 }

@@ -3,6 +3,36 @@ import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import { generateNewId } from '../../utils/resource';
 
+const normalizeAllPropsToFormApi = props => {
+  const {
+    optionsHandler,
+    validationHandler,
+    parentContext,
+    disabled,
+    showValidationBeforeTouched,
+    conditionalUpdate,
+    fieldsMeta,
+    ...rest
+  } = props;
+  const formApiProps = {
+    optionsHandler,
+    validationHandler,
+    parentContext,
+    disabled,
+    showValidationBeforeTouched,
+    conditionalUpdate,
+    fieldsMeta,
+    // deprecated Value
+    // value,
+  };
+
+  if (!formApiProps.parentContext) formApiProps.parentContext = {};
+
+  formApiProps.parentContext = { ...formApiProps.parentContext, ...rest };
+
+  return formApiProps;
+};
+
 export default function useForm({ formKey, ...formSpecificProps }) {
   const [formKeyUsed, setFormKeyUsed] = useState();
   const { disabled, showValidationBeforeTouched } = formSpecificProps;
@@ -31,7 +61,7 @@ export default function useForm({ formKey, ...formSpecificProps }) {
     if (formKeyUsedInUseEff) {
       dispatch(
         actions.form.formInit(formKeyUsedInUseEff, {
-          ...formSpecificProps,
+          ...normalizeAllPropsToFormApi(formSpecificProps),
         })
       );
     }
