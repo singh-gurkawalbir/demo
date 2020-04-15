@@ -97,7 +97,10 @@ const setVariationMappingData = (
 
     if (!relation) return;
 
-    if (relation.variation_attributes && relation.variation_attributes.length) {
+    if (
+      relation.variation_attributes &&
+      !!relation.variation_attributes.length
+    ) {
       const key = `${flowId}-${mapping.id}-variationAttributes`;
 
       if (mappings[key]) {
@@ -174,17 +177,23 @@ const setVariationMappingData = (
 
       relation.children.forEach(child => {
         const childExists = mapping.children.find(c => c.id === child.id);
+        const isVariationAttributes =
+          child.variation_attributes && !!child.variation_attributes.length;
 
         if (!childExists) {
           const mappingFound = mappingKeys.some(key =>
-            key.startsWith(`${flowId}-${child.id}`)
+            isVariationAttributes
+              ? key === `${flowId}-${child.id}-variationAttributes`
+              : key.startsWith(`${flowId}-${child.id}`)
           );
 
           if (mappingFound) {
             mapping.children.push({
               id: child.id,
               children: [],
-              variation_themes: [],
+              [isVariationAttributes
+                ? 'fieldMappings'
+                : 'variation_themes']: [],
             });
           }
         }
