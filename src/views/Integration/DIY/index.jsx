@@ -257,7 +257,7 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
 
-          {!isStandalone && permission.delete && (
+          {permission.delete && integration && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"
