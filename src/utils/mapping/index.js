@@ -191,13 +191,9 @@ const setVariationMappingData = (
             mapping.children.push({
               id: child.id,
               children: [],
-<<<<<<< HEAD
               [isVariationAttributes
                 ? 'fieldMappings'
                 : 'variation_themes']: [],
-=======
-              variation_themes: [],
->>>>>>> ae9453181e532cc3c56075cf3910c56a3347b1e7
             });
           }
         }
