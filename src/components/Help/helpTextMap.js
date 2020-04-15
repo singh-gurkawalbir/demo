@@ -255,6 +255,8 @@ export default {
     'This is the digest algorithm integrator.io will use when sending messages to your trading partner.',
   'connection.as2.partnerStationInfo.encoding':
     'This is the character encoding used by integrator.io for outgoing messages when they are encrypted (base64 or binary, with base64 being the default).',
+  'connection.as2.partnerStationInfo.signatureEncoding':
+    'Choose the way your partner is expecting the signature to be encoded on receiving side. We have multiple ways of data encoding like binary, base64, etc. This field is used to encode the signature in that respective format. Your partner will have shared this info with you already.',
   'connection.as2.partnerStationInfo.auth.type':
     "The as2 adaptors currently support 2 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called.",
   'connection.as2.partnerStationInfo.auth.failStatusCode':
