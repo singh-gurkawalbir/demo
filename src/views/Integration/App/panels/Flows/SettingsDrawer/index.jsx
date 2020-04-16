@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   settingsForm: {
-    maxHeight: `calc(100vh - 120px)`,
+    maxHeight: `calc(100vh - 150px)`,
     // maxHeight: 'unset',
     // padding: theme.spacing(2, 3),
   },

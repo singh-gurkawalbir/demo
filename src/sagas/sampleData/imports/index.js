@@ -43,11 +43,7 @@ function* fetchAssistantSampleData({ resource }) {
         importEndpoint.sampleData
       )
     );
-
-    return;
-  }
-
-  if (importEndpoint && importEndpoint.previewConfig) {
+  } else if (importEndpoint && importEndpoint.previewConfig) {
     if (
       importEndpoint.howToFindIdentifier &&
       importEndpoint.howToFindIdentifier.lookupOperationDetails &&
@@ -117,6 +113,8 @@ function* fetchAssistantSampleData({ resource }) {
     } catch (e) {
       // Handle Errors
     }
+  } else {
+    yield put(actions.metadata.failedAssistantImportPreview(resource._id));
   }
 }
 

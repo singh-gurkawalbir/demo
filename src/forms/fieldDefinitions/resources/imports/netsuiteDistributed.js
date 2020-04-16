@@ -87,7 +87,7 @@ export default {
   },
   'netsuite_da.hooks.preMap.function': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -99,7 +99,7 @@ export default {
   'netsuite_da.hooks.preMap.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
-    label: 'Pre Map File',
+    label: 'Pre map file',
     visibleWhen: [
       {
         field: 'inputMode',

@@ -201,11 +201,11 @@ export default function ResponseMappingDialog(props) {
   const disableSave = disabled || saveInProgress || !isDirty;
 
   return (
-    <ModalDialog show minWidth="md" maxWidth="md">
+    <ModalDialog show minWidth="md" maxWidth="md" onClose={onClose}>
       <div className={classes.titleSection}>
-        <div>Define Response Mapping</div>
+        <div>Define response mapping</div>
         <Help
-          title="Response Mapping"
+          title="Response mapping"
           className={classes.helpTextButton}
           helpKey={helpKey}
           fieldId={helpKey}
@@ -218,14 +218,14 @@ export default function ResponseMappingDialog(props) {
               variant="subtitle2"
               className={classes.childHeader}
               key="heading_extract">
-              {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
+              {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
             </Typography>
 
             <Typography
               variant="subtitle2"
               className={classes.childHeader}
               key="heading_generate">
-              Source Record Field (New/Existing Field)
+              Source record field (New/Existing field)
             </Typography>
           </div>
           <div key={changeIdentifier}>

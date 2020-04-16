@@ -401,6 +401,10 @@ const metadata = {
       resourceId,
       previewData,
     }),
+  failedAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
+      resourceId,
+    }),
   resetAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
@@ -745,10 +749,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId) =>
+    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
+        connectionDoc,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -834,6 +839,19 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
         id: integrationId,
         steps,
+      }),
+  },
+  clone: {
+    receivedIntegrationClonedStatus: (id, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: true,
+        integrationId,
+      }),
+    clearIntegrationClonedStatus: id =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: false,
       }),
   },
   // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
