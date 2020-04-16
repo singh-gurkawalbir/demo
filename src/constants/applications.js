@@ -20,7 +20,15 @@ const mergeObjectArrays = (arr1, arr2, match) =>
     }),
     _.reject(arr2, obj2 => _.find(arr1, obj1 => obj2[match] === obj1[match]))
   );
-const assistants = JSON.parse(localStorage.getItem('assistants'));
+let localStorageAssistants;
+
+try {
+  localStorageAssistants = JSON.parse(localStorage.getItem('assistants'));
+} catch (e) {
+  localStorageAssistants = [];
+}
+
+const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -791,8 +799,6 @@ export const groupApplications = (
       }
     });
   }
-
-  console.log('assistantConnectors2 ***', assistantConnectors);
 
   assistantConnectors.sort((a, b) => {
     const nameA = a.name ? a.name.toUpperCase() : '';

@@ -12,6 +12,7 @@ import {
   retrieveAppInitializationResources,
   retrievingOrgDetails,
   retrievingUserDetails,
+  retrievingAssistantDetails,
   validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
   invalidateSession,
@@ -105,6 +106,9 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
 
     expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+    const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+
+    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -130,6 +134,9 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
 
     expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+    const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+
+    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -164,6 +171,9 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
 
     expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
+    const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
+
+    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
