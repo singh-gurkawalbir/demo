@@ -82,8 +82,13 @@ export default function ClonePreview(props) {
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
-  const { isCloned, integrationId } = useSelector(state =>
-    selectors.integrationClonedDeatils(state, resource._id)
+  const { isCloned, integrationId } = useSelector(
+    state => selectors.integrationClonedDetails(state, resource._id),
+    (left, right) =>
+      left &&
+      right &&
+      left.isCloned === right.isCloned &&
+      left.integrationId === right.integrationId
   );
   const integrationAppName =
     isIAIntegration && getIntegrationAppUrlName(resource && resource.name);

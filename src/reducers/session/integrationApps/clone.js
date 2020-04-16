@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const defaultObject = { isCloned: false, integrationId: undefined };
+
 export default (state = {}, action) => {
   const { id, isCloned, type, integrationId } = action;
 
@@ -20,9 +22,9 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 
-export function integrationClonedDeatils(state, id) {
+export function integrationClonedDetails(state, id) {
   if (!(state && state[id])) {
-    return { isCloned: false, integrationId: undefined };
+    return defaultObject;
   }
 
   return state[id];

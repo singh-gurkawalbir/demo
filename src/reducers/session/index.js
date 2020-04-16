@@ -454,8 +454,8 @@ export function addNewStoreSteps(state, id) {
   );
 }
 
-export function integrationClonedDeatils(state, id) {
-  return fromIntegrationApps.integrationClonedDeatils(
+export function integrationClonedDetails(state, id) {
+  return fromIntegrationApps.integrationClonedDetails(
     state && state.integrationApps,
     id
   );

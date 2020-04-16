@@ -141,6 +141,6 @@ export function isAddOnInstallInProgress(state, id) {
   return fromAddon.isAddOnInstallInProgress(state && state.addon, id);
 }
 
-export function integrationClonedDeatils(state, id) {
-  return fromClone.integrationClonedDeatils(state && state.clone, id);
+export function integrationClonedDetails(state, id) {
+  return fromClone.integrationClonedDetails(state && state.clone, id);
 }
