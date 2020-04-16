@@ -1225,8 +1225,10 @@ export default {
     'Provide the non-space delimiter API provider uses to delimit scopes.',
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
-  'connection.http.auth.oauth.scope':
+  'connection.generic.http.auth.oauth.scope':
     'These are the scopes of access being requested from the authorization server. Use comma(,) to separate values.',
+  'connection.http.auth.oauth.scope':
+    'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   'connection.http.auth.oauth.accessTokenHeaders':
     "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
   'connection.http.auth.oauth.accessTokenBody':
