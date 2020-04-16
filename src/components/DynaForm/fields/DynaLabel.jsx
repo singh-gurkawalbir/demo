@@ -1,7 +1,6 @@
 import { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-// import { FieldWrapper } from 'react-forms-processor';
 import ArrowPopper from '../../ArrowPopper';
 import helpTextMap from '../../Help/helpTextMap';
 

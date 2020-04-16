@@ -1,9 +1,9 @@
-import { FormContext } from 'react-forms-processor/dist';
 import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
+import useFormContext from '../../../Form/FormContext';
 
 function DynaUploadFile(props) {
   const {
@@ -78,10 +78,10 @@ function DynaUploadFile(props) {
   );
 }
 
-const DynaUploadFileWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaUploadFile {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
+const DynaUploadFileWithFormContext = props => {
+  const form = useFormContext(props);
+
+  return <DynaUploadFile {...props} formContext={form} />;
+};
 
 export default DynaUploadFileWithFormContext;

@@ -68,8 +68,8 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   );
 }
 
-export const FormStateManager = props => {
-  const { formState, fieldMeta, onSubmitComplete } = props;
+export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
+  const { fieldMeta } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
 
@@ -118,16 +118,6 @@ export const ResourceFormFactory = props => {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
-  const allPatches = useSelector(
-    state => selectors.stagedResource(state, resourceId, 'meta').patch
-  );
-  const lastPatchtimestamp = useMemo(
-    () =>
-      allPatches &&
-      allPatches[allPatches.length - 1] &&
-      allPatches[allPatches.length - 1].timestamp,
-    [allPatches]
-  );
   const dispatch = useDispatch();
   const handleInitForm = useCallback(
     (resourceType, resourceId, isNew, flowId) => {
@@ -169,7 +159,6 @@ export const ResourceFormFactory = props => {
     handleClearResourceForm,
     handleInitForm,
     isNew,
-    lastPatchtimestamp,
     resourceId,
     resourceType,
   ]);
