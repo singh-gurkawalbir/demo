@@ -291,7 +291,7 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
       /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
       !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
-      // if not already wrapped
+      // remove the enclosing brances
       modifiedExtract = extract.replace(/^\[|]$/g, '').replace(/\\\]/g, ']');
     }
   }
