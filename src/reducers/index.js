@@ -2290,42 +2290,41 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
 };
 
-export const resourcePermissions = createSelector(
-  [
-    (state, resourceType) => resourceType,
-    (state, resourceType, resourceId) => resourceId,
-    (state, resourceType, resourceId, subResourceType) => subResourceType,
-    state => userPermissions(state),
-  ],
-  (resourceType, resourceId, subResourceType, permissions) => {
-    if (!permissions) return emptyObject;
-    let value;
+export const resourcePermissions = (
+  state,
+  resourceType,
+  resourceId,
+  subResourceType
+) => {
+  const permissions = userPermissions(state);
 
-    if (resourceType === 'integrations' && (subResourceType || resourceId)) {
-      if (
-        [
-          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-          USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-          USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-        ].includes(permissions.accessLevel)
-      )
-        value = permissions.integrations.all;
-      else if (resourceId) {
-        value = permissions[resourceType][resourceId];
-      }
-    } else if (resourceType) {
-      value = resourceId
-        ? permissions[resourceType][resourceId]
-        : permissions[resourceType];
-    } else {
-      value = permissions;
+  if (!permissions) return emptyObject;
+  let value;
+
+  if (resourceType === 'integrations' && (subResourceType || resourceId)) {
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    )
+      value = permissions.integrations.all;
+    else if (resourceId) {
+      value = permissions[resourceType][resourceId];
     }
-
-    return (
-      (subResourceType ? value && value[subResourceType] : value) || emptyObject
-    );
+  } else if (resourceType) {
+    value = resourceId
+      ? permissions[resourceType][resourceId]
+      : permissions[resourceType];
+  } else {
+    value = permissions;
   }
-);
+
+  return (
+    (subResourceType ? value && value[subResourceType] : value) || emptyObject
+  );
+};
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
   const { accessLevel } = resourcePermissions(state);
