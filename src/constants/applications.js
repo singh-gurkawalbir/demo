@@ -134,6 +134,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'snowflake',
+    name: 'Snowflake',
+    type: 'snowflake',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
     id: 'dynamodb',
     name: 'DynamoDB',
     type: 'dynamodb',
@@ -203,6 +210,12 @@ const connectors = [
   { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
+  {
+    id: 'redshift',
+    name: 'Amazon Redshift',
+    type: 'http',
+    assistant: 'redshift',
+  },
   {
     id: 'campaignmonitor',
     name: 'Campaign Monitor',

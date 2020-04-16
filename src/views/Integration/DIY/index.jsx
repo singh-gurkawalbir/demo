@@ -17,6 +17,7 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
 import AuditLogPanel from './panels/AuditLog';
+import NotificationsPanel from './panels/Notifications';
 import SettingsPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
@@ -30,6 +31,8 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import { getTemplateUrlName } from '../../../utils/template';
+import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -68,12 +71,17 @@ const tabs = [
     Panel: UsersPanel,
   },
   {
+    path: 'notifications',
+    label: 'Notifications',
+    Icon: NotificationsIcon,
+    Panel: NotificationsPanel,
+  },
+  {
     path: 'auditlog',
     label: 'Audit Log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
-
   {
     path: 'settings',
     label: 'Settings',
@@ -207,7 +215,7 @@ export default function Integration({ history, match }) {
   return (
     <Fragment>
       <ResourceDrawer match={match} />
-
+      <QueuedJobsDrawer />
       <LoadResources required resources="integrations,marketplacetemplates">
         <CeligoPageBar
           title={

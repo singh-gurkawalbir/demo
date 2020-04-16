@@ -11,6 +11,8 @@ export default {
   MULTIPLE_INSTALLS,
   INTEGRATION_DELETE_VALIDATE,
 };
+export const NO_PENDING_QUEUED_JOBS =
+  'This connection queue does not have any pending jobs. You can use the connection drop-down in the top right to see the status of a different connection queue.';
 export const LICENSE_EXPIRED =
   'This account license has expired and the account has been converted to Free Edition with a single active flow. Please contact the account owner to renew subscription.';
 export const FLOW_LIMIT_REACHED =

@@ -180,7 +180,7 @@ export default function DynaHook(props) {
     <Fragment>
       {showEditor && (
         <JavaScriptEditorDialog
-          title="Script Editor"
+          title="Script editor"
           id={id}
           key={id}
           disabled={disabled}

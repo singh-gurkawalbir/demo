@@ -234,6 +234,7 @@ export default (state = {}, action) => {
             categoryId,
             childCategoryId,
             variation,
+            isVariationAttributes,
             netsuiteRecordType,
             ...additionalOptions
           } = options;
@@ -243,7 +244,8 @@ export default (state = {}, action) => {
               draft[cKey],
               categoryId,
               childCategoryId,
-              variation
+              variation,
+              isVariationAttributes
             );
           }
 
@@ -795,13 +797,11 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = categoryMappingGeneratesMetadata(
+    state,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,
@@ -810,7 +810,6 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     deleted,
     categoryRelationshipData
   );
-
   const initData = state[cKey].initMappingData;
 
   if (!initData || !initData.data || !initData.data.mappingData) {

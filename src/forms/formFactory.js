@@ -3,7 +3,7 @@ import produce from 'immer';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
-import { REST_ASSISTANTS } from '../utils/constants';
+import { REST_ASSISTANTS, RDBMS_TYPES } from '../utils/constants';
 import { isJsonString } from '../utils/string';
 
 const getAllOptionsHandlerSubForms = (
@@ -187,7 +187,7 @@ const getResourceFormAssets = ({
 
         // when editing rdms connection we lookup for the resource subtype
         meta = formMeta.connections.rdbms[rdbmsSubType];
-      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+      } else if (RDBMS_TYPES.indexOf(type) !== -1) {
         meta = formMeta.connections.rdbms[type];
       } else {
         meta = formMeta.connections[type];
@@ -206,11 +206,20 @@ const getResourceFormAssets = ({
         if (isNew) {
           meta = meta.new;
         }
+
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuiteDistributed;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
-          meta = meta.rdbms;
+        } else if (type === 'rdbms') {
+          const rdbmsSubType =
+            connection && connection.rdbms && connection.rdbms.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          if (rdbmsSubType === 'snowflake') {
+            meta = meta.rdbms.snowflake;
+          } else {
+            meta = meta.rdbms.sql;
+          }
         } else if (
           resource &&
           (resource.useParentForm !== undefined
@@ -238,7 +247,7 @@ const getResourceFormAssets = ({
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+        } else if (RDBMS_TYPES.indexOf(type) !== -1) {
           meta = meta.rdbms;
         } else if (
           resource &&

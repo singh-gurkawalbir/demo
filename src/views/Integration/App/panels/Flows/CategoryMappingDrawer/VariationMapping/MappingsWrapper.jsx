@@ -14,16 +14,38 @@ const useStyles = makeStyles(() => ({
 
 export default function VariationMappings(props) {
   const classes = useStyles();
-  const { flowId, sectionId, integrationId, variation, categoryId } = props;
-  const id = `${flowId}-${sectionId}-${variation}`;
+  const {
+    flowId,
+    sectionId,
+    integrationId,
+    variation,
+    categoryId,
+    isVariationAttributes,
+  } = props;
+  const id = `${flowId}-${sectionId}-${
+    isVariationAttributes ? 'variationAttributes' : variation
+  }`;
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
   const { fields: generateFields } =
-    useSelector(state =>
-      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
-        sectionId,
-      })
-    ) || {};
+    useSelector(state => {
+      const generatesMetadata = selectors.categoryMappingGenerateFields(
+        state,
+        integrationId,
+        flowId,
+        {
+          sectionId,
+        }
+      );
+
+      if (isVariationAttributes) {
+        const { variation_attributes: variationAttributes } = generatesMetadata;
+
+        return { fields: variationAttributes };
+      }
+
+      return generatesMetadata;
+    }) || {};
   const resourceId = useSelector(state => {
     const flowDetails = selectors.resource(state, 'flows', flowId);
 
@@ -42,6 +64,7 @@ export default function VariationMappings(props) {
       selectors.mappingsForVariation(state, integrationId, flowId, {
         sectionId,
         variation,
+        isVariationAttributes,
       })
     ) || {};
   const resourceData = useSelector(state =>
@@ -70,6 +93,7 @@ export default function VariationMappings(props) {
     categoryId,
     childCategoryId: sectionId,
     variation,
+    isVariationAttributes,
     mappings: { fields: fieldMappings },
   };
   const handleInit = useCallback(() => {

@@ -325,15 +325,7 @@ describe('all modal sagas', () => {
             message: 'Accepting account share invite',
           })
         );
-        expect(saga.throw(new Error()).value).toEqual(
-          put(
-            actions.api.failure(
-              path,
-              opts.method,
-              'Could not accept account share invite'
-            )
-          )
-        );
+        expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
       });
     });
@@ -398,6 +390,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -415,6 +408,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -434,6 +428,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -454,6 +449,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );
@@ -476,6 +472,7 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
+                themeName: 'light',
               })
             )
           );

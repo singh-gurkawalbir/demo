@@ -81,6 +81,7 @@ export const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  snowflake: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -696,3 +697,13 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   return mapping;
 };
+
+export const isOauth = connectionDoc =>
+  connectionDoc &&
+  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
+    (connectionDoc.http &&
+      connectionDoc.http.auth &&
+      connectionDoc.http.auth.type === 'oauth') ||
+    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
+    (connectionDoc.netsuite &&
+      connectionDoc.netsuite.authType === 'token-auto'));

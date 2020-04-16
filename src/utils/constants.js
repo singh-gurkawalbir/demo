@@ -34,7 +34,7 @@ export const INTEGRATION_MODES = Object.freeze({
   SETTINGS: 'settings',
 });
 
-export const UI_FIELD_VALUES = Object.freeze(['/useParentForm', '/formView']);
+export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
   'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
 export const NETSUITE_BUNDLE_URL =
@@ -314,6 +314,7 @@ export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',

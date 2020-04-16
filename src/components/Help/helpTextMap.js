@@ -192,6 +192,9 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
+  'connection.snowflake.rdbms.queryType': `Please select this option if you want to import (or insert) multiple records at once into the database.Please use this option to provide INSERT/UPDATE queries to CREATE/UPDATE records in the database.`,
+  'connection.rdbms.snowflake.warehouse':
+    'Warehouse used for executing compute process.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -255,6 +258,8 @@ export default {
     'This is the digest algorithm integrator.io will use when sending messages to your trading partner.',
   'connection.as2.partnerStationInfo.encoding':
     'This is the character encoding used by integrator.io for outgoing messages when they are encrypted (base64 or binary, with base64 being the default).',
+  'connection.as2.partnerStationInfo.signatureEncoding':
+    'Choose the way your partner is expecting the signature to be encoded on receiving side. We have multiple ways of data encoding like binary, base64, etc. This field is used to encode the signature in that respective format. Your partner will have shared this info with you already.',
   'connection.as2.partnerStationInfo.auth.type':
     "The as2 adaptors currently support 2 types of authentication. Choose 'basic' authentication if your service implements the HTTP basic auth strategy. This auth method adds a base64 encoded username/password pair value in the 'authentication' HTTP request header.  Choose 'token' if your service relies on token-based authentication. The token may exist in the header, url or body of the http request. This method also supports refreshing tokens if supported by the service being called.",
   'connection.as2.partnerStationInfo.auth.failStatusCode':
@@ -1223,8 +1228,10 @@ export default {
     'Provide the non-space delimiter API provider uses to delimit scopes.',
   'connection.http.auth.oauth.authURI':
     'This is the endpoint for the API provider’s authorization server where the auth code is retrieved from.',
-  'connection.http.auth.oauth.scope':
+  'connection.generic.http.auth.oauth.scope':
     'These are the scopes of access being requested from the authorization server. Use comma(,) to separate values.',
+  'connection.http.auth.oauth.scope':
+    'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   'connection.http.auth.oauth.accessTokenHeaders':
     "In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default 'content-type' header value is 'application/x-www-form-urlencoded'.",
   'connection.http.auth.oauth.accessTokenBody':
@@ -1430,7 +1437,7 @@ export default {
   'mapping.generateDateTimezone':
     'If the import field is of type date, this field represents the time zone of the field on the import system.',
   'mapping.functions':
-    'This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="https://celigosuccess.zendesk.com/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>',
+    'This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039326071-Handlebars-Library">Handlebar Helper Guide</a>',
   'mapping.immutable':
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
   'mapping.lookup.mode':
