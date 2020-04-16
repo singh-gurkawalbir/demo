@@ -48,7 +48,9 @@ export function* createComponents({ resourceType, resourceId }) {
           _stackId,
           sandbox: data.sandbox,
           name: data.name,
+          tag: data.tag,
           _integrationId: data._integrationId,
+          newTemplateInstaller: data.newTemplateInstaller,
         },
       },
       message: `Cloning...`,
@@ -57,6 +59,19 @@ export function* createComponents({ resourceType, resourceId }) {
     yield put(actions.template.failedInstall(`${resourceType}-${resourceId}`));
 
     return undefined;
+  }
+
+  if (data.newTemplateInstaller && components && components._integrationId) {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('tiles'));
+    yield put(
+      actions.integrationApp.clone.receivedIntegrationClonedStatus(
+        resourceId,
+        components._integrationId
+      )
+    );
+
+    return;
   }
 
   const dependentResources =

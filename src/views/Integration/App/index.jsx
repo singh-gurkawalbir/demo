@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath } from 'react-router-dom';
+import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import CopyIcon from '../../../components/icons/CopyIcon';
 import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
@@ -321,6 +322,15 @@ export default function IntegrationApp({ match, history }) {
           />
         }
         infoText={integration.description}>
+        {integration && !supportsMultiStore && (
+          <IconTextButton
+            component={Link}
+            to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
+            variant="text"
+            data-test="cloneIntegrationApp">
+            <CopyIcon /> Clone integration
+          </IconTextButton>
+        )}
         {supportsMultiStore && (
           <div className={classes.actions}>
             <IconTextButton
