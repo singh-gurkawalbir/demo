@@ -14,6 +14,7 @@ import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
@@ -22,6 +23,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
 import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
+import NotificationsPanel from './panels/Notifications';
 import AdminPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
@@ -51,6 +53,12 @@ const allTabs = [
     label: 'Users',
     Icon: AdminIcon,
     Panel: UsersPanel,
+  },
+  {
+    path: 'notifications',
+    label: 'Notifications',
+    Icon: NotificationsIcon,
+    Panel: NotificationsPanel,
   },
   {
     path: 'auditlog',
