@@ -83,7 +83,7 @@ export default function ClonePreview(props) {
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
   const { isCloned, integrationId } = useSelector(
-    state => selectors.integrationClonedDetails(state, resource._id),
+    state => selectors.integrationAppClonedDetails(state, resource._id),
     (left, right) =>
       left &&
       right &&
@@ -182,14 +182,7 @@ export default function ClonePreview(props) {
         props.history.push(getRoutePath(`/${resourceType}`));
       }
     }
-  }, [
-    createdComponents,
-    dispatch,
-    integrations,
-    props.history,
-    resourceId,
-    resourceType,
-  ]);
+  }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
   if (!components || isEmpty(components)) {
     return (

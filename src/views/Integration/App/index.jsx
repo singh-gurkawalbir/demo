@@ -319,7 +319,7 @@ export default function IntegrationApp({ match, history }) {
             component={Link}
             to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
             variant="text"
-            data-test="cloneIntegration">
+            data-test="cloneIntegrationApp">
             <CopyIcon /> Clone integration
           </IconTextButton>
         )}

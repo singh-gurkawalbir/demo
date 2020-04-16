@@ -3973,6 +3973,6 @@ export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);
 }
 
-export function integrationClonedDetails(state, id) {
-  return fromSession.integrationClonedDetails(state && state.session, id);
+export function integrationAppClonedDetails(state, id) {
+  return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
