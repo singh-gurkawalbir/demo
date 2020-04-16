@@ -287,11 +287,11 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     * */
     // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
-      /^\[.*\]$/.test(extract) &&
-      /\W/.test(extract.replace(/^\[|]$/g, '')) &&
-      !/\./.test(extract.replace(/^\[|]$/g, ''))
+      /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+      /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+      !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
-      // if not already wrapped
+      // remove the enclosing brances
       modifiedExtract = extract.replace(/^\[|]$/g, '').replace(/\\\]/g, ']');
     }
   }
