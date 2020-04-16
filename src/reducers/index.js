@@ -2294,14 +2294,14 @@ export const resourcePermissions = (
   state,
   resourceType,
   resourceId,
-  subResourceType
+  childResourceType
 ) => {
   const permissions = userPermissions(state);
 
   if (!permissions) return emptyObject;
   let value;
 
-  if (resourceType === 'integrations' && (subResourceType || resourceId)) {
+  if (resourceType === 'integrations' && (childResourceType || resourceId)) {
     if (
       [
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -2322,7 +2322,8 @@ export const resourcePermissions = (
   }
 
   return (
-    (subResourceType ? value && value[subResourceType] : value) || emptyObject
+    (childResourceType ? value && value[childResourceType] : value) ||
+    emptyObject
   );
 };
 
