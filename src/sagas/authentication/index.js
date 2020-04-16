@@ -48,6 +48,10 @@ export function* retrievingUserDetails() {
   );
 }
 
+export function* retrievingAssistantDetails() {
+  yield put(actions.resource.requestCollection('ui/assistants'));
+}
+
 export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   defaultAShareId
 ) {
@@ -66,6 +70,7 @@ export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
 export function* retrieveAppInitializationResources() {
   yield call(retrievingOrgDetails);
   yield call(retrievingUserDetails);
+  yield call(retrievingAssistantDetails);
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
