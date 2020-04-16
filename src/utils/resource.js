@@ -81,6 +81,7 @@ export const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  snowflake: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
