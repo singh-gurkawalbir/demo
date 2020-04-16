@@ -66,7 +66,7 @@ function PostResponseMapHookDialog({
 
   return (
     <JavaScriptEditorDialog
-      title="Script Editor"
+      title="Script editor"
       id={resourceId + flowId}
       key={resourceId + flowId}
       disabled={isViewMode}

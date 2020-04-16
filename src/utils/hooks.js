@@ -41,14 +41,14 @@ export const hooksToFunctionNamesMap = {
 export const getScriptHookStub = hook => scriptHookStubs[hook];
 
 export const hooksLabelMap = {
-  preSavePage: 'Pre Save Page',
-  preSend: 'Pre Send',
-  preMap: 'Pre Map',
-  postMap: 'Post Map',
-  postSubmit: 'Post Submit',
-  postAggregate: 'Post Aggregate',
-  postResponseMap: 'Post Response Map',
-  contentBasedFlowRouter: 'Content Based Flow Router',
+  preSavePage: 'Pre save page',
+  preSend: 'Pre send',
+  preMap: 'Pre map',
+  postMap: 'Post map',
+  postSubmit: 'Post submit',
+  postAggregate: 'Post aggregate',
+  postResponseMap: 'Post response map',
+  contentBasedFlowRouter: 'Content based flow router',
   transform: 'Transform',
   filter: 'Filter',
 };
