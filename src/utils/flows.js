@@ -183,7 +183,10 @@ export const isImportMappingAvailable = resource => {
   if (appType === 'mongodb') return false;
 
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
-  if (appType === 'rdbms' && rdbms.queryType !== 'BULK INSERT') {
+  if (
+    appType === 'rdbms' &&
+    ['INSERT', 'UPDATE', 'COMPOSITE'].includes(rdbms.queryType)
+  ) {
     return false;
   }
 

@@ -22,17 +22,6 @@ export default {
           message: 'Account name should not contain spaces.',
         },
       },
-      defaultValue: r => {
-        const baseUri = r && r.rdbms && r.rdbms.host;
-        const subdomain =
-          baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.snowflakecomputing.com')
-          );
-
-        return subdomain;
-      },
       label: 'Account name',
     },
     'rdbms.database': { fieldId: 'rdbms.database' },
