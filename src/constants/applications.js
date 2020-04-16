@@ -145,6 +145,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'snowflake',
+    name: 'Snowflake',
+    type: 'snowflake',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
     id: 'dynamodb',
     name: 'DynamoDB',
     type: 'dynamodb',

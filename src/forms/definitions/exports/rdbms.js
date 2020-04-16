@@ -33,7 +33,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-
     exportRdbmsData: {
       fieldId: 'exportRdbmsData',
       type: 'labeltitle',

@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
 import { isProduction } from '../../utils';
 
 export default {
@@ -13,7 +13,7 @@ export default {
         { _connectorId: { $exists: false } },
       ];
 
-      if (['mysql', 'postgresql', 'mssql'].includes(r.type)) {
+      if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else expression.push({ type: r.type });
 
@@ -175,6 +175,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },

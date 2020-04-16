@@ -37,8 +37,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   helpTextButton: {
-    float: 'right',
-    padding: theme.spacing(1),
+    marginLeft: theme.spacing(1),
   },
   actionContainer: {
     margin: theme.spacing(0, 1),

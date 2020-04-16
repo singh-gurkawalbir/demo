@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
-import NotificationsSection from './sections/Notifications';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
 
@@ -43,12 +42,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
-  {
-    path: 'notifications',
-    label: 'Notifications',
-    Section: NotificationsSection,
-    id: 'notifications',
-  },
   {
     path: 'apitoken',
     label: 'API tokens',

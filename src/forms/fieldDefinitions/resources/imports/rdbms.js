@@ -54,6 +54,19 @@ export default {
       },
     ],
   },
+  'rdbms.bulkInsert.tableName': {
+    id: 'rdbms.bulkInsert.tableName',
+    type: 'text',
+    label: 'Target table',
+    helpText: `Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.`,
+    required: true,
+    visibleWhen: [
+      {
+        field: 'rdbms.queryType',
+        is: ['BULK INSERT'],
+      },
+    ],
+  },
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',

@@ -230,6 +230,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },
@@ -358,7 +359,7 @@ export default {
   // #region hooks
   hookType: {
     type: 'radiogroup',
-    label: 'Hook Type',
+    label: 'Hook type',
     defaultValue: 'script',
     options: [
       {
@@ -371,7 +372,7 @@ export default {
   },
   'hooks.preMap.function': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -392,7 +393,7 @@ export default {
   },
   'hooks.preMap._scriptId': {
     type: 'selectresource',
-    label: 'Pre Map Script',
+    label: 'Pre map script',
     resourceType: 'scripts',
     visibleWhen: [
       {
@@ -402,7 +403,7 @@ export default {
     ],
   },
   'hooks.preMap._stackId': {
-    label: 'Pre Map Stack',
+    label: 'Pre map stack',
     type: 'selectresource',
     resourceType: 'stacks',
     visibleWhen: [
@@ -414,7 +415,7 @@ export default {
   },
   'hooks.preMap.configuration': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
