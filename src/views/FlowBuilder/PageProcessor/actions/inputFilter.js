@@ -70,7 +70,7 @@ function InputFilterDialog({
 
   return (
     <InputFilterToggleEditorDialog
-      title="Define Input Filter"
+      title="Define input filter"
       helpTitle="Filter Rules"
       helpKey={helpKey}
       disabled={isViewMode}

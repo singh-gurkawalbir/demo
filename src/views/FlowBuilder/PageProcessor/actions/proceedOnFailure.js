@@ -68,15 +68,15 @@ function ProceedOnFailureDialog(props) {
       <div> What should happen to a record if the lookup fails?</div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
-          <Button data-test="cancelProceedOnFailure" onClick={onClose}>
-            Cancel
-          </Button>
           <DynaSubmit
             disabled={isViewMode}
             data-test="saveProceedOnFailure"
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
+          <Button data-test="cancelProceedOnFailure" onClick={onClose}>
+            Cancel
+          </Button>
         </DynaForm>
       </div>
     </ModalDialog>

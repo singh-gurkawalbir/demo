@@ -473,7 +473,7 @@ export default {
   // #region hooks
   hookType: {
     type: 'radiogroup',
-    label: 'Hook Type',
+    label: 'Hook type',
     defaultValue: r => {
       let isStackType = false;
 
