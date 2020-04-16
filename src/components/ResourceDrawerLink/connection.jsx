@@ -3,6 +3,7 @@ import * as selectors from '../../reducers';
 import ResourceDrawerLink from '.';
 
 // Wrapper of ResourceDrawerLink for connection with permission check
+// integrationId is passed in case it is used inside Integration
 export default function ConnectionResourceDrawerLink({
   resource,
   integrationId,

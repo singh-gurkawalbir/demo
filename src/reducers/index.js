@@ -1,4 +1,3 @@
-import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -906,25 +905,9 @@ export function isConnectionOffline(state, id) {
   return connection && connection.offline;
 }
 
-export function resourceListWithPermissions(state, options) {
-  const list = resourceList(state, options);
-  // eslint-disable-next-line no-use-before-define
-  const permissions = userPermissions(state);
-
-  list.resources = list.resources.map(r => {
-    const finalRes = { ...r, permissions: deepClone(permissions) };
-
-    // defaulting queue size to zero when undefined
-    finalRes.queueSize = finalRes.queueSize || 0;
-
-    return finalRes;
-  });
-
-  return list;
-}
-
+// TODO: could this be converted to re-select?
 export function resourcesByIds(state, resourceType, resourceIds) {
-  const { resources } = resourceListWithPermissions(state, {
+  const { resources } = resourceList(state, {
     type: resourceType,
   });
 
@@ -1192,7 +1175,7 @@ export function isOnOffInProgress(state, flowId) {
 
 export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
-  let { resources = [] } = resourceListWithPermissions(state, {
+  let { resources = [] } = resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
   });
@@ -1221,19 +1204,16 @@ export function integrationAppResourceList(
   const integrationResource =
     fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = resourceListWithPermissions(
-    state,
-    {
-      type: 'connections',
-      filter: { _integrationId: integrationId },
-      ...(tableConfig || {}),
-    }
-  );
+  const { resources: integrationConnections } = resourceList(state, {
+    type: 'connections',
+    filter: { _integrationId: integrationId },
+    ...(tableConfig || {}),
+  });
 
   if (!supportsMultiStore || !storeId) {
     return {
       connections: integrationConnections,
-      flows: resourceListWithPermissions(state, {
+      flows: resourceList(state, {
         type: 'flows',
         filter: { _integrationId: integrationId },
       }).resources,
@@ -1517,7 +1497,11 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
     .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({ generate: field.id, extract: '', discardIfEmpty: true }));
+    .map(field => ({
+      generate: field.id,
+      extract: '',
+      discardIfEmpty: true,
+    }));
   // Combine filtered mappings and unmapped fields and generate unmapped fields
   const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
 
@@ -2312,22 +2296,22 @@ export const resourcePermissions = createSelector(
     if (!permissions) return emptyObject;
     let value;
 
-    if (resourceId) {
+    if (resourceType === 'integrations' && (subResourceType || resourceId)) {
       if (
-        resourceId &&
-        resourceType === 'integrations' &&
         [
           USER_ACCESS_LEVELS.ACCOUNT_OWNER,
           USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
           USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
         ].includes(permissions.accessLevel)
-      ) {
+      )
         value = permissions.integrations.all;
-      } else {
+      else if (resourceId) {
         value = permissions[resourceType][resourceId];
       }
     } else if (resourceType) {
-      value = permissions[resourceType];
+      value = resourceId
+        ? permissions[resourceType][resourceId]
+        : permissions[resourceType];
     } else {
       value = permissions;
     }

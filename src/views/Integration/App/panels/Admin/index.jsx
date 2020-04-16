@@ -72,8 +72,9 @@ const allSections = [
 export default function AdminPanel({ integrationId, ...sectionProps }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const permissions = useSelector(state => selectors.userPermissions(state));
-  const showAPITokens = permissions.accesstokens.view;
+  const showAPITokens = useSelector(
+    state => selectors.resourcePermissions(state, 'accesstokens').view
+  );
   const availableSections = showAPITokens
     ? allSections
     : // remove api token (last) section;

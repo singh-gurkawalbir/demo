@@ -92,15 +92,12 @@ function QueuedJobs({ parentUrl }) {
     selectors.queuedJobs(state, connectionId)
   );
   const queueSize = useSelector(state => {
-    const { resources: connections } = selectors.resourceListWithPermissions(
-      state,
-      {
-        type: 'connections',
-      }
-    );
+    const { resources: connections } = selectors.resourceList(state, {
+      type: 'connections',
+    });
     const connection = connections.find(c => c._id === connectionId);
 
-    return connection ? connection.queueSize : 0;
+    return connection && connection.queueSize ? connection.queueSize : 0;
   });
 
   useEffect(() => {

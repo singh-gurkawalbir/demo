@@ -9,6 +9,7 @@ export default {
   label: 'Open debugger',
   component: function OpenDebugger({ resource, integrationId }) {
     const dispatch = useDispatch();
+    // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api.
     const canAccess = useSelector(
       state =>
         selectors.resourcePermissions(
