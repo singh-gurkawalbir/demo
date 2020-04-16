@@ -85,7 +85,7 @@ const generateExportHooksMetadata = ({
         id: 'preSavePage.script',
         name: 'script-preSavePage',
         type: 'hook',
-        label: 'Pre Save Page',
+        label: 'Pre save page',
         hookType: 'script',
         flowId,
         resourceId,
@@ -97,7 +97,7 @@ const generateExportHooksMetadata = ({
       'preSavePage.stack': {
         id: 'preSavePage.stack',
         name: 'stack-preSavePage',
-        label: 'Pre Save Page',
+        label: 'Pre save page',
         type: 'hook',
         hookType: 'stack',
         defaultValue:
