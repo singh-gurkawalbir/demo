@@ -72,7 +72,7 @@ const generateExportHooksMetadata = ({
         id: 'hookType',
         name: 'hookType',
         type: 'radiogroup',
-        label: 'Hook Type',
+        label: 'Hook type',
         defaultValue: defaultHookType,
         fullWidth: true,
         options: [
@@ -145,7 +145,7 @@ const generateImportHooksMetadata = ({
       id: 'hookType',
       name: 'hookType',
       type: 'radiogroup',
-      label: 'Hook Type',
+      label: 'Hook type',
       defaultValue: defaultHookType,
       fullWidth: true,
       options: [
