@@ -314,6 +314,7 @@ export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',

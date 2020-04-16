@@ -1,4 +1,5 @@
 import applications from '../../../../constants/applications';
+import { RDBMS_TYPES } from '../../../../utils/constants';
 
 const visibleWhen = [
   {
@@ -101,7 +102,7 @@ export default {
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (['mysql', 'postgresql', 'mssql', 'snowflake'].includes(app.type)) {
+      if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else {
         expression.push({ type: app.type });

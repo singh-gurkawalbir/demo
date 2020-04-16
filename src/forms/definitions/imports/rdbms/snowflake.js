@@ -37,7 +37,7 @@ export default {
       type: 'radiogroup',
       label: 'Choose type',
       required: true,
-      helpText: `Please select this option if you want to import (or insert) multiple records at once into the database.Please use this option to provide INSERT/UPDATE queries to CREATE/UPDATE records in the database.`,
+      helpKey: 'connection.snowflake.rdbms.queryType',
       options: [
         {
           items: [

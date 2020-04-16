@@ -3,6 +3,7 @@ import applications, {
   getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../../utils/resource';
+import { RDBMS_TYPES } from '../../../../utils/constants';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
@@ -123,7 +124,7 @@ export default {
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (['mysql', 'postgresql', 'mssql', 'snowflake'].includes(app.type)) {
+      if (RDBMS_TYPES.includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else {
         expression.push({ type: app.type });
