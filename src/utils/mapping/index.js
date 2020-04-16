@@ -285,16 +285,14 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
     * */
-    // So wrap the extract only if it doesnt have a dot or sublist character in it
+    // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
-      !(
-        /^\[.*\]$/.test(extract) &&
-        /\W/.test(extract.replace(/^\[|]$/g, '')) &&
-        !/\./.test(extract.replace(/^\[|]$/g, ''))
-      )
+      /^\[.*\]$/.test(extract) &&
+      /\W/.test(extract.replace(/^\[|]$/g, '')) &&
+      !/\./.test(extract.replace(/^\[|]$/g, ''))
     ) {
       // if not already wrapped
-      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
+      modifiedExtract = extract.replace(/^\[|]$/g, '').replace(/\\\]/g, ']');
     }
   }
 
