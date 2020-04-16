@@ -13,7 +13,7 @@ export default {
         { _connectorId: { $exists: false } },
       ];
 
-      if (['mysql', 'postgresql', 'mssql'].includes(r.type)) {
+      if (['mysql', 'postgresql', 'mssql', 'snowflake'].includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else expression.push({ type: r.type });
 
@@ -175,6 +175,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },

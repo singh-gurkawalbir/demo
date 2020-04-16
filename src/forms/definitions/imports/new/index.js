@@ -13,6 +13,7 @@ const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  snowflake: 'RDBMS',
   netsuite: 'NetSuiteDistributed',
   ftp: 'FTP',
   http: 'HTTP',
@@ -100,7 +101,7 @@ export default {
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+      if (['mysql', 'postgresql', 'mssql', 'snowflake'].includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else {
         expression.push({ type: app.type });

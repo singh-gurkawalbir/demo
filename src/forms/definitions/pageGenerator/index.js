@@ -135,7 +135,7 @@ export default {
     if (fieldId === 'connection') {
       const expression = [];
 
-      if (['mysql', 'postgresql', 'mssql'].includes(app.type)) {
+      if (['mysql', 'postgresql', 'mssql', 'snowflake'].includes(app.type)) {
         expression.push({ 'rdbms.type': app.type });
       } else {
         expression.push({ type: app.type });
