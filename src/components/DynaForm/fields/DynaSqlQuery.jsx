@@ -53,8 +53,6 @@ export default function DynaSqlQuery(props) {
     isValid,
     errorMessages,
   } = props;
-
-  console.log('isValid', isValid, errorMessages);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
