@@ -34,8 +34,6 @@ export default {
       startAdornment: 'https://',
       label: 'API Endpoint',
       required: true,
-      helpText:
-        'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -54,16 +52,12 @@ export default {
       id: 'http.unencrypted.Store_Code',
       type: 'text',
       label: 'Store Code',
-      helpText:
-        'Please enter the Store Code. Under store settings, we will get the store code.',
       required: true,
     },
     xMivaAPIToken: {
       id: 'xMivaAPIToken',
       type: 'text',
       label: 'API Token',
-      helpText:
-        'Please enter the API token of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

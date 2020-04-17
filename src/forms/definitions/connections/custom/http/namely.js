@@ -28,7 +28,6 @@ export default {
       endAdornment: '.namely.com',
       label: 'Company Name',
       required: true,
-      helpText: 'Your subdomain. For example, https://mysubdomain.namely.com',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -51,8 +50,7 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'Personal Access Token',
       required: true,
-      helpText:
-        'The personal access token of your account on namely. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Personal Access Token safe. This can be obtained from the Settings section and Personal Access Token subsection.',
+      helpKey: 'namely.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

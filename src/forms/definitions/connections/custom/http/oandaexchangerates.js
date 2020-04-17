@@ -13,7 +13,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      helpText: 'Please enter the API Key of your OANDA account.',
+      helpKey: 'oandaexchangerates.connection.http.auth.token.token',
       label: 'API Key',
       required: true,
     },

@@ -24,7 +24,7 @@ export default {
       endAdornment: '.dynamics.com',
       label: 'Subdomain',
       required: true,
-      helpText:
+      helpKey:
         'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {
         matchesRegEx: {

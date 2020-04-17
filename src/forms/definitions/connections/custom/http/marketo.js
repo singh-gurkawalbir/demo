@@ -30,8 +30,6 @@ export default {
       endAdornment: '/rest',
       label: 'Subdomain',
       required: true,
-      helpText:
-        "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -55,8 +53,7 @@ export default {
       type: 'text',
       label: 'Client Id',
       required: true,
-      helpText:
-        'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
+      helpKey: 'marketo.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
@@ -65,8 +62,7 @@ export default {
       required: true,
       defaultValue: '',
       inputType: 'password',
-      helpText:
-        'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+      helpKey: 'marketo.connection.http.unencrypted.clientSecret',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

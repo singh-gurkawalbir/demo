@@ -42,7 +42,7 @@ export default {
           ],
         },
       ],
-      helpText: `Select 'Newegg Business' if your account is created on https://www.neweggbusiness.com.Select 'Newegg' if your account is created on https://www.newegg.com.`,
+      helpKey: 'newegg.connection.accountType',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -62,8 +62,7 @@ export default {
       required: true,
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
+      helpKey: 'newegg.connection.http.encrypted.apiKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -74,8 +73,7 @@ export default {
       required: true,
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please enter the unique Secret Key which Newegg Marketplace integration team assigned to you. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your key safe.',
+      helpKey: 'newegg.connection.http.encrypted.apiSecret',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -84,8 +82,7 @@ export default {
       type: 'text',
       label: 'Seller Id',
       required: true,
-      helpText:
-        'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
+      helpKey: 'newegg.connection.http.unencrypted.sellerId',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

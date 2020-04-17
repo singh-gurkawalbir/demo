@@ -33,7 +33,6 @@ export default {
       type: 'text',
       label: 'Profile ID',
       required: true,
-      helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
     'http.encrypted.profileKey': {
       id: 'http.encrypted.profileKey',
@@ -42,7 +41,6 @@ export default {
       required: true,
       defaultValue: '',
       inputType: 'password',
-      helpText: 'API password (Profile Key) assigned by Merchant e-Solutions.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -53,7 +51,6 @@ export default {
       required: true,
       inputType: 'password',
       defaultValue: '',
-      helpText: 'Payment card number.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
