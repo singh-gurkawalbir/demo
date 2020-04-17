@@ -61,7 +61,7 @@ const extractedHelpkeys = {
     'Please enter the API Namespace of your account.',
   'openair.connection.http.unencrypted.apiKey':
     'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
-  'onelogin.connection.http.oneloginRegion': 'Please enter Region for URI.',
+  'connection.http.oneloginRegion': 'Please enter Region for URI.',
   'onelogin.connection.http.unencrypted.apiKey':
     'Please enter API Key of your OneLogin Account.',
   'onelogin.connection.http.encrypted.apiSecret':
@@ -474,24 +474,6 @@ const extractedHelpkeys = {
     'Please select your environment here. Select Staging if the account is created on https://openapi.staging.ware2goproject.com/ware2go. Select Production if the account is created on https://openapi.ware2goproject.com/ware2go.',
   'ware2go.connection.http.auth.basic.username':
     'Please enter your Access Token here. This can be obtained by reaching out to Ware2Go support team.',
-  'ware2go.connection.http.auth.basic.password':
-    'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
-  'ware2go.connection.http.unencrypted.merchantId':
-    'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
-  'messagemedia.connection.http.auth.basic.username':
-    'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
-  'messagemedia.connection.http.auth.basic.password':
-    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
-  'vend.connection.http.subdomain':
-    "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
-  'miva.connection.http.apiEndpoint':
-    'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
-  'miva.connection.http.unencrypted.Store_Code':
-    'Please enter the Store Code. Under store settings, we will get the store code.',
-  'miva.connection.xMivaAPIToken':
-    'Please enter the API token of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.',
-  'target.connection.accType':
-    'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
   'target.connection.http.auth.token.token':
     'Please enter the x-seller-token provided by Target',
   'target.connection.http.unencrypted.x-seller-id':

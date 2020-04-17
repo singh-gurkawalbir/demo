@@ -26,6 +26,7 @@ export default {
           ],
         },
       ],
+      helpKey: 'oandav20fxtrade.connection.accountType',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -41,6 +42,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
+      helpKey: 'oandav20fxtrade.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

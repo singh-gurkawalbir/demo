@@ -48,6 +48,7 @@ export default {
       required: true,
       type: 'text',
       label: 'API key',
+      helpKey: 'onelogin.connection.http.unencrypted.apiKey',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
@@ -56,6 +57,7 @@ export default {
       type: 'text',
       label: 'API secret',
       inputType: 'password',
+      helpKey: 'onelogin.connection.http.encrypted.apiSecret',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -70,6 +72,7 @@ export default {
       ],
       label: 'Generate token',
       required: true,
+      helpKey: 'onelogin.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {
       id: 'http.auth.token.refreshToken',
