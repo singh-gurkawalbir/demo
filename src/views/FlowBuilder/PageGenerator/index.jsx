@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
@@ -189,8 +189,7 @@ const PageGenerator = ({
     pg.webhookOnly,
     resource,
   ]);
-
-  function getApplication() {
+  const getApplication = useCallback(() => {
     if (isDataLoader) {
       return {
         connectorType: 'dataLoader',
@@ -232,8 +231,14 @@ const PageGenerator = ({
           ? 'listener'
           : 'export',
     };
-  }
-
+  }, [
+    isDataLoader,
+    pending,
+    pg.application,
+    pg.webhookOnly,
+    resource,
+    resourceId,
+  ]);
   const blockName = pending
     ? 'Pending configuration'
     : resource.name || resource.id;
@@ -242,40 +247,58 @@ const PageGenerator = ({
   drag(ref);
 
   // #region Configure available generator actions
-  let generatorActions = [];
 
-  if (!pending) {
-    if (blockType === 'export') {
-      generatorActions.push({
-        ...scheduleAction,
-        isUsed: usedActions[actionsMap.schedule],
-      });
+  const generatorActions = useMemo(() => {
+    let generatorActions = [];
+
+    if (!pending) {
+      if (blockType === 'export') {
+        generatorActions.push({
+          ...scheduleAction,
+          isUsed: usedActions[actionsMap.schedule],
+        });
+      }
+
+      if (exportNeedsRouting || connectionHasAs2Routing) {
+        generatorActions.push({
+          ...as2RoutingAction,
+          isUsed: connectionHasAs2Routing,
+        });
+      }
+
+      if (isDataLoader) {
+        generatorActions = [
+          {
+            ...exportFilterAction,
+            isUsed: usedActions[actionsMap.outputFilter],
+          },
+          { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        ];
+      } else {
+        generatorActions = [
+          ...generatorActions,
+          {
+            ...transformationAction,
+            isUsed: usedActions[actionsMap.transformation],
+          },
+          {
+            ...exportFilterAction,
+            isUsed: usedActions[actionsMap.outputFilter],
+          },
+          { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        ];
+      }
     }
 
-    if (exportNeedsRouting || connectionHasAs2Routing) {
-      generatorActions.push({
-        ...as2RoutingAction,
-        isUsed: connectionHasAs2Routing,
-      });
-    }
-
-    if (isDataLoader) {
-      generatorActions = [
-        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-      ];
-    } else {
-      generatorActions = [
-        ...generatorActions,
-        {
-          ...transformationAction,
-          isUsed: usedActions[actionsMap.transformation],
-        },
-        { ...exportFilterAction, isUsed: usedActions[actionsMap.outputFilter] },
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-      ];
-    }
-  }
+    return generatorActions;
+  }, [
+    blockType,
+    connectionHasAs2Routing,
+    exportNeedsRouting,
+    isDataLoader,
+    pending,
+    usedActions,
+  ]);
   // #endregion
 
   // console.log('render: <PageGenerator>');

@@ -371,40 +371,44 @@ function FlowBuilder() {
   }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
   // #endregion
 
-  const pushOrReplaceHistory = to => {
-    if (match.isExact) {
-      history.push(to);
-    } else {
-      history.replace(to);
-    }
-  };
-
-  function handleAddGenerator() {
+  const pushOrReplaceHistory = useCallback(
+    to => {
+      if (match.isExact) {
+        history.push(to);
+      } else {
+        history.replace(to);
+      }
+    },
+    [history, match.isExact]
+  );
+  const handleAddGenerator = useCallback(() => {
     const newTempGeneratorId = generateNewId();
 
     setNewGeneratorId(newTempGeneratorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageGenerator/${newTempGeneratorId}`
     );
-  }
-
-  function handleAddProcessor() {
+  }, [match.url, pushOrReplaceHistory]);
+  const handleAddProcessor = useCallback(() => {
     const newTempProcessorId = generateNewId();
 
     setNewProcessorId(newTempProcessorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageProcessor/${newTempProcessorId}`
     );
-  }
-
-  function handleDrawerOpen(path) {
-    pushOrReplaceHistory(`${match.url}/${path}`);
-  }
-
-  function handleTitleChange(title) {
-    patchFlow('/name', title);
-  }
-
+  }, [match.url, pushOrReplaceHistory]);
+  const handleDrawerOpen = useCallback(
+    path => {
+      pushOrReplaceHistory(`${match.url}/${path}`);
+    },
+    [match.url, pushOrReplaceHistory]
+  );
+  const handleTitleChange = useCallback(
+    title => {
+      patchFlow('/name', title);
+    },
+    [patchFlow]
+  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
@@ -412,37 +416,41 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
-
   // #region New Flow Creation logic
-  function rewriteUrl(id) {
-    const parts = match.url.split('/');
+  const rewriteUrl = useCallback(
+    id => {
+      const parts = match.url.split('/');
 
-    parts[parts.length - 1] = id;
+      parts[parts.length - 1] = id;
 
-    return parts.join('/');
-  }
-
+      return parts.join('/');
+    },
+    [match.url]
+  );
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
-  function patchNewFlow(newFlowId, newName, newPG) {
-    const startDisabled = !newPG || newPG.application !== 'dataLoader';
-    const patchSet = [
-      { op: 'add', path: '/name', value: newName || 'New flow' },
-      { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
-      { op: 'add', path: '/pageProcessors', value: [] },
-      { op: 'add', path: '/disabled', value: startDisabled },
-    ];
+  const patchNewFlow = useCallback(
+    (newFlowId, newName, newPG) => {
+      const startDisabled = !newPG || newPG.application !== 'dataLoader';
+      const patchSet = [
+        { op: 'add', path: '/name', value: newName || 'New flow' },
+        { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
+        { op: 'add', path: '/pageProcessors', value: [] },
+        { op: 'add', path: '/disabled', value: startDisabled },
+      ];
 
-    if (integrationId && integrationId !== 'none') {
-      patchSet.push({
-        op: 'add',
-        path: '/_integrationId',
-        value: integrationId,
-      });
-    }
+      if (integrationId && integrationId !== 'none') {
+        patchSet.push({
+          op: 'add',
+          path: '/_integrationId',
+          value: integrationId,
+        });
+      }
 
-    dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
-  }
+      dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
+    },
+    [dispatch, integrationId]
+  );
 
   // NEW FLOW REDIRECTION
   if (flowId === 'new') {

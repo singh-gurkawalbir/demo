@@ -1,4 +1,11 @@
-import { useRef, Fragment, useState, useEffect } from 'react';
+import {
+  useRef,
+  useMemo,
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -174,7 +181,7 @@ const PageProcessor = ({
   drag(drop(ref));
   // #endregion
 
-  function handleBlockClick() {
+  const handleBlockClick = useCallback(() => {
     const newId = generateNewId();
 
     if (pending) {
@@ -214,82 +221,94 @@ const PageProcessor = ({
     } else {
       history.replace(to);
     }
-  }
-
+  }, [
+    dispatch,
+    history,
+    match.isExact,
+    match.url,
+    pending,
+    pp._connectionId,
+    resource,
+    resourceId,
+    resourceType,
+  ]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
+  const processorActions = useMemo(() => {
+    const processorActions = [
+      {
+        ...inputFilterAction,
+        isUsed: usedActions[actionsMap.inputFilter],
+        helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
+      },
+    ];
 
-  const processorActions = [
-    {
-      ...inputFilterAction,
-      isUsed: usedActions[actionsMap.inputFilter],
-      helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
-    },
-  ];
+    if (!pending) {
+      if (pp.type === 'export') {
+        processorActions.push(
+          {
+            ...outputFilterAction,
+            isUsed: usedActions[actionsMap.outputFilter],
+          },
+          {
+            ...transformationAction,
+            isUsed: usedActions[actionsMap.transformation],
+          },
+          {
+            ...pageProcessorHooksAction,
+            isUsed: usedActions[actionsMap.hooks],
+            helpText: helpTextMap[`fb.pp.exports.hooks`],
+          }
+        );
+      } else {
+        processorActions.push(
+          ...(isImportMappingAvailable(resource)
+            ? [
+                {
+                  ...importMappingAction,
+                  isUsed: usedActions[actionsMap.importMapping],
+                },
+              ]
+            : []),
+          ...(!isLast
+            ? [
+                {
+                  ...responseTransformationAction,
+                  isUsed: usedActions[actionsMap.responseTransformation],
+                },
+              ]
+            : []),
+          {
+            ...pageProcessorHooksAction,
+            isUsed: usedActions[actionsMap.hooks],
+            helpText: helpTextMap[`fb.pp.imports.hooks`],
+          }
+        );
+      }
 
-  if (!pending) {
-    if (pp.type === 'export') {
-      processorActions.push(
-        {
-          ...outputFilterAction,
-          isUsed: usedActions[actionsMap.outputFilter],
-        },
-        {
-          ...transformationAction,
-          isUsed: usedActions[actionsMap.transformation],
-        },
-        {
-          ...pageProcessorHooksAction,
-          isUsed: usedActions[actionsMap.hooks],
-          helpText: helpTextMap[`fb.pp.exports.hooks`],
-        }
-      );
-    } else {
-      processorActions.push(
-        ...(isImportMappingAvailable(resource)
-          ? [
-              {
-                ...importMappingAction,
-                isUsed: usedActions[actionsMap.importMapping],
-              },
-            ]
-          : []),
-        ...(!isLast
-          ? [
-              {
-                ...responseTransformationAction,
-                isUsed: usedActions[actionsMap.responseTransformation],
-              },
-            ]
-          : []),
-        {
-          ...pageProcessorHooksAction,
-          isUsed: usedActions[actionsMap.hooks],
-          helpText: helpTextMap[`fb.pp.imports.hooks`],
-        }
-      );
+      if (!isLast) {
+        processorActions.push(
+          {
+            ...responseMapping,
+            isUsed: usedActions[actionsMap.responseMapping],
+            helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+          },
+          {
+            ...postResponseMapHook,
+            isUsed: usedActions[actionsMap.postResponseMap],
+            helpText: helpTextMap[`fb.pp.${resourceType}.postResponseMap`],
+          },
+          {
+            ...proceedOnFailureAction,
+            isUsed: usedActions[actionsMap.proceedOnFailure],
+            helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
+          }
+        );
+      }
     }
 
-    if (!isLast) {
-      processorActions.push(
-        {
-          ...responseMapping,
-          isUsed: usedActions[actionsMap.responseMapping],
-          helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
-        },
-        {
-          ...postResponseMapHook,
-          isUsed: usedActions[actionsMap.postResponseMap],
-          helpText: helpTextMap[`fb.pp.${resourceType}.postResponseMap`],
-        },
-        {
-          ...proceedOnFailureAction,
-          isUsed: usedActions[actionsMap.proceedOnFailure],
-          helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
-        }
-      );
-    }
-  }
+    return processorActions;
+  }, [isLast, pending, pp.type, resource, resourceType, usedActions]);
   // #endregion
 
   // console.log('render: <PageProcessor>');
