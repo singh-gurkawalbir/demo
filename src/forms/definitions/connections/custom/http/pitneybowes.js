@@ -48,6 +48,7 @@ export default {
       id: 'http.sandbox',
       type: 'select',
       label: 'Account type',
+      helpKey: 'pitneybowes.connection.http.sandbox',
       options: [
         {
           items: [
@@ -72,6 +73,7 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
+      helpKey: 'pitneybowes.connection.http.unencrypted.apiKey',
       label: 'API key',
     },
     'http.encrypted.apiSecret': {
@@ -80,12 +82,14 @@ export default {
       type: 'text',
       defaultValue: '',
       label: 'API secret',
+      helpKey: 'pitneybowes.connection.http.encrypted.apiSecret',
       inputType: 'password',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'pitneybowes.connection.http.auth.token.token',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.apiKey', is: [''] },

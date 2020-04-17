@@ -38,9 +38,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'servicenow.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'servicenow.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

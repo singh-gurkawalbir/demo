@@ -28,6 +28,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      helpKey: 'retailops.connection.http.encrypted.apiKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

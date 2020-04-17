@@ -46,6 +46,7 @@ export default {
       required: true,
       type: 'text',
       label: 'Username',
+      helpKey: 'procurify.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -54,6 +55,7 @@ export default {
       defaultValue: '',
       label: 'Password',
       inputType: 'password',
+      helpKey: 'procurify.connection.http.encrypted.password',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -61,7 +63,7 @@ export default {
       id: 'http.generateClientIdandSecret',
       type: 'tokengen',
       inputType: 'password',
-
+      helpKey: 'procurify.connection.http.generateClientIdandSecret',
       label: 'Generate client id &secret',
       defaultValue: '',
     },
@@ -69,6 +71,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
+      helpKey: 'procurify.connection.http.encrypted.clientId',
       label: 'Client id',
     },
     'http.encrypted.clientSecret': {
@@ -77,6 +80,7 @@ export default {
       type: 'tokengen',
       defaultValue: '',
       inputType: 'password',
+      helpKey: 'procurify.connection.http.encrypted.clientSecret',
       label: 'Generate client id &secret',
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
@@ -87,6 +91,7 @@ export default {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'procurify.connection.http.auth.token.token',
       disabledWhen: [
         { field: 'http.unencrypted.clientId', is: [''] },
         { field: 'http.encrypted.clientSecret', is: [''] },

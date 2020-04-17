@@ -13,8 +13,14 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
     },
-    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
-    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    'http.auth.basic.username': {
+      fieldId: 'http.auth.basic.username',
+      helpKey: 'pulseway.connection.http.auth.basic.username',
+    },
+    'http.auth.basic.password': {
+      fieldId: 'http.auth.basic.password',
+      helpKey: 'pulseway.connection.http.auth.basic.password',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

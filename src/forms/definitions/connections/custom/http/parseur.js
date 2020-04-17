@@ -24,6 +24,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       label: 'API token key',
+      helpKey: 'parseur.connection.http.encrypted.apiKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

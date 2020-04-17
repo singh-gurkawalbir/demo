@@ -14,6 +14,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API access token',
+      helpKey: 'quip.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -24,6 +24,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      helpKey: 'shiphawk.connection.http.encrypted.apiKey',
       required: true,
       description:
         'Note: for security reasons this field must always be re-entered.',

@@ -27,6 +27,7 @@ export default {
       defaultValue: '',
       required: true,
       type: 'text',
+      helpKey: 'returnly.connection.http.encrypted.apiKey',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',

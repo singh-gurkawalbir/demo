@@ -15,6 +15,7 @@ export default {
       id: 'http.unencrypted.publicKey',
       type: 'text',
       label: 'Public key',
+      helpKey: 'paycor.connection.http.unencrypted.publicKey',
       required: true,
     },
     'http.encrypted.secretKey': {
@@ -24,6 +25,7 @@ export default {
       defaultValue: '',
       required: true,
       inputType: 'password',
+      helpKey: 'paycor.connection.http.encrypted.secretKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

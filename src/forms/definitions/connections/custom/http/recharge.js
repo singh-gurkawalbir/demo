@@ -17,6 +17,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API key',
+      helpKey: 'recharge.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

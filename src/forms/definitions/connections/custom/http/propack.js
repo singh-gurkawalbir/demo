@@ -45,6 +45,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      helpKey: 'propack.connection.environment',
       options: [
         {
           items: [

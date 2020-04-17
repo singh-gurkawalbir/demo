@@ -22,6 +22,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.sharepoint.com',
       label: 'Subdomain',
+      helpKey: 'sharepoint.connection.http.subDomain',
       required: true,
       validWhen: {
         matchesRegEx: {

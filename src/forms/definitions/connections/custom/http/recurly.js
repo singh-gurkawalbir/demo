@@ -41,6 +41,7 @@ export default {
       fieldId: 'http.auth.basic.username',
       label: 'API key',
       defaultValue: '',
+      helpKey: 'recurly.connection.http.auth.basic.username',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

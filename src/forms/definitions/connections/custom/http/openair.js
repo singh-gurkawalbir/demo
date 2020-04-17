@@ -49,6 +49,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      helpKey: 'openair.connection.environment',
       options: [
         {
           items: [
@@ -81,12 +82,14 @@ export default {
       type: 'text',
       label: 'Company id',
       required: true,
+      helpKey: 'openair.connection.http.unencrypted.companyId',
     },
     'http.unencrypted.userId': {
       id: 'http.unencrypted.userId',
       type: 'text',
       label: 'User id',
       required: true,
+      helpKey: 'openair.connection.http.unencrypted.userId',
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
@@ -94,6 +97,7 @@ export default {
       label: 'Password',
       required: true,
       inputType: 'password',
+      helpKey: 'openair.connection.http.encrypted.password',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -110,6 +114,7 @@ export default {
       id: 'http.unencrypted.apiKey',
       type: 'text',
       label: 'API key',
+      helpKey: 'openair.connection.http.unencrypted.apiKey',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

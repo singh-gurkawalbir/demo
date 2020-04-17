@@ -13,11 +13,13 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'shipstation.connection.http.auth.basic.username',
       label: 'API key',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API secret',
+      helpKey: 'shipstation.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

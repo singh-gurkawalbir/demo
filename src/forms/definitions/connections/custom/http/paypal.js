@@ -37,6 +37,7 @@ export default {
       type: 'select',
       required: true,
       label: 'Account type',
+      helpKey: 'paypal.connection.http.accountType',
       options: [
         {
           items: [
@@ -62,6 +63,7 @@ export default {
       required: true,
       type: 'text',
       label: 'Client id',
+      helpKey: 'paypal.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
@@ -69,6 +71,7 @@ export default {
       type: 'text',
       defaultValue: '',
       label: 'Client secret',
+      helpKey: 'paypal.connection.http.encrypted.clientSecret',
       inputType: 'password',
     },
     'http.auth.token.token': {
@@ -76,6 +79,7 @@ export default {
       type: 'tokengen',
       inputType: 'password',
       resourceId: r => r._id,
+      helpKey: 'paypal.connection.http.auth.token.token',
       disabledWhen: [
         { field: 'http.unencrypted.clientId', is: [''] },
         { field: 'http.encrypted.clientSecret', is: [''] },

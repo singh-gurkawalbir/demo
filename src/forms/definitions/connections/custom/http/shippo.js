@@ -21,6 +21,7 @@ export default {
     'http.encrypted.token': {
       id: 'http.encrypted.token',
       label: 'API token',
+      helpKey: 'shippo.connection.http.encrypted.token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
