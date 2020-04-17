@@ -22,17 +22,6 @@ export default {
           message: 'Account name should not contain spaces.',
         },
       },
-      defaultValue: r => {
-        const baseUri = r && r.rdbms && r.rdbms.host;
-        const subdomain =
-          baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.snowflakecomputing.com')
-          );
-
-        return subdomain;
-      },
       label: 'Account name',
     },
     'rdbms.database': { fieldId: 'rdbms.database' },
@@ -46,7 +35,10 @@ export default {
       label: 'Warehouse name',
       required: true,
     },
-    rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
+    },
+    'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
   },
   layout: {
     fields: [
@@ -62,7 +54,10 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['rdbmsAdvanced'],
+        fields: [
+          '_borrowConcurrencyFromConnectionId',
+          'rdbms.concurrencyLevel',
+        ],
       },
     ],
   },
