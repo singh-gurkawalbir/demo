@@ -535,6 +535,9 @@ export default (state = {}, action) => {
           }
 
           if (
+            generatesMetadata.data &&
+            generatesMetadata.data.generatesMetaData &&
+            generatesMetadata.data.generatesMetaData.id &&
             !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
