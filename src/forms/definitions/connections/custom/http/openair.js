@@ -80,14 +80,14 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company id',
+      label: 'Company ID',
       required: true,
       helpKey: 'openair.connection.http.unencrypted.companyId',
     },
     'http.unencrypted.userId': {
       id: 'http.unencrypted.userId',
       type: 'text',
-      label: 'User id',
+      label: 'User ID',
       required: true,
       helpKey: 'openair.connection.http.unencrypted.userId',
     },

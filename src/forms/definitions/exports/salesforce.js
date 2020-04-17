@@ -112,7 +112,7 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export from salesforce?',
+      label: 'What would you like to export from Salesforce?',
     },
     outputMode: {
       id: 'outputMode',

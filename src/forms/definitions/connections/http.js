@@ -377,7 +377,7 @@ export default {
       valueType: 'keyvalue',
       defaultValue: r => (r && r.http && r.http.headers) || '',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      label: 'Configure http headers',
+      label: 'Configure HTTP headers',
       helpKey: 'connection.http.headers',
     },
     'http.auth.oauth.failStatusCode': {

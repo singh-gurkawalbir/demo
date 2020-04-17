@@ -27,7 +27,7 @@ export default {
     'http.threedcartSecureUrl': {
       id: 'http.threedcartSecureUrl',
       type: 'text',
-      label: 'Secure url',
+      label: 'Secure URL',
       required: true,
       defaultValue: r =>
         r &&

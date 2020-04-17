@@ -101,7 +101,7 @@ export default {
     ],
   },
   'rdbms.ignoreExtract': {
-    label: 'Existing data id',
+    label: 'Existing data ID',
     required: true,
     defaultValue: r => {
       const val =
@@ -123,7 +123,7 @@ export default {
     ],
   },
   'rdbms.updateExtract': {
-    label: 'Existing data id',
+    label: 'Existing data ID',
     required: true,
     defaultValue: r => {
       const val =

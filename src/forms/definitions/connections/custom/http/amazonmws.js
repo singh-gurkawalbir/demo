@@ -51,7 +51,7 @@ export default {
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
-      label: 'Marketplace id',
+      label: 'Marketplace ID',
       helpKey: 'amazonmws.connection.http.unencrypted.marketplaceId',
       required: true,
       options: [

@@ -55,7 +55,7 @@ export default {
   },
   'lambda.accessKeyId': {
     type: 'text',
-    label: 'Access key id',
+    label: 'Access key ID',
     visibleWhen: [
       {
         field: 'type',

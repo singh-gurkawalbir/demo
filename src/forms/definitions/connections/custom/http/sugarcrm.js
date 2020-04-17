@@ -58,7 +58,7 @@ export default {
       id: 'http.unencrypted.clientID',
       required: true,
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
     },
     'http.unencrypted.platform': {
       id: 'http.unencrypted.platform',

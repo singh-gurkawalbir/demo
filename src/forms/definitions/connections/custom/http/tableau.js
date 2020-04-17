@@ -60,7 +60,7 @@ export default {
       id: 'http.unencrypted.contentUrl',
       required: true,
       type: 'text',
-      label: 'Content url',
+      label: 'Content URL',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -77,7 +77,7 @@ export default {
     'http.unencrypted.siteId': {
       id: 'http.unencrypted.siteId',
       type: 'text',
-      label: 'Site id',
+      label: 'Site ID',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

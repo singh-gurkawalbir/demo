@@ -17,7 +17,7 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
       endAdornment: '/api',
-      label: 'Base uri',
+      label: 'Base URI',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =

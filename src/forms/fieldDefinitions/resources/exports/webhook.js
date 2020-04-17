@@ -103,7 +103,7 @@ export default {
   },
   'webhook.url': {
     type: 'generateurl',
-    label: 'Public url',
+    label: 'Public URL',
     buttonLabel: 'Generate URL',
   },
   'webhook.username': {
@@ -143,7 +143,7 @@ export default {
   },
   'webhook.token': {
     type: 'webhooktokengenerator',
-    label: 'Custom url token',
+    label: 'Custom URL token',
     buttonLabel: 'Generate new token',
     setFieldIds: ['webhook.url'],
     visible: true,

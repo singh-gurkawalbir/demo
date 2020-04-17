@@ -74,7 +74,7 @@ export default {
       id: 'rest.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     storeHash: {

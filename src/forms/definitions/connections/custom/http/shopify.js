@@ -108,7 +108,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
       type: 'text',
-      label: 'Store url',
+      label: 'Store URL',
       required: true,
       validWhen: {
         matchesRegEx: {

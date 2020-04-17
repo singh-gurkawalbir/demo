@@ -72,7 +72,7 @@ export default {
       required: true,
       type: 'text',
       helpKey: 'adp.connection.http.unencrypted.clientId',
-      label: 'Client id',
+      label: 'Client ID',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',

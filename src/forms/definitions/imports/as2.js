@@ -198,7 +198,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Launch xml builder',
+      label: 'Launch XML builder',
       title: 'XML Document Editor',
       ruleTitle: 'Type your template here.',
       resultTitle: 'Your evaluated result!',

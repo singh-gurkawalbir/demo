@@ -62,7 +62,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
       helpKey: 'paypal.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {

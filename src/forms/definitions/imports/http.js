@@ -534,7 +534,7 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
-      label: 'Relative uri',
+      label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -613,7 +613,7 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build http request body for create',
+      label: 'Build HTTP request body for create',
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -835,7 +835,7 @@ export default {
     'http.resourceIdPathCreate': {
       id: 'http.resourceIdPathCreate',
       type: 'text',
-      label: 'Response id path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1082,7 +1082,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
-      label: 'Relative uri',
+      label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1153,7 +1153,7 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build http request body for update',
+      label: 'Build HTTP request body for update',
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -1191,7 +1191,7 @@ export default {
     'http.resourceIdPathUpdate': {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
-      label: 'Response id path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -1383,7 +1383,7 @@ export default {
       id: 'http.existingDataId',
       type: 'textwithlookupextract',
       fieldType: 'ignoreExistingData',
-      label: 'Existing data id',
+      label: 'Existing data ID',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
