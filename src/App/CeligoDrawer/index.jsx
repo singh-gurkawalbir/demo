@@ -188,7 +188,6 @@ export default function CeligoDrawer() {
   const dispatch = useDispatch();
   const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
-  // const themeName = useSelector(state => selectors.themeName(state));
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
   );
@@ -205,7 +204,7 @@ export default function CeligoDrawer() {
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
-  const isSandbox = environment === 'sandbox'; // || themeName === 'sandbox';
+  const isSandbox = environment === 'sandbox';
   const marketplaceConnectors = useSelector(state =>
     selectors.marketplaceConnectors(state, undefined, isSandbox)
   );
