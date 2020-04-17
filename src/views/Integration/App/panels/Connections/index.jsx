@@ -1,5 +1,5 @@
 import { useState, Fragment, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
@@ -38,13 +38,15 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       tableConfig
     )
   );
-  const permission = useSelector(state =>
-    selectors.resourcePermissions(
-      state,
-      'integrations',
-      integrationId,
-      'connections'
-    )
+  const permission = useSelector(
+    state =>
+      selectors.resourcePermissions(
+        state,
+        'integrations',
+        integrationId,
+        'connections'
+      ),
+    shallowEqual
   );
 
   useEffect(() => {

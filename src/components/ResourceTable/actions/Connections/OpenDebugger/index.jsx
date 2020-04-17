@@ -1,4 +1,4 @@
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import moment from 'moment';
 import * as selectors from '../../../../../reducers';
@@ -13,8 +13,7 @@ export default {
     // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api
     const canAccess = useSelector(
       state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit,
-      shallowEqual
+        selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
 
     if (!canAccess) return null;

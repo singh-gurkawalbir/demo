@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import Icon from '../../../../icons/DebugIcon';
@@ -12,8 +12,7 @@ export default {
     const [show, setShow] = useState(false);
     const canAccess = useSelector(
       state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit,
-      shallowEqual
+        selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
 
     if (!canAccess) {

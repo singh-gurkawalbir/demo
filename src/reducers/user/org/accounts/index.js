@@ -539,16 +539,16 @@ export function permissions(
       register: true,
     };
     permissions.integrations.connectors = {
-      ...permissions.integrations.all,
+      accessLevel: userAccessLevel,
+      flows: {
+        edit: true,
+      },
+      connections: {
+        edit: true,
+      },
+      edit: true,
+      delete: true,
     };
-    const {
-      delete: _delete,
-      create,
-      register,
-      ...others
-    } = permissions.integrations.all.connections;
-
-    permissions.integrations.connectors.connections = others;
   } else if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
     permissions.integrations.none = {
       accessLevel: userAccessLevel,
@@ -557,16 +557,8 @@ export function permissions(
     };
     permissions.integrations.all = { ...permissions.integrations.none };
     permissions.integrations.connectors = {
-      ...permissions.integrations.all,
+      ...permissions.integrations.none,
     };
-    const {
-      delete: _delete,
-      create,
-      register,
-      ...others
-    } = permissions.integrations.all.connections;
-
-    permissions.integrations.connectors.connections = others;
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;

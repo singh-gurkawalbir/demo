@@ -2383,13 +2383,10 @@ export const resourcePermissions = (
         resourceData &&
         resourceData._connectorId
       ) {
-        const connPermission = deepClone(value.connections);
+        const { edit } = value.connections;
 
         return {
-          ...connPermission,
-          create: false,
-          delete: false,
-          register: false,
+          edit,
         };
       }
 

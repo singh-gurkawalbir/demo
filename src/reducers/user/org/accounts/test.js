@@ -625,14 +625,8 @@ describe('account (ashares) reducers', () => {
               accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
               edit: true,
               delete: true,
-              clone: true,
               flows: {
-                create: true,
                 edit: true,
-                delete: true,
-                clone: true,
-                attach: true,
-                detach: true,
               },
               connections: {
                 edit: true,
@@ -750,14 +744,8 @@ describe('account (ashares) reducers', () => {
               accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
               edit: true,
               delete: true,
-              clone: true,
               flows: {
-                create: true,
                 edit: true,
-                delete: true,
-                clone: true,
-                attach: true,
-                detach: true,
               },
               connections: {
                 edit: true,

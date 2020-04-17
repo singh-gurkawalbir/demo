@@ -1,4 +1,4 @@
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
@@ -14,8 +14,7 @@ export default {
     );
     const canAccess = useSelector(
       state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit,
-      shallowEqual
+        selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
 
     if (!canAccess) return null;
