@@ -27,8 +27,7 @@ export default {
     'http.refreshTokenBody.user': {
       id: 'http.refreshTokenBody.user',
       type: 'text',
-      helpText:
-        'API User Key available from Jet under API Section-> Get API Keys',
+      helpKey: 'jet.connection.http.refreshTokenBody.user',
       label: 'API User',
       required: true,
       defaultValue: r => {
@@ -49,8 +48,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Secret Key available from Jet under API Section-> Get API Keys',
+      helpKey: 'jet.connection.http.encrypted.password',
       label: 'Secret Key',
       description:
         'Note: for security reasons this field must always be re-entered.',

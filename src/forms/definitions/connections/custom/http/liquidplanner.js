@@ -27,7 +27,7 @@ export default {
       type: 'select',
       label: 'Authentication Type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
-      helpText: 'Please select Authentication Type',
+      helpKey: 'liquidplanner.connection.http.auth.type',
       options: [
         {
           items: [
@@ -39,13 +39,12 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'Enter Username of your registered LiquidPlanner account.',
+      helpKey: 'liquidplanner.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText:
-        'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
+      helpKey: 'liquidplanner.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.token.token': {
@@ -54,8 +53,7 @@ export default {
       type: 'text',
       defaultValue: '',
       label: 'API Token',
-      helpText:
-        'The API Token of your LiquidPlanner account when using the Token authentication.',
+      helpKey: 'liquidplanner.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
