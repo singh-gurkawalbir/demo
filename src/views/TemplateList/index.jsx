@@ -33,7 +33,7 @@ export default function TemplateList(props) {
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceListWithPermissions(state, {
+    selectors.resourceList(state, {
       type: 'templates',
       ...filter,
     })

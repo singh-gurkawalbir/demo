@@ -68,12 +68,9 @@ export default function DrawerTitleBar({
     (left, right) => left.length === right.length
   );
   const connectionName = useSelector(state => {
-    const { resources: connections } = selectors.resourceListWithPermissions(
-      state,
-      {
-        type: 'connections',
-      }
-    );
+    const { resources: connections } = selectors.resourceList(state, {
+      type: 'connections',
+    });
     const connection = connections.find(c => c._id === connectionId);
 
     return connection.name;
