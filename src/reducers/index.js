@@ -2290,41 +2290,121 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
 };
 
+export function userPermissionsOnConnection(state, connectionId) {
+  const permissions = userPermissions(state);
+
+  if (!permissions) {
+    return emptyObject;
+  }
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    const connection = resource(state, 'connections', connectionId);
+
+    return (
+      (connection._connectorId
+        ? permissions.integrations.connectors
+        : permissions.integrations.all) || {}
+    ).connections;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+        i._registeredConnectionIds &&
+        i._registeredConnectionIds.includes(connectionId)
+    );
+    let highestPermissionIntegration = {};
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!highestPermissionIntegration.accessLevel) {
+          highestPermissionIntegration = permissions.integrations[i._id];
+        } else if (
+          highestPermissionIntegration.accessLevel ===
+          INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          highestPermissionIntegration = permissions.integrations[i._id];
+        }
+      }
+    });
+
+    return (highestPermissionIntegration || {}).connections;
+  }
+
+  return emptyObject;
+}
+
 export const resourcePermissions = (
   state,
   resourceType,
   resourceId,
   childResourceType
 ) => {
+  if (resourceType === 'connections' && resourceId) {
+    return userPermissionsOnConnection(state, resourceId) || emptyObject;
+  }
+
   const permissions = userPermissions(state);
 
   if (!permissions) return emptyObject;
-  let value;
 
   if (resourceType === 'integrations' && (childResourceType || resourceId)) {
+    const resourceData =
+      resourceId && resource(state, 'integrations', resourceId);
+
     if (
       [
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
         USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
       ].includes(permissions.accessLevel)
-    )
-      value = permissions.integrations.all;
-    else if (resourceId) {
-      value = permissions[resourceType][resourceId];
+    ) {
+      const value =
+        resourceData && resourceData._connectorId
+          ? permissions.integrations.connectors
+          : permissions.integrations.all;
+
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    } else if (resourceId) {
+      const value = permissions[resourceType][resourceId];
+
+      if (
+        childResourceType === 'connections' &&
+        resourceData &&
+        resourceData._connectorId
+      ) {
+        const connPermission = deepClone(value.connections);
+
+        return {
+          ...connPermission,
+          create: false,
+          delete: false,
+          register: false,
+        };
+      }
+
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
     }
   } else if (resourceType) {
-    value = resourceId
+    return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
   } else {
-    value = permissions;
+    return permissions;
   }
-
-  return (
-    (childResourceType ? value && value[childResourceType] : value) ||
-    emptyObject
-  );
 };
 
 export function isFormAMonitorLevelAccess(state, integrationId) {

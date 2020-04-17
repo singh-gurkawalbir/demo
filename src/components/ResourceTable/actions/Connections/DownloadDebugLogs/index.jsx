@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
@@ -6,19 +6,16 @@ import openExternalUrl from '../../../../../utils/window';
 
 export default {
   label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource, integrationId }) {
-    let url = `/connections/${resource._id}/debug`;
+  component: function DownloadDebugLogs({ resource }) {
+    const { _id: connectionId } = resource;
+    let url = `/connections/${connectionId}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
     );
     const canAccess = useSelector(
       state =>
-        selectors.resourcePermissions(
-          state,
-          'integrations',
-          integrationId,
-          'connections'
-        ).edit
+        selectors.resourcePermissions(state, 'connections', connectionId).edit,
+      shallowEqual
     );
 
     if (!canAccess) return null;

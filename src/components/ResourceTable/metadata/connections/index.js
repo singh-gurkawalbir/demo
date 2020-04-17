@@ -64,10 +64,9 @@ export default {
   rowActions: (r, actionProps) => {
     let actionsToReturn = [AuditLogs];
 
-    // TODO: pass some attribute to restrict accessToken api call
-    actionsToReturn = [...actionsToReturn, References];
-
     if (actionProps.type === 'flowBuilder') {
+      actionsToReturn = [...actionsToReturn, References];
+
       actionsToReturn = [OpenDebugger, ...actionsToReturn];
     } else {
       actionsToReturn = [ConfigureDebugger, ...actionsToReturn];

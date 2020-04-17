@@ -621,6 +621,23 @@ describe('account (ashares) reducers', () => {
                 register: true,
               },
             },
+            connectors: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+              edit: true,
+              delete: true,
+              clone: true,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+                attach: true,
+                detach: true,
+              },
+              connections: {
+                edit: true,
+              },
+            },
           },
           recyclebin: {
             view: true,
@@ -630,7 +647,6 @@ describe('account (ashares) reducers', () => {
           },
           scripts: { view: true, create: true, edit: true, delete: true },
           stacks: { view: true, create: true, edit: true, delete: true },
-
           templates: {},
           transfers: {
             view: true,
@@ -730,6 +746,23 @@ describe('account (ashares) reducers', () => {
                 register: true,
               },
             },
+            connectors: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+              edit: true,
+              delete: true,
+              clone: true,
+              flows: {
+                create: true,
+                edit: true,
+                delete: true,
+                clone: true,
+                attach: true,
+                detach: true,
+              },
+              connections: {
+                edit: true,
+              },
+            },
           },
           recyclebin: {
             view: true,
@@ -778,7 +811,11 @@ describe('account (ashares) reducers', () => {
             },
             all: {
               accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-
+              flows: {},
+              connections: {},
+            },
+            connectors: {
+              accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
               flows: {},
               connections: {},
             },

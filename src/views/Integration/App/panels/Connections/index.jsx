@@ -38,9 +38,6 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       tableConfig
     )
   );
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
   const permission = useSelector(state =>
     selectors.resourcePermissions(
       state,
@@ -49,8 +46,6 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       'connections'
     )
   );
-  // TODO: Do we need this check
-  const isNotConnector = !(integration && integration._connectorId);
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
@@ -75,7 +70,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
 
       <PanelHeader title="Connections">
         <Fragment>
-          {isNotConnector && permission.create && (
+          {permission.create && (
             <IconTextButton
               component={Link}
               to={`${
@@ -84,7 +79,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
               <AddIcon /> Create connection
             </IconTextButton>
           )}
-          {isNotConnector && permission.register && (
+          {permission.register && (
             <IconTextButton onClick={() => setShowRegister(true)}>
               <ConnectionsIcon /> Register connections
             </IconTextButton>
