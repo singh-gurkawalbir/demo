@@ -1427,6 +1427,22 @@ const job = {
       action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
+const errorManager = {
+  openFlowErrors: {
+    request: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST, { flowId }),
+    received: ({ flowId, openErrors }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED, {
+        flowId,
+        openErrors,
+      }),
+  },
+  flowErrorDetails: {
+    request: () => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST),
+    received: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED),
+  },
+};
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
@@ -1520,6 +1536,7 @@ export default {
   auditLogs,
   accessToken,
   job,
+  errorManager,
   flow,
   agent,
   template,
