@@ -61,13 +61,17 @@ describe('reducer expression test cases', () => {
       });
 
       test('should show no warnings for FIELD1 and FIELD2 when we fullfil both of their validWhen criteria', () => {
-        formState = forms(
+        const nextFormState = forms(
           formState,
           actions.form.field.onFieldChange(formKey)('FIELD1', '456')
         );
 
+        expect(formState[formKey].fields.FIELD2).toBe(
+          nextFormState[formKey].fields.FIELD2
+        );
+
         formState = forms(
-          formState,
+          nextFormState,
           actions.form.field.onFieldChange(formKey)('FIELD2', '236')
         );
         const { FIELD1, FIELD2 } = formState[formKey].fields;
