@@ -188,8 +188,6 @@ export function howToFindIdentifierFieldsMeta({
           },
         ],
         placeholder: 'Enter field id, or JSON path if field is nested',
-        helpText:
-          'Specify the field, or field path for nested fields, in your export data record that contains the information necessary to identify the existing records that should be ignored when importing the data. IO will check each exported record to see whether the field is populated or not. If it is, then the record will be ignored. If the field is not populated, it will move forward in the import process. For example, if you specify the field as "customerID", then IO will check the customerID field of each exported record to see whether the record should get imported (field does not have a value) or skip the import (field has value). \n\n IO provides dynamic field lists to make it easier for you to select the field. If a field contains special characters (which may be the case for certain APIs, then the field is surrounded with [], e.g. [field-name]. The [*] indicates that the specified field is an array. In this case, you need to replace the * with a number corresponding to the array item to test. \n\nNote that this is a true or false field, i.e. there is no logic involved but a simple check whether a field has a value or not, arrays will not get iterated through for comparing of values.',
       };
 
       if (operationDetails.supportIgnoreExisting) {

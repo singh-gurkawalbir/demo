@@ -1,7 +1,7 @@
 export default {
   pageSize: {
     type: 'text',
-    label: 'Page Size',
+    label: 'Page size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -10,7 +10,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data URI Template',
+    label: 'Data uri template',
     refreshOptionsOnChangesTo: ['name'],
     connectionId: r => r && r._connectionId,
   },

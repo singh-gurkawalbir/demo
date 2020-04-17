@@ -55,8 +55,6 @@ export default {
           is: ['north_america'],
         },
       ],
-      helpText:
-        'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -75,8 +73,6 @@ export default {
       id: 'integrator.region',
       type: 'select',
       label: 'Region',
-      helpText:
-        'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -110,8 +106,6 @@ export default {
       label: 'Token',
       required: true,
       inputType: 'password',
-      helpText:
-        'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

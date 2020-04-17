@@ -25,10 +25,9 @@ export default {
     'http.encrypted.accountId': {
       id: 'http.encrypted.accountId',
       type: 'text',
-      label: 'Account ID',
+      label: 'Account id',
       defaultValue: '',
-      helpText:
-        'Please enter the Harvest account ID .Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account ID safe. This can be obtained from the Settings section and Account ID subsection.',
+      helpKey: 'harvest.connection.http.encrypted.accountId',
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },

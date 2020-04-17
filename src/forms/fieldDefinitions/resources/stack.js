@@ -55,7 +55,7 @@ export default {
   },
   'lambda.accessKeyId': {
     type: 'text',
-    label: 'Access Key Id',
+    label: 'Access key id',
     visibleWhen: [
       {
         field: 'type',
@@ -65,7 +65,7 @@ export default {
   },
   'lambda.secretAccessKey': {
     type: 'text',
-    label: 'Secret Acess Key',
+    label: 'Secret acess key',
     visibleWhen: [
       {
         field: 'type',
@@ -75,7 +75,7 @@ export default {
   },
   'lambda.awsRegion': {
     type: 'select',
-    label: 'AWS Region',
+    label: 'AWS region',
     options: [
       {
         items: [
@@ -107,7 +107,7 @@ export default {
   },
   'lambda.functionName': {
     type: 'text',
-    label: 'Function Name',
+    label: 'Function name',
     visibleWhen: [
       {
         field: 'type',

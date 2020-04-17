@@ -28,9 +28,8 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
-      helpText:
-        'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
+      label: 'Account type',
+      helpKey: 'ebay.connection.accountType',
       options: [
         {
           items: [
@@ -54,7 +53,7 @@ export default {
     'http.scopeSandbox': {
       id: 'http.scopeSandbox',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       visibleWhen: [{ field: 'accountType', is: ['sandbox'] }],
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
@@ -92,7 +91,7 @@ export default {
     'http.scopeProduction': {
       id: 'http.scopeProduction',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
         'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',

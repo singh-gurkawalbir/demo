@@ -32,12 +32,12 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     outputMode: {
       id: 'outputMode',
       type: 'radiogroup',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -84,7 +84,7 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample File (that would be exported)',
+      label: 'Sample file (that would be exported)',
       mode: r => r && r.file && r.file.type,
       visibleWhen: [
         {
@@ -96,7 +96,7 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'Configure CSV Parse Options',
+      label: 'Configure csv parse options',
       defaultValue: r =>
         (r.file && r.file.csv) || {
           rowsToSkip: 0,
