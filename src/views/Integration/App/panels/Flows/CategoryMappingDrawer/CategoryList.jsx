@@ -10,11 +10,14 @@ import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 const useStyles = makeStyles(theme => ({
   nested: {
     paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(2),
+    wordBreak: 'break-word',
   },
   listItem: {
     color: theme.palette.text.primary,
     width: '100%',
     cursor: 'pointer',
+    wordBreak: 'break-word',
   },
   activeListItem: {
     color: theme.palette.primary.main,

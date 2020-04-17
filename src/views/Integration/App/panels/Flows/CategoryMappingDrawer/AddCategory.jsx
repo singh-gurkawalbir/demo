@@ -17,7 +17,7 @@ import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: 750,
+    width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -198,12 +198,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
       classes={{
         paper: classes.drawerPaper,
       }}
+      BackdropProps={{ invisible: true }}
       open={!!match}>
       <DrawerTitleBar
         flowId={flowId}
         addCategory
         onClose={handleClose}
         backToParent
+        help
       />
       {metadataLoaded ? (
         <DynaForm
