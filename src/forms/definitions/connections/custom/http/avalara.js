@@ -18,8 +18,7 @@ export default {
       type: 'select',
       label: 'Account Type',
       required: true,
-      helpText:
-        'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
+      helpKey: 'avalara.connection.accType',
       options: [
         {
           items: [

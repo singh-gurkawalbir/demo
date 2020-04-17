@@ -34,8 +34,7 @@ export default {
       required: true,
       type: 'text',
       label: 'API Key',
-      helpText:
-        'GRMS assigned API key to a partner account. API key is given out by GRMS customer support team.',
+      helpKey: 'grms.connection.http.unencrypted.apiKey',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
@@ -44,8 +43,7 @@ export default {
       defaultValue: '',
       label: 'API Secret',
       inputType: 'password',
-      helpText:
-        'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+      helpKey: 'grms.connection.http.encrypted.apiSecret',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -59,7 +57,7 @@ export default {
       label: 'Generate Token',
       defaultValue: '',
       required: true,
-      helpText: 'The Access Token of your GRMS account',
+      helpKey: 'grms.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

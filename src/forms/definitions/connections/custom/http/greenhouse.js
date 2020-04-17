@@ -24,8 +24,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText:
-        'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
+      helpKey: 'greenhouse.connection.http.auth.basic.username',
       inputType: 'password',
       defaultValue: '',
       label: 'API Token',
@@ -37,8 +36,7 @@ export default {
       type: 'text',
       id: 'http.unencrypted.userID',
       label: 'User ID',
-      helpText:
-        'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
+      helpKey: 'greenhouse.connection.http.unencrypted.userID',
       validWhen: {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
