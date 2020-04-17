@@ -24,6 +24,7 @@ let localStorageAssistants;
 
 // localStorage is browser specific one. It is breaking testcases. Below code changes are to
 // avoid test case breakages.
+// TODO: Need to see alternate solution here.
 try {
   localStorageAssistants = JSON.parse(localStorage.getItem('assistants'));
 } catch (e) {

@@ -49,7 +49,36 @@ export function* retrievingUserDetails() {
 }
 
 export function* retrievingAssistantDetails() {
-  yield put(actions.resource.requestCollection('ui/assistants'));
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('ui/assistants')
+  );
+  const assistantConnectors = [];
+
+  if (
+    collection &&
+    collection.http.applications &&
+    collection.rest.applications
+  ) {
+    collection.http.applications.forEach(asst => {
+      assistantConnectors.push({
+        id: asst._id,
+        name: asst.name,
+        type: 'http',
+        assistant: asst._id,
+      });
+    });
+    collection.rest.applications.forEach(asst => {
+      assistantConnectors.push({
+        id: asst._id,
+        name: asst.name,
+        type: 'rest',
+        assistant: asst._id,
+      });
+    });
+  }
+
+  localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
 }
 
 export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
@@ -68,9 +97,11 @@ export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
 }
 
 export function* retrieveAppInitializationResources() {
-  yield call(retrievingOrgDetails);
-  yield call(retrievingUserDetails);
-  yield call(retrievingAssistantDetails);
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingUserDetails),
+    call(retrievingAssistantDetails),
+  ]);
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);

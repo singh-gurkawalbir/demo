@@ -232,35 +232,6 @@ export default (state = {}, action) => {
         });
       }
 
-      if (resourceType === 'ui/assistants') {
-        const assistantConnectors = [];
-
-        if (
-          collection &&
-          collection.http.applications &&
-          collection.rest.applications
-        ) {
-          collection.http.applications.forEach(asst => {
-            assistantConnectors.push({
-              id: asst._id,
-              name: asst.name,
-              type: 'http',
-              assistant: asst._id,
-            });
-          });
-          collection.rest.applications.forEach(asst => {
-            assistantConnectors.push({
-              id: asst._id,
-              name: asst.name,
-              type: 'rest',
-              assistant: asst._id,
-            });
-          });
-        }
-
-        localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
-      }
-
       return { ...state, [resourceType]: collection || [] };
     }
 

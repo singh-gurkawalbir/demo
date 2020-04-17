@@ -101,14 +101,16 @@ describe('initialize all app relevant resources sagas', () => {
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
     const saga = retrieveAppInitializationResources();
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-
-    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
-
-    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
-    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
+    expect(saga.next().value).toEqual(
+      all([
+        retrievingOrgDetailsEffect,
+        retrievingUserDetailsEffect,
+        retrievingAssistantDetailsEffect,
+      ])
+    );
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -129,14 +131,16 @@ describe('initialize all app relevant resources sagas', () => {
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-
-    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
-
-    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
-    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
+    expect(saga.next().value).toEqual(
+      all([
+        retrievingOrgDetailsEffect,
+        retrievingUserDetailsEffect,
+        retrievingAssistantDetailsEffect,
+      ])
+    );
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -166,15 +170,16 @@ describe('initialize all app relevant resources sagas', () => {
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
-
-    expect(saga.next().value).toEqual(retrievingOrgDetailsEffect);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
-
-    expect(saga.next().value).toEqual(retrievingUserDetailsEffect);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
 
-    expect(saga.next().value).toEqual(retrievingAssistantDetailsEffect);
-
+    expect(saga.next().value).toEqual(
+      all([
+        retrievingOrgDetailsEffect,
+        retrievingUserDetailsEffect,
+        retrievingAssistantDetailsEffect,
+      ])
+    );
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
