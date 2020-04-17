@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -49,7 +50,11 @@ export default function DynaSqlQuery(props) {
     label,
     editorClassName,
     disabled,
+    isValid,
+    errorMessages,
   } = props;
+
+  console.log('isValid', isValid, errorMessages);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -139,6 +144,9 @@ export default function DynaSqlQuery(props) {
             onChange={onChange}
           />
         </div>
+        {!isValid && (
+          <FormHelperText error="true">{errorMessages}</FormHelperText>
+        )}
       </div>
     </Fragment>
   );
