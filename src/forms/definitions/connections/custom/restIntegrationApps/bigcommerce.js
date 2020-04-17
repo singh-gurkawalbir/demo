@@ -57,36 +57,31 @@ export default {
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
-      helpText: 'Client ID will be the Username.',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
-      helpText: 'Access Token will be the Password.',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.bearerToken': {
       fieldId: 'rest.bearerToken',
       defaultValue: '',
-      label: 'Access Token',
+      label: 'Access token',
       required: true,
-      helpText: 'This Access Token works in tandem with the Client ID.',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     'rest.unencrypted.clientId': {
       id: 'rest.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
-      helpText:
-        'This Client ID works together with the Access Token to grant authorization.',
+      label: 'Client id',
       visibleWhen: [{ field: 'rest.authType', is: ['token'] }],
     },
     storeHash: {
       id: 'storeHash',
       required: true,
       type: 'text',
-      label: 'Store HASH',
+      label: 'Store hash',
       visibleWhen: [{ field: 'rest.authType', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';
@@ -105,8 +100,6 @@ export default {
 
         return value;
       },
-      helpText:
-        'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
     },
     restAdvanced: { formId: 'restAdvanced' },
   },

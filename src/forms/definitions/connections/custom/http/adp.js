@@ -44,10 +44,9 @@ export default {
     accType: {
       id: 'accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
-      helpText:
-        'Please select your account type here. Select UAT if your API Endpoint starts with https://uat-api.adp.com. Select Production if your API Endpoint starts with https://api.adp.com.',
+      helpKey: 'adp.connection.accType',
       options: [
         {
           items: [
@@ -72,39 +71,35 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
-      helpText: 'Please enter the Client ID provided by ADP support service.',
+      helpKey: 'adp.connection.http.unencrypted.clientId',
+      label: 'Client id',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'Client Secret',
+      label: 'Client secret',
       inputType: 'password',
-      helpText:
-        'Please enter the Client Secret provided by ADP support service. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+      helpKey: 'adp.connection.http.encrypted.clientSecret',
     },
     'http.clientCertificates.cert': {
       fieldId: 'http.clientCertificates.cert',
-      label: 'SSL Certificate',
+      label: 'SSL certificate',
       type: 'uploadfile',
-      helpText:
-        '1. Install OpenSSL Light and configure the OpenSSL by adding an environmental variable after this we have to open the openssl.cfg file which is located in the C drive and remove the ìunstructuredName = An optional company nameî present in ì[req_attributes ]î area.2.After installation, we have to generate a CSR file (Certificate Signing Request) file using command prompt and execute the below commands. Replace yourcompanynamehere with an actual company name. Command to generate the CSR file: Openssl req -new -key yourcompanynamehere_auth.key -out yourcompanynamehere_auth.csr3.Email the .csr file that was generated to ADP Representative and we have to wait for the certificate Signing and the ADP Representative will mail us .pem file.',
+      helpKey: 'adp.connection.http.clientCertificates.cert',
     },
     'http.clientCertificates.key': {
       fieldId: 'http.clientCertificates.key',
-      label: 'SSL Client Key',
+      label: 'SSL client key',
       type: 'uploadfile',
-      helpText:
-        '1. Install OpenSSL Light and configure the OpenSSL by adding an environmental variable after this we have to open the openssl.cfg file which is located in the C drive and remove the ìunstructuredName = An optional company nameî present in ì[req_attributes ]î area.2.After installation we have to generate a CSR file (Certificate Signing Request) file using command prompt and execute the below commands. Replace yourcompanynamehere with an actual company name.Command to generate the .Key file: openssl genrsa -out yourcompanynamehere_auth.key 2048.',
+      helpKey: 'adp.connection.http.clientCertificates.key',
     },
     'http.clientCertificates.passphrase': {
       fieldId: 'http.clientCertificates.passphrase',
-      label: 'SSL Passphrase',
+      label: 'SSL passphrase',
       type: 'textarea',
-      helpText:
-        'If there is any password for PFX file then it should be given here.',
+      helpKey: 'adp.connection.http.clientCertificates.passphrase',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

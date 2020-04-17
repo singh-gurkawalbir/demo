@@ -14,8 +14,6 @@ export default {
     instanceName: {
       type: 'text',
       id: 'instanceName',
-      helpText:
-        'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
       startAdornment: 'https://',
       endAdornment: '.service-now.com',
       label: 'Subdomain',
@@ -40,11 +38,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The username of your ServiceNow account.',
+      helpKey: 'servicenow.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The password of your ServiceNow account.',
+      helpKey: 'servicenow.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

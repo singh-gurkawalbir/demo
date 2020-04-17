@@ -18,8 +18,8 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
-      label: 'Account Type',
-      helpText: 'Select either Production or Sandbox.',
+      label: 'Account type',
+      helpKey: 'ebay-xml.connection.environment',
       options: [
         {
           items: [
@@ -45,7 +45,7 @@ export default {
     'http.unencrypted.apiSiteId': {
       id: 'http.unencrypted.apiSiteId',
       type: 'select',
-      label: 'API Site ID',
+      label: 'API site id',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
         '0',
@@ -77,8 +77,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'After you have specified the API Site ID, click Save & Authorize that opens up the eBay window where you can enter email/username and password to establish the connection with eBay.',
       required: true,
       description:
         'Note: for security reasons this field must always be re-entered',

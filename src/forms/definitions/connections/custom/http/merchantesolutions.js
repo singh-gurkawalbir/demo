@@ -31,29 +31,26 @@ export default {
     'http.unencrypted.profileId': {
       id: 'http.unencrypted.profileId',
       type: 'text',
-      label: 'Profile ID',
+      label: 'Profile id',
       required: true,
-      helpText: 'ID (Profile ID) issued by Merchant e-Solutions.',
     },
     'http.encrypted.profileKey': {
       id: 'http.encrypted.profileKey',
       type: 'text',
-      label: 'Profile Key',
+      label: 'Profile key',
       required: true,
       defaultValue: '',
       inputType: 'password',
-      helpText: 'API password (Profile Key) assigned by Merchant e-Solutions.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.encrypted.cardNumber': {
       id: 'http.encrypted.cardNumber',
       type: 'text',
-      label: 'Card Number',
+      label: 'Card number',
       required: true,
       inputType: 'password',
       defaultValue: '',
-      helpText: 'Payment card number.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

@@ -35,7 +35,7 @@ export default {
     publicURL: {
       fieldId: 'publicURL',
       type: 'labeltitle',
-      label: 'Public URL & Sample Data',
+      label: 'Public url & sample data',
     },
     // 'webhook.provider': { fieldId: 'webhook.provider' },
     'webhook.verify': { fieldId: 'webhook.verify' },

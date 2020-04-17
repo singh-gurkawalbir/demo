@@ -241,7 +241,7 @@ export default {
     'http.auth.wsse.headerName': {
       id: 'http.auth.wsse.headerName',
       type: 'text',
-      label: 'Header Name',
+      label: 'Header name',
       helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
@@ -305,8 +305,7 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
-      helpText:
-        'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
+      helpKey: 'http.connection.customScopeDelimiter',
     },
     'http.auth.oauth.type': {
       fieldId: 'http.auth.oauth.type',
@@ -378,13 +377,13 @@ export default {
       valueType: 'keyvalue',
       defaultValue: r => (r && r.http && r.http.headers) || '',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      label: 'Configure HTTP Headers',
+      label: 'Configure http headers',
       helpKey: 'connection.http.headers',
     },
     'http.auth.oauth.failStatusCode': {
       id: 'http.auth.oauth.failStatusCode',
       type: 'text',
-      label: 'Authentication Fail Status Code',
+      label: 'Authentication fail status code',
       helpKey: 'connection.http.auth.failStatusCode',
       defaultValue: r =>
         r && r.http && r.http.auth && r.http.auth.failStatusCode,
@@ -401,7 +400,7 @@ export default {
     'http.auth.oauth.failPath': {
       id: 'http.auth.oauth.failPath',
       type: 'text',
-      label: 'Authentication Fail Path',
+      label: 'Authentication fail path',
       helpKey: 'connection.http.auth.failPath',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.failPath,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
@@ -411,14 +410,14 @@ export default {
       type: 'text',
       delimiter: ',',
       helpKey: 'connection.http.auth.failValues',
-      label: 'Authentication Fail Values',
+      label: 'Authentication fail values',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.failValues,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.oauth.baseURI': {
       id: 'http.oauth.baseURI',
       type: 'text',
-      label: 'Base URI',
+      label: 'Base uri',
       required: true,
       helpKey: 'connection.http.baseURI',
       defaultValue: r => r && r.http && r.http.baseURI,
@@ -427,7 +426,7 @@ export default {
     'http.oauth.mediaType': {
       id: 'http.oauth.mediaType',
       type: 'select',
-      label: 'Media Type',
+      label: 'Media type',
       required: true,
       helpKey: 'connection.http.mediaType',
       defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
@@ -495,7 +494,7 @@ export default {
     'http.auth.oauth.headerName': {
       id: 'http.auth.oauth.headerName',
       type: 'text',
-      label: 'Header Name',
+      label: 'Header name',
       helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
@@ -540,7 +539,7 @@ export default {
     'http.oauth.customAuthScheme': {
       id: 'http.oauth.customAuthScheme',
       type: 'text',
-      label: 'Custom Auth Scheme',
+      label: 'Custom auth scheme',
       defaultValue: r => r && r.http && r.http.customAuthScheme,
       visibleWhenAll: [
         { field: 'http.auth.oauth.location', is: ['header'] },
@@ -551,7 +550,7 @@ export default {
     'http.auth.oauth.paramName': {
       id: 'http.auth.oauth.paramName',
       type: 'text',
-      label: 'Parameter Name',
+      label: 'Parameter name',
       helpKey: 'connection.http.auth.token.paramName',
       defaultValue: r =>
         r &&
@@ -569,7 +568,7 @@ export default {
       id: 'http.auth.oauth.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
-      label: 'Refresh Token Body',
+      label: 'Refresh token body',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -582,7 +581,7 @@ export default {
       valueName: 'value',
       valueType: 'keyvalue',
       helpKey: 'connection.http.auth.token.refreshHeaders',
-      label: 'Refresh Token Headers',
+      label: 'Refresh token headers',
       defaultValue: r =>
         r &&
         r.http &&
@@ -747,7 +746,7 @@ export default {
     },
     {
       id: 'saveandcontinue',
-      label: 'Save & Continue',
+      label: 'Save & continue',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -758,7 +757,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -769,7 +768,7 @@ export default {
     },
     {
       id: 'save',
-      label: 'Test and Save',
+      label: 'Test and save',
       visibleWhen: [
         {
           field: 'http.auth.type',

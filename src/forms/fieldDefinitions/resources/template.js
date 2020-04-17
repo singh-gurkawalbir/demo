@@ -14,19 +14,19 @@ export default {
   },
   imageURL: {
     type: 'text',
-    label: 'Image URL',
+    label: 'Image url',
   },
   websiteURL: {
     type: 'text',
-    label: 'Website URL',
+    label: 'Website url',
   },
   contactEmail: {
     type: 'text',
-    label: 'Contact Emails',
+    label: 'Contact emails',
   },
   installerFunction: {
     type: 'text',
-    label: 'Installer Function',
+    label: 'Installer function',
   },
   applications: {
     type: 'multiselect',

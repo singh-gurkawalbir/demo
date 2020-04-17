@@ -26,7 +26,7 @@ export default {
     'http.accountType': {
       id: 'http.accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -46,17 +46,16 @@ export default {
 
         return 'production';
       },
-      helpText: 'Please select your environment here.',
+      helpKey: 'faire.connection.http.accountType',
     },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Access Token',
+      label: 'API access token',
       required: true,
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please Enter the access token got from Faire support. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
+      helpKey: 'faire.connection.http.encrypted.apiKey',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

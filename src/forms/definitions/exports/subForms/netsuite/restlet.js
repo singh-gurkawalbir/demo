@@ -126,7 +126,7 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       type: 'refreshableselect',
       placeholder: 'Please select a Boolean field',
       filterKey: 'suitescript-booleanField',

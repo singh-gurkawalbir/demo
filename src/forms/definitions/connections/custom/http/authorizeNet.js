@@ -32,9 +32,7 @@ export default {
     'authorizeNet.accType': {
       id: 'authorizeNet.accType',
       type: 'select',
-      label: 'Account Type',
-      helpText:
-        'Please select your account type here. Select Sandbox if your API Endpoint starts with https://apitest.authorize.net. Select Production if your API Endpoint starts with https://api.authorize.net.',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -66,9 +64,7 @@ export default {
     'http.encrypted.apiLoginID': {
       id: 'http.encrypted.apiLoginID',
       type: 'text',
-      label: 'API Login ID',
-      helpText:
-        'Merchant’s unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+      label: 'API login id',
       required: true,
       inputType: 'password',
       description:
@@ -77,9 +73,7 @@ export default {
     'http.encrypted.transactionKey': {
       id: 'http.encrypted.transactionKey',
       type: 'text',
-      label: 'Transaction Key',
-      helpText:
-        'Merchant’s unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+      label: 'Transaction key',
       required: true,
       inputType: 'password',
       description:
