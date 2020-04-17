@@ -2384,7 +2384,6 @@ export const resourcePermissions = (
       let value = permissions[resourceType][resourceId];
 
       // remove tile level permissions added to connector while are not valid.
-      // childResourceType
       if (resourceData && resourceData._connectorId) {
         const connectorTilePermission = {
           accessLevel: value.accessLevel,
