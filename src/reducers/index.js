@@ -2347,6 +2347,8 @@ export const resourcePermissions = (
   resourceId,
   childResourceType
 ) => {
+  //  when resourceType == connection and resourceID = connectionId, we fetch connection
+  //  permission by checking for highest order connection permission under integrations
   if (resourceType === 'connections' && resourceId) {
     return userPermissionsOnConnection(state, resourceId) || emptyObject;
   }
@@ -2355,6 +2357,8 @@ export const resourcePermissions = (
 
   if (!permissions) return emptyObject;
 
+  // special case, where resourceType == integrations. Its childResource,
+  // ie. connections, flows can be retrieved by passing childResourceType
   if (resourceType === 'integrations' && (childResourceType || resourceId)) {
     const resourceData =
       resourceId && resource(state, 'integrations', resourceId);
@@ -2371,23 +2375,30 @@ export const resourcePermissions = (
           ? permissions.integrations.connectors
           : permissions.integrations.all;
 
+      // filtering child resource
       return (
         (childResourceType ? value && value[childResourceType] : value) ||
         emptyObject
       );
     } else if (resourceId) {
-      const value = permissions[resourceType][resourceId];
+      let value = permissions[resourceType][resourceId];
 
-      if (
-        childResourceType === 'connections' &&
-        resourceData &&
-        resourceData._connectorId
-      ) {
-        const { edit } = value.connections;
-
-        return {
-          edit,
+      // remove tile level permissions added to connector while are not valid.
+      // childResourceType
+      if (resourceData && resourceData._connectorId) {
+        const connectorTilePermission = {
+          accessLevel: value.accessLevel,
+          flows: {
+            edit: value.flow && value.flow.edit,
+          },
+          connections: {
+            edit: value.connections && value.connections.edit,
+          },
+          edit: value.edit,
+          delete: value.delete,
         };
+
+        value = connectorTilePermission;
       }
 
       return (
