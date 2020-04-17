@@ -22,6 +22,8 @@ const mergeObjectArrays = (arr1, arr2, match) =>
   );
 let localStorageAssistants;
 
+// localStorage is browser specific one. It is breaking testcases. Below code changes are to
+// avoid test case breakages.
 try {
   localStorageAssistants = JSON.parse(localStorage.getItem('assistants'));
 } catch (e) {
