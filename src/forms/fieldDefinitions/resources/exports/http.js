@@ -39,7 +39,7 @@ export default {
   'http.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
-    label: 'Relative uri',
+    label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     refreshOptionsOnChangesTo: ['name'],
     validWhen: {
@@ -115,7 +115,7 @@ export default {
   'http.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
@@ -135,7 +135,7 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   'http.paging.method': {
     type: 'select',
@@ -242,7 +242,7 @@ export default {
   },
   'http.paging.relativeURI': {
     type: 'text',
-    label: 'Relative uri',
+    label: 'Relative URI',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -394,7 +394,7 @@ export default {
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Http response resource id path',
+    label: 'Http response resource ID path',
     visibleWhen: [
       {
         field: 'http.successMediaType',
@@ -505,7 +505,7 @@ export default {
   // #endregion transform
   'http.once.relativeURI': {
     type: 'relativeuri',
-    label: 'Relative uri',
+    label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     visibleWhenAll: [
       {
@@ -518,7 +518,7 @@ export default {
   'http.once.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
     visibleWhenAll: [
       {
         field: 'outputMode',

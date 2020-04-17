@@ -14,11 +14,11 @@ export default {
   },
   imageURL: {
     type: 'text',
-    label: 'Image url',
+    label: 'Image URL',
   },
   websiteURL: {
     type: 'text',
-    label: 'Website url',
+    label: 'Website URL',
   },
   contactEmail: {
     type: 'text',

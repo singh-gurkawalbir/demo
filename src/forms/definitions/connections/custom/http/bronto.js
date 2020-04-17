@@ -25,7 +25,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
       helpKey: 'bronto.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {

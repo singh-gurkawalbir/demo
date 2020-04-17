@@ -195,7 +195,7 @@ export default {
     },
   },
   'netsuite.netsuiteExportlabel': {
-    label: 'What would you like to export from netsuite?',
+    label: 'What would you like to export from NetSuite?',
     type: 'labeltitle',
   },
   'netsuite.searches': {
@@ -229,7 +229,7 @@ export default {
   'netsuite.internalId': {
     type: 'text',
     required: true,
-    label: 'Internal id',
+    label: 'Internal ID',
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',
@@ -296,7 +296,7 @@ export default {
   },
   'netsuite.restlet.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'NetSuite restlet hooks pre send file internal id',
+    label: 'NetSuite restlet hooks pre send file internal ID',
   },
   'netsuite.restlet.hooks.preSend.function': {
     type: 'text',
@@ -323,7 +323,7 @@ export default {
   },
   'netsuite.distributed.hooks.preSend.fileInternalId': {
     type: 'text',
-    label: 'NetSuite distributed hooks pre send file internal id',
+    label: 'NetSuite distributed hooks pre send file internal ID',
   },
   'netsuite.distributed.hooks.preSend.function': {
     type: 'text',
@@ -339,7 +339,7 @@ export default {
   },
   'netsuite.distributed.skipExportFieldId': {
     type: 'text',
-    label: 'Skip export field id',
+    label: 'Skip export field ID',
   },
   'netsuite.distributed.ioEnvironment': {
     type: 'text',
@@ -355,15 +355,15 @@ export default {
   },
   'netsuite.getList[].typeId': {
     type: 'text',
-    label: 'NetSuite get list type id',
+    label: 'NetSuite get list type ID',
   },
   'netsuite.getList.internalId': {
     type: 'text',
-    label: 'NetSuite get list internal id',
+    label: 'NetSuite get list internal ID',
   },
   'netsuite.getList.externalId': {
     type: 'text',
-    label: 'NetSuite get list external id',
+    label: 'NetSuite get list external ID',
   },
   'netsuite.searchPreferences.bodyFieldsOnly': {
     type: 'checkbox',

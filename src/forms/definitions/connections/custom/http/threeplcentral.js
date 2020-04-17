@@ -25,14 +25,14 @@ export default {
     'http.unencrypted.tpl': {
       id: 'http.unencrypted.tpl',
       type: 'text',
-      label: '3PL guid',
+      label: '3PL GUID',
       required: true,
       defaultValue: '',
     },
     'http.unencrypted.userLoginId': {
       id: 'http.unencrypted.userLoginId',
       type: 'text',
-      label: 'UserLogin id',
+      label: 'UserLogin ID',
       required: true,
     },
     'http._iClientId': {

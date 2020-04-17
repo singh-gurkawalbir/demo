@@ -330,7 +330,7 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
-      label: 'Relative uri',
+      label: 'Relative URI',
       required: true,
       visibleWhenAll: [
         {
@@ -410,7 +410,7 @@ export default {
       type: 'httprequestbody',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      label: 'Build http request body',
+      label: 'Build HTTP request body',
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
@@ -519,7 +519,7 @@ export default {
     'rest.responseIdPathCreate': {
       id: 'rest.responseIdPathCreate',
       type: 'text',
-      label: 'Response id path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -621,7 +621,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
-      label: 'Relative uri',
+      label: 'Relative URI',
       required: true,
       visibleWhenAll: [
         {
@@ -692,7 +692,7 @@ export default {
       id: 'rest.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build http request body',
+      label: 'Build HTTP request body',
       arrayIndex: 0,
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
@@ -788,7 +788,7 @@ export default {
     'rest.responseIdPathUpdate': {
       id: 'rest.responseIdPathUpdate',
       type: 'text',
-      label: 'Response id path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {

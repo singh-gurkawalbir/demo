@@ -59,7 +59,7 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
-      label: 'AS2 ip addresses: ',
+      label: 'AS2 IP addresses: ',
       value: (
         <span>
           Click{' '}
@@ -199,7 +199,7 @@ export default {
     configureApiRateLimits: {
       id: 'configureApiRateLimits',
       type: 'checkbox',
-      label: 'Configure api rate limits',
+      label: 'Configure API rate limits',
       defaultValue: r =>
         !!(
           r &&

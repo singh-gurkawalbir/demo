@@ -64,7 +64,7 @@ export default {
       type: 'tokengen',
       inputType: 'password',
       helpKey: 'procurify.connection.http.generateClientIdandSecret',
-      label: 'Generate client id &secret',
+      label: 'Generate client id & secret',
       defaultValue: '',
     },
     'http.unencrypted.clientId': {
@@ -81,7 +81,7 @@ export default {
       defaultValue: '',
       inputType: 'password',
       helpKey: 'procurify.connection.http.encrypted.clientSecret',
-      label: 'Generate client id &secret',
+      label: 'Generate client id & secret',
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },

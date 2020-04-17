@@ -10,7 +10,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Data uri template',
+    label: 'Data URI template',
     refreshOptionsOnChangesTo: ['name'],
     connectionId: r => r && r._connectionId,
   },

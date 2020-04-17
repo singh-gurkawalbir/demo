@@ -6,7 +6,7 @@ export default {
   },
   'oauth2.clientId': {
     type: 'text',
-    label: 'Client id',
+    label: 'Client ID',
     required: true,
     visible: r => ![r.provider, r.assistant].includes('amazonmws'),
   },
@@ -20,7 +20,7 @@ export default {
   },
   'amazonmws.accessKeyId': {
     type: 'text',
-    label: 'Access key id:',
+    label: 'Access key ID:',
     required: true,
     visible: r => [r.provider, r.assistant].includes('amazonmws'),
   },

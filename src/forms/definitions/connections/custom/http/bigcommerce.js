@@ -82,7 +82,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
       helpKey: 'bigcommerce.connection.http.unencrypted.clientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },

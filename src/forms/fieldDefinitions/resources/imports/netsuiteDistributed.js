@@ -184,7 +184,7 @@ export default {
   },
   'netsuite.file.internalId': {
     type: 'text',
-    label: 'File internal id',
+    label: 'File internal ID',
     visibleWhenAll: [
       {
         field: 'netsuite.operation',

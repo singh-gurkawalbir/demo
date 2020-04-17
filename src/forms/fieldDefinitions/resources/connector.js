@@ -14,12 +14,12 @@ export default {
   },
   imageURL: {
     type: 'text',
-    label: 'Image url',
+    label: 'Image URL',
     required: true,
   },
   websiteURL: {
     type: 'text',
-    label: 'Website url',
+    label: 'Website URL',
     validWhen: {
       matchesRegEx: {
         pattern:

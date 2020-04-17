@@ -13,7 +13,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Account sid',
+      label: 'Account SID',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',

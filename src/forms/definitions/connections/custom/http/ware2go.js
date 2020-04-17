@@ -51,7 +51,7 @@ export default {
     },
     'http.unencrypted.merchantId': {
       id: 'http.unencrypted.merchantId',
-      label: 'Merchant id',
+      label: 'Merchant ID',
       required: true,
       type: 'text',
     },

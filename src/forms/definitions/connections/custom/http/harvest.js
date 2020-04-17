@@ -25,7 +25,7 @@ export default {
     'http.encrypted.accountId': {
       id: 'http.encrypted.accountId',
       type: 'text',
-      label: 'Account id',
+      label: 'Account ID',
       defaultValue: '',
       helpKey: 'harvest.connection.http.encrypted.accountId',
       validWhen: {

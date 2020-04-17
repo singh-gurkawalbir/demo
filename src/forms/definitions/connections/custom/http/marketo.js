@@ -51,7 +51,7 @@ export default {
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       type: 'text',
-      label: 'Client id',
+      label: 'Client ID',
       required: true,
       helpKey: 'marketo.connection.http.unencrypted.clientId',
     },

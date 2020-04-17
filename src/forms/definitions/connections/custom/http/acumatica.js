@@ -46,7 +46,7 @@ export default {
       id: 'instanceURI',
       type: 'text',
       endAdornment: '/entity',
-      label: 'Instance uri',
+      label: 'Instance URI',
       required: true,
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {

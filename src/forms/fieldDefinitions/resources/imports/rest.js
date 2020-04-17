@@ -63,7 +63,7 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   'rest.compositeType': {
     type: 'select',
@@ -127,7 +127,7 @@ export default {
   'rest.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
-    label: 'Relative uri',
+    label: 'Relative URI',
     required: true,
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
@@ -189,7 +189,7 @@ export default {
     type: 'httprequestbody',
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     refreshOptionsOnChangesTo: ['rest.lookups'],
@@ -240,7 +240,7 @@ export default {
   },
   'rest.responseIdPath': {
     type: 'text',
-    label: 'Response id path',
+    label: 'Response ID path',
     placeholder: 'Optional',
     visibleWhen: [
       {

@@ -41,7 +41,7 @@ export default {
   },
   'rest.postBody': {
     type: 'httprequestbody',
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -61,7 +61,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   // #region paging
   'rest.pagingMethod': {
@@ -119,7 +119,7 @@ export default {
   },
   'rest.nextPageRelativeURI': {
     type: 'text',
-    label: 'Next page relative uri',
+    label: 'Next page relative URI',
     required: true,
     visibleWhenAll: [
       {
@@ -207,7 +207,7 @@ export default {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
     required: true,
-    label: 'Relative uri',
+    label: 'Relative URI',
     validWhen: {
       someAreTrue: {
         message:
@@ -296,7 +296,7 @@ export default {
   },
   'transform.script._scriptId': {
     type: 'text',
-    label: 'Transform script _script id',
+    label: 'Transform script _script ID',
   },
   'transform.script.function': {
     type: 'text',
@@ -307,7 +307,7 @@ export default {
   'rest.once.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
-    label: 'Relative uri',
+    label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     visibleWhen: [
       {
@@ -367,6 +367,6 @@ export default {
         is: ['records'],
       },
     ],
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
   },
 };

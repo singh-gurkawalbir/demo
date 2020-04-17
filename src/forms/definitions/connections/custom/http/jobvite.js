@@ -42,7 +42,7 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company id',
+      label: 'Company ID',
       required: true,
       helpKey: 'jobvite.connection.http.unencrypted.companyId',
     },

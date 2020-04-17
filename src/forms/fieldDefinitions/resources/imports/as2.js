@@ -15,7 +15,7 @@ export default {
   'as2.messageIdTemplate': {
     type: 'textwithlookupextract',
     fieldType: 'templateeditor',
-    label: 'Message id',
+    label: 'Message ID',
     editorTitle:
       'Use this editor if your Message ID should be dynamically generated',
     connectionId: r => r && r._connectionId,

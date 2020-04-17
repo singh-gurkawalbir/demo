@@ -46,11 +46,11 @@ export default {
   },
   idLockTemplate: {
     type: 'relativeuri',
-    label: 'Concurrency id lock template',
+    label: 'Concurrency ID lock template',
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Override data uri template',
+    label: 'Override data URI template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },
@@ -342,7 +342,7 @@ export default {
   },
   'filter.script._scriptId': {
     type: 'text',
-    label: 'Filter script _script id',
+    label: 'Filter script _script ID',
   },
   'filter.script.function': {
     type: 'text',
@@ -602,7 +602,7 @@ export default {
   },
   'responseTransform.script._scriptId': {
     type: 'text',
-    label: 'Response transform script _script id',
+    label: 'Response transform script _script ID',
   },
   'responseTransform.script.function': {
     type: 'text',

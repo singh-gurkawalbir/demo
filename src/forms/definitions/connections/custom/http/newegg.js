@@ -80,7 +80,7 @@ export default {
     'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
-      label: 'Seller id',
+      label: 'Seller ID',
       required: true,
       helpKey: 'newegg.connection.http.unencrypted.sellerId',
     },

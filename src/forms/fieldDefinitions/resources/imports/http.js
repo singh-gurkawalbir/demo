@@ -63,7 +63,7 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
     type: 'select',
@@ -175,7 +175,7 @@ export default {
   'http.relativeURI': {
     type: 'textwithlookupextract',
     fieldType: 'relativeUri',
-    label: 'Relative uri',
+    label: 'Relative URI',
     placeholder: 'Optional',
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
@@ -199,7 +199,7 @@ export default {
     arrayIndex: 0,
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
-    label: 'Build http request body',
+    label: 'Build HTTP request body',
     required: true,
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
@@ -251,7 +251,7 @@ export default {
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Resource id path',
+    label: 'Resource ID path',
     delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [

@@ -36,7 +36,7 @@ export default {
   },
   'salesforce.document.id': {
     type: 'text',
-    label: 'Document id',
+    label: 'Document ID',
     required: true,
     visibleWhenAll: [
       {
@@ -55,7 +55,7 @@ export default {
   },
   'salesforce.attachment.id': {
     type: 'text',
-    label: 'Attachment id',
+    label: 'Attachment ID',
     required: true,
     visibleWhenAll: [
       {
@@ -130,7 +130,7 @@ export default {
   },
   'salesforce.document.folderId': {
     type: 'text',
-    label: 'Folder id',
+    label: 'Folder ID',
     required: true,
     visibleWhenAll: [
       {
@@ -149,7 +149,7 @@ export default {
   },
   'salesforce.contentVersion.contentDocumentId': {
     type: 'text',
-    label: 'Content document id',
+    label: 'Content document ID',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -247,7 +247,7 @@ export default {
   },
   'salesforce.attachment.parentId': {
     type: 'text',
-    label: 'Parent id',
+    label: 'Parent ID',
     required: true,
     visibleWhenAll: [
       {
@@ -527,7 +527,7 @@ export default {
   },
   'salesforce.upsert.externalIdField': {
     type: 'refreshableselect',
-    label: 'Which external id field should be used to upsert?',
+    label: 'Which external ID field should be used to upsert?',
     filterKey: 'salesforce-externalIdFields',
     visibleWhenAll: [
       {
@@ -544,7 +544,7 @@ export default {
     type: 'textwithlookupextract',
     fieldType: 'ignoreExistingData',
     connectionId: r => r && r._connectionId,
-    label: 'Which export data field should map to external id?',
+    label: 'Which export data field should map to external ID?',
     visibleWhenAll: [
       {
         field: 'salesforce.operation',

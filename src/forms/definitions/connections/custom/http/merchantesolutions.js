@@ -31,7 +31,7 @@ export default {
     'http.unencrypted.profileId': {
       id: 'http.unencrypted.profileId',
       type: 'text',
-      label: 'Profile id',
+      label: 'Profile ID',
       required: true,
     },
     'http.encrypted.profileKey': {

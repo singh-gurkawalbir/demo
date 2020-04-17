@@ -18,7 +18,7 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
-      label: 'Company id',
+      label: 'Company ID',
       required: true,
       type: 'text',
     },

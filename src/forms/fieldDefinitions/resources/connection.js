@@ -400,7 +400,7 @@ export default {
   },
   'rest.baseURI': {
     type: 'text',
-    label: 'Base uri',
+    label: 'Base URI',
     required: true,
   },
   'rest.bearerToken': {
@@ -440,11 +440,11 @@ export default {
   },
   'rest.oauthTokenURI': {
     type: 'text',
-    label: 'Rest oauth token uri',
+    label: 'Rest oauth token URI',
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Disable strict ssl',
+    label: 'Disable strict SSL',
   },
   'rest.authType': {
     type: 'select',
@@ -462,7 +462,7 @@ export default {
   },
   'rest.authURI': {
     type: 'text',
-    label: 'Rest auth uri',
+    label: 'Rest auth URI',
   },
   'rest.authHeader': {
     type: 'text',
@@ -506,7 +506,7 @@ export default {
   },
   'rest.cookieAuth.uri': {
     type: 'text',
-    label: 'Cookie uri',
+    label: 'Cookie URI',
   },
   'rest.cookieAuth.body': {
     type: 'text',
@@ -538,7 +538,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   'rest.encrypted': {
     type: 'editor',
@@ -596,7 +596,7 @@ export default {
   },
   'rest.refreshTokenURI': {
     type: 'text',
-    label: 'Rest refresh token uri',
+    label: 'Rest refresh token URI',
   },
   'rest.refreshTokenPath': {
     type: 'text',
@@ -628,7 +628,7 @@ export default {
   },
   'rest.pingRelativeURI': {
     type: 'text',
-    label: 'Ping uri',
+    label: 'Ping URI',
   },
   'rest.pingSuccessPath': {
     type: 'text',
@@ -750,7 +750,7 @@ export default {
   },
   'http.baseURI': {
     type: 'text',
-    label: 'Base uri',
+    label: 'Base URI',
     required: true,
     requiredWhen: [
       {
@@ -761,7 +761,7 @@ export default {
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Disable strict ssl',
+    label: 'Disable strict SSL',
   },
   'http.concurrencyLevel': {
     label: 'Concurrency level',
@@ -810,7 +810,7 @@ export default {
   },
   'http.ping.relativeURI': {
     type: 'text',
-    label: 'Ping relative uri',
+    label: 'Ping relative URI',
   },
   'http.ping.method': {
     type: 'select',
@@ -1120,7 +1120,7 @@ export default {
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh relative uri',
+    label: 'Refresh relative URI',
     required: true,
   },
   'http.auth.token.refreshBody': {
@@ -1163,7 +1163,7 @@ export default {
   },
   'http.auth.cookie.uri': {
     type: 'text',
-    label: 'Cookie uri',
+    label: 'Cookie URI',
   },
   'http.auth.cookie.body': {
     type: 'text',
@@ -1227,7 +1227,7 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     defaultValue: r => (r && r.http && r.http.headers) || '',
-    label: 'Configure http headers',
+    label: 'Configure HTTP headers',
   },
   'http.unencrypted': {
     type: 'editor',
@@ -1361,7 +1361,7 @@ export default {
     type: 'checkbox',
     defaultValue: r =>
       !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
-    label: 'Use pgp encryption',
+    label: 'Use PGP encryption',
   },
   'ftp.pgpEncryptKey': {
     type: 'text',
@@ -1422,7 +1422,7 @@ export default {
   // #region s3
   's3.accessKeyId': {
     type: 'text',
-    label: 'Access key id',
+    label: 'Access key ID',
   },
   's3.secretAccessKey': {
     type: 'text',
@@ -1670,7 +1670,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh relative uri',
+    label: 'Refresh relative URI',
     visibleWhen: [
       {
         field: 'configureTokenRefresh',
@@ -2087,7 +2087,7 @@ export default {
   },
   'netsuite.account': {
     type: 'netsuiteuserroles',
-    label: 'Account id',
+    label: 'Account ID',
   },
   'netsuite.tokenId': {
     type: 'text',
@@ -2096,7 +2096,7 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
-    label: 'Token id',
+    label: 'Token ID',
   },
   'netsuite.tokenSecret': {
     type: 'text',
@@ -2243,13 +2243,13 @@ export default {
   },
   'netsuite.applicationId': {
     type: 'text',
-    label: 'NetSuite application id',
+    label: 'NetSuite application ID',
   },
   // #endregion netsuite
   // #region netSuiteDistributedAdaptor
   'netSuiteDistributedAdaptor.accountId': {
     type: 'text',
-    label: 'Net suite distributed adaptor account id',
+    label: 'Net suite distributed adaptor account ID',
   },
   'netSuiteDistributedAdaptor.environment': {
     type: 'select',
@@ -2267,7 +2267,7 @@ export default {
   },
   'netSuiteDistributedAdaptor.connectionId': {
     type: 'text',
-    label: 'Net suite distributed adaptor connection id',
+    label: 'Net suite distributed adaptor connection ID',
   },
   'netSuiteDistributedAdaptor.username': {
     type: 'text',
@@ -2275,7 +2275,7 @@ export default {
   },
   'netSuiteDistributedAdaptor.uri': {
     type: 'text',
-    label: 'Net suite distributed adaptor uri',
+    label: 'Net suite distributed adaptor URI',
   },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
@@ -2294,7 +2294,7 @@ export default {
   },
   'salesforce.baseURI': {
     type: 'text',
-    label: 'Salesforce base uri',
+    label: 'Salesforce base URI',
   },
   'salesforce.oauth2FlowType': {
     type: 'select',
@@ -2506,7 +2506,7 @@ export default {
   // #region dynamodb
   'dynamodb.aws.accessKeyId': {
     type: 'text',
-    label: 'Access key id',
+    label: 'Access key ID',
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',

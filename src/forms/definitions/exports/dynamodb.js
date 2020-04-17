@@ -49,7 +49,7 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export from dynamodb?',
+      label: 'What would you like to export from DynamoDB?',
     },
     'dynamodb.region': { fieldId: 'dynamodb.region' },
     'dynamodb.method': { fieldId: 'dynamodb.method' },

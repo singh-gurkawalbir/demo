@@ -39,7 +39,7 @@ export default {
   },
   'netsuite.recordTypeId': {
     type: 'text',
-    label: 'NetSuite record type id',
+    label: 'NetSuite record type ID',
   },
   'netsuite.retryUpdateAsAdd': {
     type: 'checkbox',
@@ -57,15 +57,15 @@ export default {
   },
   'netsuite.internalIdLookup.extract': {
     type: 'text',
-    label: 'NetSuite internal id lookup extract',
+    label: 'NetSuite internal ID lookup extract',
   },
   'netsuite.internalIdLookup.searchField': {
     type: 'text',
-    label: 'NetSuite internal id lookup search field',
+    label: 'NetSuite internal ID lookup search field',
   },
   'netsuite.internalIdLookup.expression': {
     type: 'text',
-    label: 'NetSuite internal id lookup expression',
+    label: 'NetSuite internal ID lookup expression',
   },
   'netsuite.lookups[*].name': {
     type: 'text',
