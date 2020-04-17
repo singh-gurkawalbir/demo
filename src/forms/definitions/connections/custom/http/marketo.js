@@ -51,14 +51,14 @@ export default {
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       type: 'text',
-      label: 'Client Id',
+      label: 'Client id',
       required: true,
       helpKey: 'marketo.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       type: 'text',
-      label: 'Client Secret',
+      label: 'Client secret',
       required: true,
       defaultValue: '',
       inputType: 'password',

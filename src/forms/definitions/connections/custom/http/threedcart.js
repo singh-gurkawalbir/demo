@@ -27,9 +27,8 @@ export default {
     'http.threedcartSecureUrl': {
       id: 'http.threedcartSecureUrl',
       type: 'text',
-      label: 'Secure URL',
+      label: 'Secure url',
       required: true,
-      helpText: "3dcart merchant's Secure URL.",
       defaultValue: r =>
         r &&
         r.http &&
@@ -40,18 +39,15 @@ export default {
     'http.encrypted.PrivateKey': {
       id: 'http.encrypted.PrivateKey',
       type: 'text',
-      label: 'Private Key',
+      label: 'Private key',
       defaultValue: '',
       required: true,
-      helpText:
-        "Your application's private key.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Private Key safe. This can be obtained from the Settings section and Private Key subsection.",
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
-      helpText: "The 3dcart merchant's token.",
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

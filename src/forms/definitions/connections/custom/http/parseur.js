@@ -23,9 +23,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Token Key',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+      label: 'API token key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

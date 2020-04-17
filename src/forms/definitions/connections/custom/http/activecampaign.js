@@ -43,8 +43,8 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key',
       helpKey: 'activecampaign.connection.http.auth.token.token',
+      label: 'API key',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

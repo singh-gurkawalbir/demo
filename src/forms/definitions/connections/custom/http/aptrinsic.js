@@ -21,7 +21,7 @@ export default {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       inputType: 'password',
       defaultValue: '',
       helpKey: 'aptrinsic.connection.http.encrypted.apiKey',

@@ -28,7 +28,7 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       helpKey: 'ebay.connection.accountType',
       options: [
         {
@@ -53,7 +53,7 @@ export default {
     'http.scopeSandbox': {
       id: 'http.scopeSandbox',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       visibleWhen: [{ field: 'accountType', is: ['sandbox'] }],
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
@@ -91,7 +91,7 @@ export default {
     'http.scopeProduction': {
       id: 'http.scopeProduction',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
         'https://api.ebay.com/oauth/api_scope/sell.marketing.readonly',

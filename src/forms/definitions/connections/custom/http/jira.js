@@ -40,7 +40,7 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Token',
+      label: 'API token',
       helpKey: 'jira.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

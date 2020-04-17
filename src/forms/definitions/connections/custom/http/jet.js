@@ -28,7 +28,7 @@ export default {
       id: 'http.refreshTokenBody.user',
       type: 'text',
       helpKey: 'jet.connection.http.refreshTokenBody.user',
-      label: 'API User',
+      label: 'API user',
       required: true,
       defaultValue: r => {
         let toReturn = '';
@@ -49,7 +49,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       helpKey: 'jet.connection.http.encrypted.password',
-      label: 'Secret Key',
+      label: 'Secret key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

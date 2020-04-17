@@ -37,21 +37,21 @@ export default {
     'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
-      label: 'Seller Id',
+      label: 'Seller id',
       required: true,
       helpKey: 'amazonmws.connection.http.unencrypted.sellerId',
     },
     'http.unencrypted.mwsAuthToken': {
       id: 'http.unencrypted.mwsAuthToken',
       type: 'text',
-      label: 'MWS Auth Token',
+      label: 'MWS auth token',
       helpKey: 'amazonmws.connection.http.unencrypted.mwsAuthToken',
       required: false,
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
-      label: 'Marketplace Id',
+      label: 'Marketplace id',
       helpKey: 'amazonmws.connection.http.unencrypted.marketplaceId',
       required: true,
       options: [
@@ -124,7 +124,7 @@ export default {
     'http.unencrypted.marketplaceRegion': {
       id: 'http.unencrypted.marketplaceRegion',
       type: 'select',
-      label: 'Marketplace Region',
+      label: 'Marketplace region',
       helpKey: 'amazonmws.connection.http.unencrypted.marketplaceRegion',
       required: true,
       defaultValue: r => {

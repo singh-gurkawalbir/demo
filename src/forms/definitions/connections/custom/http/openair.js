@@ -49,7 +49,6 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
-      helpText: 'Please select the environment of your OpenAir account.',
       options: [
         {
           items: [
@@ -80,23 +79,19 @@ export default {
     'http.unencrypted.companyId': {
       id: 'http.unencrypted.companyId',
       type: 'text',
-      label: 'Company Id',
-      helpText: 'Please enter Company ID of your account.',
+      label: 'Company id',
       required: true,
     },
     'http.unencrypted.userId': {
       id: 'http.unencrypted.userId',
       type: 'text',
-      label: 'User Id',
-      helpText: 'Please enter User ID of your account.',
+      label: 'User id',
       required: true,
     },
     'http.encrypted.password': {
       id: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
-      helpText:
-        'Please enter Password of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
       required: true,
       inputType: 'password',
       description:
@@ -105,19 +100,16 @@ export default {
     'http.unencrypted.namespace': {
       id: 'http.unencrypted.namespace',
       type: 'text',
-      label: 'API Namespace',
+      label: 'API namespace',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.namespace) ||
         'default',
-      helpText: 'Please enter the API Namespace of your account.',
       required: true,
     },
     'http.unencrypted.apiKey': {
       id: 'http.unencrypted.apiKey',
       type: 'text',
       label: 'API key',
-      helpText:
-        'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

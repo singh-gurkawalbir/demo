@@ -16,7 +16,7 @@ export default {
       helpKey: 'insightly.connection.http.auth.basic.username',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Key',
+      label: 'API key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

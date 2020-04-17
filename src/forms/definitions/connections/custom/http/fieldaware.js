@@ -25,7 +25,7 @@ export default {
       inputType: 'password',
       defaultValue: '',
       required: true,
-      label: 'API Key',
+      label: 'API key',
       helpKey: 'fieldaware.connection.http.encrypted.apiKey',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

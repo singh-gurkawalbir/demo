@@ -16,7 +16,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'API Key',
+      label: 'API key',
       helpKey: 'loopreturns.connection.http.auth.token.token',
       required: true,
     },

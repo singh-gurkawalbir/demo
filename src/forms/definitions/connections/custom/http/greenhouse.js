@@ -27,7 +27,7 @@ export default {
       helpKey: 'greenhouse.connection.http.auth.basic.username',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Token',
+      label: 'API token',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

@@ -18,7 +18,7 @@ export default {
     environment: {
       id: 'environment',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       helpKey: 'ebay-xml.connection.environment',
       options: [
         {
@@ -45,7 +45,7 @@ export default {
     'http.unencrypted.apiSiteId': {
       id: 'http.unencrypted.apiSiteId',
       type: 'select',
-      label: 'API Site ID',
+      label: 'API site id',
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.apiSiteId) ||
         '0',

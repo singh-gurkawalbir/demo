@@ -49,7 +49,7 @@ export default {
     'rdbms.useSSL': {
       id: 'rdbms.useSSL',
       type: 'checkbox',
-      label: 'Use SSL',
+      label: 'Use ssl',
       defaultValue: r =>
         r &&
         r.rdbms &&

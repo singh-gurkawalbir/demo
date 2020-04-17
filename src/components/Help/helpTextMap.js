@@ -1,3 +1,548 @@
+// needs work
+// uncomment eslint-disable no-dupe-keys this to expose dupe keys
+/* eslint-disable no-dupe-keys */
+// eslint-disable-next-line no-unused-vars
+const extractedHelpkeys = {
+  // fieldDefinitions
+  'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
+    'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
+  'connections.connection.as2.userStationInfo.mdn.mdnURL':
+    "This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.",
+  'connections.connection.partnerrequireasynchronousmdns':
+    'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
+  'exports.export.netsuite.distributed.executionContext':
+    'The invited user will have permissions to manage the integrations selected here.',
+  'exports.export.netsuite.distributed.executionType':
+    'The invited user will have permissions to manage the integrations selected here.',
+  'iClients.iClient.oauth2.clientId':
+    'This is the ID for your client app that is registered with the API provider.',
+  'iClients.iClient.oauth2.clientSecret':
+    'This is the client secret the API provider gave you.',
+  'imports.import.http.requestType':
+    'Please specify whether the record is being created or updated using this field.',
+  'imports.import.rdbms.queryType':
+    "Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.",
+  'imports.import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
+  'imports.import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+    Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
+  'imports.import.rest.requestType':
+    'Please specify whether the record is being created or updated using this field.',
+
+  // definitions
+  'http.connection.customScopeDelimiter':
+    'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
+  'salesforce.connection.salesforce.info.email':
+    'Your Salesforce account email.',
+  'salesforce.connection.salesforce.info.organization_id':
+    "Your organization's unique Salesforce ID",
+  'xcart.connection.rest.bearerToken':
+    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'sharepoint.connection.http.subDomain':
+    "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
+  'vroozi.connection.accountType':
+    'Please select your account type here. Select Sandbox if your API Endpoint starts with https://sandbox-api.vroozi.com. Select Production if your API Endpoint starts with https://api.vroozi.com',
+  'vroozi.connection.http.unencrypted.apiKey':
+    'Please enter your API Key here.API key is generated after creating your application.',
+  'vroozi.connection.http.auth.token.token': `Please enter your Access Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To get an API key for your Vroozi account,login to your Vroozi account and Under API Integration section, click on Credentials.Create your application by clicking on "Add New Application" After entering your application name, you will be provided with an access token which is shown only once.`,
+  'saplitmos.connection.http.auth.token.token': `Please enter API Key of your SAP Litmos Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API Key: Login to SAP Litmos Account -- > Click "My Profile & Settings" from the drop-down menu at the top right corner of the screen -- > View the bottom of your profile.`,
+  'oandav20fxtrade.connection.accountType': `Please select your account type here. Select Demo if your account type is "fxTrade Practice". Select Trading if your account type is "fxTrade".`,
+  'oandav20fxtrade.connection.http.auth.token.token':
+    'Please enter your API token here.',
+  'openair.connection.environment':
+    'Please select the environment of your OpenAir account.',
+  'openair.connection.http.unencrypted.companyId':
+    'Please enter Company ID of your account.',
+  'openair.connection.http.unencrypted.userId':
+    'Please enter User ID of your account.',
+  'openair.connection.http.encrypted.password':
+    'Please enter Password of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'openair.connection.http.unencrypted.namespace':
+    'Please enter the API Namespace of your account.',
+  'openair.connection.http.unencrypted.apiKey':
+    'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'onelogin.connection.http.oneloginRegion': 'Please enter Region for URI.',
+  'onelogin.connection.http.unencrypted.apiKey':
+    'Please enter API Key of your OneLogin Account.',
+  'onelogin.connection.http.encrypted.apiSecret':
+    'Please enter API Secret of your OneLogin Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'onelogin.connection.http.auth.token.token':
+    'The access token of your OneLogin account.',
+  'paycor.connection.http.unencrypted.publicKey':
+    'Please enter your public key here. Your public key identifies you to our system. This is similar to a username. You will include your public key every time you send request to Paycor. This is not secret information.',
+  'paycor.connection.http.encrypted.secretKey':
+    'Please enter your private key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
+  'quickbooks.connection.http.quickbooksEnvironment':
+    'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
+  'trinet.connection.http.unencrypted.companyId':
+    'Please reach out to TriNet support team for company Id.',
+  'trinet.connection.http.auth.token.token':
+    'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'pacejet.connection.http.unencrypted.pacejetLocation':
+    'Please reach out to Pacejet support team for location header.',
+  'pacejet.connection.http.encrypted.pacejetLicenseKey':
+    'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
+  'integratorio.connection.integrator.environment':
+    'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
+  'integratorio.connection.integrator.region':
+    'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
+  'integratorio.connection.integrator.token':
+    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'recharge.connection.http.auth.token.token':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
+  'bamboohr.connection.http.bamboohrSubdomain':
+    'Please enter your company name here which you configured while signing up for a new BambooHR account.',
+  'bamboohr.connection.http.encrypted.apiKey': `Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.`,
+  'okta.connection.http.oktaSubdomain':
+    'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
+  'okta.connection.http.auth.token.token': `Please enter your Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.`,
+  'easyship.connection.http.auth.token.token':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can generate the API Access Token from https://app.easyship.com/connect. You will need to create an API connection, and then retrieve the token from the store settings.',
+  'propack.connection.environment':
+    'Please select your environment here. Select Test if the account is created on https://test.webservices.p3pl.com. Select Production if the account is created on https://webservices.p3pl.com.',
+  'propack.connection.http.unencrypted.p3plUserID':
+    'Please enter your P3PL account User ID.',
+  'propack.connection.http.encrypted.p3plUserPassword':
+    'Please enter your P3PL account Password.',
+  'solidcommerce.connection.http.encrypted.securityKey':
+    'Enter your Solid Commerce Developer Key or Security Key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Security Key safe. This can be obtained from the Settings section and Security Key subsection.',
+  'solidcommerce.connection.http.encrypted.appKey':
+    'Application Key is generated at https://www.upsefulfillment.com, under Marketplaces --> Marketplaces Setup --> Web Services.',
+  'parseur.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'paypal.connection.http.accountType':
+    'Select one of the following, depending on the account you’re connecting to. <br> <b>.</b> Sandbox </br> <b>.</b> Production',
+  'paypal.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Paypal Account.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
+  'paypal.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Paypal Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.Steps to generate API credentials: Login to Developer Account -- > My Apps & Credentials -- > Select the Sandbox or Live -- > Create an App -- > Copy the Client ID and Secret',
+  'paypal.connection.http.auth.token.token':
+    'The access token of your Paypal account.',
+  'returnly.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Summary tab in Your Account section.',
+  '4castplus.connection.http.subdomain':
+    'The subdomain is the unique portion of the 4castplus.com address that you visit to log in to your portal.',
+  '4castplus.connection.http.unencrypted.username':
+    'Username is your 4castplus account email.',
+  '4castplus.connection.http.encrypted.password':
+    'Password is your 4castplus account password. Multiple layers of protection are employed (including AES 256 encryption) to keep your password safe.',
+  'expensify.connection.http.unencrypted.partnerUserId':
+    'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
+  'expensify.connection.http.encrypted.partnerUserSecret':
+    'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'klaviyo.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+  'zohodesk.connection.http.unencrypted.organizationId':
+    'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
+  'tophatter.connection.http.auth.token.token':
+    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'zohocrm.connection.http.zohoSubdomain': `Please enter the Domain. Input ".com" to connect to US data-center. Input ".in" to connect to India data-center. Input ".com.cn" to connect to China data-center. Input ".eu" to connect to Europe data-center.`,
+  'tsheets.connection.http.tsheetsSubdomain':
+    'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
+  'squareup.connection.http.auth.type': 'Please select Authentication Type',
+  'squareup.connection.http.auth.token.token':
+    'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+  'postmark.connection.http.encrypted.serverToken':
+    'Please enter your Server Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Server Token safe. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.',
+  'postmark.connection.http.encrypted.accountToken':
+    'Please enter your Account Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account Token safe. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API Tokens tab of your Postmark account.',
+  'zendesk.connection.http.auth.type': 'Please select Authentication Type',
+  'zendesk.connection.http.zendeskSubdomain':
+    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+  'zendesk.connection.http.apiToken':
+    'API tokens are managed in the Support admin interface at Admin > Channels > API',
+  'activecampaign.connection.http.activecampaignSubdomain':
+    'Please enter your account subdomain here.',
+  'activecampaign.connection.http.auth.token.token':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and Developer subsection.',
+  'drift.connection.http.auth.token.token':
+    'Please enter your access token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your access token safe. This token is automatically generated when you installed the app to your team. You can use this to authenticate your app.',
+  'authorize.net.connection.authorizeNet.accType':
+    'Please select your account type here. Select Sandbox if your API Endpoint starts with https://apitest.authorize.net. Select Production if your API Endpoint starts with https://api.authorize.net.',
+  'authorize.net.connection.http.encrypted.apiLoginID':
+    'Merchant’s unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+  'authorize.net.connection.http.encrypted.transactionKey':
+    'Merchant’s unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
+  'recurly.connection.recurlySubdomain':
+    'Please enter your subdomain here which you configured while activating your new Recurly account.',
+  'recurly.connection.http.auth.basic.username':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
+  'cartrover.connection.http.auth.basic.username':
+    'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
+  'cartrover.connection.http.auth.basic.password':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
+  'amazonmws.connection.http.unencrypted.sellerId': `The account ID for the Amazon seller account you are integrating with. You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you do not know this value you can find it in the "Settings" section in Amazon Seller Central.`,
+  'amazonmws.connection.http.unencrypted.mwsAuthToken':
+    'The MWS authorization token.',
+  'amazonmws.connection.http.unencrypted.marketplaceId': `Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.`,
+  'amazonmws.connection.http.unencrypted.marketplaceRegion':
+    'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
+  'amazonmws.connection.http._iClientId': `Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.`,
+  'autopilot.connection.http.auth.token.token':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To get an API key for your Autopilot account, login to your Autopilot account and go to Settings and to Autopilot API.',
+  'ebay-xml.connection.environment': 'Select either Production or Sandbox.',
+  'ebay-xml.connection.http.unencrypted.apiSiteId':
+    'After you have specified the API Site ID, click Save & Authorize that opens up the eBay window where you can enter email/username and password to establish the connection with eBay.',
+  '3dcart.connection.http.threedcartSecureUrl': "3dcart merchant's Secure URL.",
+  '3dcart.connection.http.encrypted.PrivateKey':
+    "Your application's private key.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Private Key safe. This can be obtained from the Settings section and Private Key subsection.",
+  '3dcart.connection.http.auth.token.token': "The 3dcart merchant's token.",
+  'snapfulfil.connection.http.subdomain':
+    "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
+  'snapfulfil.connection.http.auth.basic.username':
+    "Please enter your snapfulfil account's username",
+  'snapfulfil.connection.http.auth.basic.password':
+    "Please enter your snapfulfil account's password",
+  'anaplan.connection.http.auth.basic.username':
+    'The username of your Anaplan account.',
+  'anaplan.connection.http.auth.basic.password':
+    'The password of your Anaplan account.',
+  'namely.connection.http.namelyCompanyName':
+    'Your subdomain. For example, https://mysubdomain.namely.com',
+  'namely.connection.http.auth.token.token':
+    'The personal access token of your account on namely. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Personal Access Token safe. This can be obtained from the Settings section and Personal Access Token subsection.',
+  'newegg.connection.accountType':
+    "Select 'Newegg Business' if your account is created on https://www.neweggbusiness.com.Select 'Newegg' if your account is created on https://www.newegg.com.",
+  'newegg.connection.http.encrypted.apiKey':
+    'Please enter the unique API Key which Newegg Marketplace integration team assigned to you.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
+  'newegg.connection.http.encrypted.apiSecret':
+    'Please enter the unique Secret Key which Newegg Marketplace integration team assigned to you. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your key safe.',
+  'newegg.connection.http.unencrypted.sellerId':
+    'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
+  'asana.connection.http.auth.token.token':
+    'Enter your personal access token.Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+  'slack.connection.http.auth.type': 'Please select Authentication Type',
+  'bigcommerce.connection.http.auth.type': 'Please select Authentication Type',
+  'bigcommerce.connection.http.auth.basic.username':
+    'Client ID will be the Username.',
+  'bigcommerce.connection.http.auth.basic.password':
+    'Access Token will be the Password.',
+  'bigcommerce.connection.http.auth.token.token':
+    'This Access Token works in tandem with the Client ID.',
+  'bigcommerce.connection.http.unencrypted.clientId':
+    'This Client ID works together with the Access Token to grant authorization.',
+  'bigcommerce.connection.storeHash':
+    'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+  'certify.connection.http.encrypted.apiKey':
+    'The API Key of your Certify account.',
+  'certify.connection.http.encrypted.apiSecret':
+    'The API Secret of your Certify account.',
+  'chargify.connection.http.chargifySubdomain':
+    'The subdomain of your chargify account. For example, https://mysubdomain.chargify.com.',
+  'chargify.connection.http.encrypted.apiKey':
+    'The API key of your Chargify account.',
+  'docusign.connection.environment':
+    'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
+  'ebay.connection.accountType':
+    'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
+  'jet.connection.http.refreshTokenBody.user':
+    'API User Key available from Jet under API Section-> Get API Keys',
+  'jet.connection.http.encrypted.password':
+    'Secret Key available from Jet under API Section-> Get API Keys',
+  'jira.connection.http.baseURI':
+    'The base URI for JIRA. For example, http://www.company.com/confluence',
+  'jira.connection.http.auth.basic.username':
+    'The username of your JIRA account.',
+  'jira.connection.http.auth.basic.password':
+    'To create an API token for Atlassian account:Login to your Atlassian account– >Go to User management– >Go to Your profile --> Security – > API token',
+  'jobvite.connection.environment':
+    'Select either Production or Sandbox based on your requirement.',
+  'jobvite.connection.http.unencrypted.companyId':
+    'The company ID of your Jobvite account.',
+  'jobvite.connection.http.unencrypted.api':
+    'The API Key of your Jobvite account.',
+  'jobvite.connection.http.encrypted.secret':
+    'The Secret Key of your Jobvite account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe. This can be obtained from the Settings section and user secret subsection.',
+  'liquidplanner.connection.http.auth.type':
+    'Please select Authentication Type',
+  'liquidplanner.connection.http.auth.basic.username':
+    'Enter Username of your registered LiquidPlanner account.',
+  'liquidplanner.connection.http.auth.basic.password':
+    'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
+  'liquidplanner.connection.http.auth.token.token':
+    'The API Token of your LiquidPlanner account when using the Token authentication.',
+  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.auth.token.token':
+    'The access token of your Magento 2 account.',
+  'mailchimp.connection.http.mailchimpDataCenter':
+    'The Data Center name provided by Mailchimp. Click Save & Authorize to open up the Mailchimp login screen where you can enter your username and password to establish the connection with your Mailchimp account.',
+  'servicenow.connection.instanceName':
+    'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
+  'servicenow.connection.http.auth.basic.username':
+    'The username of your ServiceNow account.',
+  'servicenow.connection.http.auth.basic.password':
+    'The password of your ServiceNow account.',
+  'shipstation.connection.http.auth.basic.username':
+    'The API Key of your ShipStation account.',
+  'shipstation.connection.http.auth.basic.password':
+    'The API Secret of your ShipStation account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API secret safe. This can be obtained from the Settings section and API secret subsection.',
+  'shopify.connection.http.auth.type': `Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.`,
+  'shopify.connection.http.storeURL': `Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.`,
+  'shopify.connection.http.auth.basic.username': `Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.`,
+  'shopify.connection.http.auth.basic.password': `Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.`,
+  'stripe.connection.http.auth.token.token':
+    'The secret key of your Stripe account.',
+  'twilio.connection.http.auth.basic.username':
+    'The Account Sid of your Twilio account.',
+  'twilio.connection.http.auth.basic.password':
+    'The token of your Twilio account.',
+  'woocommerce.connection.http.baseURI': `Please enter baseURI of your WooCommerce account. If your endpoint is  “https://shopName.com/wp-json/wc/v1/orders”, then use "https://shopName.com" as base URL.`,
+  'woocommerce.connection.http.auth.basic.username':
+    'The consumer key of your WooCommerce account.',
+  'woocommerce.connection.http.auth.basic.password':
+    'The consumer secret of your WooCommerce account.',
+  'shipwire.connection.environment':
+    'Please select your environment here. Select Sandbox if the account is created on https://beta.shipwire.com. Select Production if the account is created on https://www.shipwire.com.',
+  'shipwire.connection.http.auth.basic.username':
+    'The username of your Shipwire account.',
+  'shipwire.connection.http.auth.basic.password':
+    'The password of your Shipwire account.',
+  'zuora.connection.http.unencrypted.apiAccessKeyId':
+    'Please enter Username of your Zuora account.',
+  'zuora.connection.http.encrypted.apiSecretAccessKey':
+    'Please enter Password of your Zuora account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe. This can be obtained from the Settings section and password subsection.',
+  'connection.http.sandbox': 'regex zuora regex The Zuora account type.',
+  'atera.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by Navigating to Admin >> API from the left hand panel.',
+  'hubspot.connection.http.auth.type': 'Please select Authentication Type',
+  'hubspot.connection.http.auth.token.token':
+    'Please enter API Key of your Hubspot Account.',
+  'insightly.connection.http.auth.basic.username':
+    'The API key of your Insightly account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+  'freshdesk.connection.http.freshdeskSubdomain':
+    "Enter your Freshdesk subdomain. For example, in https://mycompany.freshdesk.com 'mycompany' is the subdomain.",
+  'freshdesk.connection.http.auth.basic.username':
+    'Username can be either your Freshdesk account email used to login to your Freshdesk account, or the API key associated with your account, depending on preference.',
+  'freshdesk.connection.http.auth.basic.password':
+    'The password of your Freshdesk account.',
+  'avalara.connection.accType':
+    'Please select your account type here. Select Production if your account URL starts with https://admin-avatax.avalara.net/. Select Sandbox if your account URL starts with https://admin-development.avalara.net/.',
+  'accelo.connection.http.acceloSubdomain':
+    'Please enter your subdomain here which you configured in Deployment Information page while signing up for your new Accelo account.',
+  'harvest.connection.http.encrypted.accountId':
+    'Please enter the Harvest account ID .Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account ID safe. This can be obtained from the Settings section and Account ID subsection.',
+  'pulseway.connection.http.baseURI':
+    'Please enter baseURI of your Pulseway account. If you host your own Pulseway Enterprise Server, use “https://your-server-name/api” as base URL.',
+  'shiphawk.connection.http.encrypted.apiKey':
+    'The API Key of your ShipHawk account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Key safe. This can be obtained from the Settings section and API Key subsection.',
+  'newrelic.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. From the account dropdown in the New Relic UI, select Account settings > Integrations > API keys to find it.',
+  'tableau.connection.http.myServer':
+    'Please enter your server name here which you configured while signing up for a new Tableau account.',
+  'tableau.connection.http.auth.basic.username':
+    'Please enter the User Id/Email of your Tableau Account.',
+  'tableau.connection.http.auth.basic.password':
+    'Please enter password of your Tableau Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'tableau.connection.http.unencrypted.contentUrl':
+    'The content URL is the value that in the server environment is referred to as the Site ID.',
+  'tableau.connection.http.auth.token.token':
+    'The access token of your Tableau account.',
+  'tableau.connection.http.unencrypted.siteId':
+    'The Site ID of your Tableau account.',
+  'tesco.connection.http.encrypted.apiKey':
+    'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+  'fieldaware.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by reaching out to FieldAware support team.',
+  'chargebee.connection.chargebeeSubdomain':
+    "Enter your Chargebee subdomain. For example, in https://mycompany.chargebee.com/api 'mycompany' is the subdomain.",
+  'chargebee.connection.http.auth.basic.username':
+    'The API Key of your Chargebee account.',
+  'taxjar.connection.http.auth.token.token':
+    'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
+  'pitneybowes.connection.http.sandbox':
+    'Select either Locate/Identity or Ship.',
+  'pitneybowes.connection.http.unencrypted.apiKey':
+    'Please enter API Key of your Pitney Bowes Account.',
+  'pitneybowes.connection.http.encrypted.apiSecret':
+    'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'pitneybowes.connection.http.auth.token.token':
+    'The access token of your Pitney Bowes account.',
+  'shippo.connection.http.encrypted.token':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can find your token on the Shippo API settings page.',
+  'acumatica.connection.instanceURI':
+    'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
+  'acumatica.connection.http.unencrypted.endpointName':
+    'Please enter endpoint name of your Acumatica account.',
+  'acumatica.connection.http.unencrypted.endpointVersion':
+    'Please enter endpoint version of your Acumatica account.',
+  'acumatica.connection.http.unencrypted.username':
+    'Please enter username of your Acumatica account.',
+  'acumatica.connection.http.encrypted.password':
+    'Please enter password of your Acumatica account.',
+  'acumatica.connection.http.unencrypted.company':
+    'Please enter company name of your Acumatica account.',
+  'zoom.connection.http.encrypted.apiKey':
+    'The API Key of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'zoom.connection.http.encrypted.apiSecret':
+    'The API Secret of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'bronto.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Bronto Account.',
+  'bronto.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Bronto Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'bronto.connection.http.auth.token.token':
+    'The access token of your Bronto account.',
+  'greenhouse.connection.http.auth.basic.username':
+    'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
+  'greenhouse.connection.http.unencrypted.userID':
+    'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
+  'powerbi.connection.http.unencrypted.adminUser':
+    'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',
+  'mailgun.connection.http.auth.basic.password':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+  'procurify.connection.http.procurifySubdomain': `Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.`,
+  'procurify.connection.http.unencrypted.username':
+    'Please enter the Username of your Procurify Account.',
+  'procurify.connection.http.encrypted.password': `Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.`,
+  'procurify.connection.http.generateClientIdandSecret': `Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.`,
+  'procurify.connection.http.unencrypted.clientId':
+    'The client id of your Procurify account',
+  'procurify.connection.http.encrypted.clientSecret': `Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.`,
+  'procurify.connection.http.auth.token.token':
+    'The access token of your Procurify account.',
+  'strata.connection.http.unencrypted.applicationKey':
+    'Please enter application key of your Strata account',
+  'strata.connection.http.encrypted.subscriptionKey':
+    'Please enter Ocp-Apim-Subscription-Key of your Strata account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+  'strata.connection.http.auth.token.token':
+    'The Access Token of your Strata account',
+  'aptrinsic.connection.http.encrypted.apiKey':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from Account Settings in REST API section.',
+  'coupa.connection.http.coupaSubdomain':
+    'Please enter the subdomain of your account here which can be obtained from the login url.',
+  'coupa.connection.http.auth.token.token':
+    'Please enter API Key of your Coupa account',
+  'microsoftdynamics365.connection.http.microsoftDynamics365Subdomain':
+    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+  'quip.connection.http.auth.token.token':
+    'Please enter your API token here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
+  'oandaexchangerates.connection.http.auth.token.token':
+    'Please enter the API Key of your OANDA account.',
+  'sugarcrm.connection.sugarcrmSubdomain': `Please enter your SugarCRM subdomain. For example, in https://jpeyoy4394.trial.sugarcrm.eu/http/v11_2/ "jpeyoy4394.trial.sugarcrm.eu" is the subdomain.`,
+  'sugarcrm.connection.http.unencrypted.version':
+    'Please enter endpoint version of your SugarCRM account.',
+  'sugarcrm.connection.http.unencrypted.clientID': `The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id 's can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.`,
+  'sugarcrm.connection.http.unencrypted.platform': `Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.`,
+  'sugarcrm.connection.http.encrypted.clientSecret': `Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.`,
+  'sugarcrm.connection.http.auth.token.token':
+    'The access token of your Tableau account.',
+  'marketo.connection.http.marketoSubdomain':
+    "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
+  'marketo.connection.http.unencrypted.clientId':
+    'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
+  'marketo.connection.http.encrypted.clientSecret':
+    'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'zimbra.connection.http.unencrypted.userAccount':
+    'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
+  'grms.connection.http.unencrypted.apiKey':
+    'GRMS assigned API key to a partner account. API key is given out by GRMS customer support team.',
+  'grms.connection.http.encrypted.apiSecret':
+    'GRMS assigned API secret to a partner account. API secret is given out by GRMS customer support team.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+  'grms.connection.http.auth.token.token':
+    'The Access Token of your GRMS account',
+  'retailops.connection.http.encrypted.apiKey':
+    'Please enter API Key of your RetailOps Account.Path to get API Key(Administration > User Manager>Select your user account>User Details pane(bottom-right),when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+  'skubana.connection.environment':
+    'Please select your environment here. Select Sandbox if the account is created on https://demo.skubana.com/login. Select Production if the account is created on https://app.skubana.com/login.',
+  'merchantesolutions.connection.http.unencrypted.profileId':
+    'ID (Profile ID) issued by Merchant e-Solutions.',
+  'merchantesolutions.connection.http.encrypted.profileKey':
+    'API password (Profile Key) assigned by Merchant e-Solutions.',
+  'merchantesolutions.connection.http.encrypted.cardNumber':
+    'Payment card number.',
+  'dunandbradstreet.connection.http.unencrypted.username':
+    'Please enter username of your Dun & Bradstreet account.',
+  'dunandbradstreet.connection.http.encrypted.password':
+    'Please enter password of your Dun & Bradstreet account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
+  'dunandbradstreet.connection.http.auth.token.token':
+    'The access token of your Dun & Bradstreet account.',
+  'adp.connection.accType':
+    'Please select your account type here. Select UAT if your API Endpoint starts with https://uat-api.adp.com. Select Production if your API Endpoint starts with https://api.adp.com.',
+  'adp.connection.http.unencrypted.clientId':
+    'Please enter the Client ID provided by ADP support service.',
+  'adp.connection.http.encrypted.clientSecret':
+    'Please enter the Client Secret provided by ADP support service. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'adp.connection.http.clientCertificates.cert':
+    '1. Install OpenSSL Light and configure the OpenSSL by adding an environmental variable after this we have to open the openssl.cfg file which is located in the C drive and remove the ìunstructuredName = An optional company nameî present in ì[req_attributes ]î area.2.After installation, we have to generate a CSR file (Certificate Signing Request) file using command prompt and execute the below commands. Replace yourcompanynamehere with an actual company name. Command to generate the CSR file: Openssl req -new -key yourcompanynamehere_auth.key -out yourcompanynamehere_auth.csr3.Email the .csr file that was generated to ADP Representative and we have to wait for the certificate Signing and the ADP Representative will mail us .pem file.',
+  'adp.connection.http.clientCertificates.key':
+    '1. Install OpenSSL Light and configure the OpenSSL by adding an environmental variable after this we have to open the openssl.cfg file which is located in the C drive and remove the ìunstructuredName = An optional company nameî present in ì[req_attributes ]î area.2.After installation we have to generate a CSR file (Certificate Signing Request) file using command prompt and execute the below commands. Replace yourcompanynamehere with an actual company name.Command to generate the .Key file: openssl genrsa -out yourcompanynamehere_auth.key 2048.',
+  'adp.connection.http.clientCertificates.passphrase':
+    'If there is any password for PFX file then it should be given here.',
+  'faire.connection.http.accountType': 'Please select your environment here.',
+  'faire.connection.http.encrypted.apiKey':
+    'Please Enter the access token got from Faire support. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Access token safe. This can be obtained from the Settings section and API Access token subsection.',
+  'ware2go.connection.http.accountType':
+    'Please select your environment here. Select Staging if the account is created on https://openapi.staging.ware2goproject.com/ware2go. Select Production if the account is created on https://openapi.ware2goproject.com/ware2go.',
+  'ware2go.connection.http.auth.basic.username':
+    'Please enter your Access Token here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.auth.basic.password':
+    'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.unencrypted.merchantId':
+    'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'messagemedia.connection.http.auth.basic.username':
+    'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
+  'messagemedia.connection.http.auth.basic.password':
+    'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Navigate to Merchant view on left hand side and click on API keys section to find API Key.',
+  'vend.connection.http.subdomain':
+    "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
+  'miva.connection.http.apiEndpoint':
+    'Please enter the API Endpoint. Under Domain Settings > Site Configuration> Base URL for Graphics we will get the Domain Name. Every store has its own unique API endpoint associated with the domain name. The format will be as follows: https://www.domain.com/mm5/',
+  'miva.connection.http.unencrypted.Store_Code':
+    'Please enter the Store Code. Under store settings, we will get the store code.',
+  'miva.connection.xMivaAPIToken':
+    'Please enter the API token of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. The token is generated in the Miva admin under Users > API Tokens. Note: When we are generating token we should select the Accept Requests Without Signature, Accept Requests Without Timestamp and also we should provide IP Address as 0.0.0.0/0 and also we should provide required permissions for groups and functions.',
+  'target.connection.accType':
+    'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
+  'target.connection.http.auth.token.token':
+    'Please enter the x-seller-token provided by Target',
+  'target.connection.http.unencrypted.x-seller-id':
+    'Please enter the x-seller-id provided by Target.',
+  '3plcentral.connection.http.unencrypted.tpl':
+    'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
+  '3plcentral.connection.http.unencrypted.userLoginId':
+    'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
+  'loopreturns.connection.http.auth.token.token': `Please enter your API key here. Log into your Loop Returns Account. Go to Settings > Developers, you can generate an API key or use an existing one.
+ Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.`,
+  'shopify.connection.rest.authType': `Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.`,
+  'shopify.connection.rest.storeURL': `Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.`,
+  'shopify.connection.rest.basicAuth.username': `Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.`,
+  'shopify.connection.rest.basicAuth.password': `Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.`,
+  'zendesk.connection.rest.zendeskSubdomain':
+    'Please enter your team name here which you configured while signing up for a new Zendesk account.',
+  'jet.connection.rest.refreshTokenBody.user':
+    'API User Key available from Jet under API Section-> Get API Keys',
+  'jet.connection.rest.encrypted.password':
+    'Secret Key available from Jet under API Section-> Get API Keys',
+  'jira.connection.rest.baseURI':
+    'The base URI for JIRA. For example, http://www.company.com/confluence',
+  'jira.connection.rest.basicAuth.username':
+    'The username of your JIRA account.',
+  'jira.connection.rest.basicAuth.password':
+    'The password of your JIRA account.',
+  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.bearerToken':
+    'The access token of your Magento 2 account.',
+  'bigcommerce.connection.rest.basicAuth.username':
+    'Client ID will be the Username.',
+  'bigcommerce.connection.rest.basicAuth.password':
+    'Access Token will be the Password.',
+  'bigcommerce.connection.rest.bearerToken':
+    'This Access Token works in tandem with the Client ID.',
+  'bigcommerce.connection.rest.unencrypted.clientId':
+    'This Client ID works together with the Access Token to grant authorization.',
+  'bigcommerce.connection.storeHash':
+    'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+  'ebay.connection.accountType':
+    'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
+  'http.import.http.requestTypeCreate':
+    'Please specify whether the record is being created or updated using this field.',
+  'http.import.http.requestTypeUpdate':
+    'Please specify whether the record is being created or updated using this field.',
+  'rest.import.rest.requestTypeCreate':
+    'Please specify whether the record is being created or updated using this field.',
+  'rest.import.rest.requestTypeUpdate':
+    'Please specify whether the record is being created or updated using this field.',
+};
+
 export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",

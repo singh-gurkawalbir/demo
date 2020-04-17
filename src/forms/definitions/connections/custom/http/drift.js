@@ -16,7 +16,7 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Personal Access Token',
+      label: 'Personal access token',
       helpKey: 'drift.connection.http.auth.token.token',
       required: true,
     },

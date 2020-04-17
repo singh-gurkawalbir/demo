@@ -58,7 +58,7 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
         { field: 'http.baseURI', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
       helpKey: 'magento.connection.http.auth.token.token',

@@ -16,7 +16,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
-      label: 'Personal Access Token',
+      label: 'Personal access token',
       helpKey: 'asana.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

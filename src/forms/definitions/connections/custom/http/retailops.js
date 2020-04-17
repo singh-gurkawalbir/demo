@@ -23,13 +23,11 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key',
+      label: 'API key',
       required: true,
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'Please enter API Key of your RetailOps Account.Path to get API Key(Administration > User Manager>Select your user account>User Details pane(bottom-right),when the API key appears in its separate window, this will be your only opportunity to view/copy the entire API key. Once you close the window, you will not be able to view the entire API key again (a truncated version appears under the Credentials pane to indicate that an API key was created previously). Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

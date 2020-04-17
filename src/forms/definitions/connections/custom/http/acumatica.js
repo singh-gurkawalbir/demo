@@ -46,7 +46,7 @@ export default {
       id: 'instanceURI',
       type: 'text',
       endAdornment: '/entity',
-      label: 'Instance URI',
+      label: 'Instance uri',
       required: true,
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {
@@ -60,8 +60,8 @@ export default {
     'http.unencrypted.endpointName': {
       id: 'http.unencrypted.endpointName',
       type: 'text',
-      label: 'Endpoint Name',
       helpKey: 'acumatica.connection.http.unencrypted.endpointName',
+      label: 'Endpoint name',
       required: true,
       defaultValue: r =>
         (r &&
@@ -73,8 +73,8 @@ export default {
     'http.unencrypted.endpointVersion': {
       id: 'http.unencrypted.endpointVersion',
       type: 'text',
-      label: 'Endpoint Version',
       helpKey: 'acumatica.connection.http.unencrypted.endpointVersion',
+      label: 'Endpoint version',
       required: true,
       defaultValue: r =>
         (r &&

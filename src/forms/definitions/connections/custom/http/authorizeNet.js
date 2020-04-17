@@ -32,7 +32,7 @@ export default {
     'authorizeNet.accType': {
       id: 'authorizeNet.accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -64,7 +64,7 @@ export default {
     'http.encrypted.apiLoginID': {
       id: 'http.encrypted.apiLoginID',
       type: 'text',
-      label: 'API Login ID',
+      label: 'API login id',
       required: true,
       inputType: 'password',
       description:
@@ -73,7 +73,7 @@ export default {
     'http.encrypted.transactionKey': {
       id: 'http.encrypted.transactionKey',
       type: 'text',
-      label: 'Transaction Key',
+      label: 'Transaction key',
       required: true,
       inputType: 'password',
       description:

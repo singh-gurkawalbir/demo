@@ -13,12 +13,12 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API Key',
+      label: 'API key',
       helpKey: 'messagemedia.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Secret',
+      label: 'API secret',
       helpKey: 'messagemedia.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -24,7 +24,7 @@ export default {
       helpKey: 'atera.connection.http.encrypted.apiKey',
       inputType: 'password',
       defaultValue: '',
-      label: 'API Key',
+      label: 'API key',
       description:
         'Note: for security reasons this field must always be re-entered.',
       required: true,

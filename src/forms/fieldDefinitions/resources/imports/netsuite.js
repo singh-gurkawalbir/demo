@@ -31,24 +31,24 @@ export default {
   },
   'netsuite.customFieldMetadata': {
     type: 'text',
-    label: 'NetSuite custom Field Metadata',
+    label: 'NetSuite custom field metadata',
   },
   'netsuite.recordType': {
     type: 'text',
-    label: 'NetSuite record Type',
+    label: 'NetSuite record type',
   },
   'netsuite.recordTypeId': {
     type: 'text',
-    label: 'NetSuite record Type Id',
+    label: 'NetSuite record type id',
   },
   'netsuite.retryUpdateAsAdd': {
     type: 'checkbox',
-    label: 'NetSuite retry Update As Add',
+    label: 'NetSuite retry update as add',
     defaultValue: false,
   },
   'netsuite.batchSize': {
     type: 'text',
-    label: 'NetSuite batch Size',
+    label: 'NetSuite batch size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -57,15 +57,15 @@ export default {
   },
   'netsuite.internalIdLookup.extract': {
     type: 'text',
-    label: 'NetSuite internal Id Lookup extract',
+    label: 'NetSuite internal id lookup extract',
   },
   'netsuite.internalIdLookup.searchField': {
     type: 'text',
-    label: 'NetSuite internal Id Lookup search Field',
+    label: 'NetSuite internal id lookup search field',
   },
   'netsuite.internalIdLookup.expression': {
     type: 'text',
-    label: 'NetSuite internal Id Lookup expression',
+    label: 'NetSuite internal id lookup expression',
   },
   'netsuite.lookups[*].name': {
     type: 'text',
@@ -81,11 +81,11 @@ export default {
   },
   'netsuite.lookups[*].recordType': {
     type: 'text',
-    label: 'NetSuite lookups[*] record Type',
+    label: 'NetSuite lookups[*] record type',
   },
   'netsuite.lookups[*].searchField': {
     type: 'text',
-    label: 'NetSuite lookups[*] search Field',
+    label: 'NetSuite lookups[*] search field',
   },
   'netsuite.lookups[*].expression': {
     type: 'text',
@@ -93,29 +93,29 @@ export default {
   },
   'netsuite.lookups[*].resultField': {
     type: 'text',
-    label: 'NetSuite lookups[*] result Field',
+    label: 'NetSuite lookups[*] result field',
   },
   'netsuite.lookups[*].includeInactive': {
     type: 'text',
-    label: 'NetSuite lookups[*] include Inactive',
+    label: 'NetSuite lookups[*] include inactive',
   },
   'netsuite.lookups[*].allowFailures': {
     type: 'text',
-    label: 'NetSuite lookups[*] allow Failures',
+    label: 'NetSuite lookups[*] allow failures',
   },
   'netsuite.preferences.ignoreReadOnlyFields': {
     type: 'checkbox',
-    label: 'NetSuite preferences ignore Read Only Fields',
+    label: 'NetSuite preferences ignore read only fields',
     defaultValue: false,
   },
   'netsuite.preferences.warningAsError': {
     type: 'checkbox',
-    label: 'NetSuite preferences warning As Error',
+    label: 'NetSuite preferences warning as error',
     defaultValue: false,
   },
   'netsuite.preferences.skipCustomMetadataRequests': {
     type: 'checkbox',
-    label: 'NetSuite preferences skip Custom Metadata Requests',
+    label: 'NetSuite preferences skip custom metadata requests',
     defaultValue: false,
   },
 };

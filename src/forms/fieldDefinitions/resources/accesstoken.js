@@ -14,7 +14,7 @@ export default {
   },
   autoPurgeAt: {
     type: 'select',
-    label: 'Auto Purge Token',
+    label: 'Auto purge token',
     required: r => isNewId(r && r._id),
     defaultValue: 'none',
     // TODO dynamic options for connector tokens

@@ -17,7 +17,7 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -26,8 +26,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Please select your account type here. Select Demo if your account type is "fxTrade Practice". Select Trading if your account type is "fxTrade".',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -43,7 +41,6 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
-      helpText: 'Please enter your API token here.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

@@ -96,7 +96,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input Mode',
+      label: 'Input mode',
       options: [
         {
           items: [
@@ -145,7 +145,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Launch XML Builder',
+      label: 'Launch xml builder',
       title: 'XML Document Editor',
       ruleTitle: 'Type your template here.',
       resultTitle: 'Your evaluated result!',

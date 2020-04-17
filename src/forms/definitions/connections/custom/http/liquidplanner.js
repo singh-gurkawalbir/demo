@@ -25,7 +25,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpKey: 'liquidplanner.connection.http.auth.type',
       options: [
@@ -52,7 +52,7 @@ export default {
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'API Token',
+      label: 'API token',
       helpKey: 'liquidplanner.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },

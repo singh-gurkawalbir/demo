@@ -33,7 +33,7 @@ export default {
     accountType: {
       id: 'accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -58,7 +58,7 @@ export default {
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
       type: 'text',
-      label: 'API Key',
+      label: 'API key',
       required: true,
       inputType: 'password',
       defaultValue: '',
@@ -69,7 +69,7 @@ export default {
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       type: 'text',
-      label: 'API Secret',
+      label: 'API secret',
       required: true,
       inputType: 'password',
       defaultValue: '',
@@ -80,7 +80,7 @@ export default {
     'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
-      label: 'Seller Id',
+      label: 'Seller id',
       required: true,
       helpKey: 'newegg.connection.http.unencrypted.sellerId',
     },

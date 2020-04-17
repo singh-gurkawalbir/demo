@@ -15,12 +15,12 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API User',
+      label: 'API user',
       helpKey: 'cartrover.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Key',
+      label: 'API key',
       helpKey: 'cartrover.connection.http.auth.basic.username',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

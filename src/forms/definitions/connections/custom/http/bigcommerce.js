@@ -49,7 +49,7 @@ export default {
       required: true,
       type: 'select',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
-      label: 'Authentication Type',
+      label: 'Authentication type',
       helpKey: 'bigcommerce.connection.http.auth.type',
       options: [
         {
@@ -73,7 +73,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'Access Token',
+      label: 'Access token',
       required: true,
       helpKey: 'bigcommerce.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
@@ -82,7 +82,7 @@ export default {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      label: 'Client ID',
+      label: 'Client id',
       helpKey: 'bigcommerce.connection.http.unencrypted.clientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
@@ -90,7 +90,7 @@ export default {
       id: 'storeHash',
       required: true,
       type: 'text',
-      label: 'Store HASH',
+      label: 'Store hash',
       visibleWhen: [{ field: 'http.auth.type', is: ['token', 'basic'] }],
       defaultValue: r => {
         let value = '';

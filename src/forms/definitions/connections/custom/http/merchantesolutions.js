@@ -31,13 +31,13 @@ export default {
     'http.unencrypted.profileId': {
       id: 'http.unencrypted.profileId',
       type: 'text',
-      label: 'Profile ID',
+      label: 'Profile id',
       required: true,
     },
     'http.encrypted.profileKey': {
       id: 'http.encrypted.profileKey',
       type: 'text',
-      label: 'Profile Key',
+      label: 'Profile key',
       required: true,
       defaultValue: '',
       inputType: 'password',
@@ -47,7 +47,7 @@ export default {
     'http.encrypted.cardNumber': {
       id: 'http.encrypted.cardNumber',
       type: 'text',
-      label: 'Card Number',
+      label: 'Card number',
       required: true,
       inputType: 'password',
       defaultValue: '',

@@ -26,7 +26,7 @@ export default {
     'http.accountType': {
       id: 'http.accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -50,7 +50,7 @@ export default {
     },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Access Token',
+      label: 'API access token',
       required: true,
       type: 'text',
       inputType: 'password',
