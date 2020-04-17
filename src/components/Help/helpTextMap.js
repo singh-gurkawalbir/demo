@@ -56,7 +56,7 @@ const extractedHelpkeys = {
     'Please enter User ID of your account.',
   'openair.connection.http.encrypted.password':
     'Please enter Password of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
-  'openair.connection.http.unencrypted.namespace':
+  'connection.http.unencrypted.namespace':
     'Please enter the API Namespace of your account.',
   'openair.connection.http.unencrypted.apiKey':
     'Please enter the API Key of your account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
@@ -71,15 +71,15 @@ const extractedHelpkeys = {
     'Please enter your public key here. Your public key identifies you to our system. This is similar to a username. You will include your public key every time you send request to Paycor. This is not secret information.',
   'paycor.connection.http.encrypted.secretKey':
     'Please enter your private key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.',
-  'quickbooks.connection.http.quickbooksEnvironment':
+  'connection.http.quickbooksEnvironment':
     'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
   'trinet.connection.http.unencrypted.companyId':
     'Please reach out to TriNet support team for company Id.',
   'trinet.connection.http.auth.token.token':
     'Please reach out to TriNet support team for API key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
-  'pacejet.connection.http.unencrypted.pacejetLocation':
+  'connection.http.unencrypted.pacejetLocation':
     'Please reach out to Pacejet support team for location header.',
-  'pacejet.connection.http.encrypted.pacejetLicenseKey':
+  'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
   'connection.integrator.environment':
     'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
@@ -99,9 +99,9 @@ const extractedHelpkeys = {
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can generate the API Access Token from https://app.easyship.com/connect. You will need to create an API connection, and then retrieve the token from the store settings.',
   'propack.connection.environment':
     'Please select your environment here. Select Test if the account is created on https://test.webservices.p3pl.com. Select Production if the account is created on https://webservices.p3pl.com.',
-  'propack.connection.http.unencrypted.p3plUserID':
+  'connection.http.unencrypted.p3plUserID':
     'Please enter your P3PL account User ID.',
-  'propack.connection.http.encrypted.p3plUserPassword':
+  'connection.http.encrypted.p3plUserPassword':
     'Please enter your P3PL account Password.',
   'solidcommerce.connection.http.encrypted.securityKey':
     'Enter your Solid Commerce Developer Key or Security Key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Security Key safe. This can be obtained from the Settings section and Security Key subsection.',
@@ -141,9 +141,9 @@ const extractedHelpkeys = {
   'squareup.connection.http.auth.type': 'Please select Authentication Type',
   'squareup.connection.http.auth.token.token':
     'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
-  'postmark.connection.http.encrypted.serverToken':
+  'connection.http.encrypted.serverToken':
     'Please enter your Server Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Server Token safe. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.',
-  'postmark.connection.http.encrypted.accountToken':
+  'connection.http.encrypted.accountToken':
     'Please enter your Account Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account Token safe. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API Tokens tab of your Postmark account.',
   'zendesk.connection.http.auth.type': 'Please select Authentication Type',
   'zendesk.connection.http.zendeskSubdomain':
@@ -168,7 +168,7 @@ const extractedHelpkeys = {
     'Merchant’s unique API Login ID. The API Login ID is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
   'connection.http.encrypted.transactionKey':
     'Merchant’s unique Transaction Key. The merchant Transaction Key is provided in the Merchant Interface and must be stored securely. The API Login ID and Transaction Key together provide the merchant authentication required for access to the payment gateway.',
-  'recurly.connection.recurlySubdomain':
+  'connection.recurlySubdomain':
     'Please enter your subdomain here which you configured while activating your new Recurly account.',
   'recurly.connection.http.auth.basic.username':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
@@ -271,7 +271,7 @@ const extractedHelpkeys = {
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
     'The Data Center name provided by Mailchimp. Click Save & Authorize to open up the Mailchimp login screen where you can enter your username and password to establish the connection with your Mailchimp account.',
-  'servicenow.connection.instanceName':
+  'connection.instanceName':
     'The URL of your instance with ServiceNow. For example, https://mycompany.service-now.com.',
   'servicenow.connection.http.auth.basic.username':
     'The username of your ServiceNow account.',
@@ -388,7 +388,7 @@ const extractedHelpkeys = {
     'Please enter your API token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe. You can go to Configure >> Dev Center >> API Credential Management and from there, you can create a Harvest API key and choose which endpoints it may access.',
   'greenhouse.connection.http.unencrypted.userID':
     'Please enter the Greenhouse user id used for integration here. This is required by Greenhouse for auditing purposes for all write requests and can be obtained by using List Users API.',
-  'powerbi.connection.http.unencrypted.adminUser':
+  'connection.http.unencrypted.adminUser':
     'Please check this if you are The Power BI Service Administrator. The Power BI Service Administrator role can be assigned to users who should have access to the Power BI Admin Portal without also granting them other Office 365 administrative access.',
   'mailgun.connection.http.auth.basic.password':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
