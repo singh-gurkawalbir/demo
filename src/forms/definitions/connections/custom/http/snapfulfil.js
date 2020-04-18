@@ -14,8 +14,6 @@ export default {
     'http.subdomain': {
       type: 'text',
       id: 'http.subdomain',
-      helpText:
-        "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
       label: 'Subdomain',
@@ -40,11 +38,9 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: "Please enter your snapfulfil account's username",
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: "Please enter your snapfulfil account's password",
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

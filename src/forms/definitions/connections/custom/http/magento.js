@@ -29,7 +29,7 @@ export default {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      helpText: 'The Base URI of Magento 2.',
+      helpKey: 'magento.connection.http.baseURI',
       required: true,
     },
     'http.unencrypted.username': {
@@ -58,10 +58,10 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
         { field: 'http.baseURI', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
-      helpText: 'The access token of your Magento 2 account.',
+      helpKey: 'magento.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

@@ -56,8 +56,7 @@ export default {
       id: 'http.unencrypted.applicationKey',
       required: true,
       type: 'text',
-      label: 'Application Key',
-      helpText: 'Please enter application key of your Strata account',
+      label: 'Application key',
     },
     'http.encrypted.subscriptionKey': {
       id: 'http.encrypted.subscriptionKey',
@@ -66,8 +65,6 @@ export default {
       inputType: 'password',
       defaultValue: '',
       label: 'Ocp-Apim-Subscription-Key',
-      helpText:
-        'Please enter Ocp-Apim-Subscription-Key of your Strata account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -78,10 +75,9 @@ export default {
         { field: 'http.unencrypted.applicationKey', is: [''] },
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       required: true,
       defaultValue: '',
-      helpText: 'The Access Token of your Strata account',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

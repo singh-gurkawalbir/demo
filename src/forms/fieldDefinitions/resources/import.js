@@ -10,7 +10,7 @@ export default {
     label: 'Description',
   },
   apiIdentifier: {
-    label: 'Invoke this Import [POST]',
+    label: 'Invoke this import [post]',
     type: 'apiidentifier',
     visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
@@ -21,7 +21,7 @@ export default {
   },
   'ftp.directoryPath1': {
     type: 'text',
-    label: 'Ftp directory Path1',
+    label: 'Ftp directory path1',
   },
   'file.type': {
     type: 'select',
@@ -42,7 +42,7 @@ export default {
   },
   'ftp.fileName': {
     type: 'text',
-    label: 'Ftp file Name',
+    label: 'Ftp file name',
   },
   'ftp.importMapping': {
     type: 'labeltitle',

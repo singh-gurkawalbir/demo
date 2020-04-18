@@ -9,6 +9,7 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
 import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
+import Help from '../../../../../../components/Help';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -20,7 +21,11 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
   },
-
+  helpTextButton: {
+    float: 'right',
+    padding: 1,
+    margin: theme.spacing(0, 1, 0, 2),
+  },
   divider: {
     height: theme.spacing(3),
     width: 1,
@@ -52,6 +57,7 @@ export default function DrawerTitleBar({
   title,
   addCategory,
   parentUrl,
+  help,
   backToParent,
 }) {
   const classes = useStyles();
@@ -100,6 +106,15 @@ export default function DrawerTitleBar({
             className={classes.button}>
             <AddIcon /> Add Category
           </IconTextButton>
+        )}
+        {/* TODO:Sravan we need to add the help for add category and variation mapping */}
+        {help && (
+          <Help
+            title="Help"
+            className={classes.helpTextButton}
+            helpKey="test"
+            helpText="Dummy content here now, just to give styling to the element"
+          />
         )}
         <Divider orientation="veritical" className={classes.divider} />
         <IconButton

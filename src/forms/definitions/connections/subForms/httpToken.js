@@ -26,7 +26,7 @@ export default {
     'http.customAuthScheme': {
       id: 'http.customAuthScheme',
       type: 'text',
-      label: 'Custom Auth Scheme',
+      label: 'Custom auth scheme',
       visibleWhenAll: [
         { field: 'http.auth.token.location', is: ['header'] },
         { field: 'http.auth.token.scheme', is: ['Custom'] },
@@ -39,7 +39,7 @@ export default {
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh',
+      label: 'Configure token refresh',
       defaultValue: r =>
         !!(
           r &&
@@ -51,7 +51,7 @@ export default {
     },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
-      label: 'How to Refresh Token?',
+      label: 'How to refresh token?',
       type: 'labeltitle',
       visibleWhenAll: [
         { field: 'http.auth.token.location', isNot: [''] },
