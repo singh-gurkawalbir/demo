@@ -188,7 +188,6 @@ export default function CeligoDrawer() {
   const dispatch = useDispatch();
   const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
-  // const themeName = useSelector(state => selectors.themeName(state));
   const userPermissions = useSelector(state =>
     selectors.userPermissions(state)
   );

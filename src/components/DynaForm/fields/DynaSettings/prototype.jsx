@@ -2,11 +2,11 @@ import produce from 'immer';
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Button, Typography } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import { isJsonString } from '../../../utils/string';
-import DynaForm from '../../DynaForm';
-import EditorField from './DynaEditor';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import { isJsonString } from '../../../../utils/string';
+import DynaForm from '../../../DynaForm';
+import EditorField from '../DynaEditor';
 
 const useStyles = makeStyles({
   editor: {
