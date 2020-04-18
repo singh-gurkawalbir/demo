@@ -133,6 +133,11 @@ export default function IntegrationApp({ match, history }) {
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
+  );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -315,6 +320,7 @@ export default function IntegrationApp({ match, history }) {
         title={integration.name}
         titleTag={
           <ChipInput
+            disabled={!['owner', 'manage'].includes(accessLevel)}
             value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
@@ -333,12 +339,14 @@ export default function IntegrationApp({ match, history }) {
         )}
         {supportsMultiStore && (
           <div className={classes.actions}>
-            <IconTextButton
-              variant="text"
-              data-test={`add${storeLabel}`}
-              onClick={handleAddNewStoreClick}>
-              <AddIcon /> Add {storeLabel}
-            </IconTextButton>
+            {accessLevel === 'owner' && (
+              <IconTextButton
+                variant="text"
+                data-test={`add${storeLabel}`}
+                onClick={handleAddNewStoreClick}>
+                <AddIcon /> Add {storeLabel}
+              </IconTextButton>
+            )}
             <Select
               displayEmpty
               data-test={`select${storeLabel}`}

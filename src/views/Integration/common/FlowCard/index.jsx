@@ -98,6 +98,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const flowDetails =
     useSelector(state => selectors.flowDetails(state, flowId)) || {};
+  const integrationId = flowDetails._integrationId;
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
+  );
   const isDataloader = flowDetails.isSimpleImport;
   const integrationAppName = useSelector(state => {
     const integrationApp = selectors.resource(
@@ -303,7 +309,7 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           {!flowDetails.disableSlider && !onOffInProgressStatus && (
             <OnOffSwitch
               data-test={`toggleOnAndOffFlow${flowName}`}
-              disabled={disableCard}
+              disabled={disableCard || accessLevel === 'monitor'}
               on={!disableCard && !disabled}
               onClick={handleDisableClick}
             />

@@ -2,8 +2,19 @@ export default {
   preSave: formValues => {
     const newValues = {
       ...formValues,
-      '/rdbms/bulkInsert/batchSize': 100,
     };
+
+    if (newValues['/rdbms/queryType'] === 'BULK INSERT') {
+      newValues['/rdbms/query'] = undefined;
+      newValues['/rdbms/bulkInsert/batchSize'] = 100;
+    }
+
+    if (newValues['/rdbms/queryType'] === 'INSERT') {
+      newValues['/rdbms/bulkInsert'] = undefined;
+      delete newValues['/rdbms/bulkInsert/tableName'];
+    }
+
+    newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
 
     return newValues;
   },
@@ -38,6 +49,7 @@ export default {
       label: 'Choose type',
       required: true,
       helpKey: 'connection.snowflake.rdbms.queryType',
+      defaultValue: r => r && r.rdbms && r.rdbms.queryType[0],
       options: [
         {
           items: [

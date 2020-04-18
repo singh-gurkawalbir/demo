@@ -16,9 +16,8 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
-      label: 'Personal Access Token',
-      helpText:
-        'Enter your personal access token.Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
+      label: 'Personal access token',
+      helpKey: 'asana.connection.http.auth.token.token',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

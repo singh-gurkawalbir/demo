@@ -69,7 +69,7 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch Query Builder',
+    label: 'Launch query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB Data Builder',
     ruleTitle:
@@ -85,7 +85,7 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch Query Builder',
+    label: 'Launch query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB Data Builder',
     ruleTitle:
@@ -99,7 +99,7 @@ export default {
   },
   'mongodb.ignoreLookupFilter': {
     type: 'textarea',
-    label: 'Ignore Lookup Filter',
+    label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',
@@ -136,7 +136,7 @@ export default {
   },
   'mongodb.ignoreExtract': {
     type: 'text',
-    label: 'Which Field?',
+    label: 'Which field?',
     required: true,
     visibleWhen: [
       {
