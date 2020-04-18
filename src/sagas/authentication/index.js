@@ -66,6 +66,8 @@ export function* retrievingAssistantDetails() {
         name: asst.name,
         type: 'http',
         assistant: asst._id,
+        export: asst.export,
+        import: asst.import,
       });
     });
     collection.rest.applications.forEach(asst => {
@@ -74,6 +76,8 @@ export function* retrievingAssistantDetails() {
         name: asst.name,
         type: 'rest',
         assistant: asst._id,
+        export: asst.export,
+        import: asst.import,
       });
     });
   }

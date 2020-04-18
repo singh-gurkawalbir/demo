@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function ChipInput(props) {
   const classes = useStyles();
-  const { onChange, value } = props;
+  const { onChange, disabled = false, value } = props;
   const [tag, setTag] = useState(value);
   const [isChipView, setIsChipView] = useState(true);
   const handleBlur = e => {
@@ -40,7 +40,7 @@ export default function ChipInput(props) {
       {isChipView && (
         <Chip
           {...props}
-          onClick={handleTagClick}
+          onClick={!disabled && handleTagClick}
           label={tag || 'tag'}
           size="small"
           icon={<EditIcon />}
@@ -48,6 +48,7 @@ export default function ChipInput(props) {
       )}
       {!isChipView && (
         <TextField
+          disabled={disabled}
           id="integration-tag"
           autoFocus
           defaultValue={tag}

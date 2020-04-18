@@ -1,6 +1,6 @@
 export default {
   'http.status._exportId': {
-    label: 'Status Export',
+    label: 'Status export',
     type: 'selectresource',
     options: { appType: 'http' },
     appTypeIsStatic: true,
@@ -18,30 +18,30 @@ export default {
   },
   'http.status.initialWaitTime': {
     type: 'text',
-    label: 'Initial Wait Time',
+    label: 'Initial wait time',
   },
   'http.status.pollWaitTime': {
     type: 'text',
-    label: 'Poll Wait Time',
+    label: 'Poll wait time',
   },
   'http.status.statusPath': {
     type: 'text',
-    label: 'Status Path',
+    label: 'Status path',
     required: true,
   },
   'http.status.inProgressValues': {
     type: 'text',
-    label: 'In Progress Values',
+    label: 'In progress values',
     required: true,
   },
   'http.status.doneValues': {
     type: 'text',
-    label: 'Done Values',
+    label: 'Done values',
     required: true,
   },
   'http.status.doneWithoutDataValues': {
     type: 'text',
-    label: 'Done Without Data Values',
+    label: 'Done without data values',
   },
   'http.submit.resourcePath': {
     type: 'text',
@@ -51,7 +51,7 @@ export default {
         isNot: [true],
       },
     ],
-    label: 'Submit Resource Path',
+    label: 'Submit resource path',
   },
   'http.result._exportId': {
     type: 'selectresource',
@@ -63,15 +63,14 @@ export default {
     options: { appType: 'http' },
     filter: r => ({ _connectionId: r._connectionId }),
     required: true,
-    label: 'Result Export',
+    label: 'Result export',
   },
   'http.submit.sameAsStatus': {
     type: 'checkbox',
-    label: 'Same As Status Export',
+    label: 'Same as status export',
   },
   'http.submit.transform': {
     type: 'transformrules',
-    helpKey: 'asynchelper.rules',
     label: 'Transform Rules for Submit Response',
   },
 };

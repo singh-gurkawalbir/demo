@@ -188,8 +188,8 @@ export default function CeligoDrawer() {
   const dispatch = useDispatch();
   const location = useLocation();
   const userProfile = useSelector(state => selectors.userProfile(state));
-  const userPermissions = useSelector(state =>
-    selectors.userPermissions(state)
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
   );
   const integrations = useSelector(
     state =>
@@ -270,7 +270,7 @@ export default function CeligoDrawer() {
           <List className={clsx(classes.list)}>
             {menuItems(
               userProfile,
-              userPermissions,
+              accessLevel,
               integrations,
               marketplaceConnectors
             ).map(({ label, Icon, path, routeProps, children }) => (

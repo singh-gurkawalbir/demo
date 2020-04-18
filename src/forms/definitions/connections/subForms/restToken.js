@@ -29,12 +29,12 @@ export default {
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh',
+      label: 'Configure token refresh',
       defaultValue: r => !!(r && r.rest && r.rest.refreshTokenURI),
     },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
-      label: 'How to Refresh Token?',
+      label: 'How to refresh token?',
       type: 'labeltitle',
       visibleWhenAll: [
         { field: 'rest.tokenLocation', isNot: [''] },

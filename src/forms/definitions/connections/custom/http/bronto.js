@@ -26,17 +26,16 @@ export default {
       required: true,
       type: 'text',
       label: 'Client ID',
-      helpText: 'Please enter Client ID of your Bronto Account.',
+      helpKey: 'bronto.connection.http.unencrypted.clientId',
     },
     'http.encrypted.clientSecret': {
       id: 'http.encrypted.clientSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'Client Secret',
+      label: 'Client secret',
       inputType: 'password',
-      helpText:
-        'Please enter Client Secret of your Bronto Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+      helpKey: 'bronto.connection.http.encrypted.clientSecret',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -47,10 +46,10 @@ export default {
         { field: 'http.unencrypted.clientId', is: [''] },
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
-      helpText: 'The access token of your Bronto account.',
+      helpKey: 'bronto.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {
       fieldId: 'http.auth.token.refreshToken',
