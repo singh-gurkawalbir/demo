@@ -50,7 +50,7 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     'mongodb.collection': { fieldId: 'mongodb.collection' },
     'mongodb.filter': { fieldId: 'mongodb.filter' },
@@ -58,7 +58,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 

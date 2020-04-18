@@ -1,4 +1,3 @@
-import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import Revoke from '../../actions/Connections/Revoke';
 import References from '../../actions/References';
@@ -14,7 +13,8 @@ import {
   getConnectorName,
 } from '../../../CeligoTable/util';
 import Deregister from '../../actions/Connections/Deregister';
-import { showDownloadLogs, isConnectionEditable } from './util';
+import { showDownloadLogs } from './util';
+import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
 
 export default {
   columns: (r, actionProps) => {
@@ -23,12 +23,9 @@ export default {
         heading: 'Name',
         value: function ConnectionDrawerLink(resource) {
           return (
-            <ResourceDrawerLink
-              resourceType="connections"
+            <ConnectionResourceDrawerLink
               resource={resource}
-              disabled={
-                !isConnectionEditable(resource, actionProps.integrationId)
-              }
+              integrationId={actionProps.integrationId}
             />
           );
         },
@@ -67,28 +64,22 @@ export default {
   rowActions: (r, actionProps) => {
     let actionsToReturn = [AuditLogs];
 
-    if (isConnectionEditable(r, actionProps.integrationId)) {
-      if (!actionProps.integrationId) {
-        actionsToReturn = [...actionsToReturn, References];
-      }
+    if (actionProps.type === 'flowBuilder') {
+      actionsToReturn = [...actionsToReturn, References];
 
-      if (actionProps.type === 'flowBuilder') {
-        actionsToReturn = [OpenDebugger, ...actionsToReturn];
-      } else {
-        actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
+      actionsToReturn = [OpenDebugger, ...actionsToReturn];
+    } else {
+      actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
 
-        if (showDownloadLogs(r)) {
-          actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
-        }
+      if (showDownloadLogs(r)) {
+        actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
       }
+    }
 
-      if (actionProps.integrationId && !r._connectorId) {
-        actionsToReturn = [Deregister, ...actionsToReturn];
-      } else if (!r._connectorId && actionProps.type !== 'flowBuilder') {
-        actionsToReturn = [...actionsToReturn, Delete];
-      }
-    } else if (actionProps.type !== 'flowBuilder' && showDownloadLogs(r)) {
-      actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
+    if (actionProps.integrationId && !r._connectorId) {
+      actionsToReturn = [Deregister, ...actionsToReturn];
+    } else if (!r._connectorId && actionProps.type !== 'flowBuilder') {
+      actionsToReturn = [...actionsToReturn, Delete];
     }
 
     if (r.type === 'netsuite' || r.type === 'salesforce') {

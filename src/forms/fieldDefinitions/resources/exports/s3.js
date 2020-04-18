@@ -13,15 +13,15 @@ export default {
   },
   's3.bucket': {
     type: 'text',
-    label: 'Bucket Name',
+    label: 'Bucket name',
     required: true,
   },
   's3.keyStartsWith': {
     type: 'text',
-    label: 'Key Starts With',
+    label: 'Key starts with',
   },
   's3.keyEndsWith': {
     type: 'text',
-    label: 'Key Ends With',
+    label: 'Key ends with',
   },
 };

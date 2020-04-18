@@ -20,25 +20,21 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.serverToken': {
       id: 'http.encrypted.serverToken',
-      label: 'Server Token',
+      label: 'Server token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText:
-        'Please enter your Server Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Server Token safe. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.encrypted.accountToken': {
       id: 'http.encrypted.accountToken',
-      label: 'Account Token',
+      label: 'Account token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText:
-        'Please enter your Account Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account Token safe. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API Tokens tab of your Postmark account.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

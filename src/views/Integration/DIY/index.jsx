@@ -99,6 +99,9 @@ export default function Integration({ history, match }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId)
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
@@ -222,6 +225,7 @@ export default function Integration({ history, match }) {
             integration ? (
               <EditableText
                 text={integration.name}
+                disabled={!permission.edit}
                 defaultText={`Unnamed: (${integration}) Click to add name`}
                 onChange={handleTitleChange}
                 inputClassName={
@@ -247,7 +251,7 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {integration && (
+          {permission.clone && integration && (
             <IconTextButton
               component={Link}
               to={getRoutePath(
@@ -259,12 +263,14 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
 
-          <IconTextButton
-            variant="text"
-            data-test="deleteIntegration"
-            onClick={handleDelete}>
-            <TrashIcon /> Delete integration
-          </IconTextButton>
+          {permission.delete && integration && (
+            <IconTextButton
+              variant="text"
+              data-test="deleteIntegration"
+              onClick={handleDelete}>
+              <TrashIcon /> Delete integration
+            </IconTextButton>
+          )}
         </CeligoPageBar>
 
         <IntegrationTabs
