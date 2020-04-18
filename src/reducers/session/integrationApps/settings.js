@@ -842,6 +842,14 @@ export function integrationAppAddOnState(state, integrationId) {
   return state[addOnKey] || emptyObj;
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  if (!state) {
+    return emptyObj;
+  }
+
+  return state[integrationId] || emptyObj;
+}
+
 export function shouldRedirect(state, integrationId) {
   if (!state || !state[integrationId]) {
     return null;

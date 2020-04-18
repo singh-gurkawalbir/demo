@@ -130,6 +130,9 @@ export default function IntegrationApp({ match, history }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
+  const integrationAppMetadata = useSelector(state =>
+    selectors.integrationAppMappingMetadata(state, integrationId)
+  );
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
@@ -154,13 +157,23 @@ export default function IntegrationApp({ match, history }) {
   }, [addOnState, dispatch, integrationId, requestLicense]);
 
   useEffect(() => {
-    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+    if (
+      integrationAppMetadata &&
+      !integrationAppMetadata.mappingMetadata &&
+      !requestMappingMetadata
+    ) {
       dispatch(
         actions.integrationApp.settings.requestMappingMetadata(integrationId)
       );
       setRequestMappingMetadata(true);
     }
-  }, [addOnState, dispatch, integrationId, requestMappingMetadata]);
+  }, [
+    addOnState,
+    dispatch,
+    integrationAppMetadata,
+    integrationId,
+    requestMappingMetadata,
+  ]);
 
   useEffect(() => {
     if (redirectTo) {
