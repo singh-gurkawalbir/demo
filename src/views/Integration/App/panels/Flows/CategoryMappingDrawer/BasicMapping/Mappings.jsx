@@ -308,18 +308,15 @@ export default function ImportMapping(props) {
 
   const FieldHelp = ({ id }) => {
     const field = generateFields.find(f => f.id === id);
-
-    if (!field) {
-      return null;
-    }
-
-    const { name: title, description } = field;
+    const { name: title, description = 'No Description available.' } =
+      field || {};
 
     return (
       <Help
         title={title}
+        disabled={!field}
         className={classes.helpTextButton}
-        helpKey="test"
+        helpKey={`categoryMappings-${id}`}
         helpText={description}
       />
     );
