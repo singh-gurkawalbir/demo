@@ -333,6 +333,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromIntegrationApps.integrationAppMappingMetadata(
+    state && state.integrationApps,
+    integrationId
+  );
+}
+
 export function isAddOnInstallInProgress(state, id) {
   return fromIntegrationApps.isAddOnInstallInProgress(
     state && state.integrationApps,
