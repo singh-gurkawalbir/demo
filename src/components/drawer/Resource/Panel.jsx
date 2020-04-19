@@ -326,28 +326,6 @@ export default function Panel(props) {
             onCancel={abortAndClose}
             {...props}
           />
-          {/* <div>
-              {['exports', 'imports', 'connections'].includes(resourceType) && (
-                <ConnectionStatusPanel
-                  resourceType={resourceType}
-                  resourceId={id}
-                />
-              )}
-              <ReactResizeDetector handleHeight onResize={resize} />
-            </div>
-            <ResourceForm
-              className={classes.form}
-              variant={match.isExact ? 'edit' : 'view'}
-              isNew={isNew}
-              resourceType={resourceType}
-              resourceId={id}
-              cancelButtonLabel="Cancel"
-              submitButtonLabel={submitButtonLabel}
-              onSubmitComplete={handleSubmitComplete}
-              onCancel={abortAndClose}
-              {...props}
-            />
-            */}
         </LoadResources>
       </div>
 

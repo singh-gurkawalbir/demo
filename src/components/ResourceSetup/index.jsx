@@ -55,7 +55,7 @@ export default function ResourceSetupDrawer(props) {
         <DrawerTitleBar title={title} />
         <div>
           {addOrSelect ? (
-            <AddOrSelect title={title} {...props} />
+            <AddOrSelect {...props} />
           ) : (
             <ResourceFormWithStatusPanel
               editMode={false}
