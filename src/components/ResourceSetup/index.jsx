@@ -17,6 +17,12 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
   },
+  resourceFormWrapper: {
+    padding: theme.spacing(3),
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+  },
 }));
 
 export default function ResourceSetupDrawer(props) {
@@ -58,6 +64,8 @@ export default function ResourceSetupDrawer(props) {
             <AddOrSelect {...props} />
           ) : (
             <ResourceFormWithStatusPanel
+              occupyFullWidth
+              className={classes.resourceFormWrapper}
               editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}

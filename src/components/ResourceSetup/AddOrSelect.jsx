@@ -15,6 +15,7 @@ import {
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     padding: theme.spacing(3),
+    paddingTop: 0,
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
