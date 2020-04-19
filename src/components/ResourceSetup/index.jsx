@@ -1,13 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import ResourceForm from '../../components/ResourceFormFactory';
+import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
 import * as selectors from '../../reducers';
 import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
-import ModalDialog from '../ModalDialog';
+import DrawerTitleBar from '../drawer/TitleBar';
+import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 
-export default function ResourceModal(props) {
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    marginTop: theme.appBarHeight,
+    width: 660,
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+}));
+
+export default function ResourceSetupDrawer(props) {
   const {
     resourceId,
     onSubmitComplete,
@@ -16,6 +28,7 @@ export default function ResourceModal(props) {
     connectionType,
     resourceType = 'connections',
   } = props;
+  const classes = useStyles();
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, resourceId)
   );
@@ -25,15 +38,26 @@ export default function ResourceModal(props) {
       onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
+  const title = useMemo(
+    () => `Setup ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`,
+    [resourceType]
+  );
+
   return (
-    <LoadResources required resources="connections">
-      <ModalDialog show minWidth="md" maxWidth="xl" onClose={onClose}>
-        <div> Setup {RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}</div>
+    <LoadResources required resources={resourceType}>
+      <Drawer
+        anchor="right"
+        open
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={onClose}>
+        <DrawerTitleBar title={title} />
         <div>
           {addOrSelect ? (
-            <AddOrSelect {...props} />
+            <AddOrSelect title={title} {...props} />
           ) : (
-            <ResourceForm
+            <ResourceFormWithStatusPanel
               editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}
@@ -44,7 +68,7 @@ export default function ResourceModal(props) {
             />
           )}
         </div>
-      </ModalDialog>
+      </Drawer>
     </LoadResources>
   );
 }
