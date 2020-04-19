@@ -814,7 +814,16 @@ export default {
     }
 
     if (isCategoryMapping) {
-      fields = fields.filter(el => el !== 'lookup.mode');
+      fields = fields.filter(
+        el =>
+          ![
+            'lookup.mode',
+            'lookup.recordType',
+            'lookup.expression',
+            'lookup.expressionText',
+            'lookup.resultField',
+          ].includes(el)
+      );
       const fieldMappingTypeField = fieldMap.fieldMappingType;
 
       fieldMappingTypeField.options = [
