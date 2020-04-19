@@ -18,6 +18,7 @@ import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
+import Help from '../../../../../../../components/Help';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -305,6 +306,25 @@ export default function ImportMapping(props) {
     );
   };
 
+  const FieldHelp = ({ id }) => {
+    const field = generateFields.find(f => f.id === id);
+
+    if (!field) {
+      return null;
+    }
+
+    const { name: title, description } = field;
+
+    return (
+      <Help
+        title={title}
+        className={classes.helpTextButton}
+        helpKey="test"
+        helpText={description}
+      />
+    );
+  };
+
   const ValueContainer = ({ children, ...props }) => {
     const value = props.selectProps.inputValue;
     const { filterType } =
@@ -453,6 +473,9 @@ export default function ImportMapping(props) {
                     className={classes.margin}>
                     <TrashIcon />
                   </ActionButton>
+                </div>
+                <div>
+                  <FieldHelp id={mapping.generate} />
                 </div>
               </div>
             </div>
