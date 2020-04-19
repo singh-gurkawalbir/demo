@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     fontSize: '12px',
+    marginTop: theme.spacing(1),
   },
   editorButton: {
     float: 'right',
