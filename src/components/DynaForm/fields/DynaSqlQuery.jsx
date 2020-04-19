@@ -14,7 +14,6 @@ import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilder
 
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   label: {
