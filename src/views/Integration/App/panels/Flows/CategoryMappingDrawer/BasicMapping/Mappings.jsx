@@ -432,6 +432,7 @@ export default function ImportMapping(props) {
                     options={options}
                     generate={mapping.generate}
                     application={application}
+                    isCategoryMapping
                     updateLookup={updateLookupHandler}
                     disabled={mapping.isNotEditable || disabled}
                     lookups={lookups}
