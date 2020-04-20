@@ -30,6 +30,7 @@ export default {
       endAdornment: '/rest',
       label: 'Subdomain',
       required: true,
+      helpKey: 'sugarcrm.connection.sugarcrmSubdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -51,12 +52,14 @@ export default {
     'http.unencrypted.version': {
       id: 'http.unencrypted.version',
       required: true,
+      helpKey: 'sugarcrm.connection.http.unencrypted.version',
       type: 'text',
       label: 'Version',
     },
     'http.unencrypted.clientID': {
       id: 'http.unencrypted.clientID',
       required: true,
+      helpKey: 'sugarcrm.connection.http.unencrypted.clientID',
       type: 'text',
       label: 'Client ID',
     },
@@ -64,11 +67,13 @@ export default {
       id: 'http.unencrypted.platform',
       required: true,
       type: 'text',
+      helpKey: 'sugarcrm.connection.http.unencrypted.platform',
       label: 'Platform',
     },
     'http.unencrypted.username': {
       fieldId: 'http.unencrypted.username',
       type: 'text',
+      helpKey: 'sugarcrm.connection.http.unencrypted.username',
       label: 'Username',
       required: true,
     },
@@ -76,6 +81,7 @@ export default {
       fieldId: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
+      helpKey: 'sugarcrm.connection.http.encrypted.password',
       inputType: 'password',
       defaultValue: '',
       description:
@@ -87,6 +93,7 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
+      helpKey: 'sugarcrm.connection.http.encrypted.clientSecret',
       label: 'Client secret',
       placeholder: 'Optional if Client Secret is empty',
     },
@@ -94,6 +101,7 @@ export default {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'sugarcrm.connection.http.auth.token.token',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },

@@ -11,9 +11,19 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.baseURI': { fieldId: 'http.baseURI', required: true },
-    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
-    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    'http.baseURI': {
+      fieldId: 'http.baseURI',
+      required: true,
+      helpKey: 'splunk.connection.http.baseURI',
+    },
+    'http.auth.basic.username': {
+      fieldId: 'http.auth.basic.username',
+      helpKey: 'splunk.connection.http.auth.basic.username',
+    },
+    'http.auth.basic.password': {
+      fieldId: 'http.auth.basic.password',
+      helpKey: 'splunk.connection.http.auth.basic.password',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

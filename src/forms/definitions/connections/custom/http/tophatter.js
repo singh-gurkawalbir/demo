@@ -18,6 +18,7 @@ export default {
       label: 'Access token',
       defaultValue: '',
       required: true,
+      helpKey: 'tophatter.connection.http.auth.token.token',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',

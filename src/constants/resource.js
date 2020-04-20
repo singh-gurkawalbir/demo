@@ -9,7 +9,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   export: 'exports',
   filedefinition: 'filedefinitions',
   flow: 'flows',
-  iclient: 'iclients',
+  iClient: 'iClients',
   import: 'imports',
   integration: 'integrations',
   script: 'scripts',
