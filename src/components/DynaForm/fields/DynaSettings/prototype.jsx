@@ -71,9 +71,6 @@ export default function DynaSettings(props) {
   const [alteredMeta, setAlteredMeta] = useState();
   const [metaError, setMetaError] = useState();
   const dispatch = useDispatch();
-  // const fieldMeta = useSelector(state => {
-  //   selectors.customFrom.meta(state);
-  // });
   const fieldMeta = useSelector(state => {
     // settingsForm = { form: {[metadata]}, init: {function, _scriptId}}
     // We are going to ignore the init hook for now as there is good chance
@@ -184,7 +181,7 @@ export default function DynaSettings(props) {
   // we only need to do this once as an "init"... value changes don't matter.
   // form metadata does matter.
   useEffect(() => {
-    // console.log('Init DynaSettings fieldMeta:', value, fieldMeta);
+    console.log('Init DynaSettings fieldMeta:', value, fieldMeta);
 
     if (fieldMeta) {
       setFinalMeta(getFieldMetaWithDefaults(fieldMeta, value));

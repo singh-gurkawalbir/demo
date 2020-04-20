@@ -4,8 +4,9 @@ import * as selectors from '../../../../reducers';
 import EditView from './EditView';
 import FormView from './FormView';
 import RawView from './RawView';
+import Prototype from './prototype';
 
-export default function DynaSettings(props) {
+export function NewDynaSettings(props) {
   const { id, resourceContext, disabled, onFieldChange } = props;
   const { resourceType, resourceId } = resourceContext;
   const [editFormMode, setEditFormMode] = useState(false);
@@ -61,4 +62,14 @@ export default function DynaSettings(props) {
 
   // the only case left is devs and no settings, so we render the raw settings editor.
   return <RawView {...props} onToggleClick={toggleEditMode} />;
+}
+
+export default function DynaSettingsFactory(props) {
+  if (!process.env.NEW_SETTINGS || process.env.NEW_SETTINGS === 'false') {
+    // console.log('use prototype settings', process.env.NEW_SETTINGS);
+
+    return <Prototype {...props} />;
+  }
+
+  return <NewDynaSettings {...props} />;
 }

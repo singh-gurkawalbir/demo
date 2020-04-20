@@ -1,4 +1,5 @@
-import { makeStyles, Button, Fragment } from '@material-ui/core';
+import { Fragment } from 'react';
+import { makeStyles, Button } from '@material-ui/core';
 import EditorField from '../../DynaEditor';
 
 const useStyles = makeStyles({
