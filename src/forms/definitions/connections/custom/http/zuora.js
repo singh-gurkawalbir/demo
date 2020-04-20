@@ -29,6 +29,7 @@ export default {
       id: 'http.unencrypted.apiAccessKeyId',
       required: true,
       type: 'text',
+      helpKey: 'zuora.connection.http.unencrypted.apiAccessKeyId',
       label: 'Username',
     },
     'http.encrypted.apiSecretAccessKey': {
@@ -38,12 +39,14 @@ export default {
       label: 'Password',
       defaultValue: '',
       inputType: 'password',
+      helpKey: 'zuora.connection.http.encrypted.apiSecretAccessKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
+      helpKey: 'zuora.connection.http.sandbox',
       label: 'Account type',
       options: [
         {

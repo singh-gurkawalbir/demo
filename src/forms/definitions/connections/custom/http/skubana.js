@@ -26,6 +26,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      helpKey: 'skubana.connection.environment',
       options: [
         {
           items: [
