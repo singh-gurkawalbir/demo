@@ -727,7 +727,7 @@ export function resourceList(state, options = {}) {
     ![
       'accesstokens',
       'agents',
-      'iclients',
+      'iClients',
       'scripts',
       'stacks',
       'templates',
