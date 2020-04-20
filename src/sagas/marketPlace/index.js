@@ -37,10 +37,12 @@ export function* requestTemplates() {
 }
 
 export function* installConnector({ connectorId, sandbox, tag }) {
-  const connector = yield select(selectors.resource, 'connectors', connectorId);
+  const integrationAppList = yield select(selectors.integrationAppList);
   let path = `/integrations/${connectorId}/install`;
+  const connector =
+    integrationAppList && integrationAppList.find(ia => ia._id === connectorId);
 
-  if (connector && connector.framework === 'script') {
+  if (connector && connector.framework === 'twoDotZero') {
     path = `/connectors/${connectorId}/install`;
   }
 
