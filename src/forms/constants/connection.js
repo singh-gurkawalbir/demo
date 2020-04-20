@@ -167,6 +167,7 @@ export default {
     'clio',
     'practicepanther',
     'bigquery',
+    'zendesksell',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
