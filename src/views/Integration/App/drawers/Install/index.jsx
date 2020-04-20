@@ -27,7 +27,7 @@ import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
-import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
@@ -347,13 +347,13 @@ export default function ConnectorInstallation(props) {
     <LoadResources required resources="connections,integrations">
       {connection &&
         (connection._connectionId ? (
-          <ConnectionSetupDialog
+          <ResourceSetupDrawer
             resourceId={connection._connectionId}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
           />
         ) : (
-          <ConnectionSetupDialog
+          <ResourceSetupDrawer
             resourceId={connection.newId}
             resource={connection.doc}
             resourceType="connections"
