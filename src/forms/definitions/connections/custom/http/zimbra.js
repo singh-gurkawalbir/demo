@@ -20,7 +20,7 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
       endAdornment: '/home',
-      label: 'Base uri',
+      label: 'Base URI',
       helpKey: 'zimbra.connection.http.baseURI',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;

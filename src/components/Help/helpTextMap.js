@@ -1,8 +1,6 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
-/* eslint-disable no-dupe-keys */
-// eslint-disable-next-line no-unused-vars
-const extractedHelpkeys = {
+export default {
   // fieldDefinitions
   'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -541,9 +539,7 @@ const extractedHelpkeys = {
     'Please specify whether the record is being created or updated using this field.',
   'rest.import.rest.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-};
 
-export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':

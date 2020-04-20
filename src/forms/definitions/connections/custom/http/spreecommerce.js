@@ -17,7 +17,7 @@ export default {
     'http.baseURI': {
       fieldId: 'http.baseURI',
       endAdornment: '/api',
-      label: 'Base uri',
+      label: 'Base URI',
       helpKey: 'spreecommerce.connection.http.baseURI',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
