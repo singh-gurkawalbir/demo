@@ -13,10 +13,7 @@ export default {
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/oauth/authURI': 'https://api.getbase.com/oauth2/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.getbase.com/oauth2/token',
-    '/http/auth/oauth/grantType': 'authorizecode',
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
-    '/http/auth/oauth/accessTokenBody':
-      '{"redirect_uri": "https://staging.integrator.io/connection/oauth2callback","grant_type": "authorization_code","code": "{{{query.code}}}"}',
     '/http/headers': [{ name: 'User-agent', value: '*' }],
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -24,14 +21,36 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    genericOauth: {
+      id: 'genericOauth',
+      label: 'Configure your client id and secret',
+      type: 'checkbox',
+      required: true,
+      defaultValue: r => !!(r && r.http && r.http._iClientId),
+    },
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
+      filter: { provider: 'custom_oauth2' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
+    },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http._iClientId'],
+    fields: [
+      'name',
+      'genericOauth',
+      'http._iClientId',
+      'http.auth.oauth.callbackURL',
+    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },

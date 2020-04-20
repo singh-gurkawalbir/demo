@@ -126,7 +126,7 @@ export default {
           { label: 'SkuVault', value: 'skuvault' },
           { label: 'NexTag', value: 'nextag' },
           { label: 'Newegg', value: 'newegg' },
-          { label: 'Gainsight ', value: 'gainsight' },
+          { label: 'Gainsight', value: 'gainsight' },
         ],
       },
     ],
