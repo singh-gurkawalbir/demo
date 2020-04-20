@@ -73,9 +73,9 @@ export default function ClonePreview(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const showIntegrationField = resourceType === 'flows';
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
+  const resource =
+    useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
+    {};
   const isIAIntegration =
     resourceType === 'integrations' && resource._connectorId;
   const { createdComponents } =
