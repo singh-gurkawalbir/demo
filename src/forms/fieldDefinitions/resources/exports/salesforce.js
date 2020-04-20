@@ -5,7 +5,7 @@ const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'SObject type',
+    label: 'SObject Type',
     required: true,
     visibleWhenAll: [
       {
@@ -38,8 +38,22 @@ export default {
       },
     ],
   },
+  'salesforce.distributed.skipExportFieldId': {
+    type: 'text',
+    label: 'Skip export field ID',
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'salesforce.distributed.sObjectType': {
-    label: 'SObject type',
+    label: 'SObject Type',
     required: true,
     visibleWhenAll: [
       {
@@ -55,7 +69,7 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     required: true,
-    label: 'Execution type',
+    label: 'Execution Type',
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
@@ -66,7 +80,6 @@ export default {
       if (isNew)
         // if its create
         return '';
-
       const output =
         r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
 
@@ -95,7 +108,7 @@ export default {
   'salesforce.soql.query': {
     type: 'editor',
     mode: 'sql',
-    label: 'SOQL query',
+    label: 'SOQL Query',
     omitWhenHidden: true,
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
@@ -119,7 +132,7 @@ export default {
     multiline: true,
     valueName: 'value',
     valueType: 'array',
-    label: 'Referenced fields',
+    label: 'Referenced Fields',
     omitWhenHidden: true,
     visibleWhenAll: [
       {
@@ -134,7 +147,7 @@ export default {
   },
   'salesforce.distributed.requiredTrigger': {
     type: 'text',
-    label: 'Required trigger',
+    label: 'Required Trigger',
     multiline: true,
     omitWhenHidden: true,
     visibleWhenAll: [
@@ -149,7 +162,7 @@ export default {
     ],
   },
   'salesforce.distributed.qualifier': {
-    label: 'Field specific qualification criteria',
+    label: 'Field Specific Qualification Criteria',
     omitWhenHidden: true,
     visibleWhenAll: [
       {
@@ -169,7 +182,7 @@ export default {
   'salesforce.distributed.relatedLists': {
     type: 'text',
     delimiter: ',',
-    label: 'Related lists',
+    label: 'Related Lists',
     multiline: true,
     visibleWhenAll: [
       {
@@ -197,7 +210,7 @@ export default {
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
-    label: 'SObject type',
+    label: 'SObject Type',
     options: [
       {
         items: [
