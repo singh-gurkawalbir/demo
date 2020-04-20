@@ -264,7 +264,8 @@ export default {
     'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
   'liquidplanner.connection.http.auth.token.token':
     'The API Token of your LiquidPlanner account when using the Token authentication.',
-  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -518,7 +519,8 @@ export default {
     'The username of your JIRA account.',
   'jira.connection.rest.basicAuth.password':
     'The password of your JIRA account.',
-  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.rest.bearerToken':
     'The access token of your Magento 2 account.',
   'bigcommerce.connection.rest.basicAuth.username':
