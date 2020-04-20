@@ -19,6 +19,7 @@ export default {
     'http.tsheetsSubdomain': {
       id: 'http.tsheetsSubdomain',
       type: 'text',
+      helpKey: 'tsheets.connection.http.tsheetsSubdomain',
       startAdornment: 'https://',
       endAdornment: '.tsheets.com/api',
       label: 'Subdomain',

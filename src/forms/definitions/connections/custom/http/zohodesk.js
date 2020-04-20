@@ -25,6 +25,7 @@ export default {
       id: 'http.unencrypted.organizationId',
       label: 'Organization ID',
       required: true,
+      helpKey: 'zohocrm.connection.http.unencrypted.organizationId',
       type: 'text',
     },
     'http.auth.oauth.scope': {

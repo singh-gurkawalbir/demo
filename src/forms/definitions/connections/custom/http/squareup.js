@@ -46,6 +46,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
+      helpKey: 'squareup.connection.http.auth.type',
       label: 'Authentication type',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       options: [
@@ -60,6 +61,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'Access token',
+      helpKey: 'squareup.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
       required: true,
       description:
