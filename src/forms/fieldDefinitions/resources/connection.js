@@ -1822,8 +1822,22 @@ export default {
     ],
   },
   as2url: {
-    type: 'labelvalue',
+    type: 'select',
     label: 'AS2 url',
+    options: [
+      {
+        items: [
+          {
+            label: 'http://api.staging.integrator.io/v1/as2',
+            value: 'http://api.staging.integrator.io/v1/as2',
+          },
+          {
+            label: 'https://api.staging.integrator.io/v1/as2',
+            value: 'https://api.staging.integrator.io/v1/as2',
+          },
+        ],
+      },
+    ],
     value: 'https://api.staging.integrator.io/v1/as2',
   },
   requiremdnspartners: {
