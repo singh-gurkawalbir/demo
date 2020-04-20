@@ -219,6 +219,7 @@ export default {
           { label: 'Yahoo', value: 'yahoo' },
           { label: 'Yammer', value: 'yammer' },
           { label: 'Zendesk', value: 'zendesk' },
+          { label: 'Zendesk Sell', value: 'zendesksell' },
           { label: 'Zoho', value: 'zoho' },
           { label: 'Zuora', value: 'zuora' },
           { label: 'Coupa', value: 'coupa' },

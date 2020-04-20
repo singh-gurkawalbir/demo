@@ -21,6 +21,7 @@ export default {
       fieldId: 'http.baseURI',
       endAdornment: '/home',
       label: 'Base URI',
+      helpKey: 'zimbra.connection.http.baseURI',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -32,6 +33,7 @@ export default {
     'http.unencrypted.userAccount': {
       id: 'http.unencrypted.userAccount',
       type: 'text',
+      helpKey: 'zimbra.connection.http.unencrypted.userAccount',
       label: 'User account',
       required: true,
     },

@@ -23,6 +23,7 @@ export default {
       label: 'Ocp apim subscription key',
       required: true,
       type: 'text',
+      helpKey: 'tesco.connection.http.encrypted.apiKey',
       inputType: 'password',
       defaultValue: '',
       description:

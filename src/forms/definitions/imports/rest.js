@@ -366,6 +366,7 @@ export default {
       id: 'rest.requestTypeCreate',
       type: 'select',
       label: 'RequestType',
+      helpKey: 'rest.import.rest.requestTypeCreate',
       required: true,
       options: [
         {
@@ -652,6 +653,7 @@ export default {
     'rest.requestTypeUpdate': {
       id: 'rest.requestTypeUpdate',
       type: 'select',
+      helpKey: 'rest.import.rest.requestTypeUpdate',
       label: 'Request type',
       options: [
         {
