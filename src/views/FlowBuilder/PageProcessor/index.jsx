@@ -1,11 +1,4 @@
-import {
-  useRef,
-  useMemo,
-  Fragment,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import { useRef, useMemo, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -68,7 +61,6 @@ const PageProcessor = ({
   const ref = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [newProcessorId, setNewProcessorId] = useState(null);
   const resource =
     useSelector(state =>
       selectors.resource(
@@ -89,36 +81,6 @@ const PageProcessor = ({
         ),
       shallowEqual
     ) || {};
-  const createdProcessorId = useSelector(state =>
-    selectors.createdResourceId(state, newProcessorId)
-  );
-
-  // #region Add Processor on creation effect
-  useEffect(() => {
-    if (createdProcessorId) {
-      const patchSet = [
-        {
-          op: 'replace',
-          path: `/pageProcessors/${index}`,
-          value: {
-            type: pp.type,
-            [pp.type === 'export'
-              ? '_exportId'
-              : '_importId']: createdProcessorId,
-          },
-        },
-      ];
-
-      // console.log(pp, patchSet);
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-      dispatch(actions.flowData.updateFlow(flowId));
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdProcessorId, dispatch]);
-  // #endregion
-
   // #region Drag and Drop handlers
   const [, drop] = useDrop({
     accept: itemTypes.PAGE_PROCESSOR,
@@ -186,7 +148,7 @@ const PageProcessor = ({
 
     if (pending) {
       // generate newId
-      setNewProcessorId(newId);
+
       const { type, assistant } = getResourceSubType(resource);
       const application = assistant || type;
       const patchSet = [
@@ -212,6 +174,18 @@ const PageProcessor = ({
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
+    const flowPatchSet = [
+      {
+        op: 'replace',
+        path: `/pageProcessors/${index}`,
+        value: {
+          type: pp.type,
+          [pp.type === 'export' ? '_exportId' : '_importId']: newId,
+        },
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
     const to = pending
       ? `${match.url}/add/pageProcessor/${newId}`
       : `${match.url}/edit/${resourceType}/${resourceId}`;
@@ -223,11 +197,14 @@ const PageProcessor = ({
     }
   }, [
     dispatch,
+    flowId,
     history,
+    index,
     match.isExact,
     match.url,
     pending,
     pp._connectionId,
+    pp.type,
     resource,
     resourceId,
     resourceType,

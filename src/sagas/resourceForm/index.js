@@ -236,22 +236,8 @@ function* deleteUISpecificValues({ values, resourceId }) {
   return valuesCopy;
 }
 
-function* patchSkipRetries({ resourceId }) {
-  const { patch } = yield select(
-    selectors.stagedResource,
-    resourceId,
-    SCOPES.VALUE
-  );
-  const { flowId } = yield select(
-    selectors.resourceFormState,
-    'exports',
-    resourceId
-  );
-
+function* patchSkipRetries({ resourceId, flowId, skipRetries }) {
   if (flowId) {
-    const skipRetries = patch.find(
-      p => p.path === '/skipRetries' && p.op === 'replace'
-    );
     const flow = yield select(selectors.resource, 'flows', flowId);
     let patchSet;
 
@@ -262,7 +248,7 @@ function* patchSkipRetries({ resourceId }) {
           path: `/pageGenerators`,
           value: [
             {
-              skipRetries: skipRetries ? !!skipRetries.value : false,
+              skipRetries,
               _exportId: resourceId,
             },
           ],
@@ -278,15 +264,12 @@ function* patchSkipRetries({ resourceId }) {
         {
           op: 'replace',
           path: `/pageGenerators/${index}/skipRetries`,
-          value: skipRetries ? !!skipRetries.value : false,
+          value: skipRetries,
         },
       ];
     }
 
     yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
-
-    if (!isNewId(flowId))
-      yield put(actions.resource.commitStaged('flows', flowId, SCOPES.VALUE));
   }
 }
 
@@ -416,7 +399,7 @@ export function* submitFormValues({
   // fetch all possible pending patches.
   if (!skipCommit) {
     if (resourceType === 'exports') {
-      yield call(patchSkipRetries, { resourceId });
+      // yield call(patchSkipRetries, { resourceId });
     }
 
     if (resourceType === 'exports' && isNewId(resourceId)) {
@@ -467,6 +450,7 @@ export function* submitFormValues({
         resourceType: type,
         id: resourceId,
         scope: SCOPES.VALUE,
+        // is Generate ghost code
         isGenerate,
       });
 
@@ -483,8 +467,96 @@ export function* submitFormValues({
   );
 }
 
+function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
+  if (
+    !['exports', 'imports', 'pageGenerator', 'pageProcessor'].includes(
+      resourceType
+    ) ||
+    !flowId
+  )
+    return;
+
+  // is pageGenerator or pageProcessor
+  let createdId = yield select(selectors.createdResourceId, resourceId);
+
+  createdId = createdId || resourceId;
+
+  const { merged: flowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  let flowPatchSet;
+
+  if (['exports', 'pageGenerator'].includes(resourceType)) {
+    const pgIndex =
+      flowDoc &&
+      flowDoc.pageGenerators &&
+      flowDoc.pageGenerators.findIndex(pg => pg._exportId === resourceId);
+    const patchValue = {
+      ...flowDoc.pageGenerators[pgIndex],
+      _exportId: createdId,
+    };
+
+    flowPatchSet = [
+      {
+        op: 'replace',
+        path: `/pageGenerators/${
+          pgIndex === -1 ? flowDoc.pageGenerators.length : pgIndex
+        }`,
+        value: patchValue,
+      },
+    ];
+  } else {
+    const ppIndex =
+      flowDoc &&
+      flowDoc.pageProcessors &&
+      flowDoc.pageProcessors.findIndex(pp =>
+        pp.type === 'export'
+          ? pp._exportId === resourceId
+          : pp._importId === resourceId
+      );
+    let patchValue = flowDoc.pageProcessors[ppIndex];
+
+    if (patchValue._exportId)
+      patchValue = { ...patchValue, _exportId: createdId };
+    else patchValue = { ...patchValue, _importId: createdId };
+
+    flowPatchSet = [
+      {
+        op: 'replace',
+        path: `/pageProcessors/${
+          ppIndex === -1 ? flowDoc.pageProcessors.length : ppIndex
+        }`,
+        value: patchValue,
+      },
+    ];
+  }
+
+  yield put(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
+  const { skipRetries } = resourceValues;
+
+  if (
+    ['exports', 'pageGenerator'].includes(resourceType) &&
+    skipRetries !== undefined
+  )
+    yield call(patchSkipRetries, {
+      resourceId: createdId,
+      flowId,
+      // skipRetries is a string since its values comes from a checkbox
+      skipRetries: skipRetries === 'true',
+    });
+  yield call(commitStagedChanges, {
+    resourceType: 'flows',
+    id: flowId,
+    scope: SCOPES.VALUE,
+  });
+
+  yield put(actions.flowData.updateFlow(flowId));
+}
+
 export function* submitResourceForm(params) {
-  const { resourceType, resourceId } = params;
+  const { resourceType, resourceId, flowId, values } = params;
   const { cancelSave } = yield race({
     saveForm: call(submitFormValues, params),
     cancelSave: take(
@@ -496,9 +568,51 @@ export function* submitResourceForm(params) {
   });
 
   // perform submit cleanup
-  if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
+  if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
+
+  const { submitFailed } = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
+  // if it fails return
+
+  if (submitFailed) return;
+  yield call(updateFlowDoc, {
+    resourceType,
+    resourceId,
+    flowId,
+    resourceValues: values,
+  });
 }
 
+/*
+preCommit
+  //delete ui fieldValues
+  //deleta rawData
+  //consolidating
+
+  //generatePatches
+  //final Payload 
+
+
+
+
+commit
+  //semi finalPayload
+  //perform semiPayLoad
+
+  //further operations on Payload
+
+  //we decide to commit this
+
+
+  //sneak some operation on and off operation
+
+
+postCommit
+
+*/
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
 

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { useRef, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
@@ -65,7 +65,6 @@ const PageGenerator = ({
   const { schedule } = pg;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [newGeneratorId, setNewGeneratorId] = useState(null);
   const resource = useSelector(state =>
     !resourceId
       ? emptyObj
@@ -93,31 +92,7 @@ const PageGenerator = ({
         ),
       shallowEqual
     ) || {};
-  const createdGeneratorId = useSelector(state =>
-    selectors.createdResourceId(state, newGeneratorId)
-  );
-
   // console.log(pg, usedActions, createdGeneratorId);
-
-  // #region Add Generator on creation effect
-  useEffect(() => {
-    if (createdGeneratorId) {
-      const patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators/${index}`,
-          value: { _exportId: createdGeneratorId },
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-      dispatch(actions.flowData.updateFlow(flowId));
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdGeneratorId, dispatch]);
-  // #endregion
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     item: { type: itemTypes.PAGE_GENERATOR, index },
@@ -132,7 +107,6 @@ const PageGenerator = ({
 
     if (pending) {
       // generate newId
-      setNewGeneratorId(newId);
       const { type, assistant } = getResourceSubType(resource);
       const application = pg.application || assistant || type;
       const patchSet = [];
@@ -165,6 +139,15 @@ const PageGenerator = ({
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
+    const flowPatchSet = [
+      {
+        op: 'replace',
+        path: `/pageGenerators/${index}`,
+        value: { _exportId: newId },
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
     let to = pending
       ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
@@ -178,7 +161,9 @@ const PageGenerator = ({
     }
   }, [
     dispatch,
+    flowId,
     history,
+    index,
     isDataLoader,
     match.isExact,
     match.url,

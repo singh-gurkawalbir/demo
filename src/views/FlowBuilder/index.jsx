@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, Fragment } from 'react';
+import { useState, useCallback, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -24,7 +24,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
-import { generateNewId } from '../../utils/resource';
+import { generateNewId, isNewId } from '../../utils/resource';
 import { isConnector, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
@@ -235,8 +235,6 @@ function FlowBuilder() {
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
-  const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
-  const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -264,19 +262,6 @@ function FlowBuilder() {
     (pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
-  const createdGeneratorId = useSelector(state =>
-    selectors.createdResourceId(state, newGeneratorId)
-  );
-  const createdProcessorId = useSelector(state =>
-    selectors.createdResourceId(state, newProcessorId)
-  );
-  const createdProcessorResourceType = useSelector(state => {
-    if (!createdProcessorId) return;
-
-    const imp = selectors.resource(state, 'imports', createdProcessorId);
-
-    return imp ? 'import' : 'export';
-  });
   const isConnectorType = isConnector(flow);
   const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
@@ -326,51 +311,6 @@ function FlowBuilder() {
     },
     [pageGenerators, pageProcessors, patchFlow]
   );
-
-  // #region Add Generator on creation effect
-  useEffect(() => {
-    if (createdGeneratorId) {
-      // Since flow is patched with new pageGenerator node to include skipRetries,
-      // a pageGenerator may already exist.
-      const existingPG = pageGenerators.find(
-        pg => pg._exportId === newGeneratorId
-      );
-
-      if (existingPG) {
-        existingPG._exportId = createdGeneratorId;
-        patchFlow('/pageGenerators', pageGenerators);
-      } else {
-        patchFlow('/pageGenerators', [
-          ...pageGenerators,
-          { _exportId: createdGeneratorId },
-        ]);
-      }
-
-      // in case someone clicks + again to add another resource...
-      setNewGeneratorId(generateNewId());
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdGeneratorId, patchFlow]);
-  // #endregion
-
-  // #region Add Processor on creation effect
-  useEffect(() => {
-    if (createdProcessorId) {
-      const newProcessor =
-        createdProcessorResourceType === 'import'
-          ? { type: 'import', _importId: createdProcessorId }
-          : { type: 'export', _exportId: createdProcessorId };
-
-      patchFlow('/pageProcessors', [...pageProcessors, newProcessor]);
-
-      setNewProcessorId(generateNewId());
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
-  // #endregion
-
   const pushOrReplaceHistory = useCallback(
     to => {
       if (match.isExact) {
@@ -384,7 +324,6 @@ function FlowBuilder() {
   const handleAddGenerator = useCallback(() => {
     const newTempGeneratorId = generateNewId();
 
-    setNewGeneratorId(newTempGeneratorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageGenerator/${newTempGeneratorId}`
     );
@@ -392,7 +331,6 @@ function FlowBuilder() {
   const handleAddProcessor = useCallback(() => {
     const newTempProcessorId = generateNewId();
 
-    setNewProcessorId(newTempProcessorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageProcessor/${newTempProcessorId}`
     );
@@ -452,18 +390,26 @@ function FlowBuilder() {
     [dispatch, integrationId]
   );
 
+  useEffect(() => {
+    // NEW DATA LOADER REDIRECTION
+    if (isNewId(flowId)) {
+      if (match.url.toLowerCase().includes('dataloader')) {
+        patchNewFlow(flowId, 'New data loader flow', {
+          application: 'dataLoader',
+        });
+      } else {
+        patchNewFlow(flowId);
+      }
+    }
+
+    return () => {
+      dispatch(actions.resource.clearStaged(flowId, 'values'));
+    };
+  }, [dispatch, flowId, match.url, patchNewFlow]);
+
   // NEW FLOW REDIRECTION
   if (flowId === 'new') {
     const tempId = generateNewId();
-
-    // NEW DATA LOADER REDIRECTION
-    if (match.url.toLowerCase().includes('dataloader')) {
-      patchNewFlow(tempId, 'New data loader flow', {
-        application: 'dataLoader',
-      });
-    } else {
-      patchNewFlow(tempId);
-    }
 
     history.replace(rewriteUrl(tempId));
 
