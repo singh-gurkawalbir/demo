@@ -20,6 +20,7 @@ export default {
     '/http/headers': [{ name: 'User-agent', value: '*' }],
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 10,
   }),
   fieldMap: {
     name: { fieldId: 'name' },
