@@ -215,7 +215,11 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 
   if (!resources) return null;
 
-  const match = resources.find(r => r._id === id);
+  let match = resources.find(r => r._id === id);
+
+  if (resourceType === 'connections' && !match) {
+    match = resources.find(r => r.id === id);
+  }
 
   if (!match) return null;
 

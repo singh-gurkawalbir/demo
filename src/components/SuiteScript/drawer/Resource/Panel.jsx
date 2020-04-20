@@ -11,6 +11,7 @@ import actions from '../../../../actions';
 import Close from '../../../../components/icons/CloseIcon';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -108,7 +109,7 @@ export default function Panel(props) {
     dispatch(actions.resource.clearStaged(id));
   }, [dispatch, id, onClose, resourceType]);
   const submitButtonLabel = 'Save';
-  const requiredResources = []; // determineRequiredResources(resourceType);
+  const requiredResources = ['tiles', 'connections', 'flows'];
   const resize = (width, height) => {
     setNotificationPanelHeight(height);
   };
@@ -117,9 +118,9 @@ export default function Panel(props) {
     <Fragment>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">{`Edit ${resourceType}`}</Typography>
+          <Typography variant="h3">{`Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`}</Typography>
           <IconButton
-            data-test="closeFlowSchedule"
+            data-test="closeResourceForm"
             aria-label="Close"
             className={classes.closeButton}
             onClick={onClose}>

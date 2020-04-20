@@ -1,6 +1,6 @@
 import { withRouter, useRouteMatch } from 'react-router-dom';
 import { Fragment, useState } from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography, Link } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
@@ -160,10 +160,10 @@ function FlowBuilder() {
       <CeligoPageBar
         title={
           <EditableText
-            disabled={isViewMode}
+            disabled={isViewMode || !flow.editable}
             text={flow.name}
             // multiline
-            defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
+            defaultText={`Unnamed (id:${flowId})`}
             // onChange={handleTitleChange}
             inputClassName={
               drawerOpened
@@ -179,61 +179,75 @@ function FlowBuilder() {
           </Fragment>
         }
       />
-      <div
-        className={clsx(classes.canvasContainer, {
-          [classes.canvasShift]: drawerOpened,
-        })}
-        style={{
-          height: `calc(${(4 - bottomDrawerSize) *
-            25}vh - ${theme.appBarHeight +
-            theme.pageBarHeight +
-            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
-        }}>
-        <div className={classes.canvas}>
-          {/* CANVAS START */}
-          <div
-            className={classes.generatorRoot}
-            style={{
-              minHeight: 240 * 1 + 70,
-            }}>
-            <Typography
-              component="div"
-              className={clsx(classes.title, classes.sourceTitle)}
-              variant="overline">
-              SOURCE APPLICATION
-            </Typography>
-
-            <div className={classes.generatorContainer}>
-              <PageGenerator isViewMode={isViewMode} />
-            </div>
-          </div>
-          <div className={classes.processorRoot}>
-            <Typography
-              component="div"
-              className={clsx(classes.title, classes.destinationTitle)}
-              variant="overline">
-              DESTINATION APPLICATION
-            </Typography>
-            <div className={classes.processorContainer}>
-              <PageProcessor
-                isViewMode={isViewMode}
-                isMonitorLevelAccess={false}
-              />
-            </div>
-          </div>
-          {bottomDrawerSize < 3 && (
+      {flow && !flow.editable && (
+        <Fragment>
+          <Typography>
+            The ability to change settings for the data flow you have selected
+            is not currently supported. Please{' '}
+            <Link href="https://celigo.com/support" target="_blank">
+              contact Celigo Support
+            </Link>{' '}
+            to request changes.
+          </Typography>
+        </Fragment>
+      )}
+      {flow && flow.editable && (
+        <div
+          className={clsx(classes.canvasContainer, {
+            [classes.canvasShift]: drawerOpened,
+          })}
+          style={{
+            height: `calc(${(4 - bottomDrawerSize) *
+              25}vh - ${theme.appBarHeight +
+              theme.pageBarHeight +
+              (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
+          }}>
+          <div className={classes.canvas}>
+            {/* CANVAS START */}
             <div
-              className={classes.fabContainer}
+              className={classes.generatorRoot}
               style={{
-                bottom: bottomDrawerSize
-                  ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
-                  : bottomDrawerMin + theme.spacing(3),
-              }}
-            />
-          )}
-          {/* CANVAS END */}
+                minHeight: 240 * 1 + 70,
+              }}>
+              <Typography
+                component="div"
+                className={clsx(classes.title, classes.sourceTitle)}
+                variant="overline">
+                SOURCE APPLICATION
+              </Typography>
+
+              <div className={classes.generatorContainer}>
+                <PageGenerator isViewMode={isViewMode} />
+              </div>
+            </div>
+            <div className={classes.processorRoot}>
+              <Typography
+                component="div"
+                className={clsx(classes.title, classes.destinationTitle)}
+                variant="overline">
+                DESTINATION APPLICATION
+              </Typography>
+              <div className={classes.processorContainer}>
+                <PageProcessor
+                  isViewMode={isViewMode}
+                  isMonitorLevelAccess={false}
+                />
+              </div>
+            </div>
+            {bottomDrawerSize < 3 && (
+              <div
+                className={classes.fabContainer}
+                style={{
+                  bottom: bottomDrawerSize
+                    ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
+                    : bottomDrawerMin + theme.spacing(3),
+                }}
+              />
+            )}
+            {/* CANVAS END */}
+          </div>
         </div>
-      </div>
+      )}
     </Fragment>
   );
 }

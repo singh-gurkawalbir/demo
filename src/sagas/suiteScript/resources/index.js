@@ -30,15 +30,24 @@ export function* commitStagedChanges({
 
   if (!patch) return; // nothing to do.
 
+  let resourceId = resourceType === 'connections' ? merged.id : id;
+  let resourceTypeToUse = resourceType;
+
+  if (['exports', 'imports'].includes(resourceTypeToUse)) {
+    resourceTypeToUse = 'flows';
+    resourceId = resourceId
+      .replace('re', '')
+      .replace('e', '')
+      .replace('i', '');
+  }
+
   let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
 
-  if (!['connections', 'integrations'].includes(resourceType)) {
+  if (!['connections', 'integrations'].includes(resourceTypeToUse)) {
     path += `integrations/${integrationId}/`;
   }
 
-  path += isNew
-    ? `${resourceType}`
-    : `${resourceType}/${resourceType === 'connections' ? merged.id : id}`;
+  path += isNew ? `${resourceTypeToUse}` : `${resourceTypeToUse}/${resourceId}`;
 
   // only updates need to check for conflicts.
   //   if (!isNew) {
@@ -54,7 +63,6 @@ export function* commitStagedChanges({
   //     // eslint-disable-next-line prefer-destructuring
   //     merged = resp.merged;
   //   }
-  let updated;
 
   try {
     updated = yield call(apiCallWithRetry, {

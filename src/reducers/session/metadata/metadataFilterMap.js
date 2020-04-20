@@ -76,6 +76,14 @@ export default {
       label: item.name,
       value: item.id,
     })),
+  'suitescript-itemCustomNumberColumn': data =>
+    data
+      .filter(
+        item =>
+          ['float', 'integer'].includes(item.type) &&
+          item.id.indexOf('item[*].custcol') === 0
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'webservices-searchFilters': data =>
     data.fields &&
     data.fields.map(item => ({
