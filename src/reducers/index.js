@@ -722,12 +722,14 @@ export function resource(state, resourceType, id) {
 }
 
 export function resourceList(state, options = {}) {
+  console.log('It  is coming here in list*** options ***', options);
+
   if (
     !options.ignoreEnvironmentFilter &&
     ![
       'accesstokens',
       'agents',
-      'iclients',
+      'iClients',
       'scripts',
       'stacks',
       'templates',
@@ -739,6 +741,8 @@ export function resourceList(state, options = {}) {
     )
   ) {
     const preferences = userPreferences(state);
+
+    console.log('It  should not go inside ***');
 
     // eslint-disable-next-line no-param-reassign
     options.sandbox = preferences.environment === 'sandbox';
