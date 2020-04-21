@@ -15,6 +15,7 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,10 +76,22 @@ export default function ClonePreview(props) {
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
+  const isIAIntegration =
+    resourceType === 'integrations' && resource._connectorId;
   const { createdComponents } =
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
+  const { isCloned, integrationId } = useSelector(
+    state => selectors.integrationAppClonedDetails(state, resource._id),
+    (left, right) =>
+      left &&
+      right &&
+      left.isCloned === right.isCloned &&
+      left.integrationId === right.integrationId
+  );
+  const integrationAppName =
+    isIAIntegration && getIntegrationAppUrlName(resource && resource.name);
   const integrations = useSelector(
     state =>
       selectors.resourceList(state, {
@@ -114,6 +127,27 @@ export default function ClonePreview(props) {
     { heading: 'Type', value: r => r.model },
     { heading: 'Description', value: r => r.doc.description },
   ];
+
+  useEffect(() => {
+    if (isCloned && isIAIntegration) {
+      props.history.push(
+        getRoutePath(
+          `/integrationapps/${integrationAppName}/${integrationId}/setup`
+        )
+      );
+      dispatch(
+        actions.integrationApp.clone.clearIntegrationClonedStatus(resource._id)
+      );
+    }
+  }, [
+    dispatch,
+    integrationAppName,
+    isIAIntegration,
+    isCloned,
+    props.history,
+    integrationId,
+    resource._id,
+  ]);
 
   useEffect(() => {
     if (!components || (isEmpty(components) && !requested)) {
@@ -162,12 +196,23 @@ export default function ClonePreview(props) {
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
+      tag: {
+        id: 'tag',
+        name: 'tag',
+        type: 'text',
+        label: 'Tag',
+        defaultValue: `Clone - ${resource ? resource.name : ''}`,
+        visible: isIAIntegration,
+      },
       name: {
         id: 'name',
         name: 'name',
         type: 'text',
         label: 'Name',
-        defaultValue: `Clone - ${resource ? resource.name : ''}`,
+        defaultValue: isIAIntegration
+          ? resource && resource.name
+          : `Clone - ${resource ? resource.name : ''}`,
+        visible: !isIAIntegration,
       },
       environment: {
         id: 'environment',
@@ -209,6 +254,7 @@ export default function ClonePreview(props) {
         type: 'labeltitle',
         disablePopover: true,
         label: resource && resource.description,
+        visible: !isIAIntegration,
       },
       message: {
         id: 'message',
@@ -239,7 +285,14 @@ export default function ClonePreview(props) {
               'message',
               'components',
             ]
-          : ['name', 'environment', 'description', 'message', 'components'],
+          : [
+              'tag',
+              'name',
+              'environment',
+              'description',
+              'message',
+              'components',
+            ],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -260,9 +313,29 @@ export default function ClonePreview(props) {
       return null;
     },
   };
-  const clone = ({ name, environment, integration }) => {
+  const clone = ({ name, environment, integration, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
+
+    if (isIAIntegration) {
+      dispatch(
+        actions.template.installStepsReceived(
+          [],
+          {},
+          `${resourceType}-${resourceId}`,
+          {
+            tag,
+            name,
+            sandbox: environment === 'sandbox',
+            _integrationId: integration,
+            newTemplateInstaller: true,
+          }
+        )
+      );
+      dispatch(actions.clone.createComponents(resourceType, resourceId));
+
+      return;
+    }
 
     if (showIntegrationField && !integration) {
       enquesnackbar({ message: 'Please select Integration.', variant: 'info' });

@@ -63,11 +63,11 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
     type: 'select',
-    label: 'Request Media Type',
+    label: 'Request media type',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -88,7 +88,7 @@ export default {
   },
   'http.compositeType': {
     type: 'select',
-    label: 'Composite Type',
+    label: 'Composite type',
     options: [
       {
         items: [
@@ -147,7 +147,7 @@ export default {
   },
   'http.requestType': {
     type: 'select',
-    label: 'Request Type',
+    label: 'Request type',
     options: [
       {
         items: [
@@ -162,8 +162,7 @@ export default {
         ],
       },
     ],
-    helpText:
-      'Please specify whether the record is being created or updated using this field.',
+
     visibleWhen: [
       {
         field: 'http.method',
@@ -200,7 +199,7 @@ export default {
     arrayIndex: 0,
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
     required: true,
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
@@ -218,7 +217,7 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Success Path',
+    label: 'Success path',
     delimiter: ',',
     placeholder: 'Optional',
     visibleWhenAll: [
@@ -234,7 +233,7 @@ export default {
   },
   'http.response.successValues': {
     type: 'text',
-    label: 'Success Values',
+    label: 'Success values',
     delimiter: ',',
     placeholder: 'Optional',
     // defaultValue: r =>
@@ -252,7 +251,7 @@ export default {
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Resource Id Path',
+    label: 'Resource ID path',
     delimiter: ',',
     placeholder: 'Optional',
     visibleWhen: [
@@ -268,7 +267,7 @@ export default {
   },
   'http.response.failPath': {
     type: 'text',
-    label: 'Fail Path',
+    label: 'Fail path',
     delimiter: ',',
     visibleWhenAll: [
       {
@@ -284,7 +283,7 @@ export default {
   'http.response.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Fail Values',
+    label: 'Fail values',
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -299,7 +298,7 @@ export default {
   'http.response.resourcePath': {
     type: 'text',
     delimiter: ',',
-    label: 'Response Path',
+    label: 'Response path',
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -313,7 +312,7 @@ export default {
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Error Path',
+    label: 'Error path',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -328,7 +327,7 @@ export default {
   },
   'http.batchSize': {
     type: 'text',
-    label: 'Batch Size Limit',
+    label: 'Batch size limit',
     defaultValue: 1,
     visibleWhenAll: [
       {
@@ -343,7 +342,7 @@ export default {
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Success Media Type',
+    label: 'Success media type',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -361,7 +360,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error Media Type',
+    label: 'Error media type',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -379,7 +378,7 @@ export default {
   },
   'http.ignoreEmptyNodes': {
     type: 'checkbox',
-    label: 'Ignore Empty Nodes',
+    label: 'Ignore empty nodes',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -389,7 +388,7 @@ export default {
   },
   'http.configureAsyncHelper': {
     type: 'checkbox',
-    label: 'Configure Async Helper',
+    label: 'Configure async helper',
     defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
     visible: r => !(r && r.statusExport),
     visibleWhen: r => {
@@ -405,7 +404,7 @@ export default {
   },
 
   'http._asyncHelperId': {
-    label: 'Async Helper',
+    label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
     appTypeIsStatic: true,

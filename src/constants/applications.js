@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 // Schema details:
 // ---------------
 // id: Required. Any unique token.
@@ -9,7 +11,27 @@
 // keyword: any words in combination with the name that will be used for search.
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
+const mergeObjectArrays = (arr1, arr2, match) =>
+  _.union(
+    _.map(arr1, obj1 => {
+      const same = _.find(arr2, obj2 => obj1[match] === obj2[match]);
 
+      return same ? _.extend(obj1, same) : obj1;
+    }),
+    _.reject(arr2, obj2 => _.find(arr1, obj1 => obj2[match] === obj1[match]))
+  );
+let localStorageAssistants;
+
+// localStorage is browser specific one. It is breaking testcases. Below code changes are to
+// avoid test case breakages.
+// TODO: Need to see alternate solution here.
+try {
+  localStorageAssistants = JSON.parse(localStorage.getItem('assistants'));
+} catch (e) {
+  localStorageAssistants = [];
+}
+
+const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -134,6 +156,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'snowflake',
+    name: 'Snowflake',
+    type: 'snowflake',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
     id: 'dynamodb',
     name: 'DynamoDB',
     type: 'dynamodb',
@@ -203,6 +232,12 @@ const connectors = [
   { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
   // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
+  {
+    id: 'redshift',
+    name: 'Amazon Redshift',
+    type: 'http',
+    assistant: 'redshift',
+  },
   {
     id: 'campaignmonitor',
     name: 'Campaign Monitor',
@@ -739,25 +774,13 @@ connectors.sort((a, b) => {
 
 export const groupApplications = (
   resourceType,
-  { assistants, appType, isSimpleImport }
+  { appType, isSimpleImport }
 ) => {
   // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
 
-  if (
-    assistants &&
-    assistants.http.applications &&
-    assistants.rest.applications
-  ) {
-    assistants.http.applications.forEach(asst => {
-      assistantConnectors.push({
-        id: asst._id,
-        name: asst.name,
-        type: 'http',
-        assistant: asst._id,
-      });
-    });
-    assistants.rest.applications.forEach(asst => {
+  if (assistants) {
+    assistants.forEach(asst => {
       if (
         ![
           'surveymonkey',
@@ -768,13 +791,13 @@ export const groupApplications = (
           'concurall',
           'concurv4',
           'constantcontact',
-        ].includes(asst._id)
+        ].includes(asst.id)
       ) {
         assistantConnectors.push({
-          id: asst._id,
+          id: asst.id,
           name: asst.name,
-          type: 'rest',
-          assistant: asst._id,
+          type: asst.type,
+          assistant: asst.id,
         });
       }
     });
@@ -793,23 +816,7 @@ export const groupApplications = (
 
   const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
-      let assistant = assistants.http.applications.find(
-        a => a._id === connector.assistant
-      );
-
-      if (assistant) {
-        if (appType === 'import') {
-          return assistant.import;
-        } else if (appType === 'export') {
-          return assistant.export;
-        }
-
-        return true;
-      }
-
-      assistant = assistants.rest.applications.find(
-        a => a._id === connector.assistant
-      );
+      const assistant = assistants.find(a => a.id === connector.assistant);
 
       if (assistant) {
         if (appType === 'import') {
@@ -885,5 +892,7 @@ export const getApp = (type, assistant) => {
 
   return connectors.find(c => c.id === id) || {};
 };
+
+mergeObjectArrays(connectors, assistants, 'assistant');
 
 export default connectors;

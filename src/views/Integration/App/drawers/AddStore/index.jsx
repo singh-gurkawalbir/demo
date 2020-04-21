@@ -21,7 +21,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
-import ConnectionSetupDialog from '../../../../../components/ResourceSetupDialog';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
 import InstallationStep from '../../../../../components/InstallStep';
 import { getResourceSubType } from '../../../../../utils/resource';
 import resourceConstants from '../../../../../forms/constants/connection';
@@ -250,7 +250,7 @@ export default function IntegrationAppAddNewStore(props) {
   return (
     <LoadResources required resources={['integrations', 'connections']}>
       {selectedConnectionId && (
-        <ConnectionSetupDialog
+        <ResourceSetupDrawer
           resourceId={selectedConnectionId}
           resourceType="connections"
           onClose={handleClose}

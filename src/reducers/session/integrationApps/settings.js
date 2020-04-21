@@ -234,6 +234,7 @@ export default (state = {}, action) => {
             categoryId,
             childCategoryId,
             variation,
+            isVariationAttributes,
             netsuiteRecordType,
             ...additionalOptions
           } = options;
@@ -243,7 +244,8 @@ export default (state = {}, action) => {
               draft[cKey],
               categoryId,
               childCategoryId,
-              variation
+              variation,
+              isVariationAttributes
             );
           }
 
@@ -533,6 +535,9 @@ export default (state = {}, action) => {
           }
 
           if (
+            generatesMetadata.data &&
+            generatesMetadata.data.generatesMetaData &&
+            generatesMetadata.data.generatesMetaData.id &&
             !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
@@ -795,13 +800,11 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = categoryMappingGeneratesMetadata(
+    state,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,
@@ -810,7 +813,6 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     deleted,
     categoryRelationshipData
   );
-
   const initData = state[cKey].initMappingData;
 
   if (!initData || !initData.data || !initData.data.mappingData) {
@@ -838,6 +840,14 @@ export function integrationAppAddOnState(state, integrationId) {
   const addOnKey = `${integrationId}-addOns`;
 
   return state[addOnKey] || emptyObj;
+}
+
+export function integrationAppMappingMetadata(state, integrationId) {
+  if (!state) {
+    return emptyObj;
+  }
+
+  return state[integrationId] || emptyObj;
 }
 
 export function shouldRedirect(state, integrationId) {

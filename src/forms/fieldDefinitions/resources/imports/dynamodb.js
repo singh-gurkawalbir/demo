@@ -38,7 +38,7 @@ export default {
   },
   'dynamodb.tableName': {
     type: 'text',
-    label: 'Table Name',
+    label: 'Table name',
     required: true,
   },
   'dynamodb.partitionKey': {
@@ -46,7 +46,7 @@ export default {
     fieldType: 'ignoreExistingData',
     showLookup: false,
     connectionId: r => r && r._connectionId,
-    label: 'Partition Key',
+    label: 'Partition key',
     requiredWhen: [
       {
         field: 'dynamodb.method',
@@ -59,7 +59,7 @@ export default {
     fieldType: 'ignoreExistingData',
     showLookup: false,
     connectionId: r => r && r._connectionId,
-    label: 'Sort Key',
+    label: 'Sort key',
   },
   'dynamodb.itemDocument': {
     type: 'sqlquerybuilder',
@@ -67,7 +67,7 @@ export default {
     hideDefaultData: true,
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
-    label: 'Launch Query Builder',
+    label: 'Launch query builder',
     title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
     visibleWhen: [
@@ -79,7 +79,7 @@ export default {
   },
   'dynamodb.updateExpression': {
     type: 'text',
-    label: 'Update Expression',
+    label: 'Update expression',
     required: true,
     visibleWhen: [
       {
@@ -90,11 +90,11 @@ export default {
   },
   'dynamodb.conditionExpression': {
     type: 'text',
-    label: 'Key Condition Expression',
+    label: 'Key condition expression',
   },
   'dynamodb.expressionAttributeNames': {
     type: 'editor',
-    label: 'Expression Attribute Names',
+    label: 'Expression attribute names',
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
@@ -112,7 +112,7 @@ export default {
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
-    label: 'Expression Attribute Values',
+    label: 'Expression attribute values',
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
@@ -134,7 +134,7 @@ export default {
     showLookup: false,
     adaptorType: r => r && r.adaptorType,
     connectionId: r => r && r._connectionId,
-    label: 'Ignore Extract',
+    label: 'Ignore extract',
     required: true,
   },
 };

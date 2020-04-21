@@ -2,12 +2,10 @@ import produce from 'immer';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 
+const emptySet = [];
+
 export default (state = {}, action) => {
   const { type, connectors, templates } = action;
-
-  if (!type) {
-    return state;
-  }
 
   return produce(state, draft => {
     switch (type) {
@@ -24,10 +22,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-
 export function connectors(state, application, sandbox, licenses) {
   if (!state) {
-    return [];
+    return emptySet;
   }
 
   let connectors = state.connectors || [];
@@ -63,17 +60,17 @@ export function connectors(state, application, sandbox, licenses) {
 }
 
 export function integrationAppList(state) {
-  if (!state) return [];
+  if (!state) return emptySet;
 
-  return state.connectors || [];
+  return state.connectors || emptySet;
 }
 
 export function templates(state, application) {
   if (!state) {
-    return [];
+    return emptySet;
   }
 
-  let templates = state.templates || [];
+  let templates = state.templates || emptySet;
 
   if (application) {
     templates = templates

@@ -25,7 +25,7 @@ function ScheduleDialog({
       minWidth="md"
       maxWidth="md"
       disabled={isViewMode}>
-      <div>Export Schedule</div>
+      <div>Export schedule</div>
       <div>
         <FlowSchedule
           flow={flow}

@@ -37,15 +37,8 @@ export default function LicenseAction() {
     }
   }, [enquesnackbar, integratorLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
-    state => {
-      const permissions = selectors.userPermissions(state);
-
-      return (
-        permissions &&
-        permissions.subscriptions &&
-        permissions.subscriptions.requestUpgrade
-      );
-    },
+    state =>
+      selectors.resourcePermissions(state, 'subscriptions').requestUpgrade,
     (left, right) => left === right
   );
   const handleClick = useCallback(() => {

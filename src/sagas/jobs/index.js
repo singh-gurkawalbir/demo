@@ -628,6 +628,26 @@ export function* updateRetryData({ retryId, retryData }) {
   yield put(actions.job.receivedRetryData({ retryData, retryId }));
 }
 
+function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
+  try {
+    const body = { errorFile: { host: 's3', id: errorFileId } };
+
+    // Retries the job with the error file uploaded at s3 with errorFileId
+    yield call(apiCallWithRetry, {
+      path: `/jobs/${jobId}/retries/retry`,
+      opts: {
+        method: 'POST',
+        body,
+      },
+    });
+    // Triggers polling to update the jobs list once the job is retried
+    yield call(getJobFamily, { jobId: flowJobId });
+    yield put(actions.job.requestInProgressJobStatus());
+  } catch (e) {
+    //  Error handler
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
@@ -647,4 +667,5 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.RETRY_SELECTED, retrySelectedRetries),
   takeEvery(actionTypes.JOB.ERROR.REQUEST_RETRY_DATA, requestRetryData),
   takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
+  takeEvery(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, retryProcessedErrors),
 ];

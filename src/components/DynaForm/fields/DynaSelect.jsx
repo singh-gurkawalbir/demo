@@ -1,5 +1,6 @@
 import React from 'react';
 import { ListSubheader } from '@material-ui/core';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -60,6 +61,7 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     label,
+    className,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -118,7 +120,7 @@ export default function DynaSelect(props) {
       <FormControl
         key={id}
         disabled={disabled}
-        className={classes.root}
+        className={clsx(classes.root, className)}
         error={!isValid}
         required={required}>
         <InputLabel shrink htmlFor={id}>

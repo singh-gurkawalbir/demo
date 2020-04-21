@@ -2,11 +2,11 @@ import produce from 'immer';
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Button, Typography } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import actions from '../../../actions';
-import { isJsonString } from '../../../utils/string';
-import DynaForm from '../../DynaForm';
-import EditorField from './DynaEditor';
+import * as selectors from '../../../../reducers';
+import actions from '../../../../actions';
+import { isJsonString } from '../../../../utils/string';
+import DynaForm from '../../../DynaForm';
+import EditorField from '../DynaEditor';
 
 const useStyles = makeStyles({
   editor: {
@@ -16,8 +16,8 @@ const useStyles = makeStyles({
 // const defaultSettingsMeta = {
 //   fieldMap: {
 //     storeName: {
-//       id: 'conenction',
-//       name: 'connetionId',
+//       id: 'connection',
+//       name: 'connectionId',
 //       type: 'cron',
 //       resourceType: 'connections',
 //       helpText: 'Enter your store name, which is also your host subdomain.',
@@ -71,9 +71,6 @@ export default function DynaSettings(props) {
   const [alteredMeta, setAlteredMeta] = useState();
   const [metaError, setMetaError] = useState();
   const dispatch = useDispatch();
-  // const fieldMeta = useSelector(state => {
-  //   selectors.customFrom.meta(state);
-  // });
   const fieldMeta = useSelector(state => {
     // settingsForm = { form: {[metadata]}, init: {function, _scriptId}}
     // We are going to ignore the init hook for now as there is good chance
@@ -244,6 +241,7 @@ export default function DynaSettings(props) {
         onChange={handleSettingFormChange}
         disabled={disabled}
         fieldMeta={finalMeta}
+        // resourceContext={resourceContext}
       />
     </Fragment>
   );

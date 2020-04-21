@@ -74,11 +74,11 @@ export default function AddOnsPanel({ integrationId }) {
   // contain a status indicating the progress of API request to retrieve addon
   // details.
   const [showMessage, setShowMessage] = useState(false);
-  const addOnState = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
-  );
-  const addOnMetadata =
-    addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
+  const addOnMetadata = useSelector(state => {
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
+
+    return addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
+  });
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );

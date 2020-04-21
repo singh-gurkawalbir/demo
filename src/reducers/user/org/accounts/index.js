@@ -538,6 +538,17 @@ export function permissions(
 
       register: true,
     };
+    permissions.integrations.connectors = {
+      accessLevel: userAccessLevel,
+      flows: {
+        edit: true,
+      },
+      connections: {
+        edit: true,
+      },
+      edit: true,
+      delete: true,
+    };
   } else if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
     permissions.integrations.none = {
       accessLevel: userAccessLevel,
@@ -545,6 +556,9 @@ export function permissions(
       connections: {},
     };
     permissions.integrations.all = { ...permissions.integrations.none };
+    permissions.integrations.connectors = {
+      ...permissions.integrations.none,
+    };
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;

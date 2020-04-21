@@ -1,7 +1,7 @@
 export default {
   'webhook.key': {
     type: 'textforsetfields',
-    label: 'Key (Secret)',
+    label: 'Key (secret)',
     inputType: 'password',
     setFieldIds: ['webhook.url'],
     visible: true,
@@ -35,7 +35,7 @@ export default {
   },
   'webhook.verify': {
     type: 'selectforsetfields',
-    label: 'Verification Type',
+    label: 'Verification type',
     required: true,
     setFieldIds: ['webhook.url'],
     options: [
@@ -71,7 +71,7 @@ export default {
   },
   'webhook.header': {
     type: 'textforsetfields',
-    label: 'Header (Containing HMAC)',
+    label: 'Header (containing hmac)',
     required: true,
     setFieldIds: ['webhook.url'],
     visibleWhen: [
@@ -143,7 +143,7 @@ export default {
   },
   'webhook.token': {
     type: 'webhooktokengenerator',
-    label: 'Custom URL Token',
+    label: 'Custom URL token',
     buttonLabel: 'Generate new token',
     setFieldIds: ['webhook.url'],
     visible: true,
@@ -187,6 +187,6 @@ export default {
     id: 'sampleData',
     name: '/sampleData',
     type: 'webhooksampledata',
-    label: 'Sample Data',
+    label: 'Sample data',
   },
 };

@@ -25,9 +25,8 @@ export default {
       inputType: 'password',
       defaultValue: '',
       required: true,
-      label: 'API Key',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained by reaching out to FieldAware support team.',
+      label: 'API key',
+      helpKey: 'fieldaware.connection.http.encrypted.apiKey',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

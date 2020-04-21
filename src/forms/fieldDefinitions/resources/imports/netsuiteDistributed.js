@@ -1,6 +1,6 @@
 export default {
   'netsuite_da.recordType': {
-    label: 'Record Type',
+    label: 'Record type',
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
@@ -87,7 +87,7 @@ export default {
   },
   'netsuite_da.hooks.preMap.function': {
     type: 'text',
-    label: 'Pre Map',
+    label: 'Pre map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -99,7 +99,7 @@ export default {
   'netsuite_da.hooks.preMap.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
-    label: 'Pre Map File',
+    label: 'Pre map file',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -109,7 +109,7 @@ export default {
   },
   'netsuite_da.hooks.postMap.function': {
     type: 'text',
-    label: 'Post Map',
+    label: 'Post map',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -121,7 +121,7 @@ export default {
   'netsuite_da.hooks.postMap.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
-    label: 'Post Map File',
+    label: 'Post map file',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -131,7 +131,7 @@ export default {
   },
   'netsuite_da.hooks.postSubmit.function': {
     type: 'text',
-    label: 'Post Submit',
+    label: 'Post submit',
     placeholder: 'Function Name',
     visibleWhen: [
       {
@@ -156,7 +156,7 @@ export default {
   },
   'netsuite.file.fileType': {
     type: 'text',
-    label: 'File Type',
+    label: 'File type',
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -184,7 +184,7 @@ export default {
   },
   'netsuite.file.internalId': {
     type: 'text',
-    label: 'File Internal Id',
+    label: 'File internal ID',
     visibleWhenAll: [
       {
         field: 'netsuite.operation',
@@ -199,7 +199,7 @@ export default {
   'netsuite_da.hooks.postSubmit.fileInternalId': {
     type: 'text',
     placeholder: 'File Internal ID',
-    label: 'Post Submit File',
+    label: 'Post submit file',
     visibleWhen: [
       {
         field: 'inputMode',

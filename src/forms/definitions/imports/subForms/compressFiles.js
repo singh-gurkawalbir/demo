@@ -3,7 +3,7 @@ export default {
     'file.compressFiles': {
       id: 'file.compressFiles',
       type: 'checkbox',
-      label: 'Compress Files',
+      label: 'Compress files',
     },
     'file.compressionFormat': {
       fieldId: 'file.compressionFormat',

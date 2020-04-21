@@ -32,9 +32,7 @@ export default {
     'http.unencrypted.userAccount': {
       id: 'http.unencrypted.userAccount',
       type: 'text',
-      label: 'User Account',
-      helpText:
-        'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
+      label: 'User account',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

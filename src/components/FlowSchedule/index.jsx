@@ -16,6 +16,9 @@ import {
 } from './util';
 
 export default function FlowSchedule({
+  integrationId,
+  resourceType,
+  resourceId,
   flow,
   onClose,
   className,
@@ -125,6 +128,9 @@ export default function FlowSchedule({
     <Fragment>
       <div className={className}>
         <DynaForm
+          integrationId={integrationId}
+          resourceType={resourceType}
+          resourceId={resourceId}
           disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>

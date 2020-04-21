@@ -1,6 +1,7 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import actions from '../../actions';
 import { ACCOUNT_IDS } from '../../utils/constants';
+import reducer, * as selectors from './';
 
 describe('user selectors', () => {
   describe('accountOwner', () => {
@@ -235,6 +236,54 @@ describe('user selectors', () => {
           },
         ]);
       });
+    });
+  });
+
+  describe(`user theme selectors`, () => {
+    test('should return default theme if no profile exists', () => {
+      expect(selectors.appTheme(undefined)).toEqual(selectors.DEFAULT_THEME);
+    });
+
+    test('should return correct theme when set.', () => {
+      const theme = 'my theme';
+      const state = reducer(
+        undefined,
+        actions.user.preferences.update({ themeName: theme })
+      );
+
+      expect(selectors.appTheme(state)).toEqual(theme);
+    });
+  });
+
+  describe(`editor theme selector`, () => {
+    test('should return default editor theme if no state exists', () => {
+      expect(selectors.editorTheme(undefined)).toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
+    });
+
+    test('should return default editor theme when user theme set to unknown type.', () => {
+      const themeName = 'unknown';
+      const state = reducer(
+        undefined,
+        actions.user.preferences.update({ themeName })
+      );
+
+      expect(selectors.editorTheme(state)).toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
+    });
+
+    test('should return correct editor theme when user theme set.', () => {
+      const themeName = 'dark';
+      const state = reducer(
+        undefined,
+        actions.user.preferences.update({ themeName })
+      );
+
+      expect(selectors.editorTheme(state)).not.toEqual(
+        selectors.DEFAULT_EDITOR_THEME
+      );
     });
   });
 });

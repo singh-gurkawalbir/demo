@@ -39,12 +39,11 @@ import DrawerTitleBar from './TitleBar';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
+import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
 const emptySet = [];
-const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    // marginTop: theme.appBarHeight,
     width: `60%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
@@ -59,30 +58,12 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.background.default,
     marginTop: theme.spacing(1),
   },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-  },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
     float: 'left',
   },
   fullWidth: {
     width: '100%',
-  },
-  settingsForm: {
-    maxHeight: `calc(100vh - 120px)`,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  nested: {
-    paddingLeft: theme.spacing(4),
-  },
-  drawerPaperInner: {
-    width: drawerWidth,
-    position: 'relative',
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -98,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     width: '40%',
     marginRight: 45,
   },
-  toolbar: theme.mixins.toolbar,
+  // toolbar: theme.mixins.toolbar,
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
@@ -109,14 +90,13 @@ const useStyles = makeStyles(theme => ({
     marginTop: 10,
     boxShadow: 'none',
   },
-
   secondaryHeading: {
     fontFamily: 'Roboto500',
     lineHeight: `${theme.spacing(3)}px`,
   },
-
   subNav: {
     width: '20%',
+    minWidth: 200,
     background: theme.palette.background.paper2,
     paddingTop: theme.spacing(1),
   },
@@ -127,10 +107,6 @@ const useStyles = makeStyles(theme => ({
   variationIcon: {
     position: 'absolute',
     right: theme.spacing(10),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: theme.palette.common.white,
-    },
   },
   content: {
     width: '100%',
@@ -138,20 +114,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
-    background: 'blue',
-  },
-  listItem: {
-    color: theme.palette.text.primary,
-  },
-  activeListItem: {
-    color: theme.palette.primary.main,
-    fontWeight: 'bold',
+    background: theme.palette.primary.main,
   },
   default: {
     marginBottom: 10,
-  },
-  titleBar: {
-    padding: '4px 16px',
   },
   categoryMapWrapper: {
     display: 'flex',
@@ -189,7 +155,12 @@ function CategoryMappings({
   const isCommonCategory =
     sectionId === 'commonAttributes' || isParentCommonCategory;
   const [expanded, setExpanded] = useState(isRoot);
-  const { fields: generateFields, name, variation_themes: variationThemes } =
+  const {
+    fields: generateFields,
+    name,
+    variation_themes: variationThemes,
+    variation_attributes: variationAttributes,
+  } =
     useSelector(state =>
       selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
         sectionId,
@@ -205,6 +176,9 @@ function CategoryMappings({
         sectionId,
       })
     ) || {};
+  const hasVariationMappings =
+    (variationThemes && !!variationThemes.length) ||
+    (variationAttributes && !!variationAttributes.length);
 
   useEffect(() => {
     setRequestedGenerateFields(false);
@@ -231,6 +205,7 @@ function CategoryMappings({
     sectionId,
     isRoot,
   ]);
+
   const shouldExpand =
     isRoot || (collapseAction ? collapseAction !== 'collapse' : expanded);
 
@@ -325,13 +300,14 @@ function CategoryMappings({
             </span>
           </div>
 
-          {!!variationThemes && !!variationThemes.length && (
+          {hasVariationMappings && (
             <Tooltip title="Configure variations" placement="bottom">
               <IconButton
+                onClick={handleVariation}
                 size="small"
                 color="inherit"
                 className={classes.variationIcon}>
-                <VariationIcon onClick={handleVariation} />
+                <VariationIcon />
               </IconButton>
             </Tooltip>
           )}
@@ -340,19 +316,21 @@ function CategoryMappings({
               {deleted ? (
                 <Tooltip title="Restore category" placement="bottom">
                   <IconButton
+                    onClick={handleRestore}
                     size="small"
                     color="inherit"
                     className={classes.deleteIcon}>
-                    <RestoreIcon onClick={handleRestore} />
+                    <RestoreIcon />
                   </IconButton>
                 </Tooltip>
               ) : (
                 <Tooltip title="Delete category" placement="bottom">
                   <IconButton
+                    onClick={handleDelete}
                     size="small"
                     color="inherit"
                     className={classes.deleteIcon}>
-                    <TrashIcon onClick={handleDelete} />
+                    <TrashIcon />
                   </IconButton>
                 </Tooltip>
               )}
@@ -393,6 +371,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const mappingsChanged = useSelector(state =>
     selectors.categoryMappingsChanged(state, integrationId, flowId)
@@ -458,6 +437,15 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     categoryId,
   ]);
   useEffect(() => {
+    if (mappingSaveStatus === 'saved' || mappingSaveStatus === 'close') {
+      enqueueSnackbar({
+        variant: 'success',
+        message: `Your mapping settings have been saved.`,
+        persist: false,
+      });
+    }
+  }, [enqueueSnackbar, mappingSaveStatus]);
+  useEffect(() => {
     if (mappingSaveStatus === 'close') {
       history.push(parentUrl);
       dispatch(
@@ -499,7 +487,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
         flowId
       )
     );
-  }, [dispatch, flowId, integrationId]);
+    enqueueSnackbar({
+      variant: 'info',
+      message: `Saving your mapping settings.`,
+      persist: false,
+    });
+  }, [dispatch, enqueueSnackbar, flowId, integrationId]);
   const handleSaveAndClose = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.save(
@@ -508,7 +501,12 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
         true
       )
     );
-  }, [dispatch, flowId, integrationId]);
+    enqueueSnackbar({
+      variant: 'info',
+      message: `Saving your mapping settings.`,
+      persist: false,
+    });
+  }, [dispatch, enqueueSnackbar, flowId, integrationId]);
   const handleCollapseAll = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.collapseAll(

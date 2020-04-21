@@ -1,8 +1,17 @@
 import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useEffect } from 'react';
 import { FormContext } from 'react-forms-processor';
 
+const useStyles = makeStyles(theme => ({
+  labelTop: {
+    padding: theme.spacing(2, 1),
+    fontWeight: 'bold',
+  },
+}));
+
 function CronLabel(props) {
+  const classes = useStyles();
   const { onFieldChange, id, clearFields, fields, unit } = props;
 
   useEffect(() => {
@@ -14,7 +23,9 @@ function CronLabel(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  return <Typography>{`Every * ${unit}`} </Typography>;
+  return (
+    <Typography className={classes.labelTop}>{`Every * ${unit}`} </Typography>
+  );
 }
 
 export default function DynaCronLabel(props) {
