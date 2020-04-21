@@ -19,7 +19,6 @@ import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
-import { generateUpdatePatchesToFlow } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -237,43 +236,6 @@ function* deleteUISpecificValues({ values, resourceId }) {
   return valuesCopy;
 }
 
-function* patchSkipRetries({ resourceId, flowId, skipRetries }) {
-  if (flowId) {
-    const flow = yield select(selectors.resource, 'flows', flowId);
-    let patchSet;
-
-    if (!flow) {
-      patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators`,
-          value: [
-            {
-              skipRetries,
-              _exportId: resourceId,
-            },
-          ],
-        },
-      ];
-    } else {
-      const index =
-        flow.pageGenerators &&
-        flow.pageGenerators.findIndex(pg => pg._exportId === resourceId);
-
-      if (!index || index === -1) return;
-      patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators/${index}/skipRetries`,
-          value: skipRetries,
-        },
-      ];
-    }
-
-    yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
-  }
-}
-
 const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
 const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
 
@@ -477,36 +439,29 @@ export function* submitFormValues({
 }
 
 function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
-  if (!['exports', 'imports'].includes(resourceType) || !flowId) return;
-
-  // is pageGenerator or pageProcessor
-  const createdId = yield select(selectors.createdResourceId, resourceId);
-  const { merged: flowDoc } = yield select(
-    selectors.resourceData,
-    'flows',
+  const flowPatches = yield select(
+    selectors.getFlowUpdatePatchesOnPGorPPSave,
+    resourceType,
+    resourceId,
     flowId
   );
+  const { skipRetries } = resourceValues;
+  let skipRetryPatches = [];
 
-  if (isNewId(resourceId)) {
-    const flowPatchSet = generateUpdatePatchesToFlow({
-      flowDoc,
-      resourceType,
+  if (['exports'].includes(resourceType) && skipRetries !== undefined) {
+    skipRetryPatches = yield select(
+      selectors.skipRetriesPatches,
+      flowId,
       resourceId,
-      createdId,
-    });
-
-    yield put(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
+      skipRetries === 'true'
+    );
   }
 
-  const { skipRetries } = resourceValues;
+  const consolidatedPatches = [...flowPatches, ...skipRetryPatches];
 
-  if (['exports'].includes(resourceType) && skipRetries !== undefined)
-    yield call(patchSkipRetries, {
-      resourceId: createdId,
-      flowId,
-      // skipRetries is a string since its values comes from a checkbox
-      skipRetries: skipRetries === 'true',
-    });
+  yield put(
+    actions.resource.patchStaged(flowId, consolidatedPatches, SCOPES.VALUE)
+  );
   yield call(commitStagedChanges, {
     resourceType: 'flows',
     id: flowId,

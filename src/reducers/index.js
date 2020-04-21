@@ -24,7 +24,7 @@ import {
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
-import { getFieldById } from '../forms/utils';
+import { getFieldById, getMissingPatchSet } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -3939,6 +3939,81 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
+
+export function getFlowUpdatePatchesOnPGorPPSave(
+  state,
+  resourceType,
+  tempResourceId,
+  flowId
+) {
+  if (
+    !['exports', 'imports'].includes(resourceType) ||
+    !flowId ||
+    !isNewId(tempResourceId)
+  )
+    return [];
+
+  // is pageGenerator or pageProcessor
+  const createdId = createdResourceId(state, tempResourceId);
+  const createdResource = resource(state, resourceType, createdId);
+  const { merged: flowDoc } = resourceData(state, 'flows', flowId);
+  const addIndexPP =
+    (flowDoc && flowDoc.pageProcessor && flowDoc.pageProcessor.length) || 0;
+  const addIndexPG =
+    (flowDoc && flowDoc.pageGenerators && flowDoc.pageGenerators.length) || 0;
+  let flowPatches = [];
+
+  if (resourceType === 'exports') {
+    if (createdResource.isLookup) {
+      flowPatches = [
+        {
+          op: 'add',
+          path: `/pageProcessors/${addIndexPP}`,
+          value: { type: 'export', _exportId: createdId },
+        },
+      ];
+    } else {
+      flowPatches = [
+        {
+          op: 'add',
+          path: `/pageGenerators/${addIndexPG}`,
+          value: { type: 'export', _exportId: createdId },
+        },
+      ];
+    }
+  }
+  // imports resourcetype
+
+  flowPatches = [
+    {
+      op: 'add',
+      path: `/pageProcessors/${addIndexPP}`,
+      value: { type: 'import', _importId: createdId },
+    },
+  ];
+  const missingPatches = getMissingPatchSet(
+    flowPatches && flowPatches.map(p => p.path),
+    flowDoc
+  );
+
+  return [...missingPatches, ...flowPatches];
+}
+
+export function skipRetriesPatches(state, flowId, tempResourceId, skipRetries) {
+  const { merged: flow } = resourceData(state, 'flows', flowId);
+  const createdId = createdResourceId(tempResourceId);
+  const index =
+    flow.pageGenerators &&
+    flow.pageGenerators.findIndex(pg => pg._exportId === createdId);
+
+  return [
+    {
+      op: 'replace',
+      path: `/pageGenerators/${index}/skipRetries`,
+      value: skipRetries,
+    },
+  ];
+}
 
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);
