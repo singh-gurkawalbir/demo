@@ -113,6 +113,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromSettings.integrationAppMappingMetadata(
+    state && state.settings,
+    integrationId
+  );
+}
+
 export function shouldRedirect(state, integrationId) {
   return fromSettings.shouldRedirect(state && state.settings, integrationId);
 }

@@ -29,8 +29,6 @@ export default {
       endAdornment: '.api.accelo.com',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your subdomain here which you configured in Deployment Information page while signing up for your new Accelo account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

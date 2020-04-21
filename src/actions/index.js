@@ -607,9 +607,9 @@ const integrationApp = {
           sectionId,
         }
       ),
-    requestUpgrade: (integration, options) =>
+    requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
-        integration,
+        integrationId,
         options,
       }),
     redirectTo: (integrationId, redirectTo) =>
@@ -713,9 +713,9 @@ const integrationApp = {
         integrationId,
         error,
       }),
-    upgrade: (integration, license) =>
+    upgrade: (integrationId, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
-        integration,
+        integrationId,
         license,
       }),
     update: (integrationId, flowId, storeId, sectionId, values, options) =>

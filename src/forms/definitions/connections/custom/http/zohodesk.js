@@ -23,11 +23,10 @@ export default {
     name: { fieldId: 'name' },
     'http.unencrypted.organizationId': {
       id: 'http.unencrypted.organizationId',
-      label: 'Organization Id',
+      label: 'Organization ID',
       required: true,
+      helpKey: 'zohodesk.connection.http.unencrypted.organizationId',
       type: 'text',
-      helpText:
-        'Please enter your organization id here. This can be obtained by using the Get All Organizations API. In Zoho Desk, each business is categorized as an organization. All APIs except the ones directly related to organizations must include the organization ID in the header.',
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',

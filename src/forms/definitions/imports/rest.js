@@ -231,7 +231,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input Mode',
+      label: 'Input mode',
       options: [
         {
           items: [
@@ -263,7 +263,7 @@ export default {
     createNewData: {
       id: 'createNewData',
       type: 'labeltitle',
-      label: 'Create New Data',
+      label: 'Create new data',
       visibleWhenAll: [
         {
           field: 'rest.method',
@@ -282,7 +282,7 @@ export default {
     'rest.compositeMethodCreate': {
       id: 'rest.compositeMethodCreate',
       type: 'select',
-      label: 'HTTP Method',
+      label: 'HTTP method',
       required: true,
       options: [
         {
@@ -366,6 +366,7 @@ export default {
       id: 'rest.requestTypeCreate',
       type: 'select',
       label: 'RequestType',
+      helpKey: 'rest.import.rest.requestTypeCreate',
       required: true,
       options: [
         {
@@ -389,8 +390,6 @@ export default {
           is: ['records'],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       defaultValue: r => {
         if (!r || !r.rest || !r.rest.method) {
           return '';
@@ -412,7 +411,7 @@ export default {
       type: 'httprequestbody',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP Request Body',
+      label: 'Build HTTP request body',
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
@@ -451,7 +450,7 @@ export default {
     'rest.successPathCreate': {
       id: 'rest.successPathCreate',
       type: 'text',
-      label: 'Success Path',
+      label: 'Success path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -486,7 +485,7 @@ export default {
     'rest.successValuesCreate': {
       id: 'rest.successValuesCreate',
       type: 'text',
-      label: 'Success Values',
+      label: 'Success values',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -521,7 +520,7 @@ export default {
     'rest.responseIdPathCreate': {
       id: 'rest.responseIdPathCreate',
       type: 'text',
-      label: 'Response Id Path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -556,7 +555,7 @@ export default {
     upateExistingData: {
       id: 'upateExistingData',
       type: 'labeltitle',
-      label: 'Upate Existing Data',
+      label: 'Upate existing data',
       visibleWhenAll: [
         {
           field: 'rest.method',
@@ -579,7 +578,7 @@ export default {
     'rest.compositeMethodUpdate': {
       id: 'rest.compositeMethodUpdate',
       type: 'select',
-      label: 'HTTP Method',
+      label: 'HTTP method',
       required: true,
       options: [
         {
@@ -654,7 +653,8 @@ export default {
     'rest.requestTypeUpdate': {
       id: 'rest.requestTypeUpdate',
       type: 'select',
-      label: 'Request Type',
+      helpKey: 'rest.import.rest.requestTypeUpdate',
+      label: 'Request type',
       options: [
         {
           items: [
@@ -678,8 +678,6 @@ export default {
           is: ['records'],
         },
       ],
-      helpText:
-        'Please specify whether the record is being created or updated using this field.',
       defaultValue: r => {
         if (!r || !r.rest || !r.rest.method) {
           return '';
@@ -696,7 +694,7 @@ export default {
       id: 'rest.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP Request Body',
+      label: 'Build HTTP request body',
       arrayIndex: 0,
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
@@ -730,7 +728,7 @@ export default {
     'rest.successPathUpdate': {
       id: 'rest.successPathUpdate',
       type: 'text',
-      label: 'Success Path',
+      label: 'Success path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -761,7 +759,7 @@ export default {
     'rest.successValuesUpdate': {
       id: 'rest.successValuesUpdate',
       type: 'text',
-      label: 'Success Values',
+      label: 'Success values',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -792,7 +790,7 @@ export default {
     'rest.responseIdPathUpdate': {
       id: 'rest.responseIdPathUpdate',
       type: 'text',
-      label: 'Response Id Path',
+      label: 'Response ID path',
       placeholder: 'Optional',
       visibleWhenAll: [
         {
@@ -823,7 +821,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore Existing Data',
+      label: 'Ignore existing data',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -842,7 +840,7 @@ export default {
     ignoreNewData: {
       id: 'ignoreNewData',
       type: 'labeltitle',
-      label: 'Ignore New Data',
+      label: 'Ignore new data',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -864,7 +862,7 @@ export default {
       fieldType: 'ignoreExistingData',
       connectionId: r => r && r._connectionId,
       refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
-      label: 'Existing Data Id',
+      label: 'Existing data id',
       required: true,
       visibleWhenAll: [
         {

@@ -20,13 +20,12 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'Ocp Apim Subscription Key',
+      label: 'Ocp apim subscription key',
       required: true,
       type: 'text',
+      helpKey: 'tesco.connection.http.encrypted.apiKey',
       inputType: 'password',
       defaultValue: '',
-      helpText:
-        'The subscription key of your Tesco account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

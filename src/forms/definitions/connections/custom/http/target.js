@@ -27,10 +27,9 @@ export default {
     accType: {
       id: 'accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
-      helpText:
-        'Please select Production for a live seller account or Sandbox if you currently want to integrate with a development staging environment.',
+      helpKey: 'target.connection.accType',
       options: [
         {
           items: [
@@ -55,7 +54,7 @@ export default {
       id: 'http.auth.token.token',
       type: 'text',
       label: 'X-SELLER-TOKEN',
-      helpText: 'Please enter the x-seller-token provided by Target',
+      helpKey: 'target.connection.http.auth.token.token',
       required: true,
       inputType: 'password',
     },
@@ -63,7 +62,7 @@ export default {
       id: 'http.unencrypted.x-seller-id',
       type: 'text',
       label: 'X-SELLER-ID',
-      helpText: 'Please enter the x-seller-id provided by Target.',
+      helpKey: 'target.connection.http.unencrypted.x-seller-id',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

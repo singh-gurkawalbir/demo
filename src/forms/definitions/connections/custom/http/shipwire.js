@@ -17,9 +17,8 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
-      helpText:
-        'Please select your environment here. Select Sandbox if the account is created on https://beta.shipwire.com. Select Production if the account is created on https://www.shipwire.com.',
       required: true,
+      helpKey: 'shipwire.connection.environment',
       options: [
         {
           items: [
@@ -42,11 +41,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The username of your Shipwire account.',
+      helpKey: 'shipwire.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The password of your Shipwire account.',
+      helpKey: 'shipwire.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

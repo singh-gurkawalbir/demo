@@ -68,9 +68,6 @@ export default function RunFlowButton({
     return !!(exp && exp.rawData && exp.rawData !== EMPTY_RAW_DATA);
   });
   // console.log('Does DL export have run key?', hasRunKey);
-  const isMonitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, flowDetails.integrationId)
-  );
   const uploadedFile = useSelector(
     state => selectors.getUploadedFile(state, flowId),
     shallowEqual
@@ -129,10 +126,7 @@ export default function RunFlowButton({
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
   }, []);
-  const disabled =
-    isNewFlow ||
-    !(flowDetails && flowDetails.isRunnable) ||
-    isMonitorLevelAccess;
+  const disabled = isNewFlow || !(flowDetails && flowDetails.isRunnable);
 
   useEffect(() => {
     const { status, file, error } = uploadedFile || {};

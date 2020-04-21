@@ -27,8 +27,6 @@ export default {
       id: 'accountType',
       type: 'select',
       label: 'Environment',
-      helpText:
-        'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
       options: [
         {
           items: [
@@ -61,7 +59,7 @@ export default {
     'rest.scopeSandbox': {
       id: 'rest.scopeSandbox',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       visibleWhen: [
         {
           field: 'accountType',
@@ -98,7 +96,7 @@ export default {
     'rest.scopeProduction': {
       id: 'rest.scopeProduction',
       type: 'selectscopes',
-      label: 'Configure Scopes',
+      label: 'Configure scopes',
       scopes: [
         'https://api.ebay.com/oauth/api_scope',
         // 'https://api.ebay.com/oauth/api_scope/buy.order.readonly',

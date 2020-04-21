@@ -26,12 +26,11 @@ export default {
     'http.zohoSubdomain': {
       id: 'http.zohoSubdomain',
       type: 'text',
+      helpKey: 'zohocrm.connection.http.zohoSubdomain',
       startAdornment: 'https://www.zohoapis',
       endAdornment: '/crm',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter the Domain. Input ".com" to connect to US data-center. Input ".in" to connect to India data-center. Input ".com.cn" to connect to China data-center. Input ".eu" to connect to Europe data-center.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

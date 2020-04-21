@@ -35,17 +35,13 @@ export default {
     name: { fieldId: 'name' },
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
-      helpText:
-        'The base URI for JIRA. For example, http://www.company.com/confluence',
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
-      helpText: 'The username of your JIRA account.',
     },
     // ...or, we can create completely custom fields like this:
     'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
-      helpText: 'The password of your JIRA account.',
     },
     restAdvanced: { fieldId: 'restAdvanced' },
   },

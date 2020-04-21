@@ -19,12 +19,11 @@ export default {
     'http.tsheetsSubdomain': {
       id: 'http.tsheetsSubdomain',
       type: 'text',
+      helpKey: 'tsheets.connection.http.tsheetsSubdomain',
       startAdornment: 'https://',
       endAdornment: '.tsheets.com/api',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

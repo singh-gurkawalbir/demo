@@ -30,8 +30,7 @@ export default {
       endAdornment: '/rest',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your SugarCRM subdomain. For example, in https://jpeyoy4394.trial.sugarcrm.eu/http/v11_2/ "jpeyoy4394.trial.sugarcrm.eu" is the subdomain.',
+      helpKey: 'sugarcrm.connection.sugarcrmSubdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -53,29 +52,28 @@ export default {
     'http.unencrypted.version': {
       id: 'http.unencrypted.version',
       required: true,
+      helpKey: 'sugarcrm.connection.http.unencrypted.version',
       type: 'text',
       label: 'Version',
-      helpText: 'Please enter endpoint version of your SugarCRM account.',
     },
     'http.unencrypted.clientID': {
       id: 'http.unencrypted.clientID',
       required: true,
+      helpKey: 'sugarcrm.connection.http.unencrypted.clientID',
       type: 'text',
       label: 'Client ID',
-      helpText:
-        'The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id \'s can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.',
     },
     'http.unencrypted.platform': {
       id: 'http.unencrypted.platform',
       required: true,
       type: 'text',
+      helpKey: 'sugarcrm.connection.http.unencrypted.platform',
       label: 'Platform',
-      helpText:
-        'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
     },
     'http.unencrypted.username': {
       fieldId: 'http.unencrypted.username',
       type: 'text',
+      helpKey: 'sugarcrm.connection.http.unencrypted.username',
       label: 'Username',
       required: true,
     },
@@ -83,6 +81,7 @@ export default {
       fieldId: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
+      helpKey: 'sugarcrm.connection.http.encrypted.password',
       inputType: 'password',
       defaultValue: '',
       description:
@@ -94,24 +93,23 @@ export default {
       type: 'text',
       inputType: 'password',
       defaultValue: '',
-      label: 'Client Secret',
+      helpKey: 'sugarcrm.connection.http.encrypted.clientSecret',
+      label: 'Client secret',
       placeholder: 'Optional if Client Secret is empty',
-      helpText:
-        'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your private key safe.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'sugarcrm.connection.http.auth.token.token',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
       required: true,
-      helpText: 'The access token of your Tableau account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

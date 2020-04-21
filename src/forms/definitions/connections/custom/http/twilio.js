@@ -13,13 +13,13 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The Account Sid of your Twilio account.',
-      label: 'Account Sid',
+      helpKey: 'tsheets.connection.http.auth.basic.username',
+      label: 'Account sid',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The token of your Twilio account.',
-      label: 'Auth Token',
+      label: 'Auth token',
+      helpKey: 'tsheets.connection.http.auth.basic.password',
       defaultValue: '',
     },
     httpAdvanced: { formId: 'httpAdvanced' },

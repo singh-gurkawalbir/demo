@@ -14,12 +14,11 @@ export default {
     'http.subdomain': {
       type: 'text',
       id: 'http.subdomain',
-      helpText:
-        "Enter your Snapfulfil subdomain. For example, in https://syndemo-eapi.snapfulfil.net/ 'syndemo-eapi' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.snapfulfil.net/',
       label: 'Subdomain',
       required: true,
+      helpKey: 'snapfulfil.connection.http.subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -40,11 +39,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: "Please enter your snapfulfil account's username",
+      helpKey: 'snapfulfil.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: "Please enter your snapfulfil account's password",
+      helpKey: 'snapfulfil.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

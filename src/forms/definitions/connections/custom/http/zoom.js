@@ -15,10 +15,9 @@ export default {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
+      helpKey: 'zoom.connection.http.encrypted.apiKey',
+      label: 'API key',
       inputType: 'password',
-      helpText:
-        'The API Key of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
@@ -26,10 +25,9 @@ export default {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
-      label: 'API Secret',
+      label: 'API secret',
+      helpKey: 'zoom.connection.http.encrypted.apiSecret',
       inputType: 'password',
-      helpText:
-        'The API Secret of your zoom account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

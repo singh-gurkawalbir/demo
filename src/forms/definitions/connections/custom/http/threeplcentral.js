@@ -27,17 +27,15 @@ export default {
       type: 'text',
       label: '3PL GUID',
       required: true,
+      helpKey: '3plcentral.connection.http.unencrypted.tpl',
       defaultValue: '',
-      helpText:
-        'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
     },
     'http.unencrypted.userLoginId': {
       id: 'http.unencrypted.userLoginId',
       type: 'text',
-      label: 'UserLogin ID',
+      label: 'UserLogin id',
+      helpKey: '3plcentral.connection.http.unencrypted.userLoginId',
       required: true,
-      helpText:
-        'Contact the 3PL Central Warehouse you are working with for this project and have them submit a request for REST API access to their 3PL Central Customer Success Manager.',
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',

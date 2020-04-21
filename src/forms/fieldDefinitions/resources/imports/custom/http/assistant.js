@@ -2,13 +2,13 @@ export default {
   'assistantMetadata.version': {
     type: 'assistantoptions',
     assistantFieldType: 'version',
-    label: 'API Version',
+    label: 'API version',
     required: true,
   },
   'assistantMetadata.resource': {
     type: 'assistantoptions',
     assistantFieldType: 'resource',
-    label: 'API Name',
+    label: 'API name',
     required: true,
   },
   'assistantMetadata.operation': {
@@ -19,11 +19,11 @@ export default {
   },
   'assistantMetadata.ignoreExisting': {
     type: 'checkbox',
-    label: 'Ignore Existing Records?',
+    label: 'Ignore existing records?',
   },
   'assistantMetadata.ignoreMissing': {
     type: 'checkbox',
-    label: 'Ignore Missing Records?',
+    label: 'Ignore missing records?',
   },
   'assistantMetadata.lookupType': {
     type: 'select',

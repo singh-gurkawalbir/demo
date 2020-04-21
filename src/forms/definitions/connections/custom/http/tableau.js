@@ -35,10 +35,9 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.online.tableau.com/api',
       type: 'text',
-      label: 'My Server',
+      label: 'My server',
+      helpKey: 'tableau.connection.http.myServer',
       required: true,
-      helpText:
-        'Please enter your server name here which you configured while signing up for a new Tableau account.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -53,41 +52,38 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'Please enter the User Id/Email of your Tableau Account.',
+      helpKey: 'tableau.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'tableau.connection.http.auth.basic.password',
       defaultValue: '',
-      helpText:
-        'Please enter password of your Tableau Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
     'http.unencrypted.contentUrl': {
       id: 'http.unencrypted.contentUrl',
+      helpKey: 'tableau.connection.http.unencrypted.contentUrl',
       required: true,
       type: 'text',
       label: 'Content URL',
-      helpText:
-        'The content URL is the value that in the server environment is referred to as the Site ID.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
+      helpKey: 'tableau.connection.http.auth.token.token',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.userName', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
-      helpText: 'The access token of your Tableau account.',
     },
     'http.unencrypted.siteId': {
       id: 'http.unencrypted.siteId',
       type: 'text',
       label: 'Site ID',
       defaultValue: '',
-      helpText: 'The Site ID of your Tableau account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

@@ -1,5 +1,5 @@
-import { isNewId } from '../../../utils/resource';
-import { isLookupResource } from '../../../utils/flows';
+import { isNewId } from '../../../../utils/resource';
+import { isLookupResource } from '../../../../utils/flows';
 
 export default {
   init: (fieldMeta, resource = {}, flow) => {
@@ -37,13 +37,13 @@ export default {
     exportRdbmsData: {
       fieldId: 'exportRdbmsData',
       type: 'labeltitle',
-      label: 'What would you like to export from rdbms?',
+      label: 'What would you like to export from?',
     },
     'rdbms.query': { fieldId: 'rdbms.query' },
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -59,8 +59,6 @@ export default {
           items: [
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
-            { label: 'Delta', value: 'delta' },
-            { label: 'Once', value: 'once' },
           ],
         },
       ],

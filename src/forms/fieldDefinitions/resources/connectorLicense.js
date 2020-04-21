@@ -5,7 +5,7 @@ export default {
   expires: {
     defaultValue: r => r.expires && moment(r.expires).format('L'),
     type: 'date',
-    label: 'Expiration Date',
+    label: 'Expiration date',
   },
   opts: {
     defaultValue: r => r.opts || {},

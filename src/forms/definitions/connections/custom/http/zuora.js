@@ -29,8 +29,8 @@ export default {
       id: 'http.unencrypted.apiAccessKeyId',
       required: true,
       type: 'text',
+      helpKey: 'zuora.connection.http.unencrypted.apiAccessKeyId',
       label: 'Username',
-      helpText: 'Please enter Username of your Zuora account.',
     },
     'http.encrypted.apiSecretAccessKey': {
       id: 'http.encrypted.apiSecretAccessKey',
@@ -39,15 +39,15 @@ export default {
       label: 'Password',
       defaultValue: '',
       inputType: 'password',
-      helpText:
-        'Please enter Password of your Zuora account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe. This can be obtained from the Settings section and password subsection.',
+      helpKey: 'zuora.connection.http.encrypted.apiSecretAccessKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
-      label: 'Account Type',
+      helpKey: 'zuora.connection.http.sandbox',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -56,7 +56,6 @@ export default {
           ],
         },
       ],
-      helpText: 'The Zuora account type.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 

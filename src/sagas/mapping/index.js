@@ -62,11 +62,14 @@ export function* saveMappings({ id }) {
   if (lookups && !subRecordMappingId) {
     const lookupPath = lookupUtil.getLookupPath(adaptorType);
 
-    patch.push({
-      op: lookups ? 'replace' : 'add',
-      path: lookupPath,
-      value: lookups,
-    });
+    // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
+    if (lookupPath) {
+      patch.push({
+        op: lookups ? 'replace' : 'add',
+        path: lookupPath,
+        value: lookups,
+      });
+    }
   }
 
   yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));

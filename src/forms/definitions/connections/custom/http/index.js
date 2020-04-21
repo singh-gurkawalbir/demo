@@ -168,6 +168,7 @@ import loopreturns from './loopreturns';
 import saplitmos from './saplitmos';
 import redshift from './redshift';
 import bigquery from './bigquery';
+import zendesksell from './zendesksell';
 
 export default {
   bigquery,
@@ -339,4 +340,5 @@ export default {
   target,
   '3plcentral': threeplcentral,
   loopreturns,
+  zendesksell,
 };

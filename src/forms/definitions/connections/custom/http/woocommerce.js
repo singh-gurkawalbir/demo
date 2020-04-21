@@ -12,19 +12,18 @@ export default {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
+      helpKey: 'woocommerce.connection.http.baseURI',
       required: true,
-      helpText:
-        'Please enter baseURI of your WooCommerce account. If your endpoint is  “https://shopName.com/wp-json/wc/v1/orders”, then use "https://shopName.com" as base URL.',
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Consumer Key',
-      helpText: 'The consumer key of your WooCommerce account.',
+      helpKey: 'woocommerce.connection.http.auth.basic.username',
+      label: 'Consumer key',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The consumer secret of your WooCommerce account.',
-      label: 'Consumer Secret',
+      helpKey: 'woocommerce.connection.http.auth.basic.password',
+      label: 'Consumer secret',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
