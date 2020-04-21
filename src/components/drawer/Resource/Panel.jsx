@@ -307,9 +307,9 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-  const resize = (width, height) => {
+  const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height);
-  };
+  }, []);
 
   return (
     <Fragment>

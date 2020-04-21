@@ -180,7 +180,9 @@ const PageProcessor = ({
         path: `/pageProcessors/${index}`,
         value: {
           type: pp.type,
-          [pp.type === 'export' ? '_exportId' : '_importId']: newId,
+          [pp.type === 'export' ? '_exportId' : '_importId']: pending
+            ? newId
+            : resourceId,
         },
       },
     ];

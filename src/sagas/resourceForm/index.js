@@ -19,6 +19,7 @@ import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
+import { generateUpdatePatchesToFlow } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -396,69 +397,77 @@ export function* submitFormValues({
     resourceId
   );
 
-  // fetch all possible pending patches.
-  if (!skipCommit) {
-    if (resourceType === 'exports') {
-      // yield call(patchSkipRetries, { resourceId });
-    }
-
-    if (resourceType === 'exports' && isNewId(resourceId)) {
-      yield call(patchTransformationRulesForXMLResource, { resourceId });
-    }
-
-    const { patch } = yield select(
-      selectors.stagedResource,
-      resourceId,
-      SCOPES.VALUE
+  if (skipCommit) {
+    const resourceIdPatch = patchSet.find(
+      p => p.op === 'replace' && p.path === '/resourceId'
     );
-    // In most cases there would be no other pending staged changes, since most
-    // times a patch is followed by an immediate commit.  If however some
-    // component has staged some changes, even if the patchSet above is empty,
-    // we need to check the store for these un-committed ones and still call
-    // the commit saga.
-    let type = resourceType;
 
-    if (resourceType === 'connectorLicenses') {
-      // construct url for licenses
-      const connectorUrlStr = '/connectors/';
-      const startIndex =
-        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
-
-      if (startIndex !== -1) {
-        const connectorId = match.url.substring(
-          startIndex,
-          match.url.indexOf('/', startIndex)
-        );
-
-        type = `connectors/${connectorId}/licenses`;
-      }
+    if (resourceIdPatch && resourceIdPatch.value) {
+      yield put(actions.resource.created(resourceIdPatch.value, resourceId));
     }
 
-    const integrationIdPatch =
-      patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
+    return yield put(
+      actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
+    );
+  }
 
-    if (
-      integrationIdPatch &&
-      integrationIdPatch.value &&
-      (resourceType === 'accesstokens' || resourceType === 'connections')
-    ) {
-      type = `integrations/${integrationIdPatch.value}/${resourceType}`;
+  // fetch all possible pending patches.
+  if (resourceType === 'exports' && isNewId(resourceId)) {
+    yield call(patchTransformationRulesForXMLResource, { resourceId });
+  }
+
+  const { patch } = yield select(
+    selectors.stagedResource,
+    resourceId,
+    SCOPES.VALUE
+  );
+  // In most cases there would be no other pending staged changes, since most
+  // times a patch is followed by an immediate commit.  If however some
+  // component has staged some changes, even if the patchSet above is empty,
+  // we need to check the store for these un-committed ones and still call
+  // the commit saga.
+  let type = resourceType;
+
+  if (resourceType === 'connectorLicenses') {
+    // construct url for licenses
+    const connectorUrlStr = '/connectors/';
+    const startIndex =
+      match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+
+    if (startIndex !== -1) {
+      const connectorId = match.url.substring(
+        startIndex,
+        match.url.indexOf('/', startIndex)
+      );
+
+      type = `connectors/${connectorId}/licenses`;
     }
+  }
 
-    if (patch && patch.length) {
-      const resp = yield call(commitStagedChanges, {
-        resourceType: type,
-        id: resourceId,
-        scope: SCOPES.VALUE,
-        // is Generate ghost code
-        isGenerate,
-      });
+  const integrationIdPatch =
+    patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
 
-      if (resp && (resp.error || resp.conflict)) {
-        return yield put(
-          actions.resourceForm.submitFailed(resourceType, resourceId)
-        );
-      }
+  if (
+    integrationIdPatch &&
+    integrationIdPatch.value &&
+    (resourceType === 'accesstokens' || resourceType === 'connections')
+  ) {
+    type = `integrations/${integrationIdPatch.value}/${resourceType}`;
+  }
+
+  if (patch && patch.length) {
+    const resp = yield call(commitStagedChanges, {
+      resourceType: type,
+      id: resourceId,
+      scope: SCOPES.VALUE,
+      // is Generate ghost code
+      isGenerate,
+    });
+
+    if (resp && (resp.error || resp.conflict)) {
+      return yield put(
+        actions.resourceForm.submitFailed(resourceType, resourceId)
+      );
     }
   }
 
@@ -468,78 +477,30 @@ export function* submitFormValues({
 }
 
 function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
-  if (
-    !['exports', 'imports', 'pageGenerator', 'pageProcessor'].includes(
-      resourceType
-    ) ||
-    !flowId
-  )
-    return;
+  if (!['exports', 'imports'].includes(resourceType) || !flowId) return;
 
   // is pageGenerator or pageProcessor
-  let createdId = yield select(selectors.createdResourceId, resourceId);
-
-  createdId = createdId || resourceId;
-
+  const createdId = yield select(selectors.createdResourceId, resourceId);
   const { merged: flowDoc } = yield select(
     selectors.resourceData,
     'flows',
     flowId
   );
-  let flowPatchSet;
 
-  if (['exports', 'pageGenerator'].includes(resourceType)) {
-    const pgIndex =
-      flowDoc &&
-      flowDoc.pageGenerators &&
-      flowDoc.pageGenerators.findIndex(pg => pg._exportId === resourceId);
-    const patchValue = {
-      ...flowDoc.pageGenerators[pgIndex],
-      _exportId: createdId,
-    };
+  if (isNewId(resourceId)) {
+    const flowPatchSet = generateUpdatePatchesToFlow({
+      flowDoc,
+      resourceType,
+      resourceId,
+      createdId,
+    });
 
-    flowPatchSet = [
-      {
-        op: 'replace',
-        path: `/pageGenerators/${
-          pgIndex === -1 ? flowDoc.pageGenerators.length : pgIndex
-        }`,
-        value: patchValue,
-      },
-    ];
-  } else {
-    const ppIndex =
-      flowDoc &&
-      flowDoc.pageProcessors &&
-      flowDoc.pageProcessors.findIndex(pp =>
-        pp.type === 'export'
-          ? pp._exportId === resourceId
-          : pp._importId === resourceId
-      );
-    let patchValue = flowDoc.pageProcessors[ppIndex];
-
-    if (patchValue._exportId)
-      patchValue = { ...patchValue, _exportId: createdId };
-    else patchValue = { ...patchValue, _importId: createdId };
-
-    flowPatchSet = [
-      {
-        op: 'replace',
-        path: `/pageProcessors/${
-          ppIndex === -1 ? flowDoc.pageProcessors.length : ppIndex
-        }`,
-        value: patchValue,
-      },
-    ];
+    yield put(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
   }
 
-  yield put(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
   const { skipRetries } = resourceValues;
 
-  if (
-    ['exports', 'pageGenerator'].includes(resourceType) &&
-    skipRetries !== undefined
-  )
+  if (['exports'].includes(resourceType) && skipRetries !== undefined)
     yield call(patchSkipRetries, {
       resourceId: createdId,
       flowId,
@@ -570,7 +531,7 @@ export function* submitResourceForm(params) {
   // perform submit cleanup
   if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
 
-  const { submitFailed } = yield select(
+  const { submitFailed, skipCommit } = yield select(
     selectors.resourceFormState,
     resourceType,
     resourceId
@@ -578,8 +539,27 @@ export function* submitResourceForm(params) {
   // if it fails return
 
   if (submitFailed) return;
+  // for page generators and processors
+
+  if (skipCommit) {
+    if (['pageGenerator', 'pageProcessor'].includes(resourceType)) {
+      // is pageGenerator or pageProcessor
+
+      // if its not created from an existing export or from an existing import
+      const { exportId, importId } = values;
+
+      if (!exportId && !importId) return;
+    } else return;
+  }
+
+  // resource has been
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') updatedResourceType = 'exports';
+  else if (resourceType === 'pageProcessor') updatedResourceType = 'imports';
+  else updatedResourceType = resourceType;
   yield call(updateFlowDoc, {
-    resourceType,
+    resourceType: updatedResourceType,
     resourceId,
     flowId,
     resourceValues: values,

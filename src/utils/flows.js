@@ -231,3 +231,103 @@ export const isOldFlowSchema = ({
   pageProcessors,
   _importId,
 }) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
+
+export const generateUpdatePatchesToFlow = ({
+  flowDoc,
+  resourceType,
+  resourceId,
+  createdId,
+}) => {
+  let flowPatchSet;
+
+  if (resourceType === 'exports') {
+    const pgIndex =
+      flowDoc &&
+      flowDoc.pageGenerators &&
+      flowDoc.pageGenerators.findIndex(pg => pg._exportId === resourceId);
+
+    if (pgIndex === null) {
+      flowPatchSet = [
+        {
+          op: 'add',
+          path: `/pageGenerators`,
+          value: [],
+        },
+        {
+          op: 'add',
+          path: `/pageGenerators/0`,
+          value: { _exportId: createdId },
+        },
+      ];
+    } else if (pgIndex === -1) {
+      flowPatchSet = [
+        {
+          op: 'add',
+          path: `/pageGenerators/${flowDoc.pageGenerators.length}`,
+          value: { _exportId: createdId },
+        },
+      ];
+    } else {
+      const patchValue = {
+        ...flowDoc.pageGenerators[pgIndex],
+        _exportId: createdId,
+      };
+
+      flowPatchSet = [
+        {
+          op: 'replace',
+          path: `/pageGenerators/${pgIndex}`,
+          value: patchValue,
+        },
+      ];
+    }
+  } else {
+    const ppIndex =
+      flowDoc &&
+      flowDoc.pageProcessors &&
+      flowDoc.pageProcessors.findIndex(pp =>
+        pp.type === 'export'
+          ? pp._exportId === resourceId
+          : pp._importId === resourceId
+      );
+
+    if (ppIndex === null) {
+      flowPatchSet = [
+        {
+          op: 'add',
+          path: `/pageProcessors`,
+          value: [],
+        },
+        {
+          op: 'add',
+          path: `/pageProcessors/0`,
+          value: { _importId: createdId },
+        },
+      ];
+    } else if (ppIndex === -1) {
+      flowPatchSet = [
+        {
+          op: 'add',
+          path: `/pageProcessors/${flowDoc.pageProcessors.length}`,
+          value: { _importId: createdId },
+        },
+      ];
+    } else {
+      let patchValue = flowDoc.pageProcessors[ppIndex];
+
+      if (patchValue._exportId)
+        patchValue = { ...patchValue, _exportId: createdId };
+      else patchValue = { ...patchValue, _importId: createdId };
+
+      flowPatchSet = [
+        {
+          op: 'replace',
+          path: `/pageProcessors/${ppIndex}`,
+          value: patchValue,
+        },
+      ];
+    }
+  }
+
+  return flowPatchSet;
+};

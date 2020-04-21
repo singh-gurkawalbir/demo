@@ -143,7 +143,7 @@ const PageGenerator = ({
       {
         op: 'replace',
         path: `/pageGenerators/${index}`,
-        value: { _exportId: newId },
+        value: { _exportId: pending ? newId : pg._exportId },
       },
     ];
 
