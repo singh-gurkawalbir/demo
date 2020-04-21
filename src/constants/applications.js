@@ -375,7 +375,7 @@ const connectors = [
   // },
   {
     id: 'googlemail',
-    name: 'Gmail',
+    name: 'Google Mail',
     type: 'rest',
     assistant: 'googlemail',
   },
@@ -715,7 +715,7 @@ const connectors = [
   {
     id: 'surveymonkey',
     name: 'SurveyMonkey',
-    type: 'rest',
+    type: 'http',
     assistant: 'surveymonkey',
     webhook: true,
   },
