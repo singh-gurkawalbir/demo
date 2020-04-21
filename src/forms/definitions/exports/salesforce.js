@@ -125,7 +125,7 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -155,7 +155,7 @@ export default {
     'salesforce.soql': {
       id: 'salesforce.soql',
       type: 'soqlquery',
-      label: 'SOQL Query',
+      label: 'SOQL query',
       omitWhenHidden: true,
       filterKey: 'salesforce-soqlQuery',
       required: true,
@@ -171,7 +171,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -200,7 +200,7 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date Field',
+      label: 'Date field',
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
@@ -215,7 +215,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       placeholder: 'Please select a boolean field',
       fieldName: 'onceExportBooleanFields',
       filterKey: 'salesforce-recordType',
