@@ -108,7 +108,7 @@ export default {
     ) : (
       <SwitchOnOff
         disabled={disabled}
-        on={!disabled && !flow.disabled}
+        on={!flow.disabled}
         onClick={enableOrDisableFlow}
         data-test="switchFlowOnOff"
       />

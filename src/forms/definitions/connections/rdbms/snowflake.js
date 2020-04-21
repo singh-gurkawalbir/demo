@@ -35,7 +35,10 @@ export default {
       label: 'Warehouse name',
       required: true,
     },
-    rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    _borrowConcurrencyFromConnectionId: {
+      fieldId: '_borrowConcurrencyFromConnectionId',
+    },
+    'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
   },
   layout: {
     fields: [
@@ -51,7 +54,10 @@ export default {
       {
         collapsed: true,
         label: 'Advanced Settings',
-        fields: ['rdbmsAdvanced'],
+        fields: [
+          '_borrowConcurrencyFromConnectionId',
+          'rdbms.concurrencyLevel',
+        ],
       },
     ],
   },

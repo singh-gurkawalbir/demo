@@ -293,7 +293,6 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
     height: theme.spacing(30),
     overflow: 'hidden',
     width: '100%',

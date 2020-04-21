@@ -2,13 +2,13 @@ export default {
   'assistantMetadata.version': {
     type: 'assistantoptions',
     assistantFieldType: 'version',
-    label: 'API Version',
+    label: 'API version',
     required: true,
   },
   'assistantMetadata.resource': {
     type: 'assistantoptions',
     assistantFieldType: 'resource',
-    label: 'API Name',
+    label: 'API name',
     required: true,
   },
   'assistantMetadata.operation': {
@@ -20,7 +20,7 @@ export default {
   'assistantMetadata.exportType': {
     type: 'assistantoptions',
     assistantFieldType: 'exportType',
-    label: 'Export Type',
+    label: 'Export type',
     required: true,
   },
   'assistantMetadata.searchParams': {

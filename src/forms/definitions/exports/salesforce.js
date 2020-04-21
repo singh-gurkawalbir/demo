@@ -27,6 +27,15 @@ export default {
           sObjectTypeField &&
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
+    } else if (fieldId === 'salesforce.distributed.skipExportFieldId') {
+      const sObjectTypeField = fields.find(
+        field => field.fieldId === 'salesforce.sObjectType'
+      );
+
+      return {
+        commMetaPath: `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`,
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+      };
     }
 
     const soqlField = fields.find(field => field.id === 'salesforce.soql');
@@ -104,7 +113,6 @@ export default {
       ...retValues,
     };
   },
-
   fieldMap: {
     common: { formId: 'common' },
     exportOneToMany: { formId: 'exportOneToMany' },
@@ -117,7 +125,7 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -139,7 +147,6 @@ export default {
 
         // if its create
         if (isNew) return 'records';
-
         const output = r && r.salesforce && r.salesforce.id;
 
         return output ? 'blob' : 'records';
@@ -148,7 +155,7 @@ export default {
     'salesforce.soql': {
       id: 'salesforce.soql',
       type: 'soqlquery',
-      label: 'SOQL Query',
+      label: 'SOQL query',
       omitWhenHidden: true,
       filterKey: 'salesforce-soqlQuery',
       required: true,
@@ -164,7 +171,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -193,7 +200,7 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date Field',
+      label: 'Date field',
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
@@ -208,7 +215,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       placeholder: 'Please select a boolean field',
       fieldName: 'onceExportBooleanFields',
       filterKey: 'salesforce-recordType',
@@ -227,6 +234,19 @@ export default {
     'salesforce.id': { fieldId: 'salesforce.id' },
     'salesforce.distributed.batchSize': {
       fieldId: 'salesforce.distributed.batchSize',
+    },
+    'salesforce.distributed.skipExportFieldId': {
+      fieldId: 'salesforce.distributed.skipExportFieldId',
+      type: 'refreshableselect',
+      filterKey: 'salesforce-recordType-boolean',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      visibleWhenAll: [
+        {
+          field: 'salesforce.executionType',
+          is: ['realtime'],
+        },
+        { field: 'outputMode', is: ['records'] },
+      ],
     },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
@@ -306,6 +326,7 @@ export default {
             fields: [
               'pageSize',
               'salesforce.distributed.batchSize',
+              'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
             ],
           },

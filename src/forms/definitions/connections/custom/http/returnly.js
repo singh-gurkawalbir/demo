@@ -23,13 +23,12 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.apiKey': {
       id: 'http.encrypted.apiKey',
-      label: 'API Key',
+      label: 'API key',
       defaultValue: '',
       required: true,
       type: 'text',
+      helpKey: 'returnly.connection.http.encrypted.apiKey',
       inputType: 'password',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Summary tab in Your Account section.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

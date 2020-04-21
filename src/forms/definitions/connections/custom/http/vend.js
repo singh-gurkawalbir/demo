@@ -23,8 +23,6 @@ export default {
       endAdornment: '.vendhq.com',
       label: 'Subdomain',
       required: true,
-      helpText:
-        "Please enter your SharePoint subdomain. For example, in https://temp-portal.sharepoint.com 'temp-portal' is the subdomain.",
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

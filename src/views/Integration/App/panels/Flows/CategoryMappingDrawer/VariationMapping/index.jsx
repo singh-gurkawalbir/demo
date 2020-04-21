@@ -19,11 +19,10 @@ import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 
-const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     // marginTop: theme.appBarHeight,
-    width: `50%`,
+    width: `60%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
@@ -31,39 +30,9 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     overflowX: 'hidden',
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
-    padding: theme.spacing(2, 3),
-  },
-  mappingContainer: {
-    padding: '0 0 10px 20px',
-    border: 'solid 1px',
-    borderColor: theme.palette.background.default,
-  },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-  },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
     float: 'left',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  settingsForm: {
-    maxHeight: `calc(100vh - 120px)`,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  nested: {
-    paddingLeft: theme.spacing(4),
-  },
-  drawerPaperInner: {
-    width: drawerWidth,
-    position: 'relative',
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -79,35 +48,16 @@ const useStyles = makeStyles(theme => ({
     width: '40%',
     marginRight: 45,
   },
-  toolbar: theme.mixins.toolbar,
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
-  childExpansionPanel: {
-    background: theme.palette.background.default,
-    marginTop: 10,
-    boxShadow: 'none',
-  },
-
-  secondaryHeading: {
-    fontFamily: 'Roboto500',
-    lineHeight: `${theme.spacing(3)}px`,
-  },
-
   subNav: {
+    minWidth: '200px',
     width: '20%',
     background: theme.palette.background.paper2,
     paddingTop: theme.spacing(1),
-  },
-  deleteIcon: {
-    position: 'absolute',
-    right: '20px',
-  },
-  variationIcon: {
-    position: 'absolute',
-    right: '50px',
   },
   content: {
     width: '100%',
@@ -115,21 +65,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
-    background: 'blue',
-  },
-  listItem: {
-    color: theme.palette.text.primary,
-  },
-  activeListItem: {
-    color: theme.palette.primary.main,
-  },
-  default: {
-    marginBottom: 10,
+    background: theme.palette.primary.main,
   },
   variationMapWrapper: {
     display: 'flex',
   },
-  // Todo: Sravan if you are using the Expansion panel then below css will not useful.
   mappingWrapper: {
     marginLeft: 20,
     marginTop: theme.spacing(1),
@@ -237,6 +177,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       <Drawer
         anchor="right"
         open={!!match}
+        BackdropProps={{ invisible: true }}
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -245,6 +186,8 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuie`}
           flowId={flowId}
           addCategory
+          backToParent
+          help
           onClose={handleClose}
         />
         {metadataLoaded ? (
