@@ -2,6 +2,7 @@ import produce from 'immer';
 import { sortBy } from 'lodash';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
 const addSubHeaderElement = (acc, curr) => {
   if (acc.length === 0) {
     acc.push(...[{ subHeader: curr.vendor }, curr]);
@@ -16,7 +17,7 @@ const addSubHeaderElement = (acc, curr) => {
 };
 
 function generateFileDefinitionOptions({ definitions }) {
-  if (!definitions || !definitions.length) return {};
+  if (!definitions || !definitions.length) return emptyObj;
   const categorizedDefinitionMap = {};
   const definitionOptions = definitions.map(({ name, _id, ...rest }) => ({
     ...rest,

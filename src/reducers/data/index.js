@@ -57,10 +57,6 @@ export function categoryRelationshipData(state, integrationId, flowId) {
 }
 
 // #endregion
-export function processors(state) {
-  return fromResources.processors(state && state.resources);
-}
-
 export function hasData(state, resourceType) {
   return fromResources.hasData(state && state.resources, resourceType);
 }
@@ -244,6 +240,9 @@ export function jobErrorRetryObject(state, retryId) {
   return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
 
+// TODO: Santosh, since ALL selectors "get" something, its meaningless to add
+// "get" prefix to selector names. If you run into examples like this, pls
+// rename.
 export const getPreBuiltFileDefinitions = (state, format) =>
   fromFileDefinitions.getPreBuiltFileDefinitions(
     state && state.fileDefinitions,
