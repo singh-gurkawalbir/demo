@@ -523,33 +523,6 @@ export function* submitResourceForm(params) {
   });
 }
 
-/*
-preCommit
-  //delete ui fieldValues
-  //deleta rawData
-  //consolidating
-
-  //generatePatches
-  //final Payload 
-
-
-
-
-commit
-  //semi finalPayload
-  //perform semiPayLoad
-
-  //further operations on Payload
-
-  //we decide to commit this
-
-
-  //sneak some operation on and off operation
-
-
-postCommit
-
-*/
 export function* saveAndContinueResourceForm(params) {
   const { resourceId } = params;
 
