@@ -246,7 +246,7 @@ export const generateUpdatePatchesToFlow = ({
       flowDoc.pageGenerators &&
       flowDoc.pageGenerators.findIndex(pg => pg._exportId === resourceId);
 
-    if (pgIndex === null) {
+    if (pgIndex === undefined) {
       flowPatchSet = [
         {
           op: 'add',
@@ -291,7 +291,7 @@ export const generateUpdatePatchesToFlow = ({
           : pp._importId === resourceId
       );
 
-    if (ppIndex === null) {
+    if (ppIndex === undefined) {
       flowPatchSet = [
         {
           op: 'add',
