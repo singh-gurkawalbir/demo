@@ -111,7 +111,7 @@ export default function ProfileMenuButton() {
               {accountOwnerEmail && (
                 <Fragment>
                   Account owner
-                  {isAccountOwner && `: ${accountOwnerEmail}`}
+                  {!isAccountOwner && `: ${accountOwnerEmail}`}
                 </Fragment>
               )}
             </Typography>

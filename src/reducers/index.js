@@ -1166,6 +1166,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromSession.integrationAppMappingMetadata(
+    state && state.session,
+    integrationId
+  );
+}
+
 export function isAddOnInstallInProgress(state, id) {
   return fromSession.isAddOnInstallInProgress(state && state.session, id);
 }
