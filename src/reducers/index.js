@@ -3981,16 +3981,18 @@ export function getFlowUpdatePatchesOnPGorPPSave(
         },
       ];
     }
-  }
-  // imports resourcetype
+  } else {
+    // imports resourcetype
 
-  flowPatches = [
-    {
-      op: 'add',
-      path: `/pageProcessors/${addIndexPP}`,
-      value: { type: 'import', _importId: createdId },
-    },
-  ];
+    flowPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors/${addIndexPP}`,
+        value: { type: 'import', _importId: createdId },
+      },
+    ];
+  }
+
   const missingPatches = getMissingPatchSet(
     flowPatches && flowPatches.map(p => p.path),
     flowDoc
