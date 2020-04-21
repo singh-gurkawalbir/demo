@@ -24,7 +24,7 @@ import {
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
-import { getFieldById, getMissingPatchSet } from '../forms/utils';
+import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -3958,7 +3958,7 @@ export function getFlowUpdatePatchesOnPGorPPSave(
   const createdResource = resource(state, resourceType, createdId);
   const { merged: flowDoc } = resourceData(state, 'flows', flowId);
   const addIndexPP =
-    (flowDoc && flowDoc.pageProcessor && flowDoc.pageProcessor.length) || 0;
+    (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
   const addIndexPG =
     (flowDoc && flowDoc.pageGenerators && flowDoc.pageGenerators.length) || 0;
   let flowPatches = [];
@@ -3973,13 +3973,32 @@ export function getFlowUpdatePatchesOnPGorPPSave(
         },
       ];
     } else {
-      flowPatches = [
-        {
-          op: 'add',
-          path: `/pageGenerators/${addIndexPG}`,
-          value: { type: 'export', _exportId: createdId },
-        },
-      ];
+      // only page generators
+      // temp patch of application maybe present if its data loader...
+      // perform replace in that case
+      // eslint-disable-next-line no-lonely-if
+      if (
+        flowDoc &&
+        flowDoc.pageGenerators &&
+        flowDoc.pageGenerators[0] &&
+        flowDoc.pageGenerators[0].application
+      ) {
+        flowPatches = [
+          {
+            op: 'replace',
+            path: `/pageGenerators/0`,
+            value: { _exportId: createdId },
+          },
+        ];
+      } else {
+        flowPatches = [
+          {
+            op: 'add',
+            path: `/pageGenerators/${addIndexPG}`,
+            value: { _exportId: createdId },
+          },
+        ];
+      }
     }
   } else {
     // imports resourcetype
@@ -3993,24 +4012,47 @@ export function getFlowUpdatePatchesOnPGorPPSave(
     ];
   }
 
-  const missingPatches = getMissingPatchSet(
-    flowPatches && flowPatches.map(p => p.path),
-    flowDoc
-  );
+  // only one flow patch so
+
+  let missingPatches = [];
+
+  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators)
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageGenerators`,
+        value: [],
+      },
+    ];
+  else if (
+    flowPatches[0].path.includes('pageProcessors') &&
+    !flowDoc.pageProcessors
+  )
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors`,
+        value: [],
+      },
+    ];
 
   return [...missingPatches, ...flowPatches];
 }
 
-export function skipRetriesPatches(state, flowId, tempResourceId, skipRetries) {
+export function skipRetriesPatches(state, flowId, resourceId, skipRetries) {
   const { merged: flow } = resourceData(state, 'flows', flowId);
-  const createdId = createdResourceId(tempResourceId);
+  const createdId = createdResourceId(state, resourceId);
   const index =
     flow.pageGenerators &&
-    flow.pageGenerators.findIndex(pg => pg._exportId === createdId);
+    flow.pageGenerators.findIndex(
+      pg => pg._exportId === (createdId || resourceId)
+    );
+  const opDetermination =
+    flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
 
   return [
     {
-      op: 'replace',
+      op: opDetermination,
       path: `/pageGenerators/${index}/skipRetries`,
       value: skipRetries,
     },

@@ -445,23 +445,25 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
     resourceId,
     flowId
   );
-  const { skipRetries } = resourceValues;
-  let skipRetryPatches = [];
+
+  yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
+  // TODO: is skipRetries a ui field value should this be deleted
+  // So that it does not get applied at the root of flow doc
+  const skipRetries = resourceValues['/skipRetries'];
 
   if (['exports'].includes(resourceType) && skipRetries !== undefined) {
-    skipRetryPatches = yield select(
+    const skipRetryPatches = yield select(
       selectors.skipRetriesPatches,
       flowId,
       resourceId,
-      skipRetries === 'true'
+      !!skipRetries
+    );
+
+    yield put(
+      actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE)
     );
   }
 
-  const consolidatedPatches = [...flowPatches, ...skipRetryPatches];
-
-  yield put(
-    actions.resource.patchStaged(flowId, consolidatedPatches, SCOPES.VALUE)
-  );
   yield call(commitStagedChanges, {
     resourceType: 'flows',
     id: flowId,

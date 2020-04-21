@@ -174,20 +174,6 @@ const PageProcessor = ({
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
-    const flowPatchSet = [
-      {
-        op: 'replace',
-        path: `/pageProcessors/${index}`,
-        value: {
-          type: pp.type,
-          [pp.type === 'export' ? '_exportId' : '_importId']: pending
-            ? newId
-            : resourceId,
-        },
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
     const to = pending
       ? `${match.url}/add/pageProcessor/${newId}`
       : `${match.url}/edit/${resourceType}/${resourceId}`;
@@ -199,14 +185,11 @@ const PageProcessor = ({
     }
   }, [
     dispatch,
-    flowId,
     history,
-    index,
     match.isExact,
     match.url,
     pending,
     pp._connectionId,
-    pp.type,
     resource,
     resourceId,
     resourceType,

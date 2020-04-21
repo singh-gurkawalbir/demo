@@ -139,15 +139,6 @@ const PageGenerator = ({
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
-    const flowPatchSet = [
-      {
-        op: 'replace',
-        path: `/pageGenerators/${index}`,
-        value: { _exportId: pending ? newId : pg._exportId },
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(flowId, flowPatchSet, 'value'));
     let to = pending
       ? `${match.url}/add/pageGenerator/${newId}`
       : `${match.url}/edit/exports/${pg._exportId}`;
@@ -161,9 +152,7 @@ const PageGenerator = ({
     }
   }, [
     dispatch,
-    flowId,
     history,
-    index,
     isDataLoader,
     match.isExact,
     match.url,
