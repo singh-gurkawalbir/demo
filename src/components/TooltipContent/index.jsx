@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
+import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({
   root: {
@@ -21,7 +22,11 @@ function TooltipContent({ children, className }) {
       className={clsx(classes.root, className)}
       component="div"
       variant="body2">
-      {children}
+      {/<\/?[a-z][\s\S]*>/i.test(children) ? (
+        <RawHtml html={children} />
+      ) : (
+        children
+      )}
     </Typography>
   );
 }

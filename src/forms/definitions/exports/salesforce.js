@@ -27,6 +27,15 @@ export default {
           sObjectTypeField &&
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
+    } else if (fieldId === 'salesforce.distributed.skipExportFieldId') {
+      const sObjectTypeField = fields.find(
+        field => field.fieldId === 'salesforce.sObjectType'
+      );
+
+      return {
+        commMetaPath: `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`,
+        disableFetch: !(sObjectTypeField && sObjectTypeField.value),
+      };
     }
 
     const soqlField = fields.find(field => field.id === 'salesforce.soql');
@@ -104,7 +113,6 @@ export default {
       ...retValues,
     };
   },
-
   fieldMap: {
     common: { formId: 'common' },
     exportOneToMany: { formId: 'exportOneToMany' },
@@ -139,7 +147,6 @@ export default {
 
         // if its create
         if (isNew) return 'records';
-
         const output = r && r.salesforce && r.salesforce.id;
 
         return output ? 'blob' : 'records';
@@ -228,6 +235,19 @@ export default {
     'salesforce.distributed.batchSize': {
       fieldId: 'salesforce.distributed.batchSize',
     },
+    'salesforce.distributed.skipExportFieldId': {
+      fieldId: 'salesforce.distributed.skipExportFieldId',
+      type: 'refreshableselect',
+      filterKey: 'salesforce-recordType-boolean',
+      refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      visibleWhenAll: [
+        {
+          field: 'salesforce.executionType',
+          is: ['realtime'],
+        },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
@@ -306,6 +326,7 @@ export default {
             fields: [
               'pageSize',
               'salesforce.distributed.batchSize',
+              'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
             ],
           },
