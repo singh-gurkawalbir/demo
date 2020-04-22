@@ -438,10 +438,165 @@ export function* submitFormValues({
   );
 }
 
-function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
-  const flowPatches = yield select(
-    selectors.getFlowUpdatePatchesOnPGorPPSave,
+export function* getFlowUpdatePatchesOnPGorPPSave(
+  resourceType,
+  tempResourceId,
+  flowId
+) {
+  if (
+    !['exports', 'imports'].includes(resourceType) ||
+    !flowId ||
+    !isNewId(tempResourceId)
+  )
+    return [];
+
+  // is pageGenerator or pageProcessor
+  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const createdResource = yield select(
+    selectors.resource,
     resourceType,
+    createdId
+  );
+  const { merged: flowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  const addIndexPP =
+    (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
+  const addIndexPG =
+    (flowDoc && flowDoc.pageGenerators && flowDoc.pageGenerators.length) || 0;
+  let flowPatches = [];
+
+  if (resourceType === 'exports') {
+    if (createdResource.isLookup) {
+      flowPatches = [
+        {
+          op: 'add',
+          path: `/pageProcessors/${addIndexPP}`,
+          value: { type: 'export', _exportId: createdId },
+        },
+      ];
+    } else {
+      // only page generators
+      // temp patch of application with value 'dataLoader' maybe present if its data loader...
+      // perform replace in that case
+      // eslint-disable-next-line no-lonely-if
+      if (
+        flowDoc &&
+        flowDoc.pageGenerators &&
+        flowDoc.pageGenerators[0] &&
+        flowDoc.pageGenerators[0].application &&
+        flowDoc.pageGenerators[0].application === 'dataLoader'
+      ) {
+        flowPatches = [
+          {
+            op: 'replace',
+            path: `/pageGenerators/0`,
+            value: { _exportId: createdId },
+          },
+        ];
+      } else {
+        flowPatches = [
+          {
+            op: 'add',
+            path: `/pageGenerators/${addIndexPG}`,
+            value: { _exportId: createdId },
+          },
+        ];
+      }
+    }
+  } else {
+    // imports resourcetype
+
+    flowPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors/${addIndexPP}`,
+        value: { type: 'import', _importId: createdId },
+      },
+    ];
+  }
+
+  // only one flow patch so
+
+  let missingPatches = [];
+
+  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators)
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageGenerators`,
+        value: [],
+      },
+    ];
+  else if (
+    flowPatches[0].path.includes('pageProcessors') &&
+    !flowDoc.pageProcessors
+  )
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors`,
+        value: [],
+      },
+    ];
+
+  return [...missingPatches, ...flowPatches];
+}
+
+export function* skipRetriesPatches(flowId, resourceId, skipRetries) {
+  const { merged: flow } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  const createdId = yield select(selectors.createdResourceId, resourceId);
+  const index =
+    flow.pageGenerators &&
+    flow.pageGenerators.findIndex(
+      pg => pg._exportId === (createdId || resourceId)
+    );
+  const opDetermination =
+    flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
+
+  return [
+    {
+      op: opDetermination,
+      path: `/pageGenerators/${index}/skipRetries`,
+      value: skipRetries,
+    },
+  ];
+}
+
+function* getResourceType({ resourceType, resourceId }) {
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') updatedResourceType = 'exports';
+  else if (resourceType === 'pageProcessor') {
+    const createdId = yield select(selectors.createdResourceId, resourceId);
+    const importResource = yield select(
+      selectors.resource,
+      'imports',
+      createdId
+    );
+
+    // it should be either an export or an import
+    if (importResource) updatedResourceType = 'imports';
+    else updatedResourceType = 'exports';
+  } else updatedResourceType = resourceType;
+
+  return updatedResourceType;
+}
+
+function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
+  const updatedResourceType = yield call(getResourceType, {
+    resourceType,
+    resourceId,
+  });
+  const flowPatches = yield call(
+    getFlowUpdatePatchesOnPGorPPSave,
+    updatedResourceType,
     resourceId,
     flowId
   );
@@ -451,9 +606,9 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
   // So that it does not get applied at the root of flow doc
   const skipRetries = resourceValues['/skipRetries'];
 
-  if (['exports'].includes(resourceType) && skipRetries !== undefined) {
-    const skipRetryPatches = yield select(
-      selectors.skipRetriesPatches,
+  if (['exports'].includes(updatedResourceType) && skipRetries !== undefined) {
+    const skipRetryPatches = yield call(
+      skipRetriesPatches,
       flowId,
       resourceId,
       !!skipRetries
@@ -493,30 +648,26 @@ export function* submitResourceForm(params) {
     resourceType,
     resourceId
   );
+
   // if it fails return
-
   if (submitFailed) return;
-  // for page generators and processors
 
+  // when there is nothing to commit there is no reason to update the flow doc..hence we return
+  // however there is a usecase where we create a resource from an existing resource and that
+  // is a one step process with skipCommit being true...we have to update the flow doc in that case
   if (skipCommit) {
     if (['pageGenerator', 'pageProcessor'].includes(resourceType)) {
-      // is pageGenerator or pageProcessor
-
-      // if its not created from an existing export or from an existing import
       const { exportId, importId } = values;
 
+      // if exportId or importId values are present it indicated its created from an existing import or export
+      // in that case we allow a flow doc update
+      // if its not created from an existing export or from an existing import
       if (!exportId && !importId) return;
     } else return;
   }
 
-  // resource has been
-  let updatedResourceType;
-
-  if (resourceType === 'pageGenerator') updatedResourceType = 'exports';
-  else if (resourceType === 'pageProcessor') updatedResourceType = 'imports';
-  else updatedResourceType = resourceType;
   yield call(updateFlowDoc, {
-    resourceType: updatedResourceType,
+    resourceType,
     resourceId,
     flowId,
     resourceValues: values,
