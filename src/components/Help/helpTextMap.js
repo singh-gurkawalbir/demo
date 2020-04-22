@@ -619,8 +619,20 @@ export default {
     'Please enter your API token here.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
   'connection.rest.tokenLocation':
     "Use this field to specify where in the HTTP request the API token should be located.  If both 'URL Parameter' and 'Header' are supported by the REST API then 'Header' is the preferred option because HTTP header data is slightly less likely to end up in an access log file (i.e. in the REST API's server logs).",
+  'connection.configureTokenRefresh':
+    'If your token is going to expire, you set up automatic refresh though integrator.io. You’ll need to get some info from the API documentation for the app or system that you’re working with for refresh token paths and any custom headers for the token request.',
   'connection.rest.tokenParam':
     "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=bearerToken'.",
+  'connection.rest.refreshTokenURI':
+    'The URL that intrgrator.io will need to call to refresh the token.',
+  'connection.rest.refreshTokenMediaType':
+    'Choose the media type for refresh token request body.',
+  'connection.rest.refreshTokenMethod':
+    'Choose the HTTP method for the refresh token request.',
+  'connection.rest.refreshTokenPath':
+    'If the token will be returned in the response body, you can provide a path to the token here.',
+  'connection.rest.refreshTokenHeaders':
+    'You can configure the headers for the refresh token request with custom key value pairs that are specific to your needs.',
   'connection.rest.scope':
     "Use this field to list out all the scope values that should be sent when a connection is authorized.  The list of supported scopes for any given REST API should be documented clearly in that API's user guide.  If you cannot find this info then please contact the company, or author that owns the API.",
   'connection.rest.scopeDelimiter':
