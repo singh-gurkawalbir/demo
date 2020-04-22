@@ -182,6 +182,8 @@ const getResourceFormAssets = ({
       if (isNew) {
         meta = formMeta.connections.new;
       } else if (resource && resource.assistant === 'financialforce') {
+        // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
         meta = formMeta.connections.salesforce;
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
@@ -230,6 +232,7 @@ const getResourceFormAssets = ({
           type === 'salesforce' &&
           resource.assistant === 'financialforce'
         ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
           meta = meta.salesforce;
         } else if (type === 'rdbms') {
           const rdbmsSubType =
@@ -274,6 +277,8 @@ const getResourceFormAssets = ({
           type === 'salesforce' &&
           resource.assistant === 'financialforce'
         ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
           meta = meta.salesforce;
         } else if (
           resource &&
