@@ -21,15 +21,21 @@ export default {
       delete retValues['/http/auth/oauth/authURI'];
       delete retValues['/http/auth/oauth/tokenURI'];
       delete retValues['/http/auth/oauth/scopeDelimiter'];
+      delete retValues['/http/auth/oauth/scope'];
       delete retValues['/http/auth/oauth/callbackURL'];
       retValues['/http/auth/oauth'] = undefined;
     } else {
+      retValues['/http/baseURI'] = `${
+        formValues['/oauth/instanceURI']
+      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+        formValues['/http/unencrypted/endpointVersion']
+      }`;
       retValues['/http/auth/oauth/authURI'] = `${
         formValues['/oauth/instanceURI']
-      }/identity/connect/authorize`;
+      }/AcumaticaERP/identity/connect/authorize`;
       retValues['/http/auth/oauth/tokenURI'] = `${
         formValues['/oauth/instanceURI']
-      }/identity/connect/token`;
+      }/AcumaticaERP/identity/connect/token`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
       delete retValues['/http/auth/cookie/successStatusCode'];
@@ -37,11 +43,10 @@ export default {
       delete retValues['/http/auth/cookie/body'];
       delete retValues['/http/encrypted/cookieString'];
       delete retValues['/instanceURI'];
-      delete retValues['/http/unencrypted/endpointName'];
       delete retValues['/http/unencrypted/username'];
       delete retValues['/http/unencrypted/password'];
       delete retValues['/http/encrypted/cookieString'];
-
+      delete retValues['/http/unencrypted/company'];
       retValues['/http/auth/cookie'] = undefined;
     }
 
@@ -128,7 +133,7 @@ export default {
       helpKey: 'acumatica.connection.http.unencrypted.endpointName',
       label: 'Endpoint name',
       required: true,
-      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
+      visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -142,7 +147,7 @@ export default {
       helpKey: 'acumatica.connection.http.unencrypted.endpointVersion',
       label: 'Endpoint version',
       required: true,
-      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
+      visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -213,12 +218,12 @@ export default {
       'http.auth.type',
       '_agentId',
       'instanceURI',
+      'oauth.instanceURI',
       'http.unencrypted.endpointName',
       'http.unencrypted.endpointVersion',
       'http.unencrypted.username',
       'http.encrypted.password',
       'http.unencrypted.company',
-      'oauth.instanceURI',
       'http.auth.oauth.scope',
       'genericOauth',
       'http._iClientId',
