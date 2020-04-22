@@ -357,7 +357,6 @@ export default function ConnectorInstallation(props) {
             resourceId={connection.newId}
             resource={connection.doc}
             resourceType="connections"
-            environment="production"
             connectionType={connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}

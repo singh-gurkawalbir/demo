@@ -127,6 +127,27 @@ export default {
           lookup,
         });
         break;
+      case adaptorTypeMap.RDBMSImport: {
+        // TODO: Temporary fix for support setting without lookup. Modify later once backend adds lookup for snowflake
+        const tempFieldMeta = RestMappingSettings.getMetaData({
+          value,
+          extractFields,
+          options,
+          lookups,
+          lookup,
+        });
+        const fieldMetaOptions =
+          tempFieldMeta.fieldMap.fieldMappingType.options[0];
+
+        fieldMetaOptions.items = fieldMetaOptions.items.filter(
+          item => item.label !== 'Lookup'
+        );
+        delete tempFieldMeta.layout.containers;
+        delete tempFieldMeta.layout.type;
+        fieldMeta = tempFieldMeta;
+        break;
+      }
+
       default:
     }
 

@@ -148,6 +148,10 @@ export default function InstallationWizard(props) {
       const newId = generateNewId();
       const connObj = { ...connectionMap[_connectionId] };
 
+      if (data && Object.prototype.hasOwnProperty.call(data, 'sandbox')) {
+        connObj.sandbox = !!data.sandbox;
+      }
+
       delete connObj._id;
       dispatch(
         actions.resource.patchStaged(

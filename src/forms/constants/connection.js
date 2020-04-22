@@ -168,6 +168,7 @@ export default {
     'practicepanther',
     'bigquery',
     'financialforce',
+    'zendesksell',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

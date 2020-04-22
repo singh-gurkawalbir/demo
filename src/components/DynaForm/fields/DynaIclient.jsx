@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, Fragment, useState } from 'react';
+import React, { useEffect, Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
@@ -12,9 +12,7 @@ export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
   );
   const dispatch = useDispatch();
   const [requestedOnLoad, setRequestedOnLoad] = useState(disableLoad);
-  const iClients = useMemo(() => (connection && connection.iClients) || [], [
-    connection,
-  ]);
+  const iClients = (connection && connection.iClients) || [];
 
   useEffect(() => {
     if (!iClients.length && connectionId && !requestedOnLoad) {

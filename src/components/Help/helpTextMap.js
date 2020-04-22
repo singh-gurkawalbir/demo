@@ -1,8 +1,6 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
-/* eslint-disable no-dupe-keys */
-// eslint-disable-next-line no-unused-vars
-const extractedHelpkeys = {
+export default {
   // fieldDefinitions
   'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -266,7 +264,8 @@ const extractedHelpkeys = {
     'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
   'liquidplanner.connection.http.auth.token.token':
     'The API Token of your LiquidPlanner account when using the Token authentication.',
-  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -520,7 +519,8 @@ const extractedHelpkeys = {
     'The username of your JIRA account.',
   'jira.connection.rest.basicAuth.password':
     'The password of your JIRA account.',
-  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.rest.bearerToken':
     'The access token of your Magento 2 account.',
   'bigcommerce.connection.rest.basicAuth.username':
@@ -541,9 +541,7 @@ const extractedHelpkeys = {
     'Please specify whether the record is being created or updated using this field.',
   'rest.import.rest.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-};
 
-export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':
