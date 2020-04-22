@@ -36,7 +36,8 @@ export default function RecycleBin(props) {
   const list = useSelector(state =>
     selectors.resourceList(state, {
       type: 'recycleBinTTL',
-      ...{ ...defaultFilter, ...filter },
+      ...defaultFilter,
+      ...filter,
     })
   );
 

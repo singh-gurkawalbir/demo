@@ -14,11 +14,11 @@ import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilder
 
 const useStyles = makeStyles(theme => ({
   container: {
-    marginTop: theme.spacing(1),
     overflowY: 'off',
   },
   label: {
     fontSize: '12px',
+    marginTop: theme.spacing(1),
   },
   editorButton: {
     float: 'right',

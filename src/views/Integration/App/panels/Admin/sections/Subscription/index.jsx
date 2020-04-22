@@ -82,9 +82,11 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const supportsMultiStore = !!storeId;
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
+  const version = useSelector(state => {
+    const integration = selectors.integrationAppSettings(state, integrationId);
+
+    return integration && integration.version;
+  });
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
@@ -137,16 +139,15 @@ export default function SubscriptionSection({ storeId, integrationId }) {
     upgradeText,
     upgradeRequested,
   } = license;
-  const { version } = integration;
   const handleUpgrade = () => {
     if (upgradeText === 'CONTACT US TO UPGRADE') {
       dispatch(
-        actions.integrationApp.settings.requestUpgrade(integration, {
+        actions.integrationApp.settings.requestUpgrade(integrationId, {
           licenseId: license._id,
         })
       );
     } else {
-      dispatch(actions.integrationApp.settings.upgrade(integration, license));
+      dispatch(actions.integrationApp.settings.upgrade(integrationId, license));
     }
   };
 
