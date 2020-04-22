@@ -7,6 +7,18 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
 }));
+const getRandomData = count => {
+  const x = [];
+  const y = [];
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < count; i++) {
+    x.push(i + 1);
+    y.push(Math.floor(Math.random() * 1000));
+  }
+
+  return { x, y };
+};
 
 export default function PlotlyDemo() {
   const classes = useStyles();
@@ -17,16 +29,16 @@ export default function PlotlyDemo() {
       <Plot
         data={[
           {
-            y: [100, 2000, 1500, 800, 900, 750, 1456],
-            x: [1, 2, 3, 4, 5, 6, 7],
+            y: getRandomData(1000).y,
+            x: getRandomData(1000).x,
             type: 'line',
             name: 'success',
             mode: 'lines+markers',
             marker: { color: 'green' },
           },
           {
-            y: [10, 200, 500, 900, 600, 1750, 1456],
-            x: [1, 2, 3, 4, 5, 6, 7],
+            y: getRandomData(1000).y,
+            x: getRandomData(1000).x,
             type: 'line',
             line: {
               shape: 'spline',
