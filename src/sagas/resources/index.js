@@ -710,7 +710,7 @@ export function* updateCustomSettings({ resourceId, resourceType, payload }) {
   const patchSet = [];
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
-  if (!resource.settingsForm) {
+  if (resource && !resource.settingsForm) {
     patchSet.push({ op: 'add', path: '/settingsForm', value: {} });
   }
 

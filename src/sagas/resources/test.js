@@ -1,4 +1,5 @@
-/* global describe, test, expect, beforeEach */
+/* global describe, test, expect, beforeEach, jest */
+import { runSaga } from 'redux-saga';
 import { call, put, select } from 'redux-saga/effects';
 import actions, { availableResources } from '../../actions';
 import {
@@ -609,7 +610,7 @@ describe('updateCustomSettings saga', () => {
     );
   });
 
-  test('should not add settingsForm if already present in resource selector', () => {
+  test('should not add settingsForm path if already present in resource selector', () => {
     const saga = updateCustomSettings({ resourceId, resourceType, payload });
     const expectedPatchSet = [
       { op: 'add', path: '/settingsForm/form', value: payload },
@@ -627,6 +628,72 @@ describe('updateCustomSettings saga', () => {
 
     expect(saga.next({}).value).toEqual(
       put(actions.resource.commitStaged(resourceType, resourceId, 'form-meta'))
+    );
+  });
+});
+
+async function recordSaga(sagaName, args, initialState = {}) {
+  const dispatched = [];
+
+  await runSaga(
+    {
+      dispatch: action => dispatched.push(action),
+      getState: () => initialState,
+    },
+    sagaName,
+    args
+  ).toPromise();
+
+  return dispatched;
+}
+
+describe('updateCustomSettings saga (the better way)', () => {
+  const resourceId = '1234';
+  const resourceType = 'imports';
+  const payload = 'dummy';
+
+  test('should add settingsForm path if missing in the resource', async () => {
+    selectors.resource = jest.fn().mockImplementationOnce(() => ({}));
+
+    const expectedPatchSet = [
+      { op: 'add', path: '/settingsForm', value: {} },
+      { op: 'add', path: '/settingsForm/form', value: payload },
+    ];
+    const dispatched = await recordSaga(updateCustomSettings, {
+      resourceId,
+      resourceType,
+      payload,
+    });
+
+    expect(dispatched[0]).toEqual(
+      actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
+    );
+
+    expect(dispatched[1]).toEqual(
+      actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
+    );
+  });
+
+  test('should not add settingsForm path if already present in resource selector', async () => {
+    selectors.resource = jest
+      .fn()
+      .mockImplementationOnce(() => ({ settingsForm: {} }));
+
+    const expectedPatchSet = [
+      { op: 'add', path: '/settingsForm/form', value: payload },
+    ];
+    const dispatched = await recordSaga(updateCustomSettings, {
+      resourceId,
+      resourceType,
+      payload,
+    });
+
+    expect(dispatched[0]).toEqual(
+      actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
+    );
+
+    expect(dispatched[1]).toEqual(
+      actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
     );
   });
 });
