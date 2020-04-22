@@ -167,6 +167,7 @@ export default {
     'clio',
     'practicepanther',
     'bigquery',
+    'financialforce',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
