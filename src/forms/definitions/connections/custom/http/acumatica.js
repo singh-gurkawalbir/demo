@@ -23,6 +23,7 @@ export default {
       delete retValues['/http/auth/oauth/scopeDelimiter'];
       delete retValues['/http/auth/oauth/scope'];
       delete retValues['/http/auth/oauth/callbackURL'];
+      delete retValues['/http/_iClientId'];
       retValues['/http/auth/oauth'] = undefined;
     } else {
       retValues['/http/baseURI'] = `${
@@ -202,12 +203,18 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
-      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
+      visibleWhenAll: [
+        { field: 'genericOauth', is: ['true'] },
+        { field: 'http.auth.type', is: ['oauth'] },
+      ],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
-      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
+      visibleWhen: [
+        { field: 'genericOauth', is: ['true'] },
+        { field: 'http.auth.type', is: ['oauth'] },
+      ],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
@@ -234,4 +241,38 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'oauth',
+      label: 'Save & authorize',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+      ],
+    },
+  ],
 };
