@@ -70,7 +70,6 @@ export default {
     'procurify',
     'strata',
     'aptrinsic',
-    'acumatica',
     'concur',
     'oandaexchangerates',
     'oandav20fxtrade',
