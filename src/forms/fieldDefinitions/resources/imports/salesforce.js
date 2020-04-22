@@ -3,7 +3,7 @@ import { isNewId } from '../../../../utils/resource';
 export default {
   'salesforce.api': {
     type: 'radiogroupforresetfields',
-    label: 'API Type',
+    label: 'API type',
     required: true,
     fieldsToReset: [
       { id: 'salesforce.operation', type: 'radiogroupforresetfields' },
@@ -36,7 +36,7 @@ export default {
   },
   'salesforce.document.id': {
     type: 'text',
-    label: 'Document Id',
+    label: 'Document ID',
     required: true,
     visibleWhenAll: [
       {
@@ -55,7 +55,7 @@ export default {
   },
   'salesforce.attachment.id': {
     type: 'text',
-    label: 'Attachment Id',
+    label: 'Attachment ID',
     required: true,
     visibleWhenAll: [
       {
@@ -74,7 +74,7 @@ export default {
   },
   'salesforce.document.name': {
     type: 'text',
-    label: 'Document Name',
+    label: 'Document name',
     required: true,
     visibleWhenAll: [
       {
@@ -93,7 +93,7 @@ export default {
   },
   'salesforce.attachment.name': {
     type: 'text',
-    label: 'Attachment Name',
+    label: 'Attachment name',
     required: true,
     visibleWhenAll: [
       {
@@ -130,7 +130,7 @@ export default {
   },
   'salesforce.document.folderId': {
     type: 'text',
-    label: 'Folder Id',
+    label: 'Folder ID',
     required: true,
     visibleWhenAll: [
       {
@@ -149,7 +149,7 @@ export default {
   },
   'salesforce.contentVersion.contentDocumentId': {
     type: 'text',
-    label: 'Content Document Id',
+    label: 'Content document ID',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -185,7 +185,7 @@ export default {
   },
   'salesforce.contentVersion.tagCsv': {
     type: 'text',
-    label: 'Tag CSV',
+    label: 'Tag csv',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -203,7 +203,7 @@ export default {
   },
   'salesforce.contentVersion.contentLocation': {
     type: 'select',
-    label: 'Content Location',
+    label: 'Content location',
     options: [
       {
         items: [
@@ -229,7 +229,7 @@ export default {
   },
   'salesforce.contentVersion.pathOnClient': {
     type: 'text',
-    label: 'Path On Client',
+    label: 'Path on client',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -247,7 +247,7 @@ export default {
   },
   'salesforce.attachment.parentId': {
     type: 'text',
-    label: 'Parent Id',
+    label: 'Parent ID',
     required: true,
     visibleWhenAll: [
       {
@@ -266,7 +266,7 @@ export default {
   },
   'salesforce.document.contentType': {
     type: 'text',
-    label: 'Content Type',
+    label: 'Content type',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -284,7 +284,7 @@ export default {
   },
   'salesforce.attachment.contentType': {
     type: 'text',
-    label: 'Content Type',
+    label: 'Content type',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -302,7 +302,7 @@ export default {
   },
   'salesforce.document.developerName': {
     type: 'text',
-    label: 'Developer Name',
+    label: 'Developer name',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -320,7 +320,7 @@ export default {
   },
   'salesforce.document.isInternalUseOnly': {
     type: 'checkbox',
-    label: 'For Internal Use Only?',
+    label: 'For internal use only?',
     required: true,
     visibleWhenAll: [
       {
@@ -339,7 +339,7 @@ export default {
   },
   'salesforce.document.isPublic': {
     type: 'checkbox',
-    label: 'Is Public Document?',
+    label: 'Is public document?',
     required: true,
     visibleWhenAll: [
       {
@@ -358,7 +358,7 @@ export default {
   },
   'salesforce.attachment.isPrivate': {
     type: 'checkbox',
-    label: 'Is Private?',
+    label: 'Is private?',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -376,7 +376,7 @@ export default {
   },
   'salesforce.blobsObjectType': {
     type: 'select',
-    label: 'SObject Type',
+    label: 'SObject type',
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
     visibleWhen: [
       {
@@ -396,7 +396,7 @@ export default {
     ],
   },
   'salesforce.sObjectType': {
-    label: 'SObject Type',
+    label: 'SObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
     commMetaPath: r =>
@@ -527,7 +527,7 @@ export default {
   },
   'salesforce.upsert.externalIdField': {
     type: 'refreshableselect',
-    label: 'Which External ID field should be used to Upsert?',
+    label: 'Which external ID field should be used to upsert?',
     filterKey: 'salesforce-externalIdFields',
     visibleWhenAll: [
       {
@@ -544,7 +544,7 @@ export default {
     type: 'textwithlookupextract',
     fieldType: 'ignoreExistingData',
     connectionId: r => r && r._connectionId,
-    label: 'Which export data field should map to External ID?',
+    label: 'Which export data field should map to external ID?',
     visibleWhenAll: [
       {
         field: 'salesforce.operation',

@@ -49,7 +49,7 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export from DynamoDB?',
+      label: 'What would you like to export from DynamoDB?',
     },
     'dynamodb.region': { fieldId: 'dynamodb.region' },
     'dynamodb.method': { fieldId: 'dynamodb.method' },
@@ -88,7 +88,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -116,7 +116,7 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
       type: 'text',
-      label: 'Once Boolean Field',
+      label: 'Once boolean field',
       visibleWhen: [
         {
           field: 'type',

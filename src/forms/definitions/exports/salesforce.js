@@ -28,6 +28,22 @@ export default {
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
     }
+
+    const soqlField = fields.find(field => field.id === 'salesforce.soql');
+    const dateField = fields.find(field => field.id === 'delta.dateField');
+
+    if (dateField) {
+      if (
+        soqlField &&
+        soqlField.value &&
+        soqlField.value.query &&
+        soqlField.value.query.includes('lastExportDateTime')
+      ) {
+        dateField.required = false;
+      } else {
+        dateField.required = true;
+      }
+    }
   },
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -101,7 +117,7 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -132,7 +148,7 @@ export default {
     'salesforce.soql': {
       id: 'salesforce.soql',
       type: 'soqlquery',
-      label: 'SOQL Query',
+      label: 'SOQL query',
       omitWhenHidden: true,
       filterKey: 'salesforce-soqlQuery',
       required: true,
@@ -148,7 +164,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -177,11 +193,12 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date Field',
+      label: 'Date field',
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
       connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['salesforce.soql', 'delta.dateField'],
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
     },
@@ -191,7 +208,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
-      label: 'Boolean Field',
+      label: 'Boolean field',
       placeholder: 'Please select a boolean field',
       fieldName: 'onceExportBooleanFields',
       filterKey: 'salesforce-recordType',

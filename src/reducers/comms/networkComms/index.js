@@ -108,6 +108,12 @@ function isHidden(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].hidden);
 }
 
+// TODO: @Santosh, This is a perfect candidate for memoization using re-select.
+// Reselect is a redux module which is used to cache the results of selectors IFF
+// there arguments don't change. Since this selector has no arguments, it would be
+// easy to cache... the cache would be invalidated any time some comms activity occurred.
+// I'm not sure if this is a frequently used selector and what the overall benefit
+// would be, but it could be a good exercise to learn how reselect works...
 export function allLoadingOrErrored(state) {
   if (!state || typeof state !== 'object') {
     return null;

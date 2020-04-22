@@ -174,12 +174,12 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      label: 'Ignore Existing Records',
+      label: 'Ignore existing records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['INSERT'] }],
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      label: 'Ignore Missing Records',
+      label: 'Ignore missing records',
       visibleWhen: [{ field: 'rdbms.queryType', is: ['UPDATE'] }],
     },
     'rdbms.ignoreExtract': {

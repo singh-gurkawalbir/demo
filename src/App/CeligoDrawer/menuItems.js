@@ -25,7 +25,7 @@ import UniversityIcon from '../../components/icons/UniversityIcon';
 
 export default function menuItems(
   userProfile,
-  userPermissions = {},
+  accessLevel,
   integrations,
   marketplaceConnectors
 ) {
@@ -159,11 +159,8 @@ export default function menuItems(
     // },
   ];
 
-  if (
-    userPermissions.accessLevel === 'monitor' ||
-    userPermissions.accessLevel === 'tile'
-  ) {
-    items = items.filter(i => i.label !== 'Resources');
+  if (['monitor', 'tile'].includes(accessLevel)) {
+    items = items.filter(i => !['Resources', 'Tools'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
 
@@ -181,7 +178,7 @@ export default function menuItems(
       );
     }
 
-    if (userPermissions.accessLevel !== 'owner') {
+    if (accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
         i => i.label !== 'API tokens'
       );

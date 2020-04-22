@@ -1,5 +1,4 @@
-/* global describe, test, expect, beforeEach, jest */
-import { runSaga } from 'redux-saga';
+/* global describe, test, expect, beforeEach */
 import { call, put, select } from 'redux-saga/effects';
 import actions, { availableResources } from '../../actions';
 import {
@@ -11,7 +10,6 @@ import {
   requestDeregister,
   normalizeFlow,
   resourceConflictDetermination,
-  updateCustomSettings,
 } from './';
 import { apiCallWithRetry } from '../';
 import { status500 } from '../test';
@@ -580,120 +578,5 @@ describe(`Deregister connection Saga`, () => {
     const final = saga.throw(new Error('some API exception'));
 
     expect(final.done).toBe(true);
-  });
-});
-
-describe('updateCustomSettings saga', () => {
-  const resourceId = '1234';
-  const resourceType = 'imports';
-  const payload = 'dummy';
-
-  test('should add settingsForm path if missing in the resource', () => {
-    const saga = updateCustomSettings({ resourceId, resourceType, payload });
-    const expectedPatchSet = [
-      { op: 'add', path: '/settingsForm', value: {} },
-      { op: 'add', path: '/settingsForm/form', value: payload },
-    ];
-
-    expect(saga.next().value).toEqual(
-      select(selectors.resource, resourceType, resourceId)
-    );
-
-    expect(saga.next({}).value).toEqual(
-      put(
-        actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
-      )
-    );
-
-    expect(saga.next({}).value).toEqual(
-      put(actions.resource.commitStaged(resourceType, resourceId, 'form-meta'))
-    );
-  });
-
-  test('should not add settingsForm path if already present in resource selector', () => {
-    const saga = updateCustomSettings({ resourceId, resourceType, payload });
-    const expectedPatchSet = [
-      { op: 'add', path: '/settingsForm/form', value: payload },
-    ];
-
-    expect(saga.next().value).toEqual(
-      select(selectors.resource, resourceType, resourceId)
-    );
-
-    expect(saga.next({ settingsForm: {} }).value).toEqual(
-      put(
-        actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
-      )
-    );
-
-    expect(saga.next({}).value).toEqual(
-      put(actions.resource.commitStaged(resourceType, resourceId, 'form-meta'))
-    );
-  });
-});
-
-async function recordSaga(sagaName, args, initialState = {}) {
-  const dispatched = [];
-
-  await runSaga(
-    {
-      dispatch: action => dispatched.push(action),
-      getState: () => initialState,
-    },
-    sagaName,
-    args
-  ).toPromise();
-
-  return dispatched;
-}
-
-describe('updateCustomSettings saga (the better way)', () => {
-  const resourceId = '1234';
-  const resourceType = 'imports';
-  const payload = 'dummy';
-
-  test('should add settingsForm path if missing in the resource', async () => {
-    selectors.resource = jest.fn().mockImplementationOnce(() => ({}));
-
-    const expectedPatchSet = [
-      { op: 'add', path: '/settingsForm', value: {} },
-      { op: 'add', path: '/settingsForm/form', value: payload },
-    ];
-    const dispatched = await recordSaga(updateCustomSettings, {
-      resourceId,
-      resourceType,
-      payload,
-    });
-
-    expect(dispatched[0]).toEqual(
-      actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
-    );
-
-    expect(dispatched[1]).toEqual(
-      actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
-    );
-  });
-
-  test('should not add settingsForm path if already present in resource selector', async () => {
-    selectors.resource = jest
-      .fn()
-      .mockImplementationOnce(() => ({ settingsForm: {} }));
-
-    const expectedPatchSet = [
-      { op: 'add', path: '/settingsForm/form', value: payload },
-    ];
-    const dispatched = await recordSaga(updateCustomSettings, {
-      resourceId,
-      resourceType,
-      payload,
-    });
-
-    expect(dispatched[0]).toEqual(
-      actions.resource.patchStaged(resourceId, expectedPatchSet, 'form-meta')
-    );
-
-    expect(dispatched[1]).toEqual(
-      actions.resource.commitStaged(resourceType, resourceId, 'form-meta')
-    );
   });
 });

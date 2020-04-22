@@ -30,8 +30,8 @@ export default function ThemeToggle() {
       exclusive
       className={classes.TextToggle}
       options={[
-        { value: 'light', label: 'Light' },
-        { value: 'sandbox', label: 'Sandbox' },
+        { value: 'production', label: 'Prod' },
+        { value: 'sandbox', label: 'SB' },
       ]}
     />
   );

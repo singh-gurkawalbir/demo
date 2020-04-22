@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,18 +33,16 @@ export default function EnvironmentToggle() {
 
     return false;
   });
-
-  function handleChange(environment) {
-    const themeName = environment === 'sandbox' ? 'sandbox' : 'light';
-
-    dispatch(actions.user.preferences.update({ environment, themeName }));
-    history.push(getRoutePath('/'));
-  }
+  const handleChange = useCallback(
+    environment => {
+      dispatch(actions.user.preferences.update({ environment }));
+      history.push(getRoutePath('/'));
+    },
+    [dispatch, history]
+  );
 
   if (!selectedAccountHasSandbox) return null;
 
-  // TODO: Add code to hide environment if user does not have permission,
-  // or their chosen account doesn't support sandbox.
   return (
     <TextToggle
       value={environment}

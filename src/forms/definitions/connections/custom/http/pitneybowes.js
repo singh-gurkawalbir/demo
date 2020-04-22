@@ -47,7 +47,8 @@ export default {
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
+      helpKey: 'pitneybowes.connection.http.sandbox',
       options: [
         {
           items: [
@@ -56,7 +57,6 @@ export default {
           ],
         },
       ],
-      helpText: 'Select either Locate/Identity or Ship.',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
 
@@ -73,31 +73,30 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
-      helpText: 'Please enter API Key of your Pitney Bowes Account.',
+      helpKey: 'pitneybowes.connection.http.unencrypted.apiKey',
+      label: 'API key',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       type: 'text',
       defaultValue: '',
-      label: 'API Secret',
+      label: 'API secret',
+      helpKey: 'pitneybowes.connection.http.encrypted.apiSecret',
       inputType: 'password',
-      helpText:
-        'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'pitneybowes.connection.http.auth.token.token',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.apiKey', is: [''] },
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       defaultValue: '',
-      helpText: 'The access token of your Pitney Bowes account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

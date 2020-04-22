@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
-import NotificationsSection from './sections/Notifications';
 import GeneralSection from './sections/General';
 import * as selectors from '../../../../../reducers';
 
@@ -50,12 +49,6 @@ const allSections = [
     label: 'General',
     Section: GeneralSection,
     id: 'general',
-  },
-  {
-    path: 'notifications',
-    label: 'Notifications',
-    Section: NotificationsSection,
-    id: 'notifications',
   },
   {
     path: 'readme',

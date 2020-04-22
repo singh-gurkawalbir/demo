@@ -1,17 +1,15 @@
-import { Fragment, useCallback, useState, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import ReactResizeDetector from 'react-resize-detector';
 import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
-import ResourceForm from '../../../components/ResourceFormFactory';
 import { isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
-import ConnectionStatusPanel from '../../ConnectionStatusPanel';
+import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,22 +27,11 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
-  formContainer: {
+  resourceFormWrapper: {
     padding: theme.spacing(3),
-    paddingTop: props => (props.notificationPanelHeight ? 0 : theme.spacing(3)),
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
-  },
-  form: {
-    height: props => `calc(100vh - 136px - ${props.notificationPanelHeight}px)`,
-    width: props => {
-      if (props.occupyFullWidth) return '100%';
-
-      return props.match.isExact ? '100%' : 660;
-    },
-    maxHeight: 'unset',
-    padding: 0,
   },
   appLogo: {
     paddingRight: '25px',
@@ -53,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    position: 'relative',
     background: theme.palette.background.paper,
   },
   closeButton: {
@@ -108,11 +96,9 @@ export default function Panel(props) {
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
   const classes = useStyles({
     ...props,
     occupyFullWidth,
-    notificationPanelHeight,
   });
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
@@ -306,9 +292,6 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-  const resize = (width, height) => {
-    setNotificationPanelHeight(height);
-  };
 
   return (
     <Fragment>
@@ -331,29 +314,18 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          <div className={classes.formContainer}>
-            <div>
-              {['exports', 'imports', 'connections'].includes(resourceType) && (
-                <ConnectionStatusPanel
-                  resourceType={resourceType}
-                  resourceId={id}
-                />
-              )}
-              <ReactResizeDetector handleHeight onResize={resize} />
-            </div>
-            <ResourceForm
-              className={classes.form}
-              variant={match.isExact ? 'edit' : 'view'}
-              isNew={isNew}
-              resourceType={resourceType}
-              resourceId={id}
-              cancelButtonLabel="Cancel"
-              submitButtonLabel={submitButtonLabel}
-              onSubmitComplete={handleSubmitComplete}
-              onCancel={abortAndClose}
-              {...props}
-            />
-          </div>
+          <ResourceFormWithStatusPanel
+            className={classes.resourceFormWrapper}
+            variant={match.isExact ? 'edit' : 'view'}
+            isNew={isNew}
+            resourceType={resourceType}
+            resourceId={id}
+            cancelButtonLabel="Cancel"
+            submitButtonLabel={submitButtonLabel}
+            onSubmitComplete={handleSubmitComplete}
+            onCancel={abortAndClose}
+            {...props}
+          />
         </LoadResources>
       </div>
 

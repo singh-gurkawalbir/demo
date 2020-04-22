@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath } from 'react-router-dom';
+import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -8,11 +8,13 @@ import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import CopyIcon from '../../../components/icons/CopyIcon';
 import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import GeneralIcon from '../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
+import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
@@ -21,6 +23,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GeneralPanel from './panels/General';
 import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
+import NotificationsPanel from './panels/Notifications';
 import AdminPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
@@ -28,6 +31,7 @@ import DashboardPanel from './panels/Dashboard';
 import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
+import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -49,6 +53,12 @@ const allTabs = [
     label: 'Users',
     Icon: AdminIcon,
     Panel: UsersPanel,
+  },
+  {
+    path: 'notifications',
+    label: 'Notifications',
+    Icon: NotificationsIcon,
+    Panel: NotificationsPanel,
   },
   {
     path: 'auditlog',
@@ -120,8 +130,16 @@ export default function IntegrationApp({ match, history }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
+  const integrationAppMetadata = useSelector(state =>
+    selectors.integrationAppMappingMetadata(state, integrationId)
+  );
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   //
   //
@@ -144,13 +162,23 @@ export default function IntegrationApp({ match, history }) {
   }, [addOnState, dispatch, integrationId, requestLicense]);
 
   useEffect(() => {
-    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+    if (
+      integrationAppMetadata &&
+      !integrationAppMetadata.mappingMetadata &&
+      !requestMappingMetadata
+    ) {
       dispatch(
         actions.integrationApp.settings.requestMappingMetadata(integrationId)
       );
       setRequestMappingMetadata(true);
     }
-  }, [addOnState, dispatch, integrationId, requestMappingMetadata]);
+  }, [
+    addOnState,
+    dispatch,
+    integrationAppMetadata,
+    integrationId,
+    requestMappingMetadata,
+  ]);
 
   useEffect(() => {
     if (redirectTo) {
@@ -300,10 +328,12 @@ export default function IntegrationApp({ match, history }) {
   return (
     <Fragment>
       <ResourceDrawer />
+      <QueuedJobsDrawer />
       <CeligoPageBar
         title={integration.name}
         titleTag={
           <ChipInput
+            disabled={!['owner', 'manage'].includes(accessLevel)}
             value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
@@ -311,14 +341,25 @@ export default function IntegrationApp({ match, history }) {
           />
         }
         infoText={integration.description}>
+        {integration && !supportsMultiStore && (
+          <IconTextButton
+            component={Link}
+            to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
+            variant="text"
+            data-test="cloneIntegrationApp">
+            <CopyIcon /> Clone integration
+          </IconTextButton>
+        )}
         {supportsMultiStore && (
           <div className={classes.actions}>
-            <IconTextButton
-              variant="text"
-              data-test={`add${storeLabel}`}
-              onClick={handleAddNewStoreClick}>
-              <AddIcon /> Add {storeLabel}
-            </IconTextButton>
+            {accessLevel === 'owner' && (
+              <IconTextButton
+                variant="text"
+                data-test={`add${storeLabel}`}
+                onClick={handleAddNewStoreClick}>
+                <AddIcon /> Add {storeLabel}
+              </IconTextButton>
+            )}
             <Select
               displayEmpty
               data-test={`select${storeLabel}`}

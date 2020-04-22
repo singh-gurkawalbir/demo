@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { uniq, some, map, keys, isEmpty } from 'lodash';
+import { some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import session, * as fromSession from './session';
@@ -113,6 +113,10 @@ export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
 
+// TODO: Santosh, here is another case where we are returning a new object
+// in order to "infer" the error message from the state. we cold use re-select, or
+// simply refactor the single place this is used to call the existing util method,
+// "inferErrorMessage", from the component itself.
 export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
   const resourceStatuses = allLoadingOrErrored(state);
 
@@ -344,6 +348,7 @@ export function connectorFieldOptions(
   // should select options from either defaultOptions or the refreshed metadata options
   return {
     isLoading,
+    value: data && data.value,
     options:
       (data &&
         data.options &&
@@ -905,25 +910,9 @@ export function isConnectionOffline(state, id) {
   return connection && connection.offline;
 }
 
-export function resourceListWithPermissions(state, options) {
-  const list = resourceList(state, options);
-  // eslint-disable-next-line no-use-before-define
-  const permissions = userPermissions(state);
-
-  list.resources = list.resources.map(r => {
-    const finalRes = { ...r, permissions: deepClone(permissions) };
-
-    // defaulting queue size to zero when undefined
-    finalRes.queueSize = finalRes.queueSize || 0;
-
-    return finalRes;
-  });
-
-  return list;
-}
-
+// TODO: could this be converted to re-select?
 export function resourcesByIds(state, resourceType, resourceIds) {
-  const { resources } = resourceListWithPermissions(state, {
+  const { resources } = resourceList(state, {
     type: resourceType,
   });
 
@@ -1074,17 +1063,16 @@ export function getAllImportIdsUsedInTheFlow(state, flow) {
   return importIds;
 }
 
-export function getAllConnectionIdsUsedInTheFlow(state, flow) {
+export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
   const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
   const importIds = getAllImportIdsUsedInTheFlow(state, flow);
   const connectionIds = [];
-  const borrowConnectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;
   const imports = resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
-    return connectionIds;
+    return emptySet;
   }
 
   const attachedExports =
@@ -1093,26 +1081,40 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow) {
     imports && imports.filter(i => importIds.indexOf(i._id) > -1);
 
   attachedExports.forEach(exp => {
-    if (exp && exp._connectionId) {
+    if (
+      exp &&
+      exp._connectionId &&
+      !connectionIds.includes(exp._connectionId)
+    ) {
       connectionIds.push(exp._connectionId);
     }
   });
   attachedImports.forEach(imp => {
-    if (imp && imp._connectionId) {
+    if (
+      imp &&
+      imp._connectionId &&
+      !connectionIds.includes(imp._connectionId)
+    ) {
       connectionIds.push(imp._connectionId);
     }
   });
+
   const attachedConnections =
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  attachedConnections.forEach(conn => {
-    if (conn && conn._borrowConcurrencyFromConnectionId) {
-      borrowConnectionIds.push(conn._borrowConcurrencyFromConnectionId);
-    }
-  });
+  if (!options.ignoreBorrowedConnections)
+    attachedConnections.forEach(conn => {
+      if (
+        conn &&
+        conn._borrowConcurrencyFromConnectionId &&
+        !connectionIds.includes(conn._borrowConcurrencyFromConnectionId)
+      ) {
+        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
+      }
+    });
 
-  return uniq(connectionIds.concat(borrowConnectionIds));
+  return connectionIds;
 }
 
 export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
@@ -1153,12 +1155,26 @@ export function shouldRedirect(state, integrationId) {
   return fromSession.shouldRedirect(state && state.session, integrationId);
 }
 
+export function queuedJobs(state, connectionId) {
+  return fromSession.queuedJobs(state && state.session, connectionId);
+}
+
 export function integrationAppAddOnState(state, integrationId) {
-  return fromSession.integrationAppAddOnState(state.session, integrationId);
+  return fromSession.integrationAppAddOnState(
+    state && state.session,
+    integrationId
+  );
+}
+
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromSession.integrationAppMappingMetadata(
+    state && state.session,
+    integrationId
+  );
 }
 
 export function isAddOnInstallInProgress(state, id) {
-  return fromSession.isAddOnInstallInProgress(state.session, id);
+  return fromSession.isAddOnInstallInProgress(state && state.session, id);
 }
 
 export function checkUpgradeRequested(state, licenseId) {
@@ -1171,7 +1187,7 @@ export function isOnOffInProgress(state, flowId) {
 
 export function integrationConnectionList(state, integrationId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
-  let { resources = [] } = resourceListWithPermissions(state, {
+  let { resources = [] } = resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
   });
@@ -1200,19 +1216,16 @@ export function integrationAppResourceList(
   const integrationResource =
     fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = resourceListWithPermissions(
-    state,
-    {
-      type: 'connections',
-      filter: { _integrationId: integrationId },
-      ...(tableConfig || {}),
-    }
-  );
+  const { resources: integrationConnections } = resourceList(state, {
+    type: 'connections',
+    filter: { _integrationId: integrationId },
+    ...(tableConfig || {}),
+  });
 
   if (!supportsMultiStore || !storeId) {
     return {
       connections: integrationConnections,
-      flows: resourceListWithPermissions(state, {
+      flows: resourceList(state, {
         type: 'flows',
         filter: { _integrationId: integrationId },
       }).resources,
@@ -1315,23 +1328,23 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
+    state && state.session,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
+  // SessionMappedData is a state object reference and setCategoryMappingData recursively mutates the parameter, hence deepClone the sessionData
+  const sessionMappings = deepClone(sessionMappedData);
 
   mappingUtil.setCategoryMappingData(
     flowId,
-    sessionMappedData,
+    sessionMappings,
     mappings,
     deleted,
     categoryRelationshipData
   );
 
-  return sessionMappedData;
+  return sessionMappings;
 }
 
 export function categoryMapping(state, integrationId, flowId) {
@@ -1444,7 +1457,7 @@ export function categoryRelationshipData(state, integrationId, flowId) {
 }
 
 export function mappingsForVariation(state, integrationId, flowId, filters) {
-  const { sectionId, variation } = filters;
+  const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};
   const recordMappings =
     fromSession.variationMappingData(
@@ -1455,6 +1468,10 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
 
   if (recordMappings) {
     mappings = recordMappings.find(item => item.id === sectionId) || {};
+  }
+
+  if (isVariationAttributes) {
+    return mappings;
   }
 
   // propery being read as is from IA metadata, to facilitate initialization and to avoid re-adjust while sending back.
@@ -1496,7 +1513,11 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
     .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({ generate: field.id, extract: '', discardIfEmpty: true }));
+    .map(field => ({
+      generate: field.id,
+      extract: '',
+      discardIfEmpty: true,
+    }));
   // Combine filtered mappings and unmapped fields and generate unmapped fields
   const filteredMappings = [...mappings.fieldMappings, ...filteredFields];
 
@@ -1857,10 +1878,6 @@ export function resourceReferences(state) {
 
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
-}
-
-export function processors(state) {
-  return fromData.processors(state.data);
 }
 
 export function isAgentOnline(state, agentId) {
@@ -2280,10 +2297,79 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
 };
 
-export function resourcePermissions(state, resourceType, resourceId) {
+export function userPermissionsOnConnection(state, connectionId) {
   const permissions = userPermissions(state);
 
-  if (resourceType === 'integrations') {
+  if (!permissions) {
+    return emptyObject;
+  }
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    const connection = resource(state, 'connections', connectionId);
+
+    return (
+      (connection._connectorId
+        ? permissions.integrations.connectors
+        : permissions.integrations.all) || {}
+    ).connections;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+        i._registeredConnectionIds &&
+        i._registeredConnectionIds.includes(connectionId)
+    );
+    let highestPermissionIntegration = {};
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!highestPermissionIntegration.accessLevel) {
+          highestPermissionIntegration = permissions.integrations[i._id];
+        } else if (
+          highestPermissionIntegration.accessLevel ===
+          INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          highestPermissionIntegration = permissions.integrations[i._id];
+        }
+      }
+    });
+
+    return (highestPermissionIntegration || {}).connections;
+  }
+
+  return emptyObject;
+}
+
+export const resourcePermissions = (
+  state,
+  resourceType,
+  resourceId,
+  childResourceType
+) => {
+  //  when resourceType == connection and resourceID = connectionId, we fetch connection
+  //  permission by checking for highest order connection permission under integrations
+  if (resourceType === 'connections' && resourceId) {
+    return userPermissionsOnConnection(state, resourceId) || emptyObject;
+  }
+
+  const permissions = userPermissions(state);
+
+  if (!permissions) return emptyObject;
+
+  // special case, where resourceType == integrations. Its childResource,
+  // ie. connections, flows can be retrieved by passing childResourceType
+  if (resourceType === 'integrations' && (childResourceType || resourceId)) {
+    const resourceData =
+      resourceId && resource(state, 'integrations', resourceId);
+
     if (
       [
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -2291,17 +2377,52 @@ export function resourcePermissions(state, resourceType, resourceId) {
         USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
       ].includes(permissions.accessLevel)
     ) {
-      return permissions.integrations.all;
+      const value =
+        resourceData && resourceData._connectorId
+          ? permissions.integrations.connectors
+          : permissions.integrations.all;
+
+      // filtering child resource
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
+    } else if (resourceId) {
+      let value = permissions[resourceType][resourceId];
+
+      // remove tile level permissions added to connector while are not valid.
+      if (resourceData && resourceData._connectorId) {
+        const connectorTilePermission = {
+          accessLevel: value.accessLevel,
+          flows: {
+            edit: value.flow && value.flow.edit,
+          },
+          connections: {
+            edit: value.connections && value.connections.edit,
+          },
+          edit: value.edit,
+          delete: value.delete,
+        };
+
+        value = connectorTilePermission;
+      }
+
+      return (
+        (childResourceType ? value && value[childResourceType] : value) ||
+        emptyObject
+      );
     }
-
-    return permissions.integrations[resourceId] || {};
+  } else if (resourceType) {
+    return resourceId
+      ? permissions[resourceType][resourceId]
+      : permissions[resourceType];
+  } else {
+    return permissions;
   }
-
-  return emptyObject;
-}
+};
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
-  const { accessLevel } = userPermissions(state);
+  const { accessLevel } = resourcePermissions(state);
 
   // if all forms is monitor level
   if (accessLevel === 'monitor') return true;
@@ -3231,6 +3352,22 @@ export function assistantPreviewData(state, resourceId) {
   return fromSession.assistantPreviewData(state && state.session, resourceId);
 }
 
+export function flowJobConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+  const connections = [];
+  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow, {
+    ignoreBorrowedConnections: true,
+  });
+
+  connectionIds.forEach(c => {
+    const conn = resource(state, 'connections', c);
+
+    connections.push({ id: conn._id, name: conn.name });
+  });
+
+  return connections;
+}
+
 export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   let connectionIdsToRegister = [];
 
@@ -3899,6 +4036,10 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
+export function getUploadedFile(state, fileId) {
+  return fromSession.getUploadedFile(state && state.session, fileId);
+}
+
 /*
  * The selector returns appropriate context for the JS Processor to run
  * For now, it supports contextType: hook
@@ -3923,3 +4064,11 @@ export const getScriptContext = createSelector(
     }
   }
 );
+
+export function getJobErrorsPreview(state, jobId) {
+  return fromSession.getJobErrorsPreview(state && state.session, jobId);
+}
+
+export function integrationAppClonedDetails(state, id) {
+  return fromSession.integrationAppClonedDetails(state && state.session, id);
+}

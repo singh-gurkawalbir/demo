@@ -1,5 +1,5 @@
 import { useState, Fragment, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
 import { makeStyles } from '@material-ui/styles';
@@ -38,31 +38,16 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       tableConfig
     )
   );
-  // TODO: All this logic should go into a single selector called "canManageConnections",
-  // or some equivalent name. This would also reduce the complexity of managing
-  // performance since the selector would only return a scalar (bool) so React would
-  // easily recognize when not to re-render instead of this component containing this
-  // state  inspection manipulation logic. Also a component developer should not be responsible
-  // to understand/maintain this complex logic.
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
+  const permission = useSelector(
+    state =>
+      selectors.resourcePermissions(
+        state,
+        'integrations',
+        integrationId,
+        'connections'
+      ),
+    shallowEqual
   );
-  const permissions = useSelector(state => selectors.userPermissions(state));
-  const accountAccessLevel = permissions.accessLevel;
-  const integrationAccessLevel =
-    permissions.integrations &&
-    permissions.integrations[integrationId] &&
-    permissions.integrations[integrationId].accessLevel;
-  const writePermissions =
-    accountAccessLevel === 'manage' ||
-    accountAccessLevel === 'owner' ||
-    integrationAccessLevel !== 'monitor';
-  const canManageConnections =
-    integrationId &&
-    integrationId !== 'none' &&
-    !(integration && integration._connectorId) &&
-    writePermissions;
-  // all the above logic should be replaced by a single selector.
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
@@ -86,8 +71,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       )}
 
       <PanelHeader title="Connections">
-        {canManageConnections && (
-          <Fragment>
+        <Fragment>
+          {permission.create && (
             <IconTextButton
               component={Link}
               to={`${
@@ -95,11 +80,13 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
               }/add/connections/new-${shortid.generate()}`}>
               <AddIcon /> Create connection
             </IconTextButton>
+          )}
+          {permission.register && (
             <IconTextButton onClick={() => setShowRegister(true)}>
               <ConnectionsIcon /> Register connections
             </IconTextButton>
-          </Fragment>
-        )}
+          )}
+        </Fragment>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">

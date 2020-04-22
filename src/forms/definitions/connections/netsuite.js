@@ -2,7 +2,7 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   preSave: formValues => {
-    const newValues = formValues;
+    const newValues = { ...formValues };
 
     if (newValues['/netsuite/authType'] === 'token') {
       newValues['/netsuite/environment'] =
@@ -218,7 +218,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'netsuite.authType',

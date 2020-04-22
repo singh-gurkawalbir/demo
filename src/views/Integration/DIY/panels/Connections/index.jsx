@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ConnectionsPanel({ integrationId }) {
+  const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -34,31 +35,14 @@ export default function ConnectionsPanel({ integrationId }) {
   const connections = useSelector(state =>
     selectors.integrationConnectionList(state, integrationId, tableConfig)
   );
-  // TODO: All this logic should go into a single selector called "canManageConnections",
-  // or some equivalent name. This would also reduce the complexity of managing
-  // performance since the selector would only return a scalar (bool) so React would
-  // easily recognize when not to re-render instead of this component containing this
-  // state  inspection manipulation logic. Also a component developer should not be responsible
-  // to understand/maintain this complex logic.
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    )
   );
-  const permissions = useSelector(state => selectors.userPermissions(state));
-  const accountAccessLevel = permissions.accessLevel;
-  const integrationAccessLevel =
-    permissions.integrations &&
-    permissions.integrations[integrationId] &&
-    permissions.integrations[integrationId].accessLevel;
-  const writePermissions =
-    accountAccessLevel === 'manage' ||
-    accountAccessLevel === 'owner' ||
-    integrationAccessLevel !== 'monitor';
-  const canManageConnections =
-    integrationId &&
-    integrationId !== 'none' &&
-    !(integration && integration._connectorId) &&
-    writePermissions;
-  // all the above logic should be replaced by a single selector.
   const [tempId, setTempId] = useState(null);
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, tempId)
@@ -94,8 +78,8 @@ export default function ConnectionsPanel({ integrationId }) {
       )}
 
       <PanelHeader title="Connections">
-        {canManageConnections && (
-          <Fragment>
+        <Fragment>
+          {permission.create && (
             <IconTextButton
               onClick={() => {
                 const newId = generateNewId();
@@ -117,11 +101,13 @@ export default function ConnectionsPanel({ integrationId }) {
               }}>
               <AddIcon /> Create connection
             </IconTextButton>
+          )}
+          {permission.register && !isStandalone && (
             <IconTextButton onClick={() => setShowRegister(true)}>
               <ConnectionsIcon /> Register connections
             </IconTextButton>
-          </Fragment>
-        )}
+          )}
+        </Fragment>
       </PanelHeader>
 
       <LoadResources required resources="connections">
