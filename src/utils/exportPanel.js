@@ -109,9 +109,16 @@ const formatPreviewData = records => {
 const formatBodyForRawStage = previewData => {
   const formattedData = deepClone(previewData);
 
-  if (formattedData && formattedData.data) {
-    if (formattedData.data.body && isJsonString(formattedData.data.body)) {
-      formattedData.data.body = JSON.parse(formattedData.data.body);
+  // Assuming body previewData.data is an array
+  if (
+    formattedData &&
+    formattedData.data &&
+    Array.isArray(formattedData.data)
+  ) {
+    const { body } = formattedData.data[0] || {};
+
+    if (body && isJsonString(body)) {
+      formattedData.data[0].body = JSON.parse(body);
     }
   }
 
@@ -170,7 +177,7 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
   const parsedPreviewData =
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
-  const { headers, ...rest } = bodyHeaderData;
+  const { headers, ...rest } = (bodyHeaderData && bodyHeaderData[0]) || {};
 
   return {
     body: JSON.stringify(rest, null, 2),

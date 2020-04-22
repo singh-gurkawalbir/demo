@@ -1,5 +1,5 @@
 import { takeLatest, put, select, call } from 'redux-saga/effects';
-import jsonPatch from 'fast-json-patch';
+import { deepClone, applyPatch } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -45,10 +45,8 @@ function* constructResourceFromFormValues({
     SCOPES.VALUE
   );
 
-  return jsonPatch.applyPatch(
-    merged ? jsonPatch.deepClone(merged) : {},
-    jsonPatch.deepClone(patchSet)
-  ).newDocument;
+  return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
+    .newDocument;
 }
 
 function getRulesFromResourceFormValues(formValues = {}) {
@@ -230,13 +228,21 @@ function* requestSampleData({
   stage,
   runOffline,
 }) {
+  // deepcloning the value to avoid mutation of object being passed from the component
+  const valuesCopy = deepClone(values);
+
   if (stage) {
-    yield call(processRawData, { resourceId, resourceType, values, stage });
+    yield call(processRawData, {
+      resourceId,
+      resourceType,
+      values: valuesCopy,
+      stage,
+    });
   } else {
     yield call(getPreviewData, {
       resourceId,
       resourceType,
-      values,
+      values: valuesCopy,
       runOffline,
     });
   }

@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
-import { isEqual } from 'lodash';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import applications, {
@@ -11,7 +10,6 @@ import applications, {
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-import LoadResources from '../../../LoadResources';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -68,13 +66,6 @@ export default function SelectApplication(props) {
     placeholder,
     onFieldChange,
   } = props;
-  const assistants = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'ui/assistants',
-      }),
-    (left, right) => isEqual(left, right)
-  );
   // Custom styles for Select Control
   const flowDetails = useSelector(state =>
     selectors.flowDetails(state, flowId)
@@ -82,11 +73,10 @@ export default function SelectApplication(props) {
   const groupedApps = useMemo(
     () =>
       groupApplications(resourceType, {
-        assistants,
         appType: appType || (fieldOptions && fieldOptions.appType),
         isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
       }),
-    [appType, assistants, fieldOptions, flowDetails, resourceType]
+    [appType, fieldOptions, flowDetails, resourceType]
   );
   const classes = useStyles();
   const theme = useTheme();
@@ -250,46 +240,44 @@ export default function SelectApplication(props) {
   }
 
   return (
-    <LoadResources resources="ui/assistants">
-      <FormControl
-        data-test={id}
-        key={id}
-        disabled={disabled}
-        className={classes.formControl}>
-        <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
-          {label}
-        </InputLabel>
-        <Select
-          name={name}
-          placeholder={placeholder}
-          closeMenuOnSelect
-          components={{ Option }}
-          defaultValue={defaultValue}
-          defaultMenuIsOpen={!value}
-          options={options}
-          onChange={handleChange}
-          styles={customStyles}
-          filterOption={filterOptions}
-        />
+    <FormControl
+      data-test={id}
+      key={id}
+      disabled={disabled}
+      className={classes.formControl}>
+      <InputLabel shrink className={classes.inputLabel} htmlFor={id}>
+        {label}
+      </InputLabel>
+      <Select
+        name={name}
+        placeholder={placeholder}
+        closeMenuOnSelect
+        components={{ Option }}
+        defaultValue={defaultValue}
+        defaultMenuIsOpen={!value}
+        options={options}
+        onChange={handleChange}
+        styles={customStyles}
+        filterOption={filterOptions}
+      />
 
-        <ErroredMessageComponent {...props} />
+      <ErroredMessageComponent {...props} />
 
-        {isMulti && value.length > 0 && (
-          <div className={classes.selectedContainer}>
-            {value.map((appId, i) => (
-              <AppPill
-                // i think we are ok to add index when a user selects multiple
-                // same applications. Even if a user deletes a matching app, the
-                // keys would still work out. Not sure how else to assign keys here.
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${appId}-${i}`}
-                appId={appId}
-                onRemove={() => handleRemove(i)}
-              />
-            ))}
-          </div>
-        )}
-      </FormControl>
-    </LoadResources>
+      {isMulti && value.length > 0 && (
+        <div className={classes.selectedContainer}>
+          {value.map((appId, i) => (
+            <AppPill
+              // i think we are ok to add index when a user selects multiple
+              // same applications. Even if a user deletes a matching app, the
+              // keys would still work out. Not sure how else to assign keys here.
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${appId}-${i}`}
+              appId={appId}
+              onRemove={() => handleRemove(i)}
+            />
+          ))}
+        </div>
+      )}
+    </FormControl>
   );
 }

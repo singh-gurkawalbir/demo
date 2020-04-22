@@ -16,9 +16,8 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
-      label: 'Secret Key',
+      label: 'Secret key',
       required: true,
-      helpText: 'The secret key of your Stripe account.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

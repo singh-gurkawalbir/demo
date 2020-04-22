@@ -14,9 +14,8 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'API Key',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
+      label: 'API key',
+      helpKey: 'mailgun.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

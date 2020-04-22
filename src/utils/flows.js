@@ -176,10 +176,19 @@ export const isImportMappingAvailable = resource => {
     return false;
   }
 
-  const { adaptorType } = resource;
+  const { adaptorType, rdbms = {} } = resource;
   const appType = adaptorTypeMap[adaptorType];
 
-  return ['mongodb', 'rdbms'].indexOf(appType) === -1;
+  // if apptype is mongodb then mapping shouldnot be shown
+  if (appType === 'mongodb') return false;
+
+  // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
+  if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
+    return false;
+  }
+
+  // for other app types mapping should be shown
+  return true;
 };
 
 // Given a flow doc and resourceId , returns true if it is a page generator
@@ -209,3 +218,13 @@ export const isLookupResource = (flow = {}, resource = {}) => {
 
   return !!pageProcessors.find(pp => pp._exportId === resource._id);
 };
+
+/*
+ * Returns true/false, whether passed flow follows an old schema
+ */
+export const isOldFlowSchema = ({
+  pageGenerators,
+  _exportId,
+  pageProcessors,
+  _importId,
+}) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);

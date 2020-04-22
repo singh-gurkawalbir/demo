@@ -13,13 +13,13 @@ export default {
   },
   's3.bucket': {
     type: 'text',
-    label: 'Bucket Name',
+    label: 'Bucket name',
     placeholder: 'Enter S3 folder path,such as:MySite/Orders',
     required: true,
   },
   's3.fileKey': {
     type: 'timestampfilename',
-    label: 'File Key',
+    label: 'File key',
     required: true,
     showAllSuggestions: true,
     defaultValue: r => (r && r.s3 && r.s3.fileKey) || 'file-{{timestamp}}',

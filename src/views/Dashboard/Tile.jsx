@@ -102,6 +102,22 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
+  let app1;
+  let app2;
+
+  if (
+    tile.connector &&
+    tile.connector.applications &&
+    tile.connector.applications.length
+  ) {
+    [app1, app2] = tile.connector.applications;
+
+    if (app1 === 'netsuite') {
+      // Make NetSuite always the second application
+      [app1, app2] = [app2, app1];
+    }
+  }
+
   const isNotYetSupported =
     tile._connectorId &&
     getDomain() === 'integrator.io' &&
@@ -131,6 +147,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5b2973cda8c36e54ce9a9a7a', // NetSuite Auto-create Customer Deposit
       '598a9a130ce0c234420a6735', // Google Merchant Center - NetSuite
       '5b3dc945449020198fe8597a', // SkuVault - NetSuite
+      '5e8d6f912387e356b6769bc5', // Amazon EU
+      '5e8d6ca02387e356b6769bb8', // Shopify EU
+      '5e7d921e2387e356b67669ce', // SFNSIO EU
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -270,11 +289,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
                 <ApplicationImages>
-                  <ApplicationImg type={tile.connector.applications[0]} />
+                  <ApplicationImg type={app1} />
                   <span>
                     <AddIcon />
                   </span>
-                  <ApplicationImg type={tile.connector.applications[1]} />
+                  <ApplicationImg type={app2} />
                 </ApplicationImages>
               )}
           </Content>

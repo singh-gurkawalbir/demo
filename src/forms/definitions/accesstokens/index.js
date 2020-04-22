@@ -48,6 +48,10 @@ export default {
       accessTokenData['/fullAccess'] = false;
     }
 
+    if (resource._integrationId) {
+      accessTokenData['/fullAccess'] = false; // no need to set this for connector integrations
+    }
+
     return accessTokenData;
   },
 };

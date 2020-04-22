@@ -19,8 +19,6 @@ export default {
       endAdornment: '.recurly.com',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your subdomain here which you configured while activating your new Recurly account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -41,10 +39,9 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'API Key',
+      label: 'API key',
       defaultValue: '',
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can go to Integrations >> API Credentials to find it.',
+      helpKey: 'recurly.connection.http.auth.basic.username',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

@@ -14,8 +14,6 @@ export default {
     'http.deskSubdomain': {
       type: 'text',
       id: 'http.deskSubdomain',
-      helpText:
-        "Enter your Desk subdomain. For example, in https://mycompany.desk.com 'mycompany' is the subdomain.",
       startAdornment: 'https://',
       endAdornment: '.desk.com',
       label: 'Subdomain',
@@ -40,11 +38,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpText: 'The username of your LiquidPlanner account',
+      helpKey: 'desk.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpText: 'The password of your LiquidPlanner account',
+      helpKey: 'desk.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

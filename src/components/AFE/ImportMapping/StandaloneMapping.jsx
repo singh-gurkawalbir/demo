@@ -66,6 +66,10 @@ export default function StandaloneMapping(props) {
   const isREST = resourceType.type === ResourceUtil.adaptorTypeMap.RESTImport;
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
+  // TODO (Aditya): Calculation connection/resource at data layer rather than sending heavy object
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
   const {
     visible: showMappings,
     importSampleData: savedImportSampleData,
@@ -210,7 +214,7 @@ export default function StandaloneMapping(props) {
     mappingMetadata: integrationAppMappingMetadata,
     status: integrationAppMappingStatus,
   } = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
+    selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const fetchIntegrationAppMappingMetadata = useCallback(() => {
     dispatch(
@@ -271,6 +275,7 @@ export default function StandaloneMapping(props) {
     isGroupedSampleData,
     application,
     subRecordMappingId,
+    connection,
   };
 
   if (isSalesforce) {

@@ -38,6 +38,10 @@ const useStyles = makeStyles(theme => ({
   deleteBtn: {
     border: 'none',
     width: 0,
+    background: 'none',
+    '&:hover': {
+      background: 'none',
+    },
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,

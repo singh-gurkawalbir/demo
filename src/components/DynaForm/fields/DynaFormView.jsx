@@ -17,7 +17,7 @@ const emptyObj = {};
 const isParent = true;
 
 export function FormView(props) {
-  const { resourceType, flowId, resourceId, formContext } = props;
+  const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();
   const staggedResource = useSelector(state => {
     const { merged } =
@@ -40,7 +40,7 @@ export function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
-  const { assistant: assistantName } = staggedResource;
+  const { assistant: assistantName } = connection;
   const options = useMemo(() => {
     const matchingApplication = getApp(null, assistantName);
 
@@ -87,6 +87,13 @@ export function FormView(props) {
 
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
+    // if assistant is selected back again assign it to the export to the export obj as well
+    if (
+      selectedApplication !== `${isParent}` &&
+      staggedRes['/assistant'] === undefined
+    )
+      staggedRes['/assistant'] = assistantName;
+
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
       fieldMeta: resourceFormState.fieldMeta,
@@ -98,10 +105,15 @@ export function FormView(props) {
       actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
     );
 
-    const allTouchedFields = formContext.fields
+    let allTouchedFields = formContext.fields
       .filter(field => !!field.touched)
       .map(field => ({ id: field.id, value: field.value }));
 
+    // When we initialize we always have the selected form view field touched
+    allTouchedFields = [
+      ...allTouchedFields,
+      { id, value: selectedApplication },
+    ];
     dispatch(
       actions.resourceForm.init(
         resourceType,
@@ -114,13 +126,13 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && staggedResource.assistant;
+  const isFlowBuilderAssistant = flowId && assistantName;
 
   return isFlowBuilderAssistant ? (
     <DynaSelect
       {...props}
       onFieldChange={onFieldChangeFn}
-      value={`${!!staggedResource.useParentForm}`}
+      value={value}
       options={options}
     />
   ) : null;

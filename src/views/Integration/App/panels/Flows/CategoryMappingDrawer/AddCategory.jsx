@@ -14,10 +14,11 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
 import Spinner from '../../../../../../components/Spinner';
+import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: 750,
+    width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -34,6 +35,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const { flowId } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const history = useHistory();
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
@@ -66,9 +68,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           grandchildCategory,
         })
       );
+      enqueueSnackbar({
+        variant: 'success',
+        message: `You have successfully added a new ${uiAssistant} category! Congratulations!`,
+        persist: false,
+      });
       handleClose();
     },
-    [dispatch, flowId, handleClose, integrationId]
+    [dispatch, enqueueSnackbar, flowId, handleClose, integrationId, uiAssistant]
   );
   const fieldMeta = {
     fieldMap: {
@@ -198,12 +205,14 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
       classes={{
         paper: classes.drawerPaper,
       }}
+      BackdropProps={{ invisible: true }}
       open={!!match}>
       <DrawerTitleBar
         flowId={flowId}
         addCategory
         onClose={handleClose}
         backToParent
+        help
       />
       {metadataLoaded ? (
         <DynaForm

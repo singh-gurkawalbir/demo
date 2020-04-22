@@ -38,7 +38,7 @@ function ResourceList(props) {
     useSelector(state => selectors.filter(state, resourceType)) ||
     defaultFilter;
   const list = useSelector(state =>
-    selectors.resourceListWithPermissions(state, {
+    selectors.resourceList(state, {
       type: resourceType,
       filter: connectorFilter(resourceType),
       ...{ ...defaultFilter, ...filter },

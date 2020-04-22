@@ -56,7 +56,11 @@ export default function App() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
-  const themeName = useSelector(state => selectors.themeName(state));
+  const themeName = useSelector(state =>
+    selectors.userPreferences(state).environment === 'sandbox'
+      ? 'sandbox'
+      : 'light'
+  );
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.preferences.toggleDebug());

@@ -12,11 +12,15 @@ export default {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      helpText:
-        'Please enter baseURI of your Pulseway account. If you host your own Pulseway Enterprise Server, use “https://your-server-name/api” as base URL.',
     },
-    'http.auth.basic.username': { fieldId: 'http.auth.basic.username' },
-    'http.auth.basic.password': { fieldId: 'http.auth.basic.password' },
+    'http.auth.basic.username': {
+      fieldId: 'http.auth.basic.username',
+      helpKey: 'pulseway.connection.http.auth.basic.username',
+    },
+    'http.auth.basic.password': {
+      fieldId: 'http.auth.basic.password',
+      helpKey: 'pulseway.connection.http.auth.basic.password',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

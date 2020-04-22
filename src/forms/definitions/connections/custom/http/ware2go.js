@@ -20,7 +20,7 @@ export default {
     'http.accountType': {
       id: 'http.accountType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       options: [
         {
           items: [
@@ -40,28 +40,20 @@ export default {
 
         return 'production';
       },
-      helpText:
-        'Please select your environment here. Select Staging if the account is created on https://openapi.staging.ware2goproject.com/ware2go. Select Production if the account is created on https://openapi.ware2goproject.com/ware2go.',
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      label: 'Access Token',
-      helpText:
-        'Please enter your Access Token here. This can be obtained by reaching out to Ware2Go support team.',
+      label: 'Access token',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      label: 'Access Secret',
-      helpText:
-        'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
+      label: 'Access secret',
     },
     'http.unencrypted.merchantId': {
       id: 'http.unencrypted.merchantId',
-      label: 'Merchant Id',
+      label: 'Merchant ID',
       required: true,
       type: 'text',
-      helpText:
-        'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

@@ -81,6 +81,7 @@ export const appTypeToAdaptorType = {
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  snowflake: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
   http: 'HTTP',
@@ -414,7 +415,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
         'suitescript-svb-netsuite': '203958788',
         '5b61ae4aeb538642c26bdbe6': '360001649831',
       };
-    } else if (domain === 'integrator.io' || domain === 'eu.integrator.io') {
+    } else if (domain === 'integrator.io') {
       connectorToCategoryMap = {
         '54fa0b38a7044f9252000036': '203963787',
         '55022fc3285348c76a000005': '203958808',
@@ -435,6 +436,12 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
         'suitescript-salesforce-netsuite': '203964847',
         'suitescript-svb-netsuite': '203958788',
         '5c8f30229f701b3e9a0aa817': '360001649831',
+      };
+    } else if (domain === 'eu.integrator.io') {
+      connectorToCategoryMap = {
+        '5e8d6f912387e356b6769bc5': '115000816227',
+        '5e8d6ca02387e356b6769bb8': '203963787',
+        '5e7d921e2387e356b67669ce': '360001649831',
       };
     }
 
@@ -696,3 +703,13 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
 
   return mapping;
 };
+
+export const isOauth = connectionDoc =>
+  connectionDoc &&
+  ((connectionDoc.rest && connectionDoc.rest.authType === 'oauth') ||
+    (connectionDoc.http &&
+      connectionDoc.http.auth &&
+      connectionDoc.http.auth.type === 'oauth') ||
+    (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
+    (connectionDoc.netsuite &&
+      connectionDoc.netsuite.authType === 'token-auto'));

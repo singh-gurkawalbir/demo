@@ -63,11 +63,11 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
   },
   'rest.compositeType': {
     type: 'select',
-    label: 'Composite Type',
+    label: 'Composite type',
     options: [
       {
         items: [
@@ -147,7 +147,7 @@ export default {
   },
   'rest.requestType': {
     type: 'select',
-    label: 'Request Type',
+    label: 'Request type',
     options: [
       {
         items: [
@@ -162,8 +162,7 @@ export default {
         ],
       },
     ],
-    helpText:
-      'Please specify whether the record is being created or updated using this field.',
+
     defaultValue: r =>
       r && r.rest && r.rest.requestType && r.rest.requestType[0],
     visibleWhen: [
@@ -176,7 +175,7 @@ export default {
   mapping: {
     type: 'mapping',
     connectionId: r => r && r._connectionId,
-    label: 'Manage Import Mapping',
+    label: 'Manage import mapping',
     visibleWhen: [
       {
         field: 'inputMode',
@@ -190,7 +189,7 @@ export default {
     type: 'httprequestbody',
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     refreshOptionsOnChangesTo: ['rest.lookups'],
@@ -207,7 +206,7 @@ export default {
   },
   'rest.successPath': {
     type: 'text',
-    label: 'Success Path',
+    label: 'Success path',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -224,7 +223,7 @@ export default {
   },
   'rest.successValues': {
     type: 'text',
-    label: 'Success Values',
+    label: 'Success values',
     placeholder: 'Optional',
     visibleWhenAll: [
       {
@@ -241,7 +240,7 @@ export default {
   },
   'rest.responseIdPath': {
     type: 'text',
-    label: 'Response Id Path',
+    label: 'Response ID path',
     placeholder: 'Optional',
     visibleWhen: [
       {

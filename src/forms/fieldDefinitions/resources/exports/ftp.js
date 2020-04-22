@@ -1,16 +1,16 @@
 export default {
   'ftp.directoryPath': {
     type: 'text',
-    label: 'Directory Path',
+    label: 'Directory path',
     required: true,
   },
   'ftp.fileNameStartsWith': {
     type: 'text',
-    label: 'File Name Starts With',
+    label: 'File name starts with',
   },
   'ftp.fileNameEndsWith': {
     type: 'text',
-    label: 'File Name Ends With',
+    label: 'File name ends with',
   },
   // #region transform
   'transform.expression.rules': {
@@ -21,7 +21,7 @@ export default {
   },
   'transform.script._scriptId': {
     type: 'text',
-    label: 'Transform script _script Id',
+    label: 'Transform script _script id',
   },
   'transform.script.function': {
     type: 'text',
