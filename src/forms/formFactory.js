@@ -116,11 +116,11 @@ const applyCustomSettings = ({
     }
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
-    preSaveCopy = args => {
+    preSaveCopy = (args, resource) => {
       let retValues;
 
       if (preSave) {
-        retValues = preSave(args);
+        retValues = preSave(args, resource);
       } else {
         retValues = args;
       }
@@ -181,6 +181,8 @@ const getResourceFormAssets = ({
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (resource && resource.assistant === 'financialforce') {
+        meta = formMeta.connections.salesforce;
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
@@ -224,6 +226,11 @@ const getResourceFormAssets = ({
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuiteDistributed;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          meta = meta.salesforce;
         } else if (type === 'rdbms') {
           const rdbmsSubType =
             connection && connection.rdbms && connection.rdbms.type;
@@ -263,6 +270,11 @@ const getResourceFormAssets = ({
           meta = meta.new;
         } else if (RDBMS_TYPES.indexOf(type) !== -1) {
           meta = meta.rdbms;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          meta = meta.salesforce;
         } else if (
           resource &&
           (resource.useParentForm !== undefined
