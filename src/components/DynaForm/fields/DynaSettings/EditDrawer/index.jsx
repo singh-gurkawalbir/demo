@@ -1,9 +1,11 @@
-import { useState, useCallback, Fragment } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles, Button, Typography } from '@material-ui/core';
 import actions from '../../../../../actions';
 import { isJsonString } from '../../../../../utils/string';
 import EditorField from '../../DynaEditor';
+import RightDrawer from '../../../../drawer/Right';
 
 const useStyles = makeStyles({
   editor: {
@@ -11,8 +13,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function EditView({ resourceId, onToggleClick }) {
+export default function EditDrawer({ resourceId }) {
   const classes = useStyles();
+  const history = useHistory();
   const [alteredMeta, setAlteredMeta] = useState();
   const [metaError, setMetaError] = useState();
   const dispatch = useDispatch();
@@ -36,14 +39,16 @@ export default function EditView({ resourceId, onToggleClick }) {
     }
 
     dispatch(actions.customSettings.patchForm(resourceId, meta));
-    onToggleClick();
-  }, [alteredMeta, dispatch, onToggleClick, resourceId]);
+    history.goBack();
+  }, [alteredMeta, dispatch, history, resourceId]);
 
   return (
-    <Fragment>
-      <Button variant="contained" onClick={onToggleClick}>
-        Toggle form editor
-      </Button>
+    <RightDrawer
+      path="editSettings"
+      height="tall"
+      width="large"
+      title="Edit settings form"
+      variant="temporary">
       <EditorField
         label="Form metadata"
         id="settingsForm"
@@ -56,6 +61,6 @@ export default function EditView({ resourceId, onToggleClick }) {
         Save
       </Button>
       {metaError && <Typography color="error">{metaError}</Typography>}
-    </Fragment>
+    </RightDrawer>
   );
 }
