@@ -192,6 +192,13 @@ export default {
       type: d.type,
       updateable: d.updateable,
     })),
+  'salesforce-recordType-boolean': data =>
+    data.fields
+      .filter(f => f.type === 'boolean')
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-soqlQuery': data => data,
   'salesforce-externalIdFields': data =>
     data.fields

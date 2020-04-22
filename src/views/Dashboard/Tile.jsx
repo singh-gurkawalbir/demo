@@ -147,6 +147,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5b2973cda8c36e54ce9a9a7a', // NetSuite Auto-create Customer Deposit
       '598a9a130ce0c234420a6735', // Google Merchant Center - NetSuite
       '5b3dc945449020198fe8597a', // SkuVault - NetSuite
+      '5e8d6f912387e356b6769bc5', // Amazon EU
+      '5e8d6ca02387e356b6769bb8', // Shopify EU
+      '5e7d921e2387e356b67669ce', // SFNSIO EU
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {

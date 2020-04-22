@@ -65,7 +65,7 @@ export default {
     'rest.authType': {
       id: 'rest.authType',
       type: 'select',
-      label: 'Authentication Type',
+      label: 'Authentication type',
       options: [
         {
           items: [
@@ -74,8 +74,6 @@ export default {
           ],
         },
       ],
-      helpText:
-        'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
     },
     'rest.storeURL': {
       id: 'rest.storeURL',
@@ -95,8 +93,6 @@ export default {
 
         return subdomain;
       },
-      helpText:
-        'Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -106,15 +102,11 @@ export default {
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
-      label: 'API Key',
-      helpText:
-        'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
+      label: 'API key',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.basicAuth.password': {
       fieldId: 'rest.basicAuth.password',
-      helpText:
-        'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     'rest.scope': {
@@ -184,7 +176,7 @@ export default {
     { id: 'cancel' },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
@@ -194,7 +186,7 @@ export default {
     },
     {
       id: 'save',
-      label: 'Test and Save',
+      label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],

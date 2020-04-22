@@ -608,9 +608,9 @@ const integrationApp = {
           sectionId,
         }
       ),
-    requestUpgrade: (integration, options) =>
+    requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
-        integration,
+        integrationId,
         options,
       }),
     redirectTo: (integrationId, redirectTo) =>
@@ -714,9 +714,9 @@ const integrationApp = {
         integrationId,
         error,
       }),
-    upgrade: (integration, license) =>
+    upgrade: (integrationId, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
-        integration,
+        integrationId,
         license,
       }),
     update: (integrationId, flowId, storeId, sectionId, values, options) =>
@@ -840,6 +840,19 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.STORE.RECEIVED, {
         id: integrationId,
         steps,
+      }),
+  },
+  clone: {
+    receivedIntegrationClonedStatus: (id, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: true,
+        integrationId,
+      }),
+    clearIntegrationClonedStatus: id =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: false,
       }),
   },
   // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall

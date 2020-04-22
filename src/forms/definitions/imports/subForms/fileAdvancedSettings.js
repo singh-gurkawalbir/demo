@@ -6,7 +6,7 @@ export default {
     'file.compressFiles': {
       id: 'file.compressFiles',
       type: 'checkbox',
-      label: 'Compress Files',
+      label: 'Compress files',
       defaultValue: r => !!(r && r.file && r.file.compressionFormat),
     },
     'file.compressionFormat': {

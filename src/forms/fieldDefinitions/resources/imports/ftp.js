@@ -1,13 +1,13 @@
 export default {
   'ftp.directoryPath': {
     type: 'text',
-    label: 'Directory Path',
+    label: 'Directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
     required: true,
   },
   'ftp.fileName': {
     type: 'timestampfilename',
-    label: 'File Name',
+    label: 'File name',
     required: true,
     showAllSuggestions: true,
     defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
@@ -51,7 +51,7 @@ export default {
   },
   'ftp.inProgressFileName': {
     type: 'timestampfilename',
-    label: 'In Progress File Name',
+    label: 'In progress file name',
     showAllSuggestions: true,
     defaultValue: r =>
       (r && r.ftp && r.ftp.inProgressFileName) || 'file-{{timestamp}}',
@@ -69,7 +69,7 @@ export default {
   },
   'ftp.blobFileName': {
     type: 'timestampfilename',
-    label: 'File Name',
+    label: 'File name',
     required: true,
     showAllSuggestions: true,
     defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
@@ -113,7 +113,7 @@ export default {
   },
   'ftp.blobInProgressFileName': {
     type: 'text',
-    label: 'In Progress File Name',
+    label: 'In progress file name',
     defaultValue: r => r && r.ftp && r.ftp.inProgressFileName,
     visibleWhenAll: [
       {
