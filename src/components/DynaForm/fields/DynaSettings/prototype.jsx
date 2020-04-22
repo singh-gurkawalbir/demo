@@ -163,8 +163,6 @@ export default function DynaSettings(props) {
       return;
     }
 
-    dispatch(actions.resource.updateMeta(resourceId, resourceType, meta));
-
     const patchSet = [];
 
     if (!fieldMeta) {
