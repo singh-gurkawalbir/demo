@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 //       name: 'currency',
 //       type: 'radiogroup',
 //       label: 'Currency',
-//       helpKey: 'What is the default currency of your store?',
+//       helpText: 'What is the default currency of your store?',
 //       options: [
 //         {
 //           items: [{ label: 'US', value: 'us' }, { label: 'CDN', value: 'cdn' }],

@@ -20,8 +20,6 @@ export function NewDynaSettings(props) {
   );
   const toggleEditMode = useCallback(() => {
     history.push(`${match.url}/editSettings`);
-
-    console.log('toggle edit mode');
   }, [history, match.url]);
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
@@ -38,7 +36,7 @@ export function NewDynaSettings(props) {
   const hasSettingsForm =
     settingsForm && (settingsForm.form || settingsForm.init);
 
-  console.log('settingsForm', settingsForm);
+  // console.log('settingsForm', settingsForm);
 
   // only developers can see/edit raw settings!
   // thus, if there is no metadata and the user is not a dev, render nothing.
