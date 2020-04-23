@@ -16,7 +16,7 @@ export default function FormView({
   const dispatch = useDispatch();
   // TODO: this is a missing selector to implement. It would return {status, key, meta}
   const formState = useSelector(
-    state => ({ status: 'ready', key: 123, meta: {}, len: state.length })
+    state => ({ status: 'ready', key: 123, meta: value, len: state.length })
     // selectors.customSettingsForm(state, resourceId)
   );
   const isDeveloper = useSelector(

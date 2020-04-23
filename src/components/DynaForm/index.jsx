@@ -60,8 +60,12 @@ const DynaForm = props => {
   );
 
   if (!layout) {
+    if (!fieldMap) {
+      return null;
+    }
     // if no layout metadata accompanies the fieldMap,
     // then the order in which the fields are defined in the map are used as the layout.
+
     layout = { fields: [] };
     Object.keys(fieldMap).forEach(fieldId => {
       layout.fields.push(fieldId);

@@ -36,7 +36,7 @@ export function NewDynaSettings(props) {
 
   // only developers can see/edit raw settings!
   // thus, if there is no metadata and the user is not a dev, render nothing.
-  if (!isDeveloper && hasSettingsForm) return null;
+  if (!isDeveloper && !hasSettingsForm) return null;
 
   // possibly the user is editing the form meta or init?
   // editMode can only be turned on by dev, so no need to check if user is dev here.
@@ -56,6 +56,7 @@ export function NewDynaSettings(props) {
         disabled={disabled}
         onFormChange={handleSettingFormChange}
         onToggleClick={toggleEditMode}
+        value={settingsForm.form}
       />
     );
   }
