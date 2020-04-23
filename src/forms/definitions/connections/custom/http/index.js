@@ -169,9 +169,13 @@ import saplitmos from './saplitmos';
 import redshift from './redshift';
 import bigquery from './bigquery';
 import zendesksell from './zendesksell';
+import googlemail from './googlemail';
+import surveymonkey from './surveymonkey';
 
 export default {
   bigquery,
+  googlemail,
+  surveymonkey,
   redshift,
   sharepoint,
   vroozi,

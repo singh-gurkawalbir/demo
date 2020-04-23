@@ -91,12 +91,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'surveymonkey',
-    type: 'webhook',
-    name: 'SurveyMonkey',
-    webhookOnly: true,
-  },
-  {
     id: 'mailparser-io',
     type: 'webhook',
     name: 'Mailparser',
@@ -371,7 +365,7 @@ const connectors = [
   // },
   {
     id: 'googlemail',
-    name: 'Gmail',
+    name: 'Google Mail',
     type: 'rest',
     assistant: 'googlemail',
   },
@@ -708,13 +702,6 @@ const connectors = [
     webhook: true,
   },
   { id: 'sugarcrm', name: 'SugarCRM', type: 'rest', assistant: 'sugarcrm' },
-  {
-    id: 'surveymonkey',
-    name: 'SurveyMonkey',
-    type: 'rest',
-    assistant: 'surveymonkey',
-    webhook: true,
-  },
   { id: 'svb', name: 'SVB', type: 'http', assistant: 'svb' },
   { id: 'tableau', name: 'Tableau', type: 'rest', assistant: 'tableau' },
   { id: 'target', name: 'Target', type: 'http', assistant: 'target' },
@@ -790,7 +777,6 @@ export const groupApplications = (
     assistants.forEach(asst => {
       if (
         ![
-          'surveymonkey',
           'yammer',
           'hybris',
           'etsy',
