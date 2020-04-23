@@ -55,7 +55,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
 
   return (
     <TransformEditorDialog
-      title="Transform response"
+      title="Transform record"
       helpKey="export.transform.rules"
       helpTitle="Transform Rules"
       id={exportId}
