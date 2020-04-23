@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 // Schema details:
 // ---------------
 // id: Required. Any unique token.
@@ -11,15 +9,7 @@ import _ from 'lodash';
 // keyword: any words in combination with the name that will be used for search.
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
-const mergeObjectArrays = (arr1, arr2, match) =>
-  _.union(
-    _.map(arr1, obj1 => {
-      const same = _.find(arr2, obj2 => obj1[match] === obj2[match]);
 
-      return same ? _.extend(obj1, same) : obj1;
-    }),
-    _.reject(arr2, obj2 => _.find(arr1, obj1 => obj2[match] === obj1[match]))
-  );
 let localStorageAssistants;
 
 // localStorage is browser specific one. It is breaking testcases. Below code changes are to
@@ -170,6 +160,7 @@ const connectors = [
     group: 'db',
   },
   // Application connectors
+
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
   {
     id: '3plcentral',
@@ -798,6 +789,8 @@ export const groupApplications = (
           name: asst.name,
           type: asst.type,
           assistant: asst.id,
+          export: asst.export,
+          import: asst.import,
         });
       }
     });
@@ -815,20 +808,14 @@ export const groupApplications = (
   });
 
   const filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.assistant && assistants && resourceType !== 'connections') {
-      const assistant = assistants.find(a => a.id === connector.assistant);
-
-      if (assistant) {
-        if (appType === 'import') {
-          return assistant.import;
-        } else if (appType === 'export') {
-          return assistant.export;
-        }
-
-        return true;
+    if (connector.assistant && resourceType !== 'connections') {
+      if (appType === 'import') {
+        return connector.import;
+      } else if (appType === 'export') {
+        return connector.export;
       }
 
-      return false;
+      return true;
     }
 
     // Do not show FTP import for DataLoader flows
@@ -893,6 +880,21 @@ export const getApp = (type, assistant) => {
   return connectors.find(c => c.id === id) || {};
 };
 
-mergeObjectArrays(connectors, assistants, 'assistant');
+const applications = connectors.filter(connector => {
+  const assistant = assistants.find(a => a.id === connector.assistant);
 
-export default connectors;
+  return !assistant || !connector.assistant;
+});
+
+assistants.forEach(asst => {
+  applications.push({
+    id: asst.id,
+    name: asst.name,
+    type: asst.type,
+    assistant: asst.id,
+    export: asst.export,
+    import: asst.import,
+  });
+});
+
+export default applications;
