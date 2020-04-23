@@ -12,22 +12,22 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.auth.oauth.scope': {
-      fieldId: 'http.auth.oauth.scope',
-      scopes: [
-        'surveys_read',
-        'surveys_write',
-        'collectors_read',
-        'collectors_write',
-        'contacts_read',
-        'contacts_write',
-        'responses_read',
-        'webhooks_read',
-        'webhooks_write',
-        'users_read',
-        'library_read',
-      ],
-    },
+    // 'http.auth.oauth.scope': {
+    //   fieldId: 'http.auth.oauth.scope',
+    //   scopes: [
+    //     'surveys_read',
+    //     'surveys_write',
+    //     'collectors_read',
+    //     'collectors_write',
+    //     'contacts_read',
+    //     'contacts_write',
+    //     'responses_read',
+    //     'webhooks_read',
+    //     'webhooks_write',
+    //     'users_read',
+    //     'library_read',
+    //   ],
+    // },
     genericOauth: {
       id: 'genericOauth',
       label: 'Configure your client id and secret',
@@ -54,7 +54,6 @@ export default {
   layout: {
     fields: [
       'name',
-      'http.auth.oauth.scope',
       'genericOauth',
       'http._iClientId',
       'http.auth.oauth.callbackURL',

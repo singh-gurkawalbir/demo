@@ -185,7 +185,6 @@ export default {
     'googlecontacts',
     'googlemail',
     'acumatica',
-    'surveymonkey',
     'googledrive',
     'googleanalytics',
     'lightspeed',
