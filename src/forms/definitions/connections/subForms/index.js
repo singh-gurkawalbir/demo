@@ -9,8 +9,10 @@ import rdbmsFields from './rdbmsFields';
 import rdbmsAdvanced from './rdbmsAdvanced';
 import wrapperAdvanced from './wrapperAdvanced';
 import httpCookie from './httpCookie';
+import genericOauthConnector from './genericOauthConnector';
 
 export default {
+  genericOauthConnector,
   httpBasic,
   httpToken,
   restBasic,
