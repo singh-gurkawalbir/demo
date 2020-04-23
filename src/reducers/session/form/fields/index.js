@@ -7,8 +7,6 @@ import {
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
-const generateFieldKey = id => `${id}-${Date.now()}`;
-
 export default function fields(state = {}, action) {
   const { type, formKey, fieldProps = {} } = action;
   const { value, id, skipFieldTouched, defaultValue } = fieldProps;
@@ -39,7 +37,6 @@ export default function fields(state = {}, action) {
           ...fieldProps,
           value: getFirstDefinedValue(value, defaultValue),
           touched: false,
-          fieldKey: generateFieldKey(id),
         };
 
         registerField(fieldsRef[id]);
@@ -51,8 +48,6 @@ export default function fields(state = {}, action) {
           // updated field touched state
           fieldsRef[id].touched = true;
         }
-
-        fieldsRef[id].fieldKey = generateFieldKey(id);
 
         // update the last modified field id in the form state
         draft[formKey].lastFieldUpdated = id;
@@ -69,7 +64,6 @@ export default function fields(state = {}, action) {
 
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         fieldsRef[id].touched = true;
-        fieldsRef[id].fieldKey = generateFieldKey(id);
         getNextStateFromFields(draft[formKey]);
 
         break;

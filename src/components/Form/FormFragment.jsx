@@ -11,8 +11,6 @@ export const FieldComponent = props => {
     shallowEqual
   );
 
-  console.log('rerenderd ', id, fieldState);
-
   if (!fieldState || !fieldState.visible) return null;
 
   return renderer({ ...props, ...props.parentContext, fieldState });
@@ -66,7 +64,7 @@ export default function FormFragment({ defaultFields, formKey }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, registerField]);
 */
-  console.log('see rerender form ', formParentContext);
+  // console.log('see rerender form ', formParentContext);
 
   return (
     <Fragment>
