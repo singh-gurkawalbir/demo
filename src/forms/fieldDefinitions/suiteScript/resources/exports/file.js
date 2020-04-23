@@ -6,7 +6,7 @@ export default {
     required: true,
   },
   'export.file.csv': {
-    type: 'csvparse',
+    type: 'suitescriptcsvparse',
     label: 'Configure CSV Parse Options',
     defaultValue: r =>
       (r.export && r.export.file && r.export.file.csv) || {
@@ -16,5 +16,6 @@ export default {
         hasHeaderRow: false,
         rowDelimiter: '\n',
       },
+    ssLinkedConnectionId: r => r.ssLinkedConnectionId,
   },
 };

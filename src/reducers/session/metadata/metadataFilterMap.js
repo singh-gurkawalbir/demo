@@ -200,6 +200,14 @@ export default {
         value: d.name,
       })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-textFields': data =>
+    data.fields &&
+    data.fields
+      .filter(f => ['string', 'textarea'].includes(f.type))
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-externalIdFields': data =>
     data.fields
       .filter(f => f.externalId || f.name === 'Id')

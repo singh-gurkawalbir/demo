@@ -3,6 +3,7 @@ import newegg from './newegg';
 import rakuten from './rakuten';
 import sears from './sears';
 import fileCabinet from './fileCabinet';
+import salesforce from './salesforce';
 
 export default {
   netsuite,
@@ -10,4 +11,5 @@ export default {
   rakuten,
   sears,
   fileCabinet,
+  salesforce,
 };

@@ -37,6 +37,7 @@ export function* commitStagedChanges({
     resourceTypeToUse = 'flows';
     resourceId = resourceId
       .replace('re', '')
+      .replace('ri', '')
       .replace('e', '')
       .replace('i', '');
   }

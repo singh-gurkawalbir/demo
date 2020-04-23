@@ -190,7 +190,9 @@ const getResourceFormAssets = ({
         meta = meta.netsuite[ssExport.netsuite.type];
       } else if (ssExport.type === 'salesforce') {
         if (ssExport.salesforce.type === 'sobject') {
+          meta = meta.salesforce.realtime;
         } else {
+          meta = meta.salesforce.scheduled;
         }
       } else if (resource && resource.type === 'rdbms') {
         const rdbmsSubType = resource.rdbms.type;

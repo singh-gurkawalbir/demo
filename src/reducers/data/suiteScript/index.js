@@ -92,6 +92,7 @@ export default (state = {}, action) => {
                     EXPORT: 'e',
                     IMPORT: 'i',
                     REALTIME_EXPORT: 're',
+                    REALTIME_IMPORT: 'ri',
                   }[flow.type]
                 }${flow._id}`;
 
@@ -205,7 +206,7 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
     return null;
   }
 
-  let suiteScriptResourceType = resourceType;
+  let suiteScriptResourceType = resourceType.replace('ss-', '');
 
   if (['exports', 'imports'].includes(suiteScriptResourceType)) {
     suiteScriptResourceType = 'flows';
