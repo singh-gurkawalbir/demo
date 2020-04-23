@@ -236,60 +236,6 @@ function* deleteUISpecificValues({ values, resourceId }) {
   return valuesCopy;
 }
 
-function* patchSkipRetries({ resourceId }) {
-  const { patch } = yield select(
-    selectors.stagedResource,
-    resourceId,
-    SCOPES.VALUE
-  );
-  const { flowId } = yield select(
-    selectors.resourceFormState,
-    'exports',
-    resourceId
-  );
-
-  if (flowId) {
-    const skipRetries = patch.find(
-      p => p.path === '/skipRetries' && p.op === 'replace'
-    );
-    const flow = yield select(selectors.resource, 'flows', flowId);
-    let patchSet;
-
-    if (!flow) {
-      patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators`,
-          value: [
-            {
-              skipRetries: skipRetries ? !!skipRetries.value : false,
-              _exportId: resourceId,
-            },
-          ],
-        },
-      ];
-    } else {
-      const index =
-        flow.pageGenerators &&
-        flow.pageGenerators.findIndex(pg => pg._exportId === resourceId);
-
-      if (!index || index === -1) return;
-      patchSet = [
-        {
-          op: 'replace',
-          path: `/pageGenerators/${index}/skipRetries`,
-          value: skipRetries ? !!skipRetries.value : false,
-        },
-      ];
-    }
-
-    yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
-
-    if (!isNewId(flowId))
-      yield put(actions.resource.commitStaged('flows', flowId, SCOPES.VALUE));
-  }
-}
-
 const removeParentFormPatch = [{ op: 'remove', path: '/useParentForm' }];
 const removeAssistantPatch = [{ op: 'remove', path: '/assistant' }];
 
@@ -413,68 +359,77 @@ export function* submitFormValues({
     resourceId
   );
 
-  // fetch all possible pending patches.
-  if (!skipCommit) {
-    if (resourceType === 'exports') {
-      yield call(patchSkipRetries, { resourceId });
-    }
-
-    if (resourceType === 'exports' && isNewId(resourceId)) {
-      yield call(patchTransformationRulesForXMLResource, { resourceId });
-    }
-
-    const { patch } = yield select(
-      selectors.stagedResource,
-      resourceId,
-      SCOPES.VALUE
+  if (skipCommit) {
+    const resourceIdPatch = patchSet.find(
+      p => p.op === 'replace' && p.path === '/resourceId'
     );
-    // In most cases there would be no other pending staged changes, since most
-    // times a patch is followed by an immediate commit.  If however some
-    // component has staged some changes, even if the patchSet above is empty,
-    // we need to check the store for these un-committed ones and still call
-    // the commit saga.
-    let type = resourceType;
 
-    if (resourceType === 'connectorLicenses') {
-      // construct url for licenses
-      const connectorUrlStr = '/connectors/';
-      const startIndex =
-        match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
-
-      if (startIndex !== -1) {
-        const connectorId = match.url.substring(
-          startIndex,
-          match.url.indexOf('/', startIndex)
-        );
-
-        type = `connectors/${connectorId}/licenses`;
-      }
+    if (resourceIdPatch && resourceIdPatch.value) {
+      yield put(actions.resource.created(resourceIdPatch.value, resourceId));
     }
 
-    const integrationIdPatch =
-      patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
+    return yield put(
+      actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
+    );
+  }
 
-    if (
-      integrationIdPatch &&
-      integrationIdPatch.value &&
-      (resourceType === 'accesstokens' || resourceType === 'connections')
-    ) {
-      type = `integrations/${integrationIdPatch.value}/${resourceType}`;
+  // fetch all possible pending patches.
+  if (resourceType === 'exports' && isNewId(resourceId)) {
+    yield call(patchTransformationRulesForXMLResource, { resourceId });
+  }
+
+  const { patch } = yield select(
+    selectors.stagedResource,
+    resourceId,
+    SCOPES.VALUE
+  );
+  // In most cases there would be no other pending staged changes, since most
+  // times a patch is followed by an immediate commit.  If however some
+  // component has staged some changes, even if the patchSet above is empty,
+  // we need to check the store for these un-committed ones and still call
+  // the commit saga.
+  let type = resourceType;
+
+  if (resourceType === 'connectorLicenses') {
+    // construct url for licenses
+    const connectorUrlStr = '/connectors/';
+    const startIndex =
+      match.url.indexOf(connectorUrlStr) + connectorUrlStr.length;
+
+    if (startIndex !== -1) {
+      const connectorId = match.url.substring(
+        startIndex,
+        match.url.indexOf('/', startIndex)
+      );
+
+      type = `connectors/${connectorId}/licenses`;
     }
+  }
 
-    if (patch && patch.length) {
-      const resp = yield call(commitStagedChanges, {
-        resourceType: type,
-        id: resourceId,
-        scope: SCOPES.VALUE,
-        isGenerate,
-      });
+  const integrationIdPatch =
+    patch && patch.find(p => p.op === 'add' && p.path === '/_integrationId');
 
-      if (resp && (resp.error || resp.conflict)) {
-        return yield put(
-          actions.resourceForm.submitFailed(resourceType, resourceId)
-        );
-      }
+  if (
+    integrationIdPatch &&
+    integrationIdPatch.value &&
+    (resourceType === 'accesstokens' || resourceType === 'connections')
+  ) {
+    type = `integrations/${integrationIdPatch.value}/${resourceType}`;
+  }
+
+  if (patch && patch.length) {
+    const resp = yield call(commitStagedChanges, {
+      resourceType: type,
+      id: resourceId,
+      scope: SCOPES.VALUE,
+      // is Generate ghost code
+      isGenerate,
+    });
+
+    if (resp && (resp.error || resp.conflict)) {
+      return yield put(
+        actions.resourceForm.submitFailed(resourceType, resourceId)
+      );
     }
   }
 
@@ -483,8 +438,198 @@ export function* submitFormValues({
   );
 }
 
+export function* getFlowUpdatePatchesOnPGorPPSave(
+  resourceType,
+  tempResourceId,
+  flowId
+) {
+  if (
+    !['exports', 'imports'].includes(resourceType) ||
+    !flowId ||
+    !isNewId(tempResourceId)
+  )
+    return [];
+
+  // is pageGenerator or pageProcessor
+  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const createdResource = yield select(
+    selectors.resource,
+    resourceType,
+    createdId
+  );
+  const { merged: flowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  const addIndexPP =
+    (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
+  const addIndexPG =
+    (flowDoc && flowDoc.pageGenerators && flowDoc.pageGenerators.length) || 0;
+  let flowPatches = [];
+
+  if (resourceType === 'exports') {
+    if (createdResource.isLookup) {
+      flowPatches = [
+        {
+          op: 'add',
+          path: `/pageProcessors/${addIndexPP}`,
+          value: { type: 'export', _exportId: createdId },
+        },
+      ];
+    } else {
+      // only page generators
+      // temp patch of application with value 'dataLoader' maybe present if its data loader...
+      // perform replace in that case
+      // eslint-disable-next-line no-lonely-if
+      if (
+        flowDoc &&
+        flowDoc.pageGenerators &&
+        flowDoc.pageGenerators[0] &&
+        flowDoc.pageGenerators[0].application &&
+        flowDoc.pageGenerators[0].application === 'dataLoader'
+      ) {
+        flowPatches = [
+          {
+            op: 'replace',
+            path: `/pageGenerators/0`,
+            value: { _exportId: createdId },
+          },
+        ];
+      } else {
+        flowPatches = [
+          {
+            op: 'add',
+            path: `/pageGenerators/${addIndexPG}`,
+            value: { _exportId: createdId },
+          },
+        ];
+      }
+    }
+  } else {
+    // imports resourcetype
+
+    flowPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors/${addIndexPP}`,
+        value: { type: 'import', _importId: createdId },
+      },
+    ];
+  }
+
+  // only one flow patch so
+
+  let missingPatches = [];
+
+  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators)
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageGenerators`,
+        value: [],
+      },
+    ];
+  else if (
+    flowPatches[0].path.includes('pageProcessors') &&
+    !flowDoc.pageProcessors
+  )
+    missingPatches = [
+      {
+        op: 'add',
+        path: `/pageProcessors`,
+        value: [],
+      },
+    ];
+
+  return [...missingPatches, ...flowPatches];
+}
+
+export function* skipRetriesPatches(flowId, resourceId, skipRetries) {
+  const { merged: flow } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  const createdId = yield select(selectors.createdResourceId, resourceId);
+  const index =
+    flow.pageGenerators &&
+    flow.pageGenerators.findIndex(
+      pg => pg._exportId === (createdId || resourceId)
+    );
+  const opDetermination =
+    flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
+
+  return [
+    {
+      op: opDetermination,
+      path: `/pageGenerators/${index}/skipRetries`,
+      value: skipRetries,
+    },
+  ];
+}
+
+function* getResourceType({ resourceType, resourceId }) {
+  let updatedResourceType;
+
+  if (resourceType === 'pageGenerator') updatedResourceType = 'exports';
+  else if (resourceType === 'pageProcessor') {
+    const createdId = yield select(selectors.createdResourceId, resourceId);
+    const importResource = yield select(
+      selectors.resource,
+      'imports',
+      createdId
+    );
+
+    // it should be either an export or an import
+    if (importResource) updatedResourceType = 'imports';
+    else updatedResourceType = 'exports';
+  } else updatedResourceType = resourceType;
+
+  return updatedResourceType;
+}
+
+function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
+  const updatedResourceType = yield call(getResourceType, {
+    resourceType,
+    resourceId,
+  });
+  const flowPatches = yield call(
+    getFlowUpdatePatchesOnPGorPPSave,
+    updatedResourceType,
+    resourceId,
+    flowId
+  );
+
+  yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
+  // TODO: is skipRetries a ui field value should this be deleted
+  // So that it does not get applied at the root of flow doc
+  const skipRetries = resourceValues['/skipRetries'];
+
+  if (['exports'].includes(updatedResourceType) && skipRetries !== undefined) {
+    const skipRetryPatches = yield call(
+      skipRetriesPatches,
+      flowId,
+      resourceId,
+      !!skipRetries
+    );
+
+    yield put(
+      actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE)
+    );
+  }
+
+  yield call(commitStagedChanges, {
+    resourceType: 'flows',
+    id: flowId,
+    scope: SCOPES.VALUE,
+  });
+
+  yield put(actions.flowData.updateFlow(flowId));
+}
+
 export function* submitResourceForm(params) {
-  const { resourceType, resourceId } = params;
+  const { resourceType, resourceId, flowId, values } = params;
   const { cancelSave } = yield race({
     saveForm: call(submitFormValues, params),
     cancelSave: take(
@@ -496,7 +641,37 @@ export function* submitResourceForm(params) {
   });
 
   // perform submit cleanup
-  if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
+  if (cancelSave) return yield put(actions.resource.clearStaged(resourceId));
+
+  const { submitFailed, skipCommit } = yield select(
+    selectors.resourceFormState,
+    resourceType,
+    resourceId
+  );
+
+  // if it fails return
+  if (submitFailed) return;
+
+  // when there is nothing to commit there is no reason to update the flow doc..hence we return
+  // however there is a usecase where we create a resource from an existing resource and that
+  // is a one step process with skipCommit being true...we have to update the flow doc in that case
+  if (skipCommit) {
+    if (['pageGenerator', 'pageProcessor'].includes(resourceType)) {
+      const { exportId, importId } = values;
+
+      // if exportId or importId values are present it indicated its created from an existing import or export
+      // in that case we allow a flow doc update
+      // if its not created from an existing export or from an existing import
+      if (!exportId && !importId) return;
+    } else return;
+  }
+
+  yield call(updateFlowDoc, {
+    resourceType,
+    resourceId,
+    flowId,
+    resourceValues: values,
+  });
 }
 
 export function* saveAndContinueResourceForm(params) {
