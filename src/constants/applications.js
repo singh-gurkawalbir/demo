@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import { isProduction } from '../forms/utils';
+
 // Schema details:
 // ---------------
 // id: Required. Any unique token.
@@ -809,12 +812,18 @@ export const groupApplications = (
     return 0; // names must be equal
   });
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.assistant && resourceType !== 'connections') {
-      if (appType === 'import') {
-        return connector.import;
-      } else if (appType === 'export') {
-        return connector.export;
+  let filteredConnectors = assistantConnectors.filter(connector => {
+    if (connector.assistant && assistants && resourceType !== 'connections') {
+      const assistant = assistants.find(a => a.id === connector.assistant);
+
+      if (assistant) {
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
       }
 
       return true;
@@ -842,6 +851,10 @@ export const groupApplications = (
 
     return true;
   });
+
+  if (isProduction()) {
+    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
+  }
 
   return [
     {
