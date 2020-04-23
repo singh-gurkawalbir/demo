@@ -15,14 +15,25 @@ import getRoutePath from '../../utils/routePaths';
 const useStyles = makeStyles(theme => ({
   googleBtn: {
     borderRadius: 4,
-    width: 180,
     background: `url(${getImageUrl(
       'images/googlelogo.png'
     )}) 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
-    height: 48,
+    height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
+  },
+  label: {
+    marginRight: theme.spacing(1),
+  },
+  signInOption: {
+    paddingLeft: 0,
+    margin: theme.spacing(2, 0),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  btnLabel: {
+    marginLeft: theme.spacing(3),
+    lineHeight: 0,
   },
 }));
 
@@ -212,19 +223,22 @@ export default function ProfileComponent() {
       </DynaForm>
       {getDomain() !== 'eu.integrator.io' && (
         <div>
-          <PanelHeader title="Sign in via Google" />
+          <PanelHeader
+            title="Sign in via Google"
+            className={classes.signInOption}
+          />
           {preferences &&
             (!preferences.auth_type_google ||
               !preferences.auth_type_google.id) && (
               <InputLabel>
-                Link to:
+                <span className={classes.label}>Link to:</span>
                 <Button
                   data-test="linkWithGoogle"
                   variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleLinkWithGoogle}>
-                  Google
+                  <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
             )}
@@ -232,14 +246,14 @@ export default function ProfileComponent() {
             preferences.auth_type_google &&
             preferences.auth_type_google.id && (
               <InputLabel>
-                Unlink to:
+                <span className={classes.label}>Unlink to:</span>
                 <Button
                   data-test="unlinkWithGoogle"
                   variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleUnLinkWithGoogle}>
-                  Google
+                  <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
             )}
