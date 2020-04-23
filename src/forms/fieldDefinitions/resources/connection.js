@@ -1467,7 +1467,6 @@ export default {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
-
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
