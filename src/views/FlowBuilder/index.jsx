@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, Fragment } from 'react';
+import { useState, useCallback, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -24,7 +24,7 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
-import { generateNewId } from '../../utils/resource';
+import { generateNewId, isNewId } from '../../utils/resource';
 import { isConnector, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
@@ -235,8 +235,6 @@ function FlowBuilder() {
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
-  const [newGeneratorId, setNewGeneratorId] = useState(generateNewId());
-  const [newProcessorId, setNewProcessorId] = useState(generateNewId());
   //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -264,19 +262,6 @@ function FlowBuilder() {
     (pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
-  const createdGeneratorId = useSelector(state =>
-    selectors.createdResourceId(state, newGeneratorId)
-  );
-  const createdProcessorId = useSelector(state =>
-    selectors.createdResourceId(state, newProcessorId)
-  );
-  const createdProcessorResourceType = useSelector(state => {
-    if (!createdProcessorId) return;
-
-    const imp = selectors.resource(state, 'imports', createdProcessorId);
-
-    return imp ? 'import' : 'export';
-  });
   const isConnectorType = isConnector(flow);
   const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
@@ -326,85 +311,42 @@ function FlowBuilder() {
     },
     [pageGenerators, pageProcessors, patchFlow]
   );
-
-  // #region Add Generator on creation effect
-  useEffect(() => {
-    if (createdGeneratorId) {
-      // Since flow is patched with new pageGenerator node to include skipRetries,
-      // a pageGenerator may already exist.
-      const existingPG = pageGenerators.find(
-        pg => pg._exportId === newGeneratorId
-      );
-
-      if (existingPG) {
-        existingPG._exportId = createdGeneratorId;
-        patchFlow('/pageGenerators', pageGenerators);
+  const pushOrReplaceHistory = useCallback(
+    to => {
+      if (match.isExact) {
+        history.push(to);
       } else {
-        patchFlow('/pageGenerators', [
-          ...pageGenerators,
-          { _exportId: createdGeneratorId },
-        ]);
+        history.replace(to);
       }
-
-      // in case someone clicks + again to add another resource...
-      setNewGeneratorId(generateNewId());
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdGeneratorId, patchFlow]);
-  // #endregion
-
-  // #region Add Processor on creation effect
-  useEffect(() => {
-    if (createdProcessorId) {
-      const newProcessor =
-        createdProcessorResourceType === 'import'
-          ? { type: 'import', _importId: createdProcessorId }
-          : { type: 'export', _exportId: createdProcessorId };
-
-      patchFlow('/pageProcessors', [...pageProcessors, newProcessor]);
-
-      setNewProcessorId(generateNewId());
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
-  // #endregion
-
-  const pushOrReplaceHistory = to => {
-    if (match.isExact) {
-      history.push(to);
-    } else {
-      history.replace(to);
-    }
-  };
-
-  function handleAddGenerator() {
+    },
+    [history, match.isExact]
+  );
+  const handleAddGenerator = useCallback(() => {
     const newTempGeneratorId = generateNewId();
 
-    setNewGeneratorId(newTempGeneratorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageGenerator/${newTempGeneratorId}`
     );
-  }
-
-  function handleAddProcessor() {
+  }, [match.url, pushOrReplaceHistory]);
+  const handleAddProcessor = useCallback(() => {
     const newTempProcessorId = generateNewId();
 
-    setNewProcessorId(newTempProcessorId);
     pushOrReplaceHistory(
       `${match.url}/add/pageProcessor/${newTempProcessorId}`
     );
-  }
-
-  function handleDrawerOpen(path) {
-    pushOrReplaceHistory(`${match.url}/${path}`);
-  }
-
-  function handleTitleChange(title) {
-    patchFlow('/name', title);
-  }
-
+  }, [match.url, pushOrReplaceHistory]);
+  const handleDrawerOpen = useCallback(
+    path => {
+      pushOrReplaceHistory(`${match.url}/${path}`);
+    },
+    [match.url, pushOrReplaceHistory]
+  );
+  const handleTitleChange = useCallback(
+    title => {
+      patchFlow('/name', title);
+    },
+    [patchFlow]
+  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
@@ -412,50 +354,62 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
-
   // #region New Flow Creation logic
-  function rewriteUrl(id) {
-    const parts = match.url.split('/');
+  const rewriteUrl = useCallback(
+    id => {
+      const parts = match.url.split('/');
 
-    parts[parts.length - 1] = id;
+      parts[parts.length - 1] = id;
 
-    return parts.join('/');
-  }
-
+      return parts.join('/');
+    },
+    [match.url]
+  );
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
-  function patchNewFlow(newFlowId, newName, newPG) {
-    const startDisabled = !newPG || newPG.application !== 'dataLoader';
-    const patchSet = [
-      { op: 'add', path: '/name', value: newName || 'New flow' },
-      { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
-      { op: 'add', path: '/pageProcessors', value: [] },
-      { op: 'add', path: '/disabled', value: startDisabled },
-    ];
+  const patchNewFlow = useCallback(
+    (newFlowId, newName, newPG) => {
+      const startDisabled = !newPG || newPG.application !== 'dataLoader';
+      const patchSet = [
+        { op: 'add', path: '/name', value: newName || 'New flow' },
+        { op: 'add', path: '/pageGenerators', value: newPG ? [newPG] : [] },
+        { op: 'add', path: '/pageProcessors', value: [] },
+        { op: 'add', path: '/disabled', value: startDisabled },
+      ];
 
-    if (integrationId && integrationId !== 'none') {
-      patchSet.push({
-        op: 'add',
-        path: '/_integrationId',
-        value: integrationId,
-      });
+      if (integrationId && integrationId !== 'none') {
+        patchSet.push({
+          op: 'add',
+          path: '/_integrationId',
+          value: integrationId,
+        });
+      }
+
+      dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
+    },
+    [dispatch, integrationId]
+  );
+
+  useEffect(() => {
+    // NEW DATA LOADER REDIRECTION
+    if (isNewId(flowId)) {
+      if (match.url.toLowerCase().includes('dataloader')) {
+        patchNewFlow(flowId, 'New data loader flow', {
+          application: 'dataLoader',
+        });
+      } else {
+        patchNewFlow(flowId);
+      }
     }
 
-    dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
-  }
+    return () => {
+      dispatch(actions.resource.clearStaged(flowId, 'values'));
+    };
+  }, [dispatch, flowId, match.url, patchNewFlow]);
 
   // NEW FLOW REDIRECTION
   if (flowId === 'new') {
     const tempId = generateNewId();
-
-    // NEW DATA LOADER REDIRECTION
-    if (match.url.toLowerCase().includes('dataloader')) {
-      patchNewFlow(tempId, 'New data loader flow', {
-        application: 'dataLoader',
-      });
-    } else {
-      patchNewFlow(tempId);
-    }
 
     history.replace(rewriteUrl(tempId));
 
