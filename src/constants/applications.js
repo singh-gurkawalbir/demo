@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { isProduction } from '../forms/utils';
 
 // Schema details:
