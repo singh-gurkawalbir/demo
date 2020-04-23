@@ -162,6 +162,13 @@ export const getFormParentContext = (state, formKey) =>
 export const getFieldState = (state, formKey, fieldId) =>
   fromSession.getFieldState(state && state.session, formKey, fieldId);
 
+export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
+  fromSession.isActionButtonVisible(
+    state && state.session,
+    formKey,
+    fieldVisibleRules
+  );
+
 export function resourceFormState(state, resourceType, resourceId) {
   return fromSession.resourceFormState(
     state && state.session,

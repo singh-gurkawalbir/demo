@@ -1,10 +1,10 @@
-import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
+import * as selectors from '../../reducers';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
-import actions from '../../actions';
 
 function DynaAction(props) {
   const {
@@ -14,7 +14,7 @@ function DynaAction(props) {
     value,
     id,
     dataTest,
-    fields: fieldsById,
+    visible,
     visibleWhen,
     visibleWhenAll,
     isValid,
@@ -22,12 +22,6 @@ function DynaAction(props) {
     variant = 'outlined',
     color = 'primary',
   } = props;
-  const dispatch = useDispatch();
-  const registerField = useCallback(
-    field => dispatch(actions.form.field.registerField(formKey)(field)),
-    [dispatch, formKey]
-  );
-  const fields = Object.values(fieldsById);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     ...props,
     formIsValid: isValid,
@@ -35,29 +29,15 @@ function DynaAction(props) {
   const onClick = useCallback(() => {
     onClickWhenValid(trim(value));
   }, [onClickWhenValid, value]);
+  const isButtonVisible = useSelector(state =>
+    selectors.isActionButtonVisible(state, formKey, {
+      visible,
+      visibleWhen,
+      visibleWhenAll,
+    })
+  );
 
-  useEffect(() => {
-    const matchingActionField = fields.find(field => field.id === id);
-
-    // name does not really matter since this is an action button
-    // and we are ignoring the value associated to this field
-    // through omitWhenValueIs
-    if (!matchingActionField) {
-      registerField({
-        id,
-        name: id,
-        visibleWhen,
-        visibleWhenAll,
-        omitWhenValueIs: [undefined],
-      });
-    }
-  }, [registerField, fields, id, visibleWhen, visibleWhenAll]);
-
-  if (id) {
-    const matchingActionField = fields.find(field => field.id === id);
-
-    if (matchingActionField && !matchingActionField.visible) return null;
-  }
+  if (!isButtonVisible) return null;
 
   return (
     <Button
@@ -78,8 +58,8 @@ const DynaActionWrapped = props => {
 
   return (
     <DynaAction
-      {...form}
       {...props}
+      fields={form.fields}
       disabled={!!(form.disabled || props.disabled)}
       isValid={props.isValid === undefined ? form.isValid : props.isValid}
     />

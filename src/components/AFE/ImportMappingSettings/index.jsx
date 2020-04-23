@@ -50,7 +50,7 @@ export default function ImportMappingSettings(props) {
     lookups,
   } = props;
   const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
+    showValidationBeforeTouched: false,
   });
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -131,7 +131,7 @@ export default function ImportMappingSettings(props) {
   );
   const showCustomFormValidations = useCallback(() => {
     setFormState({
-      showFormValidationsBeforeTouch: true,
+      showValidationBeforeTouched: true,
     });
   }, []);
 

@@ -44,7 +44,7 @@ export default function reducer(state = {}, action) {
           initComplete: true,
           fieldMeta,
           flowId,
-          showFormValidationsBeforeTouch: false,
+          showValidationBeforeTouched: false,
         },
       };
 
@@ -66,7 +66,7 @@ export default function reducer(state = {}, action) {
         // easier as we dont need to lookup the preSave handler...
         [key]: {
           ...state[key],
-          showFormValidationsBeforeTouch: true,
+          showValidationBeforeTouched: true,
         },
       };
 

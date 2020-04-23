@@ -3,7 +3,11 @@
 import produce from 'immer';
 import reduceReducers from 'reduce-reducers';
 import actionTypes from '../../../actions/types';
-import { getNextStateFromFields, registerFields } from '../../../utils/form';
+import {
+  getNextStateFromFields,
+  registerFields,
+  isVisible,
+} from '../../../utils/form';
 import fields from './fields';
 
 function form(state = {}, action) {
@@ -65,4 +69,12 @@ export const getFieldState = (state, formKey, fieldId) => {
   if (!formState) return null;
 
   return formState.fields && formState.fields[fieldId];
+};
+
+export const isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
+  const formState = getFormState(state, formKey);
+
+  if (!formState) return false;
+
+  return isVisible(fieldVisibleRules, formState.fields);
 };

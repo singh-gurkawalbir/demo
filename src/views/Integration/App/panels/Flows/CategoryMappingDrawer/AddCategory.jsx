@@ -50,11 +50,11 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     history.push(parentUrl);
   }, [history, parentUrl]);
   const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
+    showValidationBeforeTouched: false,
   });
   const showCustomFormValidations = useCallback(() => {
     setFormState({
-      showFormValidationsBeforeTouch: true,
+      showValidationBeforeTouched: true,
     });
   }, []);
   const handleSave = useCallback(

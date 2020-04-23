@@ -66,6 +66,13 @@ export const getFormParentContext = (state, formKey) =>
 export const getFieldState = (state, formKey, fieldId) =>
   fromForm.getFieldState(state && state.form, formKey, fieldId);
 
+export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
+  fromForm.isActionButtonVisible(
+    state && state.form,
+    formKey,
+    fieldVisibleRules
+  );
+
 export function netsuiteUserRoles(
   state,
   connectionId,

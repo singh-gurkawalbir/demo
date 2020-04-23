@@ -89,13 +89,13 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE:
         draft[key] = {
           initComplete: true,
-          showFormValidationsBeforeTouch: false,
+          showValidationBeforeTouched: false,
         };
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
         .SHOW_FORM_VALIDATION_ERRORS:
         if (!draft[key]) draft[key] = {};
-        draft[key].showFormValidationsBeforeTouch = true;
+        draft[key].showValidationBeforeTouched = true;
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
