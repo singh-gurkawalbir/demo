@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 // required for all inputs. Also move this code into a util.js sibling file and write tests against it to
 // ensure validation matches expected business rules.
 function isValidFormMetadata(meta) {
-  console.log('meta to validate:', meta);
+  // console.log('meta to validate:', meta);
 
   if (!meta) return false;
 
@@ -37,7 +37,7 @@ function isValidFormMetadata(meta) {
 
   if (!meta.layout) return false;
 
-  console.log('meta is valid');
+  // console.log('meta is valid');
 
   return true;
 }
