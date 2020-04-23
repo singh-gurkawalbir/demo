@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback, Fragment } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../../reducers';
-import EditView from './EditView';
+import EditDrawer from './EditDrawer';
 import FormView from './FormView';
 import RawView from './RawView';
 import Prototype from './prototype';
@@ -9,7 +10,8 @@ import Prototype from './prototype';
 export function NewDynaSettings(props) {
   const { id, resourceContext, disabled, onFieldChange } = props;
   const { resourceType, resourceId } = resourceContext;
-  const [editFormMode, setEditFormMode] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
   const settingsForm = useSelector(
     state => selectors.resource(state, resourceType, resourceId).settingsForm
   );
@@ -17,8 +19,8 @@ export function NewDynaSettings(props) {
     state => selectors.userProfile(state).developer
   );
   const toggleEditMode = useCallback(() => {
-    setEditFormMode(!editFormMode);
-  }, [editFormMode]);
+    history.push(`${match.url}/editSettings`);
+  }, [history, match.url]);
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
       // console.log(isValid ? 'valid: ' : 'invalid: ', values);
@@ -34,34 +36,37 @@ export function NewDynaSettings(props) {
   const hasSettingsForm =
     settingsForm && (settingsForm.form || settingsForm.init);
 
+  // console.log('settingsForm', settingsForm);
+
   // only developers can see/edit raw settings!
   // thus, if there is no metadata and the user is not a dev, render nothing.
-  if (!isDeveloper && hasSettingsForm) return null;
-
-  // possibly the user is editing the form meta or init?
-  // editMode can only be turned on by dev, so no need to check if user is dev here.
-  if (editFormMode)
-    return (
-      <EditView
-        resourceId={resourceId}
-        settingsForm={settingsForm}
-        onToggleClick={toggleEditMode}
-      />
-    );
+  if (!isDeveloper && !hasSettingsForm) return null;
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
-  if (hasSettingsForm) {
-    return (
-      <FormView
-        disabled={disabled}
-        onFormChange={handleSettingFormChange}
-        onToggleClick={toggleEditMode}
-      />
-    );
-  }
-
-  // the only case left is devs and no settings, so we render the raw settings editor.
-  return <RawView {...props} onToggleClick={toggleEditMode} />;
+  return (
+    // Always render the edit drawer. This drawer has logic within to not display unless the
+    // browser location ends with a specific path.
+    <Fragment>
+      {isDeveloper && (
+        <EditDrawer
+          resourceId={resourceId}
+          settingsForm={settingsForm}
+          onToggleClick={toggleEditMode}
+        />
+      )}
+      {hasSettingsForm ? (
+        <FormView
+          resourceId={resourceId}
+          resourceType={resourceType}
+          disabled={disabled}
+          onFormChange={handleSettingFormChange}
+          onToggleClick={toggleEditMode}
+        />
+      ) : (
+        <RawView {...props} onToggleClick={toggleEditMode} />
+      )}
+    </Fragment>
+  );
 }
 
 export default function DynaSettingsFactory(props) {

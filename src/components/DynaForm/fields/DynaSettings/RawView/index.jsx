@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RawView(onToggleClick, ...rest) {
+export default function RawView({ onToggleClick, ...rest }) {
   const classes = useStyles();
 
   // Only developers would ever see this raw settings view, so we can safely
