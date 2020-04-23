@@ -188,33 +188,9 @@ export default {
       scopes: ['api', 'offline_access', 'api:concurrent_access'],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
-    genericOauth: {
-      id: 'genericOauth',
-      label: 'Configure your client id and secret',
-      type: 'checkbox',
-      required: true,
-      defaultValue: r => !!(r && r.http && r.http._iClientId),
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http._iClientId': {
-      fieldId: 'http._iClientId',
-      required: true,
-      filter: { provider: 'custom_oauth2' },
-      type: 'dynaiclient',
-      connectionId: r => r && r._id,
-      connectorId: r => r && r._connectorId,
-      visibleWhenAll: [
-        { field: 'genericOauth', is: ['true'] },
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
-    },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-      visibleWhen: [
-        { field: 'genericOauth', is: ['true'] },
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
+    genericOauthConnector: {
+      formId: 'genericOauthConnector',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
@@ -232,9 +208,7 @@ export default {
       'http.encrypted.password',
       'http.unencrypted.company',
       'http.auth.oauth.scope',
-      'genericOauth',
-      'http._iClientId',
-      'http.auth.oauth.callbackURL',
+      'genericOauthConnector',
     ],
     type: 'collapse',
     containers: [
