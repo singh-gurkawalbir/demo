@@ -66,6 +66,7 @@ describe('reducer expression test cases', () => {
           actions.form.field.onFieldChange(formKey)('FIELD1', '456')
         );
 
+        // verify FIELD2 maintains the same instance since FIELD2 was unaffected from FIELD1 on change
         expect(formState[formKey].fields.FIELD2).toBe(
           nextFormState[formKey].fields.FIELD2
         );
@@ -148,11 +149,17 @@ describe('reducer expression test cases', () => {
 
       test('should show that field1 is invalid since its been touched with an invalid value', () => {
         // touching the field with a text
-        formState = forms(
+        const nextFormState = forms(
           formState,
           actions.form.field.onFieldChange(formKey)('FIELD1', 'some value')
         );
 
+        // verify FIELD2 maintains the same instance since FIELD2 was unaffected from FIELD1 on change
+        expect(formState[formKey].fields.FIELD2).toBe(
+          nextFormState[formKey].fields.FIELD2
+        );
+
+        formState = nextFormState;
         const { FIELD1, FIELD2 } = formState[formKey].fields;
 
         expect(FIELD1.isValid).toBe(false);
@@ -173,6 +180,7 @@ describe('reducer expression test cases', () => {
       });
     });
   });
+  // couldn't apply verify new field instances behaviour for both required and visible test suite since any change should affect both the fields
   describe('required expression test case', () => {
     let formState;
     const fieldsMeta = {
@@ -281,7 +289,7 @@ describe('reducer expression test cases', () => {
       expect(FIELD1.visible).toBe(false);
     });
 
-    test('visibleField should be required after its visibleWhen expression criteria is met ', () => {
+    test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
       formState = forms(
         formState,
         actions.form.field.onFieldChange(formKey)('FIELD2', 'standard')

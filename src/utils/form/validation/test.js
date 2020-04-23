@@ -31,7 +31,8 @@ describe('validateField', () => {
       required: false,
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(true);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(true);
   });
 
   test('visible, required field with empty string value is valid', () => {
@@ -42,7 +43,8 @@ describe('validateField', () => {
       value: '',
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(false);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(false);
   });
 
   test('visible, required field with numberical value 0 is valid', () => {
@@ -53,7 +55,8 @@ describe('validateField', () => {
       value: 0,
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(true);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(true);
   });
 
   test('visible, required field with false value is valid', () => {
@@ -64,7 +67,8 @@ describe('validateField', () => {
       value: false,
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(true);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(true);
   });
 
   test('visible, required field with string value is valid', () => {
@@ -75,7 +79,8 @@ describe('validateField', () => {
       value: 'test',
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(true);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(true);
   });
 
   test('visible, required field with empty array value is invalid', () => {
@@ -86,7 +91,8 @@ describe('validateField', () => {
       value: [],
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(false);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(false);
   });
 
   test('visible, required field with populated array value is valid', () => {
@@ -97,7 +103,8 @@ describe('validateField', () => {
       value: [1],
     };
 
-    expect(validateField(testField, [testField], true).isValid).toBe(true);
+    validateField(testField, [testField], true);
+    expect(testField.isValid).toBe(true);
   });
 
   test('visible, required field with missing data shows custom message', () => {
@@ -109,10 +116,11 @@ describe('validateField', () => {
       value: '',
       missingValueMessage: errorMessage,
     };
-    const validationResult = validateField(testField, [testField], true);
 
-    expect(validationResult.isValid).toBe(false);
-    expect(validationResult.errorMessages).toBe(errorMessage);
+    validateField(testField, [testField], true);
+
+    expect(testField.isValid).toBe(false);
+    expect(testField.errorMessages).toBe(errorMessage);
   });
 
   test('using validation handler reporting invalid', () => {
@@ -122,9 +130,8 @@ describe('validateField', () => {
     };
     const validationHandler = (field, fields) => 'Fail';
 
-    expect(
-      validateField(testField, [testField], true, validationHandler).isValid
-    ).toBe(false);
+    validateField(testField, [testField], true, validationHandler);
+    expect(testField.isValid).toBe(false);
   });
 
   test('using validation handler reporting valid', () => {
@@ -134,9 +141,8 @@ describe('validateField', () => {
     };
     const validationHandler = (field, fields) => null;
 
-    expect(
-      validateField(testField, [testField], true, validationHandler).isValid
-    ).toBe(true);
+    validateField(testField, [testField], true, validationHandler);
+    expect(testField.isValid).toBe(true);
   });
 
   test('validation of trimmed and required field with whitespace value is false', () => {
@@ -147,9 +153,10 @@ describe('validateField', () => {
       value: '     ',
       trimValue: true,
     };
-    const validationResult = validateField(testField, [testField], true);
 
-    expect(validationResult.isValid).toBe(false);
+    validateField(testField, [testField], true);
+
+    expect(testField.isValid).toBe(false);
   });
 
   test('validation of untrimmed and required field with whitespace value is true', () => {
@@ -159,9 +166,10 @@ describe('validateField', () => {
       required: true,
       value: '     ',
     };
-    const validationResult = validateField(testField, [testField], true);
 
-    expect(validationResult.isValid).toBe(true);
+    validateField(testField, [testField], true);
+
+    expect(testField.isValid).toBe(true);
   });
 
   test('field is only discretely invalid if not touched', () => {
@@ -172,11 +180,12 @@ describe('validateField', () => {
       value: '',
       touched: false,
     };
-    const validationResult = validateField(testField, [testField], false);
 
-    expect(validationResult.isValid).toBe(true);
-    expect(validationResult.isDiscretelyInvalid).toBe(true);
-    expect(validationResult.errorMessages).toBe('');
+    validateField(testField, [testField], false);
+
+    expect(testField.isValid).toBe(true);
+    expect(testField.isDiscretelyInvalid).toBe(true);
+    expect(testField.errorMessages).toBe('');
   });
 
   test('field is invalid when touched', () => {
@@ -187,11 +196,12 @@ describe('validateField', () => {
       value: '',
       touched: true,
     };
-    const validationResult = validateField(testField, [testField], false);
 
-    expect(validationResult.isValid).toBe(false);
-    expect(validationResult.isDiscretelyInvalid).toBe(true);
-    expect(validationResult.errorMessages).toBe('A value must be provided');
+    validateField(testField, [testField], false);
+
+    expect(testField.isValid).toBe(false);
+    expect(testField.isDiscretelyInvalid).toBe(true);
+    expect(testField.errorMessages).toBe('A value must be provided');
   });
 
   test('field validation rules not processed without value', () => {
@@ -208,10 +218,11 @@ describe('validateField', () => {
         },
       },
     };
-    const validationResult = validateField(testField, [testField], true);
 
-    expect(validationResult.isValid).toBe(true);
-    expect(validationResult.isDiscretelyInvalid).toBe(false);
+    validateField(testField, [testField], true);
+
+    expect(testField.isValid).toBe(true);
+    expect(testField.isDiscretelyInvalid).toBe(false);
   });
 });
 

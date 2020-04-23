@@ -200,6 +200,7 @@ export const getValueFromField = field => {
   return trimmedValue;
 };
 
+// validate field  will mutate field argument...this is to leverage immer capabilities
 export const validateField = (
   field,
   fieldsById,
@@ -225,11 +226,12 @@ export const validateField = (
       }
     } else if (!valueProvided) {
       // do not run all validations if the field is empty
-      return Object.assign({}, field, {
-        isValid: true,
-        isDiscretelyInvalid: !isValid,
-        errorMessages: errorMessages.length ? formattedErrorMessage() : '',
-      });
+
+      field.isValid = true;
+      field.isDiscretelyInvalid = !isValid;
+      field.errorMessages = errorMessages.length ? formattedErrorMessage() : '';
+
+      return;
     }
 
     isValid =
@@ -273,18 +275,16 @@ export const validateField = (
   }
 
   if (!showValidationBeforeTouched && !touched) {
-    return Object.assign({}, field, {
-      isValid: true,
-      isDiscretelyInvalid: !isValid,
-      errorMessages: '',
-    });
+    field.isValid = true;
+    field.isDiscretelyInvalid = !isValid;
+    field.errorMessages = '';
+
+    return;
   }
 
-  return Object.assign({}, field, {
-    isValid,
-    isDiscretelyInvalid: !isValid,
-    errorMessages: formattedErrorMessage(),
-  });
+  field.isValid = isValid;
+  field.isDiscretelyInvalid = !isValid;
+  field.errorMessages = formattedErrorMessage();
 };
 
 export const validateAllFields = ({
@@ -296,7 +296,7 @@ export const validateAllFields = ({
   Object.keys(fields).forEach(fieldKey => {
     // most of the primitives for each state are scaler values
     // so when i make changes to draft like this...immer should be smart enough to determine if that field needs to be updated
-    fields[fieldKey] = validateField(
+    validateField(
       fields[fieldKey],
       fields,
       showValidationBeforeTouched,
