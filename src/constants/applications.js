@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { isProduction } from '../forms/utils';
 
 // Schema details:
 // ---------------
@@ -830,7 +831,7 @@ export const groupApplications = (
     return 0; // names must be equal
   });
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
+  let filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
       const assistant = assistants.find(a => a.id === connector.assistant);
 
@@ -869,6 +870,10 @@ export const groupApplications = (
 
     return true;
   });
+
+  if (isProduction()) {
+    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
+  }
 
   return [
     {

@@ -712,11 +712,11 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.SalesforceImport:
       case adaptorTypeMap.HTTPImport:
+      case adaptorTypeMap.RDBMSImport:
         return '/mapping';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.DynamodbImport:
-      case adaptorTypeMap.RDBMSImport:
       default:
     }
   },
@@ -858,12 +858,12 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
+      case adaptorTypeMap.RDBMSImport:
         mappings = resourceObj.mapping || {};
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
       case adaptorTypeMap.DynamodbImport:
-      case adaptorTypeMap.RDBMSImport:
       default:
     }
 
