@@ -2,7 +2,7 @@
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   // fieldDefinitions
-  'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
+  'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connections.connection.as2.userStationInfo.mdn.mdnURL':
     "This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.",
