@@ -48,6 +48,11 @@ const form = {
         formKey,
         fieldProps: { id },
       }),
+    forceFieldState: formKey => (id, visible, disable, required) =>
+      action(actionTypes.FORM.FIELD.FORCE_STATE, {
+        formKey,
+        fieldProps: { id, visible, disable, required },
+      }),
   },
 };
 // #endregion
