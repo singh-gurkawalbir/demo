@@ -1155,6 +1155,10 @@ export function queuedJobs(state, connectionId) {
   return fromSession.queuedJobs(state && state.session, connectionId);
 }
 
+export function iClients(state, connectionId) {
+  return fromSession.iClients(state && state.session, connectionId);
+}
+
 export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(
     state && state.session,

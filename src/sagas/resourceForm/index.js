@@ -545,13 +545,28 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
   return [...missingPatches, ...flowPatches];
 }
 
-export function* skipRetriesPatches(flowId, resourceId, skipRetries) {
+export function* skipRetriesPatches(
+  resourceType,
+  flowId,
+  resourceId,
+  skipRetries
+) {
+  if (resourceType !== 'exports') return null;
+  const createdId = yield select(selectors.createdResourceId, resourceId);
+  const createdResource = yield select(
+    selectors.resource,
+    resourceType,
+    createdId || resourceId
+  );
+  // if the export is a lookup then no patches should be applied
+
+  if (createdResource.isLookup) return null;
+
   const { merged: flow } = yield select(
     selectors.resourceData,
     'flows',
     flowId
   );
-  const createdId = yield select(selectors.createdResourceId, resourceId);
   const index =
     flow.pageGenerators &&
     flow.pageGenerators.findIndex(
@@ -606,9 +621,10 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
   // So that it does not get applied at the root of flow doc
   const skipRetries = resourceValues['/skipRetries'];
 
-  if (['exports'].includes(updatedResourceType) && skipRetries !== undefined) {
+  if (skipRetries !== undefined) {
     const skipRetryPatches = yield call(
       skipRetriesPatches,
+      updatedResourceType,
       flowId,
       resourceId,
       !!skipRetries
