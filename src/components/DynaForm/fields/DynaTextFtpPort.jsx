@@ -49,7 +49,7 @@ export default function DynaTextFtpPort(props) {
   const classes = useStyle();
   let result;
 
-  if ((!value || [21, 22, 990].includes(value)) && options) {
+  if ([21, 22, 990].includes(value) && options) {
     result = options;
   } else {
     result = value;
