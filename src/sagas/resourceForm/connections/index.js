@@ -498,5 +498,5 @@ export default [
     actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE,
     commitAndAuthorizeConnection
   ),
-  takeEvery(actionTypes.ICLIENTS, requestIClients),
+  takeLatest(actionTypes.ICLIENTS, requestIClients),
 ];

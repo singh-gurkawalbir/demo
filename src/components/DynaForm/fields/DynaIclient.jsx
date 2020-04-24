@@ -7,12 +7,11 @@ import actions from '../../../actions';
 import { isProduction } from '../../../forms/utils';
 
 export const useLoadIClientOnce = ({ connectionId, disableLoad = false }) => {
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
+  const iClients = useSelector(state =>
+    selectors.iClients(state, connectionId)
   );
   const dispatch = useDispatch();
   const [requestedOnLoad, setRequestedOnLoad] = useState(disableLoad);
-  const iClients = (connection && connection.iClients) || [];
 
   useEffect(() => {
     if (!iClients.length && connectionId && !requestedOnLoad) {

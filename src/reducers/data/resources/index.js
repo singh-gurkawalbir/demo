@@ -160,7 +160,6 @@ export default (state = {}, action) => {
     connectionIds,
     integrationId,
     deregisteredId,
-    iClients,
     connectionId,
   } = action;
 
@@ -301,11 +300,6 @@ export default (state = {}, action) => {
       }
 
       return state;
-    case actionTypes.CONNECTION.UPDATE_ICLIENTS:
-      resourceIndex = state.connections.findIndex(r => r._id === connectionId);
-      newState.connections[resourceIndex].iClients = iClients;
-
-      return newState;
 
     case actionTypes.RESOURCE.CLEAR_COLLECTION:
       return produce(state, draft => {
