@@ -1,4 +1,5 @@
 import Plot from 'react-plotly.js';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../components/PanelHeader';
 
@@ -13,7 +14,11 @@ const getRandomData = count => {
 
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i < count; i++) {
-    x.push(i + 1);
+    x.push(
+      moment()
+        .add(-i, 'm')
+        .toISOString()
+    );
     y.push(Math.floor(Math.random() * 1000));
   }
 
@@ -29,30 +34,32 @@ export default function PlotlyDemo() {
       <Plot
         data={[
           {
-            y: getRandomData(1000).y,
-            x: getRandomData(1000).x,
+            y: getRandomData(50).y,
+            x: getRandomData(50).x,
             type: 'line',
             name: 'success',
             mode: 'lines+markers',
-            marker: { color: 'green' },
+            hoverinfo: 'all',
+            marker: { color: 'green', symbol: 'cirlce-dot' },
           },
           {
-            y: getRandomData(1000).y,
-            x: getRandomData(1000).x,
+            y: getRandomData(50).y,
+            x: getRandomData(50).x,
             type: 'line',
             line: {
               shape: 'spline',
             },
             name: 'errors',
             mode: 'lines+markers',
-            marker: { color: 'red' },
+            marker: { color: 'red', symbol: 'square-open-dot' },
           },
         ]}
         layout={{
-          width: 730,
-          height: 650,
           title: 'Flow Status',
           showlegend: false,
+          xaxis: {
+            type: 'date',
+          },
         }}
         config={{
           responsive: true,
