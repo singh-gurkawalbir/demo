@@ -132,7 +132,6 @@ function OfflineConnectionDrawer() {
           </div>
           <div className={classes.content}>
             <ResourceForm
-              editMode={false}
               resourceType="connections"
               resourceId={connectionId}
               onSubmitComplete={handleSubmitComplete}
