@@ -29,6 +29,7 @@ export default {
         '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
       '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
       '/http/ping/method': 'POST',
+      '/http/rateLimit/failStatusCode': 503,
     };
   },
   fieldMap: {
@@ -36,24 +37,22 @@ export default {
     'http.unencrypted.sellerId': {
       id: 'http.unencrypted.sellerId',
       type: 'text',
-      label: 'Seller Id',
-      helpText:
-        'The account ID for the Amazon seller account you are integrating with. You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you do not know this value you can find it in the "Settings" section in Amazon Seller Central.',
+      label: 'Seller id',
       required: true,
+      helpKey: 'amazonmws.connection.http.unencrypted.sellerId',
     },
     'http.unencrypted.mwsAuthToken': {
       id: 'http.unencrypted.mwsAuthToken',
       type: 'text',
-      label: 'MWS Auth Token',
-      helpText: 'The MWS authorization token.',
+      label: 'MWS auth token',
+      helpKey: 'amazonmws.connection.http.unencrypted.mwsAuthToken',
       required: false,
     },
     'http.unencrypted.marketplaceId': {
       id: 'http.unencrypted.marketplaceId',
       type: 'marketplaceid',
-      label: 'Marketplace Id',
-      helpText:
-        'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
+      label: 'Marketplace ID',
+      helpKey: 'amazonmws.connection.http.unencrypted.marketplaceId',
       required: true,
       options: [
         {
@@ -125,9 +124,8 @@ export default {
     'http.unencrypted.marketplaceRegion': {
       id: 'http.unencrypted.marketplaceRegion',
       type: 'select',
-      label: 'Marketplace Region',
-      helpText:
-        'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
+      label: 'Marketplace region',
+      helpKey: 'amazonmws.connection.http.unencrypted.marketplaceRegion',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -191,8 +189,7 @@ export default {
       connectorId: r => r && r._connectorId,
       allowNew: true,
       allowEdit: true,
-      helpText:
-        'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
+      helpKey: 'amazonmws.connection.http._iClientId',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

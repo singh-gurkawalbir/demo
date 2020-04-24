@@ -1,7 +1,8 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
+import { useDrag, useDrop } from 'react-dnd-cjs';
 import * as selectors from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -20,7 +21,7 @@ import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus } from './util';
+import { tileStatus, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
@@ -50,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Tile({ tile, history }) {
+function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
@@ -146,6 +147,9 @@ function Tile({ tile, history }) {
       '5b2973cda8c36e54ce9a9a7a', // NetSuite Auto-create Customer Deposit
       '598a9a130ce0c234420a6735', // Google Merchant Center - NetSuite
       '5b3dc945449020198fe8597a', // SkuVault - NetSuite
+      '5e8d6f912387e356b6769bc5', // Amazon EU
+      '5e8d6ca02387e356b6769bb8', // Shopify EU
+      '5e7d921e2387e356b67669ce', // SFNSIO EU
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -231,6 +235,16 @@ function Tile({ tile, history }) {
     },
     [history, isNotYetSupported, urlToIntegrationSettings]
   );
+  // #region Drag&Drop related
+  const ref = useRef(null);
+  // isOver is set to true when hover happens over component
+  const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
+  // Opacity to blur selected tile
+  const opacity = isDragging ? 0.2 : 1;
+
+  drag(drop(ref));
+  // #endregion
 
   return (
     <Fragment>
@@ -249,77 +263,79 @@ function Tile({ tile, history }) {
           </Button>
         </ModalDialog>
       )}
-      <HomePageCardContainer onClick={handleTileClick}>
-        <Header>
-          <Status
-            label={status.label}
-            onClick={handleStatusClick}
-            className={classes.status}>
-            <StatusCircle variant={status.variant} />
-          </Status>
-        </Header>
-        <Content>
-          <CardTitle>
-            <Typography variant="h3">
-              <Link
-                color="inherit"
-                to={getRoutePath(urlToIntegrationSettings)}
-                className={classes.tileName}
-                onClick={handleLinkClick}>
-                {tile.name}
-              </Link>
-            </Typography>
-          </CardTitle>
-          {tile.connector &&
-            tile.connector.applications &&
-            tile.connector.applications.length > 1 && (
-              <ApplicationImages>
-                <ApplicationImg type={app1} />
-                <span>
-                  <AddIcon />
-                </span>
-                <ApplicationImg type={app2} />
-              </ApplicationImages>
-            )}
-        </Content>
-        <Footer>
-          <FooterActions>
-            {accessLevel && (
-              <Manage>
-                {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                  <Tooltip
-                    title="You have monitor permissions"
-                    placement="bottom">
-                    <Link
-                      color="inherit"
-                      className={classes.action}
-                      to={getRoutePath(urlToIntegrationUsers)}
-                      onClick={handleLinkClick}>
-                      <PermissionsMonitorIcon />
-                    </Link>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    title="You have manage permissions"
-                    placement="bottom">
-                    <Link
-                      color="inherit"
-                      to={getRoutePath(urlToIntegrationUsers)}
-                      onClick={handleLinkClick}>
-                      <PermissionsManageIcon />
-                    </Link>
-                  </Tooltip>
-                )}
-              </Manage>
-            )}
-            {tile.tag && <Tag variant={tile.tag} />}
-          </FooterActions>
-          <Info
-            variant={tile._connectorId ? 'Integration app' : numFlowsText}
-            label={tile.connector && tile.connector.owner}
-          />
-        </Footer>
-      </HomePageCardContainer>
+      <div style={{ opacity }} ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick}>
+          <Header>
+            <Status
+              label={status.label}
+              onClick={handleStatusClick}
+              className={classes.status}>
+              <StatusCircle variant={status.variant} />
+            </Status>
+          </Header>
+          <Content>
+            <CardTitle>
+              <Typography variant="h3">
+                <Link
+                  color="inherit"
+                  to={getRoutePath(urlToIntegrationSettings)}
+                  className={classes.tileName}
+                  onClick={handleLinkClick}>
+                  {tile.name}
+                </Link>
+              </Typography>
+            </CardTitle>
+            {tile.connector &&
+              tile.connector.applications &&
+              tile.connector.applications.length > 1 && (
+                <ApplicationImages>
+                  <ApplicationImg type={app1} />
+                  <span>
+                    <AddIcon />
+                  </span>
+                  <ApplicationImg type={app2} />
+                </ApplicationImages>
+              )}
+          </Content>
+          <Footer>
+            <FooterActions>
+              {accessLevel && (
+                <Manage>
+                  {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
+                    <Tooltip
+                      title="You have monitor permissions"
+                      placement="bottom">
+                      <Link
+                        color="inherit"
+                        className={classes.action}
+                        to={getRoutePath(urlToIntegrationUsers)}
+                        onClick={handleLinkClick}>
+                        <PermissionsMonitorIcon />
+                      </Link>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      title="You have manage permissions"
+                      placement="bottom">
+                      <Link
+                        color="inherit"
+                        to={getRoutePath(urlToIntegrationUsers)}
+                        onClick={handleLinkClick}>
+                        <PermissionsManageIcon />
+                      </Link>
+                    </Tooltip>
+                  )}
+                </Manage>
+              )}
+              {tile.tag && <Tag variant={tile.tag} />}
+            </FooterActions>
+            <Info
+              variant={tile._connectorId ? 'Integration app' : numFlowsText}
+              label={tile.connector && tile.connector.owner}
+            />
+          </Footer>
+        </HomePageCardContainer>
+      </div>
     </Fragment>
   );
 }

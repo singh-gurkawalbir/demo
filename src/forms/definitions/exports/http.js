@@ -207,12 +207,12 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       required: true,
       options: [
         {
@@ -259,7 +259,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -327,7 +327,6 @@ export default {
     'http.paging.lastPagePath': { fieldId: 'http.paging.lastPagePath' },
     'http.paging.lastPageValues': { fieldId: 'http.paging.lastPageValues' },
     'http.response.blobFormat': { fieldId: 'http.response.blobFormat' },
-    skipRetries: { fieldId: 'skipRetries' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -340,7 +339,7 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'Configure CSV Parse Options',
+      label: 'Configure CSV parse options',
       defaultValue: r =>
         (r.file && r.file.csv) || {
           rowsToSkip: 0,
@@ -450,7 +449,6 @@ export default {
             label: 'Advanced',
             fields: [
               'advancedSettings',
-              'skipRetries',
               'configureAsyncHelper',
               'http._asyncHelperId',
             ],

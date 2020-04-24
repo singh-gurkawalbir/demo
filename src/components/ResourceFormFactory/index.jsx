@@ -79,8 +79,8 @@ const getConnectionType = resource => {
   return type;
 };
 
-export function ActionsFactory(props) {
-  const { resource, resourceType, isNew, variant = 'edit' } = props;
+export function ActionsFactory({ variant = 'edit', ...props }) {
+  const { resource, resourceType, isNew } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
 
@@ -110,7 +110,7 @@ export function ActionsFactory(props) {
     if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
       actionButtons = ['oauth', 'cancel'];
     } else {
-      actionButtons = ['test', 'cancel', 'testandsave'];
+      actionButtons = ['test', 'testandsave', 'cancel'];
     }
   } else {
     actionButtons = ['save', 'cancel'];
@@ -145,8 +145,7 @@ export const FormStateManager = props => {
 
   useEffect(() => {
     if (formState.submitComplete && onSubmitComplete) {
-      // console.log('fired onSubmitComplete');
-      onSubmitComplete();
+      onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.submitComplete /* , onSubmitComplete */]);

@@ -132,7 +132,7 @@ export const PASSWORD_MASK = '******';
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
-    name: 'Salesforce - NetSuite Connector',
+    name: 'Salesforce - NetSuite Connector (V2)',
     ssName: 'Salesforce Connector',
     description:
       'Streamline your Lead-to-Cash process with the Salesforce - NetSuite Connector. Manage sales process effectively and in real-time. Packed with Celigo’s deep domain expertise and best practices, this Connector is the embodiment of several years of customer feedback, learning and growth.  With distributed adapters running only in NetSuite and Salesforce, our connector allows endless customization options.',
@@ -314,6 +314,7 @@ export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -401,6 +402,16 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined,',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'schedule',
+    'timeZone',
+    'activeTab',
+    'frequency',
+    'startTime',
+    'endTime',
+    'daysToRunOn',
+    'dayToRunOn',
+    '_keepDeltaBehindFlowId',
+    '_keepDeltaBehindExportId',
   ],
   imports: [
     'lookups',
@@ -416,5 +427,18 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
   ],
-  flows: ['_runNextFlowIds', 'disabled'],
+  flows: [
+    '_runNextFlowIds',
+    'disabled',
+    'schedule',
+    'timeZone',
+    'activeTab',
+    'frequency',
+    'startTime',
+    'endTime',
+    'daysToRunOn',
+    'dayToRunOn',
+    '_keepDeltaBehindFlowId',
+    '_keepDeltaBehindExportId',
+  ],
 });

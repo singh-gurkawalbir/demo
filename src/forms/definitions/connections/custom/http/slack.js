@@ -51,7 +51,6 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication Type',
-      helpText: 'Please select Authentication Type',
       options: [
         {
           items: [
@@ -139,7 +138,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'http.auth.type',

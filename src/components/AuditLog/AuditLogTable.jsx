@@ -7,13 +7,17 @@ import * as selectors from '../../reducers';
 import CeligoTable from '../../components/CeligoTable';
 import metadata from './metadata';
 
-const mapStateToProps = (state, { resourceType, resourceId, filters }) => {
+const mapStateToProps = (
+  state,
+  { resourceType, resourceId, filters, options }
+) => {
   const preferences = selectors.userProfilePreferencesProps(state);
   const auditLogs = selectors.auditLogs(
     state,
     resourceType,
     resourceId,
-    filters
+    filters,
+    options
   );
 
   return {

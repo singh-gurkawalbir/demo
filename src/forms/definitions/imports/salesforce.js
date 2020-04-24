@@ -78,7 +78,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input Mode',
+      label: 'Input mode',
       options: [
         {
           items: [
@@ -165,7 +165,7 @@ export default {
     },
     ignoreExisting: {
       fieldId: 'ignoreExisting',
-      label: 'Ignore Existing Records',
+      label: 'Ignore existing records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['insert'] },
         { field: 'salesforce.compositeOperation', is: ['insert'] },
@@ -173,7 +173,7 @@ export default {
     },
     ignoreMissing: {
       fieldId: 'ignoreMissing',
-      label: 'Ignore Missing Records',
+      label: 'Ignore missing records',
       visibleWhen: [
         { field: 'salesforce.operation', is: ['update'] },
         { field: 'salesforce.compositeOperation', is: ['update'] },

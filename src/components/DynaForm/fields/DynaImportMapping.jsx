@@ -76,7 +76,7 @@ export default function DynaImportMapping(props) {
     <Fragment>
       {isModalVisible && (
         <ImportMapping
-          title="Define Import Mapping"
+          title="Define import mapping"
           id={id}
           connectionId={connectionId}
           application={application}

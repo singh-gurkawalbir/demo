@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -11,8 +11,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { difference } from 'lodash';
 import * as selectors from '../../reducers';
-import Tile from './Tile';
-import SuiteScriptTile from './SuiteScriptTile';
 import LoadResources from '../../components/LoadResources';
 import actions from '../../actions';
 import { sortTiles } from './util';
@@ -27,6 +25,7 @@ import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
 import { generateNewId } from '../../utils/resource';
 import OfflineConnectionDrawer from './OfflineConnectionDrawer';
+import DashboardCard from './DashboardCard';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -55,6 +54,9 @@ function Dashboard() {
   const preferences = useSelector(state => selectors.userPreferences(state));
   const ssLinkedConnections = useSelector(state =>
     selectors.suiteScriptLinkedConnections(state)
+  );
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations')
   );
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
@@ -92,9 +94,13 @@ function Dashboard() {
   const suiteScriptLinkedTiles = useSelector(state =>
     selectors.suiteScriptLinkedTiles(state)
   );
-  const sortedTiles = sortTiles(
-    tiles.concat(suiteScriptLinkedTiles),
-    preferences.dashboard && preferences.dashboard.tilesOrder
+  const sortedTiles = useMemo(
+    () =>
+      sortTiles(
+        tiles.concat(suiteScriptLinkedTiles),
+        preferences.dashboard && preferences.dashboard.tilesOrder
+      ),
+    [preferences.dashboard, suiteScriptLinkedTiles, tiles]
   );
 
   return (
@@ -117,48 +123,46 @@ function Dashboard() {
       <OfflineConnectionDrawer />
 
       <CeligoPageBar title="My integrations">
-        <IconTextButton
-          data-test="newIntegration"
-          component={Link}
-          to={`${location.pathname}/add/integrations/${generateNewId()}`}
-          variant="text"
-          color="primary">
-          <AddIcon />
-          Create integration
-        </IconTextButton>
-
-        <IconTextButton
-          data-test="installZip"
-          component={Link}
-          to={`${location.pathname}/installIntegration`}
-          variant="text"
-          color="primary">
-          <ZipUpIcon />
-          Install integration
-        </IconTextButton>
-        <IconTextButton
-          data-test="downloadIntegration"
-          component={Link}
-          to={`${location.pathname}/downloadIntegration`}
-          variant="text"
-          color="primary">
-          <ZipDownIcon />
-          Download integration
-        </IconTextButton>
+        {permission.create && (
+          <IconTextButton
+            data-test="newIntegration"
+            component={Link}
+            to={`${location.pathname}/add/integrations/${generateNewId()}`}
+            variant="text"
+            color="primary">
+            <AddIcon />
+            Create integration
+          </IconTextButton>
+        )}
+        {permission.install && (
+          <IconTextButton
+            data-test="installZip"
+            component={Link}
+            to={`${location.pathname}/installIntegration`}
+            variant="text"
+            color="primary">
+            <ZipUpIcon />
+            Install integration
+          </IconTextButton>
+        )}
+        {/* TODO: What condition to use for download Integration */}
+        {permission.create && (
+          <IconTextButton
+            data-test="downloadIntegration"
+            component={Link}
+            to={`${location.pathname}/downloadIntegration`}
+            variant="text"
+            color="primary">
+            <ZipDownIcon />
+            Download integration
+          </IconTextButton>
+        )}
       </CeligoPageBar>
       <LoadResources
         required
         resources="published,integrations,connections,marketplacetemplates">
         <div className={classes.container}>
-          {sortedTiles.map(t => (
-            <div key={t._ioConnectionId ? t._id : t._integrationId}>
-              {t._ioConnectionId ? (
-                <SuiteScriptTile tile={t} />
-              ) : (
-                <Tile tile={t} />
-              )}
-            </div>
-          ))}
+          <DashboardCard sortedTiles={sortedTiles} />
         </div>
       </LoadResources>
     </Fragment>

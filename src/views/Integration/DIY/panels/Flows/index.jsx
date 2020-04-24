@@ -28,6 +28,9 @@ export default function FlowsPanel({ integrationId }) {
   let flows = useSelector(
     state => selectors.resourceList(state, { type: 'flows' }).resources
   );
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
+  );
 
   flows =
     flows &&
@@ -52,25 +55,30 @@ export default function FlowsPanel({ integrationId }) {
       <MappingDrawer integrationId={integrationId} />
 
       <PanelHeader title="Integration flows" infoText={infoTextFlow}>
-        <IconTextButton
-          component={Link}
-          to="flowBuilder/new"
-          data-test="createFlow">
-          <AddIcon /> Create flow
-        </IconTextButton>
-        {!isStandalone && (
+        {permission.create && (
+          <IconTextButton
+            component={Link}
+            to="flowBuilder/new"
+            data-test="createFlow">
+            <AddIcon /> Create flow
+          </IconTextButton>
+        )}
+        {permission.attach && !isStandalone && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
             <AttachIcon /> Attach flow
           </IconTextButton>
         )}
-        <IconTextButton
-          component={Link}
-          to="dataLoader/new"
-          data-test="loadData">
-          <AddIcon /> Load data
-        </IconTextButton>
+        {/* check if this condition is correct */}
+        {permission.edit && (
+          <IconTextButton
+            component={Link}
+            to="dataLoader/new"
+            data-test="loadData">
+            <AddIcon /> Load data
+          </IconTextButton>
+        )}
       </PanelHeader>
 
       <LoadResources required resources="flows,exports">

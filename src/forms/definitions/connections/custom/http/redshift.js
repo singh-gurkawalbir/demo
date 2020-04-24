@@ -15,6 +15,7 @@ export default {
       id: 'region',
       type: 'text',
       label: 'Region',
+      helpKey: 'redshift.connection.region',
       startAdornment: 'https://redshift.',
       endAdornment: '.amazonaws.com',
       helpText:
@@ -36,12 +37,14 @@ export default {
       id: 'http.unencrypted.accessKeyId',
       type: 'text',
       label: 'Access Key Id',
+      helpKey: 'redshift.connection.http.unencrypted.accessKeyId',
       helpText:
         "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
       required: true,
     },
     'http.encrypted.secretAccessKey': {
       id: 'http.encrypted.secretAccessKey',
+      helpKey: 'redshift.connection.http.encrypted.secretAccessKey',
       type: 'text',
       label: 'Secret Access Key',
       defaultValue: '',

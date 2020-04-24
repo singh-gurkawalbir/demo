@@ -5,7 +5,7 @@ export default {
   // something meaningful
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be exported)',
+    label: 'Sample file (that would be exported)',
     mode: r => r && r.file && r.file.type,
     required: r => isNewId(r && r._id),
     visibleWhenAll: [
@@ -82,7 +82,7 @@ export default {
   },
   'file.output': {
     type: 'select',
-    label: 'Output Mode',
+    label: 'Output mode',
     defaultValue: r => (r && r.file && r.file.output) || 'records',
     options: [
       {
@@ -102,7 +102,7 @@ export default {
   },
   'file.skipDelete': {
     type: 'checkbox',
-    label: 'Leave File On Server',
+    label: 'Leave file on server',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -112,7 +112,7 @@ export default {
   },
   'ftp.leaveFile': {
     type: 'checkbox',
-    label: 'Leave File On Server',
+    label: 'Leave file on server',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -122,7 +122,7 @@ export default {
   },
   'file.compressionFormat': {
     type: 'select',
-    label: 'Compression Format',
+    label: 'Compression format',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -133,10 +133,10 @@ export default {
   },
   'file.purgeInternalBackup': {
     type: 'checkbox',
-    label: 'File purge Internal Backup',
+    label: 'File purge internal backup',
   },
   'file.json.resourcePath': {
-    label: 'Resource Path',
+    label: 'Resource path',
     type: 'text',
     visibleWhen: [
       {
@@ -146,7 +146,7 @@ export default {
     ],
   },
   'file.xml.resourcePath': {
-    label: 'Resource Path',
+    label: 'Resource path',
     type: 'text',
     visibleWhen: [
       {
@@ -157,7 +157,7 @@ export default {
     required: true,
   },
   'file.fileDefinition.resourcePath': {
-    label: 'Resource Path',
+    label: 'Resource path',
     type: 'text',
     visibleWhenAll: [
       {
@@ -168,7 +168,7 @@ export default {
   },
   'edix12.format': {
     type: 'filedefinitionselect',
-    label: 'EDI X12 Format',
+    label: 'EDI x12 format',
     required: true,
     format: 'edi',
     visibleWhenAll: [
@@ -192,7 +192,7 @@ export default {
   },
   'edifact.format': {
     type: 'filedefinitionselect',
-    label: 'EDIFACT Format',
+    label: 'EDIFACT format',
     required: true,
     format: 'ediFact',
     visibleWhenAll: [
@@ -204,7 +204,7 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File Definition Rules ',
+    label: 'File definition rules ',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -226,7 +226,7 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV Parse Options',
+    label: 'Configure CSV parse options',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         rowsToSkip: 0,
@@ -244,7 +244,7 @@ export default {
   },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
-    label: 'File Has Header',
+    label: 'File has header',
     visibleWhen: [
       {
         field: 'file.type',
@@ -254,7 +254,7 @@ export default {
   },
   'file.xlsx.rowsPerRecord': {
     type: 'checkbox',
-    label: 'Multiple Rows Per Record',
+    label: 'Multiple rows per record',
     visibleWhen: [
       {
         field: 'file.type',
@@ -265,7 +265,7 @@ export default {
   },
   'file.xlsx.keyColumns': {
     type: 'filekeycolumn',
-    label: 'Key Columns',
+    label: 'Key columns',
     hasHeaderRow: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
     refreshOptionsOnChangesTo: ['file.xlsx.hasHeaderRow'],

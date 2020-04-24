@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   preview: {
+    marginTop: theme.spacing(2),
     overflowY: 'auto',
     maxHeight: `calc(100vh - ${theme.appBarHeight + 185}px)`,
   },

@@ -41,10 +41,6 @@ export function ResourceTypeFilter(props) {
     resourceDetails[resourceType] &&
     resourceDetails[resourceType][resourceId];
 
-  if (resource && resource._connectorId) {
-    hideFilterForResourceTypes.push('flows');
-  }
-
   if (hideFilterForResourceTypes.includes(resourceType)) {
     return null;
   }
@@ -63,7 +59,7 @@ export function ResourceTypeFilter(props) {
     ],
     integrations:
       resource && resource._connectorId
-        ? ['integration', 'flow', 'connection', 'import']
+        ? ['integration', 'flow', 'connection', 'import', 'export']
         : [
             'integration',
             'flow',

@@ -2,10 +2,11 @@ export default {
   'as2.fileNameTemplate': {
     type: 'timestampfilename',
     fieldType: 'templateeditor',
-    label: 'File Name',
+    label: 'File name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    defaultValue: r =>
+      (r && r.as2 && r.as2.fileNameTemplate) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type'],
     editorTitle:
       'Use this editor if your File Name should be dynamically generated',
@@ -14,18 +15,21 @@ export default {
   'as2.messageIdTemplate': {
     type: 'textwithlookupextract',
     fieldType: 'templateeditor',
-    label: 'Message Id',
+    label: 'Message ID',
     editorTitle:
       'Use this editor if your Message ID should be dynamically generated',
     connectionId: r => r && r._connectionId,
   },
   'as2.headers': {
     type: 'keyvalue',
+    keyName: 'name',
+    valueName: 'value',
+    valueType: 'keyvalue',
     label: 'Configure HTTP Headers',
   },
   'as2.maxRetries': {
     type: 'select',
-    label: 'Max Retries',
+    label: 'Max retries',
     defaultValue: r => (r && r.as2 && r.as2.maxRetries) || 0,
     options: [
       {

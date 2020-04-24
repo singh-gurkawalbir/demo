@@ -102,6 +102,15 @@ const connection = {
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
   madeOnline: connectionId =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
+  requestQueuedJobs: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  receivedQueuedJobs: (queuedJobs, connectionId) =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
+      queuedJobs,
+      connectionId,
+    }),
+  cancelQueuedJob: jobId =>
+    action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
 };
 const marketplace = {
   requestConnectors: () =>
@@ -223,17 +232,10 @@ const resource = {
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
-    pingAndUpdateFailed: connectionId =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_FAILURE, { connectionId }),
-    pingAndUpdateSuccessful: (connectionId, offline) =>
-      action(actionTypes.CONNECTION.PING_AND_UPDATE_SUCCESS, {
-        connectionId,
-        offline,
-      }),
+    updateStatus: collection =>
+      action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
     refreshStatus: integrationId =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
-    receivedConnectionStatus: response =>
-      action(actionTypes.CONNECTION.RECEIVED_STATUS, { response }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
         resourceId,
@@ -255,9 +257,10 @@ const resource = {
         resourceId,
         message,
       }),
-    testClear: resourceId =>
+    testClear: (resourceId, retainStatus) =>
       action(actionTypes.CONNECTION.TEST_CLEAR, {
         resourceId,
+        retainStatus,
       }),
     saveAndAuthorize: (resourceId, values) =>
       action(actionTypes.RESOURCE_FORM.SAVE_AND_AUTHORIZE, {
@@ -397,6 +400,10 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RECEIVED, {
       resourceId,
       previewData,
+    }),
+  failedAssistantImportPreview: resourceId =>
+    action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
+      resourceId,
     }),
   resetAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
@@ -600,9 +607,9 @@ const integrationApp = {
           sectionId,
         }
       ),
-    requestUpgrade: (integration, options) =>
+    requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
-        integration,
+        integrationId,
         options,
       }),
     redirectTo: (integrationId, redirectTo) =>
@@ -706,9 +713,9 @@ const integrationApp = {
         integrationId,
         error,
       }),
-    upgrade: (integration, license) =>
+    upgrade: (integrationId, license) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE, {
-        integration,
+        integrationId,
         license,
       }),
     update: (integrationId, flowId, storeId, sectionId, values, options) =>
@@ -742,10 +749,11 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId) =>
+    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
+        connectionDoc,
       }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -833,6 +841,19 @@ const integrationApp = {
         steps,
       }),
   },
+  clone: {
+    receivedIntegrationClonedStatus: (id, integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: true,
+        integrationId,
+      }),
+    clearIntegrationClonedStatus: id =>
+      action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
+        id,
+        isCloned: false,
+      }),
+  },
   // TODO: Need to changes naming convention here as it is applicable to both Install and uninstall
   isAddonInstallInprogress: (installInprogress, id) =>
     action(actionTypes.INTEGRATION_APPS.ADDON.RECEIVED_INSTALL_STATUS, {
@@ -907,6 +928,21 @@ const file = {
       fileType,
       file,
     }),
+  processFile: ({ fileId, file, fileType }) =>
+    action(actionTypes.FILE.PROCESS, {
+      fileId,
+      file,
+      fileType,
+    }),
+  processedFile: ({ fileId, file, fileProps }) =>
+    action(actionTypes.FILE.PROCESSED, {
+      fileId,
+      file,
+      fileProps,
+    }),
+  processError: ({ fileId, error }) =>
+    action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
+  reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
 };
 const transfer = {
   cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
@@ -1358,6 +1394,12 @@ const job = {
     action(actionTypes.JOB.ERROR.RECEIVED_RETRY_DATA, { retryData, retryId }),
   updateRetryData: ({ retryData, retryId }) =>
     action(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, { retryData, retryId }),
+  retryForProcessedErrors: ({ jobId, flowJobId, errorFileId }) =>
+    action(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, {
+      jobId,
+      flowJobId,
+      errorFileId,
+    }),
   paging: {
     setRowsPerPage: rowsPerPage =>
       action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
@@ -1366,6 +1408,23 @@ const job = {
   },
   error: {
     clear: () => action(actionTypes.JOB.ERROR.CLEAR),
+  },
+  processedErrors: {
+    requestPreview: ({ jobId, errorFile }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.REQUEST, {
+        jobId,
+        errorFile,
+      }),
+    receivedPreview: ({ jobId, previewData, errorFileId }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.RECEIVED, {
+        jobId,
+        previewData,
+        errorFileId,
+      }),
+    previewError: ({ jobId, error }) =>
+      action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),
+    clearPreview: jobId =>
+      action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
 const flow = {

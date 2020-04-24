@@ -44,6 +44,9 @@ export default {
     'as2.userStationInfo.mdn.mdnSigning': {
       fieldId: 'as2.userStationInfo.mdn.mdnSigning',
     },
+    'as2.userStationInfo.mdn.mdnEncoding': {
+      fieldId: 'as2.userStationInfo.mdn.mdnEncoding',
+    },
     'as2.userStationInfo.encoding': { fieldId: 'as2.userStationInfo.encoding' },
     'as2.userStationInfo.encryptionType': {
       fieldId: 'as2.userStationInfo.encryptionType',
@@ -56,7 +59,7 @@ export default {
       fieldId: 'as2.encrypted.userPrivateKey',
     },
     'as2.userStationInfo.ipAddresses': {
-      label: 'AS2 IP Addresses: ',
+      label: 'AS2 IP addresses: ',
       value: (
         <span>
           Click{' '}
@@ -87,8 +90,8 @@ export default {
     partnerrequireasynchronousmdns: {
       fieldId: 'partnerrequireasynchronousmdns',
     },
-    'as2.partnerStationInfo.mdn.mdnURL': {
-      fieldId: 'as2.partnerStationInfo.mdn.mdnURL',
+    'as2.userStationInfo.mdn.mdnURL': {
+      fieldId: 'as2.userStationInfo.mdn.mdnURL',
     },
     'as2.partnerStationInfo.mdn.mdnSigning': {
       fieldId: 'as2.partnerStationInfo.mdn.mdnSigning',
@@ -166,7 +169,7 @@ export default {
     configureTokenRefresh: {
       id: 'configureTokenRefresh',
       type: 'checkbox',
-      label: 'Configure Token Refresh',
+      label: 'Configure token refresh',
       visibleWhenAll: [
         {
           field: 'as2.partnerStationInfo.auth.type',
@@ -189,14 +192,14 @@ export default {
     },
     refreshTokenHeader: {
       id: 'refreshTokenHeader',
-      label: 'How to Refresh Token?',
+      label: 'How to refresh token?',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureTokenRefresh', is: [true] }],
     },
     configureApiRateLimits: {
       id: 'configureApiRateLimits',
       type: 'checkbox',
-      label: 'Configure API Rate Limits',
+      label: 'Configure API rate limits',
       defaultValue: r =>
         !!(
           r &&
@@ -208,7 +211,7 @@ export default {
     },
     apiRateLimits: {
       id: 'apiRateLimits',
-      label: 'API Rate Limits',
+      label: 'API rate limits',
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
     },
@@ -267,6 +270,7 @@ export default {
           'requiremdnspartners',
           'requireasynchronousmdns',
           'as2.userStationInfo.mdn.mdnSigning',
+          'as2.userStationInfo.mdn.mdnEncoding',
           'as2.userStationInfo.encryptionType',
           'as2.userStationInfo.signing',
           'as2.userStationInfo.encoding',
@@ -282,7 +286,7 @@ export default {
           'as2.partnerStationInfo.as2URI',
           'as2.partnerId',
           'partnerrequireasynchronousmdns',
-          'as2.partnerStationInfo.mdn.mdnURL',
+          'as2.userStationInfo.mdn.mdnURL',
           'as2.partnerStationInfo.mdn.mdnSigning',
           // 'as2.partnerStationInfo.mdn.verifyMDNSignature',
           'as2.partnerStationInfo.encryptionType',

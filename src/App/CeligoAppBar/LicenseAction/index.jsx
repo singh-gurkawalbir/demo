@@ -37,16 +37,8 @@ export default function LicenseAction() {
     }
   }, [enquesnackbar, integratorLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
-    state => {
-      const permissions = selectors.userPermissions(state);
-
-      return (
-        permissions &&
-        permissions.subscriptions &&
-        permissions.subscriptions.requestUpgrade
-      );
-    },
-    (left, right) => left === right
+    state =>
+      selectors.resourcePermissions(state, 'subscriptions').requestUpgrade
   );
   const handleClick = useCallback(() => {
     if (licenseActionDetails.action === 'startTrial') {

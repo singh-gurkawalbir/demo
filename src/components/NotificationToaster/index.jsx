@@ -2,7 +2,7 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 import SuccessIcon from '../icons/SuccessIcon';
 import WarningIcon from '../icons/WarningIcon';
@@ -15,52 +15,75 @@ const useStyles = makeStyles(theme => ({
     left: '0px',
     right: '0px',
     top: '0px',
+    background: theme.palette.background.paper,
     zIndex: '2',
     boxSizing: 'border-box',
-    borderRadius: '0px',
-    padding: '0px 15px',
+    borderRadius: theme.spacing(0.5),
+    padding: theme.spacing(0, 2),
     minHeight: '50px',
     transition: 'max-height .5s ease',
     '& > div:first-child': {
-      width: '82%',
+      width: props => (props.fullWidth ? '100%' : '85%'),
       display: 'flex',
       justifyContent: 'center',
     },
+    '&:before': {
+      content: '""',
+      width: '3px',
+      height: '100%',
+      position: 'absolute',
+      background: theme.palette.secondary.lightest,
+      left: 0,
+      top: 0,
+    },
   },
   small: {
+    borderRadius: theme.spacing(0.5),
     maxWidth: '350px',
     display: 'inline-flex',
   },
   large: {
+    border: '1px solid',
     maxWidth: '100%',
+    boxShadow: 'none',
     '& > div:first-child': {
-      width: '95%',
-      boxSizing: 'border-box',
-      paddingLeft: '24px',
+      justifyContent: 'flex-start',
     },
   },
   success: {
-    backgroundColor: fade(theme.palette.success.main, 0.1),
+    borderColor: theme.palette.success.main,
     '& svg': {
       color: theme.palette.success.main,
     },
+    '&:before': {
+      background: theme.palette.success.main,
+    },
   },
   error: {
-    backgroundColor: fade(theme.palette.error.main, 0.1),
+    borderColor: theme.palette.error.main,
     '& svg': {
       color: theme.palette.error.main,
     },
+    '&:before': {
+      background: theme.palette.error.main,
+    },
   },
   info: {
-    backgroundColor: fade(theme.palette.info.main, 0.1),
+    borderColor: theme.palette.info.main,
     '& svg': {
       color: theme.palette.info.main,
     },
+    '&:before': {
+      background: theme.palette.info.main,
+    },
   },
   warning: {
-    backgroundColor: fade(theme.palette.warning.main, 0.1),
+    borderColor: theme.palette.warning.main,
     '& svg': {
       color: theme.palette.warning.main,
+    },
+    '&:before': {
+      background: theme.palette.warning.main,
     },
   },
   iconVariant: {
@@ -86,8 +109,11 @@ const variantIcon = {
   info: InfoIcon,
 };
 
+/**
+ * props.fullWidth : set to true for full width notification.
+ */
 function NotificationToaster(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const {
     className,
     message,
@@ -116,17 +142,20 @@ function NotificationToaster(props) {
             {children}
           </div>
         }
-        action={[
-          <IconButton
-            data-test="closeNotificationToaster"
-            key="close"
-            aria-label="close"
-            color="inherit"
-            onClick={onClose}
-            className={classes.actionButton}>
-            <CloseIcon className={classes.icon} />
-          </IconButton>,
-        ]}
+        action={
+          // show Close Icon only when onClose function is passed.
+          onClose && [
+            <IconButton
+              data-test="closeNotificationToaster"
+              key="close"
+              aria-label="close"
+              color="inherit"
+              onClick={onClose}
+              className={classes.actionButton}>
+              <CloseIcon className={classes.icon} />
+            </IconButton>,
+          ]
+        }
         {...other}
       />
     </div>

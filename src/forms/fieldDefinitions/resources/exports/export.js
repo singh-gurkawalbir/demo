@@ -59,13 +59,13 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
-    label: 'Invoke this Export [POST]',
+    label: 'Invoke this export [post]',
     type: 'apiidentifier',
     visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
   },
   configureAsyncHelper: {
     type: 'checkbox',
-    label: 'Configure Async Helper',
+    label: 'Configure async helper',
   },
   type: {
     type: 'select',
@@ -87,7 +87,7 @@ export default {
   },
   pageSize: {
     type: 'text',
-    label: 'Page Size',
+    label: 'Page size',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -96,7 +96,7 @@ export default {
   },
   dataURITemplate: {
     type: 'relativeuri',
-    label: 'Override Data URI Template',
+    label: 'Override data URI template',
     connectionId: r => r && r._connectionId,
   },
   exportOneToMany: {
@@ -143,7 +143,7 @@ export default {
   // },
   originSampleData: {
     type: 'text',
-    label: 'Origin Sample Data',
+    label: 'Origin sample data',
   },
   // not using it
   assistant: {
@@ -278,6 +278,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Microsoft SQL', value: 'microsoft sql' },
+          { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },
@@ -354,38 +355,38 @@ export default {
   },
   assistantMetadata: {
     type: 'text',
-    label: 'Assistant Metadata',
+    label: 'Assistant metadata',
   },
   isLookup: {
     type: 'checkbox',
-    label: 'Is Lookup',
+    label: 'Is lookup',
   },
   useTechAdaptorForm: {
     type: 'checkbox',
-    label: 'Use Tech Adaptor Form',
+    label: 'Use tech adaptor form',
   },
   adaptorType: {
     type: 'text',
-    label: 'Adaptor Type',
+    label: 'Adaptor type',
   },
   // #endregion common
   // #region inputFilter
   'inputFilter.expression.version': {
     type: 'radiogroup',
-    label: 'Input Filter expression version',
+    label: 'Input filter expression version',
     options: [{ items: [{ label: '1', value: '1' }] }],
   },
   'inputFilter.expression.rules': {
     type: 'text',
-    label: 'Input Filter expression rules',
+    label: 'Input filter expression rules',
   },
   'inputFilter.script._scriptId': {
     type: 'text',
-    label: 'Input Filter script _script Id',
+    label: 'Input filter script _script id',
   },
   'inputFilter.script.function': {
     type: 'text',
-    label: 'Input Filter script function',
+    label: 'Input filter script function',
   },
   // #endregion inputFilter
   // #region test
@@ -402,7 +403,7 @@ export default {
   // #region delta
   'delta.dateField': {
     type: 'text',
-    label: 'Date Field',
+    label: 'Date field',
     required: true,
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
@@ -410,7 +411,7 @@ export default {
     type: 'toggleSelectToText',
     selectHrefLabel: 'Use custom format',
     textHrefLabel: 'Use presets',
-    label: 'Delta date Format',
+    label: 'Delta date format',
     options: [
       {
         items: dateTimeOptions,
@@ -431,7 +432,7 @@ export default {
   },
   'delta.startDate': {
     type: 'text',
-    label: 'Delta start Date',
+    label: 'Delta start date',
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   'delta.lagOffset': {
@@ -441,14 +442,14 @@ export default {
   },
   'delta.endDateField': {
     type: 'text',
-    label: 'Delta end Date Field',
+    label: 'Delta end date field',
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
   // #endregion delta
   // #region once
   'once.booleanField': {
     type: 'text',
-    label: 'Boolean Field',
+    label: 'Boolean field',
     required: true,
     visibleWhen: [{ field: 'type', is: ['once'] }],
   },
@@ -456,23 +457,23 @@ export default {
   // #region valueDelta
   'valueDelta.exportedField': {
     type: 'text',
-    label: 'Value Delta exported Field',
+    label: 'Value delta exported field',
   },
   'valueDelta.pendingField': {
     type: 'text',
-    label: 'Value Delta pending Field',
+    label: 'Value delta pending field',
   },
   // #endregion valueDelta
   // #region distributed
   'distributed.bearerToken': {
     type: 'text',
-    label: 'Distributed bearer Token',
+    label: 'Distributed bearer token',
   },
   // #endregion distributed
   // #region hooks
   hookType: {
     type: 'radiogroup',
-    label: 'Hook Type',
+    label: 'Hook type',
     defaultValue: r => {
       let isStackType = false;
 
@@ -495,12 +496,12 @@ export default {
   },
   'hooks.preSavePage.function': {
     type: 'text',
-    label: 'Pre Save Page',
+    label: 'Pre save page',
   },
   'hooks.preSavePage._scriptId': {
     type: 'selectresource',
     resourceType: 'scripts',
-    label: 'Pre Save Page Script',
+    label: 'Pre save page script',
     visibleWhen: [
       {
         field: 'hookType',
@@ -512,7 +513,7 @@ export default {
     type: 'selectresource',
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
-    label: 'Pre Save Page Stack',
+    label: 'Pre save page stack',
     visibleWhen: [
       {
         field: 'hookType',
@@ -530,7 +531,7 @@ export default {
   },
   'transform.script._scriptId': {
     type: 'text',
-    label: 'Transform script _script Id',
+    label: 'Transform script _script id',
   },
   'transform.script.function': {
     type: 'text',
@@ -560,7 +561,7 @@ export default {
   },
   'filter.script._scriptId': {
     type: 'text',
-    label: 'Filter script _script Id',
+    label: 'Filter script _script id',
   },
   'filter.script.function': {
     type: 'text',
@@ -568,18 +569,18 @@ export default {
   },
   rawData: {
     type: 'rawdata',
-    label: 'Refresh Sample Data',
+    label: 'Refresh sample data',
   },
   sampleData: {
     type: 'sampledata',
-    label: 'Sample Data',
+    label: 'Sample data',
   },
   exportPanel: {
     type: 'exportpanel',
   },
   skipRetries: {
-    type: 'checkbox',
-    label: 'Skip Retries',
+    type: 'skipRetries',
+    label: 'Do not store retry data',
     visible: r => !(r && r.isLookup),
   },
   settings: {

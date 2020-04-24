@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import ResourceForm from '../../components/ResourceFormFactory';
+import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
+import ResourceFormWithStatusPanel from '../../components/ResourceFormWithStatusPanel';
 import DynaForm from '../../components/DynaForm';
 import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
@@ -11,6 +12,17 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
 
+const useStyles = makeStyles(theme => ({
+  resourceFormWrapper: {
+    padding: theme.spacing(3),
+    paddingTop: 0,
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
+  },
+}));
+
+// TODO Sravan - Cancel button doesnt work.
 export default function AddOrSelect(props) {
   const {
     resourceId,
@@ -20,6 +32,7 @@ export default function AddOrSelect(props) {
     environment,
     resourceType = 'connections',
   } = props;
+  const classes = useStyles();
   const [useNew, setUseNew] = useState(true);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
@@ -82,38 +95,45 @@ export default function AddOrSelect(props) {
 
   return (
     <LoadResources resources={resourceType}>
-      <RadioGroup
-        {...props}
-        id="selectType"
-        label="What would you like to do?"
-        defaultValue={useNew ? 'new' : 'existing'}
-        fullWidth
-        onFieldChange={handleTypeChange}
-        options={[
-          {
-            items: [
-              { label: `Setup New ${resourceLabel}`, value: 'new' },
-              { label: `Use Existing ${resourceLabel}`, value: 'existing' },
-            ],
-          },
-        ]}
-      />
-      {useNew ? (
-        <ResourceForm
-          editMode={false}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          cancelButtonLabel="Cancel"
-          onSubmitComplete={handleSubmitComplete}
-          connectionType={connectionType}
+      <div className={classes.resourceFormWrapper}>
+        <RadioGroup
+          {...props}
+          id="selectType"
+          label="What would you like to do?"
+          defaultValue={useNew ? 'new' : 'existing'}
+          fullWidth
+          onFieldChange={handleTypeChange}
+          options={[
+            {
+              items: [
+                { label: `Setup New ${resourceLabel}`, value: 'new' },
+                { label: `Use Existing ${resourceLabel}`, value: 'existing' },
+              ],
+            },
+          ]}
         />
-      ) : (
-        <DynaForm
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
-          <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
-        </DynaForm>
-      )}
+        {/* div wrapping is imp. since child component is reusable component and it inherits parent top parent. Validate before removing */}
+        <div>
+          {useNew ? (
+            <ResourceFormWithStatusPanel
+              heightOffset="250"
+              occupyFullWidth
+              editMode={false}
+              resourceType={resourceType}
+              resourceId={resourceId}
+              cancelButtonLabel="Cancel"
+              onSubmitComplete={handleSubmitComplete}
+              connectionType={connectionType}
+            />
+          ) : (
+            <DynaForm
+              fieldMeta={fieldMeta}
+              optionsHandler={fieldMeta.optionsHandler}>
+              <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
+            </DynaForm>
+          )}
+        </div>
+      </div>
     </LoadResources>
   );
 }

@@ -57,11 +57,11 @@ export default {
     const { _connectorId, name } = integration;
 
     if (!_connectorId) {
-      return 'standard';
+      return 'starter';
     }
 
     const domain = window.document.location.hostname.replace('www.', '');
-    let highestEdition = 'standard';
+    let highestEdition = 'starter';
     const integrationAppId = {
       'staging.integrator.io': {
         '5666865f67c1650309224904': 'zendesk',
@@ -105,25 +105,9 @@ export default {
         '5845210ebfa3ab6faced62fb': 'salesforceCommerce',
       },
       'eu.integrator.io': {
-        '55022fc3285348c76a000005': 'zendesk',
-        '54fa0b38a7044f9252000036': 'shopify',
-        '56cc2a64a42f08124832753a': 'jira',
-        '5717912fbc5a8ca446571f1e': 'magento2',
-        '5728756afee45a8d11e79cb7': 'adp',
-        '57179182e0a908200c2781d9': 'bigcommerce',
-        '57dbed962eca42c50e6e22be': 'walmart',
-        '57a82017810491d30e1c9760': 'openair',
-        '586cb88fc1d53d6a279d527e': 'cashapp',
-        '581cebf290a63a26daea6081': 'jet',
-        '58c90bccc13f547763bf2fc1': 'amazon',
-        '58d94e6b2e4b300dbf6b01bc': 'eBay',
-        '5833ea9127b52153647f3b7e': 'magento1',
-        '592e8679c95560380ff1325c': 'salesforceSubscription',
-        '58f772ed3c25f31c8041d5fe': 'vendorPaymentManager',
-        '5c8f30229f701b3e9a0aa817': 'sfnsio',
-        '5db8164d9df868329731fca0': 'square',
-        '5b754a8fddbb3b71d6046c87': 'amazonmcf',
-        '5845210ebfa3ab6faced62fb': 'salesforceCommerce',
+        '5e8d6f912387e356b6769bc5': 'amazon',
+        '5e8d6ca02387e356b6769bb8': 'shopify',
+        '5e7d921e2387e356b67669ce': 'sfnsio',
       },
       'localhost.io': {
         'Zendesk - NetSuite Connector': 'zendesk',

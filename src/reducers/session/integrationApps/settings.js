@@ -78,6 +78,7 @@ export default (state = {}, action) => {
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
   const cKey = getCategoryKey(integrationId, flowId);
+  const addOnKey = `${integrationId}-addOns`;
   let mappingIndex;
   let categoryMappingData;
   let generatesMetadata;
@@ -105,11 +106,11 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
-          if (!draft[integrationId]) {
-            draft[integrationId] = {};
+          if (!draft[addOnKey]) {
+            draft[addOnKey] = {};
           }
 
-          draft[integrationId].addOns = {
+          draft[addOnKey].addOns = {
             addOnMetaData: response.addOns && response.addOns.addOnMetaData,
             addOnLicenses: response.addOns && response.addOns.addOnLicenses,
           };
@@ -233,6 +234,7 @@ export default (state = {}, action) => {
             categoryId,
             childCategoryId,
             variation,
+            isVariationAttributes,
             netsuiteRecordType,
             ...additionalOptions
           } = options;
@@ -242,7 +244,8 @@ export default (state = {}, action) => {
               draft[cKey],
               categoryId,
               childCategoryId,
-              variation
+              variation,
+              isVariationAttributes
             );
           }
 
@@ -532,6 +535,9 @@ export default (state = {}, action) => {
           }
 
           if (
+            generatesMetadata.data &&
+            generatesMetadata.data.generatesMetaData &&
+            generatesMetadata.data.generatesMetaData.id &&
             !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
@@ -827,6 +833,16 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
 }
 
 export function integrationAppAddOnState(state, integrationId) {
+  if (!state) {
+    return emptyObj;
+  }
+
+  const addOnKey = `${integrationId}-addOns`;
+
+  return state[addOnKey] || emptyObj;
+}
+
+export function integrationAppMappingMetadata(state, integrationId) {
   if (!state) {
     return emptyObj;
   }

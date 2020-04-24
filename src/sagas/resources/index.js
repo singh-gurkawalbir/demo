@@ -5,13 +5,13 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
-import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
+import { resourceConflictResolution } from '../utils';
 import { isConnector } from '../../utils/flows';
 
 function* isDataLoaderFlow(flow) {
@@ -44,6 +44,7 @@ export function* resourceConflictDetermination({
   id,
   scope,
   resourceType,
+  master,
 }) {
   let origin;
 
@@ -53,22 +54,19 @@ export function* resourceConflictDetermination({
     return { error };
   }
 
-  if (origin.lastModified !== merged.lastModified) {
-    let conflict = jsonPatch.compare(merged, origin);
+  yield put(actions.resource.received(resourceType, origin));
 
-    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+  const { conflict, merged: updatedMerged } = yield resourceConflictResolution({
+    merged,
+    master,
+    origin,
+  });
 
-    yield put(actions.resource.received(resourceType, origin));
-    const intersectedPatches = conflict.filter(patch => patch.op === 'replace');
-
-    if (intersectedPatches && intersectedPatches.length) {
-      yield put(actions.resource.commitConflict(id, intersectedPatches, scope));
-
-      return { conflict: true };
-    }
+  if (conflict) {
+    yield put(actions.resource.commitConflict(id, conflict, scope));
   }
 
-  return { conflict: false };
+  return { conflict: !!conflict, merged: updatedMerged };
 }
 
 export function* commitStagedChanges({ resourceType, id, scope, options }) {
@@ -137,9 +135,12 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
       id,
       scope,
       resourceType,
+      master,
     });
 
     if (resp && (resp.error || resp.conflict)) return resp;
+    // eslint-disable-next-line prefer-destructuring
+    merged = resp.merged;
   } else if (
     ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
       resourceType
@@ -708,21 +709,41 @@ export function* refreshConnectionStatus({ integrationId }) {
       path: url,
       hidden: true,
     });
+    yield put(actions.resource.connections.updateStatus(response));
   } catch (e) {
-    return;
+    // do nothing
+  }
+}
+
+export function* requestQueuedJobs({ connectionId }) {
+  const path = `/connections/${connectionId}/jobs`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return undefined;
   }
 
-  const finalResponse = Array.isArray(response)
-    ? response.map(({ _id, offline, queues }) => ({
-        _id,
-        offline: !!offline,
-        queueSize: queues[0].size,
-      }))
-    : [];
+  yield put(actions.connection.receivedQueuedJobs(response, connectionId));
+}
 
-  yield put(
-    actions.resource.connections.receivedConnectionStatus(finalResponse)
-  );
+export function* cancelQueuedJob({ jobId }) {
+  const path = `/jobs/${jobId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {},
+        method: 'PUT',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
+    return undefined;
+  }
 }
 
 export const resourceSagas = [
@@ -745,6 +766,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
 
   ...metadataSagas,
 ];

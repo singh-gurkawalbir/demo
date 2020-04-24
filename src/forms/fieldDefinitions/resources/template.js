@@ -22,11 +22,11 @@ export default {
   },
   contactEmail: {
     type: 'text',
-    label: 'Contact Emails',
+    label: 'Contact emails',
   },
   installerFunction: {
     type: 'text',
-    label: 'Installer Function',
+    label: 'Installer function',
   },
   applications: {
     type: 'multiselect',

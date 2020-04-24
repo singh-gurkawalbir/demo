@@ -143,7 +143,7 @@ export default {
       id: 'netsuite.execution.type',
       name: 'executionType',
       type: 'radiogroup',
-      label: 'Execution Type',
+      label: 'Execution type',
       required: true,
       visible: r => !(r && r.isLookup),
       visibleWhen: r => {
@@ -184,7 +184,7 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output Mode',
+      label: 'Output mode',
       options: [
         {
           items: [
@@ -215,7 +215,7 @@ export default {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
-      label: 'API Type',
+      label: 'API type',
       required: true,
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
@@ -330,6 +330,9 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
     },
+    skipRetries: {
+      fieldId: 'skipRetries',
+    },
     pageSize: {
       fieldId: 'pageSize',
       visibleWhenAll: [
@@ -371,6 +374,7 @@ export default {
             fields: [
               'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
+              'skipRetries',
               'netsuite.distributed.forceReload',
               'pageSize',
               'netsuite.restlet.batchSize',

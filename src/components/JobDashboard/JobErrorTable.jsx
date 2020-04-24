@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, Fragment, useRef, useCallback } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
@@ -16,11 +16,15 @@ import Spinner from '../Spinner';
 import CeligoTable from '../../components/CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
+import { generateNewId } from '../../utils/resource';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ButtonsGroup from '../ButtonGroup';
+import useConfirmDialog from '../../components/ConfirmDialog';
+import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
+  fileInput: { display: 'none' },
   spinner: {
     left: '0px',
     right: '0px',
@@ -83,7 +87,10 @@ function JobErrorTable({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const { confirmDialog } = useConfirmDialog();
   const [currentPage, setCurrentPage] = useState(0);
+  const [fileId] = useState(generateNewId());
+  const uploadFileRef = useRef(null);
   const isJobInProgress = job.status === JOB_STATUS.RETRYING;
   const hasRetriableErrors =
     jobErrors.filter(
@@ -117,6 +124,31 @@ function JobErrorTable({
   ).length;
   const [editDataOfRetryId, setEditDataOfRetryId] = useState();
   const [expanded, setExpanded] = useState({});
+  // #region derived props from selectors
+  const retryObject = useSelector(state => {
+    if (!editDataOfRetryId) {
+      return undefined;
+    }
+
+    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
+  });
+  const uploadedFile = useSelector(
+    state => selectors.getUploadedFile(state, fileId),
+    shallowEqual
+  );
+  const jobErrorsPreview = useSelector(
+    state => selectors.getJobErrorsPreview(state, job._id),
+    shallowEqual
+  );
+  // Extract errorFile Id from the target Job i.e., one of the children of parent job ( job._flowJobId )
+  const existingErrorFileId = useSelector(state => {
+    const { children = [] } =
+      selectors.flowJob(state, { jobId: job._flowJobId }) || {};
+    const childJob = children.find(cJob => cJob._id === job._id) || {};
+
+    return childJob.errorFile && childJob.errorFile.id;
+  });
+  // #end region
   const jobErrorsData = [];
 
   jobErrorsInCurrentPage.forEach(j => {
@@ -139,6 +171,46 @@ function JobErrorTable({
   function handleDownloadAllErrorsClick() {
     dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'errors' }));
   }
+
+  const handleUploadProcessedErrors = useCallback(() => {
+    uploadFileRef.current.value = '';
+    uploadFileRef.current.click();
+  }, []);
+  const handleFileChosen = useCallback(
+    event => {
+      const file = event.target.files[0];
+
+      if (!file) return;
+
+      // If file name uploaded matches the existing fileId with csv extension, process right away
+      // File name is preferred not to be changed
+      if (file.name === `${existingErrorFileId}.csv`) {
+        dispatch(actions.file.processFile({ fileId, file, fileType: 'csv' }));
+
+        return;
+      }
+
+      // else take the confirmation from the user for the same and proceed if yes
+      confirmDialog({
+        title: 'Confirm',
+        message: `The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always 'Download All Errors' and work from the latest error file. Are you sure you want to proceed with this upload?`,
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              dispatch(
+                actions.file.processFile({ fileId, file, fileType: 'csv' })
+              );
+            },
+          },
+        ],
+      });
+    },
+    [confirmDialog, dispatch, existingErrorFileId, fileId]
+  );
 
   function handleRetryClick() {
     if (selectedErrorIds.length === 0) {
@@ -247,19 +319,84 @@ function JobErrorTable({
     setEditDataOfRetryId(retryId);
   }
 
-  const retryObject = useSelector(state => {
-    if (!editDataOfRetryId) {
-      return undefined;
-    }
-
-    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
-  });
-
   useEffect(() => {
     if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
       dispatch(actions.job.requestRetryData({ retryId: editDataOfRetryId }));
     }
   }, [dispatch, editDataOfRetryId, retryObject]);
+
+  useEffect(() => {
+    const { status, error, file: errorFile } = uploadedFile || {};
+
+    switch (status) {
+      case 'error':
+        enqueueSnackbar({
+          message: error,
+          variant: 'error',
+        });
+        break;
+      case 'received':
+        // request for preview on uploaded errors file for this job
+        dispatch(
+          actions.job.processedErrors.requestPreview({
+            jobId: job._id,
+            errorFile,
+          })
+        );
+        // reset file session as it is no longer needed
+        dispatch(actions.file.reset(fileId));
+        break;
+      default:
+    }
+  }, [
+    dispatch,
+    enqueueSnackbar,
+    fileId,
+    job._flowJobId,
+    job._id,
+    uploadedFile,
+  ]);
+
+  useEffect(() => {
+    const { status, previewData, errorFileId } = jobErrorsPreview || {};
+
+    if (status === 'received' && previewData) {
+      confirmDialog({
+        title: 'Confirm',
+        message: <JobErrorPreviewDialogContent previewData={previewData} />,
+        maxWidth: 'md',
+        buttons: [
+          {
+            label: 'Cancel',
+          },
+          {
+            label: 'Yes',
+            onClick: () => {
+              // dispatch action that retries this current job with uploaded file stored at s3Key
+              dispatch(
+                actions.job.retryForProcessedErrors({
+                  jobId: job._id,
+                  flowJobId: job._flowJobId,
+                  errorFileId,
+                })
+              );
+              // Once retried with uploaded processedErrors, the main error table dialog can be closed
+              onCloseClick();
+            },
+          },
+        ],
+      });
+      // Once the dialog is open, clear the preview result as it is no longer needed
+      dispatch(actions.job.processedErrors.clearPreview(job._id));
+    }
+  }, [
+    confirmDialog,
+    dispatch,
+    job._flowJobId,
+    job._id,
+    jobErrorsPreview,
+    onCloseClick,
+  ]);
 
   function handleRetryDataChange(data) {
     const updatedData = { ...retryObject.retryData, data };
@@ -300,6 +437,11 @@ function JobErrorTable({
             <Spinner size={20} /> <span>Loading retry data...</span>
           </div>
         ))}
+      {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
+        <div className={classes.spinner}>
+          <Spinner size={20} /> <span>Uploading...</span>
+        </div>
+      )}
       <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
@@ -362,9 +504,18 @@ function JobErrorTable({
               data-test="uploadProcessedErrors"
               variant="outlined"
               color="secondary"
-              disabled={isJobInProgress}>
+              disabled={isJobInProgress}
+              onClick={handleUploadProcessedErrors}>
               Upload processed errors
             </Button>
+            <input
+              data-test="uploadFile"
+              id="fileUpload"
+              type="file"
+              ref={uploadFileRef}
+              className={classes.fileInput}
+              onChange={handleFileChosen}
+            />
           </ButtonsGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (

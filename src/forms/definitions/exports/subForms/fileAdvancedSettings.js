@@ -3,7 +3,7 @@ export default {
     'file.decompressFiles': {
       id: 'file.decompressFiles',
       type: 'checkbox',
-      label: 'Decompress Files',
+      label: 'Decompress files',
       visibleWhenAll: [
         {
           field: 'outputMode',
@@ -40,6 +40,9 @@ export default {
         },
       ],
     },
+    skipRetries: {
+      fieldId: 'skipRetries',
+    },
   },
   layout: {
     fields: [
@@ -49,6 +52,7 @@ export default {
       'file.encoding',
       'pageSize',
       'dataURITemplate',
+      'skipRetries',
     ],
   },
 };
