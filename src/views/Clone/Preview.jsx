@@ -73,9 +73,9 @@ export default function ClonePreview(props) {
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const showIntegrationField = resourceType === 'flows';
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
+  const resource =
+    useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
+    {};
   const isIAIntegration =
     resourceType === 'integrations' && resource._connectorId;
   const { createdComponents } =
@@ -375,7 +375,7 @@ export default function ClonePreview(props) {
   };
 
   return (
-    <LoadResources resources={[resourceType, 'integrations']} required>
+    <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title="Cloning" infoText={cloningDescription} />
       <Fragment>
         <Grid container>
