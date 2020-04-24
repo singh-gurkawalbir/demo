@@ -29,7 +29,8 @@ export default function JobStatus({ job }) {
   const history = useHistory();
   const match = useRouteMatch();
   const jobStatusDetails = getJobStatusDetails(job);
-  const isJobInQueuedStatus = job.status === 'queued';
+  const isJobInQueuedStatus =
+    job.status === 'queued' || (job.status === 'running' && !job.doneExporting);
   const handleQueuedJobsClick = useCallback(() => {
     history.push(`${match.url}/flows/${job._flowId}/queuedJobs`);
   }, [history, job._flowId, match.url]);
