@@ -354,4 +354,77 @@ describe('reducer expression test cases', () => {
       });
     });
   });
+
+  describe('force field state behavior', () => {
+    let formState;
+    const fieldsMeta = {
+      fieldMap: {
+        visibleField: {
+          id: 'FIELD1',
+          type: 'text',
+          name: 'field1',
+          defaultValue: 'test',
+          label: 'field1',
+          visibleWhen: [{ field: 'FIELD2', is: ['standard'] }],
+        },
+
+        validField: {
+          id: 'FIELD2',
+          type: 'text',
+          name: 'field2',
+          defaultValue: '123',
+          label: 'field2',
+        },
+      },
+
+      layout: { fields: ['visibleField', 'validField'] },
+    };
+
+    beforeAll(() => {
+      formState = forms(
+        undefined,
+        actions.form.formInit(formKey, {
+          fieldsMeta,
+        })
+      );
+    });
+    test("FIELD1 should be invisible because it hasn't meet its visible criteria", () => {
+      const { FIELD1 } = formState[formKey].fields;
+
+      expect(FIELD1.visible).toBe(false);
+    });
+    test('FIELD1 should be visible since we force it to take a field state', () => {
+      formState = forms(
+        formState,
+        actions.form.field.forceFieldState(formKey)('FIELD1', true)
+      );
+      const { FIELD1 } = formState[formKey].fields;
+
+      expect(FIELD1.visible).toBe(true);
+    });
+    test('FIELD1 should continue to remain to visible even if its dependent criteria has been met', () => {
+      // this should make field1 be invisible but it will state its previous state since we have forced it
+      formState = forms(
+        formState,
+        actions.form.field.onFieldChange(formKey)('FIELD2', 'some other value')
+      );
+      const { FIELD1 } = formState[formKey].fields;
+
+      expect(FIELD1.visible).toBe(true);
+    });
+    test('FIELD1 should be invisible and its visible state computation should kick start after we clear the force computation and the dependant criteria has been met', () => {
+      // this should make field1 be invisible but it will state its previous state since we have forced it
+      formState = forms(
+        formState,
+        actions.form.field.clearForceFieldState(formKey)('FIELD1')
+      );
+      formState = forms(
+        formState,
+        actions.form.field.onFieldChange(formKey)('FIELD2', 'some other value1')
+      );
+      const { FIELD1 } = formState[formKey].fields;
+
+      expect(FIELD1.visible).toBe(false);
+    });
+  });
 });

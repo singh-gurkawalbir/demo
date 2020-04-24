@@ -210,6 +210,8 @@ export const isRequired = (field, fieldsById) => {
   });
 };
 
+const isValueForceComputed = (forceComputation, stateProp) =>
+  forceComputation && forceComputation.includes(stateProp);
 // const fieldHash = fieldProps => JSON.stringify(fieldProps);
 
 // mutate as much as possible to prevent rerenders
@@ -228,12 +230,18 @@ export const processFields = (
 
   Object.keys(fieldsById).forEach(key => {
     const field = fieldsById[key];
-    const { touched = false } = field;
+    const { touched = false, forceComputation } = field;
 
     field.touched = getTouchedStateForField(touched, resetTouchedState);
-    field.visible = isVisible(field, fieldsById);
-    field.required = isRequired(field, fieldsById);
-    field.disabled = formIsDisabled || isDisabled(field, fieldsById);
+
+    if (!isValueForceComputed(forceComputation, 'visible'))
+      field.visible = isVisible(field, fieldsById);
+
+    if (!isValueForceComputed(forceComputation, 'required'))
+      field.required = isRequired(field, fieldsById);
+
+    if (!isValueForceComputed(forceComputation, 'disabled'))
+      field.disabled = formIsDisabled || isDisabled(field, fieldsById);
   });
 };
 

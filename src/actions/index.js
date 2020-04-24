@@ -53,6 +53,11 @@ const form = {
         formKey,
         fieldProps: { id, visible, disable, required },
       }),
+    clearForceFieldState: formKey => id =>
+      action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
+        formKey,
+        fieldProps: { id },
+      }),
   },
 };
 // #endregion

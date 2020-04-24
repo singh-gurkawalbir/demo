@@ -20,6 +20,7 @@ export default function fields(state = {}, action) {
     disable,
     required,
   } = fieldProps;
+  const fieldStateProps = { visible, required, disable };
 
   return produce(state, draft => {
     if (!draft[formKey]) {
@@ -72,22 +73,28 @@ export default function fields(state = {}, action) {
 
         break;
 
-      case actionTypes.FORM.FIELD.FORCE_FIELD_STATE:
+      case actionTypes.FORM.FIELD.FORCE_STATE:
+        Object.keys(fieldStateProps)
+          .filter(key => isValueBoolean(fieldStateProps[key]))
+          .forEach(key => {
+            // set values are defined and a boolean
+
+            fieldsRef[id][key] = fieldStateProps[key];
+
+            if (!fieldsRef[id].forceComputation)
+              fieldsRef[id].forceComputation = [];
+            fieldsRef[id].forceComputation.push(key);
+          });
+
+        // no need to generate next state...
+        break;
+
+      case actionTypes.FORM.FIELD.CLEAR_FORCE_STATE:
+        delete fieldsRef[id].forceComputation;
+        // no need to generate next state...
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         fieldsRef[id].touched = true;
-
-        if (isValueBoolean(visible)) {
-          fieldsRef[id].visible = visible;
-        }
-
-        if (isValueBoolean(required)) {
-          fieldsRef[id].required = required;
-        }
-
-        if (isValueBoolean(disable)) {
-          fieldsRef[id].disable = disable;
-        }
 
         fieldsRef[id].touched = true;
         getNextStateFromFields(draft[formKey]);
