@@ -9,7 +9,6 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import suiteScript, * as fromSuiteScript from './suiteScript';
 import marketplace, * as fromMarketplace from './marketPlace';
 import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
-import errorManagement from './errorManagement';
 
 export default combineReducers({
   resources,
@@ -20,7 +19,6 @@ export default combineReducers({
   suiteScript,
   marketplace,
   fileDefinitions,
-  errorManagement,
 });
 
 // #region resource selectors

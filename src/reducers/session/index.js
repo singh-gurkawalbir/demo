@@ -24,6 +24,7 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
+import errorManagement from './errorManagement';
 
 export default combineReducers({
   stage,
@@ -51,6 +52,7 @@ export default combineReducers({
   responseMapping,
   fileUpload,
   jobErrorsPreview,
+  errorManagement,
 });
 
 // #region PUBLIC SELECTORS
