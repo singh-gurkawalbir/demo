@@ -14,6 +14,7 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
@@ -448,6 +449,7 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <QueuedJobsDrawer />
 
       <CeligoPageBar
         title={

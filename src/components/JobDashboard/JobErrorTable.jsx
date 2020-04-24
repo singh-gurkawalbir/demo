@@ -196,15 +196,15 @@ function JobErrorTable({
         message: `The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always 'Download All Errors' and work from the latest error file. Are you sure you want to proceed with this upload?`,
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Yes',
             onClick: () => {
               dispatch(
                 actions.file.processFile({ fileId, file, fileType: 'csv' })
               );
             },
+          },
+          {
+            label: 'No',
           },
         ],
       });
@@ -362,13 +362,11 @@ function JobErrorTable({
 
     if (status === 'received' && previewData) {
       confirmDialog({
-        title: 'Confirm',
+        title:
+          'Uploading this error file will result in the following. Please confirm to proceed',
         message: <JobErrorPreviewDialogContent previewData={previewData} />,
         maxWidth: 'md',
         buttons: [
-          {
-            label: 'Cancel',
-          },
           {
             label: 'Yes',
             onClick: () => {
@@ -383,6 +381,9 @@ function JobErrorTable({
               // Once retried with uploaded processedErrors, the main error table dialog can be closed
               onCloseClick();
             },
+          },
+          {
+            label: 'No',
           },
         ],
       });
