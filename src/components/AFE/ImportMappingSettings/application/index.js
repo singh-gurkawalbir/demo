@@ -4,7 +4,7 @@ import NetsuiteMappingSettings from './netsuite';
 import SalesforceMappingSettings from './salesforce';
 import FTPMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
-
+import RdbmsMappingSettings from './rdbms';
 // TODO (Aditya) test cases to be added for save functionality
 
 const getFormattedLookup = (lookup, formVal) => {
@@ -128,23 +128,14 @@ export default {
         });
         break;
       case adaptorTypeMap.RDBMSImport: {
-        // TODO: Temporary fix for support setting without lookup. Modify later once backend adds lookup for snowflake
-        const tempFieldMeta = RestMappingSettings.getMetaData({
+        fieldMeta = RdbmsMappingSettings.getMetaData({
           value,
           extractFields,
+          generate,
           options,
           lookups,
           lookup,
         });
-        const fieldMetaOptions =
-          tempFieldMeta.fieldMap.fieldMappingType.options[0];
-
-        fieldMetaOptions.items = fieldMetaOptions.items.filter(
-          item => item.label !== 'Lookup'
-        );
-        delete tempFieldMeta.layout.containers;
-        delete tempFieldMeta.layout.type;
-        fieldMeta = tempFieldMeta;
         break;
       }
 
