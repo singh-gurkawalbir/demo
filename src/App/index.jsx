@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useEffect, useCallback } from 'react';
+import { useMemo, Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
@@ -19,8 +19,6 @@ import * as selectors from '../reducers';
 import actions from '../actions';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
-import * as gainsight from '../utils/analytics/gainsight';
-import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
 
@@ -69,17 +67,6 @@ export default function App() {
   useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);
   // eslint-disable-next-line
   // console.log('render: <App>', reloadCount);
-
-  useEffect(() => {
-    const tagKey = {
-      'localhost.io': 'AP-CAGNPCDUT5BV-2',
-      'staging.integrator.io': 'AP-YRACIJBGZVAM-2',
-      'integrator.io': 'AP-JB3PQTNZWXAO-2',
-      'eu.integrator.io': 'AP-NDDMWBJ5SKRY-2',
-    }[getDomain()];
-
-    gainsight.initialize({ tagKey });
-  }, []);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>

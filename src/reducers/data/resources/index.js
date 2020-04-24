@@ -37,6 +37,7 @@ const convertOldFlowSchemaToNewOne = flow => {
     flowConvertedToNewSchema: true,
   };
 
+  // should we create empty array pg or have it undefined
   // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
   if (!pageGenerators && _exportId) {
     updatedFlow.pageGenerators = [
