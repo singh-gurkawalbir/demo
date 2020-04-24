@@ -503,6 +503,10 @@ export function queuedJobs(state, connectionId) {
   return fromConnections.queuedJobs(state && state.connections, connectionId);
 }
 
+export function iClients(state, connectionId) {
+  return fromConnections.iClients(state && state.connections, connectionId);
+}
+
 const lastExportDateTime = {};
 
 export function getLastExportDateTime(state, flowId) {
