@@ -78,6 +78,8 @@ export default (state = {}, action) => {
 
       // eslint-disable-next-line no-case-declarations
       case actionTypes.RESOURCE.STAGE_PATCH:
+        if (!newPatch || !newPatch.length) return;
+
         if (!draft[id]) {
           draft[id] = {};
         }
