@@ -214,7 +214,7 @@ export default function StandaloneMapping(props) {
     mappingMetadata: integrationAppMappingMetadata,
     status: integrationAppMappingStatus,
   } = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
+    selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const fetchIntegrationAppMappingMetadata = useCallback(() => {
     dispatch(

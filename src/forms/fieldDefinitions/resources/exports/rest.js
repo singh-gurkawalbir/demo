@@ -1,7 +1,7 @@
 export default {
   'rest.method': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     required: true,
     options: [
       {
@@ -21,7 +21,7 @@ export default {
   },
   'rest.blobMethod': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     required: true,
     defaultValue: r => r && r.rest && r.rest.method,
     options: [
@@ -41,7 +41,7 @@ export default {
   },
   'rest.postBody': {
     type: 'httprequestbody',
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -54,7 +54,7 @@ export default {
   },
   'rest.resourcePath': {
     type: 'text',
-    label: 'Resource Path',
+    label: 'Resource path',
   },
   'rest.headers': {
     type: 'keyvalue',
@@ -66,7 +66,7 @@ export default {
   // #region paging
   'rest.pagingMethod': {
     type: 'select',
-    label: 'Paging Method',
+    label: 'Paging method',
     options: [
       {
         items: [
@@ -89,7 +89,7 @@ export default {
   },
   'rest.nextPagePath': {
     type: 'text',
-    label: 'Next Page Path',
+    label: 'Next page path',
     required: true,
     visibleWhenAll: [
       {
@@ -105,7 +105,7 @@ export default {
   'rest.linkHeaderRelation': {
     type: 'text',
     required: true,
-    label: 'Link Header Relation',
+    label: 'Link header relation',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -119,7 +119,7 @@ export default {
   },
   'rest.nextPageRelativeURI': {
     type: 'text',
-    label: 'Next Page Relative URI',
+    label: 'Next page relative URI',
     required: true,
     visibleWhenAll: [
       {
@@ -134,7 +134,7 @@ export default {
   },
   'rest.pageArgument': {
     type: 'text',
-    label: 'Page Argument',
+    label: 'Page argument',
     required: true,
     visibleWhenAll: [
       {
@@ -145,7 +145,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
-    label: 'Build Paging Post Body',
+    label: 'Build paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -162,7 +162,7 @@ export default {
   },
   'rest.maxPagePath': {
     type: 'text',
-    label: 'Max Page Path',
+    label: 'Max page path',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -176,7 +176,7 @@ export default {
   },
   'rest.maxCountPath': {
     type: 'text',
-    label: 'Max Count Path',
+    label: 'Max count path',
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',
@@ -190,7 +190,7 @@ export default {
   },
   'rest.skipArgument': {
     type: 'text',
-    label: 'Skip Argument',
+    label: 'Skip argument',
     required: true,
     visibleWhenAll: [
       {
@@ -232,7 +232,7 @@ export default {
   },
   'rest.successPath': {
     type: 'text',
-    label: 'Success Path',
+    label: 'Success path',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -242,7 +242,7 @@ export default {
   },
   'rest.successValues': {
     type: 'text',
-    label: 'Success Values',
+    label: 'Success values',
     delimiter: ',',
     visibleWhen: [
       {
@@ -253,7 +253,7 @@ export default {
   },
   'rest.lastPageStatusCode': {
     type: 'text',
-    label: 'Last Page Status Code',
+    label: 'Last page status code',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -268,7 +268,7 @@ export default {
   },
   'rest.lastPagePath': {
     type: 'text',
-    label: 'Last Page Path',
+    label: 'Last page path',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -278,7 +278,7 @@ export default {
   },
   'rest.lastPageValue': {
     type: 'text',
-    label: 'Last Page Value',
+    label: 'Last page value',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -296,7 +296,7 @@ export default {
   },
   'transform.script._scriptId': {
     type: 'text',
-    label: 'Transform script _script Id',
+    label: 'Transform script _script ID',
   },
   'transform.script.function': {
     type: 'text',
@@ -318,7 +318,7 @@ export default {
   },
   'rest.once.method': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -336,7 +336,7 @@ export default {
   },
   'rest.blobFormat': {
     type: 'select',
-    label: 'Blob Format',
+    label: 'Blob format',
     options: [
       {
         items: [
@@ -367,6 +367,6 @@ export default {
         is: ['records'],
       },
     ],
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
   },
 };

@@ -25,7 +25,7 @@ export default {
   },
   'rdbms.once.query': {
     type: 'sqlquery',
-    label: 'Configure Once Query',
+    label: 'Configure once query',
     required: true,
     visibleWhen: [
       {

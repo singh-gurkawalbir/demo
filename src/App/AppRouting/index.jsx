@@ -162,6 +162,11 @@ function AppRouting() {
       <Route path="/pg/recycleBin" component={RecycleBin} />
       <Route path="/pg/editors" component={Editors} />
       <Route path="/pg/permissions" component={Permissions} />
+      <Route
+        path="/pg/myAccount"
+        exact
+        render={({ history }) => history.replace('/pg/myAccount/profile')}
+      />
       <Route path="/pg/myAccount/:tab" component={MyAccount} />
       <Route path="/pg/templates" component={TemplateList} />
       <Route path="/pg/accesstokens" component={AccessTokenList} />

@@ -3,7 +3,7 @@ export default {
   // something meaningful
   'file.type': {
     type: 'filetypeselect',
-    label: 'File Type',
+    label: 'File type',
     required: true,
     defaultValue: r => (r && r.file && r.file.type) || 'csv',
     options: [
@@ -27,7 +27,7 @@ export default {
   },
   'edix12.format': {
     type: 'filedefinitionselect',
-    label: 'EDI X12 Format',
+    label: 'EDI x12 format',
     format: 'edi',
     required: true,
     visibleWhenAll: [
@@ -51,7 +51,7 @@ export default {
   },
   'edifact.format': {
     type: 'filedefinitionselect',
-    label: 'EDIFACT Format',
+    label: 'EDIFACT format',
     format: 'ediFact',
     required: true,
     visibleWhenAll: [
@@ -63,7 +63,7 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File Definition Rules ',
+    label: 'File definition rules ',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -89,7 +89,7 @@ export default {
   },
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be imported)',
+    label: 'Sample file (that would be imported)',
     mode: r => r && r.file && r.file.type,
     visibleWhenAll: [
       {
@@ -100,7 +100,7 @@ export default {
   },
   'file.csv': {
     type: 'csvgenerate',
-    label: 'Configure CSV Generate Options',
+    label: 'Configure CSV generate options',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         includeHeader: true,
@@ -119,7 +119,7 @@ export default {
   },
   'file.xlsx.includeHeader': {
     type: 'checkbox',
-    label: 'Include Header',
+    label: 'Include header',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -129,12 +129,12 @@ export default {
   },
   'file.compressionFormat': {
     type: 'select',
-    label: 'Compression Format',
+    label: 'Compression format',
     options: [{ items: [{ label: 'gzip', value: 'gzip' }] }],
   },
   'file.skipAggregation': {
     type: 'checkbox',
-    label: 'Skip Aggregation',
+    label: 'Skip aggregation',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -144,6 +144,6 @@ export default {
   },
   'file.fileDefinition._fileDefinitionId': {
     type: 'text',
-    label: 'File file Definition _file Definition Id',
+    label: 'File file definition _file definition id',
   },
 };

@@ -97,7 +97,7 @@ export default {
     },
     'ftp.useCustomPGPEncryptionAlgorithm': {
       id: 'ftp.useCustomPGPEncryptionAlgorithm',
-      label: 'Use custom PGP Encryption Algorithm',
+      label: 'Use custom PGP encryption algorithm',
       type: 'checkbox',
       defaultValue: r => !!(r && r.ftp && r.ftp.pgpKeyAlgorithm),
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],

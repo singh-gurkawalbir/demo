@@ -314,6 +314,7 @@ export const SUBMIT_TICKET_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
@@ -401,6 +402,16 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.relatedLists.userDefined,',
     'salesforce.distributed.batchSize',
     'salesforce.soql.query',
+    'schedule',
+    'timeZone',
+    'activeTab',
+    'frequency',
+    'startTime',
+    'endTime',
+    'daysToRunOn',
+    'dayToRunOn',
+    '_keepDeltaBehindFlowId',
+    '_keepDeltaBehindExportId',
   ],
   imports: [
     'lookups',
@@ -416,5 +427,18 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
   ],
-  flows: ['_runNextFlowIds', 'disabled'],
+  flows: [
+    '_runNextFlowIds',
+    'disabled',
+    'schedule',
+    'timeZone',
+    'activeTab',
+    'frequency',
+    'startTime',
+    'endTime',
+    'daysToRunOn',
+    'dayToRunOn',
+    '_keepDeltaBehindFlowId',
+    '_keepDeltaBehindExportId',
+  ],
 });

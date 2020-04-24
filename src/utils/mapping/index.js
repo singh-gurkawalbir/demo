@@ -285,16 +285,14 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
     * */
-    // So wrap the extract only if it doesnt have a dot or sublist character in it
+    // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
-      !(
-        /^\[.*\]$/.test(extract) &&
-        /\W/.test(extract.replace(/^\[|]$/g, '')) &&
-        !/\./.test(extract.replace(/^\[|]$/g, ''))
-      )
+      /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+      /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+      !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
-      // if not already wrapped
-      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
+      // remove the enclosing brances
+      modifiedExtract = extract.replace(/^\[|]$/g, '').replace(/\\\]/g, ']');
     }
   }
 
@@ -760,8 +758,10 @@ export default {
             toReturn = 'MySQL';
           } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
             toReturn = 'Microsoft SQL';
-          } else {
+          } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
             toReturn = 'PostgreSQL';
+          } else {
+            toReturn = 'Snowflake';
           }
         }
 

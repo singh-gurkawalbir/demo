@@ -29,7 +29,7 @@ function FormButton({
     showCustomFormValidations,
   });
   const buttonDisabled = useMemo(
-    () => (disabled || skipDisableButtonForFormTouched ? false : !formTouched),
+    () => disabled || (skipDisableButtonForFormTouched ? false : !formTouched),
     [disabled, formTouched, skipDisableButtonForFormTouched]
   );
   const onClickBtn = useCallback(() => {

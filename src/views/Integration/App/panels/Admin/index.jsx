@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
-import NotificationsSection from './sections/Notifications';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';
 
@@ -44,12 +43,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const allSections = [
   {
-    path: 'notifications',
-    label: 'Notifications',
-    Section: NotificationsSection,
-    id: 'notifications',
-  },
-  {
     path: 'apitoken',
     label: 'API tokens',
     Section: ApiTokensSection,
@@ -72,8 +65,9 @@ const allSections = [
 export default function AdminPanel({ integrationId, ...sectionProps }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const permissions = useSelector(state => selectors.userPermissions(state));
-  const showAPITokens = permissions.accesstokens.view;
+  const showAPITokens = useSelector(
+    state => selectors.resourcePermissions(state, 'accesstokens').view
+  );
   const availableSections = showAPITokens
     ? allSections
     : // remove api token (last) section;

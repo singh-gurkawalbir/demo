@@ -352,6 +352,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromIntegrationApps.integrationAppMappingMetadata(
+    state && state.integrationApps,
+    integrationId
+  );
+}
+
 export function isAddOnInstallInProgress(state, id) {
   return fromIntegrationApps.isAddOnInstallInProgress(
     state && state.integrationApps,
@@ -468,6 +475,13 @@ export function uninstallData(state, id, storeId) {
 
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
+    state && state.integrationApps,
+    id
+  );
+}
+
+export function integrationAppClonedDetails(state, id) {
+  return fromIntegrationApps.integrationClonedDetails(
     state && state.integrationApps,
     id
   );

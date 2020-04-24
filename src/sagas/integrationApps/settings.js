@@ -4,8 +4,13 @@ import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
 
-export function* requestUpgrade({ integration, options }) {
+export function* requestUpgrade({ integrationId, options }) {
   const { licenseId, addOnName } = options;
+  const integration = yield select(
+    selectors.resource,
+    'integrations',
+    integrationId
+  );
   const { _connectorId, name, _id } = integration;
   const path = `/connectors/${_connectorId}/licenses/${licenseId}/upgradeRequest`;
 
@@ -239,15 +244,15 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
   );
 }
 
-export function* upgrade({ integration, license }) {
-  const path = `/integrations/${integration._id}/settings/changeEdition`;
+export function* upgrade({ integrationId, license }) {
+  const path = `/integrations/${integrationId}/settings/changeEdition`;
   let upgradeResponse;
 
   try {
     upgradeResponse = yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: { licenseOpts: license.opts, _integrationId: integration._id },
+        body: { licenseOpts: license.opts, _integrationId: integrationId },
         method: 'PUT',
       },
       message: `Upgrading...`,
@@ -257,7 +262,7 @@ export function* upgrade({ integration, license }) {
   }
 
   if (upgradeResponse.success) {
-    yield put(actions.resource.request('integrations', integration._id));
+    yield put(actions.resource.request('integrations', integrationId));
     yield put(actions.resource.requestCollection('flows'));
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
