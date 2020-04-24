@@ -30,6 +30,9 @@ export default {
       id: 'rdbms.bulkInsert.batchSize',
       type: 'text',
       label: 'Batch size',
+      validWhen: {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
       visibleWhen: [
         {
           field: 'rdbms.queryType',
