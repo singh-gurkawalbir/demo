@@ -5,13 +5,14 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
-import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
+import { resourceConflictResolution } from '../utils';
+import { isConnector } from '../../utils/flows';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -43,6 +44,7 @@ export function* resourceConflictDetermination({
   id,
   scope,
   resourceType,
+  master,
 }) {
   let origin;
 
@@ -52,25 +54,22 @@ export function* resourceConflictDetermination({
     return { error };
   }
 
-  if (origin.lastModified !== merged.lastModified) {
-    let conflict = jsonPatch.compare(merged, origin);
+  yield put(actions.resource.received(resourceType, origin));
 
-    conflict = util.removeItem(conflict, p => p.path === '/lastModified');
+  const { conflict, merged: updatedMerged } = yield resourceConflictResolution({
+    merged,
+    master,
+    origin,
+  });
 
-    yield put(actions.resource.received(resourceType, origin));
-    const intersectedPatches = conflict.filter(patch => patch.op === 'replace');
-
-    if (intersectedPatches && intersectedPatches.length) {
-      yield put(actions.resource.commitConflict(id, intersectedPatches, scope));
-
-      return { conflict: true };
-    }
+  if (conflict) {
+    yield put(actions.resource.commitConflict(id, conflict, scope));
   }
 
-  return { conflict: false };
+  return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope }) {
+export function* commitStagedChanges({ resourceType, id, scope, options }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -99,8 +98,14 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
 
   if (resourceType === 'flows') {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
+    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
+    // we reverse this process and convert it back to the old schema ...also we delete this flag
 
-    if (resourceIsDataLoaderFlow) {
+    if (
+      resourceIsDataLoaderFlow ||
+      (merged.flowConvertedToNewSchema && isConnector(merged))
+    ) {
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;
         delete merged.pageGenerators;
@@ -115,6 +120,8 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
         }
       }
     }
+
+    delete merged.flowConvertedToNewSchema;
   }
   // #endregion
 
@@ -128,9 +135,12 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
       id,
       scope,
       resourceType,
+      master,
     });
 
     if (resp && (resp.error || resp.conflict)) return resp;
+    // eslint-disable-next-line prefer-destructuring
+    merged = resp.merged;
   } else if (
     ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
       resourceType
@@ -253,6 +263,10 @@ export function* commitStagedChanges({ resourceType, id, scope }) {
     yield put(
       actions.resource.updated(resourceType, updated._id, master, patch)
     );
+  }
+
+  if (options && options.action === 'flowEnableDisable') {
+    yield put(actions.flow.isOnOffActionInprogress(false, id));
   }
 
   yield put(actions.resource.clearStaged(id, scope));
@@ -381,6 +395,10 @@ export function* updateIntegrationSettings({
       yield put(actions.resource.requestCollection('imports'));
     }
   }
+
+  if (options.action === 'flowEnableDisable') {
+    yield put(actions.flow.isOnOffActionInprogress(false, flowId));
+  }
 }
 
 export function* patchResource({ resourceType, id, patchSet, options = {} }) {
@@ -502,7 +520,7 @@ export function* deleteResource({ resourceType, id }) {
 }
 
 export function* getResourceCollection({ resourceType }) {
-  const path = `/${resourceType}`;
+  let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
@@ -512,6 +530,10 @@ export function* getResourceCollection({ resourceType }) {
     resourceType.includes('/tiles')
   ) {
     hideNetWorkSnackbar = true;
+  }
+
+  if (resourceType === 'marketplacetemplates') {
+    path = `/templates/published`;
   }
 
   try {
@@ -687,21 +709,41 @@ export function* refreshConnectionStatus({ integrationId }) {
       path: url,
       hidden: true,
     });
+    yield put(actions.resource.connections.updateStatus(response));
   } catch (e) {
-    return;
+    // do nothing
+  }
+}
+
+export function* requestQueuedJobs({ connectionId }) {
+  const path = `/connections/${connectionId}/jobs`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, { path });
+  } catch (error) {
+    return undefined;
   }
 
-  const finalResponse = Array.isArray(response)
-    ? response.map(({ _id, offline, queues }) => ({
-        _id,
-        offline: !!offline,
-        queueSize: queues[0].size,
-      }))
-    : [];
+  yield put(actions.connection.receivedQueuedJobs(response, connectionId));
+}
 
-  yield put(
-    actions.resource.connections.receivedConnectionStatus(finalResponse)
-  );
+export function* cancelQueuedJob({ jobId }) {
+  const path = `/jobs/${jobId}/cancel`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {},
+        method: 'PUT',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
+    return undefined;
+  }
 }
 
 export const resourceSagas = [
@@ -724,6 +766,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
+  takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
 
   ...metadataSagas,
 ];

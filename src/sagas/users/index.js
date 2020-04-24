@@ -142,6 +142,26 @@ export function* updateProfile() {
   }
 }
 
+export function* unlinkWithGoogle() {
+  const path = '/unlink/google';
+  const method = 'post';
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method,
+      },
+      message: 'Unlinking with Google',
+    });
+    yield put(actions.user.profile.unlinkedWithGoogle());
+  } catch (e) {
+    yield put(
+      actions.api.failure(path, method, 'Could not unlink with Google')
+    );
+  }
+}
+
 export function* changeEmail({ updatedEmail }) {
   try {
     const payload = { ...changeEmailParams.opts, body: updatedEmail };
@@ -351,13 +371,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
       message: `Accepting ${resourceType} share invite`,
     });
   } catch (e) {
-    return yield put(
-      actions.api.failure(
-        path,
-        opts.method,
-        `Could not accept ${resourceType} share invite`
-      )
-    );
+    return true;
   }
 
   const userPreferences = yield select(selectors.userPreferences);
@@ -430,6 +444,7 @@ export function* requestNumEnabledFlows() {
 }
 
 export const userSagas = [
+  takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
   takeLatest(actionTypes.UPDATE_PREFERENCES, updatePreferences),
   takeEvery(actionTypes.LICENSE_TRIAL_REQUEST, requestTrialLicense),

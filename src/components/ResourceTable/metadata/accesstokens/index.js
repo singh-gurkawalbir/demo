@@ -50,10 +50,19 @@ export default {
     },
   ],
   rowActions: r => {
+    let actionItems = [];
+    const isOTT = r._connectorId && !r.autoPurgeAt;
+
     if (r.revoked) {
-      return [Reactivate, Regenerate, AuditLogs, Delete];
+      actionItems = [Reactivate, Regenerate, AuditLogs];
+    } else {
+      actionItems = [Revoke, Regenerate, AuditLogs];
     }
 
-    return [Revoke, Regenerate, AuditLogs, Delete];
+    if (!isOTT && r.revoked) {
+      actionItems.push(Delete);
+    }
+
+    return actionItems;
   },
 };

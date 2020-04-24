@@ -1,25 +1,23 @@
-import { useReducer, useState, useEffect } from 'react';
+import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import produce from 'immer';
-import Button from '@material-ui/core/Button';
-import deepClone from 'lodash/cloneDeep';
 import { isEmpty } from 'lodash';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import TrashIcon from '../../icons/TrashIcon';
-import mappingUtil from '../../../utils/mapping';
+import responseMappingUtil from '../../../utils/responseMapping';
 import getJSONPaths from '../../../utils/jsonPaths';
-import * as resourceUtil from '../../../utils/resource';
 import ModalDialog from '../../ModalDialog';
 import ButtonGroup from '../../ButtonGroup';
-import ActionButton from '../../ActionButton';
 import Help from '../../Help';
+import PATCH_SAVE_STATUS from '../../../constants/patchSaveStatus';
+import MappingRow from './MappingRow';
+import Spinner from '../../Spinner';
 
 // TODO Aditya: Convert Response Mapping and Import mapping to re-use same component
 // TODO: Azhar once Mapping dialog design is ready make a component
+
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
@@ -42,15 +40,6 @@ const useStyles = makeStyles(theme => ({
     float: 'right',
     padding: 1,
   },
-  rowContainer: {
-    display: 'block',
-    padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
   childHeader: {
     '& > div': {
       width: '100%',
@@ -64,43 +53,31 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: '1%',
   },
 }));
+const SaveButton = props => {
+  const { dataTest, disabled, onSave, label, saveInProgress, onClose } = props;
+  const handleBtnClick = useCallback(() => {
+    onSave();
 
-export const reducer = (state, action) => {
-  const {
-    type,
-    value,
-    index,
-    field,
-    lastRowData = {},
-    setChangeIdentifier,
-  } = action;
+    if (onClose) onClose();
+  }, [onClose, onSave]);
 
-  return produce(state, d => {
-    const draft = d;
-
-    switch (type) {
-      case 'REMOVE':
-        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
-        draft.splice(index, 1);
-        break;
-      case 'UPDATE_FIELD':
-        if (state[index]) {
-          const objCopy = { ...state[index] };
-
-          objCopy[field] = value;
-
-          draft[index] = objCopy;
-        } else if (value) {
-          draft.push({ ...lastRowData, [field]: value });
-        }
-
-        setChangeIdentifier(changeIdentifier => changeIdentifier + 1);
-
-        break;
-
-      default:
-    }
-  });
+  return (
+    <Button
+      data-test={dataTest}
+      variant="outlined"
+      color="secondary"
+      disabled={disabled}
+      onClick={handleBtnClick}>
+      {saveInProgress ? (
+        <Fragment>
+          <Spinner size={16} />
+          Saving
+        </Fragment>
+      ) : (
+        <Fragment>{label}</Fragment>
+      )}
+    </Button>
+  );
 };
 
 export default function ResponseMappingDialog(props) {
@@ -110,23 +87,25 @@ export default function ResponseMappingDialog(props) {
     flowId,
     resourceType,
     onClose,
-    disabled,
+    disabled = false,
   } = props;
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.resourceData(state, 'flows', flowId)
-  );
-  const pageProcessorsObject =
-    flow && flow.pageProcessors && flow.pageProcessors[resourceIndex];
-  const resourceSubType = resourceUtil.getResourceSubTypeFromAdaptorType(
-    resource.adaptorType
-  );
-  const application = resourceSubType.type;
-  const keyName = 'extract';
-  const valueName = 'generate';
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
+  const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
+  const [closeOnSave, setCloseOnSave] = useState(false);
+  const { mappings = [], saveStatus, changeIdentifier } = useSelector(state =>
+    selectors.responseMappings(state, editorId)
+  );
+  const isDirty = useSelector(state =>
+    selectors.responseMappingDirty(state, editorId)
+  );
+  const saveInProgress = saveStatus === PATCH_SAVE_STATUS.REQUESTED;
+  const saveTerminated = [
+    PATCH_SAVE_STATUS.COMPLETED,
+    PATCH_SAVE_STATUS.FAILED,
+  ].includes(saveStatus);
   const helpKey = isImport
     ? 'import.response.mapping'
     : 'lookup.response.mapping';
@@ -152,90 +131,50 @@ export default function ResponseMappingDialog(props) {
     }
   }, [dispatch, extractFields, flowId, isImport, resourceId]);
 
-  const defaultExtractFields = mappingUtil.getResponseMappingDefaultExtracts(
+  const defaultExtractFields = responseMappingUtil.getResponseMappingDefaultExtracts(
     resourceType
   );
-  const responseMappings =
-    pageProcessorsObject && pageProcessorsObject.responseMapping;
-  const formattedResponseMapping = mappingUtil.getMappingsForApp({
-    mappings: responseMappings,
-    resource,
-  });
-  const [state, dispatchLocalAction] = useReducer(
-    reducer,
-    formattedResponseMapping || []
-  );
-  const mappingsTmp = deepClone(state);
-  const [changeIdentifier, setChangeIdentifier] = useState(0);
-  const handleFieldUpdate = (row, event, field) => {
-    const { value } = event.target;
+  const handleInit = useCallback(() => {
+    dispatch(
+      actions.responseMapping.init(editorId, {
+        resourceIndex,
+        flowId,
+      })
+    );
+  }, [dispatch, editorId, flowId, resourceIndex]);
 
-    dispatchLocalAction({
-      type: 'UPDATE_FIELD',
-      index: row,
-      field,
-      value,
-      setChangeIdentifier,
-      lastRowData: (mappingsTmp || []).length
-        ? mappingsTmp[mappingsTmp.length - 1]
-        : {},
-    });
-  };
+  useEffect(() => {
+    handleInit();
+  }, [handleInit]);
 
-  const handleDelete = row => {
-    dispatchLocalAction({
-      type: 'REMOVE',
-      index: row,
-      setChangeIdentifier,
-      lastRowData: (mappingsTmp || []).length
-        ? mappingsTmp[mappingsTmp.length - 1]
-        : {},
-    });
-  };
-
-  mappingsTmp.push({});
-  const tableData = (mappingsTmp || []).map((r, n) => ({ ...r, index: n }));
-  const handleSubmit = closeModal => {
-    let mappings = state.map(({ index, ...others }) => others);
-
-    mappings = mappingUtil.generateMappingsForApp({
-      mappings,
-      generateFields: [],
-      appType: application,
-    });
-    const patchSet = [];
-    let path;
-
-    if (
-      pageProcessorsObject &&
-      pageProcessorsObject[resourceIndex] &&
-      pageProcessorsObject[resourceIndex].responseMapping
-    ) {
-      const obj = {};
-
-      obj.responseMapping = {};
-      obj.type = resourceType === 'imports' ? 'import' : 'export';
-      obj[resourceType === 'imports' ? '_importId' : '_exportId'] =
-        resource._id;
-
-      path = `/pageProcessors/${resourceIndex}`;
-      patchSet.push({
-        op: 'add',
-        path,
-        value: obj,
-      });
-    }
-
-    path = `/pageProcessors/${resourceIndex}/responseMapping`;
-    patchSet.push({ op: 'replace', path, value: mappings });
-    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-
-    if (closeModal) {
+  useEffect(() => {
+    if (closeOnSave && saveTerminated) {
       onClose();
     }
-  };
+  }, [closeOnSave, onClose, saveTerminated]);
 
+  const handleFieldUpdate = useCallback(
+    (rowIndex, field, value) => {
+      dispatch(
+        actions.responseMapping.patchField(editorId, field, rowIndex, value)
+      );
+    },
+    [dispatch, editorId]
+  );
+  const handleDelete = useCallback(
+    rowIndex => {
+      dispatch(actions.responseMapping.delete(editorId, rowIndex));
+    },
+    [dispatch, editorId]
+  );
+  const tableData = useMemo(() => {
+    const rows = (mappings || []).map((value, index) => ({ ...value, index }));
+
+    // add empty row
+    rows.push({ index: mappings.length, rowIdentifier: 0 });
+
+    return rows;
+  }, [mappings]);
   let formattedExtractFields = defaultExtractFields;
 
   // Incase of imports , If there is sampledata we show them as suggestions else the default extractFields
@@ -249,12 +188,24 @@ export default function ResponseMappingDialog(props) {
       [];
   }
 
+  const patchSave = useCallback(() => {
+    dispatch(actions.responseMapping.save(editorId));
+  }, [dispatch, editorId]);
+  const handleSave = useCallback(() => {
+    patchSave();
+  }, [patchSave]);
+  const handleClose = () => {
+    setCloseOnSave(true);
+  };
+
+  const disableSave = disabled || saveInProgress || !isDirty;
+
   return (
-    <ModalDialog onClose={onClose} show minWidth="md" maxWidth="md">
+    <ModalDialog show minWidth="md" maxWidth="md" onClose={onClose}>
       <div className={classes.titleSection}>
-        <div>Define Response Mapping</div>
+        <div>Define response mapping</div>
         <Help
-          title="Response Mapping"
+          title="Response mapping"
           className={classes.helpTextButton}
           helpKey={helpKey}
           fieldId={helpKey}
@@ -267,86 +218,55 @@ export default function ResponseMappingDialog(props) {
               variant="subtitle2"
               className={classes.childHeader}
               key="heading_extract">
-              {resourceType === 'imports' ? 'Import' : 'Lookup'} Response Field
+              {resourceType === 'imports' ? 'Import' : 'Lookup'} response field
             </Typography>
 
             <Typography
               variant="subtitle2"
               className={classes.childHeader}
               key="heading_generate">
-              Source Record Field (New/Existing Field)
+              Source record field (New/Existing field)
             </Typography>
           </div>
           <div key={changeIdentifier}>
-            {tableData.map(r => (
-              <div className={classes.rowContainer} key={r.index}>
-                <div className={classes.innerRow}>
-                  <div className={classes.childHeader}>
-                    <DynaTypeableSelect
-                      id={`extract-${r.index}`}
-                      disabled={disabled}
-                      labelName="name"
-                      valueName="id"
-                      value={r[keyName]}
-                      options={formattedExtractFields || []}
-                      onBlur={(id, evt) => {
-                        handleFieldUpdate(
-                          r.index,
-                          { target: { value: evt } },
-                          keyName
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className={classes.childHeader}>
-                    <DynaTypeableSelect
-                      id={`generate-${r.index}`}
-                      disabled={disabled}
-                      value={r[valueName]}
-                      hideOptions
-                      onBlur={(id, evt) => {
-                        handleFieldUpdate(
-                          r.index,
-                          { target: { value: evt } },
-                          valueName
-                        );
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <ActionButton
-                      disabled={disabled}
-                      data-test={`delete-${r.index}`}
-                      aria-label="delete"
-                      onClick={() => {
-                        handleDelete(r.index);
-                      }}>
-                      <TrashIcon />
-                    </ActionButton>
-                  </div>
-                </div>
-              </div>
+            {tableData.map(mapping => (
+              <MappingRow
+                value={mapping}
+                key={`row-${mapping.rowIdentifier}-${mapping.index}`}
+                extractFields={formattedExtractFields}
+                onFieldUpdate={handleFieldUpdate}
+                disabled={disabled}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
       </div>
       <div>
         <ButtonGroup>
+          <SaveButton
+            dataTest="saveMapping"
+            disabled={disableSave}
+            onSave={handleSave}
+            saveInProgress={!closeOnSave && saveInProgress}
+            label="Save"
+          />
+          {isDirty && (
+            <SaveButton
+              dataTest="saveAndCloseMapping"
+              disabled={disableSave}
+              onSave={handleSave}
+              onClose={handleClose}
+              saveInProgress={closeOnSave && saveInProgress}
+              label="Save and Close"
+            />
+          )}
           <Button
-            disabled={disabled}
-            data-test="saveMapping"
-            onClick={() => handleSubmit(false)}
-            variant="outlined"
-            color="secondary">
-            Save
-          </Button>
-          <Button
-            disabled={disabled}
-            data-test="saveAndCloseMapping"
-            onClick={() => handleSubmit(true)}
-            variant="outlined"
-            color="primary">
-            Save and close
+            variant="text"
+            data-test="close"
+            disabled={saveInProgress}
+            onClick={onClose}>
+            {saveTerminated ? 'Close' : 'Cancel'}
           </Button>
         </ButtonGroup>
       </div>

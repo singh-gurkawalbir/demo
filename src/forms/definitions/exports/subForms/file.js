@@ -81,19 +81,16 @@ export default {
       refreshOptionsOnChangesTo: 'file.type',
     },
     'file.csv': { fieldId: 'file.csv' },
-    isNew: {
-      id: 'isNew',
-      type: 'text',
-      defaultValue: r => !!isNewId(r && r._id),
-      visible: false,
-    },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
-      disabledWhenAll: [
-        { field: 'uploadFile', is: [''] },
-        { field: 'isNew', is: [true] },
-      ],
+      disabledWhenAll: r => {
+        if (isNewId(r._id)) {
+          return [{ field: 'uploadfile', is: [''] }];
+        }
+
+        return [];
+      },
     },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     'file.xml.resourcePath': {
@@ -134,7 +131,6 @@ export default {
       'file.xml.resourcePath',
       'file.json.resourcePath',
       'file.xlsx.hasHeaderRow',
-      'isNew',
       'file.xlsx.rowsPerRecord',
       'file.xlsx.keyColumns',
       'edix12.format',

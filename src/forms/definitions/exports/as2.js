@@ -46,6 +46,8 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    newValues['/type'] = 'webhook';
+
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -149,7 +151,7 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     'edix12.format': {
       fieldId: 'edix12.format',

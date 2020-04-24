@@ -16,10 +16,9 @@ const useStyles = makeStyles(theme => ({
   formField: {
     width: '398px',
   },
-  startAdornmentWrapper: {
-    display: 'flex',
+  startAdornmentText: {
+    whiteSpace: 'nowrap',
     minWidth: theme.spacing(10),
-    wordBreak: 'break-word',
   },
   subSection: {
     maxWidth: '95%',

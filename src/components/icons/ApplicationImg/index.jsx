@@ -1,5 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { map } from 'lodash';
 import clsx from 'clsx';
+import { getDatabaseConnectors } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -55,9 +57,16 @@ export default function ApplicationImg({
 }) {
   const classes = useStyles();
   let path = `${process.env.CDN_BASE_URI}images/`;
+  const dbConnectors = map(getDatabaseConnectors(), 'id');
 
   if (!assistant) {
-    path += `flow-builder/company-logos/integration-icon-${iconMap(type)}.png`;
+    if (dbConnectors.includes(iconMap(type)) && markOnly) {
+      path += `marketplace/small/${iconMap(type)}.png`;
+    } else {
+      path += `flow-builder/company-logos/integration-icon-${iconMap(
+        type
+      )}.png`;
+    }
   } else if (markOnly) {
     path += `marketplace/small/${assistant}.png`;
   } else {

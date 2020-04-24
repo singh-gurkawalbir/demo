@@ -13,13 +13,26 @@ function flattenChildrenStructrue(
   isRoot = true,
   options = {}
 ) {
-  const { deleted = [], isParentDeleted = false } = options;
+  const {
+    deleted = [],
+    isParentDeleted = false,
+    deleteChildlessParent = false,
+  } = options;
 
   if (meta) {
+    let allChildrenDeleted = false;
+
+    if (deleteChildlessParent && meta.children && meta.children.length) {
+      allChildrenDeleted = !meta.children.some(
+        child => !deleted.includes(child.id)
+      );
+    }
+
     result.push({
       ...meta,
       isRoot,
-      deleted: deleted.includes(meta.id) || isParentDeleted,
+      deleted:
+        allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
 
     if (meta.children) {
@@ -27,6 +40,7 @@ function flattenChildrenStructrue(
         flattenChildrenStructrue(result, child, false, {
           deleted,
           isParentDeleted: deleted.includes(meta.id),
+          deleteChildlessParent,
         })
       );
     }
@@ -64,6 +78,7 @@ export default (state = {}, action) => {
   } = action;
   const key = getStateKey(integrationId, flowId, sectionId);
   const cKey = getCategoryKey(integrationId, flowId);
+  const addOnKey = `${integrationId}-addOns`;
   let mappingIndex;
   let categoryMappingData;
   let generatesMetadata;
@@ -91,11 +106,11 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
-          if (!draft[integrationId]) {
-            draft[integrationId] = {};
+          if (!draft[addOnKey]) {
+            draft[addOnKey] = {};
           }
 
-          draft[integrationId].addOns = {
+          draft[addOnKey].addOns = {
             addOnMetaData: response.addOns && response.addOns.addOnMetaData,
             addOnLicenses: response.addOns && response.addOns.addOnLicenses,
           };
@@ -219,6 +234,7 @@ export default (state = {}, action) => {
             categoryId,
             childCategoryId,
             variation,
+            isVariationAttributes,
             netsuiteRecordType,
             ...additionalOptions
           } = options;
@@ -228,7 +244,8 @@ export default (state = {}, action) => {
               draft[cKey],
               categoryId,
               childCategoryId,
-              variation
+              variation,
+              isVariationAttributes
             );
           }
 
@@ -518,6 +535,9 @@ export default (state = {}, action) => {
           }
 
           if (
+            generatesMetadata.data &&
+            generatesMetadata.data.generatesMetaData &&
+            generatesMetadata.data.generatesMetaData.id &&
             !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
@@ -716,7 +736,7 @@ export function categoryMappingData(state, integrationId, flowId) {
     return null;
   }
 
-  const { response = [], deleted = [] } = state[cKey] || emptyObj;
+  const { response = [], deleted = [], uiAssistant } = state[cKey] || emptyObj;
   const mappings = [];
   let mappingMetadata = [];
   const basicMappingData = response.find(
@@ -729,7 +749,10 @@ export function categoryMappingData(state, integrationId, flowId) {
   }
 
   mappingMetadata.forEach(meta => {
-    flattenChildrenStructrue(mappings, meta, true, { deleted });
+    flattenChildrenStructrue(mappings, meta, true, {
+      deleted,
+      deleteChildlessParent: uiAssistant !== 'jet',
+    });
   });
 
   return mappings;
@@ -777,13 +800,11 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
-  const generatesMetaData = response.find(
-    sec => sec.operation === 'generatesMetaData'
+  const categoryRelationshipData = categoryMappingGeneratesMetadata(
+    state,
+    integrationId,
+    flowId
   );
-  const categoryRelationshipData =
-    generatesMetaData &&
-    generatesMetaData.data &&
-    generatesMetaData.data.generatesMetaData;
 
   mappingUtil.setCategoryMappingData(
     flowId,
@@ -792,7 +813,6 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
     deleted,
     categoryRelationshipData
   );
-
   const initData = state[cKey].initMappingData;
 
   if (!initData || !initData.data || !initData.data.mappingData) {
@@ -817,6 +837,16 @@ export function integrationAppAddOnState(state, integrationId) {
     return emptyObj;
   }
 
+  const addOnKey = `${integrationId}-addOns`;
+
+  return state[addOnKey] || emptyObj;
+}
+
+export function integrationAppMappingMetadata(state, integrationId) {
+  if (!state) {
+    return emptyObj;
+  }
+
   return state[integrationId] || emptyObj;
 }
 
@@ -835,4 +865,5 @@ export function checkUpgradeRequested(state, licenseId) {
 
   return !!state[licenseId];
 }
+
 // #endregion

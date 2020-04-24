@@ -81,6 +81,15 @@ export default class AppRouting extends Component {
           component={CloneSetup}
         />
         <Route
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId"
+          exact
+          render={({ history, match }) =>
+            history.replace(
+              `/pg/templates/${match.params.templateName}/${match.params.integrationId}/flows`
+            )
+          }
+        />
+        <Route
           path="/pg/integrations/:integrationId"
           exact
           render={({ history, match }) =>
@@ -89,6 +98,7 @@ export default class AppRouting extends Component {
             )
           }
         />
+
         <Route
           path="/pg/marketplace/templates/:templateId"
           exact
@@ -102,11 +112,14 @@ export default class AppRouting extends Component {
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
+            '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
           <FlowBuilder />
         </Route>
+
         <Route
           path="/pg/integrations/:integrationId/:tab"
           component={Integration}
@@ -134,6 +147,12 @@ export default class AppRouting extends Component {
           ]}
           component={IntegrationApp}
         />
+        <Route
+          // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+          // templateName has structure of application2-application2 will contain atleast 5 characters
+          path="/pg/templates/:templateName([\w-]{5,})/:integrationId/:tab"
+          component={Integration}
+        />
 
         <Route
           path="/pg/connectors/:connectorId/connectorLicenses"
@@ -154,6 +173,11 @@ export default class AppRouting extends Component {
         <Route path="/pg/resources" component={Resources} />
         <Route path="/pg/editors" component={Editors} />
         <Route path="/pg/permissions" component={Permissions} />
+        <Route
+          path="/pg/myAccount"
+          exact
+          render={({ history }) => history.replace('/pg/myAccount/profile')}
+        />
         <Route path="/pg/myAccount/:tab" component={MyAccount} />
         <Route path="/pg/templates" component={TemplateList} />
         <Route path="/pg/accesstokens" component={AccessTokenList} />

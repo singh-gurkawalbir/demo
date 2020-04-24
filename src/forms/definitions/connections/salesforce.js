@@ -1,12 +1,14 @@
 import { isNewId } from '../../../utils/resource';
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues, res) => {
     const newValues = Object.assign({}, formValues);
 
     if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
       newValues['/salesforce/username'] = undefined;
     }
+
+    newValues['/assistant'] = res && res.assistant;
 
     return newValues;
   },
@@ -19,7 +21,7 @@ export default {
       type: 'text',
       label: 'Email',
       defaultDisabled: true,
-      helpText: 'Your Salesforce account email.',
+      helpKey: 'Your Salesforce account email.',
       visible: r => r && !isNewId(r._id),
       defaultValue: r =>
         r && r.salesforce && r.salesforce.info && r.salesforce.info.email,
@@ -29,7 +31,7 @@ export default {
       type: 'text',
       label: 'Organization id',
       defaultDisabled: true,
-      helpText: "Your organization's unique Salesforce ID",
+      helpKey: "Your organization's unique Salesforce ID",
       visible: r => r && !isNewId(r._id),
       defaultValue: r =>
         r &&

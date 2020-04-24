@@ -1,5 +1,5 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -18,6 +18,7 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
+import * as selectors from '../../reducers';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -56,6 +57,11 @@ export default function JobActionsMenu({
     menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
   }
 
+  const flowDetails = useSelector(
+    state => selectors.flowDetails(state, job._flowId),
+    shallowEqual
+  );
+
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
       menuOptions.push({
@@ -78,7 +84,12 @@ export default function JobActionsMenu({
 
   if (isFlowJob) {
     if (!isJobInProgress) {
-      if (job.type === JOB_TYPES.FLOW && job.status !== JOB_STATUS.RETRYING) {
+      if (
+        job.type === JOB_TYPES.FLOW &&
+        job.status !== JOB_STATUS.RETRYING &&
+        flowDetails &&
+        flowDetails.isRunnable
+      ) {
         menuOptions.push({ label: 'Run flow', action: 'runFlow' });
       }
 

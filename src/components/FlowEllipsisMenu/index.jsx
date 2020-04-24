@@ -18,6 +18,7 @@ import RefIcon from '../icons/ViewReferencesIcon';
 import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import { getTemplateUrlName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -54,6 +55,9 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   );
   const { defaultConfirmDialog } = useConfirmDialog();
   const integrationId = flowDetails._integrationId;
+  const permission = useSelector(state =>
+    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
+  );
   const integrationAppName = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -63,6 +67,25 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
     if (integration && integration._connectorId && integration.name) {
       return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  });
+  const templateName = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration && integration._templateId) {
+      const template = selectors.resource(
+        state,
+        'marketplacetemplates',
+        integration._templateId
+      );
+
+      return getTemplateUrlName(template.applications);
     }
 
     return null;
@@ -88,13 +111,20 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'schedule':
-          flowDetails._connectorId
-            ? history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
-              )
-            : history.push(
-                `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
-              );
+          if (flowDetails._connectorId) {
+            history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else if (templateName) {
+            history.push(
+              `/pg/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          } else {
+            history.push(
+              `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
+            );
+          }
+
           break;
 
         case 'clone':
@@ -153,6 +183,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       integrationAppName,
       integrationId,
       flowId,
+      templateName,
       dispatch,
       patchFlow,
     ]
@@ -161,9 +192,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  // TODO: we need to add logic to properly determine which of the
-  // below actions should be made available for this flow.
-  if (integrationId) availableActions.push(allActions.detach);
+  if (integrationId && permission.detach)
+    availableActions.push(allActions.detach);
 
   if (!flowDetails._connectorId || flowDetails.showMapping)
     availableActions.push(allActions.mapping);
@@ -172,9 +202,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
-  availableActions.push(allActions.clone);
+
+  if (permission.clone) availableActions.push(allActions.clone);
+
   availableActions.push(allActions.download);
-  availableActions.push(allActions.delete);
+
+  if (permission.delete) availableActions.push(allActions.delete);
 
   // remove any actions that have explicitly been excluded.
   if (exclude && exclude.length) {

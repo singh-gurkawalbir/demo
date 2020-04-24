@@ -62,8 +62,14 @@ export default function StandaloneMapping(props) {
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport;
   const isNetsuite =
     resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
+  const isHTTP = resourceType.type === ResourceUtil.adaptorTypeMap.HTTPImport;
+  const isREST = resourceType.type === ResourceUtil.adaptorTypeMap.RESTImport;
   const { _connectionId: connectionId, name: resourceName } = resourceData;
   const dispatch = useDispatch();
+  // TODO (Aditya): Calculation connection/resource at data layer rather than sending heavy object
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
   const {
     visible: showMappings,
     importSampleData: savedImportSampleData,
@@ -208,7 +214,7 @@ export default function StandaloneMapping(props) {
     mappingMetadata: integrationAppMappingMetadata,
     status: integrationAppMappingStatus,
   } = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
+    selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const fetchIntegrationAppMappingMetadata = useCallback(() => {
     dispatch(
@@ -234,12 +240,34 @@ export default function StandaloneMapping(props) {
 
   const application = resourceType.type;
   const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
+  let isComposite;
+
+  if (isHTTP) {
+    isComposite =
+      resourceData &&
+      resourceData.http &&
+      resourceData.http.method &&
+      resourceData.http.method.length === 2;
+  } else if (isREST) {
+    isComposite =
+      resourceData &&
+      resourceData.rest &&
+      resourceData.rest.method &&
+      resourceData.rest.method.length === 2;
+  } else if (isNetsuite) {
+    isComposite =
+      resourceData.netsuite_da &&
+      resourceData.netsuite_da.operation &&
+      resourceData.netsuite_da.operation === 'addupdate';
+  }
+
   const options = {
     flowId,
     connectionId,
     resourceId,
     resourceName,
     isGroupedSampleData,
+    isComposite,
   };
   const mappingOptions = {
     resourceData,
@@ -247,6 +275,7 @@ export default function StandaloneMapping(props) {
     isGroupedSampleData,
     application,
     subRecordMappingId,
+    connection,
   };
 
   if (isSalesforce) {

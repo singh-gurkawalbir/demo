@@ -6,6 +6,7 @@ import {
   useHistory,
   Route,
   useLocation,
+  Switch,
 } from 'react-router-dom';
 import * as selectors from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
@@ -16,12 +17,12 @@ import DrawerTitleBar from '../TitleBar';
 import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
+import Spinner from '../../../../../../../components/Spinner';
 
-const drawerWidth = 200;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     // marginTop: theme.appBarHeight,
-    width: `50%`,
+    width: `60%`,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
@@ -29,39 +30,9 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     overflowX: 'hidden',
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
-    padding: theme.spacing(2, 3),
-  },
-  mappingContainer: {
-    padding: '0 0 10px 20px',
-    border: 'solid 1px',
-    borderColor: theme.palette.background.default,
-  },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-  },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
     float: 'left',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  settingsForm: {
-    maxHeight: `calc(100vh - 120px)`,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  nested: {
-    paddingLeft: theme.spacing(4),
-  },
-  drawerPaperInner: {
-    width: drawerWidth,
-    position: 'relative',
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -77,35 +48,16 @@ const useStyles = makeStyles(theme => ({
     width: '40%',
     marginRight: 45,
   },
-  toolbar: theme.mixins.toolbar,
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
-  childExpansionPanel: {
-    background: theme.palette.background.default,
-    marginTop: 10,
-    boxShadow: 'none',
-  },
-
-  secondaryHeading: {
-    fontFamily: 'Roboto500',
-    lineHeight: `${theme.spacing(3)}px`,
-  },
-
   subNav: {
+    minWidth: '200px',
     width: '20%',
     background: theme.palette.background.paper2,
     paddingTop: theme.spacing(1),
-  },
-  deleteIcon: {
-    position: 'absolute',
-    right: '20px',
-  },
-  variationIcon: {
-    position: 'absolute',
-    right: '50px',
   },
   content: {
     width: '100%',
@@ -113,21 +65,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
-    background: 'blue',
-  },
-  listItem: {
-    color: theme.palette.text.primary,
-  },
-  activeListItem: {
-    color: theme.palette.primary.main,
-  },
-  default: {
-    marginBottom: 10,
+    background: theme.palette.primary.main,
   },
   variationMapWrapper: {
     display: 'flex',
   },
-  // Todo: Sravan if you are using the Expansion panel then below css will not useful.
   mappingWrapper: {
     marginLeft: 20,
     marginTop: theme.spacing(1),
@@ -146,6 +88,18 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     const { uiAssistant = '' } = categoryMappingMetadata;
 
     return `${uiAssistant.charAt(0).toUpperCase()}${uiAssistant.slice(1)}`;
+  });
+  const metadataLoaded = useSelector(
+    state => !!selectors.categoryMapping(state, integrationId, flowId)
+  );
+  const isVariationAttributes = useSelector(state => {
+    // eslint-disable-next-line camelcase
+    const { variation_attributes = [] } =
+      selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId: subCategoryId,
+      }) || {};
+
+    return !!variation_attributes.length;
   });
   const firstVariation =
     useSelector(state => {
@@ -173,18 +127,31 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       actions.integrationApp.settings.categoryMappings.cancelVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${variation}`
+        `${flowId}-${subCategoryId}-${
+          isVariationAttributes ? 'variationAttributes' : variation
+        }`
       )
     );
     handleClose();
-  }, [dispatch, flowId, handleClose, integrationId, subCategoryId, variation]);
+  }, [
+    dispatch,
+    flowId,
+    handleClose,
+    integrationId,
+    isVariationAttributes,
+    subCategoryId,
+    variation,
+  ]);
   const handleSave = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.saveVariationMappings(
         integrationId,
         flowId,
-        `${flowId}-${subCategoryId}-${variation}`,
-        { categoryId, subCategoryId }
+        `${flowId}-${subCategoryId}-${
+          isVariationAttributes ? 'variationAttributes' : variation
+        }`,
+        { categoryId, subCategoryId, isVariationAttributes },
+        isVariationAttributes
       )
     );
     handleClose();
@@ -194,11 +161,12 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
     flowId,
     handleClose,
     integrationId,
+    isVariationAttributes,
     subCategoryId,
     variation,
   ]);
 
-  if (!variation) {
+  if (!variation && !isVariationAttributes) {
     history.push(`${match.url}/${firstVariation}`);
 
     return null;
@@ -209,6 +177,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
       <Drawer
         anchor="right"
         open={!!match}
+        BackdropProps={{ invisible: true }}
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -217,67 +186,76 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           title={`Configure ${uiAssistant} variation themes: ${uiAssistant} - NetSuie`}
           flowId={flowId}
           addCategory
+          backToParent
+          help
           onClose={handleClose}
         />
-        <div className={classes.root}>
-          <div className={classes.variationMapWrapper}>
-            <div className={classes.subNav}>
-              <VariationAttributesList
-                integrationId={integrationId}
-                flowId={flowId}
-                categoryId={subCategoryId}
-              />
-            </div>
-            <div className={classes.content}>
-              <PanelHeader
-                className={classes.header}
-                title="Map variant attributes"
-              />
-              <div className={classes.mappingHeader}>
-                <div className={classes.mappingChild}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    {uiAssistant}
-                  </Typography>
-                  <ApplicationImg
-                    assistant={uiAssistant.toLowerCase()}
-                    size="small"
+        {metadataLoaded ? (
+          <div className={classes.root}>
+            <div className={classes.variationMapWrapper}>
+              {!isVariationAttributes && (
+                <div className={classes.subNav}>
+                  <VariationAttributesList
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    categoryId={subCategoryId}
                   />
                 </div>
-                <div className={classes.mappingChild}>
-                  <Typography variant="h5" className={classes.childHeader}>
-                    NetSuite
-                  </Typography>
-                  <ApplicationImg assistant="netsuite" />
-                </div>
-              </div>
-              <div className={classes.mappingWrapper}>
-                <VariationMappings
-                  integrationId={integrationId}
-                  flowId={flowId}
-                  categoryId={categoryId}
-                  sectionId={subCategoryId}
-                  variation={variation}
+              )}
+              <div className={classes.content}>
+                <PanelHeader
+                  className={classes.header}
+                  title="Map variant attributes"
                 />
+                <div className={classes.mappingHeader}>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      {uiAssistant}
+                    </Typography>
+                    <ApplicationImg
+                      assistant={uiAssistant.toLowerCase()}
+                      size="small"
+                    />
+                  </div>
+                  <div className={classes.mappingChild}>
+                    <Typography variant="h5" className={classes.childHeader}>
+                      NetSuite
+                    </Typography>
+                    <ApplicationImg assistant="netsuite" />
+                  </div>
+                </div>
+                <div className={classes.mappingWrapper}>
+                  <VariationMappings
+                    integrationId={integrationId}
+                    flowId={flowId}
+                    categoryId={categoryId}
+                    sectionId={subCategoryId}
+                    variation={variation}
+                    isVariationAttributes={isVariationAttributes}
+                  />
+                </div>
+                <ButtonGroup className={classes.saveButtonGroup}>
+                  <Button
+                    id={flowId}
+                    variant="outlined"
+                    color="primary"
+                    data-test="saveImportMapping"
+                    onClick={handleSave}>
+                    Save
+                  </Button>
+                  <Button
+                    variant="text"
+                    data-test="saveImportMapping"
+                    onClick={handleCancel}>
+                    Close
+                  </Button>
+                </ButtonGroup>
               </div>
-              <ButtonGroup className={classes.saveButtonGroup}>
-                <Button
-                  id={flowId}
-                  variant="outlined"
-                  color="primary"
-                  data-test="saveImportMapping"
-                  onClick={handleSave}>
-                  Save
-                </Button>
-                <Button
-                  variant="text"
-                  data-test="saveImportMapping"
-                  onClick={handleCancel}>
-                  Close
-                </Button>
-              </ButtonGroup>
             </div>
           </div>
-        </div>
+        ) : (
+          <Spinner />
+        )}
       </Drawer>
     </Fragment>
   );
@@ -288,18 +266,33 @@ export default function VariationMappingDrawerRoute(props) {
   const location = useLocation();
 
   return (
-    <Route
-      exact
-      path={[
-        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
-        `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
-      ]}>
-      <LoadResources required resources="flows,exports,imports,connections">
-        <VariationMappingDrawer
-          {...props}
-          parentUrl={location.pathname.replace(/\/variations\/.*$/, '')}
-        />
-      </LoadResources>
-    </Route>
+    <LoadResources required resources="flows,exports,imports,connections">
+      <Switch>
+        <Route
+          exact
+          path={[
+            `${match.url}/:flowId/utilitymapping/:categoryId/variationAttributes/:subCategoryId`,
+          ]}>
+          <VariationMappingDrawer
+            {...props}
+            parentUrl={location.pathname.replace(
+              /\/variationAttributes\/.*$/,
+              ''
+            )}
+          />
+        </Route>
+        <Route
+          exact
+          path={[
+            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId`,
+            `${match.url}/:flowId/utilitymapping/:categoryId/variations/:subCategoryId/:variation`,
+          ]}>
+          <VariationMappingDrawer
+            {...props}
+            parentUrl={location.pathname.replace(/\/variations\/.*$/, '')}
+          />
+        </Route>
+      </Switch>
+    </LoadResources>
   );
 }

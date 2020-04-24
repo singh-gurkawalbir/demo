@@ -166,8 +166,16 @@ import target from './target';
 import threeplcentral from './threeplcentral';
 import loopreturns from './loopreturns';
 import saplitmos from './saplitmos';
+import redshift from './redshift';
+import bigquery from './bigquery';
+import googlemail from './googlemail';
+import surveymonkey from './surveymonkey';
 
 export default {
+  bigquery,
+  googlemail,
+  surveymonkey,
+  redshift,
   sharepoint,
   vroozi,
   saplitmos,

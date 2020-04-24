@@ -241,9 +241,8 @@ export default {
     'http.auth.wsse.headerName': {
       id: 'http.auth.wsse.headerName',
       type: 'text',
-      label: 'Header Name',
-      helpText:
-        "By default, integrator.io will send all authentication type info in the 'Authorization: HTTP header field.  If the API you are connecting to requires a different HTTP header, use this field to provide an override.",
+      label: 'Header name',
+      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -306,8 +305,7 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
       ],
-      helpText:
-        'If your provider does not use spaces to delimit scopes, check this box, then provide the custom scope delimiter for your provider.',
+      helpKey: 'http.connection.customScopeDelimiter',
     },
     'http.auth.oauth.type': {
       fieldId: 'http.auth.oauth.type',
@@ -323,6 +321,7 @@ export default {
       type: 'text',
       label: 'Scopes',
       delimiter: ',',
+      helpKey: 'connection.generic.http.auth.oauth.scope',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -378,16 +377,14 @@ export default {
       valueType: 'keyvalue',
       defaultValue: r => (r && r.http && r.http.headers) || '',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      label: 'Configure HTTP Headers',
-      helpText:
-        "In some rare cases, it may be necessary to include custom HTTP headers with your API requests.  The appropriate 'content-type' header is automatically added by integrator.io based on the mediaType value described in the connection associated with this request (typically 'application/json'). Note that if the authentication method described in the associated connection requires a header value, this will also be added automatically.  This header field is used in the rare case that an API requires additional headers other than these two.",
+      label: 'Configure HTTP headers',
+      helpKey: 'connection.http.headers',
     },
     'http.auth.oauth.failStatusCode': {
       id: 'http.auth.oauth.failStatusCode',
       type: 'text',
-      label: 'Authentication Fail Status Code',
-      helpText:
-        'The HTTP specification states that authentication errors should return a 401 status code.  Some services have custom authentication implementations that rely on other status codes, or return 200 and indicate auth errors within the HTTP body. Use this field if the service you are connecting to uses a status code other than 401.',
+      label: 'Authentication fail status code',
+      helpKey: 'connection.http.auth.failStatusCode',
       defaultValue: r =>
         r && r.http && r.http.auth && r.http.auth.failStatusCode,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
@@ -403,9 +400,8 @@ export default {
     'http.auth.oauth.failPath': {
       id: 'http.auth.oauth.failPath',
       type: 'text',
-      label: 'Authentication Fail Path',
-      helpText:
-        'If the service you are connecting to embeds authentication errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a failed auth response. If there is a specific value (or set of values) that indicate a failed auth response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+      label: 'Authentication fail path',
+      helpKey: 'connection.http.auth.failPath',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.failPath,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
@@ -413,29 +409,26 @@ export default {
       id: 'http.auth.oauth.failValues',
       type: 'text',
       delimiter: ',',
-      helpText:
-        'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
-      label: 'Authentication Fail Values',
+      helpKey: 'connection.http.auth.failValues',
+      label: 'Authentication fail values',
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.failValues,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.oauth.baseURI': {
       id: 'http.oauth.baseURI',
       type: 'text',
-      label: 'Base URI',
+      label: 'Base uri',
       required: true,
-      helpText:
-        "The common part of an API's URL - used across all the different HTTP endpoints you will invoke.  Using a base URI in your connection makes it easier to configure all your exports and imports (because all you need then is a Relative URI).",
+      helpKey: 'connection.http.baseURI',
       defaultValue: r => r && r.http && r.http.baseURI,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.oauth.mediaType': {
       id: 'http.oauth.mediaType',
       type: 'select',
-      label: 'Media Type',
+      label: 'Media type',
       required: true,
-      helpText:
-        'The data format that should be used for all requests sent to, or responses received from (via HTTP) the API being connected to.  Typically a single API will only support one media type (data format) and will publish that info right at the top of their API guides. If the mediaType foe request/response are not the same, it is possible to override the mediaType for specific endpoints by using the export success/error media type fields.',
+      helpKey: 'connection.http.mediaType',
       defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       options: [
@@ -453,8 +446,7 @@ export default {
       type: 'editor',
       mode: 'json',
       label: 'Encrypted',
-      helpText:
-        "Use this encrypted JSON field to store all the security sensitive fields needed by your imports and exports (to access the application being integrated).  For example:  {'password': 'ayTb53Img!do'} or {'token': 'x7ygd4njlwerf63nhg'}.  Please note that in addition to AES 256 encryption there are multiple layers of protection in place to keep your data safe.",
+      helpKey: 'connection.http.encrypted',
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
@@ -466,8 +458,7 @@ export default {
       mode: 'json',
       required: true,
       label: 'Unencrypted',
-      helpText:
-        "Use this JSON field to store all the non security sensitive fields needed by your imports and exports (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
+      helpKey: 'connection.http.unencrypted',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       defaultValue: r =>
         (r &&
@@ -480,8 +471,7 @@ export default {
       id: 'http.auth.oauth.location',
       type: 'select',
       label: 'Location',
-      helpText:
-        "Where does your application's API expect to find the auth token? Choose 'url' if the auth token should be located in the url.  You will then be able to specify the query string parameter name that should hold the token value. If you choose 'header' you will then need to specify the header name and auth scheme to use when constructing the HTTP request. Finally, choose 'body' if your API needs the token embedded in the body structure of your HTTP request. In this case, its up to you to place the token in your body template using the placeholder: {{{connection.http.token.token}}}",
+      helpKey: 'connection.http.auth.token.location',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -504,9 +494,8 @@ export default {
     'http.auth.oauth.headerName': {
       id: 'http.auth.oauth.headerName',
       type: 'text',
-      label: 'Header Name',
-      helpText:
-        "By default, integrator.io will send all authentication type info in the 'Authorization: HTTP header field.  If the API you are connecting to requires a different HTTP header, use this field to provide an override.",
+      label: 'Header name',
+      helpKey: 'connection.http.auth.token.headerName',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -524,8 +513,7 @@ export default {
       type: 'select',
       label: 'Scheme',
       required: true,
-      helpText:
-        'By default, integrator.io will follow the HTTP specs with regards to auth scheme names (i.e. Bearer, OAuth, MAC, etc...), but if the API you are connecting to does not follow the specs exactly, this field can be used to provide an override.',
+      helpKey: 'connection.http.auth.token.scheme',
       defaultValue: r =>
         (r &&
           r.http &&
@@ -551,7 +539,7 @@ export default {
     'http.oauth.customAuthScheme': {
       id: 'http.oauth.customAuthScheme',
       type: 'text',
-      label: 'Custom Auth Scheme',
+      label: 'Custom auth scheme',
       defaultValue: r => r && r.http && r.http.customAuthScheme,
       visibleWhenAll: [
         { field: 'http.auth.oauth.location', is: ['header'] },
@@ -562,9 +550,8 @@ export default {
     'http.auth.oauth.paramName': {
       id: 'http.auth.oauth.paramName',
       type: 'text',
-      label: 'Parameter Name',
-      helpText:
-        "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=[token]'.",
+      label: 'Parameter name',
+      helpKey: 'connection.http.auth.token.paramName',
       defaultValue: r =>
         r &&
         r.http &&
@@ -581,7 +568,7 @@ export default {
       id: 'http.auth.oauth.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
-      label: 'Refresh Token Body',
+      label: 'Refresh token body',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },
@@ -593,9 +580,8 @@ export default {
       keyName: 'name',
       valueName: 'value',
       valueType: 'keyvalue',
-      helpText:
-        "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}} with a complete path matching the connection field.",
-      label: 'Refresh Token Headers',
+      helpKey: 'connection.http.auth.token.refreshHeaders',
+      label: 'Refresh token headers',
       defaultValue: r =>
         r &&
         r.http &&
@@ -760,7 +746,7 @@ export default {
     },
     {
       id: 'saveandcontinue',
-      label: 'Save & Continue',
+      label: 'Save & continue',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -771,7 +757,7 @@ export default {
     },
     {
       id: 'oauth',
-      label: 'Save & Authorize',
+      label: 'Save & authorize',
       visibleWhenAll: [
         {
           field: 'http.auth.type',
@@ -782,7 +768,7 @@ export default {
     },
     {
       id: 'save',
-      label: 'Test and Save',
+      label: 'Test and save',
       visibleWhen: [
         {
           field: 'http.auth.type',

@@ -2,7 +2,7 @@ import { get, cloneDeep } from 'lodash';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
-import { REST_ASSISTANTS } from '../utils/constants';
+import { REST_ASSISTANTS, RDBMS_TYPES } from '../utils/constants';
 import { isJsonString } from '../utils/string';
 
 const getAllOptionsHandlerSubForms = (
@@ -59,10 +59,17 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
-const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
+const applyCustomSettings = ({
+  fieldMap,
+  layout,
+  preSave,
+  isNew,
+  validationHandler,
+}) => {
   const fieldMapCopy = cloneDeep(fieldMap);
   const layoutCopy = cloneDeep(layout);
   let preSaveCopy = preSave;
+  let validationHandlerCopy;
 
   if (!isNew) {
     if (
@@ -109,11 +116,11 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
     }
 
     if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
-    preSaveCopy = args => {
+    preSaveCopy = (args, resource) => {
       let retValues;
 
       if (preSave) {
-        retValues = preSave(args);
+        retValues = preSave(args, resource);
       } else {
         retValues = args;
       }
@@ -132,9 +139,24 @@ const applyCustomSettings = ({ fieldMap, layout, preSave, isNew }) => {
 
       return retValues;
     };
+
+    validationHandlerCopy = field => {
+      // Handles validity for settings field
+      // Incase of other fields call the existing validationHandler
+      if (field.id === 'settings') {
+        if (
+          field.value &&
+          typeof field.value === 'string' &&
+          !isJsonString(field.value)
+        )
+          return 'Settings must be a valid JSON';
+      }
+
+      if (validationHandler) return validationHandler(field);
+    };
   }
 
-  return { fieldMapCopy, layoutCopy, preSaveCopy };
+  return { fieldMapCopy, layoutCopy, preSaveCopy, validationHandlerCopy };
 };
 
 const getResourceFormAssets = ({
@@ -150,6 +172,7 @@ const getResourceFormAssets = ({
   let init;
   let actions;
   let meta;
+  let validationHandler;
   const { type } = getResourceSubType(resource);
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
@@ -158,6 +181,10 @@ const getResourceFormAssets = ({
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (resource && resource.assistant === 'financialforce') {
+        // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+        meta = formMeta.connections.salesforce;
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
@@ -178,7 +205,7 @@ const getResourceFormAssets = ({
 
         // when editing rdms connection we lookup for the resource subtype
         meta = formMeta.connections.rdbms[rdbmsSubType];
-      } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+      } else if (RDBMS_TYPES.indexOf(type) !== -1) {
         meta = formMeta.connections.rdbms[type];
       } else {
         meta = formMeta.connections[type];
@@ -197,11 +224,26 @@ const getResourceFormAssets = ({
         if (isNew) {
           meta = meta.new;
         }
+
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuiteDistributed;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
-          meta = meta.rdbms;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+          meta = meta.salesforce;
+        } else if (type === 'rdbms') {
+          const rdbmsSubType =
+            connection && connection.rdbms && connection.rdbms.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          if (rdbmsSubType === 'snowflake') {
+            meta = meta.rdbms.snowflake;
+          } else {
+            meta = meta.rdbms.sql;
+          }
         } else if (
           resource &&
           (resource.useParentForm !== undefined
@@ -229,8 +271,15 @@ const getResourceFormAssets = ({
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (['mysql', 'postgresql', 'mssql'].indexOf(type) !== -1) {
+        } else if (RDBMS_TYPES.indexOf(type) !== -1) {
           meta = meta.rdbms;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+          meta = meta.salesforce;
         } else if (
           resource &&
           (resource.useParentForm !== undefined
@@ -289,6 +338,9 @@ const getResourceFormAssets = ({
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
 
+  // Need to be revisited @Surya
+  validationHandler = meta && meta.validationHandler;
+
   if (
     [
       'integrations',
@@ -303,7 +355,14 @@ const getResourceFormAssets = ({
       fieldMapCopy: fieldMap,
       layoutCopy: layout,
       preSaveCopy: preSave,
-    } = applyCustomSettings({ fieldMap, layout, preSave, isNew }));
+      validationHandlerCopy: validationHandler,
+    } = applyCustomSettings({
+      fieldMap,
+      validationHandler,
+      layout,
+      preSave,
+      isNew,
+    }));
   }
 
   return {
@@ -311,6 +370,7 @@ const getResourceFormAssets = ({
     init,
     preSave,
     optionsHandler,
+    validationHandler,
   };
 };
 

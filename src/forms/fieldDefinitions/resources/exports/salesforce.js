@@ -1,9 +1,11 @@
 import { isNewId } from '../../../../utils/resource';
 
+const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular Expression from regexnumericrangegenerator.
+
 export default {
   'salesforce.sObjectType': {
     type: 'text',
-    label: 'SObject Type',
+    label: 'SObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -16,8 +18,42 @@ export default {
       },
     ],
   },
+  'salesforce.distributed.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: batchSizePattern,
+        message: 'Please enter a value between 4 and 200.',
+      },
+    },
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
+  'salesforce.distributed.skipExportFieldId': {
+    type: 'text',
+    label: 'Skip export field ID',
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'salesforce.distributed.sObjectType': {
-    label: 'SObject Type',
+    label: 'SObject type',
     required: true,
     visibleWhenAll: [
       {
@@ -33,7 +69,7 @@ export default {
   'salesforce.executionType': {
     type: 'radiogroup',
     required: true,
-    label: 'Execution Type',
+    label: 'Execution type',
     defaultValue: r => {
       const isNew = isNewId(r._id);
 
@@ -44,7 +80,6 @@ export default {
       if (isNew)
         // if its create
         return '';
-
       const output =
         r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
 
@@ -73,7 +108,7 @@ export default {
   'salesforce.soql.query': {
     type: 'editor',
     mode: 'sql',
-    label: 'SOQL Query',
+    label: 'SOQL query',
     omitWhenHidden: true,
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
@@ -97,7 +132,7 @@ export default {
     multiline: true,
     valueName: 'value',
     valueType: 'array',
-    label: 'Referenced Fields',
+    label: 'Referenced fields',
     omitWhenHidden: true,
     visibleWhenAll: [
       {
@@ -112,7 +147,7 @@ export default {
   },
   'salesforce.distributed.requiredTrigger': {
     type: 'text',
-    label: 'Required Trigger',
+    label: 'Required trigger',
     multiline: true,
     omitWhenHidden: true,
     visibleWhenAll: [
@@ -127,7 +162,7 @@ export default {
     ],
   },
   'salesforce.distributed.qualifier': {
-    label: 'Field Specific Qualification Criteria',
+    label: 'Field specific qualification criteria',
     omitWhenHidden: true,
     visibleWhenAll: [
       {
@@ -147,7 +182,7 @@ export default {
   'salesforce.distributed.relatedLists': {
     type: 'text',
     delimiter: ',',
-    label: 'Related Lists',
+    label: 'Related lists',
     multiline: true,
     visibleWhenAll: [
       {
@@ -175,7 +210,7 @@ export default {
     type: 'select',
     required: true,
     defaultValue: r => r && r.salesforce && r.salesforce.sObjectType,
-    label: 'SObject Type',
+    label: 'SObject type',
     options: [
       {
         items: [

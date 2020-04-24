@@ -1,11 +1,13 @@
 import { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import moment from 'moment';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import { sanitizePatchSet } from '../../forms/utils';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import {
   getMetadata,
   setValues,
@@ -14,6 +16,9 @@ import {
 } from './util';
 
 export default function FlowSchedule({
+  integrationId,
+  resourceType,
+  resourceId,
   flow,
   onClose,
   className,
@@ -25,6 +30,7 @@ export default function FlowSchedule({
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', flow._integrationId)
   );
@@ -42,6 +48,17 @@ export default function FlowSchedule({
   const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
   const handleSubmit = useCallback(
     formVal => {
+      if (
+        formVal.startTime &&
+        formVal.endTime &&
+        !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
+      ) {
+        return enqueueSnackbar({
+          message: `End Time is invalid.`,
+          variant: 'error',
+        });
+      }
+
       const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
       const patchSet = [
         {
@@ -85,7 +102,7 @@ export default function FlowSchedule({
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
       onClose();
     },
-    [dispatch, flow, index, onClose, pg, scheduleStartMinute]
+    [dispatch, enqueueSnackbar, flow, index, onClose, pg, scheduleStartMinute]
   );
 
   resource = setValues(resource, schedule, scheduleStartMinute);
@@ -111,6 +128,9 @@ export default function FlowSchedule({
     <Fragment>
       <div className={className}>
         <DynaForm
+          integrationId={integrationId}
+          resourceType={resourceType}
+          resourceId={resourceId}
           disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={fieldMeta.optionsHandler}>

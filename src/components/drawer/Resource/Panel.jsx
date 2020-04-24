@@ -1,15 +1,15 @@
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useLocation, generatePath } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
-import ResourceForm from '../../../components/ResourceFormFactory';
 import { isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
+import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,15 +27,11 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
   },
-  form: {
-    height: `calc(100vh - 136px)`,
-    width: props => {
-      if (props.occupyFullWidth) return '100%';
-
-      return props.match.isExact ? '100%' : 660;
-    },
-    maxHeight: 'unset',
+  resourceFormWrapper: {
     padding: theme.spacing(3),
+    borderColor: 'rgb(0,0,0,0.1)',
+    borderStyle: 'solid',
+    borderWidth: '1px 0 0 0',
   },
   appLogo: {
     paddingRight: '25px',
@@ -44,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    position: 'relative',
     background: theme.palette.background.paper,
   },
   closeButton: {
@@ -76,14 +73,33 @@ const determineRequiredResources = type => {
   return resourceType;
 };
 
+const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
+  if (resourceType === 'pageGenerator') {
+    return 'Create source';
+  }
+
+  const queryParams = new URLSearchParams(queryParamStr);
+  const isConnectionFixFromImpExp =
+    queryParams.get('fixConnnection') === 'true';
+
+  if (isConnectionFixFromImpExp && resourceType === 'connections') {
+    return `Fix offline connection`;
+  }
+
+  return `${opTitle} ${resourceLabel.toLowerCase()}`;
+};
+
 export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
-  const classes = useStyles({ ...props, occupyFullWidth });
   const location = useLocation();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const classes = useStyles({
+    ...props,
+    occupyFullWidth,
+  });
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, id)
   );
@@ -266,13 +282,16 @@ export default function Panel(props) {
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
-  let title = `${
-    isNewId(id) ? `Create` : 'Edit'
-  } ${resourceLabel.toLowerCase()}`;
-
-  if (resourceType === 'pageGenerator') {
-    title = 'Create source';
-  }
+  const title = useMemo(
+    () =>
+      getTitle({
+        resourceType,
+        queryParamStr: location.search,
+        resourceLabel,
+        opTitle: isNewId(id) ? 'Create' : 'Edit',
+      }),
+    [id, location.search, resourceLabel, resourceType]
+  );
 
   return (
     <Fragment>
@@ -295,8 +314,8 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          <ResourceForm
-            className={classes.form}
+          <ResourceFormWithStatusPanel
+            className={classes.resourceFormWrapper}
             variant={match.isExact ? 'edit' : 'view'}
             isNew={isNew}
             resourceType={resourceType}

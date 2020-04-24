@@ -113,13 +113,28 @@ export default function ImportMapping(props) {
     mappings,
     lookups,
     changeIdentifier,
-    previewData,
+    preview = {},
     lastModifiedKey,
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
     importSampleData,
     httpAssistantPreview,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const salesforceNetsuitePreviewData = useMemo(() => {
+    if (showSalesforceNetsuiteAssistant) {
+      const { data } = preview;
+
+      if (data && Array.isArray(data) && data.length) {
+        const [_val] = data;
+
+        return _val;
+      }
+
+      return data;
+    }
+
+    return undefined;
+  }, [preview, showSalesforceNetsuiteAssistant]);
   const showPreviewPane = !!(
     showSalesforceNetsuiteAssistant || httpAssistantPreview
   );
@@ -127,8 +142,12 @@ export default function ImportMapping(props) {
     importSampleData,
     application
   );
+  // TODO: Change to return status and comparison could be made here for progress/completed
   const saveInProgress = useSelector(
     state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
+  );
+  const saveCompleted = useSelector(
+    state => selectors.mappingsSaveStatus(state, editorId).saveCompleted
   );
   const [state, setState] = useState({
     localMappings: [],
@@ -145,9 +164,6 @@ export default function ImportMapping(props) {
       });
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
-  const { saveCompleted } = useSelector(state =>
-    selectors.mappingsSaveStatus(state, editorId)
-  );
   const tableData = useMemo(
     () =>
       (localMappings || []).map((value, index) => {
@@ -233,12 +249,12 @@ export default function ImportMapping(props) {
     selectors.resource(state, 'connections', resource._connectionId)
   );
   const extractLabel = exportResource._connectionId
-    ? `Export Field (${mappingUtil.getApplicationName(
+    ? `Export field (${mappingUtil.getApplicationName(
         exportResource,
         exportConn
       )})`
     : `Source Record Field`;
-  const generateLabel = `Import Field (${mappingUtil.getApplicationName(
+  const generateLabel = `Import field (${mappingUtil.getApplicationName(
     resource,
     importConn
   )})`;
@@ -331,13 +347,23 @@ export default function ImportMapping(props) {
     );
   }
 
-  const httpAssistantPreviewData = useMemo(
-    () =>
-      JSON.stringify(
-        (previewData && previewData.data) || [importSampleData] || {}
-      ),
-    [importSampleData, previewData]
-  );
+  const httpAssistantPreviewData = useMemo(() => {
+    const model = {
+      connection: importConn,
+      data: [],
+    };
+    const { data: previewData } = preview;
+
+    if (previewData) {
+      model.data = previewData;
+    } else if (importSampleData) {
+      model.data = Array.isArray(importSampleData)
+        ? importSampleData
+        : [importSampleData];
+    }
+
+    return JSON.stringify(model);
+  }, [importConn, importSampleData, preview]);
 
   return (
     <div className={classes.root}>
@@ -433,7 +459,7 @@ export default function ImportMapping(props) {
             <Button
               variant="text"
               data-test="preview"
-              disabled={!!saveInProgress}
+              disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>
               Preview
             </Button>
@@ -477,7 +503,7 @@ export default function ImportMapping(props) {
               sObjectLabel={sObjectType}
               layoutId={salesforceMasterRecordTypeId}
               onFieldClick={handleSalesforceAssistantFieldClick}
-              data={previewData && previewData.data}
+              data={salesforceNetsuitePreviewData}
             />
           )}
           {showSalesforceNetsuiteAssistant && recordType && (
@@ -489,7 +515,7 @@ export default function ImportMapping(props) {
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
               onFieldClick={handleNetSuiteAssistantFieldClick}
-              data={previewData && previewData.data}
+              data={salesforceNetsuitePreviewData}
             />
           )}
           {httpAssistantPreview && (

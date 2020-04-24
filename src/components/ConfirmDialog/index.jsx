@@ -2,6 +2,8 @@ import React, { useState, useCallback, useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
+import RawHtml from '../RawHtml';
+import Prompt from '../Prompt';
 
 const useStyles = makeStyles({
   message: {
@@ -13,7 +15,9 @@ export const ConfirmDialog = props => {
   const {
     message,
     title = 'Confirm',
+    isHtml = false,
     onClose,
+    maxWidth,
     buttons = [
       {
         label: 'No',
@@ -28,7 +32,6 @@ export const ConfirmDialog = props => {
   const handleButtonClick = useCallback(
     button => () => {
       onClose();
-
       button.onClick && button.onClick();
     },
     [onClose]
@@ -36,9 +39,13 @@ export const ConfirmDialog = props => {
   const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} maxWidth={maxWidth}>
       {title}
-      <div className={classes.message}>{message}</div>
+      {isHtml ? (
+        <RawHtml className={classes.message} html={message} />
+      ) : (
+        <div className={classes.message}>{message}</div>
+      )}
 
       {buttons.map(button => (
         <Button
@@ -67,9 +74,12 @@ export const ConfirmDialogProvider = ({ children }) => {
       value={{
         setConfirmDialogProps,
       }}>
-      {!!confirmDialogProps && (
-        <ConfirmDialog {...confirmDialogProps} onClose={onClose} />
-      )}
+      {!!confirmDialogProps &&
+        (confirmDialogProps.isPrompt ? (
+          <Prompt {...confirmDialogProps} onClose={onClose} />
+        ) : (
+          <ConfirmDialog {...confirmDialogProps} onClose={onClose} />
+        ))}
       {children}
     </ConfirmDialogContext.Provider>
   );

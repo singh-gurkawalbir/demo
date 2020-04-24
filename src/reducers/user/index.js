@@ -6,6 +6,8 @@ import notifications, * as fromNotifications from './notifications';
 import profile, * as fromProfile from './profile';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
+export const DEFAULT_EDITOR_THEME = 'tomorrow';
+
 export default combineReducers({
   preferences,
   profile,
@@ -46,11 +48,9 @@ export function userPreferences(state) {
   const preferences = fromPreferences.userPreferences(
     state && state.preferences
   );
+  const { defaultAShareId, accounts = {} } = preferences;
 
-  if (
-    !preferences.defaultAShareId ||
-    preferences.defaultAShareId === ACCOUNT_IDS.OWN
-  ) {
+  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
     return preferences;
   }
 
@@ -65,19 +65,20 @@ export function userPreferences(state) {
 
   // eslint-disable-next-line max-len
   /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
-  const { accounts = {} } = state.org;
-  const currentAccount = accounts.find(
+  const { accounts: orgAccounts = {} } = state.org;
+  const currentAccount = orgAccounts.find(
     a => a._id === preferences.defaultAShareId
   );
-  let mergedPreferences;
+  let mergedPreferences = {
+    ...preferences,
+    ...accounts[defaultAShareId],
+  };
 
   if (currentAccount && currentAccount.ownerUser) {
     mergedPreferences = {
-      ...preferences,
+      ...mergedPreferences,
       ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
     };
-  } else {
-    mergedPreferences = { ...preferences };
   }
 
   return mergedPreferences;
@@ -88,15 +89,37 @@ export function userOwnPreferences(state) {
 }
 
 export function appTheme(state) {
-  return fromPreferences.appTheme(state && state.preferences);
+  const preferences = fromPreferences.userPreferences(
+    state && state.preferences
+  );
+  const currentAccount = preferences.defaultAShareId;
+
+  if (currentAccount) {
+    const accountPrefs =
+      preferences.accounts && preferences.accounts[currentAccount];
+
+    if (accountPrefs) {
+      return accountPrefs.themeName;
+    }
+  }
+
+  return preferences.themeName;
+}
+
+export function editorTheme(state) {
+  if (!state) return DEFAULT_EDITOR_THEME;
+
+  // props = ui theme, values = editor theme.
+  const themeMap = {
+    light: 'tomorrow',
+    dark: 'monokai',
+  };
+
+  return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
 }
 
 export function accountShareHeader(state, path) {
   return fromPreferences.accountShareHeader(state && state.preferences, path);
-}
-
-export function editorTheme(state) {
-  return fromPreferences.editorTheme(state && state.preferences);
 }
 // #endregion PREFERENCES
 

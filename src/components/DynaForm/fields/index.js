@@ -88,6 +88,9 @@ import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaMarketplaceId from './DynaMarketplaceId';
 import DynaNetSuiteSubRecordJsonPath from './DynaNetSuiteSubRecordJsonPath';
 import DynaFormView from './DynaFormView';
+import DynaSkipRetries from './DynaSkipRetries';
+import DynaTransformRules from './DynaTransformRules';
+import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 
 export default {
   mode: DynaMode,
@@ -189,4 +192,7 @@ export default {
   typeableselect: DynaTypeableSelect,
   netsuitesubrecordjsonpath: DynaNetSuiteSubRecordJsonPath,
   formview: DynaFormView,
+  skipRetries: DynaSkipRetries,
+  transformrules: DynaTransformRules,
+  netsuiteexporttype: DynaNetsuiteExportType,
 };

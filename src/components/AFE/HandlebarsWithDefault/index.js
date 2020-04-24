@@ -18,14 +18,9 @@ export default function HandlebarsWithDefaults(props) {
     disabled,
     lookups = [],
   } = props;
-  const {
-    template,
-    sampleData,
-    defaultData,
-    result,
-    error,
-    initChangeIdentifier,
-  } = useSelector(state => selectors.editor(state, editorId));
+  const { template, sampleData, defaultData, result, error } = useSelector(
+    state => selectors.editor(state, editorId)
+  );
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -62,6 +57,7 @@ export default function HandlebarsWithDefaults(props) {
         autoEvaluate: true,
         autoEvaluateDelay: 300,
         template: props.rule,
+        initTemplate: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
       })
@@ -79,7 +75,6 @@ export default function HandlebarsWithDefaults(props) {
 
   return (
     <Editor
-      changeIdentifier={initChangeIdentifier}
       editorId={editorId}
       handleInit={handleInit}
       handleChange={handleChange}

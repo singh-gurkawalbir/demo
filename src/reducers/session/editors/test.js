@@ -20,7 +20,7 @@ describe('editor reducers', () => {
     const rules = [{ a: 1 }, { b: 3 }];
     const data = [{ d: 3 }, { e: 5 }];
     const id = 1;
-    const processor = 'something';
+    const processor = 'javascript';
     const newState = reducer(
       undefined,
       actions.editor.init(id, processor, { rules, data })
@@ -37,7 +37,7 @@ describe('editor reducers', () => {
     const rules = [{ a: 1 }, { b: 3 }];
     const data = [{ d: 3 }, { e: 5 }];
     const id = 1;
-    const processor = 'something';
+    const processor = 'javascript';
     const initializedState = reducer(
       undefined,
       actions.editor.init(id, processor, { rules, data })
@@ -65,7 +65,7 @@ describe('editor reducers', () => {
     const rules = [{ a: 1 }, { b: 3 }];
     const data = [{ d: 3 }, { e: 5 }];
     const id = 1;
-    const processor = 'something';
+    const processor = 'javascript';
     const intializedState = reducer(
       undefined,
       actions.editor.init(id, processor, rules, data)
@@ -92,7 +92,11 @@ describe('editor reducers', () => {
 
   test('should get rid off all errors reset editor', () => {
     const id = 1;
-    const intializedState = reducer(undefined, actions.editor.init(id));
+    const processor = 'javascript';
+    const intializedState = reducer(
+      undefined,
+      actions.editor.init(id, processor)
+    );
     const failureState = reducer(
       intializedState,
       actions.editor.evaluateFailure(id, 'someError')
@@ -108,7 +112,11 @@ describe('editor reducers', () => {
   test('should get rid off all evaluations in reset editor', () => {
     const id = 1;
     const response = 'some result';
-    const intializedState = reducer(undefined, actions.editor.init(id));
+    const processor = 'javascript';
+    const intializedState = reducer(
+      undefined,
+      actions.editor.init(id, processor)
+    );
     const evaluationSuccessState = reducer(
       intializedState,
       actions.editor.evaluateResponse(id, response)
@@ -133,12 +141,13 @@ describe('editor reducers', () => {
   describe('mutation behaviour of patch operations', () => {
     test('should initialize with all options defined in the action and subsequent mutation to an option property should not alter the state', () => {
       const id = 1;
+      const processor = 'transform';
       const options = {
         rules: [{ extract: 't', generate: 'g' }],
       };
       const initProcessorState = reducer(
         undefined,
-        actions.editor.init(id, 'transformProcessor', options)
+        actions.editor.init(id, processor, options)
       );
 
       deepFreeze(initProcessorState);
@@ -152,7 +161,11 @@ describe('editor reducers', () => {
     });
     test('should not mutate the state of patch operation when the patch property is changed', () => {
       const id = 1;
-      const intializedState = reducer(undefined, actions.editor.init(id));
+      const processor = 'transform';
+      const intializedState = reducer(
+        undefined,
+        actions.editor.init(id, processor)
+      );
       const patch = { rules: [{ extract: 'a', generate: 'b' }] };
       const patchedState = reducer(
         intializedState,

@@ -20,13 +20,12 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.token': {
       id: 'http.encrypted.token',
-      label: 'API Token',
+      label: 'API token',
+      helpKey: 'shippo.connection.http.encrypted.token',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText:
-        'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can find your token on the Shippo API settings page.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

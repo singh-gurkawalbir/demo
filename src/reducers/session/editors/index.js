@@ -28,11 +28,14 @@ export default function reducer(state = {}, action) {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
         const saveStatus = draft[id] && draft[id].saveStatus;
+        const init = processorLogic.init(processor);
+        const optionsCopy = deepClone(options);
+        const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
 
         draft[id] = {
           processor,
-          defaultOptions: deepClone(options),
-          ...deepClone(options),
+          defaultOptions: formattedInitOptions,
+          ...deepClone(formattedInitOptions),
           lastChange: Date.now(),
           initChangeIdentifier: initChangeIdentifier + 1,
           saveStatus,

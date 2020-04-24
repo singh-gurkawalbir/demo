@@ -10,8 +10,6 @@ import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
-import jsonUtil from '../../../../utils/json';
-import csvOptions from '../options';
 
 const useStyles = makeStyles({
   template: {
@@ -25,7 +23,7 @@ export default function CsvGenerateEditor(props) {
   const { editorId, disabled } = props;
   const classes = useStyles();
   const [editorInit, setEditorInit] = useState(false);
-  const { data, result, error, initChangeIdentifier } = useSelector(state =>
+  const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -35,37 +33,12 @@ export default function CsvGenerateEditor(props) {
   const handleInit = useCallback(() => {
     const options = {
       data: props.data,
+      rule: props.rule,
       autoEvaluate: true,
-      multipleRowsPerRecord: !!(
-        props.rule &&
-        props.rule.keyColumns &&
-        props.rule.keyColumns.length
-      ),
-      ...props.rule,
     };
 
-    // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
-    if (options.columnDelimiter) {
-      const columnDelimiter = jsonUtil.getObjectKeyFromValue(
-        csvOptions.ColumnDelimiterMap,
-        options.columnDelimiter
-      );
-
-      options.columnDelimiter = columnDelimiter;
-    }
-
-    // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
-    if (options.rowDelimiter) {
-      const rowDelimiter = jsonUtil.getObjectKeyFromValue(
-        csvOptions.RowDelimiterMap,
-        options.rowDelimiter
-      );
-
-      options.rowDelimiter = rowDelimiter;
-    }
-
     dispatch(actions.editor.init(editorId, 'csvDataGenerator', options));
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props]);
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
@@ -78,7 +51,7 @@ export default function CsvGenerateEditor(props) {
   }, [data, editorInit, handleInit]);
 
   return (
-    <PanelGrid className={classes.template} key={initChangeIdentifier}>
+    <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV generate options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />

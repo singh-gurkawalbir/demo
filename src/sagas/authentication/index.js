@@ -13,8 +13,8 @@ import { apiCallWithRetry } from '../index';
 import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
-  removeCSRFToken,
   getCSRFToken,
+  removeCSRFToken,
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
@@ -48,6 +48,51 @@ export function* retrievingUserDetails() {
   );
 }
 
+export function* retrievingAssistantDetails() {
+  const collection = yield call(
+    getResourceCollection,
+    actions.resource.requestCollection('ui/assistants')
+  );
+  const assistantConnectors = [];
+
+  if (
+    collection &&
+    collection.http.applications &&
+    collection.rest.applications
+  ) {
+    collection.http.applications.forEach(asst => {
+      assistantConnectors.push({
+        id: asst._id,
+        name: asst.name,
+        type: 'http',
+        assistant: asst._id,
+        export: asst.export,
+        import: asst.import,
+      });
+    });
+    collection.rest.applications.forEach(asst => {
+      assistantConnectors.push({
+        id: asst._id,
+        name: asst.name,
+        type: 'rest',
+        assistant: asst._id,
+        export: asst.export,
+        import: asst.import,
+      });
+    });
+    assistantConnectors.push({
+      id: 'financialforce',
+      name: 'Financial Force',
+      type: 'salesforce',
+      assistant: 'financialforce',
+      export: true,
+      import: true,
+    });
+  }
+
+  localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
+}
+
 export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   defaultAShareId
 ) {
@@ -64,8 +109,11 @@ export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
 }
 
 export function* retrieveAppInitializationResources() {
-  yield call(retrievingOrgDetails);
-  yield call(retrievingUserDetails);
+  yield all([
+    call(retrievingOrgDetails),
+    call(retrievingUserDetails),
+    call(retrievingAssistantDetails),
+  ]);
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -177,8 +225,54 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   yield put(actions.auth.clearStore());
 }
 
+export function* signInWithGoogle({ returnTo }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'signinWithGoogle';
+  form.method = 'POST';
+  form.action = `/auth/google?returnTo=${returnTo || '/pg/'}`;
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+export function* reSignInWithGoogle({ email }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'reSigninWithGoogle';
+  form.method = 'POST';
+  form.action = '/reSigninWithGoogle';
+  form.target = '_blank';
+
+  form.innerHTML = `<input name="skipRedirect" value="false"><input name="login_hint" value="${email}"><input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+export function* linkWithGoogle({ returnTo }) {
+  const _csrf = yield call(getCSRFTokenBackend);
+  const form = document.createElement('form');
+
+  form.id = 'linkWithGoogle';
+  form.method = 'POST';
+  form.action = `/link/google?returnTo=${returnTo || '/pg/'}`;
+
+  form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
+  takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
+  takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
+  takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),
 ];

@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ConnectionPanel({ flow }) {
+  const { _integrationId: integrationId } = flow;
   const classes = useStyles();
   const flowConnections = useSelector(state =>
     selectors.flowConnectionList(state, flow)
@@ -27,6 +28,7 @@ export default function ConnectionPanel({ flow }) {
           actionProps={{
             type: 'flowBuilder',
             resourceType: 'connections',
+            integrationId,
           }}
         />
       </LoadResources>

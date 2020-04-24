@@ -27,10 +27,8 @@ export default {
     accType: {
       id: 'accType',
       type: 'select',
-      label: 'Account Type',
+      label: 'Account type',
       required: true,
-      helpText:
-        'Please select your account type here. Select Sandbox if your API Endpoint starts with https://staging-api.target.com. Select Production if your API Endpoint starts with https://api.target.com',
       options: [
         {
           items: [
@@ -55,8 +53,6 @@ export default {
       id: 'http.auth.token.token',
       type: 'text',
       label: 'X-SELLER-TOKEN',
-      helpText:
-        'The x-seller-token will be generated after creating an app in the developer portal.',
       required: true,
       inputType: 'password',
     },
@@ -64,7 +60,6 @@ export default {
       id: 'http.unencrypted.x-seller-id',
       type: 'text',
       label: 'X-SELLER-ID',
-      helpText: 'Please enter the x-seller-id will be provided by Target.',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

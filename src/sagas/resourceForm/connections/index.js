@@ -12,7 +12,12 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { pingConnectionParams } from '../../api/apiPaths';
-import { createFormValuesPatchSet, submitFormValues, SCOPES } from '../index';
+import {
+  createFormValuesPatchSet,
+  submitFormValues,
+  SCOPES,
+  newIAFrameWorkPayload,
+} from '../index';
 import * as selectors from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
@@ -21,7 +26,7 @@ import conversionUtil from '../../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../../utils/constants';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
 
-function* createPayload({ values, resourceId }) {
+export function* createPayload({ values, resourceId }) {
   const resourceType = 'connections';
   // TODO: Select resource Data staged changes should be included
   let connectionResource = yield select(
@@ -381,6 +386,16 @@ export function* saveAndAuthorizeConnection({ resourceId, values }) {
     if (conflict) return;
   }
 
+  // For New IA framework, UI will not create a connection and backend does it.
+  // Open Oauth window logic handled as part of install integration app sagas.
+  if (
+    yield call(newIAFrameWorkPayload, {
+      resourceId,
+    })
+  ) {
+    return true;
+  }
+
   try {
     yield call(openOAuthWindowForConnection, id);
   } catch (e) {
@@ -425,9 +440,24 @@ function* commitAndAuthorizeConnection({ resourceId }) {
 }
 
 function* requestIClients({ connectionId }) {
+  let path;
+  const newIAConnDoc = yield call(newIAFrameWorkPayload, {
+    resourceId: connectionId,
+  });
+
+  if (newIAConnDoc) {
+    path = `/integrations/${newIAConnDoc.id}/iclients?type=${newIAConnDoc.connectionType}`;
+
+    if (newIAConnDoc.assistant) {
+      path += `&assistant=${newIAConnDoc.assistant}`;
+    }
+  } else {
+    path = `/connections/${connectionId}/iclients`;
+  }
+
   try {
     const { iclients } = yield apiCallWithRetry({
-      path: `/connections/${connectionId}/iclients`,
+      path,
       opts: {
         method: 'GET',
       },
@@ -450,14 +480,8 @@ export function* pingAndUpdateConnection({ connectionId }) {
     });
 
     yield put(actions.resource.received('connections', connectionResource));
-    yield put(
-      actions.resource.connections.pingAndUpdateSuccessful(
-        connectionId,
-        connectionResource && connectionResource.offline
-      )
-    );
   } catch (error) {
-    yield put(actions.resource.connections.pingAndUpdateFailed(connectionId));
+    // do nothing
   }
 }
 

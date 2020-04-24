@@ -89,63 +89,121 @@ const setVariationMappingData = (
   flowId,
   recordMappings,
   mappings,
-  relationshipData
+  relationshipData = []
 ) => {
   recordMappings.forEach(mapping => {
-    const relation = Array.isArray(relationshipData)
-      ? relationshipData.find(rel => rel.id === mapping.id)
-      : relationshipData;
+    const relation =
+      relationshipData && relationshipData.find(rel => rel.id === mapping.id);
 
     if (!relation) return;
-    const variationTheme = relation.variation_themes.find(
-      theme => theme.id === 'variation_theme'
-    );
 
-    if (variationTheme) {
-      variationTheme.variation_attributes.forEach(vm => {
-        const key = `${flowId}-${mapping.id}-${vm}`;
+    if (
+      relation.variation_attributes &&
+      !!relation.variation_attributes.length
+    ) {
+      const key = `${flowId}-${mapping.id}-variationAttributes`;
 
-        if (mappings[key]) {
-          const stagedMappings = mappings[key].staged || mappings[key].mappings;
-
-          if (!mapping.variation_themes.find(vt => vt.variation_theme === vm)) {
-            mapping.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: vm,
-              fieldMappings: [],
-            });
-          }
-
-          const variationMapping = mapping.variation_themes.find(
-            vt => vt.variation_theme === vm
+      if (mappings[key]) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.fieldMappings = mappings[key].mappings
+          .filter(el => (!!el.extract || !!el.hardCodedValue) && !!el.generate)
+          .map(
+            ({
+              index,
+              rowIdentifier,
+              hardCodedValueTmp,
+              visible,
+              ...rest
+            }) => ({
+              ...rest,
+            })
           );
 
+        if (mappings[key].lookups && mappings[key].lookups.length) {
           // eslint-disable-next-line no-param-reassign
-          variationMapping.fieldMappings = stagedMappings
-            .filter(
-              el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
-            )
-            .map(
-              ({
-                index,
-                rowIdentifier,
-                hardCodedValueTmp,
-                visible,
-                ...rest
-              }) => ({
-                ...rest,
-              })
-            );
+          mapping.lookups = mappings[key].lookups;
         }
-      });
+      }
+    } else {
+      const variationTheme =
+        relation.variation_themes &&
+        relation.variation_themes.find(theme => theme.id === 'variation_theme');
+
+      if (variationTheme) {
+        variationTheme.variation_attributes.forEach(vm => {
+          const key = `${flowId}-${mapping.id}-${vm}`;
+
+          if (mappings[key]) {
+            const stagedMappings =
+              mappings[key].staged || mappings[key].mappings;
+
+            if (
+              !mapping.variation_themes.find(vt => vt.variation_theme === vm)
+            ) {
+              mapping.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: vm,
+                fieldMappings: [],
+              });
+            }
+
+            const variationMapping = mapping.variation_themes.find(
+              vt => vt.variation_theme === vm
+            );
+
+            // eslint-disable-next-line no-param-reassign
+            variationMapping.fieldMappings = stagedMappings
+              .filter(
+                el => (!!el.extract || !!el.hardCodedValue) && !!el.generate
+              )
+              .map(
+                ({
+                  index,
+                  rowIdentifier,
+                  hardCodedValueTmp,
+                  visible,
+                  ...rest
+                }) => ({
+                  ...rest,
+                })
+              );
+          }
+        });
+      }
     }
 
-    if (mapping.children && mapping.children.length) {
+    if (relation.children && relation.children.length) {
+      const mappingKeys = Object.keys(mappings);
+
+      relation.children.forEach(child => {
+        const childExists = mapping.children.find(c => c.id === child.id);
+        const isVariationAttributes =
+          child.variation_attributes && !!child.variation_attributes.length;
+
+        if (!childExists) {
+          const mappingFound = mappingKeys.some(key =>
+            isVariationAttributes
+              ? key === `${flowId}-${child.id}-variationAttributes`
+              : key.startsWith(`${flowId}-${child.id}`)
+          );
+
+          if (mappingFound) {
+            mapping.children.push({
+              id: child.id,
+              children: [],
+              [isVariationAttributes
+                ? 'fieldMappings'
+                : 'variation_themes']: [],
+            });
+          }
+        }
+      });
+
       setVariationMappingData(
         flowId,
         mapping.children,
         mappings,
-        relation.children
+        relationshipData
       );
     }
   });
@@ -227,16 +285,14 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
     /**
      This extract is not found in sampledata. So UI doesnt know what a dot or sublist character represent.
     * */
-    // So wrap the extract only if it doesnt have a dot or sublist character in it
+    // So wnwrap the extract only if it doesnt have a dot or sublist character in it
     if (
-      !(
-        /^\[.*\]$/.test(extract) &&
-        /\W/.test(extract.replace(/^\[|]$/g, '')) &&
-        !/\./.test(extract.replace(/^\[|]$/g, ''))
-      )
+      /^\[.*\]$/.test(extract) && // If extract is wrapped in square braces i,e starts with [ and ends with ]
+      /\W/.test(extract.replace(/^\[|]$/g, '')) && // and the wrapped content contains special character
+      !/\./.test(extract.replace(/^\[|]$/g, '')) // and none of the special characters is a dot
     ) {
-      // if not already wrapped
-      modifiedExtract = `[${extract.replace(/\]/g, '\\]')}]`;
+      // remove the enclosing brances
+      modifiedExtract = extract.replace(/^\[|]$/g, '').replace(/\\\]/g, ']');
     }
   }
 
@@ -291,19 +347,6 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 
   return modifiedExtract;
 }
-
-export const LookupResponseMappingExtracts = [
-  'data',
-  'errors',
-  'ignored',
-  'statusCode',
-];
-export const ImportResponseMappingExtracts = [
-  'id',
-  'errors',
-  'ignored',
-  'statusCode',
-];
 
 export default {
   getDefaultDataType: value => {
@@ -458,7 +501,13 @@ export default {
       return `{{${value.extract}}}`;
     }
   },
-  addVariationMap: (draft = {}, categoryId, childCategoryId, variation) => {
+  addVariationMap: (
+    draft = {},
+    categoryId,
+    childCategoryId,
+    variation,
+    isVariationAttributes
+  ) => {
     const { response = [] } = draft;
     const mappingData = response.find(sec => sec.operation === 'mappingData');
 
@@ -478,16 +527,18 @@ export default {
 
       if (category) {
         if (categoryId === childCategoryId) {
-          variationMapping = category.variation_themes.find(
-            vm => vm.variation_theme === variation
-          );
+          if (!isVariationAttributes) {
+            variationMapping = category.variation_themes.find(
+              vm => vm.variation_theme === variation
+            );
 
-          if (!variationMapping) {
-            category.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: variation,
-              fieldMappings: [],
-            });
+            if (!variationMapping) {
+              category.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: variation,
+                fieldMappings: [],
+              });
+            }
           }
         }
 
@@ -502,16 +553,18 @@ export default {
         }
 
         if (subCategory) {
-          variationMapping = subCategory.variation_themes.find(
-            vm => vm.variation_theme === variation
-          );
+          if (!isVariationAttributes) {
+            variationMapping = subCategory.variation_themes.find(
+              vm => vm.variation_theme === variation
+            );
 
-          if (!variationMapping) {
-            subCategory.variation_themes.push({
-              id: 'variation_theme',
-              variation_theme: variation,
-              fieldMappings: [],
-            });
+            if (!variationMapping) {
+              subCategory.variation_themes.push({
+                id: 'variation_theme',
+                variation_theme: variation,
+                fieldMappings: [],
+              });
+            }
           }
         }
       }
@@ -603,9 +656,10 @@ export default {
     }
   },
   addVariation: (draft, cKey, data) => {
-    const { categoryId, subCategoryId } = data;
+    const { categoryId, subCategoryId, isVariationAttributes } = data;
     const { response = [] } = draft[cKey];
     const mappingData = response.find(sec => sec.operation === 'mappingData');
+    let categoryMappings;
 
     if (
       mappingData.data &&
@@ -614,7 +668,8 @@ export default {
       mappingData.data.mappingData.variationMappings.recordMappings
     ) {
       const { recordMappings } = mappingData.data.mappingData.variationMappings;
-      const categoryMappings = recordMappings.find(
+
+      categoryMappings = recordMappings.find(
         mapping => mapping.id === categoryId
       );
 
@@ -622,8 +677,11 @@ export default {
         recordMappings.push({
           id: categoryId,
           children: [],
-          variation_themes: [],
+          [isVariationAttributes ? 'fieldMappings' : 'variation_themes']: [],
         });
+        categoryMappings = recordMappings.find(
+          mapping => mapping.id === categoryId
+        );
       }
 
       if (!subCategoryId) {
@@ -638,7 +696,7 @@ export default {
         categoryMappings.children.push({
           id: subCategoryId,
           children: [],
-          variation_themes: [],
+          [isVariationAttributes ? 'fieldMappings' : 'variation_themes']: [],
         });
       }
     }
@@ -700,8 +758,10 @@ export default {
             toReturn = 'MySQL';
           } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
             toReturn = 'Microsoft SQL';
-          } else {
+          } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
             toReturn = 'PostgreSQL';
+          } else {
+            toReturn = 'Snowflake';
           }
         }
 
@@ -1082,17 +1142,7 @@ export default {
 
     return generatedMapping;
   },
-  getResponseMappingDefaultExtracts: resourceType => {
-    const extractFields =
-      resourceType === 'imports'
-        ? ImportResponseMappingExtracts
-        : LookupResponseMappingExtracts;
 
-    return extractFields.map(m => ({
-      id: m,
-      name: m,
-    }));
-  },
   getFormattedGenerateData: (sampleData, application) => {
     let formattedGenerateFields = [];
 

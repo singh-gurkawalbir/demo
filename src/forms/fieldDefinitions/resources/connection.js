@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
 import { isProduction } from '../../utils';
 
 export default {
@@ -13,7 +13,7 @@ export default {
         { _connectorId: { $exists: false } },
       ];
 
-      if (['mysql', 'postgresql', 'mssql'].includes(r.type)) {
+      if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else expression.push({ type: r.type });
 
@@ -22,7 +22,7 @@ export default {
       };
     },
     type: 'selectresource',
-    label: 'Borrow Concurrency From',
+    label: 'Borrow concurrency from',
   },
   _agentId: {
     type: 'selectresource',
@@ -31,12 +31,12 @@ export default {
   },
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be exported)',
+    label: 'Sample file (that would be exported)',
     resourceType: 'connections',
   },
   scope: {
     type: 'selectscopes',
-    label: 'Configure Scopes',
+    label: 'Configure scopes',
   },
   name: {
     type: 'text',
@@ -175,6 +175,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },
           { label: 'Gusto', value: 'gusto' },
@@ -274,12 +275,12 @@ export default {
   },
   'rdbms.database': {
     type: 'text',
-    label: 'Database Name',
+    label: 'Database name',
     required: true,
   },
   'rdbms.instanceName': {
     type: 'text',
-    label: 'Instance Name',
+    label: 'Instance name',
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
   },
   'rdbms.user': {
@@ -299,7 +300,7 @@ export default {
   'rdbms.ssl.ca': {
     type: 'editor',
     mode: 'text',
-    label: 'Certificate Authority',
+    label: 'Certificate authority',
   },
   'rdbms.ssl.key': {
     type: 'editor',
@@ -317,7 +318,7 @@ export default {
   },
   'rdbms.version': {
     type: 'select',
-    label: 'SQL Server Version',
+    label: 'SQL server version',
     required: true,
     visibleWhen: [{ field: 'type', is: ['mssql'] }],
     options: [
@@ -337,10 +338,10 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Configure Properties',
+    label: 'Configure properties',
   },
   'rdbms.concurrencyLevel': {
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     type: 'select',
     options: [
       {
@@ -384,7 +385,7 @@ export default {
   // #region rest
   'rest.mediaType': {
     type: 'select',
-    label: 'Media Type',
+    label: 'Media type',
     options: [
       {
         items: [
@@ -423,31 +424,31 @@ export default {
   },
   'rest.tokenParam': {
     type: 'text',
-    label: 'Rest token Param',
+    label: 'Rest token param',
   },
   'rest.scope': {
     type: 'selectscopes',
-    label: 'Configure Scopes',
+    label: 'Configure scopes',
   },
   'rest.scopeDelimiter': {
     type: 'text',
-    label: 'Rest scope Delimiter',
+    label: 'Rest scope delimiter',
   },
   'rest.refreshToken': {
     type: 'text',
-    label: 'Rest refresh Token',
+    label: 'Rest refresh token',
   },
   'rest.oauthTokenURI': {
     type: 'text',
-    label: 'Rest oauth Token URI',
+    label: 'Rest oauth token URI',
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Disable Strict SSL',
+    label: 'Disable strict SSL',
   },
   'rest.authType': {
     type: 'select',
-    label: 'Authentication Type',
+    label: 'Authentication type',
     options: [
       {
         items: [
@@ -465,12 +466,12 @@ export default {
   },
   'rest.authHeader': {
     type: 'text',
-    label: 'Header Name',
+    label: 'Header name',
     defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
   },
   'rest.retryHeader': {
     type: 'text',
-    label: 'Rest retry Header',
+    label: 'Rest retry header',
   },
   'rest.authScheme': {
     type: 'select',
@@ -509,11 +510,11 @@ export default {
   },
   'rest.cookieAuth.body': {
     type: 'text',
-    label: 'Cookie Body',
+    label: 'Cookie body',
   },
   'rest.cookieAuth.method': {
     type: 'select',
-    label: 'Cookie Method',
+    label: 'Cookie method',
     options: [
       {
         items: [
@@ -525,7 +526,7 @@ export default {
   },
   'rest.cookieAuth.successStatusCode': {
     type: 'text',
-    label: 'Cookie Success Status Code',
+    label: 'Cookie success status code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -537,7 +538,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
   },
   'rest.encrypted': {
     type: 'editor',
@@ -551,11 +552,11 @@ export default {
   },
   'rest.oauth.accessTokenPath': {
     type: 'text',
-    label: 'Rest oauth access Token Path',
+    label: 'Rest oauth access token path',
   },
   'rest.oauth.grantType': {
     type: 'radiogroup',
-    label: 'Rest oauth grant Type',
+    label: 'Rest oauth grant type',
     options: [
       {
         items: [
@@ -578,7 +579,7 @@ export default {
   },
   'rest.refreshTokenMethod': {
     type: 'select',
-    label: 'Refresh Token Method',
+    label: 'Refresh token method',
     options: [
       {
         items: [
@@ -591,19 +592,19 @@ export default {
   },
   'rest.refreshTokenBody': {
     type: 'text',
-    label: 'Refresh Body',
+    label: 'Refresh body',
   },
   'rest.refreshTokenURI': {
     type: 'text',
-    label: 'Rest refresh Token URI',
+    label: 'Rest refresh token URI',
   },
   'rest.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh Token Path',
+    label: 'Refresh token path',
   },
   'rest.refreshTokenMediaType': {
     type: 'select',
-    label: 'Refresh Token Media Type',
+    label: 'Refresh token media type',
     defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
@@ -619,7 +620,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh Token Headers',
+    label: 'Refresh token headers',
   },
   'rest.info': {
     type: 'text',
@@ -631,27 +632,27 @@ export default {
   },
   'rest.pingSuccessPath': {
     type: 'text',
-    label: 'Ping Success Path',
+    label: 'Ping success path',
   },
   'rest.pingSuccessValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Ping Success Values',
+    label: 'Ping success values',
   },
   'rest.pingFailurePath': {
     type: 'text',
-    label: 'Rest ping Failure Path',
+    label: 'Rest ping failure path',
   },
   'rest.pingFailureValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Rest ping Failure Values',
+    label: 'Rest ping failure values',
   },
   'rest.concurrencyLevel': {
     type: 'select',
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     options: [
       {
         items: [
@@ -692,7 +693,7 @@ export default {
   },
   'rest.pingMethod': {
     type: 'select',
-    label: 'Ping Method',
+    label: 'Ping method',
     options: [
       {
         items: [
@@ -704,13 +705,13 @@ export default {
   },
   'rest.pingBody': {
     type: 'text',
-    label: 'Ping Body',
+    label: 'Ping body',
   },
   // #endregion rest
   // #region http
   'http.auth.type': {
     type: 'select',
-    label: 'Authentication Type',
+    label: 'Authentication type',
     required: true,
     options: [
       {
@@ -728,7 +729,7 @@ export default {
   },
   'http.mediaType': {
     type: 'select',
-    label: 'Media Type',
+    label: 'Media type',
     required: true,
     defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
     options: [
@@ -742,7 +743,7 @@ export default {
     ],
   },
   configureApiRateLimits: {
-    label: 'Configure API Rate Limits',
+    label: 'Configure api rate limits',
     type: 'checkbox',
     defaultValue: r =>
       r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
@@ -760,10 +761,10 @@ export default {
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
-    label: 'Disable Strict SSL',
+    label: 'Disable strict SSL',
   },
   'http.concurrencyLevel': {
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     type: 'select',
     options: [
       {
@@ -805,15 +806,15 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry Header',
+    label: 'Retry header',
   },
   'http.ping.relativeURI': {
     type: 'text',
-    label: 'Ping Relative URI',
+    label: 'Ping relative URI',
   },
   'http.ping.method': {
     type: 'select',
-    label: 'Ping Method',
+    label: 'Ping method',
     options: [
       {
         items: [
@@ -826,20 +827,20 @@ export default {
   },
   'http.ping.body': {
     type: 'text',
-    label: 'Ping Body',
+    label: 'Ping body',
   },
   'http.ping.successPath': {
     type: 'text',
-    label: 'Ping Success Path',
+    label: 'Ping success path',
   },
   'http.ping.successValues': {
     type: 'text',
-    label: 'Ping Success Values',
+    label: 'Ping success values',
     delimiter: ',',
   },
   'http.ping.failPath': {
     type: 'text',
-    label: 'Ping Fail Path',
+    label: 'Ping fail path',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -850,7 +851,7 @@ export default {
   'http.ping.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Ping Fail Values',
+    label: 'Ping fail values',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -860,11 +861,11 @@ export default {
   },
   'http.ping.errorPath': {
     type: 'text',
-    label: 'Ping Error Path',
+    label: 'Ping error path',
   },
   'http.auth.failStatusCode': {
     type: 'text',
-    label: 'Authentication Fail Status Code',
+    label: 'Authentication fail status code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -873,12 +874,12 @@ export default {
   },
   'http.auth.failPath': {
     type: 'text',
-    label: 'Authentication Fail Path',
+    label: 'Authentication fail path',
   },
   'http.auth.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Authentication Fail Values',
+    label: 'Authentication fail values',
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -896,28 +897,28 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access Token URL',
+    label: 'Access token url',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
-    label: 'Configure Scopes',
+    label: 'Configure scopes',
   },
   'http.auth.oauth.scopeDelimiter': {
     type: 'text',
-    label: 'Custom Scope Delimiter',
+    label: 'Custom scope delimiter',
     subSectionField: true,
   },
   'http.auth.oauth.accessTokenPath': {
     type: 'text',
-    label: 'Http auth oauth access Token Path',
+    label: 'Http auth oauth access token path',
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication URL',
+    label: 'Authentication url',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
-    label: 'Client Authentication',
+    label: 'Client authentication',
     defaultValue: r =>
       (r &&
         r.http &&
@@ -939,12 +940,12 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Access Token Headers',
+    label: 'Access token headers',
   },
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Access Token Body',
+    label: 'Access token body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -955,7 +956,7 @@ export default {
   },
   'http.auth.oauth.grantType': {
     type: 'select',
-    label: 'Grant Type',
+    label: 'Grant type',
     options: [
       {
         items: [
@@ -993,7 +994,7 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback URL',
+    label: 'Callback url',
     defaultDisabled: true,
     visible: !isProduction(),
     defaultValue: () => {
@@ -1009,19 +1010,19 @@ export default {
   },
   'http.auth.token.revoke.uri': {
     type: 'text',
-    label: 'Revoke Token URL',
+    label: 'Revoke token url',
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Revoke Token Body',
+    label: 'Revoke token body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Revoke Token Headers',
+    label: 'Revoke token headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -1062,7 +1063,7 @@ export default {
   },
   'http.auth.token.headerName': {
     type: 'text',
-    label: 'Header Name',
+    label: 'Header name',
     defaultValue: r =>
       (r &&
         r.http &&
@@ -1095,12 +1096,12 @@ export default {
   },
   'http.auth.token.paramName': {
     type: 'text',
-    label: 'Parameter Name',
+    label: 'Parameter name',
     required: true,
   },
   'http.auth.token.refreshMethod': {
     type: 'select',
-    label: 'Refresh Method',
+    label: 'Refresh method',
     defaultValue: r =>
       r &&
       r.http &&
@@ -1119,20 +1120,20 @@ export default {
   },
   'http.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh Relative URI',
+    label: 'Refresh relative URI',
     required: true,
   },
   'http.auth.token.refreshBody': {
     type: 'text',
-    label: 'Refresh Body',
+    label: 'Refresh body',
   },
   'http.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh Token Path',
+    label: 'Refresh token path',
   },
   'http.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'Refresh Media Type',
+    label: 'Refresh media type',
     required: true,
     options: [
       {
@@ -1149,7 +1150,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh Token Headers',
+    label: 'Refresh token headers',
   },
   'http.auth.token.refreshToken': {
     type: 'text',
@@ -1158,7 +1159,7 @@ export default {
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
-    label: 'Refresh Token',
+    label: 'Refresh token',
   },
   'http.auth.cookie.uri': {
     type: 'text',
@@ -1166,11 +1167,11 @@ export default {
   },
   'http.auth.cookie.body': {
     type: 'text',
-    label: 'Cookie Body',
+    label: 'Cookie body',
   },
   'http.auth.cookie.method': {
     type: 'select',
-    label: 'Cookie Method',
+    label: 'Cookie method',
     options: [
       {
         items: [
@@ -1182,7 +1183,7 @@ export default {
   },
   'http.auth.cookie.successStatusCode': {
     type: 'text',
-    label: 'Cookie Success Status Code',
+    label: 'Cookie success status code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1191,11 +1192,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'API Rate Limits',
+    label: 'API rate limits',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail Status Code',
+    label: 'Fail status code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1204,11 +1205,11 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail Path',
+    label: 'Fail path',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Fail Values',
+    label: 'Fail values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
@@ -1226,7 +1227,7 @@ export default {
     valueName: 'value',
     valueType: 'keyvalue',
     defaultValue: r => (r && r.http && r.http.headers) || '',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
   },
   'http.unencrypted': {
     type: 'editor',
@@ -1241,15 +1242,15 @@ export default {
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
-    label: 'SSL Certificate',
+    label: 'SSL certificate',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
-    label: 'SSL Client Key',
+    label: 'SSL client key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
-    label: 'SSL Passphrase',
+    label: 'SSL passphrase',
   },
   // #endregion http
   // #region ftp
@@ -1283,15 +1284,24 @@ export default {
   'ftp.password': {
     type: 'text',
     label: 'Password',
-    required: true,
     inputType: 'password',
+    requiredWhen: [
+      {
+        field: 'ftp.type',
+        is: ['ftp'],
+      },
+      {
+        field: 'ftp.authKey',
+        is: [''],
+      },
+    ],
     defaultValue: '',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.authKey': {
     type: 'text',
-    label: 'Authentication Key (PEM format)',
+    label: 'Authentication key (pem format)',
     placeholder: 'Optional if password is entered',
     multiline: true,
   },
@@ -1309,12 +1319,12 @@ export default {
   },
   'ftp.usePassiveMode': {
     type: 'checkbox',
-    label: 'Use Passive Mode',
+    label: 'Use passive mode',
     defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
     type: 'select',
-    label: 'Entry Parser',
+    label: 'Entry parser',
     options: [
       {
         items: [
@@ -1335,15 +1345,15 @@ export default {
   },
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
-    label: 'User Directory Is Root',
+    label: 'User directory is root',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
-    label: 'Use Implicit FTPS',
+    label: 'Use implicit ftps',
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
-    label: 'Require Socket Reuse',
+    label: 'Require socket reuse',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -1351,11 +1361,11 @@ export default {
     type: 'checkbox',
     defaultValue: r =>
       !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
-    label: 'Use PGP Encryption',
+    label: 'Use PGP encryption',
   },
   'ftp.pgpEncryptKey': {
     type: 'text',
-    label: 'PGP Public Key',
+    label: 'PGP public key',
     requiredWhen: [
       {
         field: 'ftp.pgpDecryptKey',
@@ -1367,7 +1377,7 @@ export default {
   },
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
-    label: 'PGP Encryption Algorithm',
+    label: 'PGP encryption algorithm',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1386,7 +1396,7 @@ export default {
   },
   'ftp.pgpDecryptKey': {
     type: 'text',
-    label: 'PGP Private Key',
+    label: 'PGP private key',
     requiredWhen: [
       {
         field: 'ftp.pgpEncryptKey',
@@ -1398,7 +1408,7 @@ export default {
   },
   'ftp.pgpPassphrase': {
     type: 'text',
-    label: 'PGP Passphrase',
+    label: 'PGP passphrase',
     requiredWhen: [
       {
         field: 'ftp.pgpDecryptKey',
@@ -1412,11 +1422,11 @@ export default {
   // #region s3
   's3.accessKeyId': {
     type: 'text',
-    label: 'Access Key Id',
+    label: 'Access key ID',
   },
   's3.secretAccessKey': {
     type: 'text',
-    label: 'Secret Access Key',
+    label: 'Secret access key',
     inputType: 'password',
     defaultValue: '',
     description:
@@ -1424,13 +1434,13 @@ export default {
   },
   's3.pingBucket': {
     type: 'text',
-    label: 'Ping Bucket',
+    label: 'Ping bucket',
   },
   // #endregion s3
   // #region as2
   'as2.as2Id': {
     type: 'text',
-    label: 'AS2 Identifier',
+    label: 'AS2 identifier',
     required: true,
   },
   'as2.partnerId': {
@@ -1452,14 +1462,11 @@ export default {
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
     label: 'MDN signature verification',
-    helpText:
-      'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   },
-  'as2.partnerStationInfo.mdn.mdnURL': {
+  'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
-    helpText: `This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.`,
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
@@ -1469,14 +1476,14 @@ export default {
   },
   'as2.partnerStationInfo.mdn.signatureProtocol': {
     type: 'radiogroup',
-    label: 'As2 partner Station Info mdn signature Protocol',
+    label: 'As2 partner station info mdn signature protocol',
     options: [
       { items: [{ label: 'Pkcs7-signature', value: 'pkcs7-signature' }] },
     ],
   },
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
-    label: 'MDN Verification Algorithm',
+    label: 'MDN verification algorithm',
     required: true,
     options: [
       {
@@ -1491,7 +1498,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.failStatusCode': {
     type: 'text',
-    label: 'Authentication Fail Status Code',
+    label: 'Authentication fail status code',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
@@ -1506,7 +1513,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.type': {
     type: 'select',
-    label: 'Authentication Type',
+    label: 'Authentication type',
     required: true,
     options: [
       {
@@ -1520,7 +1527,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.failPath': {
     type: 'text',
-    label: 'Authentication Fail Path',
+    label: 'Authentication fail path',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
@@ -1531,7 +1538,7 @@ export default {
   'as2.partnerStationInfo.auth.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Authentication Fail Values',
+    label: 'Authentication fail values',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.type',
@@ -1595,7 +1602,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
-    label: 'Header Name',
+    label: 'Header name',
     defaultValue: r =>
       (r &&
         r.as2 &&
@@ -1633,7 +1640,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.paramName': {
     type: 'text',
-    label: 'Parameter Name',
+    label: 'Parameter name',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.token.location',
@@ -1643,7 +1650,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshMethod': {
     type: 'select',
-    label: 'Refresh Method',
+    label: 'Refresh method',
     options: [
       {
         items: [
@@ -1662,7 +1669,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshRelativeURI': {
     type: 'text',
-    label: 'Refresh Relative URI',
+    label: 'Refresh relative URI',
     visibleWhen: [
       {
         field: 'configureTokenRefresh',
@@ -1673,7 +1680,7 @@ export default {
   'as2.partnerStationInfo.auth.token.refreshBody': {
     type: 'editor',
     mode: 'json',
-    label: 'Refresh Body',
+    label: 'Refresh body',
     visibleWhen: [
       {
         field: 'as2.partnerStationInfo.auth.token.refreshMethod',
@@ -1683,7 +1690,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshTokenPath': {
     type: 'text',
-    label: 'Refresh Token Path',
+    label: 'Refresh token path',
     visibleWhen: [
       {
         field: 'configureTokenRefresh',
@@ -1693,7 +1700,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshMediaType': {
     type: 'select',
-    label: 'Refresh Media Type',
+    label: 'Refresh media type',
     options: [
       {
         items: [
@@ -1715,7 +1722,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Refresh Token Headers',
+    label: 'Refresh token headers',
     visibleWhen: [
       {
         field: 'configureTokenRefresh',
@@ -1725,7 +1732,7 @@ export default {
   },
   'as2.partnerStationInfo.auth.token.refreshToken': {
     type: 'text',
-    label: 'Refresh Token',
+    label: 'Refresh token',
     visibleWhen: [
       {
         field: 'configureTokenRefresh',
@@ -1735,7 +1742,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail Status Code',
+    label: 'Fail status code',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1750,7 +1757,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail Path',
+    label: 'Fail path',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1767,7 +1774,7 @@ export default {
         is: [true],
       },
     ],
-    label: 'Fail Values',
+    label: 'Fail values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
@@ -1798,7 +1805,7 @@ export default {
   },
   'as2.partnerStationInfo.encryptionType': {
     type: 'select',
-    label: 'Encryption Type',
+    label: 'Encryption type',
     required: true,
     options: [
       {
@@ -1814,29 +1821,41 @@ export default {
     ],
   },
   as2url: {
-    type: 'labelvalue',
-    label: 'AS2 URL',
+    type: 'select',
+    label: 'AS2 url',
+    options: [
+      {
+        items: [
+          {
+            label: 'http://api.staging.integrator.io/v1/as2',
+            value: 'http://api.staging.integrator.io/v1/as2',
+          },
+          {
+            label: 'https://api.staging.integrator.io/v1/as2',
+            value: 'https://api.staging.integrator.io/v1/as2',
+          },
+        ],
+      },
+    ],
     value: 'https://api.staging.integrator.io/v1/as2',
   },
   requiremdnspartners: {
     type: 'labelvalue',
-    label: 'Require MDNs from Partners?',
+    label: 'Require mdns from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
     type: 'labelvalue',
-    label: 'Require Asynchronous MDNs?',
+    label: 'Require asynchronous mdns?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
-    label: 'Partner Requires Asynchronous MDNs?',
-    helpText:
-      'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
+    label: 'Partner requires asynchronous mdns?',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',
-    label: 'AS2 IP Addresses',
+    label: 'AS2 ip addresses',
     value: 'Click here to see the list of IP Addresses.',
   },
   'as2.partnerStationInfo.signing': {
@@ -1874,7 +1893,7 @@ export default {
   },
   'as2.partnerStationInfo.signatureEncoding': {
     type: 'select',
-    label: 'Signature Encoding',
+    label: 'Signature encoding',
     options: [
       {
         items: [
@@ -1883,10 +1902,6 @@ export default {
         ],
       },
     ],
-  },
-  'as2.userStationInfo.mdn.mdnURL': {
-    type: 'text',
-    label: 'As2 user Station Info mdn mdn URL',
   },
   'as2.encrypted.userPrivateKey': {
     type: 'editor',
@@ -1901,7 +1916,7 @@ export default {
   },
   'as2.userStationInfo.mdn.mdnSigning': {
     type: 'select',
-    label: 'MDN Signing',
+    label: 'MDN signing',
     required: true,
     options: [
       {
@@ -1916,7 +1931,7 @@ export default {
   },
   'as2.userStationInfo.mdn.mdnEncoding': {
     type: 'select',
-    label: 'MDN Encoding',
+    label: 'MDN encoding',
     options: [
       {
         items: [
@@ -1928,7 +1943,7 @@ export default {
   },
   'as2.userStationInfo.encryptionType': {
     type: 'select',
-    label: 'Decryption Algorithm',
+    label: 'Decryption algorithm',
     required: true,
     options: [
       {
@@ -1945,7 +1960,7 @@ export default {
   },
   'as2.userStationInfo.signing': {
     type: 'select',
-    label: 'Signature Verification Algorithm',
+    label: 'Signature verification algorithm',
     required: true,
     options: [
       {
@@ -1960,7 +1975,7 @@ export default {
   },
   'as2.partnerStationInfo.mdnSigning': {
     type: 'select',
-    label: 'Signature Encoding',
+    label: 'Signature encoding',
     options: [
       {
         items: [
@@ -1972,7 +1987,7 @@ export default {
   },
   'as2.userStationInfo.encoding': {
     type: 'select',
-    label: 'Incoming Message Encoding',
+    label: 'Incoming message encoding',
     required: true,
     options: [
       {
@@ -2012,11 +2027,11 @@ export default {
     ],
   },
   'as2.preventCanonicalization': {
-    label: 'Prevent Canonicalization',
+    label: 'Prevent canonicalization',
     type: 'checkbox',
   },
   'as2.concurrencyLevel': {
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     type: 'select',
     options: [
       {
@@ -2072,7 +2087,7 @@ export default {
   // #region netsuite
   'netsuite.authType': {
     type: 'select',
-    label: 'Authentication Type',
+    label: 'Authentication type',
     options: [
       {
         items: [
@@ -2094,7 +2109,7 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
-    label: 'Token Id',
+    label: 'Token ID',
   },
   'netsuite.tokenSecret': {
     type: 'text',
@@ -2103,7 +2118,7 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
     required: true,
-    label: 'Token Secret',
+    label: 'Token secret',
   },
   'netsuite.tokenEnvironment': {
     type: 'select',
@@ -2141,23 +2156,23 @@ export default {
   },
   'netsuite.requestLevelCredentials': {
     type: 'checkbox',
-    label: 'NetSuite request Level Credentials',
+    label: 'NetSuite request level credentials',
   },
   'netsuite.dataCenterURLs': {
     type: 'text',
-    label: 'NetSuite data Center URLs',
+    label: 'NetSuite data center urls',
   },
   'netsuite.accountName': {
     type: 'text',
-    label: 'NetSuite account Name',
+    label: 'NetSuite account name',
   },
   'netsuite.roleName': {
     type: 'text',
-    label: 'NetSuite role Name',
+    label: 'NetSuite role name',
   },
   'netsuite.concurrencyLevelRESTlet': {
     type: 'text',
-    label: 'NetSuite concurrency Level RESTlet',
+    label: 'NetSuite concurrency level restlet',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2166,7 +2181,7 @@ export default {
   },
   'netsuite.concurrencyLevelWebServices': {
     type: 'text',
-    label: 'NetSuite concurrency Level Web Services',
+    label: 'NetSuite concurrency level web services',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2174,7 +2189,7 @@ export default {
     ],
   },
   'netsuite.linkSuiteScriptIntegrator': {
-    label: 'Link SuiteScript Integrator',
+    label: 'Link suitescript integrator',
     type: 'checkbox',
   },
   'netsuite._iClientId': {
@@ -2183,7 +2198,7 @@ export default {
     resourceType: 'iClients',
   },
   'netsuite.concurrencyLevel': {
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     type: 'select',
     defaultValue: r =>
       r && r.netsuite && r.netsuite.concurrencyLevel
@@ -2229,7 +2244,7 @@ export default {
   },
   'netsuite.wsdlVersion': {
     type: 'radiogroup',
-    label: 'NetSuite wsdl Version',
+    label: 'NetSuite wsdl version',
     options: [
       {
         items: [
@@ -2241,17 +2256,17 @@ export default {
   },
   'netsuite.applicationId': {
     type: 'text',
-    label: 'NetSuite application Id',
+    label: 'NetSuite application ID',
   },
   // #endregion netsuite
   // #region netSuiteDistributedAdaptor
   'netSuiteDistributedAdaptor.accountId': {
     type: 'text',
-    label: 'Net Suite Distributed Adaptor account Id',
+    label: 'Net suite distributed adaptor account ID',
   },
   'netSuiteDistributedAdaptor.environment': {
     type: 'select',
-    label: 'Net Suite Distributed Adaptor environment',
+    label: 'Net suite distributed adaptor environment',
     options: [
       {
         items: [
@@ -2265,21 +2280,21 @@ export default {
   },
   'netSuiteDistributedAdaptor.connectionId': {
     type: 'text',
-    label: 'Net Suite Distributed Adaptor connection Id',
+    label: 'Net suite distributed adaptor connection ID',
   },
   'netSuiteDistributedAdaptor.username': {
     type: 'text',
-    label: 'Net Suite Distributed Adaptor username',
+    label: 'Net suite distributed adaptor username',
   },
   'netSuiteDistributedAdaptor.uri': {
     type: 'text',
-    label: 'Net Suite Distributed Adaptor uri',
+    label: 'Net suite distributed adaptor URI',
   },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
   'salesforce.sandbox': {
     type: 'select',
-    label: 'Account Type',
+    label: 'Account type',
     required: true,
     options: [
       {
@@ -2296,7 +2311,7 @@ export default {
   },
   'salesforce.oauth2FlowType': {
     type: 'select',
-    label: 'OAuth 2.0 Flow Type',
+    label: 'OAuth 2.0 flow type',
     required: true,
     options: [
       {
@@ -2319,15 +2334,15 @@ export default {
   },
   'salesforce.bearerToken': {
     type: 'text',
-    label: 'Salesforce bearer Token',
+    label: 'Salesforce bearer token',
   },
   'salesforce.refreshToken': {
     type: 'text',
-    label: 'Salesforce refresh Token',
+    label: 'Salesforce refresh token',
   },
   'salesforce.packagedOAuth': {
     type: 'checkbox',
-    label: 'Salesforce packaged OAuth',
+    label: 'Salesforce packaged oauth',
   },
   'salesforce.scopes': {
     type: 'text',
@@ -2342,7 +2357,7 @@ export default {
   },
   'salesforce.concurrencyLevel': {
     type: 'select',
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     defaultValue: r =>
       (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
     validWhen: [
@@ -2403,7 +2418,7 @@ export default {
   },
   'wrapper.pingFunction': {
     type: 'text',
-    label: 'Ping Function',
+    label: 'Ping function',
     required: true,
   },
   'wrapper._stackId': {
@@ -2415,7 +2430,7 @@ export default {
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
-    label: 'Concurrency Level',
+    label: 'Concurrency level',
     options: [
       {
         items: [
@@ -2489,7 +2504,7 @@ export default {
   },
   'mongodb.replicaSet': {
     type: 'text',
-    label: 'Replica Set',
+    label: 'Replica set',
   },
   'mongodb.ssl': {
     type: 'checkbox',
@@ -2498,17 +2513,17 @@ export default {
   },
   'mongodb.authSource': {
     type: 'text',
-    label: 'Auth Source',
+    label: 'Auth source',
   },
   // #endregion mongodb
   // #region dynamodb
   'dynamodb.aws.accessKeyId': {
     type: 'text',
-    label: 'Access Key Id',
+    label: 'Access key ID',
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
-    label: 'Secret Access Key',
+    label: 'Secret access key',
   },
   // #endregion dynamodb
   settings: {

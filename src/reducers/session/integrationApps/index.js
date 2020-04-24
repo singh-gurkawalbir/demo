@@ -3,12 +3,16 @@ import installer, * as fromInstaller from './installer';
 import uninstaller, * as fromUninstaller from './uninstaller';
 import addStore, * as fromAddStore from './addStore';
 import settings, * as fromSettings from './settings';
+import addon, * as fromAddon from './addon';
+import clone, * as fromClone from './clone';
 
 export default combineReducers({
   installer,
   uninstaller,
   settings,
   addStore,
+  addon,
+  clone,
 });
 
 export function integrationAppsInstaller(state, id) {
@@ -109,6 +113,13 @@ export function integrationAppAddOnState(state, integrationId) {
   );
 }
 
+export function integrationAppMappingMetadata(state, integrationId) {
+  return fromSettings.integrationAppMappingMetadata(
+    state && state.settings,
+    integrationId
+  );
+}
+
 export function shouldRedirect(state, integrationId) {
   return fromSettings.shouldRedirect(state && state.settings, integrationId);
 }
@@ -131,4 +142,12 @@ export function uninstallData(state, id, storeId) {
 
 export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
+}
+
+export function isAddOnInstallInProgress(state, id) {
+  return fromAddon.isAddOnInstallInProgress(state && state.addon, id);
+}
+
+export function integrationClonedDetails(state, id) {
+  return fromClone.integrationClonedDetails(state && state.clone, id);
 }

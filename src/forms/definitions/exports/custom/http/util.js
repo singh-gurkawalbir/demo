@@ -262,7 +262,7 @@ export function fieldMeta({ resource, assistantData }) {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
   };
   const fieldIds = [];

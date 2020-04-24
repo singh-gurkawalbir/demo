@@ -7,6 +7,20 @@ import {
   INSTALL_STEP_TYPES,
 } from './constants';
 
+export const getTemplateUrlName = applications => {
+  if (!applications || !Array.isArray(applications) || !applications.length)
+    return;
+  function appName(app) {
+    return app.charAt(0).toUpperCase() + app.slice(1);
+  }
+
+  if (applications.length === 1) {
+    return `${appName(applications[0])}-${appName(applications[0])}`;
+  }
+
+  return applications.map(appName).join('-');
+};
+
 export default {
   getDependentResources: components =>
     components.map(component => ({
