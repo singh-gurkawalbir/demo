@@ -77,6 +77,7 @@ export default {
       generateFields = [],
       options,
       lookups,
+      isCategoryMapping,
     } = params;
     let fieldMeta = {};
     const lookup = lookups.find(l => l.name === value.lookupName);
@@ -102,6 +103,7 @@ export default {
           options,
           lookups,
           lookup,
+          isCategoryMapping,
         });
         break;
       case adaptorTypeMap.SalesforceImport:

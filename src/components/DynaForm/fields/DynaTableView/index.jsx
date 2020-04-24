@@ -1,11 +1,9 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import DynaConnectoroNColumnMap from './DynaConnectorNColumnMap';
 import DynaStaticMap from './DynaStaticMap';
 import DynaTableView from './DynaTable';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
 import LoadResources from '../../../../components/LoadResources';
-import * as selectors from '../../../../reducers';
 import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
 
 export default function DynaTable(props) {
@@ -20,7 +18,6 @@ export default function DynaTable(props) {
     value,
   } = props;
   let tableType;
-  let connection;
   // The values should be saved within a value object
   const updatedOnFieldChange = useCallback(
     (id, value) => {
@@ -37,19 +34,13 @@ export default function DynaTable(props) {
     onFieldChange: updatedOnFieldChange,
   };
 
-  useSelector(state => {
-    if (connectionId) {
-      connection = selectors.resource(state, 'connections', connectionId);
-    }
-  });
-
   if (extractFieldHeader || extracts) {
     tableType = 'staticMapWidget';
   } else if ((map || !optionsMap) && !connectionId) {
     tableType = 'staticMap';
   } else if (optionsMap && optionsMap.length && _integrationId) {
     tableType = 'connectorStaticMap';
-  } else if (connectionId && connection) {
+  } else if (connectionId) {
     tableType = 'refreshableStaticMap';
   } else {
     tableType = 'generic';

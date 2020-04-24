@@ -375,7 +375,7 @@ export default function ClonePreview(props) {
   };
 
   return (
-    <LoadResources resources={[resourceType, 'integrations']} required>
+    <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title="Cloning" infoText={cloningDescription} />
       <Fragment>
         <Grid container>
