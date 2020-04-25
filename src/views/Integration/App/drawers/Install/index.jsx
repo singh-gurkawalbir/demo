@@ -61,13 +61,7 @@ const useStyles = makeStyles(theme => ({
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (assistant) return assistant;
-
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
-  } else if (resource.type === 'shopify') {
+  if (assistant === 'shopify') {
     if (
       resource.http &&
       resource.http.auth &&
@@ -77,6 +71,14 @@ const getConnectionType = resource => {
     }
 
     return '';
+  }
+
+  if (assistant) return assistant;
+
+  if (resource.type === 'netsuite') {
+    if (resource.netsuite.authType === 'token-auto') {
+      return 'netsuite-oauth';
+    }
   }
 
   return type;
@@ -109,8 +111,15 @@ export default function ConnectorInstallation(props) {
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
+  const isCloned =
+    integration &&
+    integration.install &&
+    integration.install.find(step => step.isClone);
   const isFrameWork2 =
-    integration && integration.installSteps && integration.installSteps.length;
+    (integration &&
+      integration.installSteps &&
+      integration.installSteps.length) ||
+    isCloned;
 
   useEffect(() => {
     if (
@@ -254,7 +263,7 @@ export default function ConnectorInstallation(props) {
       sourceConnection,
     } = step;
 
-    if (_connectionId || type === 'connection') {
+    if (_connectionId || type === 'connection' || sourceConnection) {
       if (step.isTriggered) {
         return false;
       }
