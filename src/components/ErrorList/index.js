@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, Fragment } from 'react';
+import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -6,7 +6,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import actions from '../../actions';
 import { resourceOpenErrors } from '../../reducers';
 import CeligoTable from '../CeligoTable';
-import metadata from './metadata';
+import metadataGenerator from './metadata';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
@@ -24,6 +24,10 @@ export default function ErrorList({ flowId, resourceId }) {
       resourceId,
     })
   );
+  const metadata = useMemo(() => metadataGenerator({ flowId, resourceId }), [
+    flowId,
+    resourceId,
+  ]);
 
   useEffect(() => {
     if (!status) {

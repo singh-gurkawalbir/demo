@@ -197,7 +197,9 @@ export default function CeligoTable({
                   onClick={() =>
                     handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)
                   }>
-                  {col.heading}
+                  {col.headerValue
+                    ? col.headerValue('', actionProps)
+                    : col.heading}
                   {orderBy === col.orderBy ? (
                     <span className={classes.visuallyHidden}>
                       {order === 'desc'
@@ -212,7 +214,9 @@ export default function CeligoTable({
                 key={col.heading}
                 style={col.width ? { width: col.width } : undefined}
                 align={col.align || 'left'}>
-                {col.heading}
+                {col.headerValue
+                  ? col.headerValue('', actionProps)
+                  : col.heading}
               </TableCell>
             )
           )}

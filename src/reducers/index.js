@@ -4086,3 +4086,20 @@ export function resourceResolvedErrors(state, { flowId, resourceId }) {
     resourceId,
   });
 }
+
+export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
+  return fromSession.isErrorSelected(state && state.session, {
+    flowId,
+    resourceId,
+    type,
+    errorId,
+  });
+}
+
+export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+  return fromSession.isAllErrorsSelected(state && state.session, {
+    flowId,
+    resourceId,
+    type,
+  });
+}

@@ -543,4 +543,23 @@ export function getResourceResolvedErrors(state, { flowId, resourceId }) {
   );
 }
 
+export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
+  return fromErrorManagement.isErrorSelected(state && state.errorManagement, {
+    flowId,
+    resourceId,
+    type,
+    errorId,
+  });
+}
+
+export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+  return fromErrorManagement.isAllErrorsSelected(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      type,
+    }
+  );
+}
 // #endregion

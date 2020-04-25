@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux';
 import openErrors from './openErrors';
-import errorDetails from './errorDetails';
-
-const defaultObject = {};
+import errorDetails, * as fromErrorDetails from './errorDetails';
 
 export default combineReducers({
   openErrors,
@@ -10,25 +8,42 @@ export default combineReducers({
 });
 
 export function getResourceOpenErrors(state, { flowId, resourceId }) {
-  const errorDetailsState = state && state.errorDetails;
-
-  return (
-    (errorDetailsState &&
-      errorDetailsState[flowId] &&
-      errorDetailsState[flowId][resourceId] &&
-      errorDetailsState[flowId][resourceId].open) ||
-    defaultObject
-  );
+  return fromErrorDetails.getErrors(state && state.errorDetails, {
+    flowId,
+    resourceId,
+    type: 'open',
+  });
 }
 
 export function getResourceResolvedErrors(state, { flowId, resourceId }) {
-  const errorDetailsState = state && state.errorDetails;
+  return fromErrorDetails.getErrors(state && state.errorDetails, {
+    flowId,
+    resourceId,
+    type: 'resolved',
+  });
+}
 
-  return (
-    (errorDetailsState &&
-      errorDetailsState[flowId] &&
-      errorDetailsState[flowId][resourceId] &&
-      errorDetailsState[flowId][resourceId].resolved) ||
-    defaultObject
+export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
+  const { errors = [] } = fromErrorDetails.getErrors(
+    state && state.errorDetails,
+    {
+      flowId,
+      resourceId,
+      type,
+    }
   );
+  const error = errors.find(error => error.errorId === errorId) || {};
+
+  return !!error.selected;
+}
+
+export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+  const errorDetailsState = state && state.errorDetails;
+  const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
+    flowId,
+    resourceId,
+    type,
+  });
+
+  return !errors.some(error => !error.selected);
 }
