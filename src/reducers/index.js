@@ -4072,3 +4072,17 @@ export function getJobErrorsPreview(state, jobId) {
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
+
+export function resourceOpenErrors(state, { flowId, resourceId }) {
+  return fromSession.getResourceOpenErrors(state && state.session, {
+    flowId,
+    resourceId,
+  });
+}
+
+export function resourceResolvedErrors(state, { flowId, resourceId }) {
+  return fromSession.getResourceResolvedErrors(state && state.session, {
+    flowId,
+    resourceId,
+  });
+}

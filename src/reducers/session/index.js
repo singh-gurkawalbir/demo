@@ -24,7 +24,7 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
-import errorManagement from './errorManagement';
+import errorManagement, * as fromErrorManagement from './errorManagement';
 
 export default combineReducers({
   stage,
@@ -526,6 +526,20 @@ export function getJobErrorsPreview(state, jobId) {
   return fromJobErrorsPreview.getJobErrorsPreview(
     state && state.jobErrorsPreview,
     jobId
+  );
+}
+
+export function getResourceOpenErrors(state, { flowId, resourceId }) {
+  return fromErrorManagement.getResourceOpenErrors(
+    state && state.errorManagement,
+    { flowId, resourceId }
+  );
+}
+
+export function getResourceResolvedErrors(state, { flowId, resourceId }) {
+  return fromErrorManagement.getResourceResolvedErrors(
+    state && state.errorManagement,
+    { flowId, resourceId }
   );
 }
 

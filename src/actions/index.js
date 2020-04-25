@@ -1438,9 +1438,46 @@ const errorManager = {
       }),
   },
   flowErrorDetails: {
-    request: () => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST),
-    received: () =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED),
+    open: {
+      request: ({ flowId, resourceId, loadMore }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.REQUEST, {
+          flowId,
+          resourceId,
+          loadMore,
+        }),
+      received: ({ flowId, resourceId, openErrors, loadMore }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.RECEIVED, {
+          flowId,
+          resourceId,
+          openErrors,
+          loadMore,
+        }),
+      error: ({ flowId, resourceId }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.ERROR, {
+          flowId,
+          resourceId,
+        }),
+    },
+    resolved: {
+      request: ({ flowId, resourceId, loadMore }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST, {
+          flowId,
+          resourceId,
+          loadMore,
+        }),
+      received: ({ flowId, resourceId, resolvedErrors, loadMore }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.RECEIVED, {
+          flowId,
+          resourceId,
+          resolvedErrors,
+          loadMore,
+        }),
+      error: ({ flowId, resourceId }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.ERROR, {
+          flowId,
+          resourceId,
+        }),
+    },
   },
 };
 const flow = {

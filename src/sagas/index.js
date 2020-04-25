@@ -50,6 +50,7 @@ import { COMM_STATES } from '../reducers/comms/networkComms';
 import { transferSagas } from './transfer';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
+import errorDetailsSagas from './errorManagement/errorDetails';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -149,5 +150,6 @@ export default function* rootSaga() {
     ...responseMappingSagas,
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
+    ...errorDetailsSagas,
   ]);
 }
