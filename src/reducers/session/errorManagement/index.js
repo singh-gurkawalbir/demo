@@ -1,18 +1,24 @@
 import { combineReducers } from 'redux';
 import openErrors from './openErrors';
 import errorDetails, * as fromErrorDetails from './errorDetails';
+import getFilteredErrors from '../../../utils/errorManagement';
 
 export default combineReducers({
   openErrors,
   errorDetails,
 });
 
-export function getResourceOpenErrors(state, { flowId, resourceId }) {
-  return fromErrorDetails.getErrors(state && state.errorDetails, {
+export function resourceOpenErrors(state, { flowId, resourceId, options }) {
+  const openErrors = fromErrorDetails.getErrors(state && state.errorDetails, {
     flowId,
     resourceId,
     type: 'open',
   });
+
+  return {
+    ...openErrors,
+    errors: getFilteredErrors(openErrors.errors, options),
+  };
 }
 
 export function getResourceResolvedErrors(state, { flowId, resourceId }) {
@@ -37,7 +43,10 @@ export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
   return !!error.selected;
 }
 
-export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, type, errorIds }
+) {
   const errorDetailsState = state && state.errorDetails;
   const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
     flowId,
@@ -45,5 +54,9 @@ export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
     type,
   });
 
-  return !errors.some(error => !error.selected);
+  if (!errorIds.length) return false;
+
+  return !errors.some(
+    error => errorIds.includes(error.errorId) && !error.selected
+  );
 }

@@ -12,7 +12,7 @@ export default (state = {}, action) => {
     resolvedErrors,
     loadMore,
     checked,
-    errorId,
+    errorIds,
   } = action;
 
   return produce(state, draft => {
@@ -36,17 +36,13 @@ export default (state = {}, action) => {
           nextPageURL: openErrors.nextPageURL,
         };
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT:
-        draft[flowId][resourceId].open.errors.find(
-          error => error.errorId === errorId
-        ).selected = checked;
-
-        break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ALL:
-        draft[flowId][resourceId].open.errors.forEach(
-          // eslint-disable-next-line no-param-reassign
-          error => (error.selected = checked)
-        );
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS:
+        draft[flowId][resourceId].open.errors.forEach(error => {
+          if (errorIds.includes(error.errorId)) {
+            // eslint-disable-next-line no-param-reassign
+            error.selected = checked;
+          }
+        });
         break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST:
         if (!draft[flowId]) draft[flowId] = {};

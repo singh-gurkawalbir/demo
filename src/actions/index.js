@@ -1458,18 +1458,25 @@ const errorManager = {
           resourceId,
         }),
       select: ({ flowId, resourceId, errorId, checked }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT, {
-          flowId,
-          resourceId,
-          errorId,
-          checked,
-        }),
-      selectAll: ({ flowId, resourceId, checked }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ALL, {
-          flowId,
-          resourceId,
-          checked,
-        }),
+        action(
+          actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS,
+          {
+            flowId,
+            resourceId,
+            errorIds: [errorId],
+            checked,
+          }
+        ),
+      selectAll: ({ flowId, resourceId, errorIds, checked }) =>
+        action(
+          actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS,
+          {
+            flowId,
+            resourceId,
+            errorIds,
+            checked,
+          }
+        ),
     },
     resolved: {
       request: ({ flowId, resourceId, loadMore }) =>

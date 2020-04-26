@@ -4,9 +4,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TablePagination from '@material-ui/core/TablePagination';
 import actions from '../../actions';
-import { resourceOpenErrors } from '../../reducers';
+import { resourceOpenErrors, filter } from '../../reducers';
 import CeligoTable from '../CeligoTable';
-import metadataGenerator from './metadata';
+import metadata from './metadata';
+import KeywordSearch from '../../components/KeywordSearch';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
@@ -16,18 +17,26 @@ export default function ErrorList({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const rowsPerPage = 20;
+  const defaultFilter = useMemo(
+    () => ({
+      searchBy: ['message', 'source', 'code', 'occurredAt'],
+    }),
+    []
+  );
+  const filterKey = `openErrors-${flowId}-${resourceId}`;
+  const errorFilter = useSelector(
+    state => filter(state, filterKey) || defaultFilter
+  );
+  const actionProps = { filterKey, defaultFilter, resourceId, flowId };
   const [page, setPage] = useState(0);
   const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
     resourceOpenErrors(state, {
       flowId,
       resourceId,
+      options: { ...errorFilter },
     })
   );
-  const metadata = useMemo(() => metadataGenerator({ flowId, resourceId }), [
-    flowId,
-    resourceId,
-  ]);
 
   useEffect(() => {
     if (!status) {
@@ -40,16 +49,17 @@ export default function ErrorList({ flowId, resourceId }) {
     }
   }, [dispatch, flowId, resourceId, status]);
   useEffect(() => {
-    if (openErrors.length) {
-      const currentErrorList = openErrors.slice(
-        page * rowsPerPage,
-        (page + 1) * rowsPerPage
-      );
+    const currentErrorList = openErrors.slice(
+      page * rowsPerPage,
+      (page + 1) * rowsPerPage
+    );
 
-      setErrorsInCurrentPage(currentErrorList);
-    }
+    setErrorsInCurrentPage(currentErrorList);
   }, [openErrors, page]);
 
+  useEffect(() => {
+    setPage(0);
+  }, [errorFilter]);
   const fetchMoreData = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.open.request({
@@ -71,7 +81,7 @@ export default function ErrorList({ flowId, resourceId }) {
           Load more
         </Button>
       )}
-
+      <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       <Fragment>
         <TablePagination
           className={classes.tablePaginationRoot}
@@ -92,6 +102,7 @@ export default function ErrorList({ flowId, resourceId }) {
           data={errorsInCurrentPage}
           filterKey="openErrors"
           {...metadata}
+          actionProps={actionProps}
         />
       </Fragment>
     </Fragment>

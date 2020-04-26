@@ -4073,10 +4073,14 @@ export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
 
-export function resourceOpenErrors(state, { flowId, resourceId }) {
-  return fromSession.getResourceOpenErrors(state && state.session, {
+export function resourceOpenErrors(
+  state,
+  { flowId, resourceId, options = {} }
+) {
+  return fromSession.resourceOpenErrors(state && state.session, {
     flowId,
     resourceId,
+    options,
   });
 }
 
@@ -4096,10 +4100,14 @@ export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
   });
 }
 
-export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, type, errorIds }
+) {
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
     resourceId,
     type,
+    errorIds,
   });
 }

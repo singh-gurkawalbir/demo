@@ -1,17 +1,38 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import actions from '../../../actions';
-import { isAllErrorsSelected } from '../../../reducers';
+import {
+  isAllErrorsSelected,
+  filter,
+  resourceOpenErrors,
+} from '../../../reducers';
 
-export default function SelectAllErrors({ flowId, resourceId, type = 'open' }) {
+export default function SelectAllErrors({
+  flowId,
+  resourceId,
+  type = 'open',
+  filterKey,
+  defaultFilter,
+}) {
   const dispatch = useDispatch();
+  const errorIds = useSelector(state => {
+    const errorFilter = filter(state, filterKey) || defaultFilter;
+    const { errors = [] } = resourceOpenErrors(state, {
+      flowId,
+      resourceId,
+      options: { ...errorFilter },
+    });
+
+    return errors.map(error => error.errorId);
+  }, shallowEqual);
   const isAllSelected = useSelector(state =>
     isAllErrorsSelected(state, {
       flowId,
       resourceId,
       type,
+      errorIds,
     })
   );
   const handleChange = event => {
@@ -22,6 +43,7 @@ export default function SelectAllErrors({ flowId, resourceId, type = 'open' }) {
         flowId,
         resourceId,
         checked,
+        errorIds,
       })
     );
   };

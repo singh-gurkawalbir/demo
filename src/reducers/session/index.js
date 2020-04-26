@@ -529,10 +529,10 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
-export function getResourceOpenErrors(state, { flowId, resourceId }) {
-  return fromErrorManagement.getResourceOpenErrors(
+export function resourceOpenErrors(state, { flowId, resourceId, options }) {
+  return fromErrorManagement.resourceOpenErrors(
     state && state.errorManagement,
-    { flowId, resourceId }
+    { flowId, resourceId, options }
   );
 }
 
@@ -552,13 +552,17 @@ export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
   });
 }
 
-export function isAllErrorsSelected(state, { flowId, resourceId, type }) {
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, type, errorIds }
+) {
   return fromErrorManagement.isAllErrorsSelected(
     state && state.errorManagement,
     {
       flowId,
       resourceId,
       type,
+      errorIds,
     }
   );
 }
