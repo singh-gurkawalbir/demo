@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Typography, makeStyles } from '@material-ui/core';
 import InfoIconButton from '../InfoIconButton';
 
@@ -12,11 +13,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PanelHeader({ title, children, infoText }) {
+export default function PanelHeader({ title, children, infoText, className }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={clsx(classes.root, className)}>
       <Typography variant="h4">
         {title}
         {infoText && (

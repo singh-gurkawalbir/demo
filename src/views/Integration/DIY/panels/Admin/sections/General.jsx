@@ -27,8 +27,9 @@ export default function GeneralSection({ integrationId }) {
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
-  const monitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  const canEditIntegration = useSelector(
+    state =>
+      selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
   const developerModeOn = useSelector(state => selectors.developerMode(state));
   const fieldMeta = {
@@ -48,6 +49,7 @@ export default function GeneralSection({ integrationId }) {
         type: 'text',
         multiline: true,
         maxRows: 5,
+
         label: 'Description',
         defaultValue: description,
       },
@@ -55,7 +57,7 @@ export default function GeneralSection({ integrationId }) {
         id: 'settings',
         helpKey: 'integration.settings',
         name: 'settings',
-        disabled: monitorLevelAccess || !developerModeOn,
+        disabled: !developerModeOn,
         type: 'settings',
         label: 'Settings',
         defaultValue: settings,
@@ -118,8 +120,14 @@ export default function GeneralSection({ integrationId }) {
       <PanelHeader title="General" />
 
       <div className={classes.form}>
-        <DynaForm fieldMeta={fieldMeta} key={count} render>
-          <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+        <DynaForm
+          disabled={!canEditIntegration}
+          fieldMeta={fieldMeta}
+          key={count}
+          render>
+          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
         </DynaForm>
       </div>
     </Fragment>

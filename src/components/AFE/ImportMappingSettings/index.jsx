@@ -48,6 +48,7 @@ export default function ImportMappingSettings(props) {
     options,
     disabled,
     lookups,
+    isCategoryMapping,
   } = props;
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
@@ -66,6 +67,7 @@ export default function ImportMappingSettings(props) {
         generateFields,
         options,
         lookups,
+        isCategoryMapping,
       }),
     [
       application,
@@ -75,6 +77,7 @@ export default function ImportMappingSettings(props) {
       generateFields,
       options,
       lookups,
+      isCategoryMapping,
     ]
   );
   const disableSave = useMemo(() => {

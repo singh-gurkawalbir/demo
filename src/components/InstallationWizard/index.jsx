@@ -14,7 +14,7 @@ import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import openExternalUrl from '../../utils/window';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
-import ResourceSetupDialog from '../ResourceSetupDialog';
+import ResourceSetupDrawer from '../ResourceSetup';
 import InstallationStep from '../InstallStep';
 import resourceConstants from '../../forms/constants/connection';
 import {
@@ -148,6 +148,10 @@ export default function InstallationWizard(props) {
       const newId = generateNewId();
       const connObj = { ...connectionMap[_connectionId] };
 
+      if (data && Object.prototype.hasOwnProperty.call(data, 'sandbox')) {
+        connObj.sandbox = !!data.sandbox;
+      }
+
       delete connObj._id;
       dispatch(
         actions.resource.patchStaged(
@@ -266,7 +270,7 @@ export default function InstallationWizard(props) {
   return (
     <LoadResources required resources="connections,integrations">
       {connection && (
-        <ResourceSetupDialog
+        <ResourceSetupDrawer
           resourceId={connection.newId}
           resource={connection.doc}
           resourceType="connections"
@@ -278,7 +282,7 @@ export default function InstallationWizard(props) {
         />
       )}
       {stackId && (
-        <ResourceSetupDialog
+        <ResourceSetupDrawer
           onClose={handleStackClose}
           addOrSelect
           resourceId={stackId}

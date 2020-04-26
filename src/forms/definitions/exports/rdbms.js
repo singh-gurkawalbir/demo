@@ -11,6 +11,7 @@ export default {
 
     return fieldMeta;
   },
+
   preSave: formValues => {
     const retValues = { ...formValues };
 
@@ -42,7 +43,7 @@ export default {
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -68,7 +69,8 @@ export default {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
     exportOneToMany: { formId: 'exportOneToMany' },
     exportPanel: {
       fieldId: 'exportPanel',
@@ -88,7 +90,11 @@ export default {
         ],
         type: 'collapse',
         containers: [
-          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['pageSize', 'dataURITemplate'],
+          },
         ],
       },
       {

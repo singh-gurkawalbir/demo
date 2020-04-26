@@ -2,7 +2,6 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
-import lookupUtil from '../../../utils/lookup';
 
 const emptyObj = {};
 const emptySet = [];
@@ -229,6 +228,7 @@ export default (state = {}, action) => {
             adaptorType,
             resourceData,
             application,
+            lookups,
             isGroupedSampleData,
             isVariationMapping,
             categoryId,
@@ -266,7 +266,6 @@ export default (state = {}, action) => {
                 isVariationMapping,
               }
             );
-          const lookups = lookupUtil.getLookupFromResource(resourceData);
           const initChangeIdentifier =
             (draft[cKey] &&
               draft[cKey].mappings &&
@@ -535,6 +534,9 @@ export default (state = {}, action) => {
           }
 
           if (
+            generatesMetadata.data &&
+            generatesMetadata.data.generatesMetaData &&
+            generatesMetadata.data.generatesMetaData.id &&
             !draft[cKey].generatesMetadata.find(
               meta => meta.id === generatesMetadata.data.generatesMetaData.id
             )
@@ -837,6 +839,14 @@ export function integrationAppAddOnState(state, integrationId) {
   const addOnKey = `${integrationId}-addOns`;
 
   return state[addOnKey] || emptyObj;
+}
+
+export function integrationAppMappingMetadata(state, integrationId) {
+  if (!state) {
+    return emptyObj;
+  }
+
+  return state[integrationId] || emptyObj;
 }
 
 export function shouldRedirect(state, integrationId) {

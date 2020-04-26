@@ -23,7 +23,7 @@ export default {
     statusExport: {
       fieldId: 'statusExport',
       type: 'labeltitle',
-      label: 'Status Export',
+      label: 'Status export',
     },
     submit: {
       fieldId: 'submit',

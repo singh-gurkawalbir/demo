@@ -1,7 +1,7 @@
 export default {
   'http.successMediaType': {
     type: 'select',
-    label: 'Success Media Type',
+    label: 'Success media type',
     options: [
       {
         items: [
@@ -20,7 +20,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error Media Type',
+    label: 'Error media type',
     options: [
       {
         items: [
@@ -74,7 +74,7 @@ export default {
   },
   'http.method': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     required: true,
     options: [
       {
@@ -94,7 +94,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     required: true,
     defaultValue: r => r && r.http && r.http.method,
     options: [
@@ -115,7 +115,7 @@ export default {
   'http.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
@@ -135,11 +135,11 @@ export default {
     type: 'keyvalue',
     keyName: 'name',
     valueName: 'value',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
   },
   'http.paging.method': {
     type: 'select',
-    label: 'Paging Method',
+    label: 'Paging method',
     options: [
       {
         items: [
@@ -176,7 +176,7 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
-    label: 'Build Paging Post Body',
+    label: 'Build paging post body',
     required: true,
     visibleWhenAll: [
       {
@@ -210,7 +210,7 @@ export default {
   },
   configureAsyncHelper: {
     type: 'checkbox',
-    label: 'Configure Async Helper',
+    label: 'Configure async helper',
   },
   'http.paging.token': {
     type: 'text',
@@ -256,7 +256,7 @@ export default {
   },
   'http.paging.pathAfterFirstRequest': {
     type: 'text',
-    label: 'Token Path After First Request',
+    label: 'Token path after first request',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -270,7 +270,7 @@ export default {
   },
   'http.paging.resourcePath': {
     type: 'text',
-    label: 'Resource Path',
+    label: 'Resource path',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -284,7 +284,7 @@ export default {
   },
   'http.paging.maxPagePath': {
     type: 'text',
-    label: 'Max Page Path',
+    label: 'Max page path',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -298,7 +298,7 @@ export default {
   },
   'http.paging.maxCountPath': {
     type: 'text',
-    label: 'Max Count Path',
+    label: 'Max count path',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -312,7 +312,7 @@ export default {
   },
   'http.paging.lastPageStatusCode': {
     type: 'text',
-    label: 'Last Page Status Code',
+    label: 'Last page status code',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -327,7 +327,7 @@ export default {
   },
   'http.paging.lastPagePath': {
     type: 'text',
-    label: 'Last Page Path',
+    label: 'Last page path',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -337,7 +337,7 @@ export default {
   },
   'http.paging.lastPageValues': {
     type: 'text',
-    label: 'Last Page Values',
+    label: 'Last page values',
     visibleWhen: [
       {
         field: 'outputMode',
@@ -348,7 +348,7 @@ export default {
   },
   'http.paging.linkHeaderRelation': {
     type: 'text',
-    label: 'Link Header Relation',
+    label: 'Link header relation',
     visibleWhenAll: [
       {
         field: 'http.paging.method',
@@ -361,7 +361,7 @@ export default {
     ],
   },
   'http._asyncHelperId': {
-    label: 'Async Helper',
+    label: 'Async helper',
     type: 'selectresource',
     resourceType: 'asyncHelpers',
     appTypeIsStatic: true,
@@ -378,7 +378,7 @@ export default {
   },
   'http.response.resourcePath': {
     type: 'text',
-    label: 'Resource Path',
+    label: 'Resource path',
     requiredWhen: [
       {
         field: 'http.successMediaType',
@@ -394,7 +394,7 @@ export default {
   },
   'http.response.resourceIdPath': {
     type: 'text',
-    label: 'Http response resource Id Path',
+    label: 'Http response resource ID path',
     visibleWhen: [
       {
         field: 'http.successMediaType',
@@ -404,7 +404,7 @@ export default {
   },
   'http.response.successPath': {
     type: 'text',
-    label: 'Success Path',
+    label: 'Success path',
     requiredWhen: [
       {
         field: 'http.response.successValues',
@@ -425,7 +425,7 @@ export default {
   'http.response.successValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Success Values',
+    label: 'Success values',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -439,7 +439,7 @@ export default {
   },
   'http.response.errorPath': {
     type: 'text',
-    label: 'Error Path',
+    label: 'Error path',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -453,7 +453,7 @@ export default {
   },
   'http.response.failPath': {
     type: 'text',
-    label: 'Fail Path',
+    label: 'Fail path',
     requiredWhen: [
       {
         field: 'http.response.failValues',
@@ -474,7 +474,7 @@ export default {
   'http.response.failValues': {
     type: 'text',
     delimiter: ',',
-    label: 'Fail Values',
+    label: 'Fail values',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -496,7 +496,7 @@ export default {
   },
   'transform.script._scriptId': {
     type: 'text',
-    label: 'Transform script _script Id',
+    label: 'Transform script _script id',
   },
   'transform.script.function': {
     type: 'text',
@@ -518,7 +518,7 @@ export default {
   'http.once.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'Build HTTP Request Body',
+    label: 'Build HTTP request body',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -529,7 +529,7 @@ export default {
   },
   'http.once.method': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     visibleWhenAll: [
       {
         field: 'outputMode',
@@ -551,7 +551,7 @@ export default {
   },
   'http.response.blobFormat': {
     type: 'select',
-    label: 'Blob Format',
+    label: 'Blob format',
     options: [
       {
         items: [

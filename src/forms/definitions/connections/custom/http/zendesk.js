@@ -30,8 +30,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
-      label: 'Authentication Type',
-      helpText: 'Please select Authentication Type',
+      label: 'Authentication type',
       defaultValue: r =>
         r &&
         r.http &&
@@ -57,8 +56,6 @@ export default {
       endAdornment: '.zendesk.com',
       label: 'Subdomain',
       required: true,
-      helpText:
-        'Please enter your team name here which you configured while signing up for a new Zendesk account.',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -104,9 +101,7 @@ export default {
       id: 'http.apiToken',
       required: true,
       type: 'text',
-      label: 'API Token',
-      helpText:
-        'API tokens are managed in the Support admin interface at Admin > Channels > API',
+      label: 'API token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },

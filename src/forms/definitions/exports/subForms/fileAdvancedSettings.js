@@ -3,7 +3,7 @@ export default {
     'file.decompressFiles': {
       id: 'file.decompressFiles',
       type: 'checkbox',
-      label: 'Decompress Files',
+      label: 'Decompress files',
       visibleWhenAll: [
         {
           field: 'outputMode',

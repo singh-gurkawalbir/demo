@@ -43,14 +43,14 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to Export?',
+      label: 'What would you like to export?',
     },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
     type: {
       id: 'type',
       type: 'select',
-      label: 'Export Type',
+      label: 'Export type',
       defaultValue: r => {
         const isNew = isNewId(r._id);
 

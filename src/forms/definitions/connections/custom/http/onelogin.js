@@ -27,7 +27,6 @@ export default {
       startAdornment: 'https://api.',
       endAdornment: '.onelogin.com/api',
       label: 'Region',
-      helpText: 'Please enter Region for URI.',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -48,18 +47,17 @@ export default {
       id: 'http.unencrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Key',
-      helpText: 'Please enter API Key of your OneLogin Account.',
+      label: 'API key',
+      helpKey: 'onelogin.connection.http.unencrypted.apiKey',
     },
     'http.encrypted.apiSecret': {
       id: 'http.encrypted.apiSecret',
       required: true,
       defaultValue: '',
       type: 'text',
-      label: 'API Secret',
+      label: 'API secret',
       inputType: 'password',
-      helpText:
-        'Please enter API Secret of your OneLogin Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+      helpKey: 'onelogin.connection.http.encrypted.apiSecret',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -72,14 +70,14 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
         { field: 'http.oneloginRegion', is: [''] },
       ],
-      label: 'Generate Token',
+      label: 'Generate token',
       required: true,
-      helpText: 'The access token of your OneLogin account.',
+      helpKey: 'onelogin.connection.http.auth.token.token',
     },
     'http.auth.token.refreshToken': {
       id: 'http.auth.token.refreshToken',
       type: 'text',
-      label: 'refresh Token',
+      label: 'refresh token',
       visible: false,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

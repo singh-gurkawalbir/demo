@@ -37,18 +37,18 @@ const Transfers = loadable(() =>
 );
 const tabs = [
   {
-    path: 'subscription',
-    label: 'Subscription',
-    Icon: KnowledgeBaseIcon,
-    Panel: Subscription,
-  },
-  {
     path: 'profile',
     label: 'Profile',
     Icon: SingleUserIcon,
     Panel: Profile,
   },
   { path: 'users', label: 'Users', Icon: UsersIcon, Panel: UsersPanel },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Icon: KnowledgeBaseIcon,
+    Panel: Subscription,
+  },
   {
     path: 'audit',
     label: 'Audit log',

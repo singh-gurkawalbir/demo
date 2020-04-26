@@ -130,8 +130,16 @@ export default function IntegrationApp({ match, history }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
+  const integrationAppMetadata = useSelector(state =>
+    selectors.integrationAppMappingMetadata(state, integrationId)
+  );
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
+  const accessLevel = useSelector(
+    state =>
+      selectors.resourcePermissions(state, 'integrations', integrationId)
+        .accessLevel
   );
   //
   //
@@ -154,13 +162,23 @@ export default function IntegrationApp({ match, history }) {
   }, [addOnState, dispatch, integrationId, requestLicense]);
 
   useEffect(() => {
-    if (addOnState && !addOnState.mappingMapping && !requestMappingMetadata) {
+    if (
+      integrationAppMetadata &&
+      !integrationAppMetadata.mappingMetadata &&
+      !requestMappingMetadata
+    ) {
       dispatch(
         actions.integrationApp.settings.requestMappingMetadata(integrationId)
       );
       setRequestMappingMetadata(true);
     }
-  }, [addOnState, dispatch, integrationId, requestMappingMetadata]);
+  }, [
+    addOnState,
+    dispatch,
+    integrationAppMetadata,
+    integrationId,
+    requestMappingMetadata,
+  ]);
 
   useEffect(() => {
     if (redirectTo) {
@@ -315,6 +333,7 @@ export default function IntegrationApp({ match, history }) {
         title={integration.name}
         titleTag={
           <ChipInput
+            disabled={!['owner', 'manage'].includes(accessLevel)}
             value={integration.tag || 'tag'}
             className={classes.tag}
             variant="outlined"
@@ -333,12 +352,14 @@ export default function IntegrationApp({ match, history }) {
         )}
         {supportsMultiStore && (
           <div className={classes.actions}>
-            <IconTextButton
-              variant="text"
-              data-test={`add${storeLabel}`}
-              onClick={handleAddNewStoreClick}>
-              <AddIcon /> Add {storeLabel}
-            </IconTextButton>
+            {accessLevel === 'owner' && (
+              <IconTextButton
+                variant="text"
+                data-test={`add${storeLabel}`}
+                onClick={handleAddNewStoreClick}>
+                <AddIcon /> Add {storeLabel}
+              </IconTextButton>
+            )}
             <Select
               displayEmpty
               data-test={`select${storeLabel}`}

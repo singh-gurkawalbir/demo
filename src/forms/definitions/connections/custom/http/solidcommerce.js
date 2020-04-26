@@ -25,23 +25,19 @@ export default {
     name: { fieldId: 'name' },
     'http.encrypted.securityKey': {
       id: 'http.encrypted.securityKey',
-      label: 'Security Key',
+      label: 'Security key',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText:
-        'Enter your Solid Commerce Developer Key or Security Key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Security Key safe. This can be obtained from the Settings section and Security Key subsection.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.encrypted.appKey': {
       id: 'http.encrypted.appKey',
-      label: 'Application Key',
+      label: 'Application key',
       type: 'text',
       inputType: 'password',
       required: true,
-      helpText:
-        'Application Key is generated at https://www.upsefulfillment.com, under Marketplaces --> Marketplaces Setup --> Web Services.',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

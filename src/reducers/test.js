@@ -1740,7 +1740,6 @@ describe('integrationAppConnectionList reducer', () => {
         rest: {},
         type: 'rest',
         offline: false,
-        queueSize: 0,
       },
       {
         _id: 'connection2',
@@ -1748,7 +1747,6 @@ describe('integrationAppConnectionList reducer', () => {
         netsuite: {},
         type: 'netsuite',
         offline: false,
-        queueSize: 0,
       },
     ]);
   });
@@ -1787,7 +1785,6 @@ describe('integrationAppConnectionList reducer', () => {
         type: 'rest',
         rest: {},
         offline: false,
-        queueSize: 0,
       },
       {
         _id: 'connection4',
@@ -1795,7 +1792,6 @@ describe('integrationAppConnectionList reducer', () => {
         type: 'rest',
         rest: {},
         offline: false,
-        queueSize: 0,
       },
     ]);
   });
