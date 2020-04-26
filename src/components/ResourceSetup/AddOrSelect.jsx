@@ -118,7 +118,6 @@ export default function AddOrSelect(props) {
             <ResourceFormWithStatusPanel
               heightOffset="250"
               occupyFullWidth
-              editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}
               cancelButtonLabel="Cancel"

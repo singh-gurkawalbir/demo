@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -208,10 +208,9 @@ export default function CeligoDrawer() {
   const marketplaceConnectors = useSelector(state =>
     selectors.marketplaceConnectors(state, undefined, isSandbox)
   );
-  const handleDrawerToggle = () => {
+  const handleDrawerToggle = useCallback(() => {
     dispatch(actions.toggleDrawer());
-  };
-
+  }, [dispatch]);
   const handleExpandClick = label => () => {
     setExpand(label === expand ? null : label);
 
