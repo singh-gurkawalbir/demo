@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import openErrors from './openErrors';
+import openErrors, * as fromOpenErrors from './openErrors';
 import errorDetails, * as fromErrorDetails from './errorDetails';
 import getFilteredErrors from '../../../utils/errorManagement';
 
@@ -59,4 +59,8 @@ export function isAllErrorsSelected(
   return !errors.some(
     error => errorIds.includes(error.errorId) && !error.selected
   );
+}
+
+export function flowErrorMap(state, flowId) {
+  return fromOpenErrors.flowErrorMap(state && state.openErrors, flowId);
 }

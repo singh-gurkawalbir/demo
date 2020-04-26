@@ -566,4 +566,11 @@ export function isAllErrorsSelected(
     }
   );
 }
+
+export function flowErrorMap(state, flowId) {
+  return fromErrorManagement.flowErrorMap(
+    state && state.errorManagement,
+    flowId
+  );
+}
 // #endregion

@@ -57,6 +57,7 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
+  openErrorCount,
   ...pg
 }) => {
   const pending = !pg._exportId;
@@ -298,6 +299,7 @@ const PageGenerator = ({
         resource={resource}
         index={index}
         schedule={schedule}
+        openErrorCount={openErrorCount}
         isPageGenerator
       />
       <div

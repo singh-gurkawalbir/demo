@@ -4111,3 +4111,7 @@ export function isAllErrorsSelected(
     errorIds,
   });
 }
+
+export function flowErrorMap(state, flowId) {
+  return fromSession.flowErrorMap(state && state.session, flowId);
+}

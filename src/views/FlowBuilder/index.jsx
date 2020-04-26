@@ -252,6 +252,9 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const { status: openFlowErrorsStatus, data: flowErrorsMap } = useSelector(
+    state => selectors.flowErrorMap(state, flowId)
+  );
   // There are 2 conditions to identify this flow as a Data loader.
   // if it is an existing flow, then we can use the existence of a simple export,
   // else for staged flows, we can test to see if the pending export
@@ -371,6 +374,11 @@ function FlowBuilder() {
   }, [createdProcessorResourceType, createdProcessorId, patchFlow]);
   // #endregion
 
+  useEffect(() => {
+    if (!openFlowErrorsStatus && !newFlowId) {
+      dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
+    }
+  }, [dispatch, flowId, newFlowId, openFlowErrorsStatus]);
   const pushOrReplaceHistory = to => {
     if (match.isExact) {
       history.push(to);
@@ -595,6 +603,9 @@ function FlowBuilder() {
                   onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
                   key={
                     pg._exportId ||
                     pg._connectionId ||
@@ -641,6 +652,11 @@ function FlowBuilder() {
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap &&
+                      flowErrorsMap[pp._importId || pp._exportId]) ||
+                    0
+                  }
                   key={
                     pp._importId ||
                     pp._exportId ||
