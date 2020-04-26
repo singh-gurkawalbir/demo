@@ -10,7 +10,6 @@ import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
 import RechartsDemo from '../../views/LineGraphDemo/Recharts';
-// import PlotlyDemo from '../../views/LineGraphDemo/Plotly';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -79,8 +78,6 @@ export default class AppRouting extends Component {
           component={ClonePreview}
         />
         <Route path="/pg/linegraphs/recharts" component={RechartsDemo} />
-
-        {/* <Route path="/pg/linegraphs/plotly" component={PlotlyDemo} /> */}
 
         <Route
           path="/pg/clone/:resourceType/:resourceId/setup"
