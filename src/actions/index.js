@@ -48,10 +48,17 @@ const form = {
         formKey,
         fieldProps: { id },
       }),
-    forceFieldState: formKey => (id, visible, disable, required) =>
+    forceFieldState: formKey => (
+      id,
+      visible,
+      disable,
+      required,
+      isValid,
+      errorMessages
+    ) =>
       action(actionTypes.FORM.FIELD.FORCE_STATE, {
         formKey,
-        fieldProps: { id, visible, disable, required },
+        fieldProps: { id, visible, disable, required, isValid, errorMessages },
       }),
     clearForceFieldState: formKey => id =>
       action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {

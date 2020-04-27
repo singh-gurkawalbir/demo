@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import { allAreTrue, someAreTrue, noneAreTrue } from './validator';
+import { isValueForceComputed } from '..';
 
 /* eslint-disable no-restricted-globals */
 
@@ -208,10 +209,20 @@ export const validateField = (
   validationHandler,
   parentContext
 ) => {
-  const { required, visible, validWhen = {}, touched = false } = field;
+  const {
+    required,
+    visible,
+    validWhen = {},
+    touched = false,
+    forceComputation,
+  } = field;
   let isValid = true;
   const errorMessages = [];
   const formattedErrorMessage = () => errorMessages.join('. ');
+
+  if (isValueForceComputed(forceComputation, 'isValid')) {
+    return;
+  }
 
   if (visible) {
     const value = getValueFromField(field);

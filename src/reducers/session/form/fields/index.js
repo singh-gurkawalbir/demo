@@ -7,7 +7,7 @@ import {
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
-const isValueBoolean = value => value && typeof value === 'boolean';
+const isValueBoolean = value => typeof value === 'boolean';
 
 export default function fields(state = {}, action) {
   const { type, formKey, fieldProps = {} } = action;
@@ -19,8 +19,10 @@ export default function fields(state = {}, action) {
     visible,
     disable,
     required,
+    isValid,
+    errorMessages,
   } = fieldProps;
-  const fieldStateProps = { visible, required, disable };
+  const fieldStateProps = { visible, required, disable, isValid };
 
   return produce(state, draft => {
     if (!draft[formKey]) {
@@ -81,6 +83,10 @@ export default function fields(state = {}, action) {
 
             fieldsRef[id][key] = fieldStateProps[key];
 
+            if (key === 'isValid' && fieldStateProps[key] === false) {
+              fieldsRef[id].errorMessages = errorMessages;
+            }
+
             if (!fieldsRef[id].forceComputation)
               fieldsRef[id].forceComputation = [];
             fieldsRef[id].forceComputation.push(key);
@@ -92,6 +98,7 @@ export default function fields(state = {}, action) {
       case actionTypes.FORM.FIELD.CLEAR_FORCE_STATE:
         delete fieldsRef[id].forceComputation;
         // no need to generate next state...
+        // TODO: check if generating next state is neccessary
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         fieldsRef[id].touched = true;

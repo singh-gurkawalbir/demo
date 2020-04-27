@@ -210,7 +210,7 @@ export const isRequired = (field, fieldsById) => {
   });
 };
 
-const isValueForceComputed = (forceComputation, stateProp) =>
+export const isValueForceComputed = (forceComputation, stateProp) =>
   forceComputation && forceComputation.includes(stateProp);
 // const fieldHash = fieldProps => JSON.stringify(fieldProps);
 
