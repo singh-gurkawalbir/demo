@@ -261,7 +261,12 @@ export default function ConnectorInstallation(props) {
       installerFunction,
       type,
       sourceConnection,
+      completed,
     } = step;
+
+    if (completed) {
+      return false;
+    }
 
     if (_connectionId || type === 'connection' || sourceConnection) {
       if (step.isTriggered) {
@@ -289,7 +294,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL) {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -322,12 +327,19 @@ export default function ConnectorInstallation(props) {
             'verify'
           )
         );
-        dispatch(
-          actions.integrationApp.installer.installStep(
-            integrationId,
-            installerFunction
-          )
-        );
+
+        if (isFrameWork2) {
+          dispatch(
+            actions.integrationApp.installer.scriptInstallStep(integrationId)
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.installer.installStep(
+              integrationId,
+              installerFunction
+            )
+          );
+        }
       }
       // handle Action step click
     } else if (!step.isTriggered) {

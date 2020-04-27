@@ -22,7 +22,8 @@ export default {
     if (
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
-      step.type === 'connection'
+      step.type === 'connection' ||
+      step.sourceConnection
     ) {
       if (step.completed) {
         stepText = 'Configured';
