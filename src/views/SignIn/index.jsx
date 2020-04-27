@@ -42,9 +42,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: 380,
     marginTop: '23%',
-    // [theme.breakpoints.down('xs')]: {
-    //   width: '100%',
-    // },
   },
   title: {
     marginBottom: theme.spacing(3),

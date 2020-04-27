@@ -2,7 +2,7 @@ import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Component } from 'react';
 import { hot } from 'react-hot-loader';
-import { Typography, Button, Link } from '@material-ui/core';
+import { Typography, Button, Link, FormLabel } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -36,7 +36,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     margin: theme.spacing(1),
   },
   submit: {
-    width: '90%',
+    width: '100%',
     borderRadius: 4,
     height: 48,
     fontSize: theme.spacing(2),
@@ -44,8 +44,8 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   editableFields: {
     textAlign: 'center',
+    width: '100%',
     maxWidth: 500,
-    margin: [[-8, -24]],
     background: theme.palette.background.paper2,
     padding: [[8, 24]],
     [theme.breakpoints.down('sm')]: {
@@ -56,28 +56,18 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     textDecoration: 'none',
   },
   textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: '90%',
+    width: '100%',
     border: '1px solid',
     background: theme.palette.background.paper,
     borderColor: theme.palette.secondary.lightest,
     marginBottom: 0,
-
-    // '& div > input:disabled': {
-    //   background: theme.palette.background.paper2,
-    // },
-    '& Label': {
-      color: theme.palette.secondary.light,
-      zIndex: 2,
-    },
   },
   alertMsg: {
     marginBottom: theme.spacing(1),
     fontSize: 12,
     textAlign: 'left',
-    marginLeft: 20,
-    width: '90%',
+    marginLeft: 0,
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     '& > svg': {
@@ -97,7 +87,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   googleBtn: {
     borderRadius: 4,
-    width: '90%',
+    width: '100%',
     background: `url(${path}) 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 48,
@@ -108,7 +98,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     margin: '0 auto',
     marginBottom: theme.spacing(2),
     '&:before': {
@@ -126,6 +116,14 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   hidden: {
     display: 'none',
+  },
+  wrapper: {
+    textAlign: 'left',
+    marginBottom: theme.spacing(2),
+  },
+  label: {
+    display: 'flex',
+    marginBottom: theme.spacing(1),
   },
 }))
 class SignIn extends Component {
@@ -202,27 +200,34 @@ class SignIn extends Component {
     return (
       <div className={classes.editableFields}>
         <form onSubmit={this.handleOnSubmit}>
-          <TextField
-            data-test="email"
-            id="email"
-            label="Email"
-            type="email"
-            margin="normal"
-            variant="filled"
-            value={dialogOpen ? userEmail : email}
-            onChange={this.handleOnChangeEmail}
-            className={classes.textField}
-            disabled={dialogOpen}
-          />
-          <TextField
-            data-test="password"
-            id="password"
-            label="Password"
-            type="password"
-            margin="normal"
-            variant="filled"
-            className={classes.textField}
-          />
+          <div className={classes.wrapper}>
+            <FormLabel htmlFor="email" className={classes.label}>
+              Email
+            </FormLabel>
+            <TextField
+              data-test="email"
+              id="email"
+              type="email"
+              variant="filled"
+              value={dialogOpen ? userEmail : email}
+              onChange={this.handleOnChangeEmail}
+              className={classes.textField}
+              disabled={dialogOpen}
+            />
+          </div>
+          <div className={classes.wrapper}>
+            <FormLabel htmlFor="password" className={classes.label}>
+              Password
+            </FormLabel>
+            <TextField
+              data-test="password"
+              id="password"
+              type="password"
+              variant="filled"
+              className={classes.textField}
+            />
+          </div>
+
           {error && (
             <div>
               <Typography
