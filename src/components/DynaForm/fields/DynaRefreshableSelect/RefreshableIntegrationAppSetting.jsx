@@ -42,11 +42,12 @@ export default function RefreshableIntegrationAppSetting(props) {
   const connection = useResourceList(netsuiteFilterConfig).resources[0];
   const netSuiteSystemDomain = useMemo(
     () =>
+      fieldName.includes('_listSavedSearches') &&
       connection &&
       connection.netsuite &&
       connection.netsuite.dataCenterURLs &&
       connection.netsuite.dataCenterURLs.systemDomain,
-    [connection]
+    [connection, fieldName]
   );
   const valueAndLabel = properties && properties.yieldValueAndLabel;
 
