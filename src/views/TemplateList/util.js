@@ -15,7 +15,7 @@ export const templateList = [
   { label: 'Chargify', value: 'chargify' },
   { label: 'Clover', value: 'clover' },
   { label: 'DCL', value: 'dcl' },
-  { label: 'Desk', value: 'desk' },
+  // { label: 'Desk', value: 'desk' },
   { label: 'Docusign', value: 'docusign' },
   { label: 'Dropbox', value: 'dropbox' },
   { label: 'eBay', value: 'ebay' },

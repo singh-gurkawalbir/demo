@@ -171,6 +171,7 @@ import bigquery from './bigquery';
 import zendesksell from './zendesksell';
 import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
+import inspectorio from './inspectorio';
 
 export default {
   bigquery,
@@ -345,4 +346,5 @@ export default {
   '3plcentral': threeplcentral,
   loopreturns,
   zendesksell,
+  inspectorio,
 };

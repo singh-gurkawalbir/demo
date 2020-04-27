@@ -402,6 +402,12 @@ const connectors = [
   },
   { id: 'insightly', name: 'Insightly', type: 'rest', assistant: 'insightly' },
   {
+    id: 'inspectorio',
+    name: 'Inspectorio',
+    type: 'http',
+    assistant: 'inspectorio',
+  },
+  {
     id: 'integratorio',
     name: 'integrator.io',
     type: 'rest',

@@ -118,7 +118,7 @@ export default {
           { label: 'ADP', value: 'adp' },
           { label: 'ServiceNow', value: 'servicenow' },
           { label: 'Zuora', value: 'zuora' },
-          { label: 'Desk', value: 'desk' },
+          // { label: 'Desk', value: 'desk' },
           { label: 'Other', value: 'other' },
           { label: 'Braintree', value: 'braintree' },
           { label: 'Ariba', value: 'ariba' },
