@@ -146,7 +146,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
       resourceType
     )
   ) {
-    merged.sandbox = isSandbox;
+    // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
+    // For all other cases, set the sandbox property to current environment
+    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox'))
+      merged.sandbox = isSandbox;
   }
 
   let updated;
