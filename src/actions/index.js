@@ -437,10 +437,11 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues) =>
+      save: (definitionRules, formValues, flowId) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
+          flowId,
         }),
     },
   },
