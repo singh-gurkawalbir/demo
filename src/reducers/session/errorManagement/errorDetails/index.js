@@ -44,6 +44,12 @@ export default (state = {}, action) => {
           }
         });
         break;
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.RESET_SELECTION:
+        draft[flowId][resourceId].open.errors.forEach(error => {
+          // eslint-disable-next-line no-param-reassign
+          delete error.selected;
+        });
+        break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST:
         if (!draft[flowId]) draft[flowId] = {};
 
