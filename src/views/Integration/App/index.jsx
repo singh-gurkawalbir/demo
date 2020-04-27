@@ -350,7 +350,7 @@ export default function IntegrationApp({ match, history }) {
             <CopyIcon /> Clone integration
           </IconTextButton>
         )}
-        {supportsMultiStore && (
+        {integrationAppName === 'SalesforceNetSuite' && supportsMultiStore && (
           <div className={classes.actions}>
             {accessLevel === 'owner' && (
               <IconTextButton
