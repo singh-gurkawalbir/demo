@@ -747,6 +747,41 @@ export function resourceList(state, options = {}) {
   return fromData.resourceList(state && state.data, options);
 }
 
+export function resourceListModified(userState, dataState, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    ![
+      'accesstokens',
+      'agents',
+      'iclients',
+      'scripts',
+      'stacks',
+      'templates',
+      'published',
+      'transfers',
+    ].includes(
+      /* These resources are common for both production & sandbox environments. */
+      options.type
+    )
+  ) {
+    const preferences = fromUser.userPreferences(userState);
+
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
+  }
+
+  return fromData.resourceList(dataState, options);
+}
+
+export const makeResourceListSelector = () =>
+  createSelector(
+    state => state && state.user,
+    state => state && state.data,
+    (_, options) => options,
+    (userState, dataState, options) =>
+      resourceListModified(userState, dataState, options)
+  );
+
 export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
@@ -1002,6 +1037,46 @@ export function marketplaceConnectors(state, application, sandbox) {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
+
+export function marketplaceConnectorsModified(
+  userState,
+  dataState,
+  application,
+  sandbox
+) {
+  const licenses = fromUser.licenses(userState);
+  const connectors = fromData.marketplaceConnectors(
+    dataState,
+    application,
+    sandbox,
+    licenses
+  );
+
+  return connectors
+    .map(c => {
+      const installedIntegrationApps = resourceListModified(
+        userState,
+        dataState,
+        {
+          type: 'integrations',
+          sandbox,
+          filter: { _connectorId: c._id },
+        }
+      );
+
+      return { ...c, installed: !!installedIntegrationApps.resources.length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export const makeMarketPlaceConnectorsSelectors = createSelector(
+  state => state && state.user,
+  state => state && state.data,
+  (_, application) => application,
+  (_1, _2, sandbox) => sandbox,
+  (userState, dataState, application, sandbox) =>
+    marketplaceConnectorsModified(userState, dataState, application, sandbox)
+);
 
 export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);

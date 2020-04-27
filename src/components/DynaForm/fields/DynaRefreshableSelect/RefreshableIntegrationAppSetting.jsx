@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
+import useResourceList from '../../../../hooks/useResourceList';
 
 export default function RefreshableIntegrationAppSetting(props) {
   const {
@@ -31,21 +32,22 @@ export default function RefreshableIntegrationAppSetting(props) {
       defaultFieldOptions
     )
   );
-  const netSuiteSystemDomain = useSelector(state => {
-    if (fieldName.includes('_listSavedSearches')) {
-      const connection = selectors.resourceList(state, {
-        type: 'connections',
-        filter: { type: 'netsuite', _integrationId },
-      }).resources[0];
-
-      return (
-        connection &&
-        connection.netsuite &&
-        connection.netsuite.dataCenterURLs &&
-        connection.netsuite.dataCenterURLs.systemDomain
-      );
-    }
-  });
+  const netsuiteFilterConfig = useMemo(
+    () => ({
+      type: 'connections',
+      filter: { type: 'netsuite', _integrationId },
+    }),
+    [_integrationId]
+  );
+  const connection = useResourceList(netsuiteFilterConfig).resources[0];
+  const netSuiteSystemDomain = useMemo(
+    () =>
+      connection &&
+      connection.netsuite &&
+      connection.netsuite.dataCenterURLs &&
+      connection.netsuite.dataCenterURLs.systemDomain,
+    [connection]
+  );
   const valueAndLabel = properties && properties.yieldValueAndLabel;
 
   useEffect(() => {
