@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import * as selectors from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
@@ -125,13 +126,23 @@ export default function InstallBase(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <CeligoTable
-          data={resources}
-          filterKey={sortFilterKey}
-          onSelectChange={handleSelectChange}
-          {...metadata}
-          selectableRows
-        />
+        <LoadResources required resources="connectorInstallBase">
+          {list.count === 0 ? (
+            <Typography>
+              {list.total === 0
+                ? `You don't have any installbase.`
+                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+            </Typography>
+          ) : (
+            <CeligoTable
+              data={resources}
+              filterKey={sortFilterKey}
+              onSelectChange={handleSelectChange}
+              {...metadata}
+              selectableRows
+            />
+          )}
+        </LoadResources>
       </div>
       <ShowMoreDrawer
         filterKey="connectorInstallBase"
