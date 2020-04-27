@@ -1,34 +1,11 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
-import {
-  isProduction,
-  conditionalLookupOptionsforRest,
-  conditionalLookupOptionsforRestProduction,
-} from '../../../../../forms/utils';
 
 export default {
   getMetaData: (params = {}) => {
-    const {
-      value,
-      lookup = {},
-      extractFields,
-      generate,
-      lookups,
-      options = {},
-    } = params;
-    const { isGroupedSampleData = false, connectionId, isComposite } = options;
-    let conditionalWhenOptions = isProduction()
-      ? conditionalLookupOptionsforRestProduction
-      : conditionalLookupOptionsforRest;
-
-    if (!isComposite) {
-      conditionalWhenOptions = conditionalWhenOptions.slice(
-        2,
-        conditionalWhenOptions.length + 1
-      );
-    }
-
+    const { value, extractFields, generate, options = {} } = params;
+    const { isGroupedSampleData = false } = options;
     const fieldMeta = {
       fieldMap: {
         dataType: {
@@ -102,7 +79,6 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
@@ -184,37 +160,6 @@ export default {
           // helpText not present
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
-        lookupAction: {
-          id: 'lookupAction',
-          name: 'lookupAction',
-          type: 'radiogroup',
-          defaultValue:
-            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
-            'disallowFailure',
-          label: 'Action to take if unique match not found',
-          showOptionsVertically: true,
-          options: [
-            {
-              items: [
-                {
-                  label: 'Fail Record',
-                  value: 'disallowFailure',
-                },
-                {
-                  label: 'Use Empty String as Default Value',
-                  value: 'useEmptyString',
-                },
-                { label: 'Use Null as Default Value', value: 'useNull' },
-                { label: 'Use Custom Default Value', value: 'default' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.lookupAction',
-          visibleWhenAll: [
-            { field: 'lookup.mode', is: ['dynamic', 'static'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-        },
         default: {
           id: 'default',
           name: 'default',
@@ -243,20 +188,6 @@ export default {
           ],
           helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
-        },
-        lookupDefault: {
-          id: 'lookupDefault',
-          name: 'lookupDefault',
-          type: 'text',
-          label: 'Enter Default Value',
-          placeholder: 'Enter Default Value',
-          required: true,
-          visibleWhenAll: [
-            { field: 'lookupAction', is: ['default'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-          helpKey: 'mapping.lookupDefault',
-          defaultValue: lookup.default,
         },
         extractDateFormat: {
           id: 'extractDateFormat',
@@ -340,39 +271,6 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
-        'conditional.when': {
-          id: 'conditional.when',
-          name: 'conditionalWhen',
-          type: 'select',
-          label: 'Only perform mapping when:',
-          defaultValue: value.conditional && value.conditional.when,
-          options: [{ items: conditionalWhenOptions }],
-        },
-
-        'conditional.lookupName': {
-          id: 'conditional.lookupName',
-          name: 'conditionalLookupName',
-          label: 'Lookup name:',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          connectionId,
-          refreshOptionsOnChangesTo: ['lookups'],
-          defaultValue: value.conditional && value.conditional.lookupName,
-          visibleWhen: [
-            {
-              field: 'conditional.when',
-              is: ['lookup_not_empty', 'lookup_empty'],
-            },
-          ],
-          required: true,
-        },
-        lookups: {
-          name: 'lookups',
-          fieldId: 'lookups',
-          id: 'lookups',
-          visible: false,
-          defaultValue: lookups,
-        },
       },
       layout: {
         fields: [
@@ -386,23 +284,15 @@ export default {
           'expression',
           'standardAction',
           'hardcodedAction',
-          'lookupAction',
           'default',
           'hardcodedDefault',
-          'lookupDefault',
           'extractDateFormat',
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
         ],
         type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
-          },
-        ],
+        containers: [],
       },
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
@@ -429,21 +319,6 @@ export default {
           }
 
           return expressionValue;
-        }
-
-        if (fieldId === 'conditional.lookupName') {
-          const lookupField = fields.find(field => field.fieldId === 'lookups');
-
-          return {
-            lookups: {
-              fieldId: 'lookups',
-              data:
-                (lookupField &&
-                  Array.isArray(lookupField.value) &&
-                  lookupField.value) ||
-                [],
-            },
-          };
         }
 
         return null;
