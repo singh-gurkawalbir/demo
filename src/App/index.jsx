@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useCallback } from 'react';
+import { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
@@ -19,6 +19,8 @@ import * as selectors from '../reducers';
 import actions from '../actions';
 import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
+import * as gainsight from '../utils/analytics/gainsight';
+import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
 
@@ -67,6 +69,20 @@ export default function App() {
   useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);
   // eslint-disable-next-line
   // console.log('render: <App>', reloadCount);
+
+  useEffect(() => {
+    const domain = getDomain();
+
+    /**
+     * We need to initialize the gainsight here for localhost.io only.
+     * We are injecting this intialization script into index.html from
+     * backend for other domains as per the gainsight support's suggestion
+     * for their "Product Mapper" to work properly.
+     */
+    if (domain === 'localhost.io') {
+      gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
+    }
+  }, []);
 
   return (
     <MuiThemeProvider key={reloadCount} theme={theme}>
