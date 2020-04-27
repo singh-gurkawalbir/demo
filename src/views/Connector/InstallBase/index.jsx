@@ -77,6 +77,11 @@ export default function InstallBase(props) {
         connectorId,
       })
     );
+    dispatch(
+      actions.resource.requestCollection(
+        `connectors/${connectorId}/installBase`
+      )
+    );
   };
 
   useEffect(() => {

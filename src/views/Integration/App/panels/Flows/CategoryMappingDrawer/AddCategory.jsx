@@ -212,7 +212,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         addCategory
         onClose={handleClose}
         backToParent
-        help
       />
       {metadataLoaded ? (
         <DynaForm

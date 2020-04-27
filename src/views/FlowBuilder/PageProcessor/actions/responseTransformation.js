@@ -54,7 +54,7 @@ function ResponseTransformationDialog(props) {
 
   return (
     <TransformToggleEditorDialog
-      title="Transform record"
+      title="Transform response"
       id={resourceId}
       disabled={isViewMode}
       data={sampleResponseData}

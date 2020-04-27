@@ -45,7 +45,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.CONNECTION.TEST_CLEAR: {
-        if (retainStatus) {
+        if (retainStatus && draft[resourceId]) {
           delete draft[resourceId].message;
         } else draft[resourceId] = {};
 
