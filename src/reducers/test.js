@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, beforeAll */
 import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
@@ -1590,7 +1590,80 @@ describe('marketplaceConnectorList selector', () => {
     ]);
   });
 });
+const exportGen = name => ({
+  _Id: `${name}id`,
+  _connectionId: `conn-${name}-id`,
+  name,
+  description: `${name} description`,
+});
 
+describe('makeResourceList selector reselect implementation', () => {
+  const names = ['bob', 'bill', 'will', 'bing'];
+  const testExports = names.map(exportGen);
+
+  describe('caching behavior', () => {
+    let state;
+    let bobSelector;
+    let billSelector;
+
+    beforeAll(() => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+      bobSelector = selectors.makeResourceListSelector();
+      billSelector = selectors.makeResourceListSelector();
+    });
+
+    test('should return the correct result sets for both selectors', () => {
+      const bobResource = bobSelector(state, {
+        type: 'exports',
+        keyword: 'bob',
+      }).resources;
+      const billResource = billSelector(state, {
+        type: 'exports',
+        keyword: 'bill',
+      }).resources;
+
+      expect(bobResource).toEqual([exportGen('bob')]);
+      expect(billResource).toEqual([exportGen('bill')]);
+    });
+
+    test('should return the same cached result', () => {
+      const bobQuery = {
+        type: 'exports',
+        keyword: 'bob',
+      };
+      const billQuery = {
+        type: 'exports',
+        keyword: 'bill',
+      };
+      const bobResource = bobSelector(state, bobQuery).resources;
+      const billResource = billSelector(state, billQuery).resources;
+      const bobResourceCached = bobSelector(state, bobQuery).resources;
+      const billResourceCached = billSelector(state, billQuery).resources;
+
+      expect(bobResource).toBe(bobResourceCached);
+      expect(billResource).toBe(billResourceCached);
+    });
+    test('bobSelector should return a different result for a different query billSelector should continue to return its cached result', () => {
+      const bingQuery = {
+        type: 'exports',
+        keyword: 'bing',
+      };
+      const billQuery = {
+        type: 'exports',
+        keyword: 'bill',
+      };
+      const billResource = billSelector(state, billQuery).resources;
+      const bingResource = bobSelector(state, bingQuery).resources;
+      const billResourceCached = billSelector(state, billQuery).resources;
+
+      expect(bingResource).toEqual([exportGen('bing')]);
+      expect(billResource).toBe(billResourceCached);
+    });
+  });
+});
 describe('integrationAppConnectionList reducer', () => {
   const integrations = [
     {
