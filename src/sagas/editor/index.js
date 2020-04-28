@@ -31,6 +31,7 @@ export function* evaluateProcessor({ id }) {
     return; // nothing to do...
   }
 
+  console.log(reqOpts);
   const { violations, processor, body } = reqOpts;
 
   if (violations) {
