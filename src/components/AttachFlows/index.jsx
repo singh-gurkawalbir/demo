@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
@@ -7,13 +7,15 @@ import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
+import useResourceList from '../../hooks/useResourceList';
+
+const flowsFilterConfig = { type: 'flows' };
 
 export default function AttachFlows({ onClose, integrationId }) {
-  const flows = useSelector(state =>
-    selectors
-      .resourceList(state, { type: 'flows' })
-      .resources.filter(f => !f._integrationId)
-  );
+  const allFlows = useResourceList(flowsFilterConfig).resources;
+  const flows = useMemo(() => allFlows.filter(f => !f._integrationId), [
+    allFlows,
+  ]);
   const [selected, setSelected] = useState({});
   const handleSelectChange = flows => {
     setSelected(flows);

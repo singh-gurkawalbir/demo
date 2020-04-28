@@ -13,6 +13,7 @@ import {
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
+import useResourceList from '../../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const integrationsFilterConfig = { type: 'integrations' };
 
 export default function SettingsDrawer({
   flow,
@@ -36,9 +38,7 @@ export default function SettingsDrawer({
   const dispatch = useDispatch();
   const history = useHistory();
   const developerModeOn = useSelector(state => developerMode(state));
-  const { resources: integrations } = useSelector(state =>
-    resourceList(state, { type: 'integrations' })
-  );
+  const { resources: integrations } = useResourceList(integrationsFilterConfig);
   const nextDataFlows = useSelector(state => getNextDataFlows(state, flow));
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = {
