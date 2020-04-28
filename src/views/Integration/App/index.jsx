@@ -142,7 +142,7 @@ export default function IntegrationApp({ match, history }) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
-  const isCloningSupported = integrationAppUtil.isSupportCloning(
+  const isCloningSupported = integrationAppUtil.isCloningSupported(
     integration._connectorId,
     integration.name
   );

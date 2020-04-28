@@ -168,6 +168,6 @@ export default {
 
     return highestEdition;
   },
-  isSupportCloning: (_connectorId, name) =>
+  isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
