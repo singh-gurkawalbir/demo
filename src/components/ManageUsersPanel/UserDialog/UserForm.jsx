@@ -28,7 +28,7 @@ const integrationsFilterConfig = {
 
 export default function UserForm({ id, onSaveClick, onCancelClick }) {
   const classes = useStyles();
-  const integrations = useResourceList(integrationsFilterConfig);
+  const integrations = useResourceList(integrationsFilterConfig).resources;
   const users = useSelector(state => selectors.orgUsers(state));
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;

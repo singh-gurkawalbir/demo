@@ -199,15 +199,6 @@ export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }
 
-export function marketplaceConnectors(state, application, sandbox, licenses) {
-  return fromMarketplace.connectors(
-    state && state.marketplace,
-    application,
-    sandbox,
-    licenses
-  );
-}
-
 export function integrationAppList(state) {
   return fromMarketplace.integrationAppList(state && state.marketplace);
 }

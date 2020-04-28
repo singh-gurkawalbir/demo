@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
@@ -25,7 +25,7 @@ export default function AttachFlows({ onClose, integrationId }) {
   const connectionIdsToRegister = useSelector(state => selectedFlowIds =>
     selectors.getAllConnectionIdsUsedInSelectedFlows(state, selectedFlowIds)
   );
-  const handleAttachFlowsClick = () => {
+  const handleAttachFlowsClick = useCallback(() => {
     const flowIds = Object.keys(selected).filter(key => selected[key] === true);
     const selectedFlows =
       flows && flows.filter(f => flowIds.indexOf(f._id) > -1);
@@ -51,7 +51,14 @@ export default function AttachFlows({ onClose, integrationId }) {
       )
     );
     onClose();
-  };
+  }, [
+    connectionIdsToRegister,
+    dispatch,
+    flows,
+    integrationId,
+    onClose,
+    selected,
+  ]);
 
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>

@@ -20,6 +20,7 @@ import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
 import useResourceList from '../../hooks/useResourceList';
+import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -203,9 +204,7 @@ export default function CeligoDrawer() {
   );
   const [expand, setExpand] = React.useState(null);
   const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useSelector(state =>
-    selectors.makeMarketPlaceConnectorsSelectors(state, undefined, isSandbox)
-  );
+  const marketplaceConnectors = useMarketPlaceConnectors(undefined, isSandbox);
   const handleDrawerToggle = useCallback(() => {
     dispatch(actions.toggleDrawer());
   }, [dispatch]);

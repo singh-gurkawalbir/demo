@@ -1037,29 +1037,7 @@ export function integrationAppList(state) {
   return fromData.integrationAppList(state && state.data);
 }
 
-export function marketplaceConnectors(state, application, sandbox) {
-  const licenses = fromUser.licenses(state && state.user);
-  const connectors = fromData.marketplaceConnectors(
-    state && state.data,
-    application,
-    sandbox,
-    licenses
-  );
-
-  return connectors
-    .map(c => {
-      const installedIntegrationApps = resourceList(state, {
-        type: 'integrations',
-        sandbox,
-        filter: { _connectorId: c._id },
-      });
-
-      return { ...c, installed: !!installedIntegrationApps.resources.length };
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export function marketplaceConnectorsModified(
+export function marketplaceConnectors(
   userState,
   marketPlaceState,
   resourceState,
@@ -1091,21 +1069,22 @@ export function marketplaceConnectorsModified(
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export const makeMarketPlaceConnectorsSelectors = createSelector(
-  userState,
-  marketPlaceState,
-  resourcesState,
-  (_, application) => application,
-  (_1, _2, sandbox) => sandbox,
-  (userState, marketPlaceState, resourceState, application, sandbox) =>
-    marketplaceConnectorsModified(
-      userState,
-      marketPlaceState,
-      resourceState,
-      application,
-      sandbox
-    )
-);
+export const makeMarketPlaceConnectorsSelector = () =>
+  createSelector(
+    userState,
+    marketPlaceState,
+    resourcesState,
+    (_, application) => application,
+    (_1, _2, sandbox) => sandbox,
+    (userState, marketPlaceState, resourceState, application, sandbox) =>
+      marketplaceConnectors(
+        userState,
+        marketPlaceState,
+        resourceState,
+        application,
+        sandbox
+      )
+  );
 
 export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
@@ -2970,11 +2949,11 @@ export function resourceStatusModified(
 export function allResourceStatus(
   resourceState,
   networkCommState,
-  allResources
+  resourceTypes
 ) {
-  return (typeof allResources === 'string'
-    ? allResources.split(',')
-    : allResources
+  return (typeof resourceTypes === 'string'
+    ? resourceTypes.split(',')
+    : resourceTypes
   ).map(resourceType =>
     resourceStatusModified(resourceState, networkCommState, resourceType.trim())
   );
@@ -2984,9 +2963,9 @@ export const makeAllResourceStatusSelector = () =>
   createSelector(
     resourcesState,
     networkCommState,
-    (_, allResources) => allResources,
-    (resourcesState, networkCommState, allResources) =>
-      allResourceStatus(resourcesState, networkCommState, allResources)
+    (_, resourceTypes) => resourceTypes,
+    (resourcesState, networkCommState, resourceTypes) =>
+      allResourceStatus(resourcesState, networkCommState, resourceTypes)
   );
 
 export function getAllResourceConflicts(state) {
