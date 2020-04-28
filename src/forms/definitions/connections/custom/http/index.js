@@ -170,6 +170,7 @@ import redshift from './redshift';
 import bigquery from './bigquery';
 import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
+import inspectorio from './inspectorio';
 
 export default {
   bigquery,
@@ -343,4 +344,5 @@ export default {
   target,
   '3plcentral': threeplcentral,
   loopreturns,
+  inspectorio,
 };
