@@ -21,7 +21,6 @@ import actions from '../../../../../actions';
 import {
   getResourceSubType,
   generateNewId,
-  isOauth,
 } from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
@@ -180,7 +179,7 @@ export default function ConnectorInstallation(props) {
         );
       }
 
-      if (!isOauth(connectionDoc)) setConnection(false);
+      setConnection(false);
     },
     [
       connection,
