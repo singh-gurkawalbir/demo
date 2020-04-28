@@ -1420,18 +1420,18 @@ describe('marketplaceConnectorList selector', () => {
     applications: ['amazonmws', 'netsuite'],
   };
   const connectors = [connector1, connector2];
-  let marketplaceConnectors;
+  let marketplaceConnectorsSelector;
 
   beforeAll(() => {
-    marketplaceConnectors = selectors.makeMarketPlaceConnectorsSelector();
+    marketplaceConnectorsSelector = selectors.makeMarketPlaceConnectorsSelector();
   });
   test('should not throw any error when params are bad', () => {
     const state = {};
 
-    expect(marketplaceConnectors(state, '')).toEqual([]);
-    expect(marketplaceConnectors(state, undefined)).toEqual([]);
-    expect(marketplaceConnectors(undefined, '')).toEqual([]);
-    expect(marketplaceConnectors(undefined, undefined)).toEqual([]);
+    expect(marketplaceConnectorsSelector(state, '')).toEqual([]);
+    expect(marketplaceConnectorsSelector(state, undefined)).toEqual([]);
+    expect(marketplaceConnectorsSelector(undefined, '')).toEqual([]);
+    expect(marketplaceConnectorsSelector(undefined, undefined)).toEqual([]);
   });
   test('should return correct values with respect to environment', () => {
     const state = reducer(
@@ -1446,7 +1446,7 @@ describe('marketplaceConnectorList selector', () => {
       'some_action'
     );
 
-    expect(marketplaceConnectors(state, 'netsuite')).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'netsuite')).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1468,7 +1468,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1526,7 +1526,7 @@ describe('marketplaceConnectorList selector', () => {
       'some_action'
     );
 
-    expect(marketplaceConnectors(state, 'netsuite')).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'netsuite')).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1548,7 +1548,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1570,7 +1570,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(marketplaceConnectors(state, 'amazonmws', true)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', true)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',

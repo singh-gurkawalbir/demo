@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../reducers';
 
 export default function useMarketPlaceConnectors(application, sandbox) {
-  // allResources must be memoized or else it does not cache the result
+  // application, sandbox must be memoized or else it does not cache the result
   const makeMarketPlaceConnectorsSelector = useMemo(
     () => selectors.makeMarketPlaceConnectorsSelector(),
     []
