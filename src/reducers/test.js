@@ -1646,7 +1646,7 @@ describe('makeResourceList selector reselect implementation', () => {
       expect(bobResource).toBe(bobResourceCached);
       expect(billResource).toBe(billResourceCached);
     });
-    test('bobSelector should return a different result for a different query billSelector should continue to return its cached result', () => {
+    test('bobSelector should return a different result for a different query, billSelector should continue to return its cached result', () => {
       const bingQuery = {
         type: 'exports',
         keyword: 'bing',

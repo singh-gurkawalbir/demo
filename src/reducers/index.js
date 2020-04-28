@@ -2909,6 +2909,52 @@ export function resourceStatus(
   };
 }
 
+export function resourceStatusModified(
+  dataState,
+  commState,
+  origResourceType,
+  resourceReqMethod = 'GET'
+) {
+  let resourceType;
+
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
+  else resourceType = `/${origResourceType}`;
+  const commKey = commKeyGen(resourceType, resourceReqMethod);
+  const method = resourceReqMethod;
+  const hasData = fromData.hasData(dataState, origResourceType);
+  const isLoading = fromComms.isLoading(commState, commKey);
+  const retryCount = fromComms.retryCount(commState, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
+
+  return {
+    resourceType: origResourceType,
+    hasData,
+    isLoading,
+    retryCount,
+    method,
+    isReady,
+  };
+}
+
+export function allResourceStatus(dataState, commState, allResources) {
+  return (typeof allResources === 'string'
+    ? allResources.split(',')
+    : allResources
+  ).map(resourceType =>
+    resourceStatusModified(dataState, commState, resourceType.trim())
+  );
+}
+
+export const makeAllResourceStatusSelector = () =>
+  createSelector(
+    state => state && state.data,
+    state => state && state.comms,
+    (_, allResources) => allResources,
+    (dataState, commState, allResources) =>
+      allResourceStatus(dataState, commState, allResources)
+  );
+
 export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
 }

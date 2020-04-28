@@ -1,22 +1,11 @@
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import useAllResourceStatus from '../../hooks/useAllResourceStatus';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
-  const resourceStatus = useSelector(state => {
-    const requiredStatus = (typeof resources === 'string'
-      ? resources.split(',')
-      : resources
-    ).reduce((acc, resourceType) => {
-      acc.push(selectors.resourceStatus(state, resourceType.trim()));
-
-      return acc;
-    }, []);
-
-    return requiredStatus;
-  });
+  const resourceStatus = useAllResourceStatus(resources);
   const isAllDataReady = resourceStatus.reduce((acc, resourceStatus) => {
     if (!resourceStatus.isReady) {
       return false;
