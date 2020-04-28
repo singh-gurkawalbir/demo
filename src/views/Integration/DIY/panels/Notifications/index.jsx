@@ -80,12 +80,14 @@ export default function NotificationsSection({ integrationId }) {
       subscribed: flowList.includes(integrationId),
     });
 
-    flows.forEach(flow => {
-      notifications.push({
-        _flowId: flow._id,
-        subscribed: flowList.includes(flow._id),
+    flows
+      .filter(f => f._id !== integrationId)
+      .forEach(flow => {
+        notifications.push({
+          _flowId: flow._id,
+          subscribed: flowList.includes(flow._id),
+        });
       });
-    });
     connections.forEach(connection => {
       notifications.push({
         _connectionId: connection._id,
