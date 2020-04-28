@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -106,47 +106,60 @@ export default function AccountList() {
   const userPreferences = useSelector(state =>
     selectors.userPreferences(state)
   );
+  // TODO:should we memoize this selector
   const accounts = useSelector(state => selectors.accountSummary(state));
   const open = !!anchorEl;
-  const handleMenu = event => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
-  };
-
-  const handleClose = () => {
+  const handleMenu = useCallback(
+    event => {
+      setAnchorEl(anchorEl ? null : event.currentTarget);
+    },
+    [anchorEl]
+  );
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
-
-  const handleAccountChange = id => {
-    handleClose();
-    history.push(getRoutePath('/'));
-    dispatch(actions.user.org.accounts.switchTo({ id }));
-  };
-
+  }, []);
+  const handleAccountChange = useCallback(
+    id => {
+      handleClose();
+      history.push(getRoutePath('/'));
+      dispatch(actions.user.org.accounts.switchTo({ id }));
+    },
+    [dispatch, handleClose, history]
+  );
   const { confirmDialog } = useConfirmDialog();
-  const handleAccountLeaveClick = account => {
-    handleClose();
-    confirmDialog({
-      title: 'Leave Account',
-      // eslint-disable-next-line prettier/prettier
+  const handleAccountLeaveClick = useCallback(
+    account => {
+      handleClose();
+      confirmDialog({
+        title: 'Leave Account',
+        // eslint-disable-next-line prettier/prettier
       message: `By leaving the account "${account.company}", 
         you will no longer have access to the account or any of the integrations within the account.`,
-      buttons: [
-        {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
-          onClick: () => {
-            if (userPreferences.defaultAShareId === account.id) {
-              history.push(getRoutePath('/'));
-            }
-
-            dispatch(actions.user.org.accounts.leave(account.id));
+        buttons: [
+          {
+            label: 'Cancel',
           },
-        },
-      ],
-    });
-  };
+          {
+            label: 'Yes',
+            onClick: () => {
+              if (userPreferences.defaultAShareId === account.id) {
+                history.push(getRoutePath('/'));
+              }
+
+              dispatch(actions.user.org.accounts.leave(account.id));
+            },
+          },
+        ],
+      });
+    },
+    [
+      confirmDialog,
+      dispatch,
+      handleClose,
+      history,
+      userPreferences.defaultAShareId,
+    ]
+  );
 
   if (!accounts || accounts.length < 2) {
     // when user is part of only one org, no need to show the accounts
