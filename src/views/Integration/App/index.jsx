@@ -142,6 +142,10 @@ export default function IntegrationApp({ match, history }) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
+  const isCloningSupported = integrationAppUtil.isSupportCloning(
+    integration._connectorId,
+    integration.name
+  );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -342,22 +346,15 @@ export default function IntegrationApp({ match, history }) {
           />
         }
         infoText={integration.description}>
-        {integrationAppUtil.isSupportCloning(
-          integration._connectorId,
-          integration.name
-        ) &&
-          integration &&
-          !supportsMultiStore && (
-            <IconTextButton
-              component={Link}
-              to={getRoutePath(
-                `/clone/integrations/${integration._id}/preview`
-              )}
-              variant="text"
-              data-test="cloneIntegrationApp">
-              <CopyIcon /> Clone integration
-            </IconTextButton>
-          )}
+        {isCloningSupported && integration && !supportsMultiStore && (
+          <IconTextButton
+            component={Link}
+            to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
+            variant="text"
+            data-test="cloneIntegrationApp">
+            <CopyIcon /> Clone integration
+          </IconTextButton>
+        )}
         {supportsMultiStore && (
           <div className={classes.actions}>
             {accessLevel === 'owner' && (
