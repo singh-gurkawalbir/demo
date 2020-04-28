@@ -62,7 +62,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     marginBottom: 0,
   },
   alertMsg: {
-    marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(0.5),
     fontSize: 12,
     textAlign: 'left',
     marginLeft: 0,
@@ -224,18 +224,17 @@ class SignIn extends Component {
               variant="filled"
               className={classes.textField}
             />
-          </div>
-
-          {error && (
-            <div>
+            {error && (
               <Typography
                 color="error"
+                component="div"
                 variant="h5"
                 className={classes.alertMsg}>
                 <ErrorIcon /> {error}
               </Typography>
-            </div>
-          )}
+            )}
+          </div>
+
           <div className={classes.forgotPass}>
             <Link href="true" className={classes.forgotPass} variant="body2">
               Forgot password?
