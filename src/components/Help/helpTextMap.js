@@ -1985,6 +1985,7 @@ export default {
     'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
   'mapping.lookupDefault':
     'This holds the default value to be set for the extract field.',
+  'mapping.options': `Hard-coding a field mapping will ignore the exported value and replace it with one of the following options:<br /> <ul><li><b>Use empty string as hard-coded value</b>: Populates an empty string ('') into this field</li><li><b>Use null as hard-coded value</b>: Populates a null data type into this field</li><li><b>Use custom value</b>: Populates the string that you enter below for <b>Enter default value</b> into the mapped field</li></ul>`,
   'mapping.extractDateFormat':
     'If the export field is of date, then this field represents the date format of the field being exported.',
   'mapping.extractDateTimezone':
