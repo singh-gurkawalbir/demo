@@ -32,6 +32,7 @@ import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import integrationAppUtil from '../../../utils/integrationApps';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -140,6 +141,10 @@ export default function IntegrationApp({ match, history }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
+  );
+  const isCloningSupported = integrationAppUtil.isCloningSupported(
+    integration._connectorId,
+    integration.name
   );
   //
   //
@@ -341,7 +346,7 @@ export default function IntegrationApp({ match, history }) {
           />
         }
         infoText={integration.description}>
-        {integration && !supportsMultiStore && (
+        {isCloningSupported && integration && !supportsMultiStore && (
           <IconTextButton
             component={Link}
             to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
@@ -350,7 +355,7 @@ export default function IntegrationApp({ match, history }) {
             <CopyIcon /> Clone integration
           </IconTextButton>
         )}
-        {integrationAppName === 'SalesforceNetSuite' && supportsMultiStore && (
+        {supportsMultiStore && (
           <div className={classes.actions}>
             {accessLevel === 'owner' && (
               <IconTextButton
