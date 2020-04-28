@@ -442,3 +442,4 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
   ],
 });
+export const CLONING_SUPPORTED_IAS = ['sfnsio'];
