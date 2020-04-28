@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     flexGrow: 1,
     display: 'grid',
-    gridTemplateColumns: '40% 60%',
+    gridTemplateColumns: '30% 70%',
     height: '100vh',
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '100%',
@@ -40,14 +40,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: 380,
+    width: 300,
     marginTop: '23%',
   },
   title: {
     marginBottom: theme.spacing(3),
   },
   subTitle: {
-    marginBottom: theme.spacing(1),
+    marginBottom: 12,
   },
   signInForm: {
     [theme.breakpoints.down('xs')]: {

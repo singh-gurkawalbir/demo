@@ -40,14 +40,13 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     borderRadius: 4,
     height: 48,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    marginBottom: 20,
   },
   editableFields: {
     textAlign: 'center',
     width: '100%',
     maxWidth: 500,
     background: theme.palette.background.paper2,
-    padding: [[8, 24]],
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
@@ -82,13 +81,12 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   forgotPass: {
     color: theme.palette.primary.dark,
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(5),
   },
   googleBtn: {
     borderRadius: 4,
     width: '100%',
-    background: `url(${path}) 20% center no-repeat`,
+    background: `url(${path}) 15% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 48,
     fontSize: 16,
@@ -238,6 +236,11 @@ class SignIn extends Component {
               </Typography>
             </div>
           )}
+          <div className={classes.forgotPass}>
+            <Link href="true" className={classes.forgotPass} variant="body2">
+              Forgot password?
+            </Link>
+          </div>
           <Button
             data-test="submit"
             variant="contained"
@@ -247,11 +250,6 @@ class SignIn extends Component {
             value="Submit">
             Sign in
           </Button>
-          <div className={classes.forgotPass}>
-            <Link href="true" className={classes.forgotPass} variant="body2">
-              Forgot password?
-            </Link>
-          </div>
         </form>
         {getDomain() !== 'eu.integrator.io' && (
           <div>
