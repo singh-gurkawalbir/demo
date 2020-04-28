@@ -38,11 +38,13 @@ export default function DynaSoqlQuery(props) {
   const { data = {} } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
-      connectionId,
+      connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey,
     })
   );
+
+  console.log(`data in SS SOQL`, data);
   const handleFieldOnBlur = () => {
     setsObject(true);
   };
@@ -55,19 +57,29 @@ export default function DynaSoqlQuery(props) {
 
   useEffect(() => {
     if (query && sObject && queryChanged) {
-      dispatch(actions.metadata.request(connectionId, commMetaPath, { query }));
+      dispatch(
+        actions.metadata.request(ssLinkedConnectionId, commMetaPath, { query })
+      );
       setSoqlQuery(true);
       setsObject(false);
       setQueryChanged(false);
     }
-  }, [commMetaPath, connectionId, dispatch, query, queryChanged, sObject]);
+  }, [
+    commMetaPath,
+    connectionId,
+    dispatch,
+    query,
+    queryChanged,
+    sObject,
+    ssLinkedConnectionId,
+  ]);
   useEffect(() => {
     if (soqlQuery && data.entityName) {
       onFieldChange(id, { ...value, entityName: data.entityName }, true);
       dispatch(
         actions.metadata.request(
-          connectionId,
-          `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes/${data.entityName}`
+          ssLinkedConnectionId,
+          `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes/${data.entityName}?ignoreCache=true`
         )
       );
       setSoqlQuery(false);

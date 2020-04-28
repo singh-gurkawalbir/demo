@@ -2,7 +2,9 @@ import { useCallback } from 'react';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
+import * as selectors from '../../../../reducers';
 
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
    We use the block const across several components and thus is a maintenance issue to 
@@ -31,8 +33,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const PageGenerator = ({ history, match }) => {
-  const { flowId } = match.params;
+  const { flowId, ssLinkedConnectionId } = match.params;
   const classes = useStyles();
+
+  console.log(`PageGenerator match.params`, match.params);
+
+  const resource = useSelector(state =>
+    selectors.suiteScriptResource(state, {
+      resourceType: 'flows',
+      id: flowId,
+      ssLinkedConnectionId,
+    })
+  );
   const handleBlockClick = useCallback(() => {
     const to = `${match.url}/edit/exports/${flowId}`;
 
@@ -45,7 +57,11 @@ const PageGenerator = ({ history, match }) => {
 
   return (
     <div className={classes.pgContainer}>
-      <AppBlock blockType="export" onBlockClick={handleBlockClick} />
+      <AppBlock
+        blockType="export"
+        onBlockClick={handleBlockClick}
+        resource={resource}
+      />
       <div
         /* -- connecting line */
         className={clsx([classes.line])}

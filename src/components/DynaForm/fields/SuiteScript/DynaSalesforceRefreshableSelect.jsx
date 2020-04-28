@@ -5,28 +5,34 @@ import actions from '../../../../actions';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
-  const { filterKey, formContext, fieldName } = props;
+  const {
+    filterKey,
+    formContext,
+    fieldName,
+    ssLinkedConnectionId,
+    connectionId,
+  } = props;
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/export/salesforce/soql'];
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
-  const commMetaPath = `suitescript/connections/${soqlQueryField.ssLinkedConnectionId}/connections/${soqlQueryField.connectionId}/sObjectTypes/${entityName}?ignoreCache=true`;
+  const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes/${entityName}?ignoreCache=true`;
   const dispatch = useDispatch();
   const { data = [], status, errorMessage } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
-      connectionId: soqlQueryField.ssLinkedConnectionId,
+      connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey,
     })
   );
-  const options = data; // salesforceExportSelectOptions(data, fieldName);
+  let options = data; // salesforceExportSelectOptions(data, fieldName);
+
+  if (data && fieldName === 'onceExportBooleanFields') {
+    options = data.filter(f => f.type === 'boolean' && f.updateable);
+  }
+
   const handleRefreshResource = () =>
-    dispatch(
-      actions.metadata.refresh(
-        soqlQueryField.ssLinkedConnectionId,
-        commMetaPath
-      )
-    );
+    dispatch(actions.metadata.refresh(ssLinkedConnectionId, commMetaPath));
 
   return (
     <DynaGenericSelect

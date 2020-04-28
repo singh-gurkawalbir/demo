@@ -123,9 +123,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function AppBlock({
   className,
-  onDelete,
   children,
-  forwardedRef,
   onBlockClick,
   blockType,
   connectorType,
@@ -148,6 +146,8 @@ export default function AppBlock({
 }) {
   const classes = useStyles();
 
+  console.log(`AppBlock resource`, resource);
+
   return (
     <div className={clsx(classes.root, className)}>
       <div className={classes.box} style={{ opacity }}>
@@ -163,7 +163,7 @@ export default function AppBlock({
             className={classes.appLogo}
             size="large"
             type="export"
-            assistant="netsuite"
+            assistant={resource[blockType].type}
           />
         </div>
         <div className={classes.buttonContainer}>
