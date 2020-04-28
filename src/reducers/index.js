@@ -3776,15 +3776,6 @@ export function getLastExportDateTime(state, flowId) {
   return fromSession.getLastExportDateTime(state && state.session, flowId);
 }
 
-export function resourceNamesByIds(state, type) {
-  const { resources } = resourceList(state, { type });
-  const resourceIdNameMap = {};
-
-  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
-
-  return resourceIdNameMap;
-}
-
 export function getTransferPreviewData(state) {
   return fromSession.getTransferPreviewData(state && state.session);
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useAllResourceStatus from '../../hooks/useAllResourceStatus';
@@ -6,13 +6,17 @@ import useAllResourceStatus from '../../hooks/useAllResourceStatus';
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
   const resourceStatus = useAllResourceStatus(resources);
-  const isAllDataReady = resourceStatus.reduce((acc, resourceStatus) => {
-    if (!resourceStatus.isReady) {
-      return false;
-    }
+  const isAllDataReady = useMemo(
+    () =>
+      resourceStatus.reduce((acc, resourceStatus) => {
+        if (!resourceStatus.isReady) {
+          return false;
+        }
 
-    return acc;
-  }, true);
+        return acc;
+      }, true),
+    [resourceStatus]
+  );
 
   useEffect(() => {
     if (!isAllDataReady) {
