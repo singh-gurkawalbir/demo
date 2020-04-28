@@ -142,11 +142,10 @@ export default function EditorDialog(props) {
     }
   }, [confirmDialog, isEditorDirty, onClose]);
   // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
-  const handleFullScreenClick = () => {
+  const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
-  };
-
+  }, [fullScreen, patchEditorLayoutChange, state]);
   const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
     fullScreen,
     height,
