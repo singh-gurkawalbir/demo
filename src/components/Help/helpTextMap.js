@@ -533,6 +533,10 @@ const extractedHelpkeys = {
     'This Client ID works together with the Access Token to grant authorization.',
   'bigcommerce.connection.storeHash':
     'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+  'inspectorio.connection.http.encrypted.apiKey':
+    'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'inspectorio.connection.enviornment':
+    'Please select the environment of your Inspectorio account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
