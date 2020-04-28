@@ -1494,7 +1494,50 @@ const responseMapping = {
   saveComplete: id =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
-// #endregion
+const editorSampleData = {
+  request: ({
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    fieldType,
+    requestedEditorVersion,
+  }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      fieldType,
+      requestedEditorVersion,
+    }),
+  received: ({
+    flowId,
+    resourceId,
+    fieldType,
+    sampleData,
+    fieldEditorVersion,
+  }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
+      flowId,
+      resourceId,
+      fieldType,
+      sampleData,
+      fieldEditorVersion,
+    }),
+  failed: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
+      resourceId,
+      flowId,
+      fieldType,
+    }),
+  clear: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
+      flowId,
+      resourceId,
+      fieldType,
+    }),
+};
 
 export default {
   postFeedback,
@@ -1538,4 +1581,5 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  editorSampleData,
 };

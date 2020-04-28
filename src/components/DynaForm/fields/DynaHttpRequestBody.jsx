@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useCallback, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
@@ -9,8 +9,28 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
-import getFormattedSampleData from '../../../utils/sampleData';
+// import getFormattedSampleData from '../../../utils/sampleData';
 import ErroredMessageComponent from './ErroredMessageComponent';
+
+const ManageLookup = props => {
+  const {
+    label = 'Manage Lookups',
+    lookupFieldId,
+    value,
+    onFieldChange,
+    options = {},
+  } = props;
+
+  return (
+    <DynaLookupEditor
+      id={lookupFieldId}
+      label={label}
+      value={value}
+      onFieldChange={onFieldChange}
+      options={options}
+    />
+  );
+};
 
 export default function DynaHttpRequestBody(props) {
   const {
@@ -32,10 +52,6 @@ export default function DynaHttpRequestBody(props) {
   const { lookups: lookupsObj, resourceName } = options;
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  let parsedRule =
-    options && typeof arrayIndex === 'number' && Array.isArray(value)
-      ? value[arrayIndex]
-      : value;
   const lookupFieldId = lookupsObj && lookupsObj.fieldId;
   const lookups = lookupsObj && lookupsObj.data;
   const handleEditorClick = () => {
@@ -43,61 +59,50 @@ export default function DynaHttpRequestBody(props) {
   };
 
   const dispatch = useDispatch();
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
-  const resource = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
-  );
-  const { adaptorType } = resource.merged || {};
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const { data: sampleData } = useSelector(state => {
-    if (!['exports', 'imports'].includes(resourceType)) return {};
+  const { data: sampleData, status, fieldEditorVersion } = useSelector(
+    state => {
+      if (!['exports', 'imports'].includes(resourceType)) return {};
 
-    return selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    });
-  });
-  // constructing data
-  const wrapSampleDataInArray =
-    adaptorType === 'HTTPImport' || adaptorType === 'HTTPExport';
-  const formattedSampleData = useMemo(
-    () =>
-      getFormattedSampleData({
-        connection,
-        sampleData,
-        resourceType,
-        resourceName,
-        wrapInArray: wrapSampleDataInArray,
-      }),
-    [connection, resourceName, resourceType, sampleData, wrapSampleDataInArray]
-  );
-  const stringifiedSampleData = useMemo(
-    () => JSON.stringify(formattedSampleData, null, 2),
-    [formattedSampleData]
+      return selectors.getEditorSampleData(state, {
+        flowId,
+        resourceId,
+        fieldType: id,
+      });
+    }
   );
 
   useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData && !isPageGenerator) {
+    if (flowId && !status && !isPageGenerator) {
       dispatch(
-        actions.flowData.requestSampleData(
+        actions.editorSampleData.request({
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
-        )
+          stage: 'flowInput',
+          fieldType: id,
+        })
       );
     }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
+  }, [dispatch, flowId, id, isPageGenerator, resourceId, resourceType, status]);
 
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      dispatch(
+        actions.editorSampleData.request({
+          flowId,
+          resourceId,
+          resourceType,
+          stage: 'flowInput',
+          fieldType: id,
+          requestedEditorVersion: version,
+        })
+      );
+    },
+    [dispatch, flowId, id, resourceId, resourceType]
+  );
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
@@ -117,52 +122,70 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  if (!parsedRule) {
-    if (contentType === 'json')
-      parsedRule = getJSONSampleTemplate(formattedSampleData.data);
-    else parsedRule = getXMLSampleTemplate(formattedSampleData.data);
-  }
+  const formattedRule = useMemo(() => {
+    let rule = Array.isArray(value) ? value[arrayIndex] : value;
 
-  let lookupField;
-  const lookupOptions = {
-    isSQLLookup: false,
-    sampleData: formattedSampleData,
-    resourceId,
-    resourceType,
-    flowId,
+    if (!rule) {
+      // load sample template when rule is not yet defined
+      if (contentType === 'json') rule = getJSONSampleTemplate(sampleData);
+      else rule = getXMLSampleTemplate(sampleData);
+    }
+
+    return rule;
+  }, [arrayIndex, contentType, sampleData, value]);
+  const action = useMemo(() => {
+    if (!lookupFieldId) return;
+    const options = {
+      isSQLLookup: false,
+      sampleData,
+      resourceId,
+      resourceType,
+      flowId,
+      connectionId,
+      resourceName,
+    };
+
+    return ManageLookup({
+      label: 'Manage Lookups',
+      lookupFieldId,
+      value: lookups,
+      onFieldChange,
+      options,
+    });
+  }, [
     connectionId,
+    flowId,
+    lookupFieldId,
+    lookups,
+    onFieldChange,
+    resourceId,
     resourceName,
-  };
-
-  if (lookupFieldId) {
-    lookupField = (
-      <DynaLookupEditor
-        id={lookupFieldId}
-        label="Manage Lookups"
-        value={lookups}
-        onFieldChange={onFieldChange}
-        options={lookupOptions}
-      />
-    );
-  }
+    resourceType,
+    sampleData,
+  ]);
 
   return (
     <Fragment>
       {showEditor && (
-        <HttpRequestBodyEditorDialog
-          contentType={contentType === 'json' ? 'json' : 'xml'}
-          title={title || 'Build HTTP Request Body'}
-          id={`${resourceId}-${id}`}
-          rule={parsedRule}
-          onFieldChange={onFieldChange}
-          lookups={lookups}
-          data={stringifiedSampleData}
-          onClose={handleClose}
-          action={lookupField}
-          ruleTitle={ruleTitle}
-          dataTitle={dataTitle}
-          resultTitle={resultTitle}
-        />
+        <div key={fieldEditorVersion}>
+          <HttpRequestBodyEditorDialog
+            contentType={contentType === 'json' ? 'json' : 'xml'}
+            title={title || 'Build HTTP Request Body'}
+            id={`${resourceId}-${id}`}
+            rule={formattedRule}
+            onFieldChange={onFieldChange}
+            lookups={lookups}
+            data={JSON.stringify(sampleData, null, 2)}
+            onClose={handleClose}
+            action={action}
+            ruleTitle={ruleTitle}
+            dataTitle={dataTitle}
+            resultTitle={resultTitle}
+            showVersionToggle
+            editorVersion={fieldEditorVersion}
+            onVersionToggle={handleEditorVersionToggle}
+          />
+        </div>
       )}
       <Button
         data-test={id}

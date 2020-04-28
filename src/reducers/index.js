@@ -400,6 +400,14 @@ export function editorPatchStatus(state, id) {
   return fromSession.editorPatchStatus(state && state.session, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromSession.getEditorSampleData(state && state.session, {
+    flowId,
+    resourceId,
+    fieldType,
+  });
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }

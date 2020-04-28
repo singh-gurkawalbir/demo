@@ -22,6 +22,7 @@ import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
+import TextToggle from '../../TextToggle';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -55,6 +56,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
+  editorToggleContainer: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 /**
@@ -76,6 +80,9 @@ export default function EditorDialog(props) {
     dataTest = 'editor',
     hidePreviewAction = false,
     patchOnSave = false,
+    showVersionToggle,
+    onVersionToggle,
+    editorVersion,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -167,6 +174,10 @@ export default function EditorDialog(props) {
 
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
+  const toggleEditorOptions = useMemo(
+    () => [{ label: 'AFE 1.0', value: 1 }, { label: 'AFE 2.0', value: 2 }],
+    []
+  );
 
   return (
     <Dialog
@@ -185,6 +196,17 @@ export default function EditorDialog(props) {
           {action}
         </div>
         <div className={classes.toggleContainer}>
+          {showVersionToggle && (
+            <div className={classes.editorToggleContainer}>
+              <TextToggle
+                disabled={disabled}
+                value={editorVersion}
+                onChange={onVersionToggle}
+                exclusive
+                options={toggleEditorOptions}
+              />
+            </div>
+          )}
           {showLayoutOptions && (
             <ToggleButtonGroup
               value={layout}
