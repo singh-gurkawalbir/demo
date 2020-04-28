@@ -5,11 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import {
-  resourceList,
-  getNextDataFlows,
-  developerMode,
-} from '../../../../reducers';
+import { getNextDataFlows, developerMode } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
