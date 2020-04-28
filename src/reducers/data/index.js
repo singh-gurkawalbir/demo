@@ -61,6 +61,14 @@ export function processors(state) {
   return fromResources.processors(state && state.resources);
 }
 
+export function resourceState(state) {
+  return fromResources.resourceState(state && state.resources);
+}
+
+export function marketPlaceState(state) {
+  return fromMarketplace.marketPlaceState(state && state.marketplace);
+}
+
 export function hasData(state, resourceType) {
   return fromResources.hasData(state && state.resources, resourceType);
 }
