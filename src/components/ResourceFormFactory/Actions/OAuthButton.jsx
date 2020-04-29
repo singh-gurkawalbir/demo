@@ -143,7 +143,7 @@ function OAuthButton(props) {
       className={classes.actionButton}
       ignoreFormTouchedCheck
       onClick={saveAndAuthorizeWhenScopesArePresent}>
-      {disableSave ? 'Authorizing' : label || 'Save & Authorize'}
+      {disableSave ? 'Authorizing' : label || 'Save & authorize'}
     </DynaAction>
   );
 }
