@@ -751,7 +751,11 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
-  if (!integration || !integration._connectorId) {
+  if (
+    !integration ||
+    !integration._connectorId ||
+    (integration.installSteps && integration.installSteps.length)
+  ) {
     // return empty object for DIY integrations.
     return emptyObject;
   }

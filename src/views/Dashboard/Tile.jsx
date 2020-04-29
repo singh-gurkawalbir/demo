@@ -58,13 +58,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     false
   );
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', tile && tile._integrationId)
+  );
   const templateName = useSelector(state => {
-    const integration = selectors.resource(
-      state,
-      'integrations',
-      tile && tile._integrationId
-    );
-
     if (integration && integration._templateId) {
       const template = selectors.resource(
         state,
@@ -98,8 +95,17 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+    if (
+      integration &&
+      integration.installSteps &&
+      integration.installSteps.length
+    ) {
+      urlToIntegrationSettings = `/integrations/${integration._id}`;
+      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
+    } else {
+      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+    }
   }
 
   let app1;
