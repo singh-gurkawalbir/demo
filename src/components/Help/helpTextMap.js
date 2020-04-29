@@ -619,8 +619,20 @@ export default {
     'Please enter your API token here.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
   'connection.rest.tokenLocation':
     "Use this field to specify where in the HTTP request the API token should be located.  If both 'URL Parameter' and 'Header' are supported by the REST API then 'Header' is the preferred option because HTTP header data is slightly less likely to end up in an access log file (i.e. in the REST API's server logs).",
+  'connection.configureTokenRefresh':
+    'If your token is going to expire, you set up automatic refresh though integrator.io. You’ll need to get some info from the API documentation for the app or system that you’re working with for refresh token paths and any custom headers for the token request.',
   'connection.rest.tokenParam':
     "Use this field to specify the name of the URL parameter that will hold the API token value.  For example, if you specify 'myAPITokenURLParam' then all HTTP requests will include the following: '?myAPITokenURLParam=bearerToken'.",
+  'connection.rest.refreshTokenURI':
+    'The URL that intrgrator.io will need to call to refresh the token.',
+  'connection.rest.refreshTokenMediaType':
+    'Choose the media type for refresh token request body.',
+  'connection.rest.refreshTokenMethod':
+    'Choose the HTTP method for the refresh token request.',
+  'connection.rest.refreshTokenPath':
+    'If the token will be returned in the response body, you can provide a path to the token here.',
+  'connection.rest.refreshTokenHeaders':
+    'You can configure the headers for the refresh token request with custom key value pairs that are specific to your needs.',
   'connection.rest.scope':
     "Use this field to list out all the scope values that should be sent when a connection is authorized.  The list of supported scopes for any given REST API should be documented clearly in that API's user guide.  If you cannot find this info then please contact the company, or author that owns the API.",
   'connection.rest.scopeDelimiter':
@@ -1015,7 +1027,7 @@ export default {
   'export.rest.postBody':
     "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebar templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
   'export.rest.pagingMethod':
-    "Some APIs offer paging functionality in order to limit each of their responses to a manageable size if the total set of resources is large.  The following paging methods are supported by integrator.io. Choose 'Next Page URL' if the API returns a link to the next page within the response body.  Choose 'Page Argument' if the API uses a query string parameter to paginate the results. Choose 'Relative URI' if the same endpoint should be hit repeatedly until no more data is returned. Finally, choose 'Skip Argument' if the API uses a query string parameter to indicate the record offset for the next page request. The export will automatically calculate the amount to skip and integrator.io will add this parameter to the relativeURI for each subsequent page request. Note that typically these services also support an optional 'take' or 'pageSize' query string parameter to control how many records are returned in each page; integrator.io will not set or modify this parameter.",
+    "Some APIs offer paging functionality in order to limit each of their responses to a manageable size if the total set of resources is large. The following paging methods are supported by integrator.io. Choose 'Next Page URL' if the API returns a link to the next page within the response body. Choose 'Page Argument' if the API uses a query string parameter to paginate the results. Choose 'Relative URI' if the same endpoint should be hit repeatedly until no more data is returned. Choose Link header if the API points to subsequent pages in the Link header of the API response. Choose 'Skip Argument' if the API uses a query string parameter to indicate the record offset for the next page request. Finally, choose Token if the API responds with a token that should be used to fetch the next page.The export will automatically calculate the amount to skip and integrator.io will add this parameter to the relativeURI for each subsequent page request. Note that typically these services also support an optional 'take' or 'pageSize' query string parameter to control how many records are returned in each page; integrator.io will not set or modify this parameter.",
   'export.rest.nextPagePath':
     "This optional field can be used when the 'Paging Method' is set to 'Next Page URL'.  Set this field's value to the JSON path that will point to the next page URL returned in the HTTP response from the API. Zendesk for example uses 'next_page' while SalesForce uses 'nextRecordsUrl'. The default value used if this field is left blank is 'nextpage'.",
   'export.rest.pageArgument':
@@ -1894,7 +1906,7 @@ export default {
   'accesstoken.description':
     'Describe how your token is being used and be sure to mention exactly where your token is being stored externally.',
   'accesstoken.scope':
-    'Scope is used to define access permissions for your token.\n\n<ul><li><b>Full Access</b> - Full access tokens have unlimited permissions to your integrator.io account. Please be very careful provisioning full access tokens!</li>\n\n<li><b>Custom</b> - Custom scope tokens can be created with only minimal permissions to specific resources in your integrator.io account, and they can only be used to invoke very specific integrator.io APIs (i.e. only the APIs required to import or export data from external applications).</li></ul>',
+    'Scope is used to define access permissions for your token.\n\n<ul><li><b>Full Access</b> - Full access tokens provisioned at the account level have unrestricted permissions to your integrator.io account. Please be very careful provisioning full access tokens at the account level!  Full access tokens provisioned at the integration level can only be used to invoke exports and imports that belong to the integration, or to invoke virtual exports and imports using one of the connections that belong to the integration. Full access tokens provisioned at the integration level also include read-only access permissions to the resources that belong to the integration.</li>\n\n<li><b>Custom</b> - Custom scope tokens can be created with only minimal permissions to specific resources in your integrator.io account, and they can only be used to invoke very specific integrator.io APIs (i.e. only the APIs required to import or export data from external applications).</li></ul>',
   'accesstoken.name':
     'Name your token so that you can easily reference it from other parts of the application',
   'accesstoken._connectionIds':

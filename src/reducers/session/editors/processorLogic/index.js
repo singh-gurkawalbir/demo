@@ -5,6 +5,7 @@ import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
+import settingsForm from './settingsForm';
 import structuredFileParser from './structuredFileParser';
 import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
@@ -22,6 +23,7 @@ const logicMap = {
   transform,
   handlebars,
   javascript,
+  settingsForm,
   structuredFileParser,
   structuredFileGenerator,
   sql,
@@ -53,6 +55,10 @@ const validate = editor => {
 };
 
 const requestOptions = editor => {
+  const logic = getLogic(editor);
+
+  if (logic.skipPreview && logic.skipPreview(editor)) return undefined;
+
   const violations = validate(editor);
 
   if (violations) {
@@ -60,8 +66,8 @@ const requestOptions = editor => {
   }
 
   return {
-    processor: getLogic(editor).processor || editor.processor,
-    body: getLogic(editor).requestBody(editor),
+    processor: logic.processor || editor.processor,
+    body: logic.requestBody(editor),
   };
 };
 

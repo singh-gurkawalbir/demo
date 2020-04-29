@@ -80,6 +80,14 @@ export function* retrievingAssistantDetails() {
         import: asst.import,
       });
     });
+    assistantConnectors.push({
+      id: 'financialforce',
+      name: 'Financial Force',
+      type: 'salesforce',
+      assistant: 'financialforce',
+      export: true,
+      import: true,
+    });
   }
 
   localStorage.setItem('assistants', JSON.stringify(assistantConnectors));

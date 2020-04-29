@@ -38,6 +38,20 @@ export default {
       },
     ],
   },
+  'salesforce.distributed.skipExportFieldId': {
+    type: 'text',
+    label: 'Skip export field ID',
+    visibleWhenAll: [
+      {
+        field: 'salesforce.executionType',
+        is: ['realtime'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'salesforce.distributed.sObjectType': {
     label: 'SObject type',
     required: true,
@@ -66,7 +80,6 @@ export default {
       if (isNew)
         // if its create
         return '';
-
       const output =
         r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
 
