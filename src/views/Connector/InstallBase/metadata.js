@@ -35,7 +35,7 @@ export default {
     },
     {
       heading: 'Version',
-      value: r => r.version,
+      value: r => (r.updateInProgress ? 'In Progress...' : r.version),
       orderBy: 'version',
     },
   ],
