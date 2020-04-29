@@ -142,10 +142,12 @@ export default function IntegrationApp({ match, history }) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
-  const isCloningSupported = integrationAppUtil.isCloningSupported(
-    integration._connectorId,
-    integration.name
-  );
+  const isCloningSupported =
+    integration &&
+    integrationAppUtil.isCloningSupported(
+      integration._connectorId,
+      integration.name
+    );
   //
   //
   // TODO: All the code below should be moved into the data layer.
