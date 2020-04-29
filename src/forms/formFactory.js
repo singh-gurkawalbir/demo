@@ -96,8 +96,8 @@ const applyCustomSettings = ({
       draft.settings = { fieldId: 'settings' };
     }
   });
-  const preSaveProxy = values => {
-    const newValues = preSave ? preSave(values) : values;
+  const preSaveProxy = (values, resource) => {
+    const newValues = preSave ? preSave(values, resource) : values;
 
     return produce(newValues, draft => {
       if (Object.hasOwnProperty.call(draft, '/settings')) {
@@ -167,6 +167,10 @@ const getResourceFormAssets = ({
     case 'connections':
       if (isNew) {
         meta = formMeta.connections.new;
+      } else if (resource && resource.assistant === 'financialforce') {
+        // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+        meta = formMeta.connections.salesforce;
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
 
@@ -210,6 +214,12 @@ const getResourceFormAssets = ({
         // get edit form meta branch
         else if (type === 'netsuite') {
           meta = meta.netsuiteDistributed;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+          meta = meta.salesforce;
         } else if (type === 'rdbms') {
           const rdbmsSubType =
             connection && connection.rdbms && connection.rdbms.type;
@@ -249,6 +259,13 @@ const getResourceFormAssets = ({
           meta = meta.new;
         } else if (RDBMS_TYPES.indexOf(type) !== -1) {
           meta = meta.rdbms;
+        } else if (
+          type === 'salesforce' &&
+          resource.assistant === 'financialforce'
+        ) {
+          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+          meta = meta.salesforce;
         } else if (
           resource &&
           (resource.useParentForm !== undefined

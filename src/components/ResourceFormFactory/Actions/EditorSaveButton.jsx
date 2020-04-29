@@ -18,7 +18,7 @@ export default function EditorSaveButton(props) {
     dataTest,
     onClose,
   } = props;
-  const [saveTrigerred, setSaveTriggered] = useState(false);
+  const [saveTriggered, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const editor = useSelector(state => selectors.editor(state, id));
   const { resourceType } = editor;
@@ -32,11 +32,11 @@ export default function EditorSaveButton(props) {
   );
 
   useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
+    if (saveTriggered && saveCompleted && onClose) {
       onClose();
       setSaveTriggered(false);
     }
-  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
+  }, [onClose, saveCompleted, saveTerminated, saveTriggered]);
   const onSave = useCallback(() => {
     dispatch(actions.editor.save(id));
     setSaveTriggered(true);

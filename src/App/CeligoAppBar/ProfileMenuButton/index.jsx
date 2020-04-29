@@ -124,9 +124,7 @@ export default function ProfileMenuButton() {
             variant="outlined"
             color="secondary"
             component={Link}
-            to={getRoutePath(
-              isAccountOwner ? '/myAccount/subscription' : '/myAccount/profile'
-            )}>
+            to={getRoutePath('/myAccount/profile')}>
             {isAccountOwner ? 'My account' : 'My profile'}
           </Button>
           <Button

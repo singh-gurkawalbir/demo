@@ -624,6 +624,10 @@ export function resourceList(
   };
 }
 
+export function resourceState(state) {
+  return state;
+}
+
 export function hasData(state, resourceType) {
   return !!(state && state[resourceType]);
 }

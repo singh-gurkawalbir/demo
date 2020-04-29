@@ -187,7 +187,6 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           flowId={flowId}
           addCategory
           backToParent
-          help
           onClose={handleClose}
         />
         {metadataLoaded ? (

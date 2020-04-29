@@ -11,6 +11,7 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -20,6 +21,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
+const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
 
 export default function InstallBase(props) {
   const defaultFilter = useMemo(
@@ -36,15 +38,15 @@ export default function InstallBase(props) {
   const filter =
     useSelector(state => selectors.filter(state, sortFilterKey)) ||
     defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const connectorInstallBaseConfig = useMemo(
+    () => ({
       type: 'connectorInstallBase',
       ...{ ...defaultFilter, ...filter },
-    })
+    }),
+    [defaultFilter, filter]
   );
-  const { resources: licenses } = useSelector(state =>
-    selectors.resourceList(state, { type: 'connectorLicenses' })
-  );
+  const list = useResourceList(connectorInstallBaseConfig).resources;
+  const licenses = useResourceList(connectorLicenseFilterConfig).resources;
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
@@ -76,6 +78,11 @@ export default function InstallBase(props) {
         _integrationIds,
         connectorId,
       })
+    );
+    dispatch(
+      actions.resource.requestCollection(
+        `connectors/${connectorId}/installBase`
+      )
     );
   };
 

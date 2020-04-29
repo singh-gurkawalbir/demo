@@ -72,7 +72,7 @@ export default {
           { label: 'Chargify', value: 'chargify' },
           { label: 'Clover', value: 'clover' },
           { label: 'Dcl', value: 'dcl' },
-          { label: 'Desk', value: 'desk' },
+          // { label: 'Desk', value: 'desk' },
           { label: 'Dnb', value: 'dnb' },
           { label: 'Docusign', value: 'docusign' },
           { label: 'Doubleclick', value: 'doubleclick' },
@@ -103,6 +103,7 @@ export default {
           { label: 'Hubspot', value: 'hubspot' },
           { label: 'Hybris', value: 'hybris' },
           { label: 'Insightly', value: 'insightly' },
+          { label: 'Inspectorio', value: 'inspectorio' },
           { label: 'Integratorio', value: 'integratorio' },
           { label: 'Jet', value: 'jet' },
           { label: 'Jira', value: 'jira' },
@@ -1308,6 +1309,7 @@ export default {
   'ftp.port': {
     type: 'ftpport',
     label: 'Port',
+    required: true,
     validWhen: {
       fallsWithinNumericalRange: {
         min: 0,
@@ -1467,7 +1469,6 @@ export default {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
-
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
@@ -1822,8 +1823,22 @@ export default {
     ],
   },
   as2url: {
-    type: 'labelvalue',
+    type: 'select',
     label: 'AS2 url',
+    options: [
+      {
+        items: [
+          {
+            label: 'http://api.staging.integrator.io/v1/as2',
+            value: 'http://api.staging.integrator.io/v1/as2',
+          },
+          {
+            label: 'https://api.staging.integrator.io/v1/as2',
+            value: 'https://api.staging.integrator.io/v1/as2',
+          },
+        ],
+      },
+    ],
     value: 'https://api.staging.integrator.io/v1/as2',
   },
   requiremdnspartners: {

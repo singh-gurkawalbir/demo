@@ -49,6 +49,8 @@ export default function FormView({
         onChange={onFormChange}
         disabled={disabled}
         fieldMeta={formState.meta}
+        resourceId={resourceId}
+        resourceType={resourceType}
       />
     </Fragment>
   );

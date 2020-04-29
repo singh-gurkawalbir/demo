@@ -13,6 +13,7 @@ import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import actions from '../../actions';
+import useResourceList from '../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -33,12 +34,15 @@ export default function RecycleBin(props) {
   const filter =
     useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||
     defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const recycleBinFilterConfig = useMemo(
+    () => ({
       type: 'recycleBinTTL',
-      ...{ ...defaultFilter, ...filter },
-    })
+      ...defaultFilter,
+      ...filter,
+    }),
+    [defaultFilter, filter]
   );
+  const list = useResourceList(recycleBinFilterConfig);
 
   useEffect(() => {
     dispatch(actions.resource.requestCollection('recycleBinTTL'));
