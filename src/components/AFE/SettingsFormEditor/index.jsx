@@ -39,19 +39,20 @@ const useStyles = makeStyles({
   },
 });
 
-function hookContextWrapper(form) {
-  return {
-    resource: {
-      settingsForm: { form },
-    },
-    settings: {
-      export: {},
-      import: {},
-      flow: {},
-      integration: {},
+function getData(form) {
+  return JSON.stringify(
+    {
+      resource: {
+        settingsForm: { form },
+      },
+      parentResource: {},
       license: {},
+      parentLicense: {},
+      sandbox: false,
     },
-  };
+    null,
+    2
+  );
 }
 
 function safeParse(o) {
@@ -87,6 +88,8 @@ export default function SettingsFormEditor({
   editorId,
   settingsForm = {},
   disabled,
+  resourceId,
+  resourceType,
 }) {
   const { form, init = {} } = settingsForm;
   const classes = useStyles();
@@ -96,8 +99,7 @@ export default function SettingsFormEditor({
   // console.log(editorId, 'settingsForm:', settingsForm);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const { data, result, error, lastChange } = editor;
-
-  console.log('editor', editor);
+  // console.log('editor', editor);
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -113,7 +115,7 @@ export default function SettingsFormEditor({
   }, []);
 
   useEffect(() => {
-    const wrappedForm = hookContextWrapper(form);
+    const data = getData(form);
 
     dispatch(
       actions.editor.init(editorId, 'settingsForm', {
@@ -121,15 +123,24 @@ export default function SettingsFormEditor({
         initScriptId: init._scriptId,
         entryFunction: init.function || 'main',
         initEntryFunction: init.function || 'main',
-        data: wrappedForm,
-        initData: wrappedForm,
-        context: { sample: 'context' }, // @Adi: what is this?
+        data,
+        initData: data,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
         autoEvaluateDelay: 500,
+        resourceId,
+        resourceType,
       })
     );
-  }, [dispatch, editorId, form, init._scriptId, init.function]);
+  }, [
+    dispatch,
+    editorId,
+    form,
+    init._scriptId,
+    init.function,
+    resourceId,
+    resourceType,
+  ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
   useEffect(() => {
@@ -171,6 +182,8 @@ export default function SettingsFormEditor({
             key={lastChange}
             fieldMeta={finalMeta}
             onChange={handleFormPreviewChange}
+            resourceId={resourceId}
+            resourceType={resourceType}
           />
         ) : (
           <Typography>

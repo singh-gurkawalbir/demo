@@ -2,7 +2,7 @@ import { useCallback, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../../reducers';
-import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer'; // './EditDrawer';
+import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
 import Prototype from './prototype';
@@ -33,9 +33,13 @@ export function NewDynaSettings(props) {
     },
     [id, onFieldChange]
   );
-  const handleEditClose = useCallback((shouldCommit, editor) => {
-    console.log('edit drawer closed', shouldCommit, editor);
-  }, []);
+  const handleEditClose = useCallback(
+    (shouldCommit, editor) => {
+      // console.log('edit drawer closed', shouldCommit, editor);
+      history.goBack();
+    },
+    [history]
+  );
   const hasSettingsForm =
     settingsForm && (settingsForm.form || settingsForm.init);
 
@@ -54,6 +58,7 @@ export function NewDynaSettings(props) {
         <EditDrawer
           editorId={id}
           resourceId={resourceId}
+          resourceType={resourceType}
           settingsForm={settingsForm}
           onClose={handleEditClose}
         />

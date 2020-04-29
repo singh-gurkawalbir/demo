@@ -5,7 +5,13 @@ export default {
   processor: 'javascript',
   skipPreview: ({ code, entryFunction }) => !code || !entryFunction,
   requestBody: javascript.requestBody,
-  dirty: javascript.dirty,
+  dirty: editor => {
+    if (editor.data !== editor.initData) {
+      return true;
+    }
+
+    return javascript.dirty(editor);
+  },
   validate: ({ data }) => {
     let dataError;
 

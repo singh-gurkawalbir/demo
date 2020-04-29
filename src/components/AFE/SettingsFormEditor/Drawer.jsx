@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
-import actions from '../../../actions';
+// import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
@@ -10,40 +10,30 @@ import SettingsFormEditor from './';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
-    margin: theme.spacing(0, 1),
-    padding: theme.spacing(2),
-    display: 'flex',
-    marginRight: theme.spacing(2),
-  },
-  actions: {
-    justifyContent: 'flex-start',
-    marginLeft: theme.spacing(2),
-    marginTop: 0,
-    marginBottom: theme.spacing(2),
+    '& > *': {
+      marginRight: theme.spacing(2),
+    },
   },
 }));
 
-/**
- * @param patchOnSave = false (default editor behavior) or true (for resource patch on save)
- */
-export default function EditorDrawer({ id, onClose, ...rest }) {
+export default function EditorDrawer({ editorId, onClose, ...rest }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const editor = useSelector(state => selectors.editor(state, id));
+  const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
-    state => selectors.editorPatchStatus(state, id).saveInProgress
+    state => selectors.editorPatchStatus(state, editorId).saveInProgress
   );
   const isEditorDirty = useSelector(state =>
-    selectors.isEditorDirty(state, id)
+    selectors.isEditorDirty(state, editorId)
   );
   const editorViolations = useSelector(state =>
-    selectors.editorViolations(state, id)
+    selectors.editorViolations(state, editorId)
   );
-  const handlePreview = useCallback(
-    () => dispatch(actions.editor.evaluateRequest(id)),
-    [dispatch, id]
-  );
+  // const handlePreview = useCallback(
+  //   () => dispatch(actions.editor.evaluateRequest(editorId)),
+  //   [dispatch, editorId]
+  // );
   const handleSave = useCallback(() => {
     if (onClose) {
       onClose(true, editor);
@@ -68,10 +58,10 @@ export default function EditorDrawer({ id, onClose, ...rest }) {
       ],
     });
   }, [confirmDialog, isEditorDirty, onClose]);
-  const showPreviewAction = useMemo(
-    () => editor && !editorViolations && !editor.autoEvaluate,
-    [editor, editorViolations]
-  );
+  // const showPreviewAction = useMemo(
+  //   () => editor && !editorViolations && !editor.autoEvaluate,
+  //   [editor, editorViolations]
+  // );
   const disableSave = useMemo(() => {
     // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
     const val =
@@ -89,18 +79,21 @@ export default function EditorDrawer({ id, onClose, ...rest }) {
       width="xl"
       // type="paper"
       title="Edit settings form"
-      variant="temporary">
-      <SettingsFormEditor {...rest} />
-      <div className={classes.actions}>
-        <Button
+      variant="temporary"
+      onClose={handleCancelClick}>
+      <SettingsFormEditor editorId={editorId} {...rest} />
+      <div className={classes.actionContainer}>
+        {/*
+          <Button
           data-test="previewEditorResult"
           variant="outlined"
           onClick={handlePreview}
           disabled={showPreviewAction}>
           Preview
         </Button>
+        */}
         <EditorSaveButton
-          id={id}
+          id={editorId}
           variant="outlined"
           color="primary"
           dataTest="saveEditor"
