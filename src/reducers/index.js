@@ -3976,3 +3976,6 @@ export function integrationAppClonedDetails(state, id) {
 export function customSettingsStatus(state, resourceId) {
   return fromSession.customSettingsStatus(state && state.session, resourceId);
 }
+
+export const exportData = (state, identifier) =>
+  fromSession.exportData(state && state.session, identifier);

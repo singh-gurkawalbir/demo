@@ -18,7 +18,7 @@ let localStorageAssistants;
 // avoid test case breakages.
 // TODO: Need to see alternate solution here.
 try {
-  localStorageAssistants = JSON.parse(localStorage.getItem('assistants'));
+  localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
 } catch (e) {
   localStorageAssistants = [];
 }
