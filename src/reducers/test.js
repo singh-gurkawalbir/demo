@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* global describe, test, expect, beforeAll */
 import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
@@ -1420,14 +1420,18 @@ describe('marketplaceConnectorList selector', () => {
     applications: ['amazonmws', 'netsuite'],
   };
   const connectors = [connector1, connector2];
+  let marketplaceConnectorsSelector;
 
+  beforeAll(() => {
+    marketplaceConnectorsSelector = selectors.makeMarketPlaceConnectorsSelector();
+  });
   test('should not throw any error when params are bad', () => {
     const state = {};
 
-    expect(selectors.marketplaceConnectors(state, '')).toEqual([]);
-    expect(selectors.marketplaceConnectors(state, undefined)).toEqual([]);
-    expect(selectors.marketplaceConnectors(undefined, '')).toEqual([]);
-    expect(selectors.marketplaceConnectors(undefined, undefined)).toEqual([]);
+    expect(marketplaceConnectorsSelector(state, '')).toEqual([]);
+    expect(marketplaceConnectorsSelector(state, undefined)).toEqual([]);
+    expect(marketplaceConnectorsSelector(undefined, '')).toEqual([]);
+    expect(marketplaceConnectorsSelector(undefined, undefined)).toEqual([]);
   });
   test('should return correct values with respect to environment', () => {
     const state = reducer(
@@ -1442,7 +1446,7 @@ describe('marketplaceConnectorList selector', () => {
       'some_action'
     );
 
-    expect(selectors.marketplaceConnectors(state, 'netsuite')).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'netsuite')).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1464,7 +1468,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(selectors.marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1522,7 +1526,7 @@ describe('marketplaceConnectorList selector', () => {
       'some_action'
     );
 
-    expect(selectors.marketplaceConnectors(state, 'netsuite')).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'netsuite')).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1544,7 +1548,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(selectors.marketplaceConnectors(state, 'amazonmws', false)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', false)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1566,7 +1570,7 @@ describe('marketplaceConnectorList selector', () => {
         published: true,
       },
     ]);
-    expect(selectors.marketplaceConnectors(state, 'amazonmws', true)).toEqual([
+    expect(marketplaceConnectorsSelector(state, 'amazonmws', true)).toEqual([
       {
         _id: 'connector1',
         _stackId: '57be8a07be81b76e185bbb8d',
@@ -1590,7 +1594,80 @@ describe('marketplaceConnectorList selector', () => {
     ]);
   });
 });
+const exportGen = name => ({
+  _Id: `${name}id`,
+  _connectionId: `conn-${name}-id`,
+  name,
+  description: `${name} description`,
+});
 
+describe('makeResourceList selector reselect implementation', () => {
+  const names = ['bob', 'bill', 'will', 'bing'];
+  const testExports = names.map(exportGen);
+
+  describe('caching behavior', () => {
+    let state;
+    let bobSelector;
+    let billSelector;
+
+    beforeAll(() => {
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+      bobSelector = selectors.makeResourceListSelector();
+      billSelector = selectors.makeResourceListSelector();
+    });
+
+    test('should return the correct result sets for both selectors', () => {
+      const bobResource = bobSelector(state, {
+        type: 'exports',
+        keyword: 'bob',
+      }).resources;
+      const billResource = billSelector(state, {
+        type: 'exports',
+        keyword: 'bill',
+      }).resources;
+
+      expect(bobResource).toEqual([exportGen('bob')]);
+      expect(billResource).toEqual([exportGen('bill')]);
+    });
+
+    test('should return the same cached result', () => {
+      const bobQuery = {
+        type: 'exports',
+        keyword: 'bob',
+      };
+      const billQuery = {
+        type: 'exports',
+        keyword: 'bill',
+      };
+      const bobResource = bobSelector(state, bobQuery).resources;
+      const billResource = billSelector(state, billQuery).resources;
+      const bobResourceCached = bobSelector(state, bobQuery).resources;
+      const billResourceCached = billSelector(state, billQuery).resources;
+
+      expect(bobResource).toBe(bobResourceCached);
+      expect(billResource).toBe(billResourceCached);
+    });
+    test('bobSelector should return a different result for a different query, billSelector should continue to return its cached result', () => {
+      const bingQuery = {
+        type: 'exports',
+        keyword: 'bing',
+      };
+      const billQuery = {
+        type: 'exports',
+        keyword: 'bill',
+      };
+      const billResource = billSelector(state, billQuery).resources;
+      const bingResource = bobSelector(state, bingQuery).resources;
+      const billResourceCached = billSelector(state, billQuery).resources;
+
+      expect(bingResource).toEqual([exportGen('bing')]);
+      expect(billResource).toBe(billResourceCached);
+    });
+  });
+});
 describe('integrationAppConnectionList reducer', () => {
   const integrations = [
     {
