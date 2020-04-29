@@ -92,7 +92,7 @@ export default {
         '&:disabled': {
           color: colors.celigoNeutral4,
           background: colors.celigoNeutral2,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoNeutral2,
         },
       },
       containedSecondary: {
@@ -120,7 +120,7 @@ export default {
         '&:disabled': {
           color: colors.celigoNeutral4,
           background: colors.celigoNeutral2,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoNeutral2,
         },
       },
       outlinedPrimary: {
@@ -398,7 +398,7 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&.Mui-disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
         },
       },
       input: {
@@ -414,7 +414,7 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -437,7 +437,7 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
         },
       },
       inputMultiline: {
@@ -457,8 +457,11 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: '15px',
         '&$disabled': {
-          background: colors.celigoNeutral3,
-          color: colors.celigoNeutral6,
+          background: colors.celigoNeutral2,
+          color: colors.celigoNeutral4,
+          '&hover': {
+            borderColor: '#cc0000',
+          },
         },
       },
     },

@@ -46,7 +46,6 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     textAlign: 'center',
     width: '100%',
     maxWidth: 500,
-    background: theme.palette.background.paper2,
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },

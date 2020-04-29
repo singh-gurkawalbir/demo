@@ -5,7 +5,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../components/CodeEditor';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
@@ -145,7 +145,7 @@ export default function DynaEditor(props) {
         data-test={id}
         onClick={handleEditorClick}
         className={classes.editorButton}>
-        <ExitIcon />
+        <ExpandWindowIcon />
       </ActionButton>
     </div>
   );

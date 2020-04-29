@@ -3,43 +3,28 @@ import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import CeligoSelect from '../../CeligoSelect';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    // width: '486px',
+    height: 'auto',
+    '& >.MuiSelect-selectMenu': {
+      height: 'auto',
+    },
   },
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > .MuiInput-formControl': {
-      minHeight: 38,
-      padding: '0px 15px',
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& svg': {
-      right: theme.spacing(1),
-    },
+  labelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
+    padding: [[12, 0]],
   },
   chip: {
     margin: theme.spacing(0.25),
@@ -79,7 +64,7 @@ export default function DynaMultiSelect(props) {
     processedValue = [processedValue];
   }
 
-  const items = options.reduce(
+  let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -114,6 +99,13 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
+  const defaultItem = (
+    <MenuItem key="__placeholder" value="">
+      {placeholder || 'Please select'}
+    </MenuItem>
+  );
+
+  items = [defaultItem, ...items];
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 
@@ -127,30 +119,32 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <div className={classes.wrapper}>
-      <FormLabel htmlFor={id} required={required}>
-        {label}
-      </FormLabel>
+    <div>
+      <div className={classes.labelWrapper}>
+        <FormLabel htmlFor={id} required={required}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <FormControl
         key={id}
         disabled={disabled}
         error={!isValid}
-        required={required}
-        className={classes.root}>
-        <Select
+        required={required}>
+        <CeligoSelect
           multiple
           data-test={id}
           disabled={disabled}
           value={processedValue}
           displayEmpty={displayEmpty}
-          IconComponent={ArrowDownIcon}
+          className={classes.wrapper}
           onChange={evt => {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}
           renderValue={selected =>
             !selected || !selected.length ? (
-              <div>{placeholder}</div>
+              <span>{placeholder}</span>
             ) : (
               <div className={classes.chips}>
                 {selected &&
@@ -160,7 +154,7 @@ export default function DynaMultiSelect(props) {
             )
           }>
           {items}
-        </Select>
+        </CeligoSelect>
       </FormControl>
 
       <ErroredMessageComponent {...props} />

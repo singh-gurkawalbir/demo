@@ -4,41 +4,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
+import CeligoSelect from '../../CeligoSelect';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   fieldWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > .MuiInput-formControl': {
-      height: 38,
-      padding: '11px 15px',
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& svg': {
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-    },
-  },
-}));
+});
 
 export default function DynaSelect(props) {
   const {
@@ -118,12 +93,10 @@ export default function DynaSelect(props) {
         key={id}
         disabled={disabled}
         error={!isValid}
-        required={required}
-        className={classes.root}>
-        <Select
+        required={required}>
+        <CeligoSelect
           data-test={id}
           value={finalTextValue}
-          IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
           disabled={disabled}
@@ -133,7 +106,7 @@ export default function DynaSelect(props) {
           }}
           input={<Input name={name} id={id} />}>
           {items}
-        </Select>
+        </CeligoSelect>
       </FormControl>
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}

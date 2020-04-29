@@ -7,7 +7,7 @@ import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -130,7 +130,7 @@ export default function DynaRelativeUri(props) {
         data-test={id}
         onClick={handleEditorClick}
         className={classes.exitButton}>
-        <ExitIcon />
+        <ExpandWindowIcon />
       </ActionButton>
       <TextField
         key={id}
