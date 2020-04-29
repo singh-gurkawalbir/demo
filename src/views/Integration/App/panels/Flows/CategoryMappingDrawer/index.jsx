@@ -609,7 +609,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                       disabled={isSaving}
                       data-test="saveAndCloseImportMapping"
                       onClick={handleSaveAndClose}>
-                      Save & Close
+                      Save & close
                     </Button>
                   )}
                   <Button
