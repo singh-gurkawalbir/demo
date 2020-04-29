@@ -35,6 +35,8 @@ import {
   isSimpleImportFlow,
   isRunnable,
   showScheduleIcon,
+  getAllExportIdsUsedInTheFlow,
+  getAllImportIdsUsedInTheFlow,
 } from './flowsUtil';
 import {
   getUsedActionsMapForResource,
@@ -1090,61 +1092,9 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function getAllExportIdsUsedInTheFlow(state, flow) {
-  const exportIds = [];
-
-  if (!flow) {
-    return exportIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-    });
-  }
-
-  return exportIds;
-}
-
-export function getAllImportIdsUsedInTheFlow(state, flow) {
-  const importIds = [];
-
-  if (!flow) {
-    return importIds;
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  return importIds;
-}
-
 export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
-  const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
-  const importIds = getAllImportIdsUsedInTheFlow(state, flow);
+  const exportIds = getAllExportIdsUsedInTheFlow(flow);
+  const importIds = getAllImportIdsUsedInTheFlow(flow);
   const connectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;

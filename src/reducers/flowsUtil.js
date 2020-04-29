@@ -82,3 +82,55 @@ export function isRunnable(exports, exp, flow) {
   // finally, we must thus be runnable.
   return true;
 }
+
+export function getAllExportIdsUsedInTheFlow(flow) {
+  const exportIds = [];
+
+  if (!flow) {
+    return exportIds;
+  }
+
+  if (flow._exportId) {
+    exportIds.push(flow._exportId);
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
+    flow.pageGenerators.forEach(pg => {
+      if (pg._exportId) {
+        exportIds.push(pg._exportId);
+      }
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._exportId) {
+        exportIds.push(pp._exportId);
+      }
+    });
+  }
+
+  return exportIds;
+}
+
+export function getAllImportIdsUsedInTheFlow(flow) {
+  const importIds = [];
+
+  if (!flow) {
+    return importIds;
+  }
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp._importId) {
+        importIds.push(pp._importId);
+      }
+    });
+  }
+
+  return importIds;
+}
