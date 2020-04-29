@@ -75,6 +75,10 @@ export default (state = initialState, action) => {
   });
 };
 
+export function networkCommState(state) {
+  return state;
+}
+
 // #region PUBLIC SELECTORS
 export function commReqType(state, resourceName) {
   return (state && state[resourceName] && state[resourceName].method) || 'GET';

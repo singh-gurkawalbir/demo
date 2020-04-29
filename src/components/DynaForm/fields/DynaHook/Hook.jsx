@@ -15,6 +15,7 @@ import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
+import useResourceList from '../../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -34,10 +35,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-
 /*
  * pass patchOnSave = true along with processorKey, if network save is required on click of Save button
  */
+const scriptsFilterConfig = { type: 'scripts' };
+const stacksFilterConfig = { type: 'stacks' };
+
 export default function DynaHook(props) {
   const [showEditor, setShowEditor] = useState(false);
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
@@ -48,12 +51,8 @@ export default function DynaHook(props) {
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, tempScriptId)
   );
-  const allScripts = useSelector(
-    state => selectors.resourceList(state, { type: 'scripts' }).resources
-  );
-  const allStacks = useSelector(
-    state => selectors.resourceList(state, { type: 'stacks' }).resources
-  );
+  const allScripts = useResourceList(scriptsFilterConfig).resources;
+  const allStacks = useResourceList(stacksFilterConfig).resources;
   const {
     id,
     flowId,

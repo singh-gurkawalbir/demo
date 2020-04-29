@@ -15,6 +15,7 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -47,13 +48,15 @@ export default function Licenses(props) {
   const filter =
     useSelector(state => selectors.filter(state, sortFilterKey)) ||
     defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const connectorLicensesFilterConfig = useMemo(
+    () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
       ...{ ...defaultFilter, ...filter },
-    })
+    }),
+    [defaultFilter, filter]
   );
+  const list = useResourceList(connectorLicensesFilterConfig);
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
