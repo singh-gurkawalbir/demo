@@ -5,7 +5,8 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   editorButton: {
-    marginRight: 5,
+    marginLeft: theme.spacing(1),
+    display: 'inline-block',
     background: theme.palette.background.paper,
     padding: 0,
     borderRadius: 2,

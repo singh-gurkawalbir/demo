@@ -13,6 +13,9 @@ const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
     marginBottom: theme.spacing(2),
+    '& > div': {
+      width: '100%',
+    },
   },
   formField: {
     width: '398px',

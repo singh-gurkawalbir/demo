@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     overflow: 'hidden',
-    padding: '0px 15px',
+    padding: '0px 12px',
     height: 38,
     justifyContent: 'flex-end',
     borderRadius: theme.spacing(0.5),

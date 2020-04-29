@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
@@ -10,12 +10,21 @@ import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    width: '100%',
   },
   exitButton: {
     float: 'right',
     marginLeft: theme.spacing(1),
+    marginTop: 30,
+  },
+  wrapper: {
+    flexDirection: `row !important`,
+  },
+  textField: {
+    width: '100%',
   },
 }));
 
@@ -115,7 +124,7 @@ export default function DynaRelativeUri(props) {
   }
 
   return (
-    <Fragment>
+    <div className={classes.wrapper}>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
@@ -126,26 +135,31 @@ export default function DynaRelativeUri(props) {
           disabled={disabled}
         />
       )}
+
+      <FormControl className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id} required={required}>
+          {label}
+        </FormLabel>
+        <TextField
+          key={id}
+          name={name}
+          className={classes.textField}
+          placeholder={placeholder}
+          helperText={isValid ? description : errorMessages}
+          disabled={disabled}
+          required={required}
+          error={!isValid}
+          value={value}
+          variant="filled"
+          onChange={handleFieldChange}
+        />
+      </FormControl>
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
         className={classes.exitButton}>
         <ExpandWindowIcon />
       </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        required={required}
-        error={!isValid}
-        value={value}
-        variant="filled"
-        onChange={handleFieldChange}
-      />
-    </Fragment>
+    </div>
   );
 }

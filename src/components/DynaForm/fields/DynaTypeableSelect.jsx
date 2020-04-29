@@ -51,17 +51,20 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     display: 'flex',
     '& > .MuiFilledInput-multiline': {
-      minHeight: '48px',
+      minHeight: '38px',
       padding: theme.spacing(1),
       '& >:nth-child(1)': {
         margin: 0,
         minWidth: 0,
-        maxWidth: '90%',
+        maxWidth: '85%',
       },
       '& >:nth-child(2)': {
         minHeight: `16px !important`,
         wordBreak: 'break-word',
       },
+    },
+    '& > div': {
+      width: '100%',
     },
   },
 }));

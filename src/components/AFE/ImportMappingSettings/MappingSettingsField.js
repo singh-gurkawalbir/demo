@@ -1,21 +1,13 @@
 import { useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import ImportMappingSettings from './';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
-
-const useStyles = makeStyles(theme => ({
-  settingIcon: {
-    marginLeft: theme.spacing(1),
-  },
-}));
 
 /**
  *
  * disabled property set to true in case of monitor level access
  */
 export default function MappingSettingsField(props) {
-  const classes = useStyles();
   const {
     id,
     onSave,
@@ -62,7 +54,6 @@ export default function MappingSettingsField(props) {
 
       <ActionButton
         data-test={id}
-        className={classes.settingIcon}
         disabled={isDisabled}
         aria-label="settings"
         onClick={handleBtnClick}

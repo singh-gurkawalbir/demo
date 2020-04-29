@@ -20,9 +20,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     marginTop: -1,
     padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
   },
 }));
 
@@ -178,7 +175,11 @@ export default function SettingsDrawer({
     the integration-level setting.`;
 
   return (
-    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
+    <RightDrawer
+      path="settings"
+      title="Settings"
+      infoText={infoTextSettings}
+      width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm
           integrationId={integrationId}
