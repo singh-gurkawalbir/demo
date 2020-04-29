@@ -751,7 +751,12 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
 
-  if (!integration || !integration._connectorId) {
+  // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
+  if (
+    !integration ||
+    !integration._connectorId ||
+    (integration.installSteps && integration.installSteps.length)
+  ) {
     // return empty object for DIY integrations.
     return emptyObject;
   }
