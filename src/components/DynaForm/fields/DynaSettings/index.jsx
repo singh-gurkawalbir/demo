@@ -34,10 +34,10 @@ export function NewDynaSettings(props) {
     [id, onFieldChange]
   );
   const handleEditClose = useCallback(
-    (shouldCommit, editor) => {
-      // console.log('edit drawer closed', shouldCommit, editor);
-      history.goBack();
-    },
+    // (shouldCommit, editor) => {
+    // console.log('edit drawer closed', shouldCommit, editor);
+    // },
+    () => history.goBack(),
     [history]
   );
   const hasSettingsForm =
