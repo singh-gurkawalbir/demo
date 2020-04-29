@@ -72,7 +72,7 @@ export default {
           { label: 'Chargify', value: 'chargify' },
           { label: 'Clover', value: 'clover' },
           { label: 'Dcl', value: 'dcl' },
-          { label: 'Desk', value: 'desk' },
+          // { label: 'Desk', value: 'desk' },
           { label: 'Dnb', value: 'dnb' },
           { label: 'Docusign', value: 'docusign' },
           { label: 'Doubleclick', value: 'doubleclick' },
@@ -103,6 +103,7 @@ export default {
           { label: 'Hubspot', value: 'hubspot' },
           { label: 'Hybris', value: 'hybris' },
           { label: 'Insightly', value: 'insightly' },
+          { label: 'Inspectorio', value: 'inspectorio' },
           { label: 'Integratorio', value: 'integratorio' },
           { label: 'Jet', value: 'jet' },
           { label: 'Jira', value: 'jira' },
@@ -1308,6 +1309,7 @@ export default {
   'ftp.port': {
     type: 'ftpport',
     label: 'Port',
+    required: true,
     validWhen: {
       fallsWithinNumericalRange: {
         min: 0,

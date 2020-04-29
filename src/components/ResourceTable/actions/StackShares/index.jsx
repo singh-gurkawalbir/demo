@@ -1,19 +1,19 @@
-import { Fragment, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
+import { Fragment, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
+import useResourceList from '../../../../hooks/useResourceList';
+
+const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
   label: 'Stack Shares',
   component: function StackShares({ resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
-    const resourceList = useSelector(state =>
-      selectors.resourceList(state, { type: 'sshares' })
-    );
+    const resourceList = useResourceList(ssharesFilterConfig);
     const stackShareCollection = resourceList.resources;
 
     useEffect(() => {

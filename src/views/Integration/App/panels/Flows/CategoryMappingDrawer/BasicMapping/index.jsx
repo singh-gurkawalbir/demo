@@ -21,7 +21,7 @@ export default function MappingWrapper(props) {
 
     return null;
   });
-  const { fieldMappings, deleted = false } =
+  const { fieldMappings, lookups, deleted = false } =
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
@@ -50,6 +50,7 @@ export default function MappingWrapper(props) {
     adaptorType: 'netsuite',
     application,
     isCategoryMapping: true,
+    lookups,
     mappings: { fields: fieldMappings },
   };
   const handleInit = useCallback(() => {

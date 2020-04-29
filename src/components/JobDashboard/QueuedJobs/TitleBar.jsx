@@ -1,12 +1,13 @@
+import { Divider, IconButton, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Typography, IconButton, Divider } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../reducers';
+import BackArrowIcon from '../../../components/icons/BackArrowIcon';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import LoadResources from '../../../components/LoadResources';
-import BackArrowIcon from '../../../components/icons/BackArrowIcon';
+import useResourceList from '../../../hooks/useResourceList';
+import * as selectors from '../../../reducers';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 
 const useStyles = makeStyles(theme => ({
@@ -53,6 +54,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
 }));
+const connectionsFilterConfig = {
+  type: 'connections',
+};
 
 export default function DrawerTitleBar({
   connectionId,
@@ -67,14 +71,11 @@ export default function DrawerTitleBar({
     state => selectors.flowJobConnections(state, flowId),
     (left, right) => left.length === right.length
   );
-  const connectionName = useSelector(state => {
-    const { resources: connections } = selectors.resourceList(state, {
-      type: 'connections',
-    });
-    const connection = connections.find(c => c._id === connectionId);
-
-    return connection.name;
-  });
+  const connectionsResourceList = useResourceList(connectionsFilterConfig)
+    .resources;
+  const connectionName = connectionsResourceList.find(
+    c => c._id === connectionId
+  ).name;
   const handleConnectionChange = useCallback(
     (id, value) => {
       onConnChange(value);
