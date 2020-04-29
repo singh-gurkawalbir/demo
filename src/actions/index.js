@@ -229,6 +229,10 @@ const resource = {
       op,
       offset,
     }),
+  flows: {
+    requestLineGraphDetails: flowId =>
+      action(actionTypes.RESOURCE.REQUEST_LINE_GRAPH_DETAILS, { flowId }),
+  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),

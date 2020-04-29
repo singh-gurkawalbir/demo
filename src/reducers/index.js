@@ -462,6 +462,10 @@ export function getSampleDataContext(
   });
 }
 
+export function lineGraphData(state, flowId) {
+  return flowId ? null : undefined;
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,

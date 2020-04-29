@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import {
   LineChart,
@@ -11,7 +12,9 @@ import {
   Line,
 } from 'recharts';
 import { makeStyles } from '@material-ui/core';
+import * as selectors from '../../../reducers';
 import PanelHeader from '../../../components/PanelHeader';
+import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,6 +37,8 @@ const getRandomData = count => {
 
   return data;
 };
+
+const flowId = '5ea7f077700a4a7fae11459d';
 
 export function CustomizedDot(props) {
   const { cx, cy, value } = props;
@@ -67,6 +72,15 @@ export function CustomizedDot(props) {
 
 export default function Recharts() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const flowData = useSelector(state => selectors.lineGraphData(state, flowId));
+
+  useEffect(() => {
+    if (!flowData) {
+      dispatch(actions.resource.flows.requestLineGraphDetails(flowId));
+    }
+  }, [dispatch, flowData]);
+  const data = flowData || getRandomData(25);
 
   return (
     <div className={classes.root}>
@@ -74,7 +88,7 @@ export default function Recharts() {
       <LineChart
         width={930}
         height={350}
-        data={getRandomData(25)}
+        data={data}
         margin={{
           top: 5,
           right: 30,
@@ -101,27 +115,6 @@ export default function Recharts() {
         />
         <Line dataKey="errors" legendType="diamond" stroke="red" />
         <Line dataKey="ignored" stroke="purple" />
-      </LineChart>
-      <PanelHeader title="Recharts Demo" />
-      <LineChart
-        width={730}
-        height={250}
-        data={getRandomData(50)}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="success" stroke="green" />
-        <Line type="monotone" dataKey="errors" stroke="red" />
-        <Line type="monotone" dataKey="ignored" stroke="purple" />
       </LineChart>
     </div>
   );
