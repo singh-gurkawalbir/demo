@@ -78,7 +78,7 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpKey: 'zendesk.connection.http.auth.basic.username',
+      helpKey: 'connection.http.auth.basic.username',
       defaultValue: r => {
         if (
           r &&
@@ -98,7 +98,7 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
-      helpKey: 'zendesk.connection.http.auth.basic.password',
+      helpKey: 'connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.apiToken': {
