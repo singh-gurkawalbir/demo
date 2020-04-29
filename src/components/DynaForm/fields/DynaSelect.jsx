@@ -1,16 +1,19 @@
 import React from 'react';
-import { ListSubheader } from '@material-ui/core';
-import clsx from 'clsx';
+import { ListSubheader, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -21,29 +24,18 @@ const useStyles = makeStyles(theme => ({
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     overflow: 'hidden',
-    height: 50,
     justifyContent: 'flex-end',
     borderRadius: 2,
-    '& > Label': {
-      marginTop: theme.spacing(-1),
-      whiteSpace: 'nowrap',
-      '&.MuiInputLabel-shrink': {
-        paddingTop: theme.spacing(2),
-      },
+    '& > .MuiInput-formControl': {
+      height: 38,
+      padding: '11px 15px',
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-      textAlign: 'left',
-    },
     '& svg': {
       right: theme.spacing(1),
-      top: theme.spacing(-1),
+      top: theme.spacing(1),
     },
   },
 }));
@@ -61,7 +53,6 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     label,
-    className,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -109,7 +100,7 @@ export default function DynaSelect(props) {
 
   const defaultItem = (
     <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please Select'}
+      {placeholder || 'Please select'}
     </MenuItem>
   );
 
@@ -117,15 +108,18 @@ export default function DynaSelect(props) {
 
   return (
     <div>
+      <div className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id} required={required}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <FormControl
         key={id}
         disabled={disabled}
-        className={clsx(classes.root, className)}
         error={!isValid}
-        required={required}>
-        <InputLabel shrink htmlFor={id}>
-          {label}
-        </InputLabel>
+        required={required}
+        className={classes.root}>
         <Select
           data-test={id}
           value={finalTextValue}

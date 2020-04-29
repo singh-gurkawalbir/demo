@@ -5,6 +5,7 @@ import {
   FormLabel,
   FormControl,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -12,7 +13,14 @@ import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 
+const useStyles = makeStyles(theme => ({
+  nsSavedSearch: {
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 export default function DynaNSSavedSearch(props) {
+  const classes = useStyles();
   const [searchType, setSearchType] = useState('public');
   // Use this state to set Search type for the first time
   const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
@@ -85,6 +93,7 @@ export default function DynaNSSavedSearch(props) {
         error={!isValid}
         required={required}
         disabled={disabled}
+        className={classes.nsSavedSearch}
         component="fieldset">
         <FormLabel component="legend">Saved search type</FormLabel>
         <RadioGroup

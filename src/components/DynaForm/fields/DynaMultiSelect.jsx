@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import { FormLabel } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -11,6 +11,9 @@ import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
+  wrapper: {
+    // width: '486px',
+  },
   root: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -21,29 +24,14 @@ const useStyles = makeStyles(theme => ({
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     overflow: 'hidden',
-    minHeight: 50,
     justifyContent: 'flex-end',
     borderRadius: 2,
-    '& > Label': {
-      marginTop: theme.spacing(-1),
-      '&.MuiInputLabel-shrink': {
-        marginTop: 5,
-      },
-      '& + div': {
-        marginTop: 0,
-        top: 0,
-      },
+    '& > .MuiInput-formControl': {
+      minHeight: 38,
+      padding: '0px 15px',
     },
     '&:hover': {
       borderColor: theme.palette.primary.main,
-    },
-
-    '& > *': {
-      padding: [[0, 12]],
-      background: 'none',
-    },
-    '& > div > div ': {
-      paddingTop: theme.spacing(3),
     },
     '& svg': {
       right: theme.spacing(1),
@@ -139,16 +127,16 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <div>
+    <div className={classes.wrapper}>
+      <FormLabel htmlFor={id} required={required}>
+        {label}
+      </FormLabel>
       <FormControl
         key={id}
         disabled={disabled}
         error={!isValid}
         required={required}
         className={classes.root}>
-        <InputLabel shrink htmlFor={id}>
-          {label}
-        </InputLabel>
         <Select
           multiple
           data-test={id}

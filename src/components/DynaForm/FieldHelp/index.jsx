@@ -5,7 +5,7 @@ import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
-    marginLeft: 8,
+    marginLeft: theme.spacing(0.5),
     padding: 0,
     color: theme.palette.text.hint,
   },

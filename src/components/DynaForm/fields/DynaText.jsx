@@ -12,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
+    marginBottom: theme.spacing(2),
   },
   formField: {
     width: '398px',
@@ -148,27 +149,25 @@ function DynaText(props) {
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <div>
-        <TextField
-          autoComplete="off"
-          key={id}
-          data-test={id}
-          name={name}
-          InputProps={InputProps}
-          type={inputType}
-          placeholder={placeholder}
-          helperText={isValid ? description : errorMessages}
-          disabled={disabled || disableText}
-          multiline={multiline}
-          rowsMax={rowsMax}
-          required={required}
-          error={!isValid}
-          value={inpValue}
-          variant="filled"
-          onChange={handleFieldChange}
-          className={(classes.formField, className)}
-        />
-      </div>
+      <TextField
+        autoComplete="off"
+        key={id}
+        data-test={id}
+        name={name}
+        InputProps={InputProps}
+        type={inputType}
+        placeholder={placeholder}
+        helperText={isValid ? description : errorMessages}
+        disabled={disabled || disableText}
+        multiline={multiline}
+        rowsMax={rowsMax}
+        required={required}
+        error={!isValid}
+        value={inpValue}
+        variant="filled"
+        onChange={handleFieldChange}
+        className={(classes.formField, className)}
+      />
     </FormControl>
   );
 }

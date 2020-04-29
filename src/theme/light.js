@@ -379,8 +379,12 @@ export default {
       root: {
         fontFamily: 'source sans pro',
         fontSize: 14,
-        lineHeight: '100%',
+        marginBottom: 8,
+        lineHeight: '24px',
         color: colors.celigoNeutral6,
+        '&.Mui-required': {
+          fontWeight: 'bold',
+        },
       },
     },
     MuiFilledInput: {

@@ -4,7 +4,7 @@ import fields from './fields';
 const wrapper = {
   display: 'flex',
   alignItems: 'flex-start',
-  marginBottom: 6,
+  marginBottom: 16,
 };
 const fieldStyle = {
   flexGrow: '1',

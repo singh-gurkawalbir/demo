@@ -1,5 +1,4 @@
 import { useEffect, useState, cloneElement, useCallback } from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,6 +68,9 @@ const useStyles = makeStyles(theme => ({
   chip: {
     margin: theme.spacing(0.25),
   },
+  refreshRoot: {
+    width: '100%',
+  },
 }));
 
 /**
@@ -86,7 +88,7 @@ export default function RefreshGenericResource(props) {
     disabled,
     disableOptionsLoad,
     id,
-    label,
+
     resourceToFetch,
     resetValue,
     multiselect,
@@ -162,13 +164,12 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.inlineElements}>
-        <InputLabel shrink htmlFor={id} className={classes.label}>
-          {label}
-        </InputLabel>
-        {cloneElement(children, {
-          ...props,
-          options: [{ items: options || [] }],
-        })}
+        <div className={classes.refreshRoot}>
+          {cloneElement(children, {
+            ...props,
+            options: [{ items: options || [] }],
+          })}
+        </div>
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={handleRefreshResource}

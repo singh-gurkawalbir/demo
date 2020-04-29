@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -10,9 +10,6 @@ import ModalDialog from '../../ModalDialog';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    overflowY: 'off',
-  },
   label: {
     fontSize: '12px',
     marginTop: theme.spacing(1),
@@ -23,13 +20,18 @@ const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
     height: theme.spacing(10),
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '50vh',
     width: '65vh',
+  },
+  wrapper: {
+    flexDirection: `row !important`,
+  },
+  internalWrapper: {
+    width: '100%',
   },
 }));
 
@@ -120,14 +122,8 @@ export default function DynaEditor(props) {
   );
 
   return (
-    <Fragment>
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.editorButton}>
-        <ExitIcon />
-      </ActionButton>
-      <div className={classes.container}>
+    <div className={classes.wrapper}>
+      <div className={classes.internalWrapper}>
         {showEditor && editorDialog}
         <FormLabel className={classes.label}>{label}</FormLabel>
         <div
@@ -145,6 +141,12 @@ export default function DynaEditor(props) {
         </div>
         <ErroredMessageComponent {...props} />
       </div>
-    </Fragment>
+      <ActionButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.editorButton}>
+        <ExitIcon />
+      </ActionButton>
+    </div>
   );
 }

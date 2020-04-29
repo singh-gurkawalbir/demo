@@ -38,7 +38,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   submit: {
     width: '100%',
     borderRadius: 4,
-    height: 48,
+    height: 38,
     fontSize: theme.spacing(2),
     marginBottom: 20,
   },
@@ -56,9 +56,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   textField: {
     width: '100%',
-    border: '1px solid',
     background: theme.palette.background.paper,
-    borderColor: theme.palette.secondary.lightest,
     marginBottom: 0,
   },
   alertMsg: {
@@ -88,7 +86,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     width: '100%',
     background: `url(${path}) 15% center no-repeat`,
     backgroundSize: theme.spacing(2),
-    height: 48,
+    height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
   },
