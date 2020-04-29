@@ -21,7 +21,6 @@ import actions from '../../../../../actions';
 import {
   getResourceSubType,
   generateNewId,
-  isOauth,
 } from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
@@ -61,13 +60,7 @@ const useStyles = makeStyles(theme => ({
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
 
-  if (assistant) return assistant;
-
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
-  } else if (resource.type === 'shopify') {
+  if (assistant === 'shopify') {
     if (
       resource.http &&
       resource.http.auth &&
@@ -77,6 +70,14 @@ const getConnectionType = resource => {
     }
 
     return '';
+  }
+
+  if (assistant) return assistant;
+
+  if (resource.type === 'netsuite') {
+    if (resource.netsuite.authType === 'token-auto') {
+      return 'netsuite-oauth';
+    }
   }
 
   return type;
@@ -109,8 +110,15 @@ export default function ConnectorInstallation(props) {
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
+  const isCloned =
+    integration &&
+    integration.install &&
+    integration.install.find(step => step.isClone);
   const isFrameWork2 =
-    integration && integration.installSteps && integration.installSteps.length;
+    (integration &&
+      integration.installSteps &&
+      integration.installSteps.length) ||
+    isCloned;
 
   useEffect(() => {
     if (
@@ -171,7 +179,7 @@ export default function ConnectorInstallation(props) {
         );
       }
 
-      if (!isOauth(connectionDoc)) setConnection(false);
+      setConnection(false);
     },
     [
       connection,
@@ -252,9 +260,14 @@ export default function ConnectorInstallation(props) {
       installerFunction,
       type,
       sourceConnection,
+      completed,
     } = step;
 
-    if (_connectionId || type === 'connection') {
+    if (completed) {
+      return false;
+    }
+
+    if (_connectionId || type === 'connection' || sourceConnection) {
       if (step.isTriggered) {
         return false;
       }
@@ -280,7 +293,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL) {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -313,12 +326,19 @@ export default function ConnectorInstallation(props) {
             'verify'
           )
         );
-        dispatch(
-          actions.integrationApp.installer.installStep(
-            integrationId,
-            installerFunction
-          )
-        );
+
+        if (isFrameWork2) {
+          dispatch(
+            actions.integrationApp.installer.scriptInstallStep(integrationId)
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.installer.installStep(
+              integrationId,
+              installerFunction
+            )
+          );
+        }
       }
       // handle Action step click
     } else if (!step.isTriggered) {

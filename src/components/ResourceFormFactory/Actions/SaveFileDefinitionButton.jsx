@@ -17,6 +17,7 @@ const SaveFileDefinitionButton = props => {
     submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
+    flowId,
     disabled = false,
   } = props;
   const dispatch = useDispatch();
@@ -34,11 +35,15 @@ const SaveFileDefinitionButton = props => {
         definitionRules = JSON.parse(definitionRules);
 
         dispatch(
-          actions.fileDefinitions.definition.userDefined.save(definitionRules, {
-            resourceId,
-            resourceType,
-            values,
-          })
+          actions.fileDefinitions.definition.userDefined.save(
+            definitionRules,
+            {
+              resourceId,
+              resourceType,
+              values,
+            },
+            flowId
+          )
         );
         setDisableSave(true);
       } catch (e) {
@@ -50,7 +55,7 @@ const SaveFileDefinitionButton = props => {
         });
       }
     },
-    [dispatch, enquesnackbar, resourceId, resourceType]
+    [dispatch, enquesnackbar, flowId, resourceId, resourceType]
   );
 
   useEffect(() => {

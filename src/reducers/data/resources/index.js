@@ -136,7 +136,7 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.installerFunction === step.installerFunction
+            s => s.name === step.name
           );
 
           if (stepIndex !== -1) {
