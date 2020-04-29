@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
     width: '40%',
+    overflow: 'hidden',
   },
   disableChildRow: {
     cursor: 'not-allowed',
