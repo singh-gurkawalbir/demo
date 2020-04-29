@@ -750,6 +750,7 @@ export function resourceList(state, options = {}) {
 export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
   const allFlows = [];
+
   // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
   if (
     !integration ||
