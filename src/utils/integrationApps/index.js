@@ -168,6 +168,12 @@ export default {
 
     return highestEdition;
   },
-  isCloningSupported: (_connectorId, name) =>
-    CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
+  isCloningSupported: (_connectorId, name) => {
+    const domain = window.document.location.hostname.replace('www.', '');
+
+    return (
+      domain === 'staging.integrator.io' &&
+      CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name }))
+    );
+  },
 };

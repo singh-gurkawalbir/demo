@@ -95,6 +95,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
+    // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
     if (
       integration &&
       integration.installSteps &&
