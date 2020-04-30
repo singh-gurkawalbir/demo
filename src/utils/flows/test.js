@@ -28,56 +28,41 @@ const flowWithPGsandPPs = {
 
 describe('getExportIdsFromFlow', () => {
   test('should return empty set when flow is empty', () => {
-    const expected = getExportIdsFromFlow();
-
-    expect(expected).toEqual([]);
+    expect(getExportIdsFromFlow()).toEqual([]);
   });
   test('should return the correct exportId when the flow uses the old schema properties', () => {
-    const expected = getExportIdsFromFlow(oldFlow);
-
-    expect(expected).toEqual(['e1']);
+    expect(getExportIdsFromFlow(oldFlow)).toEqual(['e1']);
   });
   test('should return correct export Ids when flow has only pageGenerators', () => {
-    const expected = getExportIdsFromFlow(flowWithOnlyPGs);
-
-    expect(expected).toEqual(['e1', 'e2']);
+    expect(getExportIdsFromFlow(flowWithOnlyPGs)).toEqual(['e1', 'e2']);
   });
   test('should return correct export Ids when flow has only pageProcessors', () => {
-    const expected = getExportIdsFromFlow(flowWithOnlyPPs);
-
-    expect(expected).toEqual(['e1', 'e2']);
+    expect(getExportIdsFromFlow(flowWithOnlyPPs)).toEqual(['e1', 'e2']);
   });
   test('should return correct export Ids when flow has both pageGenerators and pageProcessors', () => {
-    const expected = getExportIdsFromFlow(flowWithPGsandPPs);
-
-    expect(expected).toEqual(['e1', 'e2', 'e3', 'e4']);
+    expect(getExportIdsFromFlow(flowWithPGsandPPs)).toEqual([
+      'e1',
+      'e2',
+      'e3',
+      'e4',
+    ]);
   });
 });
 
 describe('getImportIdsFromFlow', () => {
   test('should return empty set when flow is empty', () => {
-    const expected = getImportIdsFromFlow();
-
-    expect(expected).toEqual([]);
+    expect(getImportIdsFromFlow()).toEqual([]);
   });
   test('should return the correct importId when the flow uses the old schema properties', () => {
-    const expected = getImportIdsFromFlow(oldFlow);
-
-    expect(expected).toEqual(['i1']);
+    expect(getImportIdsFromFlow(oldFlow)).toEqual(['i1']);
   });
   test('should return correct import Ids when flow has only pageGenerators', () => {
-    const expected = getImportIdsFromFlow(flowWithOnlyPGs);
-
-    expect(expected).toEqual([]);
+    expect(getImportIdsFromFlow(flowWithOnlyPGs)).toEqual([]);
   });
   test('should return correct import Ids when flow has only pageProcessors', () => {
-    const expected = getImportIdsFromFlow(flowWithOnlyPPs);
-
-    expect(expected).toEqual(['i1']);
+    expect(getImportIdsFromFlow(flowWithOnlyPPs)).toEqual(['i1']);
   });
   test('should return correct import Ids when flow has both pageGenerators and pageProcessors', () => {
-    const expected = getImportIdsFromFlow(flowWithPGsandPPs);
-
-    expect(expected).toEqual(['i1', 'i2']);
+    expect(getImportIdsFromFlow(flowWithPGsandPPs)).toEqual(['i1', 'i2']);
   });
 });
