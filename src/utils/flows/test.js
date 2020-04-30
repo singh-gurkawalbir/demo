@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { getExportIdsFromFlow, getImportIdsFromFlow } from './flowsUtil';
+import { getExportIdsFromFlow, getImportIdsFromFlow } from '.';
 
 const oldFlow = {
   _exportId: 'e1',

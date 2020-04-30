@@ -37,8 +37,6 @@ import {
   showScheduleIcon,
   getExportIdsFromFlow,
   getImportIdsFromFlow,
-} from './flowsUtil';
-import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
 } from '../utils/flows';
