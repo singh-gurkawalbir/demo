@@ -1946,7 +1946,7 @@ export default {
   'fb.pp.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
   'fb.pp.exports.responseMapping':
-    'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
+    'Configure ‘results mapping‘ to specify where data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
@@ -1962,7 +1962,7 @@ export default {
   'fb.pp.imports.hooks':
     'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
   'fb.pp.imports.responseMapping':
-    'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
+    'Configure ‘response mapping‘ to specify where fields returned by the destination application should be merged back into the source record.',
   'fb.pp.imports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.imports.proceedOnFailure':
@@ -2026,8 +2026,7 @@ export default {
     'Important: only records where the filter expression evaluates to true will get processed. All other records will simply get passed along to subsequent applications in your flow. Defining an input filter allows you to skip processing for specific records for specific applications. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day, you could use an input filter to instead only post messages for orders that are above a certain amount.',
   'lookup.output.filter':
     'Important: only records where the filter expression evaluates to true will get passed along. All other records will get discarded. Defining an output filter allows you to discard records when you are working with older applications that do not natively support the ability to define search criteria. If an application does support the ability to define search criteria then you should use that native functionality (vs defining out filters here) to avoid pulling unnecessary data into integrator.io.',
-  'import.response.mapping':
-    'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'import.response.mapping': `Response mapping enables you to specify where fields returned by the destination application should be merged back into the source record. If you don't see a specific import response field in the drop-down below, you can still map it by manually typing in the field name, then the mapping will work as long as the field is returned by the destination application when the flow is running. You can merge import response fields into any existing field in the source record, or you can specify a new field in which case integrator.io will create the field on-the-fly. You can also merge errors back into the source record if you want to manually process errors downstream in your flow.Learn <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping" target="_blank">more about mapping.</a>`,
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
 
