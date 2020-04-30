@@ -1,6 +1,6 @@
-import Retry from './actions/Retry';
-import SelectError from './components/SelectError';
-import SelectAllErrors from './components/SelectAllErrors';
+import Retry from '../actions/Retry';
+import SelectError from '../components/SelectError';
+import SelectAllErrors from '../components/SelectAllErrors';
 
 export default {
   columns: [

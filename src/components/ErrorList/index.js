@@ -1,113 +1,37 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, Fragment } from 'react';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import TablePagination from '@material-ui/core/TablePagination';
-import actions from '../../actions';
-import { resourceErrors, filter } from '../../reducers';
-import CeligoTable from '../CeligoTable';
-import metadata from './metadata';
-import KeywordSearch from '../../components/KeywordSearch';
+import { makeStyles } from '@material-ui/core/styles';
+import OpenErrors from './OpenErrors';
+import ResolvedErrors from './ResolvedErrors';
 
 const useStyles = makeStyles(() => ({
-  tablePaginationRoot: { float: 'right' },
+  errorType: {
+    float: 'right',
+    position: 'relative',
+    bottom: '60px',
+    right: '100px',
+  },
 }));
 
 export default function ErrorList({ flowId }) {
-  const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceId } = match.params;
-  const rowsPerPage = 20;
-  const defaultFilter = useMemo(
-    () => ({
-      searchBy: ['message', 'source', 'code', 'occurredAt'],
-    }),
-    []
-  );
-  const filterKey = `openErrors-${flowId}-${resourceId}`;
-  const errorFilter = useSelector(
-    state => filter(state, filterKey) || defaultFilter
-  );
-  const actionProps = { filterKey, defaultFilter, resourceId, flowId };
-  const [page, setPage] = useState(0);
-  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
-  const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
-    resourceErrors(state, {
-      flowId,
-      resourceId,
-      options: { ...errorFilter },
-    })
-  );
-
-  useEffect(() => {
-    if (!status) {
-      dispatch(
-        actions.errorManager.flowErrorDetails.request({
-          flowId,
-          resourceId,
-        })
-      );
-    }
-  }, [dispatch, flowId, resourceId, status]);
-  useEffect(() => {
-    const currentErrorList = openErrors.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
-
-    setErrorsInCurrentPage(currentErrorList);
-  }, [openErrors, page]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [errorFilter]);
-  const fetchMoreData = useCallback(() => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.request({
-        flowId,
-        resourceId,
-        loadMore: true,
-      })
-    );
-  }, [dispatch, flowId, resourceId]);
-  const handleChangePage = useCallback(
-    (event, newPage) => setPage(newPage),
-    []
-  );
+  const [isResolvedErrorType, setIsResolvedErrorType] = useState(false);
 
   return (
     <Fragment>
-      {nextPageURL && (
-        <Button class="primary" onClick={fetchMoreData}>
-          Load more
-        </Button>
+      <Button
+        onClick={() => setIsResolvedErrorType(!isResolvedErrorType)}
+        className={classes.errorType}>
+        {isResolvedErrorType ? 'View Open Errors' : 'View Resolved History'}
+      </Button>
+      {!isResolvedErrorType ? (
+        <OpenErrors flowId={flowId} resourceId={resourceId} />
+      ) : (
+        <ResolvedErrors flowId={flowId} resourceId={resourceId} />
       )}
-      <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
-      <Fragment>
-        <TablePagination
-          className={classes.tablePaginationRoot}
-          component="div"
-          count={openErrors.length}
-          rowsPerPageOptions={[rowsPerPage]}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={handleChangePage}
-        />
-        <CeligoTable
-          data={errorsInCurrentPage}
-          filterKey="openErrors"
-          {...metadata}
-          actionProps={actionProps}
-        />
-      </Fragment>
     </Fragment>
   );
 }
