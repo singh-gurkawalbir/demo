@@ -8,73 +8,65 @@ export default (state = {}, action) => {
     type,
     flowId,
     resourceId,
-    openErrors,
-    resolvedErrors,
+    errorDetails,
     loadMore,
+    isResolved,
     checked,
     errorIds,
   } = action;
 
   return produce(state, draft => {
     if (!flowId || !resourceId) return;
+    const errorType = isResolved ? 'resolved' : 'open';
 
     switch (type) {
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.REQUEST:
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST:
         if (!draft[flowId]) draft[flowId] = {};
 
         if (!draft[flowId][resourceId])
           draft[flowId][resourceId] = { open: {}, resolved: {} };
         draft[flowId][resourceId].open.status = 'requested';
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.RECEIVED:
-        draft[flowId][resourceId].open = {
-          ...draft[flowId][resourceId].open,
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED: {
+        const errors =
+          (isResolved ? errorDetails.resolved : errorDetails.errors) || [];
+
+        draft[flowId][resourceId][errorType] = {
+          ...draft[flowId][resourceId][errorType],
           status: 'received',
           errors: loadMore
-            ? [...draft[flowId][resourceId].open.errors, ...openErrors.errors]
-            : openErrors.errors,
-          nextPageURL: openErrors.nextPageURL,
+            ? [...draft[flowId][resourceId][errorType].errors, ...errors]
+            : errors,
+          nextPageURL: errorDetails.nextPageURL,
         };
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS:
-        draft[flowId][resourceId].open.errors.forEach(error => {
+      }
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS:
+        draft[flowId][resourceId][errorType].errors.forEach(error => {
           if (errorIds.includes(error.errorId)) {
             // eslint-disable-next-line no-param-reassign
             error.selected = checked;
           }
         });
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.RESET_SELECTION:
-        draft[flowId][resourceId].open.errors.forEach(error => {
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESET_SELECTION:
+        draft[flowId][resourceId][errorType].errors.forEach(error => {
           // eslint-disable-next-line no-param-reassign
           delete error.selected;
         });
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST:
-        if (!draft[flowId]) draft[flowId] = {};
-
-        if (!draft[flowId][resourceId])
-          draft[flowId][resourceId] = { open: {}, resolved: {} };
-        draft[flowId][resourceId].resolved.status = 'requested';
-        break;
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.RECEIVED:
-        draft[flowId][resourceId].resolved = {
-          status: 'received',
-          data: resolvedErrors,
-        };
-        break;
-
       default:
     }
   });
 };
 
-export function getErrors(state, { flowId, resourceId, type }) {
+export function getErrors(state, { flowId, resourceId, errorType }) {
   return (
     (state &&
       state[flowId] &&
       state[flowId][resourceId] &&
-      state[flowId][resourceId][type]) ||
+      state[flowId][resourceId][errorType]) ||
     defaultObject
   );
 }

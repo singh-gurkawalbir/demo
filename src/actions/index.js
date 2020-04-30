@@ -1438,66 +1438,55 @@ const errorManager = {
       }),
   },
   flowErrorDetails: {
-    open: {
-      request: ({ flowId, resourceId, loadMore }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.REQUEST, {
-          flowId,
-          resourceId,
-          loadMore,
-        }),
-      received: ({ flowId, resourceId, openErrors, loadMore }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.RECEIVED, {
-          flowId,
-          resourceId,
-          openErrors,
-          loadMore,
-        }),
-      error: ({ flowId, resourceId }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.ERROR, {
-          flowId,
-          resourceId,
-        }),
-      select: ({ flowId, resourceId, errorId, checked }) =>
-        action(
-          actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS,
-          {
-            flowId,
-            resourceId,
-            errorIds: [errorId],
-            checked,
-          }
-        ),
-      selectAll: ({ flowId, resourceId, errorIds, checked }) =>
-        action(
-          actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.SELECT_ERRORS,
-          {
-            flowId,
-            resourceId,
-            errorIds,
-            checked,
-          }
-        ),
-    },
-    resolved: {
-      request: ({ flowId, resourceId, loadMore }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST, {
-          flowId,
-          resourceId,
-          loadMore,
-        }),
-      received: ({ flowId, resourceId, resolvedErrors, loadMore }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.RECEIVED, {
-          flowId,
-          resourceId,
-          resolvedErrors,
-          loadMore,
-        }),
-      error: ({ flowId, resourceId }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.ERROR, {
-          flowId,
-          resourceId,
-        }),
-    },
+    request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
+        flowId,
+        resourceId,
+        loadMore,
+        isResolved,
+      }),
+    received: ({
+      flowId,
+      resourceId,
+      errorDetails,
+      loadMore,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED, {
+        flowId,
+        resourceId,
+        errorDetails,
+        loadMore,
+        isResolved,
+      }),
+    error: ({ flowId, resourceId, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    select: ({ flowId, resourceId, errorId, checked, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS, {
+        flowId,
+        resourceId,
+        errorIds: [errorId],
+        checked,
+        isResolved,
+      }),
+    selectAll: ({
+      flowId,
+      resourceId,
+      errorIds,
+      checked,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS, {
+        flowId,
+        resourceId,
+        errorIds,
+        checked,
+        isResolved,
+      }),
   },
 };
 const flow = {

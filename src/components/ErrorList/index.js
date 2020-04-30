@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TablePagination from '@material-ui/core/TablePagination';
 import actions from '../../actions';
-import { resourceOpenErrors, filter } from '../../reducers';
+import { resourceErrors, filter } from '../../reducers';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import KeywordSearch from '../../components/KeywordSearch';
@@ -31,7 +31,7 @@ export default function ErrorList({ flowId, resourceId }) {
   const [page, setPage] = useState(0);
   const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
-    resourceOpenErrors(state, {
+    resourceErrors(state, {
       flowId,
       resourceId,
       options: { ...errorFilter },
@@ -41,7 +41,7 @@ export default function ErrorList({ flowId, resourceId }) {
   useEffect(() => {
     if (!status) {
       dispatch(
-        actions.errorManager.flowErrorDetails.open.request({
+        actions.errorManager.flowErrorDetails.request({
           flowId,
           resourceId,
         })
@@ -62,7 +62,7 @@ export default function ErrorList({ flowId, resourceId }) {
   }, [errorFilter]);
   const fetchMoreData = useCallback(() => {
     dispatch(
-      actions.errorManager.flowErrorDetails.open.request({
+      actions.errorManager.flowErrorDetails.request({
         flowId,
         resourceId,
         loadMore: true,

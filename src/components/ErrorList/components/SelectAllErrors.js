@@ -3,11 +3,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import actions from '../../../actions';
-import {
-  isAllErrorsSelected,
-  filter,
-  resourceOpenErrors,
-} from '../../../reducers';
+import { isAllErrorsSelected, filter, resourceErrors } from '../../../reducers';
 
 export default function SelectAllErrors({
   flowId,
@@ -19,7 +15,7 @@ export default function SelectAllErrors({
   const dispatch = useDispatch();
   const errorIds = useSelector(state => {
     const errorFilter = filter(state, filterKey) || defaultFilter;
-    const { errors = [] } = resourceOpenErrors(state, {
+    const { errors = [] } = resourceErrors(state, {
       flowId,
       resourceId,
       options: { ...errorFilter },

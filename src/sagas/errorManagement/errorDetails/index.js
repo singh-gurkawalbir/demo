@@ -1,15 +1,22 @@
 import { put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
-import { resourceOpenErrors } from '../../../reducers';
+import { resourceErrors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 
-function* requestOpenErrorDetails({ flowId, resourceId, loadMore = false }) {
+function* requestErrorDetails({
+  flowId,
+  resourceId,
+  loadMore = false,
+  isResolved = false,
+}) {
   try {
-    let path = `/flows/${flowId}/${resourceId}/errors`;
+    let path = `/flows/${flowId}/${resourceId}/${
+      isResolved ? 'resolved' : 'errors'
+    }`;
 
     if (loadMore) {
-      const { nextPageURL } = yield select(resourceOpenErrors, {
+      const { nextPageURL } = yield select(resourceErrors, {
         flowId,
         resourceId,
       });
@@ -18,7 +25,7 @@ function* requestOpenErrorDetails({ flowId, resourceId, loadMore = false }) {
       path = nextPageURL.replace('/api', '');
     }
 
-    const openErrors = yield apiCallWithRetry({
+    const errorDetails = yield apiCallWithRetry({
       path,
       opts: {
         method: 'GET',
@@ -26,11 +33,12 @@ function* requestOpenErrorDetails({ flowId, resourceId, loadMore = false }) {
     });
 
     yield put(
-      actions.errorManager.flowErrorDetails.open.received({
+      actions.errorManager.flowErrorDetails.received({
         flowId,
         resourceId,
-        openErrors,
+        errorDetails,
         loadMore,
+        isResolved,
       })
     );
   } catch (error) {
@@ -41,37 +49,9 @@ function* requestOpenErrorDetails({ flowId, resourceId, loadMore = false }) {
   }
 }
 
-function* requestResolvedErrorDetails({ flowId, resourceId }) {
-  try {
-    const resolvedErrors = yield apiCallWithRetry({
-      path: `/flows/${flowId}/${resourceId}/resolved`,
-      opts: {
-        method: 'GET',
-      },
-    });
-
-    yield put(
-      actions.errorManager.flowErrorDetails.resolved.received({
-        flowId,
-        resourceId,
-        resolvedErrors,
-      })
-    );
-  } catch (error) {
-    actions.errorManager.flowErrorDetails.resolved.error({
-      flowId,
-      error,
-    });
-  }
-}
-
 export default [
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OPEN.REQUEST,
-    requestOpenErrorDetails
-  ),
-  takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVED.REQUEST,
-    requestResolvedErrorDetails
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
+    requestErrorDetails
   ),
 ];

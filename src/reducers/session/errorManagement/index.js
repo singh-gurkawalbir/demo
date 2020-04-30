@@ -8,25 +8,20 @@ export default combineReducers({
   errorDetails,
 });
 
-export function resourceOpenErrors(state, { flowId, resourceId, options }) {
-  const openErrors = fromErrorDetails.getErrors(state && state.errorDetails, {
+export function resourceErrors(
+  state,
+  { flowId, resourceId, isResolved, options }
+) {
+  const errorDetails = fromErrorDetails.getErrors(state && state.errorDetails, {
     flowId,
     resourceId,
-    type: 'open',
+    errorType: isResolved ? 'resolved' : 'open',
   });
 
   return {
-    ...openErrors,
-    errors: getFilteredErrors(openErrors.errors, options),
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, options),
   };
-}
-
-export function getResourceResolvedErrors(state, { flowId, resourceId }) {
-  return fromErrorDetails.getErrors(state && state.errorDetails, {
-    flowId,
-    resourceId,
-    type: 'resolved',
-  });
 }
 
 export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {

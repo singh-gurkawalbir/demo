@@ -529,11 +529,12 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
-export function resourceOpenErrors(state, { flowId, resourceId, options }) {
-  return fromErrorManagement.resourceOpenErrors(
-    state && state.errorManagement,
-    { flowId, resourceId, options }
-  );
+export function resourceErrors(state, { flowId, resourceId, options }) {
+  return fromErrorManagement.resourceErrors(state && state.errorManagement, {
+    flowId,
+    resourceId,
+    options,
+  });
 }
 
 export function getResourceResolvedErrors(state, { flowId, resourceId }) {

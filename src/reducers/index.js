@@ -4073,21 +4073,11 @@ export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
 
-export function resourceOpenErrors(
-  state,
-  { flowId, resourceId, options = {} }
-) {
-  return fromSession.resourceOpenErrors(state && state.session, {
+export function resourceErrors(state, { flowId, resourceId, options = {} }) {
+  return fromSession.resourceErrors(state && state.session, {
     flowId,
     resourceId,
     options,
-  });
-}
-
-export function resourceResolvedErrors(state, { flowId, resourceId }) {
-  return fromSession.getResourceResolvedErrors(state && state.session, {
-    flowId,
-    resourceId,
   });
 }
 
