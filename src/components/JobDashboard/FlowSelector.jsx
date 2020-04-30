@@ -1,8 +1,10 @@
-import { useSelector } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import useResourceList from '../../hooks/useResourceList';
 import * as selectors from '../../reducers';
-import CeligoSelect from '../CeligoSelect';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
+import CeligoSelect from '../CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   flow: {
@@ -30,25 +32,26 @@ export default function FlowSelector({
     },
     (left, right) => left.length === right.length
   );
-  const filteredFlows = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'flows',
-        filter: {
-          $where() {
-            if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
-              return !this._integrationId; // standalone integration flows
-            }
+  const flowsFilterConfig = useMemo(
+    () => ({
+      type: 'flows',
+      filter: {
+        $where() {
+          if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+            return !this._integrationId; // standalone integration flows
+          }
 
-            if (storeId) {
-              return storeFlows.includes(this._id);
-            }
+          if (storeId) {
+            return storeFlows.includes(this._id);
+          }
 
-            return this._integrationId === integrationId;
-          },
+          return this._integrationId === integrationId;
         },
-      }).resources
+      },
+    }),
+    [integrationId, storeFlows, storeId]
   );
+  const filteredFlows = useResourceList(flowsFilterConfig).resources;
 
   return (
     <CeligoSelect

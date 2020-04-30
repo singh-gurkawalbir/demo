@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
@@ -31,9 +31,9 @@ export default function ResourceFormWithStatusPanel({ className, ...props }) {
     ...props,
     notificationPanelHeight,
   });
-  const resize = (width, height) => {
+  const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height);
-  };
+  }, []);
 
   return (
     <div
