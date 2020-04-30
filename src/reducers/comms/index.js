@@ -15,6 +15,10 @@ export function testConnectionMessage(state, resourceId) {
   return fromPing.testConnectionMessage(state && state.ping, resourceId);
 }
 
+export function networkCommState(state) {
+  return fromNetworkComms.networkCommState(state && state.networkComms);
+}
+
 export function commReqType(state, resourceName) {
   return fromNetworkComms.commReqType(
     state && state.networkComms,

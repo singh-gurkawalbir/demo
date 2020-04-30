@@ -19,6 +19,8 @@ import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
+import useResourceList from '../../hooks/useResourceList';
+import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -182,6 +184,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const integrationsFilterConfig = {
+  type: 'integrations',
+  ignoreEnvironmentFilter: true,
+};
 
 export default function CeligoDrawer() {
   const classes = useStyles();
@@ -191,31 +197,25 @@ export default function CeligoDrawer() {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
-  const integrations = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'integrations',
-        ignoreEnvironmentFilter: true,
-      }),
-    (left, right) => left.length === right.length
-  ).resources;
+  const integrations = useResourceList(integrationsFilterConfig).resources;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
   const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useSelector(state =>
-    selectors.marketplaceConnectors(state, undefined, isSandbox)
-  );
+  const marketplaceConnectors = useMarketPlaceConnectors(undefined, isSandbox);
   const handleDrawerToggle = useCallback(() => {
     dispatch(actions.toggleDrawer());
   }, [dispatch]);
-  const handleExpandClick = label => () => {
-    setExpand(label === expand ? null : label);
+  const handleExpandClick = useCallback(
+    label => () => {
+      setExpand(label === expand ? null : label);
 
-    if (!drawerOpened) handleDrawerToggle();
-  };
+      if (!drawerOpened) handleDrawerToggle();
+    },
+    [drawerOpened, expand, handleDrawerToggle]
+  );
 
   // what is the active item? does it have a parent
   // that needs an active state as well?

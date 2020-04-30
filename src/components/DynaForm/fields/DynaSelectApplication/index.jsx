@@ -10,6 +10,7 @@ import applications, {
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import SearchIcon from '../../../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -181,6 +182,11 @@ export default function SelectApplication(props) {
       assistant: app.assistant,
     })),
   }));
+  const DropdownIndicator = props => (
+    <components.DropdownIndicator {...props}>
+      <SearchIcon />
+    </components.DropdownIndicator>
+  );
   const Option = props => {
     const { type, icon, value } = props.data;
 
@@ -252,7 +258,7 @@ export default function SelectApplication(props) {
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
-        components={{ Option }}
+        components={{ Option, DropdownIndicator }}
         defaultValue={defaultValue}
         defaultMenuIsOpen={!value}
         options={options}

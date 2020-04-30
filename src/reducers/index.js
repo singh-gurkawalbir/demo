@@ -7,8 +7,11 @@ import produce from 'immer';
 import { some, map, keys, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
+import * as fromResources from './data/resources';
+import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
+import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -50,7 +53,6 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
-import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 
@@ -78,6 +80,21 @@ const rootReducer = (state, action) => {
 
 export default rootReducer;
 
+export function marketPlaceState(state) {
+  return fromData.marketPlaceState(state && state.data);
+}
+
+export function resourcesState(state) {
+  return fromData.resourceState(state && state.data);
+}
+
+export function networkCommState(state) {
+  return fromComms.networkCommState(state && state.comms);
+}
+
+export function userState(state) {
+  return state && state.user;
+}
 // TODO: Do we really need to proxy all selectors here?
 // Instead, we could only have the selectors that cross
 // state subdivisions (marked GLOBAL right now)
@@ -137,7 +154,7 @@ export function isAllLoadingCommsAboveThreshold(state) {
   return (
     loadingOrErrored.filter(
       resource =>
-        resource.status === COMM_STATES.LOADING &&
+        resource.status === fromNetworkComms.COMM_STATES.LOADING &&
         Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
     ).length === 0
   );
@@ -586,7 +603,11 @@ export function isAuthInitialized(state) {
 }
 
 export function isAuthLoading(state) {
-  return state && state.auth && state.auth.commStatus === COMM_STATES.LOADING;
+  return (
+    state &&
+    state.auth &&
+    state.auth.commStatus === fromNetworkComms.COMM_STATES.LOADING
+  );
 }
 
 export function authenticationErrored(state) {
@@ -640,7 +661,7 @@ export function changePasswordSuccess(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.SUCCESS;
+  return status === fromNetworkComms.COMM_STATES.SUCCESS;
 }
 
 export function changePasswordFailure(state) {
@@ -650,7 +671,7 @@ export function changePasswordFailure(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.ERROR;
+  return status === fromNetworkComms.COMM_STATES.ERROR;
 }
 
 export function changePasswordMsg(state) {
@@ -670,7 +691,7 @@ export function changeEmailFailure(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.ERROR;
+  return status === fromNetworkComms.COMM_STATES.ERROR;
 }
 
 export function changeEmailSuccess(state) {
@@ -680,7 +701,7 @@ export function changeEmailSuccess(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.SUCCESS;
+  return status === fromNetworkComms.COMM_STATES.SUCCESS;
 }
 
 export function changeEmailMsg(state) {
@@ -763,6 +784,41 @@ export function resourceList(state, options = {}) {
 
   return fromData.resourceList(state && state.data, options);
 }
+
+export function resourceListModified(userState, resourcesState, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    ![
+      'accesstokens',
+      'agents',
+      'iclients',
+      'scripts',
+      'stacks',
+      'templates',
+      'published',
+      'transfers',
+    ].includes(
+      /* These resources are common for both production & sandbox environments. */
+      options.type
+    )
+  ) {
+    const preferences = fromUser.userPreferences(userState);
+
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
+  }
+
+  return fromResources.resourceList(resourcesState, options);
+}
+
+export const makeResourceListSelector = () =>
+  createSelector(
+    userState,
+    resourcesState,
+    (_, options) => options,
+    (userState, resourcesState, options) =>
+      resourceListModified(userState, resourcesState, options)
+  );
 
 export function getIAFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
@@ -998,10 +1054,16 @@ export function integrationAppList(state) {
   return fromData.integrationAppList(state && state.data);
 }
 
-export function marketplaceConnectors(state, application, sandbox) {
-  const licenses = fromUser.licenses(state && state.user);
-  const connectors = fromData.marketplaceConnectors(
-    state && state.data,
+export function marketplaceConnectors(
+  userState,
+  marketPlaceState,
+  resourceState,
+  application,
+  sandbox
+) {
+  const licenses = fromUser.licenses(userState);
+  const connectors = fromMarketPlace.connectors(
+    marketPlaceState,
     application,
     sandbox,
     licenses
@@ -1009,16 +1071,37 @@ export function marketplaceConnectors(state, application, sandbox) {
 
   return connectors
     .map(c => {
-      const installedIntegrationApps = resourceList(state, {
-        type: 'integrations',
-        sandbox,
-        filter: { _connectorId: c._id },
-      });
+      const installedIntegrationApps = resourceListModified(
+        userState,
+        resourceState,
+        {
+          type: 'integrations',
+          sandbox,
+          filter: { _connectorId: c._id },
+        }
+      );
 
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
+
+export const makeMarketPlaceConnectorsSelector = () =>
+  createSelector(
+    userState,
+    marketPlaceState,
+    resourcesState,
+    (_, application) => application,
+    (_1, _2, sandbox) => sandbox,
+    (userState, marketPlaceState, resourceState, application, sandbox) =>
+      marketplaceConnectors(
+        userState,
+        marketPlaceState,
+        resourceState,
+        application,
+        sandbox
+      )
+  );
 
 export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
@@ -2799,6 +2882,7 @@ export function tiles(state) {
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS
+
 export function isProfileDataReady(state) {
   const commKey = commKeyGen('/profile', 'GET');
 
@@ -2850,6 +2934,56 @@ export function resourceStatus(
     isReady,
   };
 }
+
+export function resourceStatusModified(
+  resourceState,
+  networkCommState,
+  origResourceType,
+  resourceReqMethod = 'GET'
+) {
+  let resourceType;
+
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
+  else resourceType = `/${origResourceType}`;
+  const commKey = commKeyGen(resourceType, resourceReqMethod);
+  const method = resourceReqMethod;
+  const hasData = fromResources.hasData(resourceState, origResourceType);
+  const isLoading = fromNetworkComms.isLoading(networkCommState, commKey);
+  const retryCount = fromNetworkComms.retryCount(networkCommState, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
+
+  return {
+    resourceType: origResourceType,
+    hasData,
+    isLoading,
+    retryCount,
+    method,
+    isReady,
+  };
+}
+
+export function allResourceStatus(
+  resourceState,
+  networkCommState,
+  resourceTypes
+) {
+  return (typeof resourceTypes === 'string'
+    ? resourceTypes.split(',')
+    : resourceTypes
+  ).map(resourceType =>
+    resourceStatusModified(resourceState, networkCommState, resourceType.trim())
+  );
+}
+
+export const makeAllResourceStatusSelector = () =>
+  createSelector(
+    resourcesState,
+    networkCommState,
+    (_, resourceTypes) => resourceTypes,
+    (resourcesState, networkCommState, resourceTypes) =>
+      allResourceStatus(resourcesState, networkCommState, resourceTypes)
+  );
 
 export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
@@ -3636,15 +3770,6 @@ export function debugLogs(state) {
 
 export function getLastExportDateTime(state, flowId) {
   return fromSession.getLastExportDateTime(state && state.session, flowId);
-}
-
-export function resourceNamesByIds(state, type) {
-  const { resources } = resourceList(state, { type });
-  const resourceIdNameMap = {};
-
-  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
-
-  return resourceIdNameMap;
 }
 
 export function getTransferPreviewData(state) {

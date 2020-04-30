@@ -29,6 +29,7 @@ export default {
       generateFields,
       options,
       lookups,
+      isCategoryMapping,
     } = params;
     const {
       connectionId,
@@ -43,6 +44,7 @@ export default {
     const fieldMetadata =
       generateFields && generateFields.find(gen => gen.id === generate);
     let generateFieldType;
+    let fieldOptions = [];
     let conditionalWhenOptions = isProduction()
       ? conditionalLookupOptionsforNetsuiteProduction
       : conditionalLookupOptionsforNetsuite;
@@ -52,6 +54,10 @@ export default {
         2,
         conditionalWhenOptions.length + 1
       );
+    }
+
+    if (isCategoryMapping && fieldMetadata && fieldMetadata.type === 'select') {
+      fieldOptions = fieldMetadata.options;
     }
 
     if (
@@ -263,6 +269,8 @@ export default {
             }),
           connectionId: fieldId && connectionId,
           label: '',
+          keyOptions:
+            fieldOptions && fieldOptions.length ? fieldOptions : undefined,
           keyName: 'export',
           keyLabel: 'Export Field',
           valueName: 'import',
@@ -273,10 +281,12 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['static'] },
-          ],
+          visibleWhenAll: isCategoryMapping
+            ? [{ field: 'fieldMappingType', is: ['lookup'] }]
+            : [
+                { field: 'fieldMappingType', is: ['lookup'] },
+                { field: 'lookup.mode', is: ['static'] },
+              ],
         },
         functions: {
           id: 'functions',
@@ -352,10 +362,12 @@ export default {
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           refreshOptionsOnChangesTo: ['lookup.mode'],
-          visibleWhenAll: [
-            { field: 'lookup.mode', is: ['dynamic', 'static'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
+          visibleWhenAll: isCategoryMapping
+            ? [{ field: 'fieldMappingType', is: ['lookup'] }]
+            : [
+                { field: 'lookup.mode', is: ['dynamic', 'static'] },
+                { field: 'fieldMappingType', is: ['lookup'] },
+              ],
           helpKey: 'mapping.lookupAction',
         },
         hardcodedDefault: {
@@ -651,7 +663,7 @@ export default {
             },
           ];
 
-          if (lookupModeField.value === 'dynamic') {
+          if (lookupModeField && lookupModeField.value === 'dynamic') {
             options[0].items.splice(1, 0, {
               label: 'Use Default on Multiple Matches',
               value: 'useDefaultOnMultipleMatches',
@@ -719,7 +731,8 @@ export default {
         return null;
       },
     };
-    let { fields } = fieldMeta.layout;
+    const { fieldMap, layout } = fieldMeta;
+    let { fields } = layout;
 
     if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.useFirstRow;
@@ -800,6 +813,34 @@ export default {
       );
     }
 
+    if (isCategoryMapping) {
+      fields = fields.filter(
+        el =>
+          ![
+            'lookup.mode',
+            'lookup.recordType',
+            'lookup.expression',
+            'lookup.expressionText',
+            'lookup.resultField',
+          ].includes(el)
+      );
+      const fieldMappingTypeField = fieldMap.fieldMappingType;
+
+      fieldMappingTypeField.options = [
+        {
+          items: [
+            { label: 'Standard', value: 'standard' },
+            { label: 'Hard-Coded', value: 'hardCoded' },
+            {
+              label: 'Static - Lookup',
+              value: 'lookup',
+            },
+          ],
+        },
+      ];
+    }
+
+    fieldMeta.fieldMap = fieldMap;
     fieldMeta.layout.fields = fields;
 
     return fieldMeta;
