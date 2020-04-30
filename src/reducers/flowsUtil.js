@@ -83,7 +83,7 @@ export function isRunnable(exports, exp, flow) {
   return true;
 }
 
-export function getAllExportIdsUsedInTheFlow(flow) {
+export function getExportIdsFromFlow(flow) {
   const exportIds = [];
 
   if (!flow) {
@@ -113,7 +113,7 @@ export function getAllExportIdsUsedInTheFlow(flow) {
   return exportIds;
 }
 
-export function getAllImportIdsUsedInTheFlow(flow) {
+export function getImportIdsFromFlow(flow) {
   const importIds = [];
 
   if (!flow) {

@@ -35,8 +35,8 @@ import {
   isSimpleImportFlow,
   isRunnable,
   showScheduleIcon,
-  getAllExportIdsUsedInTheFlow,
-  getAllImportIdsUsedInTheFlow,
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
 } from './flowsUtil';
 import {
   getUsedActionsMapForResource,
@@ -1093,8 +1093,8 @@ export function marketplaceTemplates(state, application) {
 }
 
 export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
-  const exportIds = getAllExportIdsUsedInTheFlow(flow);
-  const importIds = getAllImportIdsUsedInTheFlow(flow);
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
   const connectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;
@@ -1275,8 +1275,8 @@ export function integrationAppResourceList(
     const flow = resource(state, 'flows', f) || {};
 
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
-    exports.push(...getAllExportIdsUsedInTheFlow(state, flow));
-    imports.push(...getAllImportIdsUsedInTheFlow(state, flow));
+    exports.push(...getExportIdsFromFlow(state, flow));
+    imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {

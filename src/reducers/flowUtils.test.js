@@ -1,9 +1,6 @@
 /* global describe, test, expect */
 
-import {
-  getAllExportIdsUsedInTheFlow,
-  getAllImportIdsUsedInTheFlow,
-} from './flowsUtil';
+import { getExportIdsFromFlow, getImportIdsFromFlow } from './flowsUtil';
 
 const oldFlow = {
   _exportId: 'e1',
@@ -29,57 +26,57 @@ const flowWithPGsandPPs = {
   ],
 };
 
-describe('getAllExportIdsUsedInTheFlow tests', () => {
-  test('empty flow', () => {
-    const expected = getAllExportIdsUsedInTheFlow();
+describe('getExportIdsFromFlow', () => {
+  test('should return empty set when flow is empty', () => {
+    const expected = getExportIdsFromFlow();
 
     expect(expected).toEqual([]);
   });
-  test('old flow', () => {
-    const expected = getAllExportIdsUsedInTheFlow(oldFlow);
+  test('should return the correct exportId when the flow uses the old schema properties', () => {
+    const expected = getExportIdsFromFlow(oldFlow);
 
     expect(expected).toEqual(['e1']);
   });
-  test('flow with only pageGenerators', () => {
-    const expected = getAllExportIdsUsedInTheFlow(flowWithOnlyPGs);
+  test('should return correct export Ids when flow has only pageGenerators', () => {
+    const expected = getExportIdsFromFlow(flowWithOnlyPGs);
 
     expect(expected).toEqual(['e1', 'e2']);
   });
-  test('flow with only pageProcessors', () => {
-    const expected = getAllExportIdsUsedInTheFlow(flowWithOnlyPPs);
+  test('should return correct export Ids when flow has only pageProcessors', () => {
+    const expected = getExportIdsFromFlow(flowWithOnlyPPs);
 
     expect(expected).toEqual(['e1', 'e2']);
   });
-  test('flow with pageGenerators and pageProcessors', () => {
-    const expected = getAllExportIdsUsedInTheFlow(flowWithPGsandPPs);
+  test('should return correct export Ids when flow has both pageGenerators and pageProcessors', () => {
+    const expected = getExportIdsFromFlow(flowWithPGsandPPs);
 
     expect(expected).toEqual(['e1', 'e2', 'e3', 'e4']);
   });
 });
 
-describe('getAllImportIdsUsedInTheFlow tests', () => {
-  test('empty flow', () => {
-    const expected = getAllImportIdsUsedInTheFlow();
+describe('getImportIdsFromFlow', () => {
+  test('should return empty set when flow is empty', () => {
+    const expected = getImportIdsFromFlow();
 
     expect(expected).toEqual([]);
   });
-  test('old flow', () => {
-    const expected = getAllImportIdsUsedInTheFlow(oldFlow);
+  test('should return the correct importId when the flow uses the old schema properties', () => {
+    const expected = getImportIdsFromFlow(oldFlow);
 
     expect(expected).toEqual(['i1']);
   });
-  test('flow with only pageGenerators', () => {
-    const expected = getAllImportIdsUsedInTheFlow(flowWithOnlyPGs);
+  test('should return correct import Ids when flow has only pageGenerators', () => {
+    const expected = getImportIdsFromFlow(flowWithOnlyPGs);
 
     expect(expected).toEqual([]);
   });
-  test('flow with only pageProcessors', () => {
-    const expected = getAllImportIdsUsedInTheFlow(flowWithOnlyPPs);
+  test('should return correct import Ids when flow has only pageProcessors', () => {
+    const expected = getImportIdsFromFlow(flowWithOnlyPPs);
 
     expect(expected).toEqual(['i1']);
   });
-  test('flow with pageGenerators and pageProcessors', () => {
-    const expected = getAllImportIdsUsedInTheFlow(flowWithPGsandPPs);
+  test('should return correct import Ids when flow has both pageGenerators and pageProcessors', () => {
+    const expected = getImportIdsFromFlow(flowWithPGsandPPs);
 
     expect(expected).toEqual(['i1', 'i2']);
   });
