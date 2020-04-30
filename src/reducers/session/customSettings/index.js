@@ -1,24 +1,30 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
-const emptyObj = {};
-
 export default function reducer(state = {}, action) {
-  const { type, resourceId, status, formMeta } = action;
+  const { type, resourceId, status, key, formMeta, patch } = action;
 
   return produce(state, draft => {
+    let formPatches;
+
     switch (type) {
       case actionTypes.CUSTOM_SETTINGS.UPDATE:
-        draft[resourceId] = { status, initializedForm: formMeta };
-        break;
-
-      case actionTypes.CUSTOM_SETTINGS.CLEAR:
-        draft[resourceId] = {};
+        draft[resourceId] = { status, key, meta: formMeta };
         break;
 
       case actionTypes.RESOURCE.UPDATED:
-        // TODO:
-        return;
+        formPatches = patch.filter(
+          patch =>
+            patch.path === '/settingsForm' ||
+            patch.path === '/settings' ||
+            patch.path === '/content'
+        );
+
+        if (formPatches) {
+          delete draft[resourceId];
+        }
+
+        break;
 
       default:
         return state;
@@ -29,9 +35,9 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export function customSettingsStatus(state, resourceId) {
   if (!state) {
-    return emptyObj;
+    return undefined;
   }
 
-  return state[resourceId] || emptyObj;
+  return state.customSettings[resourceId] || undefined;
 }
 // #endregion

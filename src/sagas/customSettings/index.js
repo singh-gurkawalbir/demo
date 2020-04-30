@@ -1,16 +1,10 @@
+import produce from 'immer';
 import shortid from 'shortid';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-
-export const SCOPES = {
-  META: 'meta',
-  VALUE: 'value',
-  SCRIPT: 'script',
-};
-Object.freeze(SCOPES);
 
 export function* initSettingsForm({ resourceType, resourceId }) {
   const resource = yield select(selectors.resource, resourceType, resourceId);
@@ -21,7 +15,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
     resource.settingsForm &&
     resource.settingsForm.init &&
     resource.settingsForm.init.function;
-  let metadata;
+  let metadata = resource.settingsForm && resource.settingsForm.form;
 
   if (hasInitHook) {
     // If so, make an API call to initialize the form,
@@ -40,21 +34,25 @@ export function* initSettingsForm({ resourceType, resourceId }) {
     try {
       metadata = yield call(apiCallWithRetry, {
         path,
+        opts: { method: 'POST' },
       });
     } catch (error) {
+      // REVIEW:
       return undefined;
     }
   }
 
   // inject the current setting values (found in resource.settings)
   // into the respective field’s defaultValue prop.
+  let newFieldMeta = metadata;
+
   if (resource.settings && metadata) {
-    const { fieldMap } = metadata;
+    newFieldMeta = produce(metadata, draft => {
+      Object.keys(draft.fieldMap).forEach(key => {
+        const field = draft.fieldMap[key];
 
-    Object.keys(fieldMap).forEach(key => {
-      const { name } = fieldMap[key];
-
-      fieldMap[key].defaultValue = resource.settings[name];
+        field.defaultValue = resource.settings[field.name] || '';
+      });
     });
   }
 
@@ -64,30 +62,11 @@ export function* initSettingsForm({ resourceType, resourceId }) {
       resourceId,
       'complete',
       shortid.generate(),
-      metadata
+      newFieldMeta
     )
   );
 }
 
-export function* patchSettingsForm({ resourceId, formMeta }) {
-  const patchSet = [];
-  const resource = yield select(selectors.resource, 'exports', resourceId);
-  let op = 'add';
-
-  if (!resource.settingsForm) {
-    patchSet.push({ op: 'add', path: '/settingsForm', value: {} });
-  } else if (resource.settingsForm.form) {
-    op = 'replace';
-  }
-
-  patchSet.push({ op, path: '/settingsForm/form', value: formMeta });
-
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
-  yield put(actions.customSettings.initForm('exports', resourceId, formMeta));
-  // yield put(actions.resource.commitStaged('imports', resourceId, SCOPES.VALUE));
-}
-
 export const customSettingsSagas = [
-  takeEvery(actionTypes.CUSTOM_SETTINGS.PATCH, patchSettingsForm),
   takeEvery(actionTypes.CUSTOM_SETTINGS.INIT, initSettingsForm),
 ];

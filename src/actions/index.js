@@ -1504,10 +1504,11 @@ const customSettings = {
     action(actionTypes.CUSTOM_SETTINGS.CLEAR, {
       resourceId,
     }),
-  updateForm: (resourceId, status, formMeta) =>
+  updateForm: (resourceId, status, key, formMeta) =>
     action(actionTypes.CUSTOM_SETTINGS.UPDATE, {
       resourceId,
       status,
+      key,
       formMeta,
     }),
   patchForm: (resourceId, formMeta) =>

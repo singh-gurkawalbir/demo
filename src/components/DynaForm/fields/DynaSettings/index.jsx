@@ -70,6 +70,7 @@ export function NewDynaSettings(props) {
           disabled={disabled}
           onFormChange={handleSettingFormChange}
           onToggleClick={toggleEditMode}
+          value={hasSettingsForm}
         />
       ) : (
         <RawView {...props} onToggleClick={toggleEditMode} />
