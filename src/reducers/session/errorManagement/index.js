@@ -24,29 +24,15 @@ export function resourceErrors(
   };
 }
 
-export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
-  const { errors = [] } = fromErrorDetails.getErrors(
-    state && state.errorDetails,
-    {
-      flowId,
-      resourceId,
-      type,
-    }
-  );
-  const error = errors.find(error => error.errorId === errorId) || {};
-
-  return !!error.selected;
-}
-
 export function isAllErrorsSelected(
   state,
-  { flowId, resourceId, type, errorIds }
+  { flowId, resourceId, type: errorType, errorIds }
 ) {
   const errorDetailsState = state && state.errorDetails;
   const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
     flowId,
     resourceId,
-    type,
+    errorType,
   });
 
   if (!errorIds.length) return false;

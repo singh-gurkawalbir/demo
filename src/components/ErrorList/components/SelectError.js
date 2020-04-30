@@ -1,30 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import actions from '../../../actions';
-import { isErrorSelected } from '../../../reducers';
 
-export default function SelectError({
-  flowId,
-  resourceId,
-  error,
-  type = 'open',
-}) {
+export default function SelectError({ flowId, resourceId, error }) {
   const dispatch = useDispatch();
-  const isSelected = useSelector(state =>
-    isErrorSelected(state, {
-      flowId,
-      resourceId,
-      errorId: error.errorId,
-      type,
-    })
-  );
   const handleChange = event => {
     const { checked } = event.target;
 
     dispatch(
-      actions.errorManager.flowErrorDetails.open.select({
+      actions.errorManager.flowErrorDetails.select({
         flowId,
         resourceId,
         errorId: error.errorId,
@@ -46,7 +32,7 @@ export default function SelectError({
         </span>
       }
       onChange={event => handleChange(event)}
-      checked={isSelected}
+      checked={error.selected || false}
       color="primary"
     />
   );

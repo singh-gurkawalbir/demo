@@ -35,7 +35,7 @@ export default function SelectAllErrors({
     const { checked } = event.target;
 
     dispatch(
-      actions.errorManager.flowErrorDetails.open.selectAll({
+      actions.errorManager.flowErrorDetails.selectAll({
         flowId,
         resourceId,
         checked,

@@ -4206,15 +4206,6 @@ export function resourceErrors(state, { flowId, resourceId, options = {} }) {
   });
 }
 
-export function isErrorSelected(state, { flowId, resourceId, type, errorId }) {
-  return fromSession.isErrorSelected(state && state.session, {
-    flowId,
-    resourceId,
-    type,
-    errorId,
-  });
-}
-
 export function isAllErrorsSelected(
   state,
   { flowId, resourceId, type, errorIds }

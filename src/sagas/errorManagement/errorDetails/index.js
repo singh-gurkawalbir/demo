@@ -42,9 +42,10 @@ function* requestErrorDetails({
       })
     );
   } catch (error) {
-    actions.errorManager.flowErrorDetails.open.error({
+    actions.errorManager.flowErrorDetails.error({
       flowId,
       error,
+      isResolved,
     });
   }
 }
