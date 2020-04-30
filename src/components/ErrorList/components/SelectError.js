@@ -10,10 +10,10 @@ export default function SelectError({ flowId, resourceId, error }) {
     const { checked } = event.target;
 
     dispatch(
-      actions.errorManager.flowErrorDetails.select({
+      actions.errorManager.flowErrorDetails.selectErrors({
         flowId,
         resourceId,
-        errorId: error.errorId,
+        errorIds: [error.errorId],
         checked,
       })
     );

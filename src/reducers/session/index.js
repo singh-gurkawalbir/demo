@@ -546,14 +546,14 @@ export function getResourceResolvedErrors(state, { flowId, resourceId }) {
 
 export function isAllErrorsSelected(
   state,
-  { flowId, resourceId, type, errorIds }
+  { flowId, resourceId, isResolved, errorIds }
 ) {
   return fromErrorManagement.isAllErrorsSelected(
     state && state.errorManagement,
     {
       flowId,
       resourceId,
-      type,
+      isResolved,
       errorIds,
     }
   );

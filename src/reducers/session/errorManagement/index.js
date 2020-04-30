@@ -8,14 +8,11 @@ export default combineReducers({
   errorDetails,
 });
 
-export function resourceErrors(
-  state,
-  { flowId, resourceId, isResolved, options }
-) {
+export function resourceErrors(state, { flowId, resourceId, options }) {
   const errorDetails = fromErrorDetails.getErrors(state && state.errorDetails, {
     flowId,
     resourceId,
-    errorType: isResolved ? 'resolved' : 'open',
+    errorType: options.isResolved ? 'resolved' : 'open',
   });
 
   return {
@@ -26,13 +23,13 @@ export function resourceErrors(
 
 export function isAllErrorsSelected(
   state,
-  { flowId, resourceId, type: errorType, errorIds }
+  { flowId, resourceId, isResolved, errorIds }
 ) {
   const errorDetailsState = state && state.errorDetails;
   const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
     flowId,
     resourceId,
-    errorType,
+    errorType: isResolved ? 'resolved' : 'open',
   });
 
   if (!errorIds.length) return false;

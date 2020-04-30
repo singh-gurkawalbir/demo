@@ -4208,12 +4208,20 @@ export function resourceErrors(state, { flowId, resourceId, options = {} }) {
 
 export function isAllErrorsSelected(
   state,
-  { flowId, resourceId, type, errorIds }
+  { flowId, resourceId, filterKey, defaultFilter, isResolved }
 ) {
+  const errorFilter = filter(state, filterKey) || defaultFilter;
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options: { ...errorFilter, isResolved },
+  });
+  const errorIds = errors.map(error => error.errorId);
+
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
     resourceId,
-    type,
+    isResolved,
     errorIds,
   });
 }

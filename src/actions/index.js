@@ -1465,15 +1465,7 @@ const errorManager = {
         resourceId,
         isResolved,
       }),
-    select: ({ flowId, resourceId, errorId, checked, isResolved = false }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS, {
-        flowId,
-        resourceId,
-        errorIds: [errorId],
-        checked,
-        isResolved,
-      }),
-    selectAll: ({
+    selectErrors: ({
       flowId,
       resourceId,
       errorIds,
@@ -1486,6 +1478,13 @@ const errorManager = {
         errorIds,
         checked,
         isResolved,
+      }),
+    selectAll: ({ flowId, resourceId, checked, options }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        checked,
+        options,
       }),
   },
 };
