@@ -120,7 +120,6 @@ export default function AddOrSelect(props) {
               occupyFullWidth
               resourceType={resourceType}
               resourceId={resourceId}
-              cancelButtonLabel="Cancel"
               onSubmitComplete={handleSubmitComplete}
               connectionType={connectionType}
             />

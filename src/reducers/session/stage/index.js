@@ -145,10 +145,13 @@ export default (state = {}, action) => {
   });
 };
 
+const emptyObj = {};
+const emptyList = [];
+
 // #region PUBLIC SELECTORS
 export function stagedResource(state, id, scope) {
   if (!state || !id || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   let updatedPatches;
@@ -165,7 +168,7 @@ export function stagedResource(state, id, scope) {
 
 export function getAllResourceConflicts(state) {
   if (!state) {
-    return [];
+    return emptyList;
   }
 
   return Object.keys(state)

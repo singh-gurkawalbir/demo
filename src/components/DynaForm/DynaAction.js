@@ -56,6 +56,8 @@ function DynaAction(props) {
 const DynaActionWrapped = props => {
   const form = useFormContext(props);
 
+  if (!form) return null;
+
   return (
     <DynaAction
       {...props}

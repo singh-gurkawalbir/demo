@@ -1,13 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
-import useTraceUpdate from 'use-trace-update';
 import clsx from 'clsx';
-import { Children, cloneElement, useMemo, Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import useTraceUpdate from 'use-trace-update';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 import * as selectors from '../../reducers';
-import ButtonGroup from '../ButtonGroup';
-import DynaFormGenerator from './DynaFormGenerator';
 import useForm from '../Form';
+import DynaFormGenerator from './DynaFormGenerator';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -27,9 +26,6 @@ const useStyles = makeStyles(theme => ({
   expansionPanel: {
     width: '100%',
     overflow: 'hidden',
-  },
-  actions: {
-    padding: theme.spacing(2, 0),
   },
 }));
 const DynaForm = props => {
@@ -72,16 +68,6 @@ const DynaForm = props => {
           formKey={formKeyUsed}
         />
       </div>
-      {/* The children are action buttons for the form */}
-      {children && (
-        <div className={classes.actions}>
-          <ButtonGroup>
-            {Children.map(children, child =>
-              cloneElement(child, { formKey: formKeyUsed })
-            )}
-          </ButtonGroup>
-        </div>
-      )}
     </Fragment>
   );
 };

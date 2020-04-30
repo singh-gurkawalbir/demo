@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
@@ -17,8 +17,11 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, resource, ...rest } = props;
-  const { resourceId } = rest;
+  const { label, classes, resourceType, disabled, resourceId, ...rest } = props;
+  const resource = useSelector(
+    state => selectors.resourceData(state, resourceType, resourceId).merged,
+    shallowEqual
+  );
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const { iClients } = useLoadIClientOnce({

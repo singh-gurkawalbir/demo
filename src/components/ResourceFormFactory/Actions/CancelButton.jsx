@@ -8,7 +8,7 @@ const styles = theme => ({
   },
 });
 const CancelButton = props => {
-  const { onCancel, cancelButtonLabel, classes } = props;
+  const { onCancel, classes } = props;
 
   return (
     <Button
@@ -17,7 +17,7 @@ const CancelButton = props => {
       className={classes.actionButton}
       variant="text"
       color="primary">
-      {cancelButtonLabel || 'Reset'}
+      Cancel
     </Button>
   );
 };

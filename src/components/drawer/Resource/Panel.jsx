@@ -1,15 +1,100 @@
-import { Fragment, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Route, useLocation, generatePath } from 'react-router-dom';
-import { makeStyles, Typography, IconButton } from '@material-ui/core';
-import LoadResources from '../../../components/LoadResources';
-import { isNewId } from '../../../utils/resource';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../reducers';
+import {
+  ButtonGroup,
+  IconButton,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
+import { Fragment, useCallback, useMemo, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { generatePath, Route, useLocation } from 'react-router-dom';
 import actions from '../../../actions';
 import Close from '../../../components/icons/CloseIcon';
+import LoadResources from '../../../components/LoadResources';
+import resourceConstants from '../../../forms/constants/connection';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import * as selectors from '../../../reducers';
+import {
+  getResourceSubType,
+  isNewId,
+  generateNewId,
+} from '../../../utils/resource';
 import ApplicationImg from '../../icons/ApplicationImg';
+import consolidatedActions from '../../ResourceFormFactory/Actions';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
+
+const getConnectionType = resource => {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (assistant) return assistant;
+
+  return type;
+};
+
+const useStylesButtons = makeStyles(theme => ({
+  actions: {
+    padding: theme.spacing(2, 0),
+  },
+}));
+
+export function ActionsFactory(props) {
+  const classes = useStylesButtons();
+  const { resourceType, resourceId, isNew } = props;
+  const resource = useSelector(
+    state => selectors.resourceData(state, resourceType, resourceId).merged,
+    shallowEqual
+  );
+  const connectionType = getConnectionType(resource);
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+
+  if (!formState.initComplete) return null;
+  const { actions } = formState.fieldMeta;
+
+  // console.log('render: <ActionsFactory>');
+
+  // When action buttons is provided in the metadata then we generate the action buttons for you
+  if (actions) {
+    const ActionButtons =
+      actions.length > 0 &&
+      actions.map(action => {
+        const Action = consolidatedActions[action.id];
+
+        return <Action key={action.id} {...props} {...action} />;
+      });
+
+    return (
+      <ButtonGroup className={classes.actionButtons}>
+        <ActionButtons />
+      </ButtonGroup>
+    );
+  }
+
+  let actionButtons;
+
+  // When action button metadata isn't provided we infer the action buttons.
+  if (resourceType === 'connections' && !isNew) {
+    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+      actionButtons = ['oauth', 'cancel'];
+    } else {
+      actionButtons = ['test', 'testandsave', 'cancel'];
+    }
+  } else {
+    actionButtons = ['save', 'cancel'];
+  }
+
+  return (
+    <ButtonGroup className={classes.actionButtons}>
+      {actionButtons.map(key => {
+        const Action = consolidatedActions[key];
+        // remove form disabled prop...
+        // they dont necessary apply to action button
+
+        return <Action key={key} dataTest={key} {...props} />;
+      })}
+    </ButtonGroup>
+  );
+}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -91,6 +176,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
 
 export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
+  const [newId] = useState(generateNewId());
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const location = useLocation();
@@ -316,15 +402,20 @@ export default function Panel(props) {
         <LoadResources required resources={requiredResources}>
           <ResourceFormWithStatusPanel
             className={classes.resourceFormWrapper}
-            variant={match.isExact ? 'edit' : 'view'}
+            isNew={isNew}
+            formKey={newId}
+            resourceType={resourceType}
+            resourceId={id}
+            // TODO: push this to directly to the button
+            submitButtonLabel={submitButtonLabel}
+            onSubmitComplete={handleSubmitComplete}
+          />
+          <ActionsFactory
+            formKey={newId}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
-            {...props}
           />
         </LoadResources>
       </div>

@@ -20,6 +20,8 @@ const normalizeAllPropsToFormApi = props => {
     parentContext,
     disabled,
     showValidationBeforeTouched,
+    // lets get rid of conditional update
+
     conditionalUpdate,
     fieldsMeta,
     // deprecated Value

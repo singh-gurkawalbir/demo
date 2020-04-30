@@ -1,72 +1,10 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Typography } from '@material-ui/core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
-import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
+import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
-import consolidatedActions from './Actions';
-import { getResourceSubType } from '../../utils/resource';
-
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
-
-export function ActionsFactory({ variant = 'edit', ...props }) {
-  const { resource, resourceType, isNew } = props;
-  const { actions } = props.fieldMeta;
-  const connectionType = getConnectionType(resource);
-
-  // console.log('render: <ActionsFactory>');
-
-  if (variant === 'view') {
-    return <DynaForm {...props} />;
-  }
-
-  // When action buttons is provided in the metadata then we generate the action buttons for you
-  if (actions) {
-    const ActionButtons =
-      actions.length > 0 &&
-      actions.map(action => {
-        const Action = consolidatedActions[action.id];
-
-        return <Action key={action.id} {...props} {...action} />;
-      });
-
-    return <DynaForm {...props}>{ActionButtons}</DynaForm>;
-  }
-
-  let actionButtons;
-
-  // When action button metadata isn't provided we infer the action buttons.
-  if (resourceType === 'connections' && !isNew) {
-    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['oauth', 'cancel'];
-    } else {
-      actionButtons = ['test', 'testandsave', 'cancel'];
-    }
-  } else {
-    actionButtons = ['save', 'cancel'];
-  }
-
-  return (
-    <DynaForm {...props}>
-      {actionButtons.map(key => {
-        const Action = consolidatedActions[key];
-        // remove form disabled prop...
-        // they dont necessary apply to action button
-        const { disabled, ...rest } = props;
-
-        return <Action key={key} dataTest={key} {...rest} />;
-      })}
-    </DynaForm>
-  );
-}
 
 export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const { fieldMeta } = props;
@@ -96,14 +34,7 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
     return <Typography>Initializing Form</Typography>;
   }
 
-  return (
-    <ActionsFactory
-      onCancel={remountForm}
-      {...props}
-      {...formState}
-      key={count}
-    />
-  );
+  return <DynaForm {...props} {...formState} key={count} />;
 };
 
 export const ResourceFormFactory = props => {
