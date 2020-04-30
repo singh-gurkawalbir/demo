@@ -1500,10 +1500,6 @@ const customSettings = {
       resourceType,
       resourceId,
     }),
-  clearForm: resourceId =>
-    action(actionTypes.CUSTOM_SETTINGS.CLEAR, {
-      resourceId,
-    }),
   updateForm: (resourceId, status, key, formMeta) =>
     action(actionTypes.CUSTOM_SETTINGS.UPDATE, {
       resourceId,
@@ -1511,20 +1507,6 @@ const customSettings = {
       key,
       formMeta,
     }),
-  patchForm: (resourceId, formMeta) =>
-    action(actionTypes.CUSTOM_SETTINGS.PATCH, {
-      resourceId,
-      formMeta,
-    }),
-  /* patchInit: (resourceId, {_scriptId, function}) =>
-    action(actionTypes.CUSTOM_SETTINGS.PATCH_INIT, {
-      resourceType,
-      resourceId,
-      values,
-      match,
-      skipClose,
-      isGenerate,
-    }), */
 };
 // #endregion
 
