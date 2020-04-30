@@ -365,3 +365,24 @@ export function getImportIdsFromFlow(flow) {
 
   return importIds;
 }
+
+export function isDeltaFlow(flow, exports) {
+  if (!flow) return false;
+  let isDeltaFlow = false;
+
+  flow &&
+    flow.pageGenerators &&
+    flow.pageGenerators.forEach(pg => {
+      const flowExp = exports && exports.find(e => e._id === pg._exportId);
+
+      if (
+        flowExp &&
+        flowExp.type === 'delta' &&
+        !(flowExp.delta && flowExp.delta.lagOffset)
+      ) {
+        isDeltaFlow = true;
+      }
+    });
+
+  return isDeltaFlow;
+}

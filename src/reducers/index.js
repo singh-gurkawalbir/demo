@@ -39,6 +39,7 @@ import {
   getImportIdsFromFlow,
   getUsedActionsMapForResource,
   isPageGeneratorResource,
+  isDeltaFlow,
 } from '../utils/flows';
 import {
   isValidResourceReference,
@@ -835,32 +836,6 @@ export function getIAFlowSettings(state, integrationId, flowId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
-export function isDeltaFlow(state, id) {
-  const flow = resource(state, 'flows', id);
-  const exports = resourceList(state, {
-    type: 'exports',
-  }).resources;
-
-  if (!flow) return false;
-  let isDeltaFlow = false;
-
-  flow &&
-    flow.pageGenerators &&
-    flow.pageGenerators.forEach(pg => {
-      const flowExp = exports && exports.find(e => e._id === pg._exportId);
-
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
-        isDeltaFlow = true;
-      }
-    });
-
-  return isDeltaFlow;
-}
-
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,
@@ -885,7 +860,7 @@ export function flowDetails(state, id) {
     draft.isSimpleImport = isSimpleImportFlow(pg);
     draft.isRunnable = isRunnable(allExports, pg, draft);
     draft.canSchedule = showScheduleIcon(allExports, pg, draft);
-    draft.isDeltaFlow = isDeltaFlow(state, id);
+    draft.isDeltaFlow = isDeltaFlow(flow, allExports);
     const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
 
     draft.showMapping = flowSettings.showMapping;
