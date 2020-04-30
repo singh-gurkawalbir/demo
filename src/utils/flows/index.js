@@ -1,5 +1,6 @@
 import mappingUtil from '../mapping';
 import { adaptorTypeMap, isBlobTypeResource } from '../resource';
+import { emptyList } from '../constants';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -385,4 +386,43 @@ export function isDeltaFlow(flow, exports) {
     });
 
   return isDeltaFlow;
+}
+
+export function getImportsFromFlow(flow, imports) {
+  const importIds = [];
+
+  if (!flow || !imports || imports.length === 0) return emptyList;
+
+  if (flow._importId) {
+    importIds.push(flow._importId);
+  } else if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(p => {
+      if (p._importId) {
+        importIds.push(p._importId);
+      }
+    });
+  }
+
+  if (!importIds.length) return emptyList;
+
+  return imports.filter(i => importIds.indexOf(i._id) > -1);
+}
+
+export function getPageProcessorImportsFromFlow(imports, pageProcessors) {
+  let ppImports = [];
+  const pageProcessorIds = [];
+
+  if (!pageProcessors) {
+    return imports;
+  }
+
+  pageProcessors.forEach(pageProcessor => {
+    if (pageProcessor && pageProcessor._importId) {
+      pageProcessorIds.push(pageProcessor._importId);
+    }
+  });
+  ppImports =
+    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
+
+  return ppImports;
 }
