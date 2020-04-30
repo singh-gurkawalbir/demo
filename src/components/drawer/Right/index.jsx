@@ -56,6 +56,12 @@ const useStyles = makeStyles(theme => ({
   xl: {
     width: 1300,
   },
+  fullWidthDrawerClose: {
+    width: 'calc(100% - 60px)',
+  },
+  fullWidthDrawerOpen: {
+    width: `calc(100% - ${theme.drawerWidth}px)`,
+  },
   tall: {
     marginTop: theme.appBarHeight,
   },
@@ -91,6 +97,7 @@ export default function RightDrawer({
   const match = useRouteMatch();
   const location = useLocation();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
   const handleBack = useCallback(() => {
     // else, just go back in browser history...
@@ -120,11 +127,14 @@ export default function RightDrawer({
             paper: clsx(
               classes.drawerPaper,
               classes[`drawerPaper_${type}`],
-              classes[width],
               classes[height],
               {
                 [classes.banner]:
                   bannerOpened && showBanner && height === 'short',
+                [classes[width]]: width !== 'full',
+                [classes.fullWidthDrawerClose]:
+                  width === 'full' && !drawerOpened,
+                [classes.fullWidthDrawerOpen]: width === 'full' && drawerOpened,
               }
             ),
           }}

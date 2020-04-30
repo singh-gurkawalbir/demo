@@ -15,6 +15,7 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
+import ErrorDetailsDrawer from './drawers/ErrorsDetails';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
@@ -379,13 +380,16 @@ function FlowBuilder() {
       dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
     }
   }, [dispatch, flowId, newFlowId, openFlowErrorsStatus]);
-  const pushOrReplaceHistory = to => {
-    if (match.isExact) {
-      history.push(to);
-    } else {
-      history.replace(to);
-    }
-  };
+  const pushOrReplaceHistory = useCallback(
+    to => {
+      if (match.isExact) {
+        history.push(to);
+      } else {
+        history.replace(to);
+      }
+    },
+    [history, match.isExact]
+  );
 
   function handleAddGenerator() {
     const newTempGeneratorId = generateNewId();
@@ -405,14 +409,21 @@ function FlowBuilder() {
     );
   }
 
-  function handleDrawerOpen(path) {
-    pushOrReplaceHistory(`${match.url}/${path}`);
-  }
+  const handleDrawerOpen = useCallback(
+    path => pushOrReplaceHistory(`${match.url}/${path}`),
+    [match.url, pushOrReplaceHistory]
+  );
 
   function handleTitleChange(title) {
     patchFlow('/name', title);
   }
 
+  const handleErrors = useCallback(
+    resourceId => () => {
+      handleDrawerOpen(`errors/${resourceId}`);
+    },
+    [handleDrawerOpen]
+  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
@@ -502,6 +513,8 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+
+      <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
         title={
@@ -601,6 +614,7 @@ function FlowBuilder() {
                 <PageGenerator
                   {...pg}
                   onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+                  onErrors={handleErrors(pg._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
                   openErrorCount={
@@ -650,6 +664,7 @@ function FlowBuilder() {
                 <PageProcessor
                   {...pp}
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+                  onErrors={handleErrors(pp._importId || pp._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
                   openErrorCount={

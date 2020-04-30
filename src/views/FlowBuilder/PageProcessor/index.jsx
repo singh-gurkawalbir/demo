@@ -53,6 +53,7 @@ const PageProcessor = ({
   isViewMode,
   isMonitorLevelAccess,
   onDelete,
+  onErrors,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -308,6 +309,7 @@ const PageProcessor = ({
             pending ? 'Pending configuration' : resource.name || resource.id
           }
           onDelete={onDelete}
+          onErrors={onErrors}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}
           onBlockClick={handleBlockClick}

@@ -134,6 +134,7 @@ const useStyles = makeStyles(theme => ({
 function AppBlock({
   className,
   onDelete,
+  onErrors,
   children,
   forwardedRef,
   onBlockClick,
@@ -350,6 +351,7 @@ function AppBlock({
         {openErrorCount ? (
           <Status
             className={classes.status}
+            onClick={onErrors}
             label={`${openErrorCount} new errors`}>
             <StatusCircle variant="error" size="small" />
           </Status>

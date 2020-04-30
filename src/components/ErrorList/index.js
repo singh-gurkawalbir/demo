@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -13,9 +14,11 @@ const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
 }));
 
-export default function ErrorList({ flowId, resourceId }) {
+export default function ErrorList({ flowId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const match = useRouteMatch();
+  const { resourceId } = match.params;
   const rowsPerPage = 20;
   const defaultFilter = useMemo(
     () => ({
