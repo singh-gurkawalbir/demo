@@ -59,6 +59,7 @@ const DynaActionWrapped = props => {
   return (
     <DynaAction
       {...props}
+      value={form.value}
       fields={form.fields}
       disabled={!!(form.disabled || props.disabled)}
       isValid={props.isValid === undefined ? form.isValid : props.isValid}
