@@ -1,20 +1,26 @@
 import React, { useState, Fragment } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import ActionButton from '../../../ActionButton';
-import ExitIcon from '../../../icons/ExitIcon';
+import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
 import sampleTemplateUtil from '../../../../utils/sampleTemplate';
+import FieldHelp from '../../FieldHelp';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  lookupHandleWrapper: {
+    width: '100%',
   },
-  exitButton: {
+  exitButtonTemplate: {
     float: 'right',
-    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(5),
+  },
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
@@ -171,61 +177,82 @@ export default function TemplateEditor(props) {
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
+        className={classes.exitButtonTemplate}>
+        <ExpandWindowIcon />
       </ActionButton>
       {fieldType === 'relativeUri' && (
-        <InputWithLookupHandlebars
-          id={id}
-          showLookup={showLookup}
-          key={id}
-          name={name}
-          label={label}
-          placeholder={placeholder}
-          isValid={isValid}
-          sampleData={sampleData}
-          description={description}
-          errorMessages={errorMessages}
-          isSqlImport={isSqlImport}
-          disabled={disabled}
-          multiline={multiline}
-          onFieldChange={handleFieldChange}
-          extractFields={extractFields}
-          lookups={lookupData}
-          onLookupUpdate={handleLookupUpdate}
-          required={required}
-          connectionId={connectionId}
-          value={extactedVal}
-          connectionType={connection.type}
-          resourceId={resourceId}
-          resourceName={resourceName}
-          resourceType={resourceType}
-          flowId={flowId}
-          getUpdatedFieldValue={getUpdatedFieldValue}
-          prefixRegexp={prefixRegexp}
-          getMatchedValueforSuggestion={getMatchedValueforSuggestion}
-        />
+        <FormControl>
+          <div className={classes.fieldWrapper}>
+            <FormLabel htmlFor={id} required={required} error={!isValid}>
+              {label}
+            </FormLabel>
+            <FieldHelp {...props} />
+          </div>
+          <InputWithLookupHandlebars
+            id={id}
+            showLookup={showLookup}
+            key={id}
+            name={name}
+            placeholder={placeholder}
+            isValid={isValid}
+            sampleData={sampleData}
+            description={description}
+            isSqlImport={isSqlImport}
+            disabled={disabled}
+            multiline={multiline}
+            onFieldChange={handleFieldChange}
+            extractFields={extractFields}
+            lookups={lookupData}
+            className={classes.lookupHandleWrapper}
+            onLookupUpdate={handleLookupUpdate}
+            required={required}
+            connectionId={connectionId}
+            value={extactedVal}
+            connectionType={connection.type}
+            resourceId={resourceId}
+            resourceName={resourceName}
+            resourceType={resourceType}
+            flowId={flowId}
+            getUpdatedFieldValue={getUpdatedFieldValue}
+            prefixRegexp={prefixRegexp}
+            getMatchedValueforSuggestion={getMatchedValueforSuggestion}
+          />
+          <ErroredMessageComponent
+            isValid={isValid}
+            description={description}
+            errorMessages={errorMessages}
+          />
+        </FormControl>
       )}
       {fieldType === 'templateeditor' && (
-        <TextField
-          id={id}
-          key={id}
-          name={name}
-          label={label}
-          className={classes.textField}
-          placeholder={placeholder}
-          helperText={isValid ? description : errorMessages}
-          disabled={disabled}
-          required={required}
-          error={!isValid}
-          value={value}
-          variant="filled"
-          onChange={e => {
-            const inpValue = e.target.value;
+        <FormControl>
+          <div className={classes.fieldWrapper}>
+            <FormLabel htmlFor={id} required={required} error={!isValid}>
+              {label}
+            </FormLabel>
+            <FieldHelp {...props} />
+          </div>
+          <TextField
+            id={id}
+            key={id}
+            name={name}
+            className={classes.textField}
+            placeholder={placeholder}
+            disabled={disabled}
+            value={value}
+            variant="filled"
+            onChange={e => {
+              const inpValue = e.target.value;
 
-            handleFieldChange(id, inpValue);
-          }}
-        />
+              handleFieldChange(id, inpValue);
+            }}
+          />
+          <ErroredMessageComponent
+            isValid={isValid}
+            description={description}
+            errorMessages={errorMessages}
+          />
+        </FormControl>
       )}
     </Fragment>
   );

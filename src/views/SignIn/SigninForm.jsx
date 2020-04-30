@@ -249,9 +249,6 @@ class SignIn extends Component {
         </form>
         {getDomain() !== 'eu.integrator.io' && (
           <div>
-            <div className={classes.or}>
-              <Typography variant="body1">or</Typography>
-            </div>
             {!dialogOpen && (
               <form onSubmit={this.handleSignInWithGoogle}>
                 <TextField
@@ -260,6 +257,9 @@ class SignIn extends Component {
                   name="attemptedRoute"
                   value={attemptedRoute || '/pg/'}
                 />
+                <div className={classes.or}>
+                  <Typography variant="body1">or</Typography>
+                </div>
                 <Button
                   type="submit"
                   variant="contained"

@@ -8,17 +8,15 @@ import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
     marginBottom: theme.spacing(2),
-    '& > div': {
-      width: '100%',
-    },
   },
   formField: {
-    width: '398px',
+    width: '100%',
   },
   startAdornmentText: {
     whiteSpace: 'nowrap',
@@ -147,7 +145,7 @@ function DynaText(props) {
   return (
     <FormControl>
       <div className={classes.fieldWrapper}>
-        <FormLabel htmlFor={id} required={required}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
         <FieldHelp {...props} />
@@ -160,16 +158,19 @@ function DynaText(props) {
         InputProps={InputProps}
         type={inputType}
         placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
         disabled={disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}
-        error={!isValid}
         value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
-        className={(classes.formField, className)}
+        className={clsx(classes.formField, className)}
+      />
+      <ErroredMessageComponent
+        isValid={isValid}
+        description={description}
+        errorMessages={errorMessages}
       />
     </FormControl>
   );

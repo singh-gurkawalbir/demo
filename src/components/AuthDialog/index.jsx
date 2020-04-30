@@ -9,7 +9,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 
 const contentWrapper = {
-  width: 380,
+  minWidth: 432,
 };
 const ExpiredSessionContent = () => (
   <Fragment>

@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   actions: {
-    padding: theme.spacing(2, 3, 0),
+    padding: theme.spacing(1, 3, 1, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));

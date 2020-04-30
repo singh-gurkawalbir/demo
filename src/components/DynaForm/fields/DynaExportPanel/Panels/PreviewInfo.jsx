@@ -3,8 +3,9 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../../../IconTextButton';
 import ArrowRightIcon from '../../../../icons/ArrowRightIcon';
-import ErrorIcon from '../../../../icons/ErrorIcon';
+// import ErrorIcon from '../../../../icons/ErrorIcon';
 import { getPreviewDataPageSizeInfo } from '../../../../../utils/exportPanel';
+import ErroredMessageComponent from '../../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -39,9 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   previewDataRight: {
     display: 'flex',
-    flexDirection: 'column',
+    alignItems: 'center',
     paddingLeft: theme.spacing(1),
-    justifyContent: 'space-between',
+
     position: 'relative',
     width: '100%',
   },
@@ -81,12 +82,11 @@ export default function PreviewInfo(props) {
       const errorCount = error.errors && error.errors.length;
 
       return (
-        <div className={classes.errorMessage}>
-          <ErrorIcon className={classes.error} />
-          <Typography variant="body1">
-            You have {errorCount} {errorCount > 1 ? 'errors' : 'error'}
-          </Typography>
-        </div>
+        <ErroredMessageComponent
+          errorMessages={`you have ${errorCount} ${
+            errorCount > 1 ? 'errors' : 'error'
+          }`}
+        />
       );
     }
 
@@ -98,13 +98,7 @@ export default function PreviewInfo(props) {
         </Typography>
       );
     }
-  }, [
-    classes.error,
-    classes.errorMessage,
-    panelType,
-    previewStageDataList,
-    resourceSampleData,
-  ]);
+  }, [panelType, previewStageDataList, resourceSampleData]);
 
   return (
     <div className={classes.previewContainer}>
@@ -122,8 +116,8 @@ export default function PreviewInfo(props) {
         </div>
 
         <div className={classes.previewDataRight}>
-          <div> {sampleDataStatus}</div>
-          {sampleDataOverview}
+          {sampleDataStatus && <div> {sampleDataStatus}</div>}
+          {sampleDataOverview && <div> {sampleDataOverview} </div>}
         </div>
       </div>
     </div>

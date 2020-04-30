@@ -22,7 +22,7 @@ const ErroredMessageComponent = props => {
 
   return description || errorMessages ? (
     <FormHelperText error={!isValid} className={classes.error}>
-      {errorMessages && <ErrorIcon className={classes.icon} />}
+      {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
       {isValid ? description : errorMessages}
     </FormHelperText>
   ) : null;

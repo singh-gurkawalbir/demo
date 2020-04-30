@@ -84,16 +84,12 @@ export default function DynaSelect(props) {
   return (
     <div>
       <div className={classes.fieldWrapper}>
-        <FormLabel htmlFor={id} required={required}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <FormControl
-        key={id}
-        disabled={disabled}
-        error={!isValid}
-        required={required}>
+      <FormControl key={id} disabled={disabled} required={required}>
         <CeligoSelect
           data-test={id}
           value={finalTextValue}
