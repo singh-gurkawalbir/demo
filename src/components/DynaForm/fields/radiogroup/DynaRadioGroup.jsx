@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   rowFlexWrapper: {
@@ -23,11 +24,12 @@ const useStyles = makeStyles(theme => ({
   columnFlexWrapper: {
     flexDirection: 'column',
   },
-  fullWidth: {
-    width: '100%',
+  radioGroupWrapper: {
+    display: 'flex',
+    alignItems: 'center',
   },
-  block: {
-    marginTop: theme.spacing(1),
+  innerRadioWrapper: {
+    display: 'flex',
   },
   radioGroup: {
     marginTop: 6,
@@ -35,6 +37,10 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(1),
       marginLeft: 0,
     },
+  },
+  radioGroupLabel: {
+    marginBottom: 0,
+    marginRight: 12,
   },
 }));
 
@@ -49,8 +55,6 @@ export default function DynaRadio(props) {
     disabled,
     // use showOptionsVertically to render vertically
     showOptionsVertically,
-    // set fullWidth to true for component to occupy fill width
-    fullWidth,
     label,
     isValid,
     onFieldChange,
@@ -85,31 +89,36 @@ export default function DynaRadio(props) {
   );
 
   return (
-    <FormControl
-      error={!isValid}
-      component="fieldset"
-      required={required}
-      disabled={disabled}
-      className={clsx(classes.block, fullWidth ? classes.fullWidth : '')}>
-      <div>
-        <FormLabel component="legend">{label}</FormLabel>
-      </div>
-      <RadioGroup
-        data-test={id}
-        aria-label={label}
-        className={clsx(classes.radioGroup, {
-          [classes.columnFlexWrapper]: showOptionsVertically,
-        })}
-        name={name}
-        defaultValue={defaultValue}
-        value={value}
-        color="primary"
-        onChange={evt => {
-          onFieldChange(id, evt.target.value);
-        }}>
-        {items}
-      </RadioGroup>
+    <div>
+      <FormControl component="fieldset" disabled={disabled}>
+        <div className={classes.radioGroupWrapper}>
+          <FormLabel
+            required={required}
+            error={!isValid}
+            className={classes.radioGroupLabel}>
+            {label}:
+          </FormLabel>
+          <div className={classes.radioGroupWrapper}>
+            <RadioGroup
+              data-test={id}
+              aria-label={label}
+              className={clsx(classes.radioGroup, {
+                [classes.columnFlexWrapper]: showOptionsVertically,
+              })}
+              name={name}
+              defaultValue={defaultValue}
+              value={value}
+              color="primary"
+              onChange={evt => {
+                onFieldChange(id, evt.target.value);
+              }}>
+              {items}
+            </RadioGroup>
+            <FieldHelp {...props} />
+          </div>
+        </div>
+      </FormControl>
       <ErroredMessageComponent {...props} />
-    </FormControl>
+    </div>
   );
 }

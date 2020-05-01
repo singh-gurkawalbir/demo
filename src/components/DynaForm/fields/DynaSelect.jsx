@@ -13,6 +13,9 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  dynaSelectWrapper: {
+    width: '100%',
+  },
 });
 
 export default function DynaSelect(props) {
@@ -82,14 +85,18 @@ export default function DynaSelect(props) {
   items = [defaultItem, ...items];
 
   return (
-    <div>
+    <div className={classes.dynaSelectWrapper}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <FormControl key={id} disabled={disabled} required={required}>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        required={required}
+        className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={id}
           value={finalTextValue}

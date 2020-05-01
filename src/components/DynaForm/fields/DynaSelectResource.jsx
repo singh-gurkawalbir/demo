@@ -90,28 +90,24 @@ const handleAddNewResource = args => {
   history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
-    '& > div:first-child': {
-      width: '100%',
-      marginRight: 6,
-      overflow: 'auto',
-    },
   },
-  actions: {
+  dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
+    marginTop: theme.spacing(5),
   },
   menuItem: {
     maxWidth: '95%',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
-});
+}));
 
 function ConnectionLoadingChip(props) {
   const { connectionId } = props;
@@ -301,7 +297,7 @@ function DynaSelectResource(props) {
           />
         )}
       </LoadResources>
-      <div className={classes.actions}>
+      <div className={classes.dynaSelectMultiSelectActions}>
         {allowNew && (
           <ActionButton
             data-test="addNewResource"
