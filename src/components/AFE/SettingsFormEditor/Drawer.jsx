@@ -74,11 +74,14 @@ export default function EditorDrawer({ editorId, onClose, ...rest }) {
     !editor ||
     editorViolations ||
     (isEditorDirty !== undefined && !isEditorDirty);
+  // if the editor is not yet initialized, then the autoevealuate flag is undefined
+  // so lets default to ON.
+  const autoEvaluate = editor.autoEvaluate || editor.autoEvaluate === undefined;
   const drawerActions = (
     <FormControlLabel
       control={
         <Checkbox
-          checked={editor.autoEvaluate}
+          checked={autoEvaluate}
           onChange={handlePreviewChange}
           name="autoEvaluate"
         />

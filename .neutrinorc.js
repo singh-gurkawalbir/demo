@@ -180,7 +180,6 @@ module.exports = {
         'SESSION_WARNING_INTERVAL_PRIOR_TO_EXPIRATION',
         'SESSION_EXPIRATION_INTERVAL',
         'WHY_RERENDER',
-        'NEW_SETTINGS',
       ],
     ],
     neutrino => {
