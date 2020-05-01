@@ -1,10 +1,23 @@
+import produce from 'immer';
 import util from '../../../../utils/json';
 import javascript from './javascript';
+
+function safeParse(o) {
+  if (typeof o === 'object') return o;
+
+  try {
+    return JSON.parse(o);
+  } catch (e) {
+    return undefined;
+  }
+}
 
 export default {
   processor: 'javascript',
   skipPreview: ({ code, entryFunction }) => !code || !entryFunction,
+
   requestBody: javascript.requestBody,
+
   dirty: editor => {
     if (editor.data !== editor.initData) {
       return true;
@@ -12,6 +25,7 @@ export default {
 
     return javascript.dirty(editor);
   },
+
   validate: ({ data }) => {
     let dataError;
 
@@ -20,5 +34,35 @@ export default {
       dataError = util.validateJsonString(data);
 
     return { dataError: dataError !== null && dataError };
+  },
+
+  processResult: ({ settings, data }, newResult) => {
+    let meta;
+
+    if (newResult) {
+      meta = newResult.data;
+    } else if (data) {
+      const parsedData = safeParse(data);
+
+      if (!parsedData) return undefined;
+      // console.log('parsedData', parsedData);
+
+      meta =
+        parsedData.resource &&
+        parsedData.resource.settingsForm &&
+        parsedData.resource.settingsForm.form;
+    }
+
+    // inject the current setting values (found in resource.settings)
+    // into the respective field’s defaultValue prop.
+    return produce(meta, draft => {
+      if (settings && meta) {
+        Object.keys(draft.fieldMap).forEach(key => {
+          const field = draft.fieldMap[key];
+
+          field.defaultValue = settings[field.name] || '';
+        });
+      }
+    });
   },
 };

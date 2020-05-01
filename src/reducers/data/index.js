@@ -55,11 +55,7 @@ export function categoryRelationshipData(state, integrationId, flowId) {
     flowId
   );
 }
-
 // #endregion
-export function processors(state) {
-  return fromResources.processors(state && state.resources);
-}
 
 export function resourceState(state) {
   return fromResources.resourceState(state && state.resources);
