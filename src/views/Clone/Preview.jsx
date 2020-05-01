@@ -16,7 +16,7 @@ import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
-import useResourceList from '../../hooks/useResourceList';
+import useResourceList from '../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
-import useResourceList from '../../../../hooks/useResourceList';
+import useResourceList from '../../../../hooks/selectors/useResourceList';
 
 const ssharesFilterConfig = { type: 'sshares' };
 

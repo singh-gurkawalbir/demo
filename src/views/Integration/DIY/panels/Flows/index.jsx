@@ -12,7 +12,7 @@ import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
-import useResourceList from '../../../../../hooks/useResourceList';
+import useResourceList from '../../../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   root: {

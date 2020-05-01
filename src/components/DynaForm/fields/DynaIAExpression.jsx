@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaNSQualifier from './DynaNetSuiteQualifier';

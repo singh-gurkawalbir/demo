@@ -1,8 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Fragment, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
+import { shallowEqual, useSelector } from 'react-redux';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 import * as selectors from '../../reducers';
 import useForm from '../Form';
@@ -40,13 +39,12 @@ const DynaForm = props => {
   const classes = useStyles();
   const { layout, fieldMap } = fieldMeta;
   const { formKey } = rest;
-
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy
   // to identify the source.
   // console.log('RENDER: DynaForm', layout);
-  useTraceUpdate(props);
+  // useTraceUpdate(props);
   const formKeyUsed = useForm({
     ...rest,
     formKey,
@@ -86,7 +84,9 @@ export default function DisabledDynaFormPerUserPermissions(props) {
   );
   // pass in the integration Id to find access level of its associated forms
   const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
-    state => selectors.formAccessLevel(state, integrationId, resource, disabled)
+    state =>
+      selectors.formAccessLevel(state, integrationId, resource, disabled),
+    shallowEqual
   );
   const updatedFieldMeta = useMemo(() => {
     if (disableAllFieldsExceptClocked)
@@ -94,6 +94,8 @@ export default function DisabledDynaFormPerUserPermissions(props) {
 
     return fieldMeta;
   }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);
+
+  console.log('re render DisabledDynaFormPerUserPermissions ', props);
 
   return (
     <DynaForm

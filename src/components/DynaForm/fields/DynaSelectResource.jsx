@@ -18,7 +18,7 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const handleAddNewResource = args => {
   const {

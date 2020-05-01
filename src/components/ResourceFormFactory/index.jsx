@@ -1,8 +1,9 @@
 import { Typography } from '@material-ui/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import formFactory from '../../forms/formFactory';
+import useResourceData from '../../hooks/selectors/useStaggedResource';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 
@@ -34,6 +35,8 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
     return <Typography>Initializing Form</Typography>;
   }
 
+  console.log('rerender FormStateManager');
+
   return <DynaForm {...props} {...formState} key={count} />;
 };
 
@@ -42,10 +45,7 @@ export const ResourceFormFactory = props => {
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
   );
-  const resource = useSelector(
-    state => selectors.resourceData(state, resourceType, resourceId).merged,
-    shallowEqual
-  );
+  const resource = useResourceData(resourceType, resourceId).merged;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );
@@ -94,6 +94,7 @@ export const ResourceFormFactory = props => {
     resourceType,
   ]);
 
+  console.log('rerender ResourceForm factory');
   const { optionsHandler, validationHandler } = useMemo(
     () =>
       formFactory.getResourceFormAssets({

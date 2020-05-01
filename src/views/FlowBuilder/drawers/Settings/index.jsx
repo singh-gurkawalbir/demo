@@ -9,7 +9,7 @@ import { getNextDataFlows, developerMode } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
-import useResourceList from '../../../../hooks/useResourceList';
+import useResourceList from '../../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {

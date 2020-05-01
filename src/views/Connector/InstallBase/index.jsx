@@ -11,7 +11,7 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {

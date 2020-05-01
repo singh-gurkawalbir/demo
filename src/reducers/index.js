@@ -10,6 +10,7 @@ import data, * as fromData from './data';
 import * as fromResources from './data/resources';
 import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
+import * as fromStage from './session/stage';
 import comms, * as fromComms from './comms';
 import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
@@ -27,7 +28,12 @@ import {
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
-import { getFieldById } from '../forms/utils';
+import {
+  getFieldById,
+  isAnyFieldVisibleForMeta,
+  isExpansionPanelErrored,
+  isAnyFieldTouchedForMeta,
+} from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -82,6 +88,10 @@ export default rootReducer;
 
 export function marketPlaceState(state) {
   return fromData.marketPlaceState(state && state.data);
+}
+
+export function stageState(state) {
+  return fromSession.stageState(state && state.session);
 }
 
 export function resourcesState(state) {
@@ -178,6 +188,28 @@ export const getFormParentContext = (state, formKey) =>
 
 export const getFieldState = (state, formKey, fieldId) =>
   fromSession.getFieldState(state && state.session, formKey, fieldId);
+
+export const isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
+  const { fields } = getFormState(state, formKey) || {};
+
+  return isAnyFieldVisibleForMeta(fieldMeta, fields);
+};
+
+export const isExpansionPanelErroredForMetaForm = (
+  state,
+  formKey,
+  fieldMeta
+) => {
+  const { fields } = getFormState(state, formKey) || {};
+
+  return isExpansionPanelErrored(fieldMeta, fields || []);
+};
+
+export const isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
+  const { fields } = getFormState(state, formKey) || {};
+
+  return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
+};
 
 export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
   fromSession.isActionButtonVisible(
@@ -3038,6 +3070,70 @@ export function resourceData(state, resourceType, id, scope) {
 
   return data;
 }
+
+export function resourceDataModified(
+  resourcesState,
+  stageState,
+  resourceType,
+  id,
+  scope
+) {
+  if ((!resourcesState && !stageState) || !resourceType || !id)
+    return emptyObject;
+  let type = resourceType;
+
+  if (resourceType.indexOf('/licenses') >= 0) {
+    type = 'connectorLicenses';
+  }
+
+  // For accesstokens and connections within an integration
+  if (resourceType.indexOf('integrations/') >= 0) {
+    type = resourceType.split('/').pop();
+  }
+
+  const master = fromResources.resource(resourcesState, type, id);
+  const { patch, conflict } = fromStage.stagedResource(stageState, id, scope);
+
+  if (!master && !patch) return { merged: emptyObject };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+}
+
+export const makeResourceDataSelector = () =>
+  createSelector(
+    resourcesState,
+    stageState,
+    (_1, resourceType) => resourceType,
+    (_1, _2, id) => id,
+    (_1, _2, _3, scope) => scope,
+    (resourcesState, stageState, resourceType, id, scope) =>
+      resourceDataModified(resourcesState, stageState, resourceType, id, scope)
+  );
 
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);

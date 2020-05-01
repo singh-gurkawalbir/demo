@@ -9,7 +9,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import connectorsMetadata from '../../constants/applications';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useMarketPlaceConnectors from '../../hooks/selectors/useMarketPlaceConnectors';
 
 const useStyles = makeStyles(theme => ({
   root: {

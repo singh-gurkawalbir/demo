@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import useResourceList from '../../../../hooks/useResourceList';
+import useResourceList from '../../../../hooks/selectors/useResourceList';
 
 export default function RefreshableIntegrationAppSetting(props) {
   const {

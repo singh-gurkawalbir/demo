@@ -79,6 +79,8 @@ export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
   return res;
 };
 
+const fieldsStateToArray = fields => Object.values(fields);
+
 export const getFieldWithReferenceById = ({ meta, id }) =>
   searchMetaForFieldByFindFunc(meta, f => byId(f, id));
 
@@ -113,7 +115,7 @@ export const getFieldByIdFromLayout = (layout, fieldMap, id) => {
 };
 
 export const isExpansionPanelErrored = (meta, fieldStates) => {
-  const invalidFields = fieldStates.filter(
+  const invalidFields = fieldsStateToArray(fieldStates).filter(
     field => !field.isValid || field.isDiscretelyInvalid
   );
   const { layout, fieldMap } = meta;
@@ -124,7 +126,9 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
 };
 
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
-  const visibleFields = fieldStates.filter(field => field.visible);
+  const visibleFields = fieldsStateToArray(fieldStates).filter(
+    field => field.visible
+  );
   const { layout, fieldMap } = meta;
 
   return visibleFields.some(
@@ -164,11 +168,12 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 export const isFormTouched = fields => fields.some(field => field.touched);
 
 export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
-  fields
+  fieldsStateToArray(fields)
     .filter(field => field.touched)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
 export const isAnyFieldVisibleForMeta = ({ layout, fieldMap }, fields) =>
-  fields
+  fieldsStateToArray(fields)
     .filter(field => field.visible)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
 

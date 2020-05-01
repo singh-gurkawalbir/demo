@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import useAllResourceStatus from '../../hooks/useAllResourceStatus';
+import useAllResourceStatus from '../../hooks/selectors/useAllResourceStatus';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();

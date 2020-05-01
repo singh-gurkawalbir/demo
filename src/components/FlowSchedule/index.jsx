@@ -14,7 +14,7 @@ import {
   getScheduleStartMinute,
   getScheduleVal,
 } from './util';
-import useResourceList from '../../hooks/useResourceList';
+import useResourceList from '../../hooks/selectors/useResourceList';
 
 const exportFilterConfig = { type: 'exports' };
 const flowsFilterConfig = { type: 'flows' };

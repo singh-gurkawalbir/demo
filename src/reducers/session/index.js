@@ -57,6 +57,7 @@ export default combineReducers({
 
 // #region PUBLIC SELECTORS
 
+export const stageState = state => state && state.stage;
 export const getFormState = (state, formKey) =>
   fromForm.getFormState(state && state.form, formKey);
 

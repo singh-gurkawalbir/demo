@@ -9,7 +9,7 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import IconTextButton from '../../../../components/IconTextButton';
 import metadata from './metadata';
 import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
-import useResourceList from '../../../../hooks/useResourceList';
+import useResourceList from '../../../../hooks/selectors/useResourceList';
 
 const integrationsFilterConfig = {
   type: 'integrations',

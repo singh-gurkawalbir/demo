@@ -8,7 +8,7 @@ import * as selectors from '../../../reducers';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   subNavOpen: {

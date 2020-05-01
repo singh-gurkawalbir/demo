@@ -7,7 +7,7 @@ import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
-import useResourceList from '../../hooks/useResourceList';
+import useResourceList from '../../hooks/selectors/useResourceList';
 
 const flowsFilterConfig = { type: 'flows' };
 

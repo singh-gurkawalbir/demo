@@ -255,8 +255,7 @@ export default function Panel(props) {
     'pageProcessor',
   ].includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
-
-  function lookupProcessorResourceType() {
+  const lookupProcessorResourceType = useCallback(() => {
     if (!stagedProcessor || !stagedProcessor.patch) {
       // TODO: we need a better pattern for logging warnings. We need a common util method
       // which logs these warning only if the build is dev... if build is prod, these
@@ -282,28 +281,29 @@ export default function Panel(props) {
     }
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }
+  }, [stagedProcessor]);
+  const getEditUrl = useCallback(
+    id => {
+      // console.log(location);
+      const segments = location.pathname.split('/');
+      const { length } = segments;
 
-  function getEditUrl(id) {
-    // console.log(location);
-    const segments = location.pathname.split('/');
-    const { length } = segments;
+      segments[length - 1] = id;
+      segments[length - 3] = 'edit';
 
-    segments[length - 1] = id;
-    segments[length - 3] = 'edit';
+      if (resourceType === 'pageGenerator') {
+        segments[length - 2] = 'exports';
+      } else if (resourceType === 'pageProcessor') {
+        segments[length - 2] = lookupProcessorResourceType();
+      }
 
-    if (resourceType === 'pageGenerator') {
-      segments[length - 2] = 'exports';
-    } else if (resourceType === 'pageProcessor') {
-      segments[length - 2] = lookupProcessorResourceType();
-    }
+      const url = segments.join('/');
 
-    const url = segments.join('/');
-
-    return url;
-  }
-
-  function handleSubmitComplete() {
+      return url;
+    },
+    [location.pathname, lookupProcessorResourceType, resourceType]
+  );
+  const handleSubmitComplete = useCallback(() => {
     if (isNew) {
       // The following block of logic is used specifically for pageProcessor
       // and pageGenerator forms. These forms allow a user to choose an
@@ -361,13 +361,31 @@ export default function Panel(props) {
         });
       onClose();
     }
-  }
-
+  }, [
+    dispatch,
+    enqueueSnackbar,
+    formState.skipClose,
+    getEditUrl,
+    id,
+    isMultiStepSaveResource,
+    isNew,
+    match.path,
+    newResourceId,
+    onClose,
+    operation,
+    props.history,
+    resourceLabel,
+    resourceType,
+    stagedProcessor.patch,
+  ]);
   const showApplicationLogo =
     flowId &&
     ['exports', 'imports'].includes(resourceType) &&
     !!applicationType;
-  const requiredResources = determineRequiredResources(resourceType);
+  const requiredResources = useMemo(
+    () => determineRequiredResources(resourceType),
+    [resourceType]
+  );
   const title = useMemo(
     () =>
       getTitle({

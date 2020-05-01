@@ -18,7 +18,7 @@ import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useMarketPlaceConnectors from '../../hooks/selectors/useMarketPlaceConnectors';
 
 const useStyles = makeStyles(theme => ({
   root: {

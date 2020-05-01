@@ -15,7 +15,7 @@ import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
-import useResourceList from '../../../../hooks/useResourceList';
+import useResourceList from '../../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {

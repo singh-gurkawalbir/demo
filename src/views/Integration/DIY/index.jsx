@@ -33,7 +33,7 @@ import SettingsIcon from '../../../components/icons/SettingsIcon';
 import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {

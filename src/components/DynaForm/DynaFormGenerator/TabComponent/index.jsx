@@ -1,13 +1,10 @@
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { Fragment, useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormGenerator from '..';
-import {
-  getAllFormValuesAssociatedToMeta,
-  isAnyFieldTouchedForMeta,
-  isExpansionPanelErrored,
-} from '../../../../forms/utils';
-import useFormContext from '../../../Form/FormContext';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
+import * as selectors from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 
 const useStyle = makeStyles(theme => ({
@@ -91,23 +88,27 @@ function FormWithSave(props) {
     values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
     [fieldMap, layout]
   );
-  const form = useFormContext(props);
+  const { formKey } = rest;
+  const isExpansionPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+  const isAnyFieldTouchedForMeta = useSelector(state =>
+    selectors.isAnyFieldTouchedForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
 
   return (
     <Fragment>
       <FormGenerator {...props} />
       <IntegrationSettingsSaveButton
         {...rest}
-        isValid={
-          !isExpansionPanelErrored(
-            { layout, fieldMap },
-            form.fields ? Object.values(form.fields) : []
-          )
-        }
-        isFormTouchedForMeta={isAnyFieldTouchedForMeta(
-          { layout, fieldMap },
-          form.fields ? Object.values(form.fields) : []
-        )}
+        isValid={!isExpansionPanelErrored}
+        isFormTouchedForMeta={isAnyFieldTouchedForMeta}
         postProcessValuesFn={postProcessValuesFn}
       />
     </Fragment>

@@ -14,7 +14,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   container: {

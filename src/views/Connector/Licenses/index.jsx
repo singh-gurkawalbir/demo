@@ -15,7 +15,7 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {

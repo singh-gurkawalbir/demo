@@ -19,8 +19,8 @@ import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
-import useResourceList from '../../hooks/useResourceList';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useResourceList from '../../hooks/selectors/useResourceList';
+import useMarketPlaceConnectors from '../../hooks/selectors/useMarketPlaceConnectors';
 
 const useStyles = makeStyles(theme => ({
   drawer: {

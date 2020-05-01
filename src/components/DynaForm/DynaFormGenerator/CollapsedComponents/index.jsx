@@ -4,12 +4,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormGenerator from '../';
-import {
-  isAnyExpansionPanelFieldVisible,
-  isExpansionPanelErrored,
-} from '../../../../forms/utils';
-import useFormContext from '../../../Form/FormContext';
+import * as selectors from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +48,6 @@ const useStyles = makeStyles(theme => ({
 export default function CollapsedComponents(props) {
   const classes = useStyles();
   const { containers, fieldMap, formKey } = props;
-  const form = useFormContext(props);
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
@@ -64,7 +60,6 @@ export default function CollapsedComponents(props) {
           collapsed={collapsed}
           index={index}
           layout={rest}
-          formState={form}
           classes={classes}
           header={header}
           fieldMap={fieldMap}
@@ -77,21 +72,20 @@ export default function CollapsedComponents(props) {
 }
 
 const ExpansionPannelExpandOnInValidState = props => {
-  const {
-    collapsed,
-    layout,
-    formState: form,
-    classes,
-    header,
-    fieldMap,
-  } = props;
+  const { collapsed, layout, classes, header, fieldMap, formKey } = props;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [componentLoaded, setComponentLoaded] = useState(false);
-  const isPanelErrored = isExpansionPanelErrored(
-    { layout, fieldMap },
-    form.fields ? Object.values(form.fields) : []
+  const isPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+  const isAnyExpansionPanelFieldVisible = useSelector(state =>
+    selectors.isAnyFieldVisibleForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
   );
 
   useEffect(() => {
@@ -100,25 +94,8 @@ const ExpansionPannelExpandOnInValidState = props => {
       setExpandOnce(true);
     }
   }, [expandOnce, isPanelErrored]);
-  useEffect(() => {
-    setComponentLoaded(true);
-  }, []);
 
-  // we need to let the component mount and the field state settle before determing if they need to be removed
-  useEffect(() => {
-    if (componentLoaded) {
-      if (
-        isAnyExpansionPanelFieldVisible(
-          { layout, fieldMap },
-          form.fields ? Object.values(form.fields) : []
-        )
-      )
-        setVisible(true);
-      else setVisible(false);
-    }
-  }, [componentLoaded, fieldMap, form.fields, layout]);
-
-  if (!visible) return null;
+  if (!isAnyExpansionPanelFieldVisible) return null;
 
   return (
     <div className={classes.child}>

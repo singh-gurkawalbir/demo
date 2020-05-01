@@ -9,7 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
-import useResourceList from '../../../hooks/useResourceList';
+import useResourceList from '../../../hooks/selectors/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
