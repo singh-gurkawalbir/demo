@@ -537,13 +537,6 @@ export function resourceErrors(state, { flowId, resourceId, options }) {
   });
 }
 
-export function getResourceResolvedErrors(state, { flowId, resourceId }) {
-  return fromErrorManagement.getResourceResolvedErrors(
-    state && state.errorManagement,
-    { flowId, resourceId }
-  );
-}
-
 export function isAllErrorsSelected(
   state,
   { flowId, resourceId, isResolved, errorIds }
