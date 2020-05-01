@@ -5,9 +5,8 @@ import * as selectors from '../../../../reducers';
 import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
-import Prototype from './prototype';
 
-export function NewDynaSettings(props) {
+export default function DynaSettings(props) {
   const { id, resourceContext, disabled, onFieldChange } = props;
   const { resourceType, resourceId } = resourceContext;
   const history = useHistory();
@@ -76,14 +75,4 @@ export function NewDynaSettings(props) {
       )}
     </Fragment>
   );
-}
-
-export default function DynaSettingsFactory(props) {
-  if (!process.env.NEW_SETTINGS || process.env.NEW_SETTINGS === 'false') {
-    // console.log('use prototype settings', process.env.NEW_SETTINGS);
-
-    return <Prototype {...props} />;
-  }
-
-  return <NewDynaSettings {...props} />;
 }
