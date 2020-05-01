@@ -56,13 +56,11 @@ const validate = editor => {
 
 const requestOptions = editor => {
   const logic = getLogic(editor);
-
-  if (logic.skipPreview && logic.skipPreview(editor)) return undefined;
-
+  const skipPreview = logic.skipPreview && logic.skipPreview(editor);
   const violations = validate(editor);
 
-  if (violations) {
-    return { violations };
+  if (violations || skipPreview) {
+    return { violations, skipPreview };
   }
 
   return {
@@ -88,6 +86,12 @@ const init = processor => {
   return logic.init;
 };
 
+const processResult = editor => {
+  const logic = getLogic(editor);
+
+  return logic.processResult;
+};
+
 /**
  * init is optional for processors and is called during EDITOR_INIT.
  * data saved during EDITOR.INIT can be modified with it
@@ -98,4 +102,5 @@ export default {
   validate,
   isDirty,
   init,
+  processResult,
 };

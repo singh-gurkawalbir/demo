@@ -1,4 +1,3 @@
-import produce from 'immer';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -57,46 +56,6 @@ function getData(form) {
   );
 }
 
-function safeParse(o) {
-  if (typeof o === 'object') return o;
-
-  try {
-    return JSON.parse(o);
-  } catch (e) {
-    return undefined;
-  }
-}
-
-function determineFinalMeta(result, data, settings) {
-  let meta;
-
-  if (result) {
-    meta = result.data;
-  } else if (data) {
-    const parsedData = safeParse(data);
-
-    if (!parsedData) return undefined;
-    // console.log('parsedData', parsedData);
-
-    meta =
-      parsedData.resource &&
-      parsedData.resource.settingsForm &&
-      parsedData.resource.settingsForm.form;
-  }
-
-  // inject the current setting values (found in resource.settings)
-  // into the respective field’s defaultValue prop.
-  return produce(meta, draft => {
-    if (settings && meta) {
-      Object.keys(draft.fieldMap).forEach(key => {
-        const field = draft.fieldMap[key];
-
-        field.defaultValue = settings[field.name] || '';
-      });
-    }
-  });
-}
-
 export default function SettingsFormEditor({
   editorId,
   settingsForm = {},
@@ -146,6 +105,7 @@ export default function SettingsFormEditor({
         autoEvaluateDelay: 200,
         resourceId,
         resourceType,
+        settings,
       })
     );
   }, [
@@ -156,25 +116,17 @@ export default function SettingsFormEditor({
     init.function,
     resourceId,
     resourceType,
+    settings,
   ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
-  const hasScript = editor.scriptId && editor.entryFunction;
-
   useEffect(() => {
     setSettingsPreview();
     setSettingsValid(true);
   }, [lastChange]);
-  useEffect(() => {
-    if (!hasScript) {
-      dispatch(actions.editor.patch(editorId, { result: undefined }));
-    }
-  }, [dispatch, editorId, hasScript]);
 
-  const finalMeta = determineFinalMeta(result, data, settings);
-
-  console.log(finalMeta);
-  const key = useMemo(() => hashCode(finalMeta), [finalMeta]);
+  // console.log(finalMeta);
+  const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
 
   return (
@@ -203,10 +155,10 @@ export default function SettingsFormEditor({
       </PanelGridItem>
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form Preview" />
-        {finalMeta ? (
+        {result ? (
           <DynaForm
             key={key}
-            fieldMeta={finalMeta}
+            fieldMeta={result}
             onChange={handleFormPreviewChange}
             resourceId={resourceId}
             resourceType={resourceType}
