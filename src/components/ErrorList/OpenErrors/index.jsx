@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
-import KeywordSearch from '../../../components/KeywordSearch';
+import KeywordSearch from '../../KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
