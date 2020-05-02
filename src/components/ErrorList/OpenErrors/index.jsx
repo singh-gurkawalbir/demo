@@ -1,11 +1,10 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
+import { useCallback, useEffect, Fragment, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import TablePagination from '@material-ui/core/TablePagination';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
-import CeligoTable from '../../CeligoTable';
+import CeligoPaginatedTable from '../../CeligoPaginatedTable';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 
@@ -18,14 +17,22 @@ const useStyles = makeStyles(theme => ({
   },
   loadMore: {
     float: 'right',
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
+  },
+  actionButtonsContainer: {
+    position: 'relative',
+    top: '40px',
+    left: '700px',
+    '& > button': {
+      marginLeft: '10px',
+    },
   },
 }));
 
 export default function OpenErrors({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const rowsPerPage = 20;
+  const [selectedErrorIds, setSelectedErrorIds] = useState([]);
   const defaultFilter = useMemo(
     () => ({
       searchBy: ['message', 'source', 'code', 'occurredAt'],
@@ -37,8 +44,6 @@ export default function OpenErrors({ flowId, resourceId }) {
     state => filter(state, filterKey) || defaultFilter
   );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
-  const [page, setPage] = useState(0);
-  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
     resourceErrors(state, {
       flowId,
@@ -57,18 +62,7 @@ export default function OpenErrors({ flowId, resourceId }) {
       );
     }
   }, [dispatch, flowId, resourceId, status]);
-  useEffect(() => {
-    const currentErrorList = openErrors.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
 
-    setErrorsInCurrentPage(currentErrorList);
-  }, [openErrors, page]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [errorFilter]);
   const fetchMoreData = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.request({
@@ -78,16 +72,33 @@ export default function OpenErrors({ flowId, resourceId }) {
       })
     );
   }, [dispatch, flowId, resourceId]);
-  const handleChangePage = useCallback(
-    (event, newPage) => setPage(newPage),
-    []
-  );
+  const onSelectChange = useCallback(selected => {
+    const selectedIds = Object.entries(selected)
+      .filter(([errorId, isSelected]) => !!(errorId && isSelected))
+      .map(([errorId]) => errorId);
+
+    setSelectedErrorIds(selectedIds);
+  }, []);
+  const paginationOptions = {
+    rowsPerPage: 10,
+    rowsPerPageOptions: [10, 25, 50, 100],
+  };
 
   return (
     <Fragment>
+      {openErrors.length ? (
+        <div className={classes.actionButtonsContainer}>
+          <Button variant="outlined" disabled={!selectedErrorIds.length}>
+            Retry
+          </Button>
+          <Button variant="outlined" disabled={!selectedErrorIds.length}>
+            Resolve
+          </Button>
+        </div>
+      ) : null}
       {nextPageURL && (
         <div className={classes.loadMore}>
-          <Button class="primary" onClick={fetchMoreData}>
+          <Button variant="outlined" onClick={fetchMoreData}>
             Load more
           </Button>
         </div>
@@ -96,26 +107,15 @@ export default function OpenErrors({ flowId, resourceId }) {
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       <Fragment>
-        <TablePagination
-          className={classes.tablePaginationRoot}
-          component="div"
-          count={openErrors.length}
-          rowsPerPageOptions={[rowsPerPage]}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={handleChangePage}
-        />
-        <CeligoTable
-          data={errorsInCurrentPage}
-          filterKey="openErrors"
+        <CeligoPaginatedTable
+          data={openErrors}
+          filterKey={filterKey}
+          selectableRows
+          onSelectChange={onSelectChange}
+          resourceKey="errorId"
           {...metadata}
           actionProps={actionProps}
+          paginationOptions={paginationOptions}
         />
       </Fragment>
     </Fragment>
