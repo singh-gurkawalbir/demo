@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   actions: {
-    padding: theme.spacing(2, 3, 0),
+    padding: theme.spacing(2, 0),
   },
 }));
 const DynaForm = props => {

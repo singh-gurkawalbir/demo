@@ -1,6 +1,7 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
+import { hashCode } from '../../../utils/string';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DynaForm from '../../DynaForm';
@@ -12,7 +13,7 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import ConsoleGridItem from '../ConsoleGridItem';
 
-/*
+/* sample form meta.
   {
     "fieldMap": {
       "A": {
@@ -55,35 +56,6 @@ function getData(form) {
   );
 }
 
-function safeParse(o) {
-  if (typeof o === 'object') return o;
-
-  try {
-    return JSON.parse(o);
-  } catch (e) {
-    return undefined;
-  }
-}
-
-function determineFinalMeta(result, data) {
-  if (result) {
-    return result.data;
-  }
-
-  if (data) {
-    const parsedData = safeParse(data);
-
-    if (!parsedData) return undefined;
-    // console.log('parsedData', parsedData);
-
-    return (
-      parsedData.resource &&
-      parsedData.resource.settingsForm &&
-      parsedData.resource.settingsForm.form
-    );
-  }
-}
-
 export default function SettingsFormEditor({
   editorId,
   settingsForm = {},
@@ -98,6 +70,9 @@ export default function SettingsFormEditor({
   const [settingsValid, setSettingsValid] = useState(true);
   // console.log(editorId, 'settingsForm:', settingsForm);
   const editor = useSelector(state => selectors.editor(state, editorId));
+  const settings = useSelector(
+    state => selectors.resource(state, resourceType, resourceId).settings
+  );
   const { data, result, error, lastChange } = editor;
   // console.log('editor', editor);
   const violations = useSelector(state =>
@@ -127,9 +102,10 @@ export default function SettingsFormEditor({
         initData: data,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
-        autoEvaluateDelay: 500,
+        autoEvaluateDelay: 200,
         resourceId,
         resourceType,
+        settings,
       })
     );
   }, [
@@ -140,6 +116,7 @@ export default function SettingsFormEditor({
     init.function,
     resourceId,
     resourceType,
+    settings,
   ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
@@ -148,7 +125,8 @@ export default function SettingsFormEditor({
     setSettingsValid(true);
   }, [lastChange]);
 
-  const finalMeta = determineFinalMeta(result, data);
+  // console.log(finalMeta);
+  const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
 
   return (
@@ -177,10 +155,10 @@ export default function SettingsFormEditor({
       </PanelGridItem>
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form Preview" />
-        {finalMeta ? (
+        {result ? (
           <DynaForm
-            key={lastChange}
-            fieldMeta={finalMeta}
+            key={key}
+            fieldMeta={result}
             onChange={handleFormPreviewChange}
             resourceId={resourceId}
             resourceType={resourceType}
