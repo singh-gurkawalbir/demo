@@ -25,7 +25,7 @@ export default (state = {}, action) => {
 
         if (!draft[flowId][resourceId])
           draft[flowId][resourceId] = { open: {}, resolved: {} };
-        draft[flowId][resourceId].open.status = 'requested';
+        draft[flowId][resourceId][errorType].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED: {
         const errors =
