@@ -1,100 +1,16 @@
-import {
-  ButtonGroup,
-  IconButton,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { IconButton, makeStyles, Typography } from '@material-ui/core';
 import { Fragment, useCallback, useMemo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { generatePath, Route, useLocation } from 'react-router-dom';
-import actions from '../../../actions';
-import Close from '../../../components/icons/CloseIcon';
-import LoadResources from '../../../components/LoadResources';
-import resourceConstants from '../../../forms/constants/connection';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../reducers';
-import {
-  getResourceSubType,
-  isNewId,
-  generateNewId,
-} from '../../../utils/resource';
-import ApplicationImg from '../../icons/ApplicationImg';
-import consolidatedActions from '../../ResourceFormFactory/Actions';
-import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
-
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
-
-const useStylesButtons = makeStyles(theme => ({
-  actions: {
-    padding: theme.spacing(2, 0),
-  },
-}));
-
-export function ActionsFactory(props) {
-  const classes = useStylesButtons();
-  const { resourceType, resourceId, isNew } = props;
-  const resource = useSelector(
-    state => selectors.resourceData(state, resourceType, resourceId).merged,
-    shallowEqual
-  );
-  const connectionType = getConnectionType(resource);
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, resourceId)
-  );
-
-  if (!formState.initComplete) return null;
-  const { actions } = formState.fieldMeta;
-
-  // console.log('render: <ActionsFactory>');
-
-  // When action buttons is provided in the metadata then we generate the action buttons for you
-  if (actions) {
-    const ActionButtons =
-      actions.length > 0 &&
-      actions.map(action => {
-        const Action = consolidatedActions[action.id];
-
-        return <Action key={action.id} {...props} {...action} />;
-      });
-
-    return (
-      <ButtonGroup className={classes.actionButtons}>
-        <ActionButtons />
-      </ButtonGroup>
-    );
-  }
-
-  let actionButtons;
-
-  // When action button metadata isn't provided we infer the action buttons.
-  if (resourceType === 'connections' && !isNew) {
-    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['oauth', 'cancel'];
-    } else {
-      actionButtons = ['test', 'testandsave', 'cancel'];
-    }
-  } else {
-    actionButtons = ['save', 'cancel'];
-  }
-
-  return (
-    <ButtonGroup className={classes.actionButtons}>
-      {actionButtons.map(key => {
-        const Action = consolidatedActions[key];
-        // remove form disabled prop...
-        // they dont necessary apply to action button
-
-        return <Action key={key} dataTest={key} {...props} />;
-      })}
-    </ButtonGroup>
-  );
-}
+import actions from '../../../../actions';
+import Close from '../../../icons/CloseIcon';
+import LoadResources from '../../../LoadResources';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import * as selectors from '../../../../reducers';
+import { generateNewId, isNewId } from '../../../../utils/resource';
+import ApplicationImg from '../../../icons/ApplicationImg';
+import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
+import ActionsFactory from './ActionsFactory';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -209,9 +125,19 @@ export default function Panel(props) {
   // peeking into the patch set from the first step in PP/PG creation.
   // The patch set should have a value for /adaptorType which
   // contains [*Import|*Export].
-  const stagedProcessor = useSelector(state =>
-    selectors.stagedResource(state, id)
-  );
+  const stagedProcessorResourceId = useSelector(state => {
+    const stagedProcessor = selectors.stagedResource(state, id);
+    const resourceIdPatch =
+      stagedProcessor &&
+      stagedProcessor.patch &&
+      stagedProcessor.patch.length &&
+      stagedProcessor.patch.find(
+        p => p.op === 'replace' && p.path === '/resourceId'
+      );
+    const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
+
+    return resourceId;
+  });
   const applicationType = useSelector(state => {
     const stagedResource = selectors.stagedResource(state, id);
 
@@ -255,53 +181,8 @@ export default function Panel(props) {
     'pageProcessor',
   ].includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
-  const lookupProcessorResourceType = useCallback(() => {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      // TODO: we need a better pattern for logging warnings. We need a common util method
-      // which logs these warning only if the build is dev... if build is prod, these
-      // console.warn/logs should not even be bundled by webpack...
-      // eslint-disable-next-line
-      return console.warn(
-        'No patch-set available to determine new Page Processor resourceType.'
-      );
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/adaptorType'
-    );
-
-    // console.log(`adaptorType-${id}`, adaptorType);
-
-    if (!adaptorType || !adaptorType.value) {
-      // eslint-disable-next-line
-      console.warn(
-        'No replace operation against /adaptorType found in the patch-set.'
-      );
-    }
-
-    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }, [stagedProcessor]);
-  const getEditUrl = useCallback(
-    id => {
-      // console.log(location);
-      const segments = location.pathname.split('/');
-      const { length } = segments;
-
-      segments[length - 1] = id;
-      segments[length - 3] = 'edit';
-
-      if (resourceType === 'pageGenerator') {
-        segments[length - 2] = 'exports';
-      } else if (resourceType === 'pageProcessor') {
-        segments[length - 2] = lookupProcessorResourceType();
-      }
-
-      const url = segments.join('/');
-
-      return url;
-    },
-    [location.pathname, lookupProcessorResourceType, resourceType]
+  const editUrl = useSelector(state =>
+    selectors.drawerEditUrl(state, resourceType, id, location.pathname)
   );
   const handleSubmitComplete = useCallback(() => {
     if (isNew) {
@@ -317,14 +198,9 @@ export default function Panel(props) {
         );
       }
 
-      const resourceIdPatch = stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/resourceId'
-      );
-      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
-
       if (isMultiStepSaveResource) {
-        if (!resourceId) {
-          return props.history.replace(getEditUrl(id));
+        if (!stagedProcessorResourceId) {
+          return props.history.replace(editUrl);
         }
 
         // Take care of existing resource selection.
@@ -336,7 +212,7 @@ export default function Panel(props) {
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
 
-      dispatch(actions.resource.created(resourceId, id));
+      dispatch(actions.resource.created(stagedProcessorResourceId, id));
       onClose();
     } else {
       // For web hook generate URL case
@@ -363,9 +239,9 @@ export default function Panel(props) {
     }
   }, [
     dispatch,
+    editUrl,
     enqueueSnackbar,
     formState.skipClose,
-    getEditUrl,
     id,
     isMultiStepSaveResource,
     isNew,
@@ -376,7 +252,7 @@ export default function Panel(props) {
     props.history,
     resourceLabel,
     resourceType,
-    stagedProcessor.patch,
+    stagedProcessorResourceId,
   ]);
   const showApplicationLogo =
     flowId &&
@@ -433,6 +309,8 @@ export default function Panel(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            // TODO: push this to directly to the button
+            submitButtonLabel={submitButtonLabel}
             onCancel={abortAndClose}
           />
         </LoadResources>
