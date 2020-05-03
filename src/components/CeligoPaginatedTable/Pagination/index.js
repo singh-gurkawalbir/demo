@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import IconTextButton from '../../../components/IconTextButton';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../../components/icons/ArrowLeftIcon';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(() => ({
@@ -19,17 +22,18 @@ export default function Pagination(props) {
   const {
     className,
     count,
-    // rowsPerPageOptions,
+    rowsPerPageOptions = [],
     rowsPerPage,
     page,
     onChangePage,
-    // onChangeRowsPerPage,
+    onChangeRowsPerPage,
     hasMore,
     loading,
     loadMoreHandler,
   } = props;
   const classes = useStyles();
   const [label, setLabel] = useState();
+  const [disableNextPage, setDisableNextPage] = useState(false);
 
   useEffect(() => {
     const start = page * rowsPerPage + 1;
@@ -37,6 +41,10 @@ export default function Pagination(props) {
     const total = `${count}${hasMore ? '+' : ''}`;
 
     setLabel(`${start} - ${end < count ? end : count} of ${total}`);
+
+    if (end > count && !hasMore) {
+      setDisableNextPage(true);
+    }
   }, [count, hasMore, page, rowsPerPage]);
 
   const handlePrevPage = useCallback(
@@ -66,6 +74,18 @@ export default function Pagination(props) {
 
   return (
     <div className={className}>
+      <Select
+        value={rowsPerPage}
+        IconComponent={ArrowDownIcon}
+        disableUnderline
+        displayEmpty
+        onChange={onChangeRowsPerPage}>
+        {rowsPerPageOptions.map(opt => (
+          <MenuItem key={opt} value={opt}>
+            {opt}
+          </MenuItem>
+        ))}
+      </Select>
       <IconTextButton
         onClick={handlePrevPage}
         className={classes.arrow}
@@ -74,9 +94,12 @@ export default function Pagination(props) {
       </IconTextButton>
       <span className={classes.label}>{label}</span>
       {loading ? (
-        <Spinner />
+        <Spinner size={24} />
       ) : (
-        <IconTextButton onClick={handleNextPage} className={classes.arrow}>
+        <IconTextButton
+          onClick={handleNextPage}
+          className={classes.arrow}
+          disabled={disableNextPage}>
           <ArrowRightIcon />
         </IconTextButton>
       )}

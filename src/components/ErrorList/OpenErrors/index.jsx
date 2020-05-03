@@ -9,20 +9,15 @@ import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: { float: 'right' },
   search: {
     width: '300px',
     paddingTop: theme.spacing(1),
     float: 'left',
   },
-  loadMore: {
-    float: 'right',
-    paddingTop: theme.spacing(1),
-  },
   actionButtonsContainer: {
     position: 'relative',
-    top: '40px',
-    left: '700px',
+    top: '30px',
+    left: `calc(100% - ${500}px)`,
     '& > button': {
       marginLeft: '10px',
     },
