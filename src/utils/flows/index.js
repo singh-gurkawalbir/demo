@@ -1,6 +1,11 @@
 import produce from 'immer';
+import { keys } from 'lodash';
 import mappingUtil from '../mapping';
-import { adaptorTypeMap, isBlobTypeResource } from '../resource';
+import {
+  adaptorTypeMap,
+  isBlobTypeResource,
+  isValidResourceReference,
+} from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 
 export const actionsMap = {
@@ -548,4 +553,65 @@ export function getFlowDetails(flow, integration, exports) {
     draft.disableSlider = flowSettings.disableSlider;
     draft.showUtilityMapping = flowSettings.showUtilityMapping;
   });
+}
+
+export function getFlowReferencesForResource(
+  flows,
+  exports,
+  imports,
+  resourceType,
+  resourceId
+) {
+  const existingFlows = keys(flows);
+  const flowRefs = [];
+
+  existingFlows.forEach(flowId => {
+    const { pageGenerators = [], pageProcessors = [] } = flows[flowId];
+    let [pgIndex, ppIndex] = [0, 0];
+
+    while (pgIndex < pageGenerators.length) {
+      const pg = pageGenerators[pgIndex];
+      const pgResource = exports.find(e => e._id === pg._exportId);
+
+      if (
+        isValidResourceReference(
+          pgResource,
+          pg._exportId,
+          resourceType,
+          resourceId
+        )
+      ) {
+        flowRefs.push({ flowId, resourceId: pg._exportId });
+
+        return;
+      }
+
+      pgIndex += 1;
+    }
+
+    while (ppIndex < pageProcessors.length) {
+      const pp = pageProcessors[ppIndex];
+      const ppId = pp._exportId || pp._importId;
+      const ppResourceType = pp._exportId ? 'exports' : 'imports';
+      let ppResource;
+
+      if (ppResourceType === 'exports') {
+        ppResource = exports.find(e => e._id === ppId);
+      } else {
+        ppResource = imports.find(i => i._id === ppId);
+      }
+
+      if (
+        isValidResourceReference(ppResource, ppId, resourceType, resourceId)
+      ) {
+        flowRefs.push({ flowId, resourceId: ppId });
+
+        return;
+      }
+
+      ppIndex += 1;
+    }
+  });
+
+  return flowRefs;
 }

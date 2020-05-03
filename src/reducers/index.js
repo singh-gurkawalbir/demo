@@ -41,6 +41,7 @@ import {
   getNextDataFlows,
   getIAFlowSettings,
   getFlowDetails,
+  getFlowReferencesForResource,
 } from '../utils/flows';
 import {
   isValidResourceReference,
@@ -3460,54 +3461,22 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
-export function getFlowReferencesForResource(state, resourceId, resourceType) {
+export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
-  const existingFlows = keys(flowsState);
-  const flowRefs = [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const imports = resourceList(state, {
+    type: 'imports',
+  }).resources;
 
-  existingFlows.forEach(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = flowsState[flowId];
-    let [pgIndex, ppIndex] = [0, 0];
-
-    while (pgIndex < pageGenerators.length) {
-      const pg = pageGenerators[pgIndex];
-      const pgResource = resource(state, 'exports', pg._exportId);
-
-      if (
-        isValidResourceReference(
-          pgResource,
-          pg._exportId,
-          resourceType,
-          resourceId
-        )
-      ) {
-        flowRefs.push({ flowId, resourceId: pg._exportId });
-
-        return;
-      }
-
-      pgIndex += 1;
-    }
-
-    while (ppIndex < pageProcessors.length) {
-      const pp = pageProcessors[ppIndex];
-      const ppId = pp._exportId || pp._importId;
-      const ppResourceType = pp._exportId ? 'exports' : 'imports';
-      const ppResource = resource(state, ppResourceType, ppId);
-
-      if (
-        isValidResourceReference(ppResource, ppId, resourceType, resourceId)
-      ) {
-        flowRefs.push({ flowId, resourceId: ppId });
-
-        return;
-      }
-
-      ppIndex += 1;
-    }
-  });
-
-  return flowRefs;
+  return getFlowReferencesForResource(
+    flowsState,
+    exports,
+    imports,
+    resourceType,
+    resourceId
+  );
 }
 
 /*
