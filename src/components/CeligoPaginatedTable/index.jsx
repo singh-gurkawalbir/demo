@@ -1,9 +1,10 @@
 import { useState, useCallback, Fragment, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { produce } from 'immer';
-import TablePagination from '@material-ui/core/TablePagination';
+// import TablePagination from '@material-ui/core/TablePagination';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoTable from './Table';
+import Pagination from './Pagination';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(() => ({
@@ -17,8 +18,11 @@ export default function CeligoPaginationTable(props) {
   const {
     rowsPerPage: pageSize,
     rowsPerPageOptions,
-    backIconButtonProps,
-    nextIconButtonProps,
+    // backIconButtonProps,
+    // nextIconButtonProps,
+    hasMore = false,
+    loading = false,
+    loadMoreHandler,
   } = paginationOptions;
   // #region state variables
   const [selectedResources, setSelectedResources] = useState({});
@@ -112,7 +116,7 @@ export default function CeligoPaginationTable(props) {
     <Fragment>
       {data.length ? (
         <Fragment>
-          <TablePagination
+          {/* <TablePagination
             className={classes.tablePaginationRoot}
             component="div"
             count={data.length}
@@ -131,6 +135,18 @@ export default function CeligoPaginationTable(props) {
             }
             onChangePage={handleChangePage}
             onChangeRowsPerPage={handleChangeRowsPerPage}
+          /> */}
+          <Pagination
+            className={classes.tablePaginationRoot}
+            count={data.length}
+            rowsPerPageOptions={rowsPerPageOptions || [rowsPerPage]}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+            hasMore={hasMore}
+            loading={loading}
+            loadMoreHandler={loadMoreHandler}
           />
           <CeligoTable
             {...tableOptions}

@@ -82,6 +82,9 @@ export default function OpenErrors({ flowId, resourceId }) {
   const paginationOptions = {
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 25, 50, 100],
+    loadMoreHandler: fetchMoreData,
+    hasMore: !!nextPageURL,
+    loading: status === 'requested',
   };
 
   return (
@@ -96,13 +99,6 @@ export default function OpenErrors({ flowId, resourceId }) {
           </Button>
         </div>
       ) : null}
-      {nextPageURL && (
-        <div className={classes.loadMore}>
-          <Button variant="outlined" onClick={fetchMoreData}>
-            Load more
-          </Button>
-        </div>
-      )}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
