@@ -31,17 +31,16 @@ import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
-  isRealtimeExport,
-  isSimpleImportFlow,
-  isRunnable,
-  showScheduleIcon,
   getExportIdsFromFlow,
   getImportIdsFromFlow,
   getUsedActionsMapForResource,
   isPageGeneratorResource,
-  isDeltaFlow,
   getImportsFromFlow,
   getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
 } from '../utils/flows';
 import {
   isValidResourceReference,
@@ -806,36 +805,10 @@ export const makeResourceListSelector = () =>
       resourceListModified(userState, resourcesState, options)
   );
 
-export function getIAFlowSettings(state, integrationId, flowId) {
+export function iaFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
-  const allFlows = [];
 
-  if (!integration || !integration._connectorId) {
-    // return empty object for DIY integrations.
-    return emptyObject;
-  }
-
-  if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
-      if (!section.sections) {
-        return;
-      }
-
-      const { flows } = section.sections.reduce((a, b) => ({
-        flows: [...a.flows, ...b.flows],
-      }));
-
-      allFlows.push(...(flows || []));
-    });
-  } else {
-    const { flows } = integration.settings.sections.reduce((a, b) => ({
-      flows: [...a.flows, ...b.flows],
-    }));
-
-    allFlows.push(...(flows || []));
-  }
-
-  return allFlows.find(flow => flow._id === flowId) || emptyObject;
+  return getIAFlowSettings(integration, flowId);
 }
 
 // TODO: The object returned from this selector needs to be overhauled.
@@ -847,90 +820,30 @@ export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
   if (!flow) return emptyObject;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  return produce(flow, draft => {
-    const exportId =
-      draft.pageGenerators && draft.pageGenerators.length
-        ? draft.pageGenerators[0]._exportId
-        : draft._exportId;
-    const pg = resource(state, 'exports', exportId);
-    const allExports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    draft.isRealtime = isRealtimeExport(pg);
-    draft.isSimpleImport = isSimpleImportFlow(pg);
-    draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
-    draft.isDeltaFlow = isDeltaFlow(flow, allExports);
-    const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
-
-    draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!(
-      (flowSettings.settings && flowSettings.settings.length) ||
-      (flowSettings.sections && flowSettings.sections.length)
-    );
-    draft.showSchedule = draft._connectorId
-      ? draft.canSchedule && !!flowSettings.showSchedule
-      : draft.canSchedule;
-    draft.showStartDateDialog = flowSettings.showStartDateDialog;
-    draft.disableSlider = flowSettings.disableSlider;
-    draft.showUtilityMapping = flowSettings.showUtilityMapping;
-  });
+  return getFlowDetails(flow, integration, exports);
 }
 
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  flows.forEach((f, i) => {
-    const _exportId =
-      f.pageGenerators && f.pageGenerators.length
-        ? f.pageGenerators[0]._exportId
-        : f._exportId;
-    const exp = resource(state, 'exports', _exportId);
-    const exports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    if (isRealtimeExport(exp)) {
-      flows[i].isRealtime = true;
-    }
-
-    if (isSimpleImportFlow(exp)) {
-      flows[i].isSimpleImport = true;
-    }
-
-    if (isRunnable(exports, exp, f)) {
-      flows[i].isRunnable = true;
-    }
-
-    if (showScheduleIcon(exports, exp, f)) {
-      flows[i].showScheduleIcon = true;
-    }
-  });
-
-  return { resources: flows };
+  return getFlowListWithMetadata(flows, exports);
 }
 
 /*
  * Gives all other valid flows of same Integration
  */
-export function getNextDataFlows(state, flow) {
+export function nextDataFlowsForFlow(state, flow) {
   const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
-  const { _integrationId } = flow;
-  // Incase of standalone Integrations, _integrationId is undefined for flow resources
-  const flowIntegrationId =
-    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
 
-  // Returns all valid flows under this integration
-  return flows.filter(
-    f =>
-      f._integrationId === flowIntegrationId &&
-      f._id !== flow._id &&
-      !f.isRealtime &&
-      !f.isSimpleImport &&
-      !f.disabled
-  );
+  return getNextDataFlows(flows, flow);
 }
 
 export function isConnectionOffline(state, id) {

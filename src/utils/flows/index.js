@@ -1,6 +1,7 @@
+import produce from 'immer';
 import mappingUtil from '../mapping';
 import { adaptorTypeMap, isBlobTypeResource } from '../resource';
-import { emptyList } from '../constants';
+import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -230,6 +231,16 @@ export const isOldFlowSchema = ({
   _importId,
 }) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
 
+export function getFirstExportFromFlow(flow, exports) {
+  const exportId =
+    flow.pageGenerators && flow.pageGenerators.length
+      ? flow.pageGenerators[0]._exportId
+      : flow._exportId;
+  const pg = exports.find(e => e._id === exportId);
+
+  return pg;
+}
+
 export function isRealtimeExport(exp) {
   if (!exp) return false;
 
@@ -245,9 +256,17 @@ export function isRealtimeExport(exp) {
   return false;
 }
 
-export function hasBatchExport(exports, simpleExp, flow) {
-  if (flow && flow._exportId) {
-    return !isRealtimeExport(simpleExp);
+export function isRealtimeFlow(flow, exports) {
+  const exp = getFirstExportFromFlow(flow, exports);
+
+  return isRealtimeExport(exp);
+}
+
+export function hasBatchExport(flow, exports) {
+  const exp = getFirstExportFromFlow(flow, exports);
+
+  if (isOldFlowSchema(flow)) {
+    return !isRealtimeExport(exp);
   }
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
@@ -261,18 +280,20 @@ export function hasBatchExport(exports, simpleExp, flow) {
   return false;
 }
 
-export function isSimpleImportFlow(exp) {
+export function isSimpleImportFlow(flow, exports) {
+  const exp = getFirstExportFromFlow(flow, exports);
+
   return exp && exp.type === 'simple';
 }
 
-export function showScheduleIcon(exports, exp, flow) {
-  if (isSimpleImportFlow(exp)) return false;
+export function showScheduleIcon(flow, exports) {
+  if (isSimpleImportFlow(flow, exports)) return false;
 
-  return hasBatchExport(exports, exp, flow);
+  return hasBatchExport(flow, exports);
 }
 
-export function isRunnable(exports, exp, flow) {
-  const isDataLoader = isSimpleImportFlow(exp);
+export function isRunnable(flow, exports) {
+  const isDataLoader = isSimpleImportFlow(flow, exports);
 
   // invalid flows are not runnable.
   if (!flow) {
@@ -307,7 +328,7 @@ export function isRunnable(exports, exp, flow) {
   if (isDataLoader) return true;
 
   // flows need at least one export which is not real-time to be runnable.
-  if (!hasBatchExport(exports, exp, flow)) {
+  if (!hasBatchExport(flow, exports)) {
     return false;
   }
 
@@ -425,4 +446,106 @@ export function getPageProcessorImportsFromFlow(imports, pageProcessors) {
     imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
 
   return ppImports;
+}
+
+export function getFlowListWithMetadata(flows = [], exports = []) {
+  // TODO are we not mutating state here in getter and should we not return a clone.
+  flows.forEach((f, i) => {
+    if (isRealtimeFlow(f, exports)) {
+      /* eslint-disable no-param-reassign */
+      flows[i].isRealtime = true;
+    }
+
+    if (isSimpleImportFlow(f, exports)) {
+      flows[i].isSimpleImport = true;
+    }
+
+    if (isRunnable(f, exports)) {
+      flows[i].isRunnable = true;
+    }
+
+    if (showScheduleIcon(f, exports)) {
+      flows[i].showScheduleIcon = true;
+    }
+  });
+
+  return { resources: flows };
+}
+
+export function getNextDataFlows(flows, flow) {
+  const { _integrationId } = flow;
+  // Incase of standalone Integrations, _integrationId is undefined for flow resources
+  const flowIntegrationId =
+    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
+
+  // Returns all valid flows under this integration
+  return flows.filter(
+    f =>
+      f._integrationId === flowIntegrationId &&
+      f._id !== flow._id &&
+      !f.isRealtime &&
+      !f.isSimpleImport &&
+      !f.disabled
+  );
+}
+
+export function getIAFlowSettings(integration, flowId) {
+  const allFlows = [];
+
+  if (!integration || !integration._connectorId) {
+    // return empty object for DIY integrations.
+    return emptyObject;
+  }
+
+  if (integration.settings && integration.settings.supportsMultiStore) {
+    integration.settings.sections.forEach(section => {
+      if (!section.sections) {
+        return;
+      }
+
+      const { flows } = section.sections.reduce((a, b) => ({
+        flows: [...a.flows, ...b.flows],
+      }));
+
+      allFlows.push(...(flows || []));
+    });
+  } else {
+    const { flows } = integration.settings.sections.reduce((a, b) => ({
+      flows: [...a.flows, ...b.flows],
+    }));
+
+    allFlows.push(...(flows || []));
+  }
+
+  return allFlows.find(flow => flow._id === flowId) || emptyObject;
+}
+
+// TODO: The object returned from this selector needs to be overhauled.
+// It is shared between IA and DIY flows,
+// yet its impossible to know which works for each flow type. For example,
+// showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
+// Maybe its best to only hav common props here and remove all IA props to a separate selector.
+export function getFlowDetails(flow, integration, exports) {
+  if (!flow) return emptyObject;
+
+  return produce(flow, draft => {
+    draft.isRealtime = isRealtimeFlow(flow, exports);
+    draft.isSimpleImport = isSimpleImportFlow(flow, exports);
+    draft.isRunnable = isRunnable(flow, exports);
+    draft.canSchedule = showScheduleIcon(flow, exports);
+    draft.isDeltaFlow = isDeltaFlow(flow, exports);
+    const flowSettings = getIAFlowSettings(integration, flow._id);
+
+    draft.showMapping = flowSettings.showMapping;
+    draft.hasSettings = !!(
+      (flowSettings.settings && flowSettings.settings.length) ||
+      (flowSettings.sections && flowSettings.sections.length)
+    );
+    draft.showSchedule = flow._connectorId
+      ? flow.canSchedule && !!flowSettings.showSchedule
+      : flow.canSchedule;
+    draft.showStartDateDialog = flowSettings.showStartDateDialog;
+    draft.disableSlider = flowSettings.disableSlider;
+    draft.showUtilityMapping = flowSettings.showUtilityMapping;
+  });
 }
