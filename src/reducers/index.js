@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { some, map, keys, isEmpty } from 'lodash';
+import { some, map, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import * as fromResources from './data/resources';
@@ -44,7 +44,6 @@ import {
   getFlowReferencesForResource,
 } from '../utils/flows';
 import {
-  isValidResourceReference,
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,

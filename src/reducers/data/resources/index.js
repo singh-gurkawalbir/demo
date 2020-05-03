@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { isOldFlowSchema } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
 
 const emptyObject = {};
 const emptyList = [];
@@ -15,49 +15,6 @@ const resourceTypesToIgnore = [
   ...accountResources,
   'audit',
 ];
-const convertOldFlowSchemaToNewOne = flow => {
-  const {
-    pageGenerators,
-    pageProcessors,
-    _exportId,
-    _importId,
-    ...rest
-  } = flow;
-
-  // a new schema just return the flow unaltered
-  if (!isOldFlowSchema(flow)) {
-    return flow;
-  }
-
-  const updatedFlow = {
-    ...rest,
-    pageGenerators,
-    pageProcessors,
-    // set this flag when converting it to new schema
-    flowConvertedToNewSchema: true,
-  };
-
-  // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
-  if (!pageGenerators && _exportId) {
-    updatedFlow.pageGenerators = [
-      {
-        type: 'export',
-        _exportId,
-      },
-    ];
-  }
-
-  if (!pageProcessors && _importId) {
-    updatedFlow.pageProcessors = [
-      {
-        type: 'import',
-        _importId,
-      },
-    ];
-  }
-
-  return updatedFlow;
-};
 
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
