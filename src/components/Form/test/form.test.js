@@ -1,16 +1,15 @@
 /* global describe,test,expect,afterEach ,beforeEach,beforeAll */
 
 import { MuiThemeProvider } from '@material-ui/core';
-import { cleanup, render, fireEvent } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import useForm from '..';
+import actions from '../../../actions';
 import reducer, * as selectors from '../../../reducers';
 import themeProvider from '../../../theme/themeProvider';
-import FormFragment from '../FormFragment';
-import { getCorrespondingFieldMap } from '../../DynaForm/DynaFormGenerator';
-import actions from '../../../actions';
+import FormGenerator from '../../DynaForm/DynaFormGenerator';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -39,15 +38,7 @@ export const Component = hookProps => {
 
   if (!formKey) return null;
 
-  return (
-    <FormFragment
-      defaultFields={getCorrespondingFieldMap(
-        fieldsMeta.layout.fields,
-        fieldsMeta.fieldMap
-      )}
-      formKey={formKey}
-    />
-  );
+  return <FormGenerator {...fieldsMeta} formKey={formKey} />;
 };
 
 describe('validation warnings', () => {
