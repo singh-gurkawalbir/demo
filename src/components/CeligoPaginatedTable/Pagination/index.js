@@ -42,8 +42,10 @@ export default function Pagination(props) {
 
     setLabel(`${start} - ${end < count ? end : count} of ${total}`);
 
-    if (end > count && !hasMore) {
+    if (end >= count && !hasMore) {
       setDisableNextPage(true);
+    } else {
+      setDisableNextPage(false);
     }
   }, [count, hasMore, page, rowsPerPage]);
 
@@ -74,18 +76,21 @@ export default function Pagination(props) {
 
   return (
     <div className={className}>
-      <Select
-        value={rowsPerPage}
-        IconComponent={ArrowDownIcon}
-        disableUnderline
-        displayEmpty
-        onChange={onChangeRowsPerPage}>
-        {rowsPerPageOptions.map(opt => (
-          <MenuItem key={opt} value={opt}>
-            {opt}
-          </MenuItem>
-        ))}
-      </Select>
+      {rowsPerPageOptions.length > 1 ? (
+        <Select
+          value={rowsPerPage}
+          IconComponent={ArrowDownIcon}
+          disableUnderline
+          displayEmpty
+          onChange={onChangeRowsPerPage}>
+          {rowsPerPageOptions.map(opt => (
+            <MenuItem key={opt} value={opt}>
+              {opt}
+            </MenuItem>
+          ))}
+        </Select>
+      ) : null}
+
       <IconTextButton
         onClick={handlePrevPage}
         className={classes.arrow}
