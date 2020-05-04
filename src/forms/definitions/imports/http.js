@@ -334,30 +334,6 @@ export default {
       };
     }
 
-    if (
-      fieldId === 'http.relativeURI' ||
-      fieldId === 'http.relativeURIUpdate' ||
-      fieldId === 'http.relativeURICreate' ||
-      fieldId === 'http.existingDataId'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
-      return {
-        resourceName: nameField && nameField.value,
-        lookups: {
-          fieldId: 'http.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
-      };
-    }
-
     return null;
   },
 
@@ -532,7 +508,6 @@ export default {
       type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -1079,7 +1054,6 @@ export default {
       type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -1383,7 +1357,6 @@ export default {
       fieldType: 'ignoreExistingData',
       label: 'Existing data ID',
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',

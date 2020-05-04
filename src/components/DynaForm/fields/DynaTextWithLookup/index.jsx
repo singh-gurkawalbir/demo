@@ -1,27 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Suggestions from './Suggestions';
 
-const useStyles = makeStyles(theme => ({
-  suggestions: {
-    width: '100%',
-    marginLeft: 0,
-    listStyleType: 'none',
-    paddingLeft: 0,
-    marginTop: theme.spacing(1),
-    maxHeight: 200,
-    overflow: 'auto',
-    paddingInlineStart: theme.spacing(1),
-    '& li': {
-      height: 40,
-      display: 'flex',
-      padding: 4,
-    },
-  },
-}));
 const DynaTextWithLookup = props => {
   const {
     id,
@@ -42,6 +24,7 @@ const DynaTextWithLookup = props => {
     formContext,
     showLookup = true,
     showExtract = true,
+    connectionId,
     // isSqlImport,
     // onLookupUpdate,
     // lookups,
@@ -56,19 +39,15 @@ const DynaTextWithLookup = props => {
     // hideExtractFields,
   } = props;
   const ref = useRef(null);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [lookupShown, setLookupShown] = useState(false);
   const [state, setState] = useState({
     cursorPosition: 0,
     userInput: value || '',
     isFocus: false,
-    matchedVal: '',
   });
-  const { userInput, cursorPosition, matchedVal } = state;
+  const { userInput, cursorPosition } = state;
   const handleUpdate = useCallback(
     newValue => {
       setState({ ...state, userInput: newValue });
-      setShowSuggestions(false);
       onFieldChange(id, newValue);
     },
     [id, onFieldChange, state]
@@ -87,19 +66,19 @@ const DynaTextWithLookup = props => {
   }, [state, userInput, value]);
 
   // close suggestions when clicked outside
-  const handleClickOutside = event => {
-    if (ref.current && !lookupShown && !ref.current.contains(event.target)) {
-      setShowSuggestions(false);
-    }
-  };
+  // const handleClickOutside = event => {
+  //   if (ref.current && !ref.current.contains(event.target)) {
+  //     setShowSuggestions(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    document.addEventListener('click', handleClickOutside, true);
+  // useEffect(() => {
+  //   document.addEventListener('click', handleClickOutside, true);
 
-    return () => {
-      document.removeEventListener('click', handleClickOutside, true);
-    };
-  });
+  //   return () => {
+  //     document.removeEventListener('click', handleClickOutside, true);
+  //   };
+  // });
   const handleFieldChange = e => {
     const inpValue = e.target.value;
 
@@ -107,7 +86,6 @@ const DynaTextWithLookup = props => {
       ...state,
       userInput: inpValue,
     });
-    console.log('inpValue', inpValue);
     onFieldChange(id, inpValue);
   };
 
@@ -134,8 +112,11 @@ const DynaTextWithLookup = props => {
       />
       {(showExtract || showLookup) && (
         <Suggestions
+          id={id}
+          onFieldChange={onFieldChange}
           resourceId={resourceId}
           flowId={flowId}
+          connectionId={connectionId}
           formContext={formContext}
           resourceType={resourceType}
           value={userInput}

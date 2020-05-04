@@ -1,12 +1,14 @@
+import { deepClone } from 'fast-json-patch/lib/core';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import * as selectors from '../../../../reducers';
 import DynaAddEditLookup from '../DynaAddEditLookup';
 import lookupUtil from '../../../../utils/lookup';
+import { adaptorTypeMap } from '../../../../utils/resource';
 
-const useStyles = makeStyles(() => ({}));
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value, cursorPosition) => {
   const inpValue = value.substring(0, cursorPosition);
@@ -60,10 +62,38 @@ const insertSuggestionInValue = ({
   return newValue;
 };
 
+const useStyles = makeStyles(theme => ({
+  suggestions: {
+    width: '100%',
+    marginLeft: 0,
+    listStyleType: 'none',
+    paddingLeft: 0,
+    marginTop: theme.spacing(1),
+    maxHeight: 200,
+    overflow: 'auto',
+    paddingInlineStart: theme.spacing(1),
+    '& li': {
+      height: 40,
+      display: 'flex',
+      padding: 4,
+    },
+  },
+}));
+const ExtractItem = props => {
+  const { onSelect, value, label } = props;
+  const handleItemSelect = useCallback(() => {
+    onSelect(value);
+  }, [onSelect, value]);
+
+  return <Button onClick={handleItemSelect}>{label}</Button>;
+};
+
 export default function Suggestions(props) {
   const {
+    id,
     flowId,
     resourceId,
+    connectionId,
     formContext,
     resourceType,
     showLookup,
@@ -71,9 +101,8 @@ export default function Suggestions(props) {
     showExtract,
     cursorPosition,
     onValueUpdate,
+    onFieldChange,
   } = props;
-
-  console.log('formContext', formContext);
   const classes = useStyles();
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
@@ -97,17 +126,17 @@ export default function Suggestions(props) {
     );
   }, [sampleData]);
   const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
-  const handleExtractClick = useCallback(
-    (event = {}) => {
+  const handleExtractSelect = useCallback(
+    value => {
       const newValue = insertSuggestionInValue({
         value,
         cursorPosition,
-        valueToInsert: event.value,
+        valueToInsert: value,
       });
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate, value]
+    [cursorPosition, onValueUpdate]
   );
   const matchingText = getMatchingText(value, cursorPosition);
   const filteredLookup = lookups.filter(
@@ -115,6 +144,7 @@ export default function Suggestions(props) {
   );
   const handleLookupSelect = useCallback(
     lookup => {
+      // update text field with selected lookup
       const newValue = insertSuggestionInValue({
         value,
         cursorPosition,
@@ -125,6 +155,19 @@ export default function Suggestions(props) {
       onValueUpdate(newValue);
     },
     [cursorPosition, onValueUpdate, value]
+  );
+  const handleLookupAdd = useCallback(
+    lookup => {
+      handleLookupSelect(lookup);
+      // update lookup in resouce doc
+      const modifiedLookup = deepClone(lookups);
+
+      modifiedLookup.push(lookup);
+      const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+
+      onFieldChange(lookupFieldId, modifiedLookup);
+    },
+    [adaptorType, handleLookupSelect, lookups, onFieldChange]
   );
   const filteredExtracts = useMemo(
     () =>
@@ -142,8 +185,25 @@ export default function Suggestions(props) {
     .substring(0, cursorPosition)
     .match(prefixRegexp);
 
-  // TODO: check if needed
+  // TODO: Remove Start
   if (!showSuggestion) return null;
+  const isSqlImport =
+    adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
+  const options = {
+    isSQLLookup: isSqlImport,
+    sampleData,
+    connectionId,
+    // passed in ignore existing. todo enable
+    // importType,
+    // fieldMetadata,
+    resourceId,
+    resourceType,
+    flowId,
+    fieldId: id,
+    // recordType,
+    // extractFields,
+  };
+  // ends
 
   return (
     <ul className={classes.suggestions}>
@@ -152,7 +212,9 @@ export default function Suggestions(props) {
           showDynamicLookupOnly
           id="add-lookup"
           label="New Lookup"
+          onSave={handleLookupAdd}
           onSavelabel="Add New Lookup"
+          options={options}
         />
       )}
       {showLookup &&
@@ -162,18 +224,23 @@ export default function Suggestions(props) {
               id={lookup.name}
               label="Edit"
               isEdit
+              onSave={handleLookupAdd}
               onSelect={handleLookupSelect}
               showDynamicLookupOnly
               value={lookup}
+              options={options}
             />
           </li>
         ))}
 
       {showExtract &&
         filteredExtracts.map(e => (
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          <li key={e.label} onClick={handleExtractClick}>
-            {e.label}
+          <li key={e.label}>
+            <ExtractItem
+              value={e.value}
+              label={e.label}
+              onSelect={handleExtractSelect}
+            />
           </li>
         ))}
     </ul>

@@ -40,7 +40,6 @@ export default {
     type: 'relativeuri',
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['name'],
     validWhen: {
       someAreTrue: {
         message:

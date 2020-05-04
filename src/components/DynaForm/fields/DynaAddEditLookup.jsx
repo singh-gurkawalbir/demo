@@ -41,7 +41,7 @@ export default function DynaAddEditLookup(props) {
     onClick,
   } = props;
   const handleEditorClick = () => {
-    onClick(!showLookup);
+    if (onClick) onClick(!showLookup);
     setShowLookup(!showLookup);
   };
 
