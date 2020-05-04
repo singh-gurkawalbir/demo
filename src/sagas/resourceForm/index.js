@@ -567,8 +567,6 @@ export function* skipRetriesPatches(
     'flows',
     flowId
   );
-
-  if (!flow) return null;
   const index =
     flow.pageGenerators &&
     flow.pageGenerators.findIndex(
@@ -668,7 +666,7 @@ export function* submitResourceForm(params) {
   );
 
   // if it fails return
-  if (submitFailed) return;
+  if (submitFailed || !flowId) return;
 
   // when there is nothing to commit there is no reason to update the flow doc..hence we return
   // however there is a usecase where we create a resource from an existing resource and that
