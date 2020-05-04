@@ -171,6 +171,8 @@ import bigquery from './bigquery';
 import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
 import inspectorio from './inspectorio';
+import orderful from './orderful';
+import logisense from './logisense';
 
 export default {
   bigquery,
@@ -345,4 +347,6 @@ export default {
   '3plcentral': threeplcentral,
   loopreturns,
   inspectorio,
+  orderful,
+  logisense,
 };

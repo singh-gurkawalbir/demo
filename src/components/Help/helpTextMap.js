@@ -537,6 +537,16 @@ const extractedHelpkeys = {
     'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'inspectorio.connection.enviornment':
     'Please select the environment of your Inspectorio account.',
+  'logisense.connection.http.storeURL':
+    'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
+  'logisense.connection.http.unencrypted.username':
+    'Please enter the Username of your LogiSense account.',
+  'logisense.connection.http.encrypted.password':
+    'Please enter the Password of your LogiSense account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
+  'logisense.connection.http.encrypted.clientId':
+    'Please enter the client_id provided by LogiSense team and perform any needed whitelisting with the destination/source systems.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
+  'orderful.connection.http.auth.token.token':
+    'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API Token.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
