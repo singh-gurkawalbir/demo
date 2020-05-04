@@ -27,7 +27,7 @@ function form(state = {}, action) {
           ...formSpecificProps,
           showValidationBeforeTouched,
           conditionalUpdate,
-          disabled,
+          formIsDisabled: disabled,
           resetTouchedState: false,
         };
         draft[formKey].fields = registerFields(
@@ -43,7 +43,7 @@ function form(state = {}, action) {
         draft[
           formKey
         ].showValidationBeforeTouched = !!showValidationBeforeTouched;
-        draft[formKey].disabled = !!disabled;
+        draft[formKey].formIsDisabled = !!disabled;
 
         getNextStateFromFields(draft[formKey]);
 
