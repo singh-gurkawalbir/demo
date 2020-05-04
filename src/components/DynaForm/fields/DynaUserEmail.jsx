@@ -66,7 +66,7 @@ function DynaUserEmail(props) {
             variant="contained"
             className={classes.editEmailButton}
             onClick={() => handleOpenModal('openEmailModal')}>
-            Edit Email
+            Edit email
           </Button>
         </div>
       </div>

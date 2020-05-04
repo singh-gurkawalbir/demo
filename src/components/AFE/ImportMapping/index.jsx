@@ -479,7 +479,7 @@ export default function ImportMapping(props) {
             onClose={handleClose}
             disabled={!!(disabled || saveInProgress)}
             showOnlyOnChanges
-            submitButtonLabel="Save & Close"
+            submitButtonLabel="Save & close"
           />
           <Button
             variant="text"

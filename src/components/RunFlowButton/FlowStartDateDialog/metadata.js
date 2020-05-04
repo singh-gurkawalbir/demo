@@ -24,7 +24,7 @@ export default {
           id: 'timeZone',
           name: 'timeZone',
           type: 'select',
-          label: 'Time Zone',
+          label: 'Time zone',
           defaultValue: timeZone,
           options: [
             {
@@ -44,7 +44,7 @@ export default {
           id: 'startDateAutomatic',
           name: 'startDateAutomatic',
           type: 'text',
-          label: `Start Date/Time:`,
+          label: `Start date/time:`,
           defaultDisabled: true,
           defaultValue: startDate,
           visibleWhen: [{ field: 'deltaType', is: ['automatic'] }],
@@ -53,7 +53,7 @@ export default {
           id: 'startDateCustom',
           name: 'startDateCustom',
           type: 'datetime',
-          label: `Start Date/Time:`,
+          label: `Start date/time:`,
           defaultValue: startDate,
           requiredWhen: [{ field: 'deltaType', is: ['custom'] }],
           visibleWhen: [{ field: 'deltaType', is: ['custom'] }],

@@ -437,10 +437,11 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues) =>
+      save: (definitionRules, formValues, flowId) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
+          flowId,
         }),
     },
   },
@@ -1255,7 +1256,15 @@ const resourceForm = {
       resourceType,
       resourceId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
+  submit: (
+    resourceType,
+    resourceId,
+    values,
+    match,
+    skipClose,
+    isGenerate,
+    flowId
+  ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
@@ -1263,6 +1272,7 @@ const resourceForm = {
       match,
       skipClose,
       isGenerate,
+      flowId,
     }),
   saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {

@@ -120,7 +120,7 @@ function DynaExportPanel(props) {
       className={clsx(classes.container, {
         [classes.drawerShift]: isDrawerOpened,
       })}>
-      <Typography> Preview Data </Typography>
+      <Typography> Preview data </Typography>
       <Panels.PreviewInfo
         fetchExportPreviewData={fetchExportPreviewData}
         resourceSampleData={resourceSampleData}

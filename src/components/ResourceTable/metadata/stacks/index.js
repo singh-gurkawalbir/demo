@@ -27,16 +27,16 @@ export default {
       value: r => r.server && r.server.hostURI,
     },
     {
-      heading: 'Function Name',
+      heading: 'Function name',
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: 'System Token',
+      heading: 'System token',
       width: '250px',
       value: r => !r.shared && r.server && getSystemToken(r),
     },
     {
-      heading: 'Access Key Id',
+      heading: 'Access key ID',
       value: r => r.lambda && r.lambda.accessKeyId,
     },
     {

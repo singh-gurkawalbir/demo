@@ -22,6 +22,7 @@ describe('commitStagedChanges saga', () => {
   const id = '1';
   const resourceType = 'dogs';
   const path = '/dogs/1';
+  const somePatch = [{ path: '/a', value: 'someValue' }];
 
   test('should do nothing if no staged changes exist.', () => {
     const saga = commitStagedChanges({ resourceType, id });
@@ -50,7 +51,7 @@ describe('commitStagedChanges saga', () => {
       );
       const merged = { lastModified: 50 };
 
-      expect(saga.next({ merged, patch: true }).value).toEqual(
+      expect(saga.next({ merged, patch: somePatch }).value).toEqual(
         call(resourceConflictDetermination, {
           path,
           merged,
@@ -81,7 +82,7 @@ describe('commitStagedChanges saga', () => {
       const getCallEffect = saga.next({
         master,
         merged,
-        patch: true,
+        patch: somePatch,
       }).value;
 
       expect(getCallEffect).toEqual(
@@ -120,7 +121,7 @@ describe('commitStagedChanges saga', () => {
             resourceType,
             updated._id,
             { lastModified: 100 },
-            true
+            somePatch
           )
         )
       );
@@ -152,7 +153,7 @@ describe('commitStagedChanges saga', () => {
         saga.next({
           master: null,
           merged: newResource,
-          patch: true,
+          patch: somePatch,
         }).value
       ).toEqual(
         call(apiCallWithRetry, {

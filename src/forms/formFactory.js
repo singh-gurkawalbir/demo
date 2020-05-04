@@ -257,8 +257,16 @@ const getResourceFormAssets = ({
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        } else if (RDBMS_TYPES.indexOf(type) !== -1) {
-          meta = meta.rdbms;
+        } else if (type === 'rdbms') {
+          const rdbmsSubType =
+            connection && connection.rdbms && connection.rdbms.type;
+
+          // when editing rdms connection we lookup for the resource subtype
+          if (rdbmsSubType === 'snowflake') {
+            meta = meta.rdbms.snowflake;
+          } else {
+            meta = meta.rdbms.sql;
+          }
         } else if (
           type === 'salesforce' &&
           resource.assistant === 'financialforce'

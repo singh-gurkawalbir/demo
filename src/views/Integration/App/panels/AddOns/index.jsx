@@ -79,9 +79,6 @@ export default function AddOnsPanel({ integrationId }) {
 
     return addOnState && addOnState.addOns && addOnState.addOns.addOnMetaData;
   });
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
   const licenseId = useSelector(state => {
     const license = selectors.integrationAppLicense(state, integrationId);
 
@@ -100,14 +97,14 @@ export default function AddOnsPanel({ integrationId }) {
       // What do we have application state for then? Here we fetch data from the
       // state only to sent it right back into the data-layer.
       dispatch(
-        actions.integrationApp.settings.requestUpgrade(integration, {
+        actions.integrationApp.settings.requestUpgrade(integrationId, {
           addOnName,
           licenseId,
         })
       );
       setShowMessage(true);
     },
-    [dispatch, integration, licenseId]
+    [dispatch, integrationId, licenseId]
   );
 
   return (

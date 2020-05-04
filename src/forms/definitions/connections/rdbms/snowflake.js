@@ -16,6 +16,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.snowflakecomputing.com',
       required: true,
+      helpKey: 'snowflake.connection.rdbms.host',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -24,10 +25,17 @@ export default {
       },
       label: 'Account name',
     },
-    'rdbms.database': { fieldId: 'rdbms.database' },
-    'rdbms.user': { fieldId: 'rdbms.user' },
+    'rdbms.database': {
+      fieldId: 'rdbms.database',
+      helpKey: 'snowflake.connection.rdbms.database',
+    },
+    'rdbms.user': {
+      fieldId: 'rdbms.user',
+      helpKey: 'snowflake.connection.rdbms.user',
+    },
     'rdbms.password': {
       fieldId: 'rdbms.password',
+      helpKey: 'snowflake.connection.rdbms.password',
     },
     'rdbms.snowflake.warehouse': {
       id: 'rdbms.snowflake.warehouse',
