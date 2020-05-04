@@ -330,7 +330,7 @@ export default function Subscription() {
                 </Typography>
                 <div className={classes.wrapper}>
                   <Typography variant="h3">
-                    {licenseActionDetails.subscriptionName} Plan
+                    {licenseActionDetails.subscriptionName} plan
                   </Typography>
                   <ul className={classes.itemsList}>
                     <li className={classes.bold}>

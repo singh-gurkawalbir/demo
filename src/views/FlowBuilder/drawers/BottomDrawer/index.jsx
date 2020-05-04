@@ -203,8 +203,8 @@ export default function BottomDrawer({
             }
             label="Connections"
           />
-          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
+          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
           {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>

@@ -39,14 +39,14 @@ function DynaUserPassword() {
       <div className={classes.editRowElement}>
         <div>
           <InputLabel>
-            Edit Password:
+            Edit password:
             <Button
               data-test="editPassword"
               color="primary"
               variant="contained"
               style={{ marginLeft: '10px' }}
               onClick={() => handleOpenModal('openPasswordModal')}>
-              Edit Password
+              Edit password
             </Button>
           </InputLabel>
         </div>

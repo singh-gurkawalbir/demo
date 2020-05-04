@@ -12,7 +12,7 @@ export default {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
-          label: 'Data Type',
+          label: 'Data type',
           defaultValue: mappingUtil.getDefaultDataType(value),
           helpKey: 'mapping.dataType',
           options: [
@@ -22,8 +22,8 @@ export default {
                 { label: 'Number', value: 'number' },
                 { label: 'Boolean', value: 'boolean' },
                 { label: 'Date', value: 'date' },
-                { label: 'Number Array', value: 'numberarray' },
-                { label: 'String Array', value: 'stringarray' },
+                { label: 'Number array', value: 'numberarray' },
+                { label: 'String array', value: 'stringarray' },
                 { label: 'JSON', value: 'json' },
               ],
             },
@@ -35,7 +35,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
-          label: 'Discard If Empty',
+          label: 'Discard if empty',
         },
         immutable: {
           id: 'immutable',
@@ -50,13 +50,13 @@ export default {
           name: 'useFirstRow',
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
-          label: 'Use First Row',
+          label: 'Use first row',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
           type: 'radiogroup',
-          label: 'Field Mapping Type',
+          label: 'Field mapping type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
@@ -119,11 +119,11 @@ export default {
             {
               items: [
                 {
-                  label: 'Use Empty String as Default Value',
+                  label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
-                { label: 'Use Null as Default Value', value: 'useNull' },
-                { label: 'Use Custom Default Value', value: 'default' },
+                { label: 'Use null as default value', value: 'useNull' },
+                { label: 'Use custom default value', value: 'default' },
               ],
             },
           ],
@@ -143,15 +143,15 @@ export default {
             {
               items: [
                 {
-                  label: `Use Empty String as hardcoded Value`,
+                  label: `Use empty string as hardcoded Value`,
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as hardcoded Value',
+                  label: 'Use null as hardcoded Value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Value',
+                  label: 'Use custom value',
                   value: 'default',
                 },
               ],
@@ -164,8 +164,8 @@ export default {
           id: 'default',
           name: 'default',
           type: 'text',
-          label: 'Enter Default Value',
-          placeholder: 'Enter Default Value',
+          label: 'Enter default value',
+          placeholder: 'Enter default value',
           required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
@@ -179,7 +179,7 @@ export default {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
           type: 'text',
-          label: 'Enter Default Value',
+          label: 'Enter default value',
           placeholder: 'Enter Default Value',
           required: true,
           visibleWhenAll: [
@@ -193,7 +193,7 @@ export default {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
           type: 'autosuggest',
-          label: 'Export Date Format',
+          label: 'Export date format',
           placeholder: '',
           options: {
             suggestions: dateFormats,
@@ -212,7 +212,7 @@ export default {
           name: 'extractDateTimezone',
           type: 'select',
           defaultValue: value.extractDateTimezone,
-          label: 'Export Date TimeZone',
+          label: 'Export date time zone',
           options: [
             {
               items:
@@ -235,7 +235,7 @@ export default {
           name: 'generateDateFormat',
           type: 'autosuggest',
           defaultValue: value.generateDateFormat,
-          label: 'Import Date Format',
+          label: 'Import date format',
           placeholder: '',
           options: {
             suggestions: dateFormats,
@@ -253,7 +253,7 @@ export default {
           name: 'generateDateTimezone',
           type: 'select',
           defaultValue: value.generateDateTimezone,
-          label: 'Import Date TimeZone',
+          label: 'Import date time zone',
           options: [
             {
               items:

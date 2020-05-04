@@ -1562,7 +1562,7 @@ export function integrationAppLicense(state, id) {
   );
   const plan = `${
     edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } Plan`;
+  } plan`;
 
   return {
     ...license,
