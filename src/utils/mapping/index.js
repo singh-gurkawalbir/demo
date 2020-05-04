@@ -51,7 +51,6 @@ const setMappingData = (
 ) => {
   recordMappings.forEach(mapping => {
     const key = `${flowId}-${mapping.id}`;
-    const mappingDeleted = deleted.includes(mapping.id) || isParentDeleted;
     let allChildrenDeleted = false;
 
     if (mapping.children && mapping.children.length) {
@@ -60,7 +59,12 @@ const setMappingData = (
       );
     }
 
-    if (mappingDeleted && deleteChildlessParent && allChildrenDeleted) {
+    const mappingDeleted =
+      deleted.includes(mapping.id) ||
+      isParentDeleted ||
+      (deleteChildlessParent && allChildrenDeleted);
+
+    if (mappingDeleted) {
       // eslint-disable-next-line no-param-reassign
       mapping.delete = true;
     }
@@ -444,6 +448,7 @@ export default {
       basicMappings.recordMappings || [],
       mappings,
       deleted,
+      false,
       deleteChildlessParent
     );
     setVariationMappingData(
