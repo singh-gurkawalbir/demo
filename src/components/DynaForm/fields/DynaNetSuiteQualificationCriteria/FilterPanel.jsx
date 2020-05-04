@@ -49,7 +49,7 @@ export default function FilterPanel({
   const patchEditor = useCallback(
     value => {
       if (editorId) {
-        dispatch(actions.editor.patch(editorId, { rule: value || [] }));
+        dispatch(actions.editor.patch(editorId, { rule: value || '' }));
       } else if (onFieldChange) {
         onFieldChange(id, JSON.stringify(value));
       }
@@ -116,7 +116,11 @@ export default function FilterPanel({
   const getRules = (options = {}) => {
     const qbRules = jQuery(qbuilder.current).queryBuilder('getRules', options);
 
-    if (isEmpty(qbRules) || (qbRules && !qbRules.valid)) {
+    if (
+      isEmpty(qbRules) ||
+      (qbRules && !qbRules.valid) ||
+      (qbRules.rules && isEmpty(qbRules.rules))
+    ) {
       return undefined;
     }
 

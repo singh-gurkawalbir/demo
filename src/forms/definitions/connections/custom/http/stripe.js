@@ -17,6 +17,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'Secret key',
+      helpKey: 'stripe.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -33,8 +33,8 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: NetSuite Search', value: 'dynamic' },
-                { label: 'Static: Value to Value', value: 'static' },
+                { label: 'Dynamic: NetSuite search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
@@ -46,7 +46,7 @@ export default {
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
           defaultValue: lookup.recordType,
           type: 'refreshableselect',
-          label: 'Search Record Type',
+          label: 'Search record type',
           connectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
@@ -55,7 +55,7 @@ export default {
           id: 'lookup.expression',
           name: 'lookupExpression',
           type: 'netsuitelookupfilters',
-          label: 'NS Filters',
+          label: 'NS filters',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
@@ -66,7 +66,7 @@ export default {
           id: 'lookup.expressionText',
           name: 'expressionText',
           type: 'text',
-          label: 'Lookup Filter Expression',
+          label: 'Lookup filter expression',
           multiline: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.expression'],
@@ -78,7 +78,7 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
-          label: 'Value Field',
+          label: 'Value field',
           defaultValue: lookup.resultField,
 
           savedRecordType: lookup.recordType,
@@ -91,7 +91,7 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import Field (NetSuite)',
+          valueLabel: 'Import field (NetSuite)',
           commMetaPath:
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
@@ -103,7 +103,7 @@ export default {
           connectionId,
           label: '',
           keyName: 'export',
-          keyLabel: 'Export Field',
+          keyLabel: 'Export field',
           valueName: 'import',
           defaultValue:
             lookup.map &&

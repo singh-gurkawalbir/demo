@@ -135,6 +135,18 @@ export default {
       label: 'Role',
       defaultDisabled: true,
       visible: r => r && !isNewId(r._id),
+      visibleWhen: r => {
+        const isNew = isNewId(r._id);
+
+        if (isNew) return [];
+
+        return [
+          {
+            field: 'netsuite.authType',
+            is: ['token-auto'],
+          },
+        ];
+      },
       defaultValue: r => r && r.netsuite && r.netsuite.roleId,
     },
     'netsuite.tokenId': {
