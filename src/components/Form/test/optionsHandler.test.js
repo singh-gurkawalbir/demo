@@ -1,6 +1,6 @@
-/* global describe,test,expect,beforeAll,jest */
+/* global describe,test,expect,beforeAll,jest ,afterAll */
 
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import { createStore } from 'redux';
 import reducer from '../../../reducers';
 import { Component, reduxWrappedComponent } from './form.test';
@@ -75,6 +75,9 @@ describe('options handler', () => {
     ));
   });
 
+  afterAll(() => {
+    cleanup();
+  });
   test('options handler is called initially for each field', () => {
     expect(optionsHandler.mock.calls.length).toBe(3); // Called for each field
   });

@@ -1,7 +1,7 @@
-/* global describe,test,expect,afterEach ,beforeEach,beforeAll */
+/* global describe,test,expect,afterEach ,beforeEach,beforeAll,afterAll */
 
 import { MuiThemeProvider } from '@material-ui/core';
-import { cleanup, fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, configure } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -21,6 +21,7 @@ import FormGenerator from '../../DynaForm/DynaFormGenerator';
 // and wraps out custom component with react router
 
 export const theme = themeProvider();
+configure({ testIdAttribute: 'data-test' });
 
 export function reduxWrappedComponent({ Component, store, componentProps }) {
   return (
@@ -227,7 +228,9 @@ describe('visible behavior', () => {
       })
     ));
   });
-
+  afterAll(() => {
+    cleanup();
+  });
   test('visibleField should be initially invisible since it does not meet its visible expression criteria', () => {
     // find a field with that default value
     const formState = selectors.getFormState(store.getState(), '123');
@@ -312,6 +315,9 @@ describe('required behavior', () => {
       })
     ));
   });
+  afterAll(() => {
+    cleanup();
+  });
 
   test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
     // find a field with that default value
@@ -392,6 +398,9 @@ describe('changing form value prop', () => {
         })
       );
     });
+    afterAll(() => {
+      cleanup();
+    });
     test('field has not been touched', () => {
       const formState = selectors.getFormState(store.getState(), 123);
 
@@ -415,6 +424,192 @@ describe('changing form value prop', () => {
       const formState = selectors.getFormState(store.getState(), formKey);
 
       expect(formState.fields.FIELD1.touched).toBe(true);
+    });
+  });
+});
+
+describe('various layout specific behavior ', () => {
+  describe('collapse component', () => {
+    describe('expand behavior', () => {
+      const formKey = '123';
+      let store;
+      let queryAllByText;
+      let queryByDisplayValue;
+      const fieldsMeta = {
+        fieldMap: {
+          FIELD1: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+            requiredWhen: [{ field: 'FIELD2', is: ['standard'] }],
+          },
+
+          FIELD2: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: 'abc',
+            label: 'field2',
+            validWhen: {
+              matchesRegEx: {
+                pattern: '^[\\d]+$',
+                message: 'Numbers only',
+              },
+            },
+          },
+        },
+
+        layout: {
+          type: 'collapse',
+          fields: ['FIELD1'],
+          containers: [{ label: 'expansion panel1', fields: ['FIELD2'] }],
+        },
+      };
+
+      afterAll(() => {
+        cleanup();
+      });
+
+      beforeAll(() => {
+        // build up the state
+
+        store = createStore(reducer, {
+          user: { profile: { name: 'profile 1' } },
+        });
+
+        ({ queryByDisplayValue, queryAllByText } = render(
+          reduxWrappedComponent({
+            Component,
+            store,
+            componentProps: {
+              formKey,
+              fieldsMeta,
+              showValidationBeforeTouched: true,
+            },
+          })
+        ));
+      });
+
+      test('the expansion panel should be expanded since invalid field has not met its validWhen criteria', () => {
+        expect(queryByDisplayValue('abc')).toBeTruthy();
+      });
+
+      // TODO:try testing the toggle behavior of expansion panel
+      // could not do that since the component does not unmount of close
+      test('the expansion panel should should continue to be in an expanded state and not collapse when its validWhen condition its met', () => {
+        const field2Ele = queryByDisplayValue('abc');
+        const errorMsg = queryAllByText('Numbers only');
+
+        expect(errorMsg.length).toBe(1);
+        // feeding a non number again
+
+        fireEvent.change(field2Ele, {
+          target: {
+            value: '123',
+          },
+        });
+
+        expect(queryByDisplayValue('123')).toBeTruthy();
+
+        const errorMsgAfterNumberSet = queryAllByText('Numbers only');
+
+        expect(errorMsgAfterNumberSet.length).toBe(0);
+      });
+    });
+    describe('visible behavior', () => {
+      const formKey = '123';
+      let store;
+      let queryByTestId;
+      let queryByDisplayValue;
+      const fieldsMeta = {
+        fieldMap: {
+          FIELD1: {
+            id: 'FIELD1',
+            type: 'text',
+            name: 'field1',
+            defaultValue: 'test',
+            label: 'field1',
+          },
+
+          FIELD2: {
+            id: 'FIELD2',
+            type: 'text',
+            name: 'field2',
+            defaultValue: 'abc',
+            label: 'field2',
+            visibleWhen: [{ field: 'FIELD1', is: ['test'] }],
+          },
+        },
+
+        layout: {
+          type: 'collapse',
+          fields: ['FIELD1'],
+          containers: [{ label: 'expansion panel1', fields: ['FIELD2'] }],
+        },
+      };
+
+      afterAll(() => {
+        cleanup();
+      });
+
+      beforeAll(() => {
+        // build up the state
+
+        store = createStore(reducer, {
+          user: { profile: { name: 'profile 1' } },
+        });
+
+        ({ queryByDisplayValue, queryByTestId } = render(
+          reduxWrappedComponent({
+            Component,
+            store,
+            componentProps: {
+              formKey,
+              fieldsMeta,
+              showValidationBeforeTouched: true,
+            },
+          })
+        ));
+      });
+
+      test('FIELD2 should be visible since it meets its visibleWhen criteria', () => {
+        expect(queryByDisplayValue('abc')).toBeTruthy();
+      });
+
+      test('FIELD2 expansion panel should be invisible when its visibleWhen criteria is not met', () => {
+        const field1Ele = queryByDisplayValue('test');
+        // feeding a non number again
+
+        fireEvent.change(field1Ele, {
+          target: {
+            value: '123',
+          },
+        });
+
+        expect(queryByDisplayValue('123')).toBeTruthy();
+
+        expect(queryByDisplayValue('abc')).not.toBeTruthy();
+
+        expect(queryByTestId('expansion panel1')).not.toBeTruthy();
+      });
+      test('FIELD2 expansion panel should be visible when its visibleWhen criteria is met', () => {
+        const field1Ele = queryByDisplayValue('123');
+        // feeding a non number again
+
+        fireEvent.change(field1Ele, {
+          target: {
+            value: 'test',
+          },
+        });
+
+        expect(queryByDisplayValue('test')).toBeTruthy();
+
+        expect(queryByDisplayValue('abc')).toBeTruthy();
+
+        expect(queryByTestId('expansion panel1')).toBeTruthy();
+      });
     });
   });
 });

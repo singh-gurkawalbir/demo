@@ -3,7 +3,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import FormGenerator from '../';
 import * as selectors from '../../../../reducers';
@@ -95,6 +95,13 @@ const ExpansionPannelExpandOnInValidState = props => {
     }
   }, [expandOnce, isPanelErrored]);
 
+  const toggleExpansionPanel = useCallback(() => {
+    console.log('clicked expansion Panell');
+    setShouldExpand(expand => !expand);
+  }, []);
+
+  console.log('shouldExpand ', shouldExpand);
+
   if (!isAnyExpansionPanelFieldVisible) return null;
 
   return (
@@ -106,7 +113,7 @@ const ExpansionPannelExpandOnInValidState = props => {
         <ExpansionPanelSummary
           data-test={header}
           className={classes.expPanelSummary}
-          onClick={() => setShouldExpand(expand => !expand)}
+          onClick={toggleExpansionPanel}
           expandIcon={<ExpandMoreIcon />}>
           <Typography>{header}</Typography>
         </ExpansionPanelSummary>
