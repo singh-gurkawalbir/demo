@@ -6,7 +6,7 @@ export default {
   formView: {
     id: 'formView',
     type: 'formview',
-    label: 'Form View',
+    label: 'Form view',
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {

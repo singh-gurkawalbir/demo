@@ -129,7 +129,6 @@ export function* previewMappings({ id }) {
     }
   } else if (application === adaptorTypeMap.NetSuiteDistributedImport) {
     path = `/netsuiteDA/previewImportMappingFields?_connectionId=${_connectionId}`;
-    resourceCopy = resourceCopy.netsuite_da;
 
     // in case of subRecord mapping, modify the subrecord and return the root mapping object
     if (subRecordMappingId) {
@@ -139,12 +138,15 @@ export function* previewMappings({ id }) {
         subRecordMapping: _mappings,
         subRecordLookups: lookups,
       });
-    } else {
+    }
+
+    resourceCopy = resourceCopy.netsuite_da;
+
+    if (!subRecordMappingId) {
       resourceCopy.lookups = lookups;
     }
 
     resourceCopy.mapping = _mappings;
-
     requestBody.data = [requestBody.data];
     requestBody.celigo_resource = 'previewImportMappingFields';
   } else if (application === adaptorTypeMap.HTTPImport) {
@@ -164,7 +166,7 @@ export function* previewMappings({ id }) {
     const preview = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: `Fetching Preview Data`,
+      message: `Fetching preview data`,
     });
 
     if (application === adaptorTypeMap.NetSuiteDistributedImport) {

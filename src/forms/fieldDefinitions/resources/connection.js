@@ -1386,7 +1386,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
+          { label: 'Please select (Optional)', value: '' },
           { label: 'AES-256', value: 'AES-256' },
           { label: 'AES-192', value: 'AES-192' },
           { label: 'AES-128', value: 'AES-128' },

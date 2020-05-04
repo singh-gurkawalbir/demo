@@ -22,11 +22,11 @@ export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
 );
 export const RESOURCE_TYPE_SINGULAR_TO_LABEL = Object.freeze({
   accesstoken: 'API token',
-  asynchelper: 'Async Helper',
+  asynchelper: 'Async helper',
   connection: 'Connection',
   connector: 'Connector',
   export: 'Export',
-  filedefinition: 'File Definition',
+  filedefinition: 'File definition',
   flow: 'Flow',
   iclient: 'IClient',
   import: 'Import',
