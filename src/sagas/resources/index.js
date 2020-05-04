@@ -266,6 +266,14 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
     yield put(
       actions.resource.updated(resourceType, updated._id, master, patch)
     );
+
+    // clear sample data V2
+    if (['flows', 'imports', 'exports'].includes(resourceType)) {
+      actions.editorSampleData.clear({
+        resourceType,
+        resourceId: updated._id,
+      });
+    }
   }
 
   if (options && options.action === 'flowEnableDisable') {

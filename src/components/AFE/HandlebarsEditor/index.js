@@ -50,7 +50,6 @@ export default function HandlebarsEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
-        autoEvaluate: true,
         autoEvaluateDelay: 500,
         template: props.rule,
         data: props.data,

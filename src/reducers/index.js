@@ -462,6 +462,8 @@ export function getSampleDataContext(
   state,
   { flowId, resourceId, resourceType, stage }
 ) {
+  console.log('o came');
+
   return fromSession.getSampleDataContext(state && state.session, {
     flowId,
     resourceId,

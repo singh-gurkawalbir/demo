@@ -1500,6 +1500,7 @@ const editorSampleData = {
     resourceId,
     resourceType,
     stage,
+    formValues,
     fieldType,
     requestedEditorVersion,
   }) =>
@@ -1508,6 +1509,7 @@ const editorSampleData = {
       resourceId,
       resourceType,
       stage,
+      formValues,
       fieldType,
       requestedEditorVersion,
     }),
@@ -1531,11 +1533,10 @@ const editorSampleData = {
       flowId,
       fieldType,
     }),
-  clear: ({ flowId, resourceId, fieldType }) =>
+  clear: ({ resourceId, resourceType }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
-      flowId,
       resourceId,
-      fieldType,
+      resourceType,
     }),
 };
 

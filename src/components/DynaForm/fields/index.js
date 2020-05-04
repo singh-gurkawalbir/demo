@@ -91,6 +91,9 @@ import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
+import DynaTextWithLookup from './DynaTextWithLookup';
+import DynaDataURITemplate from './DynaDataURITemplate';
+import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 
 export default {
   mode: DynaMode,
@@ -195,4 +198,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  textwithlookup: DynaTextWithLookup,
+  datauritemplate: DynaDataURITemplate,
+  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
 };

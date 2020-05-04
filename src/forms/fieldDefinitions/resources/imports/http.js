@@ -173,7 +173,7 @@ export default {
       r && r.http && r.http.requestType && r.http.requestType[0],
   },
   'http.relativeURI': {
-    type: 'textwithlookupextract',
+    type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
     placeholder: 'Optional',

@@ -7,9 +7,6 @@ export default function HttpRequestBodyEditor(props) {
     contentType,
     layout = 'compact',
     rule,
-    resultTitle,
-    dataTitle,
-    ruleTitle,
     data,
     lookups,
   } = props;
@@ -27,9 +24,9 @@ export default function HttpRequestBodyEditor(props) {
       dataMode="json"
       layout={layout}
       resultMode={mode}
-      ruleTitle={ruleTitle || `HTTP Body Template (${mode})`}
-      dataTitle={dataTitle || 'Data'}
-      resultTitle={resultTitle || 'Final HTTP Body'}
+      ruleTitle="Type your handlebar template here"
+      dataTitle="Resources available in your template."
+      resultTitle="Click run to see your handlebar template evaluated here!"
       enableAutocomplete
     />
   );

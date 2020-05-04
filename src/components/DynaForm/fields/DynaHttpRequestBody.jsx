@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
@@ -32,17 +33,15 @@ const ManageLookup = props => {
   );
 };
 
-export default function DynaHttpRequestBody(props) {
+const DynaHttpRequestBody = props => {
   const {
     id,
+    formContext,
     onFieldChange,
     options = {},
     value,
     label,
     title,
-    resultTitle,
-    ruleTitle,
-    dataTitle,
     resourceId,
     connectionId,
     resourceType,
@@ -62,33 +61,14 @@ export default function DynaHttpRequestBody(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const { data: sampleData, status, fieldEditorVersion } = useSelector(
-    state => {
-      if (!['exports', 'imports'].includes(resourceType)) return {};
-
-      return selectors.getEditorSampleData(state, {
-        flowId,
-        resourceId,
-        fieldType: id,
-      });
-    }
+  const { data: sampleData, fieldEditorVersion } = useSelector(state =>
+    selectors.getEditorSampleData(state, {
+      flowId,
+      resourceId,
+      fieldType: id,
+    })
   );
-
-  useEffect(() => {
-    if (flowId && !status && !isPageGenerator) {
-      dispatch(
-        actions.editorSampleData.request({
-          flowId,
-          resourceId,
-          resourceType,
-          stage: 'flowInput',
-          fieldType: id,
-        })
-      );
-    }
-  }, [dispatch, flowId, id, isPageGenerator, resourceId, resourceType, status]);
-
-  const handleEditorVersionToggle = useCallback(
+  const loadEditorSampleData = useCallback(
     version => {
       dispatch(
         actions.editorSampleData.request({
@@ -96,13 +76,36 @@ export default function DynaHttpRequestBody(props) {
           resourceId,
           resourceType,
           stage: 'flowInput',
+          formValues: formContext.value,
           fieldType: id,
           requestedEditorVersion: version,
         })
       );
     },
-    [dispatch, flowId, id, resourceId, resourceType]
+    [dispatch, flowId, formContext.value, id, resourceId, resourceType]
   );
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      loadEditorSampleData(version);
+    },
+    [loadEditorSampleData]
+  );
+
+  useEffect(() => {
+    if (flowId && !isPageGenerator) {
+      loadEditorSampleData();
+    }
+  }, [
+    dispatch,
+    flowId,
+    formContext.value,
+    id,
+    isPageGenerator,
+    loadEditorSampleData,
+    resourceId,
+    resourceType,
+  ]);
+
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
@@ -127,7 +130,8 @@ export default function DynaHttpRequestBody(props) {
 
     if (!rule) {
       // load sample template when rule is not yet defined
-      if (contentType === 'json') rule = getJSONSampleTemplate(sampleData);
+      if (contentType === 'json')
+        rule = getJSONSampleTemplate(sampleData || []);
       else rule = getXMLSampleTemplate(sampleData);
     }
 
@@ -178,9 +182,6 @@ export default function DynaHttpRequestBody(props) {
             data={JSON.stringify(sampleData, null, 2)}
             onClose={handleClose}
             action={action}
-            ruleTitle={ruleTitle}
-            dataTitle={dataTitle}
-            resultTitle={resultTitle}
             showVersionToggle
             editorVersion={fieldEditorVersion}
             onVersionToggle={handleEditorVersionToggle}
@@ -196,5 +197,13 @@ export default function DynaHttpRequestBody(props) {
       </Button>
       <ErroredMessageComponent {...props} />
     </Fragment>
+  );
+};
+
+export default function DynaHttpRequestBodyWrapper(props) {
+  return (
+    <FormContext.Consumer>
+      {form => <DynaHttpRequestBody {...props} formContext={form} />}
+    </FormContext.Consumer>
   );
 }

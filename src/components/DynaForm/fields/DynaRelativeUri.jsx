@@ -1,13 +1,14 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { useState, useCallback, useMemo, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
-import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
+import DynaTextWithLookup from './DynaTextWithLookup';
+// import sampleTemplateUtil from '../../../utils/sampleTemplate';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -18,32 +19,21 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
 }));
-
-// TODO(Aditya): remove this component and use DynaTextWithLookupExtract/RelativeURI after refractor
-export default function DynaRelativeUri(props) {
+const DynaRelativeUri = props => {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    connectionId,
-    disabled,
-    errorMessages,
     id,
-    isValid,
-    name,
     onFieldChange,
-    placeholder,
-    required,
     value,
+    editorTitle = 'Build Relative URI',
     resourceId,
     resourceType,
     flowId,
-    label,
     options = {},
+    formContext,
+    arrayIndex,
   } = props;
-  const resourceName = options.resourceName || props.resourceName;
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
@@ -62,69 +52,80 @@ export default function DynaRelativeUri(props) {
     handleEditorClick();
   };
 
-  const { data: sampleData } = useSelector(state =>
-    selectors.getSampleDataContext(state, {
+  const { data: sampleData, fieldEditorVersion } = useSelector(state =>
+    selectors.getEditorSampleData(state, {
       flowId,
       resourceId,
-      resourceType,
-      stage: 'flowInput',
+      fieldType: id,
     })
   );
-  const formattedSampleData = useMemo(
-    () =>
-      JSON.stringify(
-        getFormattedSampleData({
-          connection,
-          sampleData,
-          resourceType,
-          resourceName,
-        }),
-        null,
-        2
-      ),
-    [connection, resourceName, resourceType, sampleData]
-  );
-
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData && !isPageGenerator) {
+  const loadEditorSampleData = useCallback(
+    version => {
       dispatch(
-        actions.flowData.requestSampleData(
+        actions.editorSampleData.request({
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
-        )
+          stage: 'flowInput',
+          formValues: formContext.value,
+          fieldType: id,
+          requestedEditorVersion: version,
+        })
       );
+    },
+    [dispatch, flowId, formContext.value, id, resourceId, resourceType]
+  );
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      loadEditorSampleData(version);
+    },
+    [loadEditorSampleData]
+  );
+
+  useEffect(() => {
+    if (flowId && !isPageGenerator) {
+      loadEditorSampleData();
     }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
+  }, [
+    dispatch,
+    flowId,
+    formContext.value,
+    id,
+    isPageGenerator,
+    loadEditorSampleData,
+    resourceId,
+    resourceType,
+  ]);
 
-  const handleFieldChange = event => {
-    const { value } = event.target;
+  const inputValue = useMemo(
+    () =>
+      options && typeof arrayIndex === 'number' && Array.isArray(value)
+        ? value[arrayIndex]
+        : value,
+    [arrayIndex, options, value]
+  );
+  // const sampleRule = sampleTemplateUtil.getSampleRuleTemplate(resource);
+  // const { type } = connection || {};
 
-    onFieldChange(id, value);
-  };
-
-  let description = '';
-  const { type } = connection || {};
-
-  if (type === 'http' || type === 'rest') {
-    description = `Relative to: ${connection[type].baseURI}`;
-  }
-
+  // if (type === 'http' || type === 'rest') {
+  //   description = `Relative to: ${connection[type].baseURI}`;
+  // }
   return (
     <Fragment>
       {showEditor && (
-        <UrlEditorDialog
-          title="Relative URI Editor"
-          id={id}
-          data={formattedSampleData}
-          rule={value}
-          onClose={handleClose}
-          disabled={disabled}
-        />
+        <div>
+          <UrlEditorDialog
+            title={editorTitle}
+            id={id}
+            data={JSON.stringify(sampleData, null, 2)}
+            rule={inputValue}
+            // sampleRule={sampleRule}
+            onClose={handleClose}
+            showVersionToggle
+            editorVersion={fieldEditorVersion}
+            onVersionToggle={handleEditorVersionToggle}
+          />
+        </div>
       )}
       <ActionButton
         data-test={id}
@@ -132,20 +133,16 @@ export default function DynaRelativeUri(props) {
         className={classes.exitButton}>
         <ExitIcon />
       </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        required={required}
-        error={!isValid}
-        value={value}
-        variant="filled"
-        onChange={handleFieldChange}
-      />
+
+      <DynaTextWithLookup id={id} value={inputValue} {...props} />
     </Fragment>
+  );
+};
+
+export default function RelativeUriWrapper(props) {
+  return (
+    <FormContext.Consumer>
+      {form => <DynaRelativeUri {...props} formContext={form} />}
+    </FormContext.Consumer>
   );
 }

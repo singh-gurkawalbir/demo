@@ -1,10 +1,11 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch/lib/core';
 import { requestSampleData } from '../sampleData/flows';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
+import { constructResourceFromFormValues } from '../sampleData';
 
 export function* requestEditorSampleData({
   flowId,
@@ -12,18 +13,31 @@ export function* requestEditorSampleData({
   resourceType,
   stage,
   fieldType,
+  formValues,
   requestedEditorVersion,
 }) {
-  const resource = yield select(selectors.resource, resourceType, resourceId);
+  const _resource = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
+  // Temp fix to remove fieldEditorVersion;
+  // To delete starts
+  const resource = deepClone(_resource);
+
+  delete resource.fieldEditorVersion;
+
+  // To delete ends
+  // const resource = yield select(selectors.resource, resourceType, resourceId);
   const path = '/processors/handleBar/getContext';
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,
     stage,
-  }).data;
+  });
 
-  if (!flowSampleData) {
+  if (!flowSampleData || !flowSampleData.data) {
     // sample data not present.
     // trigger action to get sample data
     yield call(requestSampleData, {
@@ -31,7 +45,6 @@ export function* requestEditorSampleData({
       resourceId,
       resourceType,
       stage: 'flowInput',
-      isInitialized: true,
     });
     // get sample data from the selector once loaded
     flowSampleData = yield select(selectors.getSampleDataContext, {
@@ -39,7 +52,7 @@ export function* requestEditorSampleData({
       resourceId,
       resourceType,
       stage,
-    }).data;
+    });
   }
 
   if (!resource) {
@@ -55,13 +68,12 @@ export function* requestEditorSampleData({
   }
 
   const body = {
-    sampleData: flowSampleData || { myField: 'sample' },
+    sampleData: flowSampleData.data || { myField: 'sample' },
   };
-  const _resource = deepClone(resource);
 
   if (requestedEditorVersion)
-    _resource.fieldEditorVersion = requestedEditorVersion;
-  body[resourceType === 'imports' ? 'import' : 'export'] = _resource;
+    resource.fieldEditorVersion = requestedEditorVersion;
+  body[resourceType === 'imports' ? 'import' : 'export'] = resource;
 
   body.fieldPath = fieldType;
 
@@ -72,7 +84,8 @@ export function* requestEditorSampleData({
   const response = yield call(apiCallWithRetry, {
     path,
     opts,
-    // hidden: true,
+    message: `Fetching editor sample data`,
+    hidden: false,
   });
 
   if (response) {
@@ -99,5 +112,5 @@ export function* requestEditorSampleData({
 }
 
 export default [
-  takeLatest(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, requestEditorSampleData),
+  takeEvery(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, requestEditorSampleData),
 ];

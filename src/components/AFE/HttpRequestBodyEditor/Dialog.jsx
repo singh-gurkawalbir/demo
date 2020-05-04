@@ -9,9 +9,6 @@ export default function HttpRequestBodyDialog(props) {
     contentType,
     lookups = [],
     disabled,
-    resultTitle,
-    dataTitle,
-    ruleTitle,
     ...rest
   } = props;
   const defaults = {
@@ -30,9 +27,6 @@ export default function HttpRequestBodyDialog(props) {
         rule={rule}
         data={data}
         disabled={disabled}
-        ruleTitle={ruleTitle}
-        dataTitle={dataTitle}
-        resultTitle={resultTitle}
       />
     </EditorDialog>
   );

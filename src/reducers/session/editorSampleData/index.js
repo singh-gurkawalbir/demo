@@ -7,9 +7,11 @@ export default function reducer(state = {}, action) {
   const {
     type,
     flowId,
+    resourceType,
     resourceId,
     fieldType,
     sampleData,
+    // formValue,
     fieldEditorVersion,
   } = action;
 
@@ -28,9 +30,9 @@ export default function reducer(state = {}, action) {
         //   status: 'requested',
         // };
         if (!draft[resourceId][flowId][fieldType]) {
-          draft[resourceId][flowId][fieldType] = { sampleData: 'requested' };
+          draft[resourceId][flowId][fieldType] = { status: 'requested' };
         } else {
-          draft[resourceId][flowId][fieldType].sampleData = 'requested';
+          draft[resourceId][flowId][fieldType].status = 'requested';
         }
 
         break;
@@ -48,17 +50,10 @@ export default function reducer(state = {}, action) {
         };
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.CLEAR:
-        if (resourceId && draft[resourceId]) {
+        if (resourceType === 'flows') {
+          // delete all items for flows
+        } else if (['exports', 'imports'].includes(resourceType)) {
           delete draft[resourceId];
-        } else if (flowId && draft[resourceId] && draft[resourceId][flowId]) {
-          delete draft[resourceId][flowId];
-        } else if (
-          fieldType &&
-          draft[resourceId] &&
-          draft[resourceId][flowId] &&
-          draft[resourceId][flowId][fieldType]
-        ) {
-          delete draft[resourceId][flowId][fieldType];
         }
 
         break;

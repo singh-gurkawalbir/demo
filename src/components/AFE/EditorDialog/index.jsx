@@ -23,6 +23,7 @@ import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import TextToggle from '../../TextToggle';
+import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -100,6 +101,9 @@ export default function EditorDialog(props) {
   const isEditorDirty = useSelector(state =>
     selectors.isEditorDirty(state, id)
   );
+  const handleAutoPreviewToggle = useCallback(() => {
+    dispatch(actions.editor.patch(id, { autoEvaluate: !editor.autoEvaluate }));
+  }, [dispatch, editor.autoEvaluate, id]);
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
@@ -148,7 +152,6 @@ export default function EditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = () => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
@@ -190,6 +193,15 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
+          <div>
+            <DynaCheckbox
+              disabled={disabled}
+              id="disableAutoPreview"
+              onFieldChange={handleAutoPreviewToggle}
+              label="Enable auto-preview"
+              value={!!editor.autoEvaluate}
+            />
+          </div>
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -246,7 +258,7 @@ export default function EditorDialog(props) {
             data-test="previewEditorResult"
             variant="outlined"
             onClick={handlePreview}>
-            Preview
+            Run
           </Button>
         )}
         {patchOnSave ? (

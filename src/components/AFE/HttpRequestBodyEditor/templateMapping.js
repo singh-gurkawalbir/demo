@@ -3,7 +3,10 @@ import getJSONPaths from '../../../utils/jsonPaths';
 
 export function getJSONSampleTemplate(data) {
   let toReturn = '';
-  const eFields = getJSONPaths(data[0], null, { wrapSpecialChars: true });
+  const eFields =
+    data && Array.isArray(data)
+      ? getJSONPaths(data[0], null, { wrapSpecialChars: true })
+      : [];
 
   toReturn += '{{#each data}}\n';
   toReturn += '{{#if @index}} , {{/if}}\n';
@@ -100,9 +103,12 @@ export function getXMLSampleTemplate(data) {
   toReturn += '{{#each data}}\n';
 
   if (data) {
-    const eFields = getJSONPaths(data[0], null, {
-      wrapSpecialChars: true,
-    });
+    const eFields =
+      data && Array.isArray(data)
+        ? getJSONPaths(data[0], null, {
+            wrapSpecialChars: true,
+          })
+        : [];
 
     if (Array.isArray(data) && Array.isArray(data[0])) {
       toReturn += '  <record id="{{this.0.id}}">\n';

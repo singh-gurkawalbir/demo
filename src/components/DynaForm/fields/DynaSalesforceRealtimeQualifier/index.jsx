@@ -38,7 +38,6 @@ export default function DynaSalesforceRealtimeQualifier(props) {
     dispatch(
       actions.editor.init(editorId, 'salesforceQualifier', {
         data,
-        autoEvaluate: false,
         rule: value,
       })
     );
