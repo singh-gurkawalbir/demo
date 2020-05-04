@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
@@ -12,6 +12,7 @@ import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import useResourceList from '../../../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,27 +21,28 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
   },
 }));
+const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowsPanel({ integrationId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
-  let flows = useSelector(
-    state => selectors.resourceList(state, { type: 'flows' }).resources
-  );
+  const allFlows = useResourceList(flowsFilterConfig).resources;
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
   );
-
-  flows =
-    flows &&
-    flows.filter(
-      f =>
-        f._integrationId ===
-        (integrationId === STANDALONE_INTEGRATION.id
-          ? undefined
-          : integrationId)
-    );
+  const flows = useMemo(
+    () =>
+      allFlows &&
+      allFlows.filter(
+        f =>
+          f._integrationId ===
+          (integrationId === STANDALONE_INTEGRATION.id
+            ? undefined
+            : integrationId)
+      ),
+    [allFlows, integrationId]
+  );
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 

@@ -276,6 +276,7 @@ export default {
               ],
             },
           ],
+          helpKey: 'mapping.options',
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {

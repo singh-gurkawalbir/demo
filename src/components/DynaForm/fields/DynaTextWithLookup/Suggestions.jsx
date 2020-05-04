@@ -68,7 +68,7 @@ export default function Suggestions(props) {
     resourceType,
     showLookup,
     value = '',
-    showExtracts,
+    showExtract,
     cursorPosition,
     onValueUpdate,
   } = props;
@@ -174,7 +174,7 @@ export default function Suggestions(props) {
           </li>
         ))}
 
-      {showExtracts &&
+      {showExtract &&
         filteredExtracts.map(e => (
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
           <li key={e.label} onClick={handleExtractClick}>

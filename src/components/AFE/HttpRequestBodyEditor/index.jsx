@@ -24,9 +24,6 @@ export default function HttpRequestBodyEditor(props) {
       dataMode="json"
       layout={layout}
       resultMode={mode}
-      ruleTitle="Type your handlebar template here"
-      dataTitle="Resources available in your template."
-      resultTitle="Click run to see your handlebar template evaluated here!"
       enableAutocomplete
     />
   );

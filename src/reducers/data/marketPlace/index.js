@@ -25,6 +25,10 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 
+export function marketPlaceState(state) {
+  return state;
+}
+
 export function connectors(state, application, sandbox, licenses) {
   if (!state) {
     return [];

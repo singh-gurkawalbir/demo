@@ -152,11 +152,11 @@ export default function EditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-  const handleFullScreenClick = () => {
+  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
+  const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
-  };
-
+  }, [fullScreen, patchEditorLayoutChange, state]);
   const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
     fullScreen,
     height,

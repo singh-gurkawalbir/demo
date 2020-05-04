@@ -22,9 +22,6 @@ export default function UrlEditor(props) {
       ruleMode="handlebars"
       dataMode="json"
       resultMode="text"
-      ruleTitle="Url Template"
-      dataTitle="Sample Data"
-      resultTitle="Evaluated Result"
       enableAutocomplete
     />
   );

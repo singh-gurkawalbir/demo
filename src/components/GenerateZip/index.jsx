@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { MenuItem, FormControl, Button } from '@material-ui/core';
+import { Button, FormControl, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../reducers';
+import React, { useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import CeligoSelect from '../../components/CeligoSelect';
+import useResourceList from '../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   selectIntegration: {
@@ -16,15 +16,16 @@ const useStyles = makeStyles(theme => ({
     marginRight: 'auto',
   },
 }));
+const integrationFilterConfig = { type: 'integrations' };
 
 export default function GenerateZip({ onClose, invalid = 'invalid' }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  let { resources: integrations } = useSelector(state =>
-    selectors.resourceList(state, { type: 'integrations' })
+  const integrations = useResourceList(integrationFilterConfig).resources;
+  const filteredIntegrations = useMemo(
+    () => integrations.filter(i => !i._connectorId && !i.isShared),
+    [integrations]
   );
-
-  integrations = integrations.filter(i => !i._connectorId && !i.isShared);
   const [selectedIntegrationId, setSelectedIntegrationId] = useState(invalid);
   const handleGenerateZipClick = () => {
     if (selectedIntegrationId === invalid) {
@@ -49,8 +50,8 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
         <MenuItem key={invalid} value={invalid}>
           Select Integration
         </MenuItem>
-        {integrations &&
-          integrations.map(integration => (
+        {filteredIntegrations &&
+          filteredIntegrations.map(integration => (
             <MenuItem key={integration._id} value={integration._id}>
               {integration.name}
             </MenuItem>

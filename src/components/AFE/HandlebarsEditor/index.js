@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -10,9 +10,6 @@ export default function HandlebarsEditor(props) {
     editorId,
     layout,
     templateClassName,
-    ruleTitle,
-    resultTitle,
-    dataTitle,
     resultMode,
     dataMode,
     ruleMode,
@@ -20,7 +17,7 @@ export default function HandlebarsEditor(props) {
     enableAutocomplete,
     lookups = [],
   } = props;
-  const { template, data, result, error } = useSelector(state =>
+  const { template, data, result, error, autoEvaluate } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -63,6 +60,14 @@ export default function HandlebarsEditor(props) {
     dispatch(actions.editor.evaluateRequest(editorId));
   };
 
+  const resultTitle = useMemo(
+    () =>
+      autoEvaluate
+        ? 'Evaluated handlebar template'
+        : 'Click run to see your handlebar template evaluated here!',
+    [autoEvaluate]
+  );
+
   return (
     <Editor
       disabled={disabled}
@@ -77,11 +82,11 @@ export default function HandlebarsEditor(props) {
       resultMode={resultMode}
       layout={layout}
       templateClassName={templateClassName}
-      ruleTitle={ruleTitle}
+      ruleTitle="Type your handlebar template here"
+      dataTitle="Resources available in your template."
       resultTitle={resultTitle}
       violations={violations}
       rule={template}
-      dataTitle={dataTitle}
       data={data}
       result={result ? result.data : ''}
       error={error}

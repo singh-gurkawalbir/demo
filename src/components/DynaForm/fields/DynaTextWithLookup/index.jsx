@@ -43,7 +43,7 @@ const DynaTextWithLookup = props => {
     flowId,
     formContext,
     showLookup = true,
-    showExtracts = true,
+    showExtract = true,
     // isSqlImport,
     // onLookupUpdate,
     // lookups,
@@ -57,6 +57,12 @@ const DynaTextWithLookup = props => {
     // recordType,
     // hideExtractFields,
   } = props;
+
+  console.log('============');
+  console.log('showLookup', showLookup);
+  console.log('showExtract', showExtract);
+  console.log('id', id);
+  console.log('============');
 
   console.log(props);
   const ref = useRef(null);
@@ -136,17 +142,19 @@ const DynaTextWithLookup = props => {
         onKeyUp={handleCursorChange}
         variant="filled"
       />
-      <Suggestions
-        resourceId={resourceId}
-        flowId={flowId}
-        formContext={formContext}
-        resourceType={resourceType}
-        value={userInput}
-        showLookup={showLookup}
-        showExtracts={showExtracts}
-        cursorPosition={cursorPosition}
-        onValueUpdate={handleUpdate}
-      />
+      {(showExtract || showLookup) && (
+        <Suggestions
+          resourceId={resourceId}
+          flowId={flowId}
+          formContext={formContext}
+          resourceType={resourceType}
+          value={userInput}
+          showLookup={showLookup}
+          showExtract={showExtract}
+          cursorPosition={cursorPosition}
+          onValueUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 };

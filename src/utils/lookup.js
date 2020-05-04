@@ -68,13 +68,6 @@ export default {
   getLookupFromFormContext(formContext, adaptorType) {
     const lookupPath = this.getLookupPath(adaptorTypeMap[adaptorType]);
     const lookupFieldKey = lookupPath && lookupPath.substr(1).replace('/', '.');
-
-    if (!lookupPath) {
-      console.log('hold');
-    }
-
-    console.log('lookupFieldKey', lookupFieldKey);
-
     const lookupField = formContext.fields.find(
       field => field.key === lookupFieldKey
     );

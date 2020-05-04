@@ -61,6 +61,14 @@ export function processors(state) {
   return fromResources.processors(state && state.resources);
 }
 
+export function resourceState(state) {
+  return fromResources.resourceState(state && state.resources);
+}
+
+export function marketPlaceState(state) {
+  return fromMarketplace.marketPlaceState(state && state.marketplace);
+}
+
 export function hasData(state, resourceType) {
   return fromResources.hasData(state && state.resources, resourceType);
 }
@@ -189,15 +197,6 @@ export function suiteScriptTiles(state, connectionId) {
 
 export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
-}
-
-export function marketplaceConnectors(state, application, sandbox, licenses) {
-  return fromMarketplace.connectors(
-    state && state.marketplace,
-    application,
-    sandbox,
-    licenses
-  );
 }
 
 export function integrationAppList(state) {

@@ -16,6 +16,7 @@ import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import useResourceList from '../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,6 +63,13 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '20px',
   },
 }));
+const integrationsFilterConfig = {
+  type: 'integrations',
+  ignoreEnvironmentFilter: true,
+  filter: {
+    _connectorId: { $exists: false },
+  },
+};
 
 export default function ClonePreview(props) {
   const classes = useStyles(props);
@@ -92,16 +100,7 @@ export default function ClonePreview(props) {
   );
   const integrationAppName =
     isIAIntegration && getIntegrationAppUrlName(resource && resource.name);
-  const integrations = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'integrations',
-        ignoreEnvironmentFilter: true,
-        filter: {
-          _connectorId: { $exists: false },
-        },
-      }).resources
-  );
+  const integrations = useResourceList(integrationsFilterConfig).resources;
   const selectedAccountHasSandbox = useSelector(state => {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);

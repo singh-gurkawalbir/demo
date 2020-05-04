@@ -349,7 +349,7 @@ export default {
               ],
             },
           ],
-
+          helpKey: 'mapping.options',
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -534,6 +534,7 @@ export default {
           name: 'conditionalWhen',
           type: 'select',
           label: 'Only perform mapping when:',
+          helpKey: 'mapping.conditional.when',
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {

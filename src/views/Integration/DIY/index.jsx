@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, useEffect } from 'react';
+import { Fragment, useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
@@ -33,6 +33,7 @@ import SettingsIcon from '../../../components/icons/SettingsIcon';
 import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -120,8 +121,8 @@ export default function Integration({ history, match }) {
 
     return null;
   });
-  const cantDelete = useSelector(state => {
-    const flows = selectors.resourceList(state, {
+  const flowsFilterConfig = useMemo(
+    () => ({
       type: 'flows',
       filter: {
         _integrationId:
@@ -129,10 +130,11 @@ export default function Integration({ history, match }) {
             ? undefined
             : integrationId,
       },
-    }).resources;
-
-    return flows.length > 0;
-  });
+    }),
+    [integrationId]
+  );
+  const flows = useResourceList(flowsFilterConfig).resources;
+  const cantDelete = flows.length > 0;
   const patchIntegration = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];

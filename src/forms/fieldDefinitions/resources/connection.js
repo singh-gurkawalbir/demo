@@ -1486,15 +1486,19 @@ export default {
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'MDN verification algorithm',
-    required: true,
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.mdn.verifyMDNSignature',
+        is: [true],
       },
     ],
   },
