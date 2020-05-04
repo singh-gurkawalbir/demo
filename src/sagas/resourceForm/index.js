@@ -567,6 +567,8 @@ export function* skipRetriesPatches(
     'flows',
     flowId
   );
+
+  if (!flow) return null;
   const index =
     flow.pageGenerators &&
     flow.pageGenerators.findIndex(
