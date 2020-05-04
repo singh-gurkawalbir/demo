@@ -5,6 +5,7 @@ import sears from './sears';
 import file from './file';
 import fileCabinet from './fileCabinet';
 import salesforce from './salesforce';
+import ftp from './ftp';
 
 const allFieldDefinitions = {
   ...netsuite,
@@ -14,6 +15,7 @@ const allFieldDefinitions = {
   ...file,
   ...fileCabinet,
   ...salesforce,
+  ...ftp,
   exportData: {
     fieldId: 'exportData',
     type: 'labeltitle',

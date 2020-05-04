@@ -1,6 +1,6 @@
 import actionTypes from '../../../actions/types';
 import { fieldsTouchedForMeta } from '../../../forms/utils';
-import suiteScriptResourceKey from '../../../utils/suiteScript';
+import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 
 export default (state = {}, action) => {
   const {

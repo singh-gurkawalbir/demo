@@ -1,5 +1,5 @@
 import actionTypes from './types';
-import suiteScriptResourceKey from '../utils/suiteScript';
+import { suiteScriptResourceKey } from '../utils/suiteScript';
 
 export const availableResources = [
   'exports',
@@ -1701,6 +1701,49 @@ const suiteScript = {
         patch,
         ssLinkedConnectionId,
         integrationId,
+      }),
+  },
+  sampleData: {
+    request: (
+      ssLinkedConnectionId,
+      resourceId,
+      resourceType,
+      values,
+      stage,
+      runOffline
+    ) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, {
+        ssLinkedConnectionId,
+        resourceId,
+        resourceType,
+        values,
+        stage,
+        runOffline,
+      }),
+    received: (ssLinkedConnectionId, resourceId, previewData) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED, {
+        ssLinkedConnectionId,
+        resourceId,
+        previewData,
+      }),
+    update: (ssLinkedConnectionId, resourceId, processedData, stage) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.UPDATE, {
+        ssLinkedConnectionId,
+        resourceId,
+        processedData,
+        stage,
+      }),
+    receivedError: (ssLinkedConnectionId, resourceId, error, stage) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR, {
+        ssLinkedConnectionId,
+        resourceId,
+        error,
+        stage,
+      }),
+    reset: (ssLinkedConnectionId, resourceId) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
+        ssLinkedConnectionId,
+        resourceId,
       }),
   },
 };

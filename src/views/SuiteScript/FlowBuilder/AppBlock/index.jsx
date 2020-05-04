@@ -123,30 +123,31 @@ const useStyles = makeStyles(theme => ({
 
 export default function AppBlock({
   className,
-  children,
   onBlockClick,
   blockType,
-  connectorType,
-  assistant,
-  name,
-  actions,
-  resourceIndex,
   opacity = 1,
-  flowId,
-  resourceType,
   resource,
-  integrationId,
-  isViewMode,
-  isMonitorLevelAccess,
-  isPageGenerator,
-  schedule,
-  index,
-  ssLinkedConnectionId,
-  ...rest
 }) {
   const classes = useStyles();
 
   console.log(`AppBlock resource`, resource);
+
+  let application;
+
+  if (
+    resource &&
+    resource[blockType] &&
+    resource[blockType].netsuite &&
+    resource[blockType].netsuite.type
+  ) {
+    application = 'netsuite';
+  } else if (resource && resource[blockType]) {
+    application = resource[blockType].type;
+  }
+
+  if (application === 'fileCabinet') {
+    application = 'netsuite';
+  }
 
   return (
     <div className={clsx(classes.root, className)}>
@@ -163,7 +164,7 @@ export default function AppBlock({
             className={classes.appLogo}
             size="large"
             type="export"
-            assistant={resource[blockType].type}
+            assistant={application}
           />
         </div>
         <div className={classes.buttonContainer}>

@@ -1,9 +1,11 @@
 import connection from './resources/connection';
 import integration from './resources/integration';
 import exports from './resources/exports';
+import imports from './resources/imports';
 
 export default {
   'ss-connections': connection,
   'ss-integrations': integration,
   'ss-exports': exports,
+  'ss-imports': imports,
 };

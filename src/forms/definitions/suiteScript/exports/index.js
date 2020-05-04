@@ -4,6 +4,7 @@ import rakuten from './rakuten';
 import sears from './sears';
 import fileCabinet from './fileCabinet';
 import salesforce from './salesforce';
+import ftp from './ftp';
 
 export default {
   netsuite,
@@ -12,4 +13,5 @@ export default {
   sears,
   fileCabinet,
   salesforce,
+  ftp,
 };

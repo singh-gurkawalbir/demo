@@ -14,7 +14,7 @@ import { isNewId } from '../../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../../utils/file';
 import { uploadRawData } from '../../uploadFile';
 import { UI_FIELD_VALUES } from '../../../utils/constants';
-import suiteScriptResourceKey from '../../../utils/suiteScript';
+import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 
 export const SCOPES = {
   META: 'meta',

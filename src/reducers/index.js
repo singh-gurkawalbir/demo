@@ -53,7 +53,7 @@ import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
-import suiteScriptResourceKey from '../utils/suiteScript';
+import { suiteScriptResourceKey } from '../utils/suiteScript';
 
 const emptySet = [];
 const emptyObject = {};

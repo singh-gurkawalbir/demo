@@ -197,6 +197,10 @@ const getResourceFormAssets = ({
       } else {
         meta = meta[ssExport.type];
       }
+    } else if (resourceType === 'imports') {
+      const ssImport = resource.import;
+
+      meta = meta[ssImport.type];
     }
 
     if (meta) {
