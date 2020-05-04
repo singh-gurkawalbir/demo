@@ -17,12 +17,12 @@ export default function fields(state = {}, action) {
     skipFieldTouched,
     defaultValue,
     visible,
-    disable,
+    disabled,
     required,
     isValid,
     errorMessages,
   } = fieldProps;
-  const fieldStateProps = { visible, required, disable, isValid };
+  const fieldStateProps = { visible, required, disabled, isValid };
 
   return produce(state, draft => {
     if (!draft[formKey]) {
