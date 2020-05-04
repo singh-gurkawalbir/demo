@@ -753,9 +753,14 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'connection.snowflake.rdbms.queryType': `Please select this option if you want to import (or insert) multiple records at once into the database.Please use this option to provide INSERT/UPDATE queries to CREATE/UPDATE records in the database.`,
+  'snowflake.import.rdbms.queryType': `BULK INSERT supports binding an array of data, allowing you to insert multiple records. Binding a large array will impact performance and might be rejected if the size of data is too large to be handled by SnowFlake server. When you use BULK INSERT option, you must complete field mapping. Alternatively, you can insert records using option “Use SQL Query” by writing your own SQL statement in the Query Builder editor.`,
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
+  'snowflake.connection.rdbms.host': 'Account name of Snowflake instance.',
+  'snowflake.connection.rdbms.database':
+    'Snowflake database that you want to connect.',
+  'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -1125,6 +1130,8 @@ export default {
   'export.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'export.rdbms.query': 'The query that fetches records to be exported.',
+  'snowflake.export.rdbms.query':
+    'Build the query command to query the database and retrieves a set of rows.',
   'export.rdbms.once.query':
     "Please specify the query to update each record as exported in the database (i.e. integrator.io will make a request back into the database to set this field to true for all the records that were exported so that those same records are not exported again). For example, you can give the query like 'Update Employee set exported=true where id={ {data.id }}'. Here, 'Employee' is the table name, 'exported' is the boolean field to identify whether a record is exported or not, and 'id' is the unique identifier of the record.",
   'export.mongodb.method':
