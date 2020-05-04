@@ -69,7 +69,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'accessLevel',
         name: 'accessLevel',
         type: 'select',
-        label: 'Access Level',
+        label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
         options: [
@@ -96,7 +96,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'integrationsToManage',
         name: 'integrationsToManage',
         type: 'multiselect',
-        label: 'Integrations to Manage',
+        label: 'Integrations to manage',
         defaultValue: integrationsToManage,
         visibleWhen: [
           {
@@ -125,7 +125,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'integrationsToMonitor',
         name: 'integrationsToMonitor',
         type: 'multiselect',
-        label: 'Integrations to Monitor',
+        label: 'Integrations to monitor',
         defaultValue: integrationsToMonitor,
         visibleWhen: [
           {

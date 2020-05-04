@@ -29,6 +29,9 @@ function ResourceReferences(props) {
   const resourceReferences = useSelector(state =>
     selectors.resourceReferences(state)
   );
+  const resourceTypeLabel = MODEL_PLURAL_TO_LABEL[resourceType]
+    ? MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()
+    : '';
 
   useEffect(() => {
     dispatch(actions.resource.requestReferences(resourceType, resourceId));
@@ -41,7 +44,7 @@ function ResourceReferences(props) {
       {!resourceReferences && (
         <Loader open>
           <Typography variant="h4">
-            {`Retrieving ${MODEL_PLURAL_TO_LABEL[resourceType]} References`}
+            {`Retrieving ${resourceTypeLabel} references`}
           </Typography>
           <Spinner color="primary" />
         </Loader>
@@ -49,8 +52,7 @@ function ResourceReferences(props) {
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
           <Typography variant="h4">
-            This {MODEL_PLURAL_TO_LABEL[resourceType]} is not being used
-            anywhere
+            This {resourceTypeLabel} is not being used anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">
             Close
@@ -61,13 +63,13 @@ function ResourceReferences(props) {
         <ModalDialog onClose={onClose} show>
           <div>
             {title
-              ? `Unable to delete ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]} as`
-              : `${MODEL_PLURAL_TO_LABEL[resourceType]} References:`}
+              ? `Unable to delete ${resourceTypeLabel} as`
+              : `${MODEL_PLURAL_TO_LABEL[resourceType]} references:`}
           </div>
           <div>
             <Typography className={classes.message}>
               {title &&
-                `This ${MODEL_PLURAL_TO_LABEL[resourceType]} 
+                `This ${resourceTypeLabel} 
                 is referenced by the resources below. Only resources 
                 that have no references can be deleted.`}
             </Typography>
