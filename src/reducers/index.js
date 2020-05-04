@@ -2333,13 +2333,15 @@ export const resourcePermissions = (
         emptyObject
       );
     }
+
+    return emptyObject;
   } else if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
-  } else {
-    return permissions;
   }
+
+  return permissions || emptyObject;
 };
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
