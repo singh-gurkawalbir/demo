@@ -1,3 +1,5 @@
+export const emptyList = [];
+export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });

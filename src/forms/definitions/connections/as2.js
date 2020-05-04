@@ -24,6 +24,9 @@ export default {
       newValues['/as2/contentBasedFlowRouter'] = undefined;
     }
 
+    newValues['/as2/partnerStationInfo/mdn/mdnSigning'] =
+      newValues['/as2/partnerStationInfo/mdn/mdnSigning'] || 'NONE';
+
     return newValues;
   },
   fieldMap: {
@@ -287,8 +290,8 @@ export default {
           'as2.partnerId',
           'partnerrequireasynchronousmdns',
           'as2.userStationInfo.mdn.mdnURL',
-          'as2.partnerStationInfo.mdn.mdnSigning',
           'as2.partnerStationInfo.mdn.verifyMDNSignature',
+          'as2.partnerStationInfo.mdn.mdnSigning',
           'as2.partnerStationInfo.encryptionType',
           'as2.partnerStationInfo.signing',
           'as2.partnerStationInfo.encoding',

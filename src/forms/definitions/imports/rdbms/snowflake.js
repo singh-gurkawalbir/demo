@@ -62,7 +62,7 @@ export default {
       type: 'radiogroup',
       label: 'Choose type',
       required: true,
-      helpKey: 'connection.snowflake.rdbms.queryType',
+      helpKey: 'snowflake.import.rdbms.queryType',
       defaultValue: r => r && r.rdbms && r.rdbms.queryType[0],
       options: [
         {
