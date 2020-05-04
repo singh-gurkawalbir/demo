@@ -11,13 +11,10 @@ export default function FormView({
   onFormChange,
   onToggleClick,
   disabled,
-  value,
 }) {
   const dispatch = useDispatch();
-  // TODO: this is a missing selector to implement. It would return {status, key, meta}
-  const formState = useSelector(
-    state => ({ status: 'ready', key: 123, meta: {}, len: state.length })
-    // selectors.customSettingsForm(state, resourceId)
+  const formState = useSelector(state =>
+    selectors.customSettingsStatus(state, resourceId)
   );
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
@@ -27,13 +24,32 @@ export default function FormView({
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
     if (!formState) {
-      dispatch(
-        actions.customSettings.initForm(resourceType, resourceId, value)
-      );
+      dispatch(actions.customSettings.formRequest(resourceType, resourceId));
     }
-  }, [dispatch, formState, resourceId, resourceType, value]);
+  }, [dispatch, formState, resourceId, resourceType]);
 
-  if (!formState || formState.status !== 'ready') {
+  useEffect(
+    () => () => {
+      // console.log('cleaned up');
+      dispatch(actions.customSettings.formClear(resourceId));
+    },
+    [dispatch, resourceId]
+  );
+
+  if (formState && formState.error) {
+    return (
+      <Fragment>
+        <Typography>{formState.error.message}</Typography>
+        {isDeveloper && (
+          <Button variant="contained" onClick={onToggleClick}>
+            Toggle form editor
+          </Button>
+        )}
+      </Fragment>
+    );
+  }
+
+  if (!formState || formState.status === 'request') {
     return <Typography>Initializing form...</Typography>;
   }
 

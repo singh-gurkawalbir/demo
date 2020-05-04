@@ -1494,6 +1494,28 @@ const responseMapping = {
   saveComplete: id =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
+const customSettings = {
+  formRequest: (resourceType, resourceId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
+      resourceType,
+      resourceId,
+    }),
+  formReceived: (resourceId, formMeta, scriptId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {
+      resourceId,
+      formMeta,
+      scriptId,
+    }),
+  formError: (resourceId, error) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_ERROR, {
+      resourceId,
+      error,
+    }),
+  formClear: resourceId =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_CLEAR, {
+      resourceId,
+    }),
+};
 // #endregion
 
 export default {
@@ -1538,4 +1560,5 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  customSettings,
 };

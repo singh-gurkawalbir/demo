@@ -4197,3 +4197,7 @@ export function getJobErrorsPreview(state, jobId) {
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
+
+export function customSettingsStatus(state, resourceId) {
+  return fromSession.customSettingsStatus(state && state.session, resourceId);
+}

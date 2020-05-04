@@ -485,8 +485,10 @@ availableResources.forEach(type => {
       );
       const path = `/${type}/${id}/dependencies`;
       const mockResourceReferences = {
+        // eslint-disable-next-line prettier/prettier
         imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
-        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
+        // eslint-disable-next-line prettier/prettier
+        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }]
       };
       const callEffect = saga.next().value;
 

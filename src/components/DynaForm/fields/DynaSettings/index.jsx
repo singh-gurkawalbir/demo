@@ -11,9 +11,11 @@ export default function DynaSettings(props) {
   const { resourceType, resourceId } = resourceContext;
   const history = useHistory();
   const match = useRouteMatch();
-  const settingsForm = useSelector(
-    state => selectors.resource(state, resourceType, resourceId).settingsForm
-  );
+  const settingsForm = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return resource && resource.settingsForm;
+  });
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
   );
