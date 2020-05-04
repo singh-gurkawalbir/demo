@@ -45,8 +45,7 @@ const DynaForm = props => {
   } = props;
   const classes = useStyles();
   // const { layout, fieldMap } = fieldMeta;
-  let { layout } = fieldMeta;
-  const { fieldMap } = fieldMeta;
+  const { layout, fieldMap } = fieldMeta;
   const { formState } = rest;
   const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
   // This is a helpful logger to find re-renders of forms.
@@ -58,17 +57,18 @@ const DynaForm = props => {
     () => (formState && formState.showFormValidationsBeforeTouch) || false,
     [formState]
   );
+  let newLayout;
 
   if (!layout) {
     if (!fieldMap) {
       return null;
     }
+
     // if no layout metadata accompanies the fieldMap,
     // then the order in which the fields are defined in the map are used as the layout.
-
-    layout = { fields: [] };
+    newLayout = { fields: [] };
     Object.keys(fieldMap).forEach(fieldId => {
-      layout.fields.push(fieldId);
+      newLayout.fields.push(fieldId);
     });
 
     // return null;
@@ -80,7 +80,11 @@ const DynaForm = props => {
       showValidationBeforeTouched={showValidationBeforeTouched}
       renderer={renderer}>
       <div className={clsx(classes.fieldContainer, className)}>
-        <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
+        <DynaFormGenerator
+          {...rest}
+          layout={layout || newLayout}
+          fieldMap={fieldMap}
+        />
       </div>
       {/* The children are action buttons for the form */}
       {children && (

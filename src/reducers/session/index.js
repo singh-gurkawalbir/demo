@@ -530,7 +530,10 @@ export function getJobErrorsPreview(state, jobId) {
 }
 
 export function customSettingsStatus(state, resourceId) {
-  return fromCustomSettingsStatus.customSettingsStatus(state, resourceId);
+  return fromCustomSettingsStatus.customSettingsStatus(
+    state && state.customSettings,
+    resourceId
+  );
 }
 
 // #endregion

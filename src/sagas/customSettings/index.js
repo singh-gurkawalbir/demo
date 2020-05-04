@@ -1,5 +1,4 @@
 import produce from 'immer';
-import shortid from 'shortid';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -10,24 +9,14 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
   if (!resource) return; // nothing to do.
-
-  const hasInitHook =
+  const initScriptId =
     resource.settingsForm &&
     resource.settingsForm.init &&
-    resource.settingsForm.init.function;
+    resource.settingsForm.init._scriptId;
   let metadata = resource.settingsForm && resource.settingsForm.form;
 
-  if (hasInitHook) {
+  if (initScriptId) {
     // If so, make an API call to initialize the form,
-    // and dispatch an action to record a pending initialization status.
-    yield put(
-      actions.customSettings.updateForm(
-        resourceId,
-        'pending',
-        shortid.generate(),
-        {}
-      )
-    );
 
     const path = `/${resourceType}/${resourceId}/settingsForm/init`;
 
@@ -37,8 +26,9 @@ export function* initSettingsForm({ resourceType, resourceId }) {
         opts: { method: 'POST' },
       });
     } catch (error) {
-      // REVIEW:
-      return undefined;
+      yield put(actions.customSettings.formError(resourceId, error));
+
+      return;
     }
   }
 
@@ -56,17 +46,12 @@ export function* initSettingsForm({ resourceType, resourceId }) {
     });
   }
 
-  // Dispatch an action to record the initialized form metadata and also a “complete” status.
+  // Dispatch an action to record the initialized form metadata
   yield put(
-    actions.customSettings.updateForm(
-      resourceId,
-      'complete',
-      shortid.generate(),
-      newFieldMeta
-    )
+    actions.customSettings.formReceived(resourceId, newFieldMeta, initScriptId)
   );
 }
 
 export const customSettingsSagas = [
-  takeEvery(actionTypes.CUSTOM_SETTINGS.INIT, initSettingsForm),
+  takeEvery(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, initSettingsForm),
 ];

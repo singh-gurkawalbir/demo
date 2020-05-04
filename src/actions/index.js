@@ -1495,17 +1495,25 @@ const responseMapping = {
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 const customSettings = {
-  initForm: (resourceType, resourceId) =>
-    action(actionTypes.CUSTOM_SETTINGS.INIT, {
+  formRequest: (resourceType, resourceId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
       resourceType,
       resourceId,
     }),
-  updateForm: (resourceId, status, key, formMeta) =>
-    action(actionTypes.CUSTOM_SETTINGS.UPDATE, {
+  formReceived: (resourceId, formMeta, scriptId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {
       resourceId,
-      status,
-      key,
       formMeta,
+      scriptId,
+    }),
+  formError: (resourceId, error) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_ERROR, {
+      resourceId,
+      error,
+    }),
+  formClear: resourceId =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_CLEAR, {
+      resourceId,
     }),
 };
 // #endregion
