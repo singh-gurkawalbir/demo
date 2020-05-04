@@ -36,7 +36,7 @@ const getDefaultMetadata = ({
         id: 'method',
         name: 'method',
         type: 'select',
-        label: 'HTTP Method',
+        label: 'HTTP method',
         defaultValue: lookup.method,
         options: [
           {
@@ -65,7 +65,7 @@ const getDefaultMetadata = ({
         name: 'body',
         type: 'httprequestbody',
         connectionId: r => r && r._connectionId,
-        label: 'Build HTTP Request Body',
+        label: 'Build HTTP request body',
         defaultValue: lookup.body,
         visibleWhenAll: [
           {
@@ -82,7 +82,7 @@ const getDefaultMetadata = ({
         id: 'extract',
         name: 'extract',
         type: 'text',
-        label: 'Resource Identifier Path',
+        label: 'Resource identifier path',
         placeholder: 'Resource Identifier Path',
         defaultValue: lookup.extract,
         visibleWhen: [
@@ -99,9 +99,9 @@ const getDefaultMetadata = ({
         type: 'staticMap',
         label: '',
         keyName: 'export',
-        keyLabel: 'Export Field',
+        keyLabel: 'Export field',
         valueName: 'import',
-        valueLabel: 'Import Field (HTTP)',
+        valueLabel: 'Import field (HTTP)',
         map: lookup && lookup.map,
         visibleWhen: [
           {

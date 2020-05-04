@@ -92,7 +92,7 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.installerFunction === step.installerFunction
+            s => s.name === step.name
           );
 
           if (stepIndex !== -1) {
@@ -116,7 +116,6 @@ export default (state = {}, action) => {
     connectionIds,
     integrationId,
     deregisteredId,
-    iClients,
     connectionId,
   } = action;
 
@@ -257,11 +256,6 @@ export default (state = {}, action) => {
       }
 
       return state;
-    case actionTypes.CONNECTION.UPDATE_ICLIENTS:
-      resourceIndex = state.connections.findIndex(r => r._id === connectionId);
-      newState.connections[resourceIndex].iClients = iClients;
-
-      return newState;
 
     case actionTypes.RESOURCE.CLEAR_COLLECTION:
       return produce(state, draft => {

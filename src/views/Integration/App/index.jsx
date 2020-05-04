@@ -32,6 +32,7 @@ import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import integrationAppUtil from '../../../utils/integrationApps';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -62,7 +63,7 @@ const allTabs = [
   },
   {
     path: 'auditlog',
-    label: 'Audit Log',
+    label: 'Audit log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
@@ -141,6 +142,12 @@ export default function IntegrationApp({ match, history }) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
+  const isCloningSupported =
+    integration &&
+    integrationAppUtil.isCloningSupported(
+      integration._connectorId,
+      integration.name
+    );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -341,7 +348,7 @@ export default function IntegrationApp({ match, history }) {
           />
         }
         infoText={integration.description}>
-        {integration && !supportsMultiStore && (
+        {isCloningSupported && integration && !supportsMultiStore && (
           <IconTextButton
             component={Link}
             to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}

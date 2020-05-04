@@ -750,7 +750,7 @@ export function resourceList(state, options = {}) {
     ![
       'accesstokens',
       'agents',
-      'iclients',
+      'iClients',
       'scripts',
       'stacks',
       'templates',
@@ -1074,6 +1074,10 @@ export function shouldRedirect(state, integrationId) {
 
 export function queuedJobs(state, connectionId) {
   return fromSession.queuedJobs(state && state.session, connectionId);
+}
+
+export function iClients(state, connectionId) {
+  return fromSession.iClients(state && state.session, connectionId);
 }
 
 export function integrationAppAddOnState(state, integrationId) {
@@ -1473,7 +1477,7 @@ export function integrationAppLicense(state, id) {
   );
   const plan = `${
     edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } Plan`;
+  } plan`;
 
   return {
     ...license,

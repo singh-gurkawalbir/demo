@@ -50,6 +50,7 @@ export default {
       id: 'http.auth.type',
       required: true,
       type: 'select',
+      helpKey: 'slack.connection.http.auth.type',
       label: 'Authentication Type',
       options: [
         {
@@ -115,6 +116,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       required: true,
+      helpKey: 'slack.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },

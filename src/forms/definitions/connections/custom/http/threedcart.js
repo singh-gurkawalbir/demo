@@ -27,7 +27,8 @@ export default {
     'http.threedcartSecureUrl': {
       id: 'http.threedcartSecureUrl',
       type: 'text',
-      label: 'Secure URL',
+      label: 'Secure url',
+      helpKey: '3dcart.connection.http.threedcartSecureUrl',
       required: true,
       defaultValue: r =>
         r &&
@@ -41,12 +42,14 @@ export default {
       type: 'text',
       label: 'Private key',
       defaultValue: '',
+      helpKey: '3dcart.connection.http.encrypted.PrivateKey',
       required: true,
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
+      helpKey: '3dcart.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

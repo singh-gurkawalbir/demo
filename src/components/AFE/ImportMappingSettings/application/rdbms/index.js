@@ -4,7 +4,7 @@ import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
   getMetaData: (params = {}) => {
-    const { value, lookup = {}, extractFields, options = {} } = params;
+    const { value, extractFields, generate, options = {} } = params;
     const { isGroupedSampleData = false } = options;
     const fieldMeta = {
       fieldMap: {
@@ -24,17 +24,10 @@ export default {
                 { label: 'Date', value: 'date' },
                 { label: 'Number array', value: 'numberarray' },
                 { label: 'String array', value: 'stringarray' },
+                { label: 'JSON', value: 'json' },
               ],
             },
           ],
-        },
-        useFirstRow: {
-          id: 'useFirstRow',
-          name: 'useFirstRow',
-          type: 'checkbox',
-          defaultValue: value.useFirstRow || false,
-          // helpText not present
-          label: 'Use first row',
         },
         discardIfEmpty: {
           id: 'discardIfEmpty',
@@ -44,7 +37,21 @@ export default {
           helpKey: 'mapping.discardIfEmpty',
           label: 'Discard if empty',
         },
-
+        immutable: {
+          id: 'immutable',
+          name: 'immutable',
+          type: 'checkbox',
+          defaultValue: value.immutable || false,
+          helpKey: 'mapping.immutable',
+          label: 'Immutable (Advanced)',
+        },
+        useFirstRow: {
+          id: 'useFirstRow',
+          name: 'useFirstRow',
+          type: 'checkbox',
+          defaultValue: value.useFirstRow || false,
+          label: 'Use first row',
+        },
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
@@ -58,31 +65,11 @@ export default {
               items: [
                 { label: 'Standard', value: 'standard' },
                 { label: 'Hard-Coded', value: 'hardCoded' },
-                { label: 'Static-Lookup', value: 'lookup' },
+                // { label: 'Lookup', value: 'lookup' },
                 { label: 'Multi-Field', value: 'multifield' },
               ],
             },
           ],
-        },
-
-        'lookup.mapList': {
-          id: 'lookup.mapList',
-          name: '_mapList',
-          type: 'staticMap',
-          label: '',
-          keyName: 'export',
-          keyLabel: 'Export field',
-          valueName: 'import',
-          valueLabel: 'Import field',
-          defaultValue:
-            lookup.map &&
-            Object.keys(lookup.map).map(key => ({
-              export: key,
-              import: lookup.map[key],
-            })),
-          map: lookup.map,
-          // helpText not present
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         functions: {
           id: 'functions',
@@ -92,7 +79,6 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
-        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
@@ -171,36 +157,8 @@ export default {
               ],
             },
           ],
-          helpKey: 'mapping.options',
+          // helpText not present
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
-        },
-        lookupAction: {
-          id: 'lookupAction',
-          name: 'lookupAction',
-          type: 'radiogroup',
-          defaultValue:
-            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
-            'disallowFailure',
-          label: 'Action to take if unique match not found',
-          showOptionsVertically: true,
-          options: [
-            {
-              items: [
-                {
-                  label: 'Fail record',
-                  value: 'disallowFailure',
-                },
-                {
-                  label: 'Use empty string as default value',
-                  value: 'useEmptyString',
-                },
-                { label: 'Use null as default value', value: 'useNull' },
-                { label: 'Use custom default value', value: 'default' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.lookupAction',
-          visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
         },
         default: {
           id: 'default',
@@ -222,7 +180,7 @@ export default {
           name: 'hardcodedDefault',
           type: 'text',
           label: 'Enter default value',
-          placeholder: 'Enter default value',
+          placeholder: 'Enter Default Value',
           required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
@@ -231,32 +189,18 @@ export default {
           helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
-        lookupDefault: {
-          id: 'lookupDefault',
-          name: 'lookupDefault',
-          type: 'text',
-          label: 'Enter default value',
-          required: true,
-          placeholder: 'Enter default value',
-          visibleWhenAll: [
-            { field: 'lookupAction', is: ['default'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-          helpKey: 'mapping.lookupDefault',
-          defaultValue: lookup.default,
-        },
         extractDateFormat: {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
           type: 'autosuggest',
+          label: 'Export date format',
+          placeholder: '',
           options: {
             suggestions: dateFormats,
           },
           labelName: 'name',
           valueName: 'value',
-          label: 'Export date format',
           defaultValue: value.extractDateFormat,
-          placeholder: '',
           helpKey: 'mapping.extractDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
@@ -267,8 +211,8 @@ export default {
           id: 'extractDateTimezone',
           name: 'extractDateTimezone',
           type: 'select',
-          label: 'Export date time zone',
           defaultValue: value.extractDateTimezone,
+          label: 'Export date time zone',
           options: [
             {
               items:
@@ -280,7 +224,7 @@ export default {
                 [],
             },
           ],
-          helpKey: 'mapping.extractDateTimezone',
+          helpkey: 'mapping.extractDateTimezone',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
             { field: 'fieldMappingType', is: ['standard'] },
@@ -290,14 +234,14 @@ export default {
           id: 'generateDateFormat',
           name: 'generateDateFormat',
           type: 'autosuggest',
+          defaultValue: value.generateDateFormat,
+          label: 'Import date format',
+          placeholder: '',
           options: {
             suggestions: dateFormats,
           },
           labelName: 'name',
           valueName: 'value',
-          label: 'Import date format',
-          defaultValue: value.generateDateFormat,
-          placeholder: '',
           helpKey: 'mapping.generateDateFormat',
           visibleWhenAll: [
             { field: 'dataType', is: ['date'] },
@@ -308,8 +252,8 @@ export default {
           id: 'generateDateTimezone',
           name: 'generateDateTimezone',
           type: 'select',
-          label: 'Import date time zone',
           defaultValue: value.generateDateTimezone,
+          label: 'Import date time zone',
           options: [
             {
               items:
@@ -327,53 +271,28 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
-        'conditional.when': {
-          id: 'conditional.when',
-          name: 'conditionalWhen',
-          type: 'select',
-          label: 'Only perform mapping when:',
-          defaultValue: value.conditional && value.conditional.when,
-          options: [
-            {
-              items: [
-                {
-                  label: 'Source record has a value',
-                  value: 'extract_not_empty',
-                },
-              ],
-            },
-          ],
-        },
       },
       layout: {
         fields: [
           'dataType',
-          'useFirstRow',
           'discardIfEmpty',
+          'immutable',
+          'useFirstRow',
           'fieldMappingType',
-          'lookup.mapList',
           'functions',
           'extract',
           'expression',
           'standardAction',
           'hardcodedAction',
-          'lookupAction',
           'default',
           'hardcodedDefault',
-          'lookupDefault',
           'extractDateFormat',
           'extractDateTimezone',
           'generateDateFormat',
           'generateDateTimezone',
         ],
         type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['conditional.when'],
-          },
-        ],
+        containers: [],
       },
       optionsHandler: (fieldId, fields) => {
         if (fieldId === 'expression') {
@@ -407,7 +326,7 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!isGroupedSampleData) {
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
     }

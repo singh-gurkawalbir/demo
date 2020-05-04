@@ -117,7 +117,9 @@ export function auditLogs(state, resourceType, resourceId, filters) {
 
     if (resourceDetails && resourceDetails._connectorId) {
       if (
-        ['integrations', 'flows', 'connections'].includes(resourceTypePlural)
+        ['integrations', 'flows', 'connections', 'imports', 'exports'].includes(
+          resourceTypePlural
+        )
       ) {
         return true;
       }

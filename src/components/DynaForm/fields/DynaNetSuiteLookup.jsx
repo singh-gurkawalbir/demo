@@ -98,7 +98,7 @@ export default function DynaNetSuiteLookup(props) {
     <Fragment>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
-          title="Lookup Criteria"
+          title="Lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={rule}
