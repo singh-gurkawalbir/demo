@@ -4,7 +4,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { some, map, keys, isEmpty } from 'lodash';
+import { some, map, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
 import * as fromResources from './data/resources';
@@ -31,17 +31,19 @@ import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
-  isRealtimeExport,
-  isSimpleImportFlow,
-  isRunnable,
-  showScheduleIcon,
-} from './flowsUtil';
-import {
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
   getUsedActionsMapForResource,
   isPageGeneratorResource,
+  getImportsFromFlow,
+  getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
+  getFlowReferencesForResource,
 } from '../utils/flows';
 import {
-  isValidResourceReference,
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
@@ -803,62 +805,10 @@ export const makeResourceListSelector = () =>
       resourceListModified(userState, resourcesState, options)
   );
 
-export function getIAFlowSettings(state, integrationId, flowId) {
+export function iaFlowSettings(state, integrationId, flowId) {
   const integration = resource(state, 'integrations', integrationId);
-  const allFlows = [];
 
-  if (!integration || !integration._connectorId) {
-    // return empty object for DIY integrations.
-    return emptyObject;
-  }
-
-  if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
-      if (!section.sections) {
-        return;
-      }
-
-      const { flows } = section.sections.reduce((a, b) => ({
-        flows: [...a.flows, ...b.flows],
-      }));
-
-      allFlows.push(...(flows || []));
-    });
-  } else {
-    const { flows } = integration.settings.sections.reduce((a, b) => ({
-      flows: [...a.flows, ...b.flows],
-    }));
-
-    allFlows.push(...(flows || []));
-  }
-
-  return allFlows.find(flow => flow._id === flowId) || emptyObject;
-}
-
-export function isDeltaFlow(state, id) {
-  const flow = resource(state, 'flows', id);
-  const exports = resourceList(state, {
-    type: 'exports',
-  }).resources;
-
-  if (!flow) return false;
-  let isDeltaFlow = false;
-
-  flow &&
-    flow.pageGenerators &&
-    flow.pageGenerators.forEach(pg => {
-      const flowExp = exports && exports.find(e => e._id === pg._exportId);
-
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
-        isDeltaFlow = true;
-      }
-    });
-
-  return isDeltaFlow;
+  return getIAFlowSettings(integration, flowId);
 }
 
 // TODO: The object returned from this selector needs to be overhauled.
@@ -870,90 +820,30 @@ export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
   if (!flow) return emptyObject;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  return produce(flow, draft => {
-    const exportId =
-      draft.pageGenerators && draft.pageGenerators.length
-        ? draft.pageGenerators[0]._exportId
-        : draft._exportId;
-    const pg = resource(state, 'exports', exportId);
-    const allExports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    draft.isRealtime = isRealtimeExport(pg);
-    draft.isSimpleImport = isSimpleImportFlow(pg);
-    draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
-    draft.isDeltaFlow = isDeltaFlow(state, id);
-    const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
-
-    draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!(
-      (flowSettings.settings && flowSettings.settings.length) ||
-      (flowSettings.sections && flowSettings.sections.length)
-    );
-    draft.showSchedule = draft._connectorId
-      ? draft.canSchedule && !!flowSettings.showSchedule
-      : draft.canSchedule;
-    draft.showStartDateDialog = flowSettings.showStartDateDialog;
-    draft.disableSlider = flowSettings.disableSlider;
-    draft.showUtilityMapping = flowSettings.showUtilityMapping;
-  });
+  return getFlowDetails(flow, integration, exports);
 }
 
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  flows.forEach((f, i) => {
-    const _exportId =
-      f.pageGenerators && f.pageGenerators.length
-        ? f.pageGenerators[0]._exportId
-        : f._exportId;
-    const exp = resource(state, 'exports', _exportId);
-    const exports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    if (isRealtimeExport(exp)) {
-      flows[i].isRealtime = true;
-    }
-
-    if (isSimpleImportFlow(exp)) {
-      flows[i].isSimpleImport = true;
-    }
-
-    if (isRunnable(exports, exp, f)) {
-      flows[i].isRunnable = true;
-    }
-
-    if (showScheduleIcon(exports, exp, f)) {
-      flows[i].showScheduleIcon = true;
-    }
-  });
-
-  return { resources: flows };
+  return getFlowListWithMetadata(flows, exports);
 }
 
 /*
  * Gives all other valid flows of same Integration
  */
-export function getNextDataFlows(state, flow) {
+export function nextDataFlowsForFlow(state, flow) {
   const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
-  const { _integrationId } = flow;
-  // Incase of standalone Integrations, _integrationId is undefined for flow resources
-  const flowIntegrationId =
-    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
 
-  // Returns all valid flows under this integration
-  return flows.filter(
-    f =>
-      f._integrationId === flowIntegrationId &&
-      f._id !== flow._id &&
-      !f.isRealtime &&
-      !f.isSimpleImport &&
-      !f.disabled
-  );
+  return getNextDataFlows(flows, flow);
 }
 
 export function isConnectionOffline(state, id) {
@@ -1090,61 +980,9 @@ export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function getAllExportIdsUsedInTheFlow(state, flow) {
-  const exportIds = [];
-
-  if (!flow) {
-    return exportIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-    });
-  }
-
-  return exportIds;
-}
-
-export function getAllImportIdsUsedInTheFlow(state, flow) {
-  const importIds = [];
-
-  if (!flow) {
-    return importIds;
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  return importIds;
-}
-
 export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
-  const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
-  const importIds = getAllImportIdsUsedInTheFlow(state, flow);
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
   const connectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;
@@ -1325,8 +1163,8 @@ export function integrationAppResourceList(
     const flow = resource(state, 'flows', f) || {};
 
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
-    exports.push(...getAllExportIdsUsedInTheFlow(state, flow));
-    imports.push(...getAllImportIdsUsedInTheFlow(state, flow));
+    exports.push(...getExportIdsFromFlow(state, flow));
+    imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {
@@ -3518,58 +3356,21 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   return connectionIdsToRegister;
 }
 
-const emptyList = [];
-
 // returns a list of import resources for a given flow,
 // identified by flowId.
 export function flowImports(state, id) {
-  const importIds = [];
   const flow = resource(state, 'flows', id);
-
-  if (!flow) return emptyList;
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  } else if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(p => {
-      if (p._importId) {
-        importIds.push(p._importId);
-      }
-    });
-  }
-
-  // wherever possible, to prevent re-renders in components using this
-  // selector, return a static pointer.
-  if (importIds.length === 0) return emptyList;
-
   const imports = resourceList(state, { type: 'imports' }).resources;
 
-  // possibly imports are not loaded in the state yet?
-  if (!imports || imports.length === 0) return emptyList;
-
-  return imports.filter(i => importIds.indexOf(i._id) > -1);
+  return getImportsFromFlow(flow, imports);
 }
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
 export function getAllPageProcessorImports(state, pageProcessors) {
-  let ppImports = [];
-  const pageProcessorIds = [];
   const imports = resourceList(state, { type: 'imports' }).resources;
 
-  if (!pageProcessors) {
-    return imports;
-  }
-
-  pageProcessors.forEach(pageProcessor => {
-    if (pageProcessor && pageProcessor._importId) {
-      pageProcessorIds.push(pageProcessor._importId);
-    }
-  });
-  ppImports =
-    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
-
-  return ppImports;
+  return getPageProcessorImportsFromFlow(imports, pageProcessors);
 }
 
 export function getImportSampleData(state, resourceId, options = {}) {
@@ -3659,54 +3460,22 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
-export function getFlowReferencesForResource(state, resourceId, resourceType) {
+export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
-  const existingFlows = keys(flowsState);
-  const flowRefs = [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const imports = resourceList(state, {
+    type: 'imports',
+  }).resources;
 
-  existingFlows.forEach(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = flowsState[flowId];
-    let [pgIndex, ppIndex] = [0, 0];
-
-    while (pgIndex < pageGenerators.length) {
-      const pg = pageGenerators[pgIndex];
-      const pgResource = resource(state, 'exports', pg._exportId);
-
-      if (
-        isValidResourceReference(
-          pgResource,
-          pg._exportId,
-          resourceType,
-          resourceId
-        )
-      ) {
-        flowRefs.push({ flowId, resourceId: pg._exportId });
-
-        return;
-      }
-
-      pgIndex += 1;
-    }
-
-    while (ppIndex < pageProcessors.length) {
-      const pp = pageProcessors[ppIndex];
-      const ppId = pp._exportId || pp._importId;
-      const ppResourceType = pp._exportId ? 'exports' : 'imports';
-      const ppResource = resource(state, ppResourceType, ppId);
-
-      if (
-        isValidResourceReference(ppResource, ppId, resourceType, resourceId)
-      ) {
-        flowRefs.push({ flowId, resourceId: ppId });
-
-        return;
-      }
-
-      ppIndex += 1;
-    }
-  });
-
-  return flowRefs;
+  return getFlowReferencesForResource(
+    flowsState,
+    exports,
+    imports,
+    resourceType,
+    resourceId
+  );
 }
 
 /*
