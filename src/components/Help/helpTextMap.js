@@ -760,7 +760,7 @@ export default {
   'snowflake.connection.rdbms.database':
     'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
-  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -2037,6 +2037,10 @@ export default {
     'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
-
+  'users.user': `All users who have access to your account and integrations, or who have been invited to join your account.`,
+  'users.accesslevel': `The role of each user per integration. This is Manager if the user has full managing access, or Monitor if the user has full monitoring access. However, if a user has Manager for one integration, but Monitor for another, access level will display as Tile Level. Each role has its own permissions. Find out more about roles and permissions.`,
+  'users.status': `Tells you who has accepted the invitation to join your account and who is still pending.`,
+  'users.offOn': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their Accounts drop-down.`,
+  'users.actions': `These are actions the account owner can perform, like Make account owner, which will make that user the owner of the selected account. Change permissions enables the account owner to manage each user’s access level. Delete will delete the user from the account and they will no longer have access.`,
   // #region UI help text
 };
