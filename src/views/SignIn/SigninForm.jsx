@@ -271,6 +271,9 @@ class SignIn extends Component {
             )}
             {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
               <form onSubmit={this.handleReSignInWithGoogle}>
+                <div className={classes.or}>
+                  <Typography variant="body1">or</Typography>
+                </div>
                 <Button
                   type="submit"
                   variant="contained"

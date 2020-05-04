@@ -20,43 +20,10 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
-  refreshButton: {
-    marginLeft: 5,
-    marginRight: 0,
-  },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-    },
+  refreshGenericActionBtn: {
+    marginLeft: theme.spacing(1),
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing(1),
   },
   selectElement: {
     width: '80%',
@@ -173,20 +140,20 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={handleRefreshResource}
-            className={classes.refreshButton}
+            className={classes.refreshGenericActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>
         )}
         {fieldData && isLoading && (
-          <span className={classes.spinner}>
-            <Spinner size={48} color="primary" />
+          <span className={classes.refreshGenericActionBtn}>
+            <Spinner size={24} color="primary" />
           </span>
         )}
         {urlToOpen && (
           <ActionButton
             onClick={handleOpenResource}
-            className={classes.refreshButton}
+            className={classes.refreshGenericActionBtn}
             data-test="openResource">
             <ExitIcon />
           </ActionButton>

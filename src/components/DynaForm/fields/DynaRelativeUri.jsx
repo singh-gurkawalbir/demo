@@ -8,6 +8,8 @@ import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   fieldWrapper: {
@@ -15,12 +17,13 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
     width: '100%',
   },
-  exitButton: {
+  exitButtonRelativeUrl: {
     float: 'right',
     marginLeft: theme.spacing(1),
-    marginTop: 30,
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing(1),
   },
-  wrapper: {
+  relativeUriWrapper: {
     flexDirection: `row !important`,
   },
   textField: {
@@ -124,7 +127,7 @@ export default function DynaRelativeUri(props) {
   }
 
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.relativeUriWrapper}>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
@@ -135,29 +138,38 @@ export default function DynaRelativeUri(props) {
           disabled={disabled}
         />
       )}
+      <div className={classes.textField}>
+        <div className={classes.labelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
 
-      <FormControl className={classes.fieldWrapper}>
-        <FormLabel htmlFor={id} required={required}>
-          {label}
-        </FormLabel>
-        <TextField
-          key={id}
-          name={name}
-          className={classes.textField}
-          placeholder={placeholder}
-          helperText={isValid ? description : errorMessages}
-          disabled={disabled}
-          required={required}
-          error={!isValid}
-          value={value}
-          variant="filled"
-          onChange={handleFieldChange}
-        />
-      </FormControl>
+        <FormControl className={classes.fieldWrapper}>
+          <TextField
+            key={id}
+            name={name}
+            className={classes.textField}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            error={!isValid}
+            value={value}
+            variant="filled"
+            onChange={handleFieldChange}
+          />
+          <ErroredMessageComponent
+            isValid={isValid}
+            errorMessages={errorMessages}
+            description={description}
+          />
+        </FormControl>
+      </div>
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.exitButton}>
+        className={classes.exitButtonRelativeUrl}>
         <ExpandWindowIcon />
       </ActionButton>
     </div>

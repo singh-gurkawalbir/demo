@@ -12,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
+    minHeight: 38,
     height: 'auto',
     '& >.MuiSelect-selectMenu': {
       height: 'auto',
@@ -35,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     '&:before': {
       display: 'none',
     },
+  },
+  multislectWrapper: {
+    width: '100%',
   },
 }));
 
@@ -126,12 +130,17 @@ export default function DynaMultiSelect(props) {
         </FormLabel>
         <FieldHelp {...props} />
       </div>
-      <FormControl key={id} disabled={disabled} required={required}>
+      <FormControl
+        key={id}
+        disabled={disabled}
+        required={required}
+        className={classes.multislectWrapper}>
         <CeligoSelect
           multiple
           data-test={id}
           disabled={disabled}
           value={processedValue}
+          placeholder={placeholder}
           displayEmpty={displayEmpty}
           className={classes.wrapper}
           onChange={evt => {
