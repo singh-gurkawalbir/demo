@@ -46,13 +46,21 @@ const setMappingData = (
   recordMappings,
   mappings,
   deleted = [],
-  isParentDeleted
+  isParentDeleted,
+  deleteChildlessParent
 ) => {
   recordMappings.forEach(mapping => {
     const key = `${flowId}-${mapping.id}`;
     const mappingDeleted = deleted.includes(mapping.id) || isParentDeleted;
+    let allChildrenDeleted = false;
 
-    if (mappingDeleted) {
+    if (mapping.children && mapping.children.length) {
+      allChildrenDeleted = mapping.children.every(child =>
+        deleted.includes(child.id)
+      );
+    }
+
+    if (mappingDeleted && deleteChildlessParent && allChildrenDeleted) {
       // eslint-disable-next-line no-param-reassign
       mapping.delete = true;
     }
@@ -89,11 +97,15 @@ const setVariationMappingData = (
   flowId,
   recordMappings,
   mappings,
-  relationshipData = []
+  relationshipData = [],
+  options = { depth: 0 }
 ) => {
   recordMappings.forEach(mapping => {
     const relation =
-      relationshipData && relationshipData.find(rel => rel.id === mapping.id);
+      relationshipData &&
+      relationshipData.find(
+        rel => rel.id === mapping.id && rel.depth === (options.depth || 0)
+      );
 
     if (!relation) return;
 
@@ -203,7 +215,8 @@ const setVariationMappingData = (
         flowId,
         mapping.children,
         mappings,
-        relationshipData
+        relationshipData,
+        { ...options, depth: options.depth ? options.depth + 1 : 1 }
       );
     }
   });
@@ -421,7 +434,8 @@ export default {
     sessionMappedData = {},
     mappings = {},
     deleted,
-    relationshipData
+    relationshipData,
+    deleteChildlessParent
   ) => {
     const { basicMappings = {}, variationMappings = {} } = sessionMappedData;
 
@@ -429,7 +443,8 @@ export default {
       flowId,
       basicMappings.recordMappings || [],
       mappings,
-      deleted
+      deleted,
+      deleteChildlessParent
     );
     setVariationMappingData(
       flowId,
