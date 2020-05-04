@@ -125,7 +125,7 @@ class UserList extends Component {
             <TableHead>
               <TableRow>
                 <TableCell>User</TableCell>
-                <TableCell>Access Level</TableCell>
+                <TableCell>Access level</TableCell>
                 <TableCell>Status</TableCell>
                 {isAccountOwner && (
                   <Fragment>

@@ -411,7 +411,7 @@ export const getMetadata = ({
         id: 'timeZone',
         name: 'timeZone',
         type: 'select',
-        label: 'Time Zone',
+        label: 'Time zone',
         helpKey: 'flow.timezone',
         defaultValue:
           (flow && flow.timeZone) ||
@@ -440,8 +440,8 @@ export const getMetadata = ({
         options: [
           {
             items: [
-              { label: 'Use Preset', value: PRESET_TAB },
-              { label: 'Use Cron Expression', value: ADVANCED_TAB },
+              { label: 'Use preset', value: PRESET_TAB },
+              { label: 'Use cron expression', value: ADVANCED_TAB },
             ],
           },
         ],
@@ -456,16 +456,16 @@ export const getMetadata = ({
         options: [
           {
             items: [
-              { label: 'Once Weekly', value: 'once_weekly' },
-              { label: 'Once Daily', value: 'once_daily' },
-              { label: 'Twice Daily', value: 'twice_daily' },
-              { label: 'Every Eight Hours', value: 'every_eight_hours' },
-              { label: 'Every Six Hours', value: 'every_six_hours' },
-              { label: 'Every Four Hours', value: 'every_four_hours' },
-              { label: 'Every Two Hours', value: 'every_two_hours' },
-              { label: 'Every Hour', value: 'every_hour' },
-              { label: 'Every 30 Minutes', value: 'every_half_hour' },
-              { label: 'Every 15 Minutes', value: 'every_quarter' },
+              { label: 'Once weekly', value: 'once_weekly' },
+              { label: 'Once daily', value: 'once_daily' },
+              { label: 'Twice daily', value: 'twice_daily' },
+              { label: 'Every eight hours', value: 'every_eight_hours' },
+              { label: 'Every six hours', value: 'every_six_hours' },
+              { label: 'Every four hours', value: 'every_four_hours' },
+              { label: 'Every two hours', value: 'every_two_hours' },
+              { label: 'Every hour', value: 'every_hour' },
+              { label: 'Every 30 minutes', value: 'every_half_hour' },
+              { label: 'Every 15 minutes', value: 'every_quarter' },
             ],
           },
         ],
@@ -480,7 +480,7 @@ export const getMetadata = ({
         id: 'startTime',
         name: 'startTime',
         type: 'select',
-        label: 'Start Time',
+        label: 'Start time',
         helpKey: 'flow.startTime',
         defaultValue: resource && resource.startTime,
         options: [
@@ -505,7 +505,7 @@ export const getMetadata = ({
         id: 'endTime',
         name: 'endTime',
         type: 'select',
-        label: 'End Time',
+        label: 'End time',
         helpKey: 'flow.endTime',
         defaultValue: resource && resource.endTime,
         omitWhenHidden: true,
@@ -531,7 +531,7 @@ export const getMetadata = ({
         name: 'daysToRunOn',
         type: 'multiselect',
         helpKey: 'flow.daysToRunOn',
-        label: 'Days To Run On',
+        label: 'Days to run nn',
         defaultValue: resource.daysToRunOn || [
           '1',
           '2',
@@ -570,7 +570,7 @@ export const getMetadata = ({
         name: 'dayToRunOn',
         helpKey: 'flow.daysToRunOn',
         type: 'select',
-        label: 'Day To Run On',
+        label: 'Day to run on',
         defaultValue: resource.dayToRunOn,
         options: [
           {

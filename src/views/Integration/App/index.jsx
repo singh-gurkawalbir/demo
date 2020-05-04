@@ -63,7 +63,7 @@ const allTabs = [
   },
   {
     path: 'auditlog',
-    label: 'Audit Log',
+    label: 'Audit log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },

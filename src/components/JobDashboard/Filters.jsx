@@ -172,10 +172,10 @@ function Filters({
         onChange={e => patchFilter('status', e.target.value)}
         value={status}>
         {[
-          ['all', 'Select Status'],
-          ['error', 'Contains Error'],
-          ['resolved', 'Contains Resolved'],
-          ['running', 'In Progress'],
+          ['all', 'Select status'],
+          ['error', 'Contains error'],
+          ['resolved', 'Contains resolved'],
+          ['running', 'In progress'],
           ['retrying', 'Retrying'],
           ['queued', 'Queued'],
           ['canceled', 'Canceled'],

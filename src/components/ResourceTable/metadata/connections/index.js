@@ -49,7 +49,7 @@ export default {
         orderBy: 'lastModified',
       },
       {
-        heading: 'Queue Size',
+        heading: 'Queue size',
         // align: 'right',
         value: r => r.queueSize || 0,
       },
