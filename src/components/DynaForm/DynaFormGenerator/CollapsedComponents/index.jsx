@@ -96,11 +96,8 @@ const ExpansionPannelExpandOnInValidState = props => {
   }, [expandOnce, isPanelErrored]);
 
   const toggleExpansionPanel = useCallback(() => {
-    console.log('clicked expansion Panell');
     setShouldExpand(expand => !expand);
   }, []);
-
-  console.log('shouldExpand ', shouldExpand);
 
   if (!isAnyExpansionPanelFieldVisible) return null;
 

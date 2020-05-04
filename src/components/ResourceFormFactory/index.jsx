@@ -6,6 +6,17 @@ import formFactory from '../../forms/formFactory';
 import useResourceData from '../../hooks/selectors/useStaggedResource';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+
+const Form = props => {
+  const { fieldMeta } = props;
+  const formKey = useFormInitWithPermissions({
+    ...props,
+    fieldsMeta: fieldMeta,
+  });
+
+  return <DynaForm {...props} formKey={formKey} />;
+};
 
 export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const { fieldMeta } = props;
@@ -37,7 +48,7 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
 
   console.log('rerender FormStateManager');
 
-  return <DynaForm {...props} {...formState} key={count} />;
+  return <Form {...props} {...formState} key={count} />;
 };
 
 export const ResourceFormFactory = props => {

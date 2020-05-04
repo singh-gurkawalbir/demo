@@ -37,6 +37,17 @@ function form(state = {}, action) {
         getNextStateFromFields(draft[formKey]);
 
         return;
+
+      case actionTypes.FORM.UPDATE:
+        if (!formKey) break;
+        draft[
+          formKey
+        ].showValidationBeforeTouched = !!showValidationBeforeTouched;
+        draft[formKey].disabled = !!disabled;
+
+        getNextStateFromFields(draft[formKey]);
+
+        break;
       case actionTypes.FORM.CLEAR:
         delete draft[formKey];
         break;

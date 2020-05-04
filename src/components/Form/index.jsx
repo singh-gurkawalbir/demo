@@ -37,7 +37,11 @@ const normalizeAllPropsToFormApi = props => {
 
 export default function useForm({ formKey, ...formSpecificProps }) {
   const [formKeyUsed, setFormKeyUsed] = useState();
-  const { disabled, showValidationBeforeTouched } = formSpecificProps;
+  const {
+    disabled,
+    showValidationBeforeTouched,
+    fieldsMeta,
+  } = formSpecificProps;
   const dispatch = useDispatch();
   // form specific props could be
 
@@ -60,7 +64,7 @@ export default function useForm({ formKey, ...formSpecificProps }) {
       setFormKeyUsed(formKeyUsedInUseEff);
     }
 
-    if (formKeyUsedInUseEff) {
+    if (formKeyUsedInUseEff && fieldsMeta) {
       dispatch(
         actions.form.formInit(formKeyUsedInUseEff, {
           ...normalizeAllPropsToFormApi(formSpecificProps),
@@ -70,7 +74,19 @@ export default function useForm({ formKey, ...formSpecificProps }) {
 
     return () => dispatch(actions.form.formClear(formKeyUsedInUseEff));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, formKey, disabled, showValidationBeforeTouched]);
+  }, [dispatch, fieldsMeta, formKey]);
+
+  useEffect(() => {
+    if (formKeyUsed) {
+      dispatch(
+        actions.form.formUpdate(formKeyUsed, {
+          disabled,
+          showValidationBeforeTouched,
+        })
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, disabled, showValidationBeforeTouched]);
 
   return formKeyUsed;
 }

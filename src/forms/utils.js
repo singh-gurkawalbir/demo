@@ -136,27 +136,18 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
-export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
-  const { layout, fieldMap } = meta;
-  const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
+export const fieldIDsExceptClockedFields = (meta, resourceType) => {
+  const { fieldMap } = meta;
+
+  return Object.keys(fieldMap).reduce((acc, curr) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
     )
-      acc[curr] = {
-        ...fieldMap[curr],
-        defaultDisabled: true,
-      };
-    else {
-      acc[curr] = {
-        ...fieldMap[curr],
-      };
-    }
+      acc.push(fieldMap[curr].id);
 
     return acc;
-  }, {});
-
-  return { layout, fieldMap: updatedFieldMap };
+  }, []);
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {

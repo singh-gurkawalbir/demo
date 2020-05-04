@@ -30,6 +30,8 @@ const form = {
   formInit: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
   formClear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
+  formUpdate: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
   field: {
     registerField: formKey => fieldProps =>
       action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
