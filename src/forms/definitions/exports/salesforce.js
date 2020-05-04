@@ -251,6 +251,7 @@ export default {
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      defaultDisabled: true,
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {

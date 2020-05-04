@@ -1722,11 +1722,11 @@ export default {
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
   'import.restImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.netsuiteImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.etailImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.mapping.lists.fields.useFirstRow': '',
   'import.mapping.lists.fields.useAsAnInitializeValue':
     'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) during create/transform of a record. Mark this check box if you would like to add this field during record initialization. \nExample: If you are trying to create a non inventory item and you want to specify the subtype as "Sale" or "Purchase" or "ReSale", this mapping has to be set during the initialization itself. In such cases, we mark the subtype mapping as an initialization parameter.',
@@ -1953,7 +1953,7 @@ export default {
   'fb.pp.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
   'fb.pp.exports.responseMapping':
-    'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
+    'Configure ‘results mapping‘ to specify where data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
@@ -1969,7 +1969,7 @@ export default {
   'fb.pp.imports.hooks':
     'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
   'fb.pp.imports.responseMapping':
-    'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
+    'Configure ‘response mapping‘ to specify where fields returned by the destination application should be merged back into the source record.',
   'fb.pp.imports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.imports.proceedOnFailure':
@@ -1981,7 +1981,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping#field-mapping-types+++++++++++++" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
@@ -1996,6 +1996,7 @@ export default {
     'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
   'mapping.lookupDefault':
     'This holds the default value to be set for the extract field.',
+  'mapping.options': `Hard-coding a field mapping will ignore the exported value and replace it with one of the following options:<br /> <ul><li><b>Use empty string as hard-coded value</b>: Populates an empty string ('') into this field</li><li><b>Use null as hard-coded value</b>: Populates a null data type into this field</li><li><b>Use custom value</b>: Populates the string that you enter below for <b>Enter default value</b> into the mapped field</li></ul>`,
   'mapping.extractDateFormat':
     'If the export field is of date, then this field represents the date format of the field being exported.',
   'mapping.extractDateTimezone':
@@ -2010,6 +2011,8 @@ export default {
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
   'mapping.lookup.mode':
     'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
+  'mapping.conditional.when':
+    'Perform this mapping when <br> <b>Record is created </b> </br> Perform the field mapping only when the record is being created. Otherwise, ignore this mapping.</br> <b>Record is updated</b> </br>Perform the field mapping only when the record is being updated. Otherwise, ignore this mapping.</br><b>Source is not empty</b> </br>Perform the field mapping when the extract resolves to a truthy value. Otherwise, ignore this mapping.</br> <b>Lookup is not empty</b> </br>Perform the field mapping when the lookup defined finds a record and it the return field’s value is not empty. Otherwise, ignore this mapping.</br><b>Lookup is empty</b> </br>Perform the field mapping when the lookup defined does not find a record or the found records field value is empty. Otherwise, ignore this mapping.</br><b>Field is not set</b> </br>Perform this field mapping if the record to be updated in NS does not have a value set. Otherwise, ignore the mapping.</br>By default, if none of the condition is specified the mapping is always considered.',
   'mapping.relativeURI':
     'This json path used to set the lookup in the URI itself. Ex: search.json?query=type:organization name:{customer.name}',
   'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
@@ -2033,8 +2036,7 @@ export default {
     'Important: only records where the filter expression evaluates to true will get processed. All other records will simply get passed along to subsequent applications in your flow. Defining an input filter allows you to skip processing for specific records for specific applications. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day, you could use an input filter to instead only post messages for orders that are above a certain amount.',
   'lookup.output.filter':
     'Important: only records where the filter expression evaluates to true will get passed along. All other records will get discarded. Defining an output filter allows you to discard records when you are working with older applications that do not natively support the ability to define search criteria. If an application does support the ability to define search criteria then you should use that native functionality (vs defining out filters here) to avoid pulling unnecessary data into integrator.io.',
-  'import.response.mapping':
-    'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'import.response.mapping': `Response mapping enables you to specify where fields returned by the destination application should be merged back into the source record. If you don't see a specific import response field in the drop-down below, you can still map it by manually typing in the field name, then the mapping will work as long as the field is returned by the destination application when the flow is running. You can merge import response fields into any existing field in the source record, or you can specify a new field in which case integrator.io will create the field on-the-fly. You can also merge errors back into the source record if you want to manually process errors downstream in your flow.Learn <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping" target="_blank">more about mapping.</a>`,
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
   'users.user': `All users who have access to your account and integrations, or who have been invited to join your account.`,
@@ -2042,5 +2044,24 @@ export default {
   'users.status': `Tells you who has accepted the invitation to join your account and who is still pending.`,
   'users.offOn': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their Accounts drop-down.`,
   'users.actions': `These are actions the account owner can perform, like Make account owner, which will make that user the owner of the selected account. Change permissions enables the account owner to manage each user’s access level. Delete will delete the user from the account and they will no longer have access.`,
+  'myaccount.name':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.email':
+    'Email is a very important field. Password reset links, product notifications, subscription notifications, etc. are all sent via email.It is highly recommended that you take the time to secure your email, especially if you are integrating sensitive information with your integrator.io account.',
+  'myaccount.password':
+    'There are minimum password requirements that all integrator.io users must satisfy, but we highly recommend using a password management app to auto generate a truly random, complex password that no one can remember or guess, and then rely solely on your password management app to sign you in to integrator.io.',
+  'myaccount.company':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.role':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.phone':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.timezone':
+    'Use this field to configure the time zone that you want dates and times to be displayed in your integrator.io account. This field is also used by the integrator.io scheduler to run your integration flows at the correct time of day based on your time zone.',
+  'myaccount.dateFormat':
+    'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
+  'myaccount.timeFormat':
+    'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
+  'myaccount.developer': `Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.`,
   // #region UI help text
 };
