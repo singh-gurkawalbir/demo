@@ -65,6 +65,7 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 // TODO (Azhar) : to work on styling
+// helpcontent is showing as bold text
 
 @withStyles({
   root: {
@@ -129,14 +130,15 @@ class UserList extends Component {
                 <TableCell>
                   User
                   <Help
-                    title="User"
-                    helpKey="users.user"
+                    helpKey="User"
+                    helpText="users.user"
                     caption="users.user"
                   />
                 </TableCell>
                 <TableCell>
                   Access Level
                   <Help
+                    helpText="ffdfawerw3434t54  ewrr3t rt"
                     title="Access Level"
                     helpKey="users.accesslevel"
                     caption="users.accesslevel"
