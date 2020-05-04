@@ -9,7 +9,6 @@ import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
 import ModalDialog from '../ModalDialog';
 import metadata from './metadata';
-import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import Loader from '../Loader';
 
 const styles = theme => ({
