@@ -294,7 +294,7 @@ export default {
               ],
             },
           ],
-          // helpText not present
+          helpKey: 'mapping.options',
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
