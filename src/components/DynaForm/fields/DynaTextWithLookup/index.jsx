@@ -38,8 +38,6 @@ const DynaTextWithLookup = props => {
     required,
     value,
     onFieldChange,
-    connectionId,
-    importType,
     flowId,
     formContext,
     showLookup = true,
@@ -57,14 +55,6 @@ const DynaTextWithLookup = props => {
     // recordType,
     // hideExtractFields,
   } = props;
-
-  console.log('============');
-  console.log('showLookup', showLookup);
-  console.log('showExtract', showExtract);
-  console.log('id', id);
-  console.log('============');
-
-  console.log(props);
   const ref = useRef(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [lookupShown, setLookupShown] = useState(false);

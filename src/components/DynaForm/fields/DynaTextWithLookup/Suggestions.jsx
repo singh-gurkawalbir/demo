@@ -97,9 +97,6 @@ export default function Suggestions(props) {
     );
   }, [sampleData]);
   const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
-
-  console.log('lookups', lookups);
-  console.log('extracts', extracts);
   const handleExtractClick = useCallback(
     (event = {}) => {
       const newValue = insertSuggestionInValue({
@@ -141,8 +138,6 @@ export default function Suggestions(props) {
         ),
     [extracts, matchingText]
   );
-
-  console.log('filteredExtracts', filteredExtracts);
   const showSuggestion = !!value
     .substring(0, cursorPosition)
     .match(prefixRegexp);
