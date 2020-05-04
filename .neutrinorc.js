@@ -76,7 +76,7 @@ module.exports = {
       '@neutrinojs/jest',
       {
         bail: false,
-        testRegex: 'src/utils/flows/test.js',
+        testRegex: undefined,
         collectCoverage: true,
         collectCoverageFrom: [
           // If we consistently follow the current abstractions,
