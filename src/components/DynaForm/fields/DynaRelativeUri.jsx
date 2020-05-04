@@ -134,7 +134,12 @@ const DynaRelativeUri = props => {
         <ExitIcon />
       </ActionButton>
 
-      <DynaTextWithLookup id={id} value={inputValue} {...props} />
+      <DynaTextWithLookup
+        key={`text-${id}`}
+        id={id}
+        value={inputValue}
+        {...props}
+      />
     </Fragment>
   );
 };

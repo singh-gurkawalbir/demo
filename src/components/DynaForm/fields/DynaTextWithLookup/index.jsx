@@ -93,7 +93,7 @@ const DynaTextWithLookup = props => {
     <div ref={ref}>
       <TextField
         autoComplete="off"
-        id={id}
+        id={`text-${id}`}
         key={id}
         data-test={id}
         name={name}
@@ -112,7 +112,7 @@ const DynaTextWithLookup = props => {
       />
       {(showExtract || showLookup) && (
         <Suggestions
-          id={id}
+          id={`suggestions-${id}`}
           onFieldChange={onFieldChange}
           resourceId={resourceId}
           flowId={flowId}
