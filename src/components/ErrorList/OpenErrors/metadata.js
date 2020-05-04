@@ -1,4 +1,7 @@
 import Retry from '../actions/Retry';
+import Resolve from '../actions/Resolve';
+import ViewErrorDetails from '../actions/ViewErrorDetails';
+import EditRetryData from '../actions/EditRetryData';
 // import SelectError from '../components/SelectError';
 // import SelectAllErrors from '../components/SelectAllErrors';
 
@@ -27,5 +30,14 @@ export default {
       value: r => r.occurredAt,
     },
   ],
-  rowActions: () => [Retry],
+  rowActions: ({ errorId }) => {
+    const actions = [
+      ...(errorId ? [EditRetryData] : []),
+      Resolve,
+      ...(errorId ? [Retry] : []),
+      ViewErrorDetails,
+    ];
+
+    return actions;
+  },
 };

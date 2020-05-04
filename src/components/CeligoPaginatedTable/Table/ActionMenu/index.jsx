@@ -6,8 +6,8 @@ import EllipsisHorizontalIcon from '../../../icons/EllipsisHorizontalIcon';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     '& > .MuiMenu-paper': {
-      marginLeft: theme.spacing(-2),
-      width: '100px',
+      marginLeft: theme.spacing(-4),
+      maxWidth: '200px',
     },
   },
 }));

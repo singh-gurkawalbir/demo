@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
+import { generateNewId } from '../../../utils/resource';
 import { resourceErrors, filter } from '../../../reducers';
 import CeligoPaginatedTable from '../../CeligoPaginatedTable';
 import metadata from './metadata';
@@ -28,6 +29,7 @@ export default function OpenErrors({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [selectedErrorIds, setSelectedErrorIds] = useState([]);
+  const [tableKey, setTableKey] = useState(generateNewId());
   const defaultFilter = useMemo(
     () => ({
       searchBy: ['message', 'source', 'code', 'occurredAt'],
@@ -74,22 +76,39 @@ export default function OpenErrors({ flowId, resourceId }) {
 
     setSelectedErrorIds(selectedIds);
   }, []);
-  const paginationOptions = {
-    rowsPerPage: 10,
-    rowsPerPageOptions: [10, 25, 50, 100],
-    loadMoreHandler: fetchMoreData,
-    hasMore: !!nextPageURL,
-    loading: status === 'requested',
-  };
+  const paginationOptions = useMemo(
+    () => ({
+      rowsPerPage: 10,
+      rowsPerPageOptions: [10, 25, 50, 100],
+      loadMoreHandler: fetchMoreData,
+      hasMore: !!nextPageURL,
+      loading: status === 'requested',
+    }),
+    [fetchMoreData, nextPageURL, status]
+  );
+  const retryErrors = useCallback(() => {
+    setTableKey(generateNewId());
+    setSelectedErrorIds([]);
+  }, []);
+  const resolveErrors = useCallback(() => {
+    setTableKey(generateNewId());
+    setSelectedErrorIds([]);
+  });
 
   return (
     <Fragment>
       {openErrors.length ? (
         <div className={classes.actionButtonsContainer}>
-          <Button variant="outlined" disabled={!selectedErrorIds.length}>
+          <Button
+            variant="outlined"
+            disabled={!selectedErrorIds.length}
+            onClick={retryErrors}>
             Retry
           </Button>
-          <Button variant="outlined" disabled={!selectedErrorIds.length}>
+          <Button
+            variant="outlined"
+            disabled={!selectedErrorIds.length}
+            onClick={resolveErrors}>
             Resolve
           </Button>
         </div>
@@ -100,6 +119,7 @@ export default function OpenErrors({ flowId, resourceId }) {
       <Fragment>
         <CeligoPaginatedTable
           data={openErrors}
+          key={tableKey}
           filterKey={filterKey}
           selectableRows
           onSelectChange={onSelectChange}

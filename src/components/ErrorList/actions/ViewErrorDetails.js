@@ -1,14 +1,14 @@
 import { Fragment, useCallback } from 'react';
 
 export default {
-  label: 'Retry',
-  component: function Retry() {
+  label: 'View Error Details',
+  component: function ViewErrorDetails() {
     const handleClick = useCallback(() => {}, []);
 
     return (
       <Fragment>
-        <div data-test="retryError" onClick={handleClick}>
-          Retry
+        <div data-test="viewErrorDetails" onClick={handleClick}>
+          View error details
         </div>
       </Fragment>
     );
