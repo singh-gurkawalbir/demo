@@ -61,6 +61,13 @@ const DynaHttpRequestBody = props => {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+  const isEditorV2Supported = useSelector(state =>
+    selectors.isEditorV2Supported(state, {
+      flowId,
+      resourceId,
+      fieldType: id,
+    })
+  );
   const { data: sampleData, fieldEditorVersion } = useSelector(state =>
     selectors.getEditorSampleData(state, {
       flowId,
@@ -182,7 +189,7 @@ const DynaHttpRequestBody = props => {
             data={JSON.stringify(sampleData, null, 2)}
             onClose={handleClose}
             action={action}
-            showVersionToggle
+            showVersionToggle={isEditorV2Supported}
             editorVersion={fieldEditorVersion}
             onVersionToggle={handleEditorVersionToggle}
           />

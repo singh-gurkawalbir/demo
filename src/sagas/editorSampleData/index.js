@@ -21,13 +21,6 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType,
   });
-  // Temp fix to remove fieldEditorVersion;
-  // To delete starts
-  const resource = deepClone(_resource);
-
-  delete resource.fieldEditorVersion;
-
-  // To delete ends
   // const resource = yield select(selectors.resource, resourceType, resourceId);
   const path = '/processors/handleBar/getContext';
   let flowSampleData = yield select(selectors.getSampleDataContext, {
@@ -36,6 +29,13 @@ export function* requestEditorSampleData({
     resourceType,
     stage,
   });
+  // Temp fix to remove fieldEditorVersion;
+  // To delete starts
+  const resource = deepClone(_resource);
+
+  delete resource.fieldEditorVersion;
+
+  // To delete ends
 
   if (!flowSampleData || !flowSampleData.data) {
     // sample data not present.
@@ -67,47 +67,57 @@ export function* requestEditorSampleData({
     return;
   }
 
-  const body = {
-    sampleData: flowSampleData.data || { myField: 'sample' },
-  };
+  const isEditorV2Supported = yield call(
+    requestSampleData,
+    resourceId,
+    resourceType
+  );
 
-  if (requestedEditorVersion)
-    resource.fieldEditorVersion = requestedEditorVersion;
-  body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-
-  body.fieldPath = fieldType;
-
-  const opts = {
-    method: 'POST',
-    body,
-  };
-  const response = yield call(apiCallWithRetry, {
-    path,
-    opts,
-    message: `Fetching editor sample data`,
-    hidden: false,
-  });
-
-  if (response) {
-    const { context, fieldEditorVersion } = response;
-
-    yield put(
-      actions.editorSampleData.received({
-        flowId,
-        resourceId,
-        fieldType,
-        sampleData: context,
-        fieldEditorVersion,
-      })
-    );
+  if (!isEditorV2Supported) {
+    // call diff action to render old sample data
   } else {
-    yield put(
-      actions.editorSampleData.failed({
-        resourceId,
-        flowId,
-        fieldType,
-      })
-    );
+    const body = {
+      sampleData: flowSampleData.data || { myField: 'sample' },
+    };
+
+    if (requestedEditorVersion)
+      resource.fieldEditorVersion = requestedEditorVersion;
+    body[resourceType === 'imports' ? 'import' : 'export'] = resource;
+
+    body.fieldPath = fieldType;
+
+    const opts = {
+      method: 'POST',
+      body,
+    };
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+      message: `Fetching editor sample data`,
+      hidden: false,
+    });
+
+    if (response) {
+      const { context, fieldEditorVersion } = response;
+
+      yield put(
+        actions.editorSampleData.received({
+          flowId,
+          resourceId,
+          fieldType,
+          sampleData: context,
+          fieldEditorVersion,
+        })
+      );
+    } else {
+      yield put(
+        actions.editorSampleData.failed({
+          resourceId,
+          flowId,
+          fieldType,
+        })
+      );
+    }
   }
 }
 

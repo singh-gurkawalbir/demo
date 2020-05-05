@@ -5,9 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import * as selectors from '../../../../reducers';
-import DynaAddEditLookup from '../DynaAddEditLookup';
+import DynaManageLookup from '../DynaManageLookup';
 import lookupUtil from '../../../../utils/lookup';
-import { adaptorTypeMap } from '../../../../utils/resource';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value, cursorPosition) => {
@@ -102,6 +101,7 @@ export default function Suggestions(props) {
     cursorPosition,
     onValueUpdate,
     onFieldChange,
+    options,
   } = props;
   const classes = useStyles();
   const sampleData = useSelector(state =>
@@ -187,31 +187,37 @@ export default function Suggestions(props) {
 
   // TODO: Remove Start
   if (!showSuggestion) return null;
-  const isSqlImport =
-    adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
-  const options = {
-    isSQLLookup: isSqlImport,
-    sampleData,
-    connectionId,
-    // passed in ignore existing. todo enable
-    // importType,
-    // fieldMetadata,
-    resourceId,
-    resourceType,
-    flowId,
-    fieldId: id,
-    // recordType,
-    // extractFields,
-  };
+  // const isSqlImport =
+  //   adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
+  // const options = {
+  //   isSQLLookup: isSqlImport,
+  //   sampleData,
+  //   connectionId,
+  //   // passed in ignore existing. todo enable
+  //   // importType,
+  //   // fieldMetadata,
+  //   resourceId,
+  //   resourceType,
+  //   flowId,
+  //   fieldId: id,
+  //   // recordType,
+  //   // extractFields,
+  // };
   // ends
+  // const options = { fieldMetadata };
 
   return (
     <ul className={classes.suggestions}>
       {showLookup && (
-        <DynaAddEditLookup
-          showDynamicLookupOnly
+        <DynaManageLookup
           id="add-lookup"
           label="New Lookup"
+          connectionId={connectionId}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          flowId={flowId}
+          fieldId={id}
+          showDynamicLookupOnly
           onSave={handleLookupAdd}
           onSavelabel="Add New Lookup"
           options={options}
@@ -220,9 +226,14 @@ export default function Suggestions(props) {
       {showLookup &&
         filteredLookup.map(lookup => (
           <li key={lookup.name}>
-            <DynaAddEditLookup
+            <DynaManageLookup
               id={lookup.name}
               label="Edit"
+              connectionId={connectionId}
+              resourceId={resourceId}
+              resourceType={resourceType}
+              flowId={flowId}
+              fieldId={id}
               isEdit
               onSave={handleLookupAdd}
               onSelect={handleLookupSelect}

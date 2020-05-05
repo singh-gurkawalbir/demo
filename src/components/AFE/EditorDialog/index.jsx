@@ -61,10 +61,14 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
 }));
-
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
  */
+const toggleEditorOptions = [
+  { label: 'AFE 1.0', value: 1 },
+  { label: 'AFE 2.0', value: 2 },
+];
+
 export default function EditorDialog(props) {
   const {
     children,
@@ -152,7 +156,6 @@ export default function EditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
@@ -177,10 +180,6 @@ export default function EditorDialog(props) {
 
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
-  const toggleEditorOptions = useMemo(
-    () => [{ label: 'AFE 1.0', value: 1 }, { label: 'AFE 2.0', value: 2 }],
-    []
-  );
 
   return (
     <Dialog

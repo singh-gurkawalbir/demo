@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
@@ -39,55 +38,39 @@ const DynaTextWithLookup = props => {
     // hideExtractFields,
   } = props;
   const ref = useRef(null);
-  const [state, setState] = useState({
-    cursorPosition: 0,
-    userInput: value || '',
-    isFocus: false,
-  });
-  const { userInput, cursorPosition } = state;
+  const [cursorPosition, setCursorPosition] = useState(0);
   const handleUpdate = useCallback(
     newValue => {
-      setState({ ...state, userInput: newValue });
+      setCursorPosition(0);
       onFieldChange(id, newValue);
     },
-    [id, onFieldChange, state]
+    [id, onFieldChange]
   );
-  const handleCursorChange = useCallback(
-    e => {
-      const pointerIndex = e.target.selectionStart;
+  const handleCursorChange = useCallback(e => {
+    const cursorIndex = e.target.selectionStart;
 
-      setState({ ...state, cursorPosition: pointerIndex });
-    },
-    [state]
-  );
-
-  useEffect(() => {
-    if (value !== userInput) setState({ ...state, userInput: value });
-  }, [state, userInput, value]);
-
-  // close suggestions when clicked outside
-  // const handleClickOutside = event => {
-  //   if (ref.current && !ref.current.contains(event.target)) {
-  //     setShowSuggestions(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   document.addEventListener('click', handleClickOutside, true);
-
-  //   return () => {
-  //     document.removeEventListener('click', handleClickOutside, true);
-  //   };
-  // });
+    setCursorPosition(cursorIndex);
+  }, []);
   const handleFieldChange = e => {
     const inpValue = e.target.value;
 
-    setState({
-      ...state,
-      userInput: inpValue,
-    });
     onFieldChange(id, inpValue);
   };
+
+  // close suggestions when clicked outside
+  const handleClickOutside = event => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      setCursorPosition(0);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+    };
+  });
 
   return (
     <div ref={ref}>
@@ -105,7 +88,7 @@ const DynaTextWithLookup = props => {
         error={!isValid}
         onChange={handleFieldChange}
         required={required}
-        value={userInput}
+        value={value}
         onClick={handleCursorChange}
         onKeyUp={handleCursorChange}
         variant="filled"
@@ -119,7 +102,7 @@ const DynaTextWithLookup = props => {
           connectionId={connectionId}
           formContext={formContext}
           resourceType={resourceType}
-          value={userInput}
+          value={value}
           showLookup={showLookup}
           showExtract={showExtract}
           cursorPosition={cursorPosition}

@@ -121,9 +121,8 @@ export default {
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
           name: '_relativeURI',
-          type: 'textwithlookupextract',
-          fieldType: 'relativeUri',
-          hideLookups: true,
+          type: 'relativeuri',
+          showLookup: false,
           connectionId,
           resourceId,
           flowId,

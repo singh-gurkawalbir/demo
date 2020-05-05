@@ -819,6 +819,21 @@ export function iaFlowSettings(state, integrationId, flowId) {
   return getIAFlowSettings(integration, flowId);
 }
 
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { adaptorType } = resource(state, resourceType, resourceId);
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(adaptorType);
+}
+
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,
