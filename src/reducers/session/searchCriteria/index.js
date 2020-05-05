@@ -34,6 +34,16 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.SEARCH_CRITERIA.PATCH_FIELD: {
+        let fieldValue;
+        let fieldJoin;
+
+        if (field === 'field' && value) {
+          const valueParts = value.split('.');
+
+          fieldValue = valueParts.pop();
+          fieldJoin = valueParts.join('.') || undefined;
+        }
+
         if (draft[id].searchCriteria[index]) {
           if (field === 'operator') {
             const searchValue2Enabled = !!enableSearchValue2(value);
@@ -49,6 +59,11 @@ export default function reducer(state = {}, action) {
 
           draft[id].searchCriteria[index].rowIdentifier += 1;
           draft[id].searchCriteria[index][field] = value;
+
+          if (field === 'field') {
+            draft[id].searchCriteria[index][field] = fieldValue;
+            draft[id].searchCriteria[index].join = fieldJoin;
+          }
         } else if (value) {
           const newObj = {
             [field]: value,
@@ -59,6 +74,11 @@ export default function reducer(state = {}, action) {
             const searchValue2Enabled = !!enableSearchValue2(value);
 
             newObj.searchValue2Enabled = searchValue2Enabled;
+          }
+
+          if (field === 'field') {
+            newObj[field] = fieldValue;
+            newObj.join = fieldJoin;
           }
 
           draft[id].searchCriteria.push(newObj);
