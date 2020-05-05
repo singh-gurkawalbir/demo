@@ -55,6 +55,8 @@ function FormButton({
 const DynaSubmit = props => {
   const form = useFormContext(props);
 
+  if (!form) return null;
+
   return <FormButton {...form} {...props} />;
 };
 
