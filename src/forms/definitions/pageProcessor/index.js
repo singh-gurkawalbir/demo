@@ -1,6 +1,7 @@
 import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
+// import { importOptions } from '../../utils';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
@@ -54,6 +55,7 @@ export default {
       name: 'resourceType',
       type: 'select',
       label: 'What would you like to do?',
+      // refreshOptionsOnChangesTo: ['application'],
       required: true,
       defaultValue: r => (r && r.resourceType) || 'imports',
       options: [
@@ -147,6 +149,14 @@ export default {
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
+
+    // if (fieldId === 'resourceType' && ['s3', 'ftp'].includes(app.type)) {
+    //   return [
+    //     {
+    //       items: importOptions[app.type] || [],
+    //     },
+    //   ];
+    // }
 
     if (fieldId === 'connection') {
       const expression = [];

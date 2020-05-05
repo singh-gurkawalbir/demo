@@ -17,10 +17,6 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
-      {
-        field: 'file.output',
-        is: ['records'],
-      },
     ],
   },
   'file.encoding': {
@@ -29,10 +25,6 @@ export default {
     visibleWhenAll: [
       {
         field: 'outputMode',
-        is: ['records'],
-      },
-      {
-        field: 'file.output',
         is: ['records'],
       },
     ],
@@ -69,10 +61,6 @@ export default {
         field: 'outputMode',
         is: ['records'],
       },
-      {
-        field: 'file.output',
-        is: ['records'],
-      },
     ],
     userDefinitionId: r =>
       r &&
@@ -80,26 +68,7 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
-  'file.output': {
-    type: 'select',
-    label: 'Output mode',
-    defaultValue: r => (r && r.file && r.file.output) || 'records',
-    options: [
-      {
-        items: [
-          { label: 'Records', value: 'records' },
-          { label: 'Metadata', value: 'metadata' },
-          { label: 'Blob keys', value: 'blobKeys' },
-        ],
-      },
-    ],
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
+
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',

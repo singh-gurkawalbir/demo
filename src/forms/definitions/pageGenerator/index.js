@@ -4,6 +4,7 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
+import { exportFileProviderOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -63,24 +64,31 @@ export default {
     type: {
       id: 'type',
       name: 'type',
-      type: 'radiogroup',
-      label: 'This application supports two options for exporting data',
+      type: 'select',
+      label: 'What would you like to do?',
       defaultValue: r => (r && r.type) || 'api',
       required: true,
+      refreshOptionsOnChangesTo: ['application'],
+
       options: [
         {
           items: [
-            { label: 'API', value: 'api' },
-            { label: 'Webhook', value: 'webhook' },
+            {
+              label: 'Export records from source application',
+              value: 'Export records from source application',
+            },
+            {
+              label: 'Transfer files out of source application',
+              value: 'api',
+            },
+            {
+              label: 'Listen for real-time data from source applications',
+              value: 'Listen for real-time data from source applications',
+            },
           ],
         },
       ],
-      visibleWhen: [
-        {
-          field: 'application',
-          is: getWebhookConnectors().map(connector => connector.id),
-        },
-      ],
+      defaultDisabled: true,
     },
 
     existingExport: {
@@ -132,6 +140,14 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
+
+    if (fieldId === 'type' && ['s3', 'ftp'].includes(app.type)) {
+      return [
+        {
+          items: exportFileProviderOptions[app.type] || [],
+        },
+      ];
+    }
 
     if (fieldId === 'connection') {
       const expression = [];

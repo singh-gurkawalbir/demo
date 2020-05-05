@@ -1,5 +1,17 @@
 export default {
   fieldMap: {
+    fileMetadata: {
+      id: 'fileMetadata',
+      type: 'checkbox',
+      label: 'File metadata only',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['blob'],
+        },
+      ],
+      defaultValue: r => r && r.file && r.file.output === 'metadata',
+    },
     'file.decompressFiles': {
       id: 'file.decompressFiles',
       type: 'checkbox',
@@ -46,6 +58,7 @@ export default {
   },
   layout: {
     fields: [
+      'fileMetadata',
       'file.decompressFiles',
       'file.compressionFormat',
       'file.skipDelete',

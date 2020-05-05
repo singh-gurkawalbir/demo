@@ -96,18 +96,12 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input mode',
+      label: 'Do you need to parse files?',
       options: [
         {
           items: [
-            {
-              label: 'Records',
-              value: 'records',
-            },
-            {
-              label: 'Blob keys',
-              value: 'blob',
-            },
+            { label: 'Yes', value: 'records' },
+            { label: 'No', value: 'blob' },
           ],
         },
       ],

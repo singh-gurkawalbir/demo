@@ -61,11 +61,15 @@ export default {
 
     if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-      newValues['/file/output'] = 'blobKeys';
+
+      if (newValues['/fileMetadata']) {
+        newValues['/file/output'] = 'metadata';
+      } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
     }
 
     delete newValues['/outputMode'];
+    delete newValues['/fileMetadata'];
 
     if (newValues['/file/decompressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
@@ -111,13 +115,13 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output mode',
+      label: 'Do you need to parse files?',
       required: true,
       options: [
         {
           items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob keys', value: 'blob' },
+            { label: 'Yes', value: 'records' },
+            { label: 'No', value: 'blob' },
           ],
         },
       ],
@@ -140,12 +144,11 @@ export default {
       },
     },
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-    'file.output': {
-      fieldId: 'file.output',
-    },
+
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
+
     file: {
       formId: 'file',
       visibleWhenAll: [
@@ -165,7 +168,6 @@ export default {
       'exportOneToMany',
       'exportData',
       'ftp.directoryPath',
-      'file.output',
       'ftp.fileNameStartsWith',
       'ftp.fileNameEndsWith',
       'file',

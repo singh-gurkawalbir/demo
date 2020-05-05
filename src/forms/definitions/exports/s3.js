@@ -111,13 +111,13 @@ export default {
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Output mode',
+      label: 'Do you need to parse files?',
       required: true,
       options: [
         {
           items: [
-            { label: 'Records', value: 'records' },
-            { label: 'Blob keys', value: 'blob' },
+            { label: 'Yes', value: 'records' },
+            { label: 'No', value: 'blob' },
           ],
         },
       ],
@@ -128,6 +128,7 @@ export default {
 
         return false;
       },
+
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -141,7 +142,6 @@ export default {
     },
     's3.region': { fieldId: 's3.region' },
     's3.bucket': { fieldId: 's3.bucket' },
-    'file.output': { fieldId: 'file.output' },
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
@@ -163,7 +163,6 @@ export default {
       'exportData',
       's3.region',
       's3.bucket',
-      'file.output',
       's3.keyStartsWith',
       's3.keyEndsWith',
       'file',

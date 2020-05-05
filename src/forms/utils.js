@@ -725,6 +725,94 @@ export const conditionalLookupOptionsforRestProduction = [
     value: 'extract_not_empty',
   },
 ];
+export const exportFileProviderOptions = {
+  ftp: [
+    {
+      label: 'You can only transfer files using FTP',
+      value: 'api',
+    },
+  ],
+  s3: [
+    {
+      label: 'You can only transfer files using Amazon S3',
+      value: 'api',
+    },
+  ],
+  http: [],
+  rest: [],
+  webhook: [],
+  mysql: [],
+  mssql: [],
+  postgresql: [],
+  mongodb: [],
+  netsuite: [],
+  salesforce: [],
+  default: [
+    {
+      label: 'Export records from source application',
+      value: 'Export records from source application',
+    },
+    {
+      label: 'Transfer files out of source application',
+      value: 'Transfer files out of source application',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'Listen for real-time data from source applications',
+    },
+  ],
+};
+export const importFileProviderOptions = {
+  ftp: [
+    {
+      label: 'Transfer records into destination application',
+      value: 'imports',
+    },
+
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'exports',
+    },
+  ],
+  s3: [
+    {
+      label: 'Transfer records into destination application',
+      value: 'imports',
+    },
+
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'exports',
+    },
+  ],
+  http: [],
+  rest: [],
+  webhook: [],
+  mysql: [],
+  mssql: [],
+  postgresql: [],
+  mongodb: [],
+  netsuite: [],
+  salesforce: [],
+  default: [
+    {
+      label: 'Import records into destination application',
+      value: 'Import records into destination application',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'Transfer records into destination application',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'Lookup addition records (per record)',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'Lookup addition files (per record)',
+    },
+  ],
+};
 
 // #END_REGION Integration App from utils
 
