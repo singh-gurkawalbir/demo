@@ -183,12 +183,16 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           )
         );
       } else {
-        if (status.variant === 'error') {
-          /**
-           * TODO Check if there is a better way to set the status filter on the Job Dashboard.
-           */
-          dispatch(actions.patchFilter('jobs', { status: 'error' }));
-        }
+        // if (status.variant === 'error') {
+        /**
+         * TODO Check if there is a better way to set the status filter on the Job Dashboard.
+         */
+        dispatch(
+          actions.patchFilter('jobs', {
+            status: status.variant === 'error' ? 'error' : 'all',
+          })
+        );
+        // }
 
         if (tile._connectorId) {
           history.push(
