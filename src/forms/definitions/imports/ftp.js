@@ -204,7 +204,7 @@ export default {
               value: 'records',
             },
             {
-              label: 'Blob Keys',
+              label: 'Blob keys',
               value: 'blob',
             },
           ],

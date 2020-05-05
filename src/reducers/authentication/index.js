@@ -1,102 +1,84 @@
+import produce from 'immer';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../comms/networkComms/index';
 
-export default function(
-  state = { initialized: false, commStatus: COMM_STATES.LOADING },
-  action
-) {
-  let newState;
+const defaultState = { initialized: false, commStatus: COMM_STATES.LOADING };
 
-  switch (action.type) {
-    case actionTypes.INIT_SESSION:
-    case actionTypes.AUTH_REQUEST: {
-      newState = { ...state, authenticated: false };
-      newState.commStatus = COMM_STATES.LOADING;
-      delete newState.loggedOut;
+// #region Reducers
+export default function(state = defaultState, action) {
+  // Since the CLEAR_STORE action resets the state, it can not be placed in
+  // the produce function since the draft object within the 'produce' fn context
+  // should not be re-assigned. (only its properties)
+  if (action.type === actionTypes.CLEAR_STORE) {
+    return {
+      initialized: false,
+      commStatus: COMM_STATES.LOADING,
+      loggedOut: true, // why is this not in the defaultState?
+    };
+  }
 
-      return newState;
-    }
+  return produce(state, draft => {
+    switch (action.type) {
+      case actionTypes.INIT_SESSION:
+      case actionTypes.AUTH_REQUEST:
+        draft.authenticated = false;
+        draft.commStatus = COMM_STATES.LOADING;
+        delete draft.loggedOut;
+        break;
 
-    case actionTypes.AUTH_SUCCESSFUL: {
-      newState = {
-        ...state,
-        authenticated: true,
-        initialized: true,
-      };
+      case actionTypes.AUTH_SUCCESSFUL:
+        draft.authenticated = true;
+        draft.initialized = true;
+        draft.commStatus = COMM_STATES.SUCCESS;
+        delete draft.sessionExpired;
+        delete draft.failure;
+        break;
 
-      newState.commStatus = COMM_STATES.SUCCESS;
-      delete newState.sessionExpired;
-      delete newState.failure;
+      case actionTypes.AUTH_FAILURE:
+        draft.failure = action.message;
+        draft.commStatus = COMM_STATES.ERROR;
 
-      return newState;
-    }
+        if (draft.authenticated) {
+          draft.sessionExpired = true;
+        }
 
-    case actionTypes.AUTH_FAILURE: {
-      newState = { ...state, failure: action.message };
+        delete draft.authTimestamp;
+        delete draft.warning;
+        draft.initialized = true;
+        draft.authenticated = false;
+        break;
 
-      newState.commStatus = COMM_STATES.ERROR;
+      case actionTypes.DEFAULT_ACCOUNT_SET:
+        draft.defaultAccountSet = true;
+        break;
 
-      if (newState.authenticated) {
-        newState.sessionExpired = true;
+      case actionTypes.AUTH_TIMESTAMP:
+        draft.authTimestamp = Date.now();
+        delete draft.warning;
+        break;
+
+      case actionTypes.AUTH_WARNING: {
+        return {
+          ...state,
+          warning: true,
+        };
       }
 
-      delete newState.authTimestamp;
-      delete newState.warning;
-      newState.initialized = true;
-
-      newState.authenticated = false;
-
-      return newState;
+      default:
     }
-
-    case actionTypes.DEFAULT_ACCOUNT_SET: {
-      newState = {
-        ...state,
-        defaultAccountSet: true,
-      };
-
-      return newState;
-    }
-
-    case actionTypes.AUTH_TIMESTAMP: {
-      newState = {
-        ...state,
-        authTimestamp: Date.now(),
-      };
-
-      delete newState.warning;
-
-      return newState;
-    }
-
-    case actionTypes.AUTH_WARNING: {
-      return {
-        ...state,
-        warning: true,
-      };
-    }
-
-    case actionTypes.CLEAR_STORE: {
-      newState = {
-        initialized: false,
-        commStatus: COMM_STATES.LOADING,
-        loggedOut: true,
-      };
-
-      return newState;
-    }
-
-    default: {
-      return state;
-    }
-  }
+  });
 }
+// #endregion
 
+// #region Selectors
 export function showSessionStatus(state) {
   const { sessionExpired, warning } = state;
 
   // authenticated and session Expired are mutually exclusive
   if (warning) {
     return 'warning';
-  } else if (sessionExpired) return 'expired';
+  } else if (sessionExpired) {
+    return 'expired';
+  }
 }
+// #endregion Selectors

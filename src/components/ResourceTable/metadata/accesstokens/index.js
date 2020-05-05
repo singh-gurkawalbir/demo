@@ -45,7 +45,7 @@ export default {
           : 'Custom',
     },
     {
-      heading: 'Auto Purge',
+      heading: 'Auto purge',
       value: r => getAutoPurgeAt(r),
     },
   ],

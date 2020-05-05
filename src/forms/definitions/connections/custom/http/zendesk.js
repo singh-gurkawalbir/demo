@@ -31,6 +31,7 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
+      helpKey: 'zendesk.connection.http.auth.type',
       defaultValue: r =>
         r &&
         r.http &&
@@ -52,6 +53,7 @@ export default {
     'http.zendeskSubdomain': {
       id: 'http.zendeskSubdomain',
       type: 'text',
+      helpKey: 'zendesk.connection.http.zendeskSubdomain',
       startAdornment: 'https://',
       endAdornment: '.zendesk.com',
       label: 'Subdomain',
@@ -76,6 +78,7 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'connection.http.auth.basic.username',
       defaultValue: r => {
         if (
           r &&
@@ -95,10 +98,12 @@ export default {
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.apiToken': {
       id: 'http.apiToken',
+      helpKey: 'zendesk.connection.http.apiToken',
       required: true,
       type: 'text',
       label: 'API token',

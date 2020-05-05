@@ -67,7 +67,7 @@ export default function CsvGeneratePanel(props) {
             native
             value={columnDelimiter}
             className={classes.select}
-            placeholder="Please Select"
+            placeholder="Please select"
             onChange={event =>
               patchEditor('columnDelimiter', event.target.value)
             }
@@ -88,7 +88,7 @@ export default function CsvGeneratePanel(props) {
             value={rowDelimiter}
             className={classes.select}
             onChange={event => patchEditor('rowDelimiter', event.target.value)}
-            placeholder="Please Select"
+            placeholder="Please select"
             inputProps={{ id: 'rowDelimiter' }}>
             {options.RowDelimiterOptions.map(opt => (
               <option key={opt.value} value={opt.value} data-test={opt.value}>

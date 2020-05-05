@@ -72,12 +72,8 @@ function FileUploader(props) {
         />
         <span className={classes.fileName}>{fileName}</span>
       </div>
-      {!isValid && (
-        <FormHelperText error="true">{errorMessages}</FormHelperText>
-      )}
-      {uploadError && (
-        <FormHelperText error="true">{uploadError}</FormHelperText>
-      )}
+      {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
+      {uploadError && <FormHelperText error>{uploadError}</FormHelperText>}
     </Fragment>
   );
 }

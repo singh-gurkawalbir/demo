@@ -6,12 +6,12 @@ export default {
 
     if (newValues['/rdbms/queryType'] === 'BULK INSERT') {
       newValues['/rdbms/query'] = undefined;
-      newValues['/rdbms/bulkInsert/batchSize'] = 100;
     }
 
     if (newValues['/rdbms/queryType'] === 'INSERT') {
       newValues['/rdbms/bulkInsert'] = undefined;
       delete newValues['/rdbms/bulkInsert/tableName'];
+      delete newValues['/rdbms/bulkInsert/batchSize'];
     }
 
     newValues['/rdbms/queryType'] = [newValues['/rdbms/queryType']];
@@ -25,6 +25,20 @@ export default {
       id: 'importData',
       type: 'labeltitle',
       label: 'How would you like the data imported?',
+    },
+    'rdbms.bulkInsert.batchSize': {
+      id: 'rdbms.bulkInsert.batchSize',
+      type: 'text',
+      label: 'Batch size',
+      validWhen: {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+      visibleWhen: [
+        {
+          field: 'rdbms.queryType',
+          is: ['BULK INSERT'],
+        },
+      ],
     },
     'rdbms.query': {
       id: 'rdbms.query',
@@ -48,7 +62,7 @@ export default {
       type: 'radiogroup',
       label: 'Choose type',
       required: true,
-      helpKey: 'connection.snowflake.rdbms.queryType',
+      helpKey: 'snowflake.import.rdbms.queryType',
       defaultValue: r => r && r.rdbms && r.rdbms.queryType[0],
       options: [
         {
@@ -72,6 +86,12 @@ export default {
       'dataMappings',
     ],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['rdbms.bulkInsert.batchSize'],
+      },
+    ],
   },
 };

@@ -13,7 +13,6 @@ import {
   getConnectorName,
 } from '../../../CeligoTable/util';
 import Deregister from '../../actions/Connections/Deregister';
-import { showDownloadLogs } from './util';
 import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
 
 export default {
@@ -49,7 +48,7 @@ export default {
         orderBy: 'lastModified',
       },
       {
-        heading: 'Queue Size',
+        heading: 'Queue size',
         // align: 'right',
         value: r => r.queueSize || 0,
       },
@@ -71,7 +70,7 @@ export default {
     } else {
       actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
 
-      if (showDownloadLogs(r)) {
+      if (r.debugDate) {
         actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
       }
     }

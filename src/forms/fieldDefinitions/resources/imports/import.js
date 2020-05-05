@@ -6,7 +6,7 @@ export default {
   formView: {
     id: 'formView',
     type: 'formview',
-    label: 'Form View',
+    label: 'Form view',
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {
@@ -221,6 +221,7 @@ export default {
           { label: 'Yahoo', value: 'yahoo' },
           { label: 'Yammer', value: 'yammer' },
           { label: 'Zendesk', value: 'zendesk' },
+          { label: 'Zendesk Sell', value: 'zendesksell' },
           { label: 'Zoho', value: 'zoho' },
           { label: 'Zuora', value: 'zuora' },
           { label: 'Coupa', value: 'coupa' },
@@ -811,10 +812,8 @@ export default {
     label: 'Lookups[*] where Clause',
   },
   settings: {
-    type: 'editor',
-    mode: 'json',
-    label: 'Settings',
+    type: 'settings',
     showOnDeveloperMode: true,
-    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+    defaultValue: r => r && r.settings,
   },
 };
