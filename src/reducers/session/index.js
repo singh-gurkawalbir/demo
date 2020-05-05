@@ -24,7 +24,7 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
-import customSettings, * as fromCustomSettingsStatus from './customSettings';
+import customSettings, * as fromCustomSettingsForm from './customSettings';
 
 export default combineReducers({
   stage,
@@ -533,8 +533,8 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
-export function customSettingsStatus(state, resourceId) {
-  return fromCustomSettingsStatus.customSettingsStatus(
+export function customSettingsForm(state, resourceId) {
+  return fromCustomSettingsForm.customSettingsForm(
     state && state.customSettings,
     resourceId
   );

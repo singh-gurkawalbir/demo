@@ -16,6 +16,11 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+          break;
+        }
+
         draft[resourceId].status = 'received';
         draft[resourceId].meta = formMeta;
         draft[resourceId].scriptId = scriptId;
@@ -63,7 +68,7 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function customSettingsStatus(state, resourceId) {
+export function customSettingsForm(state, resourceId) {
   if (!state) {
     return undefined;
   }

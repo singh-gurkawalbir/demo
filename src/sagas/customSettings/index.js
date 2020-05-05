@@ -4,6 +4,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
+import inferErrorMessage from '../../utils/inferErrorMessage';
 
 export function* initSettingsForm({ resourceType, resourceId }) {
   const resource = yield select(selectors.resource, resourceType, resourceId);
@@ -26,7 +27,12 @@ export function* initSettingsForm({ resourceType, resourceId }) {
         opts: { method: 'POST' },
       });
     } catch (error) {
-      yield put(actions.customSettings.formError(resourceId, error));
+      yield put(
+        actions.customSettings.formError(
+          resourceId,
+          inferErrorMessage(error.message)
+        )
+      );
 
       return;
     }
