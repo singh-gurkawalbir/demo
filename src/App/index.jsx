@@ -63,7 +63,7 @@ export default function App() {
   );
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
-    dispatch(actions.user.preferences.toggleDebug());
+    dispatch(actions.user.toggleDebug());
   }, [dispatch]);
 
   useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);

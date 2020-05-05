@@ -970,6 +970,7 @@ const stack = {
     action(actionTypes.STACK.USER_REINVITE, { userInfo, userId }),
 };
 const user = {
+  toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   profile: {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
@@ -1018,7 +1019,6 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
-    toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>
