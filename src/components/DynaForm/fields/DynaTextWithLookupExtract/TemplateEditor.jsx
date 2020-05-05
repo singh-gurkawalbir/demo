@@ -194,9 +194,7 @@ export default function TemplateEditor(props) {
             key={id}
             name={name}
             placeholder={placeholder}
-            isValid={isValid}
             sampleData={sampleData}
-            description={description}
             isSqlImport={isSqlImport}
             disabled={disabled}
             multiline={multiline}

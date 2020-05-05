@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   radioGroupLabel: {
     marginBottom: 0,
     marginRight: 12,
+    fontSize: 14,
   },
 }));
 

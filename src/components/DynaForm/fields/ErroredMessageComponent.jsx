@@ -1,6 +1,6 @@
 import { FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
+import ErrorIcon from '../../icons/ErrorIcon';
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -11,17 +11,20 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
+  icon: {
+    marginRight: 3,
+    fontSize: theme.spacing(2),
+  },
   description: {
-    lineHeight: '18px',
+    lineHeight: '20px',
   },
 }));
 const ErroredMessageComponent = ({ description, errorMessages, isValid }) => {
   const classes = useStyles();
 
   return description || errorMessages ? (
-    <FormHelperText
-      error={!isValid}
-      className={clsx(classes.error, { [classes.description]: description })}>
+    <FormHelperText error={!isValid} className={classes.error}>
+      {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
       {isValid ? description : errorMessages}
     </FormHelperText>
   ) : null;

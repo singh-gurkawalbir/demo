@@ -123,7 +123,7 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <div>
+    <div className={classes.multislectWrapper}>
       <div className={classes.labelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}

@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
   },
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    marginRight: theme.spacing(1),
     height: theme.spacing(10),
   },
   editorContainer: {
@@ -30,7 +29,12 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     flexDirection: `row !important`,
   },
-  internalWrapper: {
+  dynaEditorWrapper: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  CodeEditorWrapper: {
     width: '100%',
   },
 }));
@@ -125,9 +129,12 @@ export default function DynaEditor({
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.internalWrapper}>
+      <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
-        <FormLabel className={classes.label}>{label}</FormLabel>
+        <div>
+          <FormLabel>{label}</FormLabel>
+        </div>
+
         <div
           className={classNames(
             classes.inlineEditorContainer,
@@ -138,6 +145,7 @@ export default function DynaEditor({
             name={`${id}-inline`}
             value={value}
             mode={mode}
+            className={classes.CodeEditorWrapper}
             onChange={handleUpdate}
           />
         </div>
