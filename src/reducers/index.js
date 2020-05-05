@@ -504,7 +504,7 @@ export function developerMode(state) {
 }
 
 export function userPreferences(state) {
-  return fromUser.userPreferences((state && state.user) || null);
+  return fromUser.userPreferences(state && state.user);
 }
 
 export function currentEnvironment(state) {
@@ -702,6 +702,10 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
+export function debugOn(state) {
+  return fromUser.debugOn(state && state.user);
+}
+
 export function testConnectionCommState(state, resourceId) {
   const status = fromComms.testConnectionStatus(
     state && state.comms,
