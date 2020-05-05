@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
 import { generateNewId } from '../../../utils/resource';
-import { resourceErrors, filter } from '../../../reducers';
+import { resourceErrors, errorRetryIds, filter } from '../../../reducers';
 import CeligoPaginatedTable from '../../CeligoPaginatedTable';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
@@ -39,6 +39,11 @@ export default function OpenErrors({ flowId, resourceId }) {
   const filterKey = `openErrors-${flowId}-${resourceId}`;
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
+  );
+  const areSelectedErrorsRetriable = useSelector(
+    state =>
+      !!errorRetryIds(state, { flowId, resourceId, errorIds: selectedErrorIds })
+        .length
   );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
@@ -101,7 +106,7 @@ export default function OpenErrors({ flowId, resourceId }) {
         <div className={classes.actionButtonsContainer}>
           <Button
             variant="outlined"
-            disabled={!selectedErrorIds.length}
+            disabled={!areSelectedErrorsRetriable}
             onClick={retryErrors}>
             Retry
           </Button>

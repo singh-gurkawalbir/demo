@@ -3975,6 +3975,20 @@ export function resourceErrors(state, { flowId, resourceId, options = {} }) {
   });
 }
 
+export function errorRetryIds(
+  state,
+  { flowId, resourceId, errorIds = [], options = {} }
+) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors
+    .filter(
+      ({ errorId, retryDataKey }) =>
+        errorIds.includes(errorId) && !!retryDataKey
+    )
+    .map(error => error.retryDataKey);
+}
+
 export function isAllErrorsSelected(
   state,
   { flowId, resourceId, filterKey, defaultFilter, isResolved }
