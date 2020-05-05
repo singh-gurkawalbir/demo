@@ -15,14 +15,25 @@ import getRoutePath from '../../utils/routePaths';
 const useStyles = makeStyles(theme => ({
   googleBtn: {
     borderRadius: 4,
-    width: 180,
     background: `url(${getImageUrl(
       'images/googlelogo.png'
     )}) 20% center no-repeat`,
     backgroundSize: theme.spacing(2),
-    height: 48,
+    height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
+  },
+  label: {
+    marginRight: theme.spacing(1),
+  },
+  signInOption: {
+    paddingLeft: 0,
+    margin: theme.spacing(2, 0),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  btnLabel: {
+    marginLeft: theme.spacing(3),
+    lineHeight: 0,
   },
 }));
 
@@ -118,6 +129,7 @@ export default function ProfileComponent() {
         type: 'text',
         label: 'Name',
         required: true,
+        helpKey: 'myaccount.name',
         defaultValue: preferences && preferences.name,
       },
       email: {
@@ -125,11 +137,13 @@ export default function ProfileComponent() {
         name: 'email',
         type: 'useremail',
         label: 'Email',
+        helpKey: 'myaccount.email',
         value: preferences && preferences.email,
       },
       password: {
         id: 'password',
         name: 'password',
+        helpKey: 'myaccount.password',
         type: 'userpassword',
       },
       company: {
@@ -137,6 +151,7 @@ export default function ProfileComponent() {
         name: 'company',
         type: 'text',
         label: 'Company',
+        helpKey: 'myaccount.company',
         defaultValue: preferences && preferences.company,
       },
       phone: {
@@ -144,12 +159,14 @@ export default function ProfileComponent() {
         name: 'phone',
         type: 'text',
         label: 'Phone',
+        helpKey: 'myaccount.phone',
         defaultValue: preferences && preferences.phone,
       },
       role: {
         id: 'role',
         name: 'role',
         type: 'text',
+        helpKey: 'myaccount.role',
         label: 'Role',
         defaultValue: preferences && preferences.role,
       },
@@ -157,8 +174,9 @@ export default function ProfileComponent() {
         id: 'timezone',
         name: 'timezone',
         type: 'select',
-        label: 'Time Zone',
+        label: 'Time zone',
         required: true,
+        helpKey: 'myaccount.timezone',
         defaultValue: preferences && preferences.timezone,
         options: dateTimeZonesList,
       },
@@ -167,6 +185,7 @@ export default function ProfileComponent() {
         name: 'dateFormat',
         type: 'select',
         required: true,
+        helpKey: 'myaccount.dateFormat',
         label: 'Date format',
         defaultValue: preferences && preferences.dateFormat,
         options: dateFormatList,
@@ -175,8 +194,9 @@ export default function ProfileComponent() {
         id: 'timeFormat',
         name: 'timeFormat',
         type: 'select',
+        helpKey: 'myaccount.timeFormat',
         required: true,
-        label: 'Time Format',
+        label: 'Time format',
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
       },
@@ -184,7 +204,8 @@ export default function ProfileComponent() {
         id: 'developer',
         name: 'developer',
         type: 'checkbox',
-        label: 'Developer Mode',
+        helpKey: 'myaccount.developer',
+        label: 'Developer mode',
         defaultValue: preferences && preferences.developer,
       },
     },
@@ -212,19 +233,22 @@ export default function ProfileComponent() {
       </DynaForm>
       {getDomain() !== 'eu.integrator.io' && (
         <div>
-          <PanelHeader title="Sign in via Google" />
+          <PanelHeader
+            title="Sign in via Google"
+            className={classes.signInOption}
+          />
           {preferences &&
             (!preferences.auth_type_google ||
               !preferences.auth_type_google.id) && (
               <InputLabel>
-                Link to:
+                <span className={classes.label}>Link to:</span>
                 <Button
                   data-test="linkWithGoogle"
                   variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleLinkWithGoogle}>
-                  Google
+                  <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
             )}
@@ -232,14 +256,14 @@ export default function ProfileComponent() {
             preferences.auth_type_google &&
             preferences.auth_type_google.id && (
               <InputLabel>
-                Unlink to:
+                <span className={classes.label}>Unlink to:</span>
                 <Button
                   data-test="unlinkWithGoogle"
                   variant="contained"
                   color="secondary"
                   className={classes.googleBtn}
                   onClick={handleUnLinkWithGoogle}>
-                  Google
+                  <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
             )}

@@ -18,6 +18,7 @@ import OptionalIcon from '../../../../../../../components/icons/OptionalIcon';
 import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
+import Help from '../../../../../../../components/Help';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -221,20 +222,23 @@ export default function ImportMapping(props) {
     );
   };
 
-  const updateLookupHandler = (isDelete, obj) => {
+  const updateLookupHandler = (lookupOps = []) => {
     let lookupsTmp = [...lookups];
+    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
 
-    if (isDelete) {
-      lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-    } else {
-      const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-      if (index !== -1) {
-        lookupsTmp[index] = obj;
+    lookupOps.forEach(({ isDelete, obj }) => {
+      if (isDelete) {
+        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
       } else {
-        lookupsTmp.push(obj);
+        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+        if (index !== -1) {
+          lookupsTmp[index] = obj;
+        } else {
+          lookupsTmp.push(obj);
+        }
       }
-    }
+    });
 
     dispatch(
       actions.integrationApp.settings.categoryMappings.updateLookup(
@@ -301,6 +305,22 @@ export default function ImportMapping(props) {
         startAdornment={icon}
         onFieldChange={handleValueChange}
         className={classes.dynaTextContainer}
+      />
+    );
+  };
+
+  const FieldHelp = ({ id }) => {
+    const field = generateFields.find(f => f.id === id);
+    const { name: title, description = 'No Description available.' } =
+      field || {};
+
+    return (
+      <Help
+        title={title}
+        disabled={!field}
+        className={classes.helpTextButton}
+        helpKey={`categoryMappings-${id}`}
+        helpText={description}
       />
     );
   };
@@ -432,6 +452,7 @@ export default function ImportMapping(props) {
                     options={options}
                     generate={mapping.generate}
                     application={application}
+                    isCategoryMapping
                     updateLookup={updateLookupHandler}
                     disabled={mapping.isNotEditable || disabled}
                     lookups={lookups}
@@ -452,6 +473,9 @@ export default function ImportMapping(props) {
                     className={classes.margin}>
                     <TrashIcon />
                   </ActionButton>
+                </div>
+                <div>
+                  <FieldHelp id={mapping.generate} />
                 </div>
               </div>
             </div>

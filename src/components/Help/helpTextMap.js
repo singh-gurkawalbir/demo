@@ -1,32 +1,28 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
-/* eslint-disable no-dupe-keys */
-// eslint-disable-next-line no-unused-vars
-const extractedHelpkeys = {
+export default {
   // fieldDefinitions
-  'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
+  'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
-  'connections.connection.as2.userStationInfo.mdn.mdnURL':
-    "This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.",
-  'connections.connection.partnerrequireasynchronousmdns':
+  'connection.partnerrequireasynchronousmdns':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
-  'exports.export.netsuite.distributed.executionContext':
+  'export.netsuite.distributed.executionContext':
     'The invited user will have permissions to manage the integrations selected here.',
-  'exports.export.netsuite.distributed.executionType':
+  'export.netsuite.distributed.executionType':
     'The invited user will have permissions to manage the integrations selected here.',
-  'iClients.iClient.oauth2.clientId':
+  'iClient.oauth2.clientId':
     'This is the ID for your client app that is registered with the API provider.',
-  'iClients.iClient.oauth2.clientSecret':
+  'iClient.oauth2.clientSecret':
     'This is the client secret the API provider gave you.',
-  'imports.import.http.requestType':
+  'import.http.requestType':
     'Please specify whether the record is being created or updated using this field.',
-  'imports.import.rdbms.queryType':
+  'import.rdbms.queryType':
     "Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.",
-  'imports.import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rest.requestType':
+  'import.rest.requestType':
     'Please specify whether the record is being created or updated using this field.',
 
   // definitions
@@ -266,7 +262,8 @@ const extractedHelpkeys = {
     'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
   'liquidplanner.connection.http.auth.token.token':
     'The API Token of your LiquidPlanner account when using the Token authentication.',
-  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -520,7 +517,8 @@ const extractedHelpkeys = {
     'The username of your JIRA account.',
   'jira.connection.rest.basicAuth.password':
     'The password of your JIRA account.',
-  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.rest.bearerToken':
     'The access token of your Magento 2 account.',
   'bigcommerce.connection.rest.basicAuth.username':
@@ -533,6 +531,10 @@ const extractedHelpkeys = {
     'This Client ID works together with the Access Token to grant authorization.',
   'bigcommerce.connection.storeHash':
     'The base api path will look something like this: https://api.bigcommerce.com/stores/123456/. In the base path, the store hash is the 123456.',
+  'inspectorio.connection.http.encrypted.apiKey':
+    'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'inspectorio.connection.enviornment':
+    'Please select the environment of your Inspectorio account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -541,9 +543,7 @@ const extractedHelpkeys = {
     'Please specify whether the record is being created or updated using this field.',
   'rest.import.rest.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-};
 
-export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':
@@ -749,9 +749,14 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'connection.snowflake.rdbms.queryType': `Please select this option if you want to import (or insert) multiple records at once into the database.Please use this option to provide INSERT/UPDATE queries to CREATE/UPDATE records in the database.`,
+  'snowflake.import.rdbms.queryType': `BULK INSERT supports binding an array of data, allowing you to insert multiple records. Binding a large array will impact performance and might be rejected if the size of data is too large to be handled by SnowFlake server. When you use BULK INSERT option, you must complete field mapping. Alternatively, you can insert records using option “Use SQL Query” by writing your own SQL statement in the Query Builder editor.`,
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
+  'snowflake.connection.rdbms.host': 'Account name of Snowflake instance.',
+  'snowflake.connection.rdbms.database':
+    'Snowflake database that you want to connect.',
+  'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -1121,6 +1126,8 @@ export default {
   'export.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'export.rdbms.query': 'The query that fetches records to be exported.',
+  'snowflake.export.rdbms.query':
+    'Build the query command to query the database and retrieves a set of rows.',
   'export.rdbms.once.query':
     "Please specify the query to update each record as exported in the database (i.e. integrator.io will make a request back into the database to set this field to true for all the records that were exported so that those same records are not exported again). For example, you can give the query like 'Update Employee set exported=true where id={ {data.id }}'. Here, 'Employee' is the table name, 'exported' is the boolean field to identify whether a record is exported or not, and 'id' is the unique identifier of the record.",
   'export.mongodb.method':
@@ -1383,6 +1390,8 @@ export default {
     'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'import.http.ignoreEmptyNodes':
     'IF this flag is set to true, then the XML or JSON that makes up the HTTP request body will be stripped of all nodes that do not have a value. For example, if the body template resolves to: <customer id="1"><phone></phone></customer> and this flag is set, then the actual XML that will be used in the HTTP request will be: <customer id="1"></customer>',
+  'import.rdbms.bulkInsert.batchSize':
+    'BatchSize indicates number of records that will be imported in one request. The default value is 100. Please note that there is a query limit of 1 MB in the Snowflake. So, for larger values of batchSize, the number of records getting imported in a single request will be adjusted to the 1MB size limit.',
   'import.file.skipAggregation':
     'By default, integrator.io will aggregate all the pages of data that get generated by an export into one (possibly large) file.  If you prefer multiple smaller files (vs one large file) then please set this field to true.',
   'import.file.type':
@@ -1711,11 +1720,11 @@ export default {
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
   'import.restImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.netsuiteImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.etailImportFieldMappingSettings':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/sections/205928707-Field-Mapping-options-in-integrator-io" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'import.mapping.lists.fields.useFirstRow': '',
   'import.mapping.lists.fields.useAsAnInitializeValue':
     'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) during create/transform of a record. Mark this check box if you would like to add this field during record initialization. \nExample: If you are trying to create a non inventory item and you want to specify the subtype as "Sale" or "Purchase" or "ReSale", this mapping has to be set during the initialization itself. In such cases, we mark the subtype mapping as an initialization parameter.',
@@ -1906,7 +1915,7 @@ export default {
   'accesstoken.description':
     'Describe how your token is being used and be sure to mention exactly where your token is being stored externally.',
   'accesstoken.scope':
-    'Scope is used to define access permissions for your token.\n\n<ul><li><b>Full Access</b> - Full access tokens have unlimited permissions to your integrator.io account. Please be very careful provisioning full access tokens!</li>\n\n<li><b>Custom</b> - Custom scope tokens can be created with only minimal permissions to specific resources in your integrator.io account, and they can only be used to invoke very specific integrator.io APIs (i.e. only the APIs required to import or export data from external applications).</li></ul>',
+    'Scope is used to define access permissions for your token.\n\n<ul><li><b>Full Access</b> - Full access tokens provisioned at the account level have unrestricted permissions to your integrator.io account. Please be very careful provisioning full access tokens at the account level!  Full access tokens provisioned at the integration level can only be used to invoke exports and imports that belong to the integration, or to invoke virtual exports and imports using one of the connections that belong to the integration. Full access tokens provisioned at the integration level also include read-only access permissions to the resources that belong to the integration.</li>\n\n<li><b>Custom</b> - Custom scope tokens can be created with only minimal permissions to specific resources in your integrator.io account, and they can only be used to invoke very specific integrator.io APIs (i.e. only the APIs required to import or export data from external applications).</li></ul>',
   'accesstoken.name':
     'Name your token so that you can easily reference it from other parts of the application',
   'accesstoken._connectionIds':
@@ -1942,7 +1951,7 @@ export default {
   'fb.pp.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the lookup before the records are merged back into the source record.',
   'fb.pp.exports.responseMapping':
-    'Define a ‘results mapping’ here to specify where the data returned by the lookup should be merged back into the source record.',
+    'Configure ‘results mapping‘ to specify where data returned by the lookup should be merged back into the source record.',
   'fb.pp.exports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.exports.proceedOnFailure':
@@ -1958,7 +1967,7 @@ export default {
   'fb.pp.imports.hooks':
     'Define a ‘hook’ here to use custom code to process source records before they are submitted to the destination application (pre and post mapping hooks are available), or to process response data returned by the import (i.e. to handle errors, enhance error messages, etc...).',
   'fb.pp.imports.responseMapping':
-    'Define a ‘response mapping’ here to specify where the response data returned by the import should be merged back into the source record.',
+    'Configure ‘response mapping‘ to specify where fields returned by the destination application should be merged back into the source record.',
   'fb.pp.imports.postResponseMap':
     'Define a ‘hook’ here to use custom code to process records after the response/results mapping is complete, but before the records are passed along to downstream applications.',
   'fb.pp.imports.proceedOnFailure':
@@ -1970,7 +1979,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping#field-mapping-types+++++++++++++" target="_blank"/> Field Reference Guide.</a>',
+    'The type of field mapping that you want to perform. For more information refer to, the <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>',
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
@@ -1985,6 +1994,7 @@ export default {
     'This field can be used when any field value on the import system has to be hardcoded with some value. Generate field combined with this field will make the generate field to be filled with this value.',
   'mapping.lookupDefault':
     'This holds the default value to be set for the extract field.',
+  'mapping.options': `Hard-coding a field mapping will ignore the exported value and replace it with one of the following options:<br /> <ul><li><b>Use empty string as hard-coded value</b>: Populates an empty string ('') into this field</li><li><b>Use null as hard-coded value</b>: Populates a null data type into this field</li><li><b>Use custom value</b>: Populates the string that you enter below for <b>Enter default value</b> into the mapped field</li></ul>`,
   'mapping.extractDateFormat':
     'If the export field is of date, then this field represents the date format of the field being exported.',
   'mapping.extractDateTimezone':
@@ -1999,6 +2009,8 @@ export default {
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
   'mapping.lookup.mode':
     'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
+  'mapping.conditional.when':
+    'Perform this mapping when <br> <b>Record is created </b> </br> Perform the field mapping only when the record is being created. Otherwise, ignore this mapping.</br> <b>Record is updated</b> </br>Perform the field mapping only when the record is being updated. Otherwise, ignore this mapping.</br><b>Source is not empty</b> </br>Perform the field mapping when the extract resolves to a truthy value. Otherwise, ignore this mapping.</br> <b>Lookup is not empty</b> </br>Perform the field mapping when the lookup defined finds a record and it the return field’s value is not empty. Otherwise, ignore this mapping.</br><b>Lookup is empty</b> </br>Perform the field mapping when the lookup defined does not find a record or the found records field value is empty. Otherwise, ignore this mapping.</br><b>Field is not set</b> </br>Perform this field mapping if the record to be updated in NS does not have a value set. Otherwise, ignore the mapping.</br>By default, if none of the condition is specified the mapping is always considered.',
   'mapping.relativeURI':
     'This json path used to set the lookup in the URI itself. Ex: search.json?query=type:organization name:{customer.name}',
   'mapping.lookup.method': 'Operation method to be performed. Ex: GET or POST',
@@ -2022,10 +2034,27 @@ export default {
     'Important: only records where the filter expression evaluates to true will get processed. All other records will simply get passed along to subsequent applications in your flow. Defining an input filter allows you to skip processing for specific records for specific applications. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day, you could use an input filter to instead only post messages for orders that are above a certain amount.',
   'lookup.output.filter':
     'Important: only records where the filter expression evaluates to true will get passed along. All other records will get discarded. Defining an output filter allows you to discard records when you are working with older applications that do not natively support the ability to define search criteria. If an application does support the ability to define search criteria then you should use that native functionality (vs defining out filters here) to avoid pulling unnecessary data into integrator.io.',
-  'import.response.mapping':
-    'The primary reason for defining a response mapping is to specify where fields returned by the destination application should be merged back into the source record. If you do not see a specific import response field in the dropdown below you can still map it regardless, and as long as the field is returned by the destination application when the flow is running the mapping will work. You can merge import response fields into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly. You can also merge ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'import.response.mapping': `Response mapping enables you to specify where fields returned by the destination application should be merged back into the source record. If you don't see a specific import response field in the drop-down below, you can still map it by manually typing in the field name, then the mapping will work as long as the field is returned by the destination application when the flow is running. You can merge import response fields into any existing field in the source record, or you can specify a new field in which case integrator.io will create the field on-the-fly. You can also merge errors back into the source record if you want to manually process errors downstream in your flow.Learn <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping" target="_blank">more about mapping.</a>`,
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
-
+  'myaccount.name':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.email':
+    'Email is a very important field. Password reset links, product notifications, subscription notifications, etc. are all sent via email.It is highly recommended that you take the time to secure your email, especially if you are integrating sensitive information with your integrator.io account.',
+  'myaccount.password':
+    'There are minimum password requirements that all integrator.io users must satisfy, but we highly recommend using a password management app to auto generate a truly random, complex password that no one can remember or guess, and then rely solely on your password management app to sign you in to integrator.io.',
+  'myaccount.company':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.role':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.phone':
+    'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
+  'myaccount.timezone':
+    'Use this field to configure the time zone that you want dates and times to be displayed in your integrator.io account. This field is also used by the integrator.io scheduler to run your integration flows at the correct time of day based on your time zone.',
+  'myaccount.dateFormat':
+    'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
+  'myaccount.timeFormat':
+    'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
+  'myaccount.developer': `Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.`,
   // #region UI help text
 };

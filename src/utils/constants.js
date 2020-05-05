@@ -1,3 +1,5 @@
+export const emptyList = [];
+export const emptyObject = {};
 export const ACCOUNT_IDS = Object.freeze({
   OWN: 'own',
 });
@@ -206,7 +208,7 @@ export const REST_ASSISTANTS = [
   'asana',
   'shopify',
   'slack',
-  'desk',
+  // 'desk',
   'eventbrite',
   'smartsheet',
   'campaignmonitor',
@@ -442,3 +444,4 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_keepDeltaBehindExportId',
   ],
 });
+export const CLONING_SUPPORTED_IAS = ['sfnsio'];

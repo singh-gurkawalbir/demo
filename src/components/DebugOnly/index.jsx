@@ -2,13 +2,9 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 
 export default function DebugOnly({ children }) {
-  const debug = useSelector(state => {
-    const { debug } = selectors.userPreferences(state);
+  const debugOn = useSelector(state => selectors.debugOn(state));
 
-    return !!debug;
-  });
-
-  if (debug) {
+  if (debugOn) {
     return children || null;
   }
 

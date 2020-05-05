@@ -25,7 +25,7 @@ export default function reducer(state = {}, action) {
       newState = {
         ...state,
         integratorLicenseActionMessage:
-          'Activated! Your 30 days of unlimited flows starts now.',
+          'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?',
       };
 
       return newState;

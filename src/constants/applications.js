@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isProduction } from '../forms/utils';
 
 // Schema details:
 // ---------------
@@ -11,15 +11,7 @@ import _ from 'lodash';
 // keyword: any words in combination with the name that will be used for search.
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
-const mergeObjectArrays = (arr1, arr2, match) =>
-  _.union(
-    _.map(arr1, obj1 => {
-      const same = _.find(arr2, obj2 => obj1[match] === obj2[match]);
 
-      return same ? _.extend(obj1, same) : obj1;
-    }),
-    _.reject(arr2, obj2 => _.find(arr1, obj1 => obj2[match] === obj1[match]))
-  );
 let localStorageAssistants;
 
 // localStorage is browser specific one. It is breaking testcases. Below code changes are to
@@ -101,12 +93,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'surveymonkey',
-    type: 'webhook',
-    name: 'SurveyMonkey',
-    webhookOnly: true,
-  },
-  {
     id: 'mailparser-io',
     type: 'webhook',
     name: 'Mailparser',
@@ -170,6 +156,7 @@ const connectors = [
     group: 'db',
   },
   // Application connectors
+
   { id: '3dcart', name: '3DCart', type: 'rest', assistant: '3dcart' },
   {
     id: '3plcentral',
@@ -194,7 +181,12 @@ const connectors = [
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
-  { id: 'aptrinsic', name: 'Gainsight', type: 'rest', assistant: 'aptrinsic' },
+  {
+    id: 'aptrinsic',
+    name: 'Gainsight PX',
+    type: 'rest',
+    assistant: 'aptrinsic',
+  },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
@@ -375,7 +367,7 @@ const connectors = [
   // },
   {
     id: 'googlemail',
-    name: 'Gmail',
+    name: 'Google Mail',
     type: 'rest',
     assistant: 'googlemail',
   },
@@ -409,6 +401,12 @@ const connectors = [
     webhook: true,
   },
   { id: 'insightly', name: 'Insightly', type: 'rest', assistant: 'insightly' },
+  {
+    id: 'inspectorio',
+    name: 'Inspectorio',
+    type: 'http',
+    assistant: 'inspectorio',
+  },
   {
     id: 'integratorio',
     name: 'integrator.io',
@@ -712,13 +710,6 @@ const connectors = [
     webhook: true,
   },
   { id: 'sugarcrm', name: 'SugarCRM', type: 'rest', assistant: 'sugarcrm' },
-  {
-    id: 'surveymonkey',
-    name: 'SurveyMonkey',
-    type: 'rest',
-    assistant: 'surveymonkey',
-    webhook: true,
-  },
   { id: 'svb', name: 'SVB', type: 'http', assistant: 'svb' },
   { id: 'tableau', name: 'Tableau', type: 'rest', assistant: 'tableau' },
   { id: 'target', name: 'Target', type: 'http', assistant: 'target' },
@@ -750,7 +741,18 @@ const connectors = [
   { id: 'xcart', name: 'XCart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
   // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
-  { id: 'zendesk', name: 'Zendesk', type: 'rest', assistant: 'zendesk' },
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    type: 'rest',
+    assistant: 'zendesk',
+  },
+  {
+    id: 'zendesksell',
+    name: 'Zendesk Sell',
+    type: 'http',
+    assistant: 'zendesksell',
+  },
   { id: 'zimbra', name: 'Zimbra', type: 'http', assistant: 'zimbra' },
   // { id: 'zoho', name: 'Zoho', type: 'http', assistant: 'zoho' },
   { id: 'zohobooks', name: 'Zoho Books', type: 'rest', assistant: 'zohobooks' },
@@ -783,7 +785,6 @@ export const groupApplications = (
     assistants.forEach(asst => {
       if (
         ![
-          'surveymonkey',
           'yammer',
           'hybris',
           'etsy',
@@ -798,6 +799,8 @@ export const groupApplications = (
           name: asst.name,
           type: asst.type,
           assistant: asst.id,
+          export: asst.export,
+          import: asst.import,
         });
       }
     });
@@ -814,7 +817,7 @@ export const groupApplications = (
     return 0; // names must be equal
   });
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
+  let filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.assistant && assistants && resourceType !== 'connections') {
       const assistant = assistants.find(a => a.id === connector.assistant);
 
@@ -828,7 +831,7 @@ export const groupApplications = (
         return true;
       }
 
-      return false;
+      return true;
     }
 
     // Do not show FTP import for DataLoader flows
@@ -853,6 +856,10 @@ export const groupApplications = (
 
     return true;
   });
+
+  if (isProduction()) {
+    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
+  }
 
   return [
     {
@@ -893,6 +900,21 @@ export const getApp = (type, assistant) => {
   return connectors.find(c => c.id === id) || {};
 };
 
-mergeObjectArrays(connectors, assistants, 'assistant');
+const applications = connectors.filter(connector => {
+  const assistant = assistants.find(a => a.id === connector.assistant);
 
-export default connectors;
+  return !assistant || !connector.assistant;
+});
+
+assistants.forEach(asst => {
+  applications.push({
+    id: asst.id,
+    name: asst.name,
+    type: asst.type,
+    assistant: asst.id,
+    export: asst.export,
+    import: asst.import,
+  });
+});
+
+export default applications;

@@ -11,6 +11,7 @@ export default function DynaStaticMap(props) {
     value,
     id,
     onFieldChange,
+    keyOptions,
   } = props;
   // TODO: (Aditya/Sravan) DynaTable to accept a single value and conversion to be made inside component.Check for validations and how error message will be displayed in case of incomplete map
   // if map is being passed instead of value, trigger a onFieldChange with formatted value
@@ -21,7 +22,8 @@ export default function DynaStaticMap(props) {
       id: keyName,
       label: keyLabel,
       required: true,
-      type: 'input',
+      options: keyOptions,
+      type: keyOptions ? 'autosuggest' : 'input',
       supportsRefresh: false,
     },
     {

@@ -6,7 +6,7 @@ export default {
   formView: {
     id: 'formView',
     type: 'formview',
-    label: 'Form View',
+    label: 'Form view',
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {
@@ -130,7 +130,7 @@ export default {
           { label: 'Chargify', value: 'chargify' },
           { label: 'Clover', value: 'clover' },
           { label: 'Dcl', value: 'dcl' },
-          { label: 'Desk', value: 'desk' },
+          // { label: 'Desk', value: 'desk' },
           { label: 'Dnb', value: 'dnb' },
           { label: 'Docusign', value: 'docusign' },
           { label: 'Doubleclick', value: 'doubleclick' },
@@ -161,6 +161,7 @@ export default {
           { label: 'Hubspot', value: 'hubspot' },
           { label: 'Hybris', value: 'hybris' },
           { label: 'Insightly', value: 'insightly' },
+          { label: 'Inspectorio', value: 'inspectorio' },
           { label: 'Integratorio', value: 'integratorio' },
           { label: 'Jet', value: 'jet' },
           { label: 'Jira', value: 'jira' },
@@ -219,6 +220,7 @@ export default {
           { label: 'Yahoo', value: 'yahoo' },
           { label: 'Yammer', value: 'yammer' },
           { label: 'Zendesk', value: 'zendesk' },
+          { label: 'Zendesk Sell', value: 'zendesksell' },
           { label: 'Zoho', value: 'zoho' },
           { label: 'Zuora', value: 'zuora' },
           { label: 'Coupa', value: 'coupa' },

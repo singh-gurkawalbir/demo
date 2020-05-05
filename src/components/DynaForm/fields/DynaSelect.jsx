@@ -25,10 +25,13 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-end',
     borderRadius: 2,
     '& > Label': {
-      marginTop: theme.spacing(-1),
+      marginTop: theme.spacing(-3),
       whiteSpace: 'nowrap',
-      '&.MuiInputLabel-shrink': {
-        paddingTop: theme.spacing(2),
+      fontSize: 12,
+      padding: [[5, 0, 5, 12]],
+      width: '100%',
+      '&.Mui-disabled': {
+        background: theme.palette.secondary.lightest,
       },
     },
     '&:hover': {
@@ -109,7 +112,7 @@ export default function DynaSelect(props) {
 
   const defaultItem = (
     <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please Select'}
+      {placeholder || 'Please select'}
     </MenuItem>
   );
 
@@ -123,7 +126,7 @@ export default function DynaSelect(props) {
         className={clsx(classes.root, className)}
         error={!isValid}
         required={required}>
-        <InputLabel shrink htmlFor={id}>
+        <InputLabel htmlFor={id} disableAnimation shrink={false}>
           {label}
         </InputLabel>
         <Select

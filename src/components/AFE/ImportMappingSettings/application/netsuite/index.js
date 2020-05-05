@@ -29,6 +29,7 @@ export default {
       generateFields,
       options,
       lookups,
+      isCategoryMapping,
     } = params;
     const {
       connectionId,
@@ -43,6 +44,7 @@ export default {
     const fieldMetadata =
       generateFields && generateFields.find(gen => gen.id === generate);
     let generateFieldType;
+    let fieldOptions = [];
     let conditionalWhenOptions = isProduction()
       ? conditionalLookupOptionsforNetsuiteProduction
       : conditionalLookupOptionsforNetsuite;
@@ -52,6 +54,10 @@ export default {
         2,
         conditionalWhenOptions.length + 1
       );
+    }
+
+    if (isCategoryMapping && fieldMetadata && fieldMetadata.type === 'select') {
+      fieldOptions = fieldMetadata.options;
     }
 
     if (
@@ -84,7 +90,7 @@ export default {
           id: 'dataType',
           name: 'dataType',
           type: 'select',
-          label: 'Data Type',
+          label: 'Data type',
           defaultValue: value.dataType,
           helpKey: 'mapping.dataType',
           options: [
@@ -93,8 +99,8 @@ export default {
                 { label: 'String', value: 'string' },
                 { label: 'Number', value: 'number' },
                 { label: 'Boolean', value: 'boolean' },
-                { label: 'Number Array', value: 'numberarray' },
-                { label: 'String Array', value: 'stringarray' },
+                { label: 'Number array', value: 'numberarray' },
+                { label: 'String array', value: 'stringarray' },
               ],
             },
           ],
@@ -105,7 +111,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
-          label: 'Discard If Empty',
+          label: 'Discard if empty',
         },
         immutable: {
           id: 'immutable',
@@ -121,7 +127,7 @@ export default {
           type: 'checkbox',
           defaultValue: value.useFirstRow || false,
           // helpText not present
-          label: 'Use First Row',
+          label: 'Use first row',
         },
         useAsAnInitializeValue: {
           id: 'useAsAnInitializeValue',
@@ -130,13 +136,13 @@ export default {
           defaultValue: value.useAsAnInitializeValue || false,
           // helpText not present
           // TODO check when this field is hidden
-          label: 'Use This Field During Record Initialization',
+          label: 'Use this field during record initialization',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
           type: 'radiogroup',
-          label: 'Field Mapping Type',
+          label: 'Field mapping type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
@@ -176,8 +182,8 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: NetSuite Search', value: 'dynamic' },
-                { label: 'Static: Value to Value', value: 'static' },
+                { label: 'Dynamic: NetSuite search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
@@ -189,7 +195,7 @@ export default {
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
           defaultValue: lookup.recordType,
           type: 'refreshableselect',
-          label: 'Search Record Type',
+          label: 'Search record type',
           connectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
@@ -201,7 +207,7 @@ export default {
           id: 'lookup.expression',
           name: 'lookupExpression',
           type: 'netsuitelookupfilters',
-          label: 'NS Filters',
+          label: 'NS filters',
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
@@ -215,7 +221,7 @@ export default {
           id: 'lookup.expressionText',
           name: 'expressionText',
           type: 'text',
-          label: 'Lookup Filter Expression',
+          label: 'Lookup filter expression',
           multiline: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.expression'],
@@ -230,7 +236,7 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
-          label: 'Value Field',
+          label: 'Value field',
           defaultValue: lookup.resultField,
           /** savedRecordType is not being used with the intension of passing prop to the component.
            * But being used in reference to optionHandler.
@@ -252,7 +258,7 @@ export default {
           id: 'lookup.mapList',
           name: '_mapList',
           type: 'staticMap',
-          valueLabel: 'Import Field (NetSuite)',
+          valueLabel: 'Import field (NetSuite)',
           commMetaPath:
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
@@ -263,8 +269,10 @@ export default {
             }),
           connectionId: fieldId && connectionId,
           label: '',
+          keyOptions:
+            fieldOptions && fieldOptions.length ? fieldOptions : undefined,
           keyName: 'export',
-          keyLabel: 'Export Field',
+          keyLabel: 'Export field',
           valueName: 'import',
           defaultValue:
             lookup.map &&
@@ -273,10 +281,12 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['static'] },
-          ],
+          visibleWhenAll: isCategoryMapping
+            ? [{ field: 'fieldMappingType', is: ['lookup'] }]
+            : [
+                { field: 'fieldMappingType', is: ['lookup'] },
+                { field: 'lookup.mode', is: ['static'] },
+              ],
         },
         functions: {
           id: 'functions',
@@ -325,21 +335,21 @@ export default {
             {
               items: [
                 {
-                  label: `Use Empty String as hardcoded Value`,
+                  label: `Use empty string as hardcoded Value`,
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as hardcoded Value',
+                  label: 'Use null as hardcoded Value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Value',
+                  label: 'Use custom value',
                   value: 'default',
                 },
               ],
             },
           ],
-
+          helpKey: 'mapping.options',
           visibleWhen: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
         lookupAction: {
@@ -352,10 +362,12 @@ export default {
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           refreshOptionsOnChangesTo: ['lookup.mode'],
-          visibleWhenAll: [
-            { field: 'lookup.mode', is: ['dynamic', 'static'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
+          visibleWhenAll: isCategoryMapping
+            ? [{ field: 'fieldMappingType', is: ['lookup'] }]
+            : [
+                { field: 'lookup.mode', is: ['dynamic', 'static'] },
+                { field: 'fieldMappingType', is: ['lookup'] },
+              ],
           helpKey: 'mapping.lookupAction',
         },
         hardcodedDefault: {
@@ -363,7 +375,7 @@ export default {
           name: 'hardcodedDefault',
           type: 'text',
           required: true,
-          label: 'Enter Default Value',
+          label: 'Enter default value',
           placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
@@ -377,7 +389,7 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           required: true,
-          label: 'Enter Default Value',
+          label: 'Enter default value',
           placeholder: 'Enter Default Value',
           visibleWhenAll: [
             {
@@ -501,7 +513,7 @@ export default {
           id: 'extractDateTimezone',
           name: 'extractDateTimezone',
           type: 'select',
-          label: 'Time Zone',
+          label: 'Time zone',
           defaultValue: value.extractDateTimezone,
           options: [
             {
@@ -522,6 +534,7 @@ export default {
           name: 'conditionalWhen',
           type: 'select',
           label: 'Only perform mapping when:',
+          helpKey: 'mapping.conditional.when',
           defaultValue: value.conditional && value.conditional.when,
           options: [
             {
@@ -540,7 +553,7 @@ export default {
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          label: 'Lookup Name',
+          label: 'Lookup name',
           type: 'textwithlookupextract',
           fieldType: 'lookupMappings',
           importType: 'netsuite',
@@ -632,28 +645,28 @@ export default {
             {
               items: [
                 {
-                  label: 'Fail Record',
+                  label: 'Fail record',
                   value: 'disallowFailure',
                 },
                 {
-                  label: 'Use Empty String as Default Value',
+                  label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as Default Value',
+                  label: 'Use null as default value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Default Value',
+                  label: 'Use custom default value',
                   value: 'default',
                 },
               ],
             },
           ];
 
-          if (lookupModeField.value === 'dynamic') {
+          if (lookupModeField && lookupModeField.value === 'dynamic') {
             options[0].items.splice(1, 0, {
-              label: 'Use Default on Multiple Matches',
+              label: 'Use default on multiple matches',
               value: 'useDefaultOnMultipleMatches',
             });
           }
@@ -719,7 +732,8 @@ export default {
         return null;
       },
     };
-    let { fields } = fieldMeta.layout;
+    const { fieldMap, layout } = fieldMeta;
+    let { fields } = layout;
 
     if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.useFirstRow;
@@ -800,6 +814,34 @@ export default {
       );
     }
 
+    if (isCategoryMapping) {
+      fields = fields.filter(
+        el =>
+          ![
+            'lookup.mode',
+            'lookup.recordType',
+            'lookup.expression',
+            'lookup.expressionText',
+            'lookup.resultField',
+          ].includes(el)
+      );
+      const fieldMappingTypeField = fieldMap.fieldMappingType;
+
+      fieldMappingTypeField.options = [
+        {
+          items: [
+            { label: 'Standard', value: 'standard' },
+            { label: 'Hard-Coded', value: 'hardCoded' },
+            {
+              label: 'Static - Lookup',
+              value: 'lookup',
+            },
+          ],
+        },
+      ];
+    }
+
+    fieldMeta.fieldMap = fieldMap;
     fieldMeta.layout.fields = fields;
 
     return fieldMeta;

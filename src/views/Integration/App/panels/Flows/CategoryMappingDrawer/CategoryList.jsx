@@ -13,6 +13,11 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(2),
     wordBreak: 'break-word',
   },
+  doubleNested: {
+    paddingLeft: theme.spacing(6),
+    paddingRight: theme.spacing(2),
+    wordBreak: 'break-word',
+  },
   listItem: {
     color: theme.palette.text.primary,
     width: '100%',
@@ -58,11 +63,22 @@ export default function CategoryList({ integrationId, flowId }) {
           </ListItem>
           {!!children && !!children.length && (
             <Collapse in={!!listCollapseState[id]} timeout="auto" unmountOnExit>
-              {children.map(({ id, name }) => (
+              {children.map(({ id, name, children }) => (
                 <List key={id} component="div" disablePadding>
                   <Typography className={classes.nested} variant="body2">
                     {name}
                   </Typography>
+                  {!!children &&
+                    !!children.length &&
+                    children.map(({ id, name }) => (
+                      <List key={id} component="div" disablePadding>
+                        <Typography
+                          className={classes.doubleNested}
+                          variant="body2">
+                          {name}
+                        </Typography>
+                      </List>
+                    ))}
                 </List>
               ))}
             </Collapse>

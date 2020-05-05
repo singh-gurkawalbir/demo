@@ -72,7 +72,7 @@ export default {
           { label: 'Chargify', value: 'chargify' },
           { label: 'Clover', value: 'clover' },
           { label: 'Dcl', value: 'dcl' },
-          { label: 'Desk', value: 'desk' },
+          // { label: 'Desk', value: 'desk' },
           { label: 'Dnb', value: 'dnb' },
           { label: 'Docusign', value: 'docusign' },
           { label: 'Doubleclick', value: 'doubleclick' },
@@ -103,6 +103,7 @@ export default {
           { label: 'Hubspot', value: 'hubspot' },
           { label: 'Hybris', value: 'hybris' },
           { label: 'Insightly', value: 'insightly' },
+          { label: 'Inspectorio', value: 'inspectorio' },
           { label: 'Integratorio', value: 'integratorio' },
           { label: 'Jet', value: 'jet' },
           { label: 'Jira', value: 'jira' },
@@ -1308,6 +1309,7 @@ export default {
   'ftp.port': {
     type: 'ftpport',
     label: 'Port',
+    required: true,
     validWhen: {
       fallsWithinNumericalRange: {
         min: 0,
@@ -1384,7 +1386,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
+          { label: 'Please select (Optional)', value: '' },
           { label: 'AES-256', value: 'AES-256' },
           { label: 'AES-192', value: 'AES-192' },
           { label: 'AES-128', value: 'AES-128' },
@@ -1467,7 +1469,6 @@ export default {
     type: 'text',
     label: "Partner's URL for Asynchronous MDN:",
     required: true,
-
     visibleWhen: [
       {
         field: 'partnerrequireasynchronousmdns',
@@ -1485,15 +1486,19 @@ export default {
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'MDN verification algorithm',
-    required: true,
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.mdn.verifyMDNSignature',
+        is: [true],
       },
     ],
   },

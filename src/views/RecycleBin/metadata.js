@@ -16,11 +16,11 @@ export default {
       orderBy: 'model',
     },
     {
-      heading: 'Deleted Date',
+      heading: 'Deleted date',
       value: r => r.doc && <DateTimeDiaply dateTime={r.doc.lastModified} />,
     },
     {
-      heading: 'Auto Purge',
+      heading: 'Auto purge',
       value: r => {
         const restoreWithin = Math.ceil(
           (30 * 24 * 60 * 60 * 1000 -
