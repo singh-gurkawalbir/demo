@@ -19,6 +19,10 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-end',
     marginBottom: theme.spacing(1),
   },
+  dynaNetsuiteLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
 }));
 
 export default function DynaNetSuiteQualifier(props) {
@@ -90,7 +94,7 @@ export default function DynaNetSuiteQualifier(props) {
   return (
     <div className={classes.dynaNetsuiteQWrapper}>
       <FormControl className={classes.textField}>
-        <div className={classes.fieldWrapper}>
+        <div className={classes.dynaNetsuiteLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>

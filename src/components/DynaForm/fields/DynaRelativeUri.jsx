@@ -29,6 +29,10 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
   },
+  relativeUrilabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
 }));
 
 // TODO(Aditya): remove this component and use DynaTextWithLookupExtract/RelativeURI after refractor
@@ -139,7 +143,7 @@ export default function DynaRelativeUri(props) {
         />
       )}
       <div className={classes.textField}>
-        <div className={classes.labelWrapper}>
+        <div className={classes.relativeUrilabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>

@@ -40,6 +40,10 @@ const useStyles = makeStyles(theme => ({
   textFieldWithClipBoard: {
     width: '100%',
   },
+  dynaTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
 }));
 
 function DynaText(props) {
@@ -139,7 +143,7 @@ function DynaText(props) {
 
   return (
     <FormControl>
-      <div className={classes.fieldWrapper}>
+      <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
