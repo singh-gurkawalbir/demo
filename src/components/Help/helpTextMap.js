@@ -1,32 +1,28 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
-/* eslint-disable no-dupe-keys */
-// eslint-disable-next-line no-unused-vars
-const extractedHelpkeys = {
+export default {
   // fieldDefinitions
-  'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
+  'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
-  'connections.connection.as2.userStationInfo.mdn.mdnURL':
-    "This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.",
-  'connections.connection.partnerrequireasynchronousmdns':
+  'connection.partnerrequireasynchronousmdns':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
-  'exports.export.netsuite.distributed.executionContext':
+  'export.netsuite.distributed.executionContext':
     'The invited user will have permissions to manage the integrations selected here.',
-  'exports.export.netsuite.distributed.executionType':
+  'export.netsuite.distributed.executionType':
     'The invited user will have permissions to manage the integrations selected here.',
-  'iClients.iClient.oauth2.clientId':
+  'iClient.oauth2.clientId':
     'This is the ID for your client app that is registered with the API provider.',
-  'iClients.iClient.oauth2.clientSecret':
+  'iClient.oauth2.clientSecret':
     'This is the client secret the API provider gave you.',
-  'imports.import.http.requestType':
+  'import.http.requestType':
     'Please specify whether the record is being created or updated using this field.',
-  'imports.import.rdbms.queryType':
+  'import.rdbms.queryType':
     "Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.",
-  'imports.import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rest.requestType':
+  'import.rest.requestType':
     'Please specify whether the record is being created or updated using this field.',
 
   // definitions
@@ -266,7 +262,8 @@ const extractedHelpkeys = {
     'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
   'liquidplanner.connection.http.auth.token.token':
     'The API Token of your LiquidPlanner account when using the Token authentication.',
-  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -520,7 +517,8 @@ const extractedHelpkeys = {
     'The username of your JIRA account.',
   'jira.connection.rest.basicAuth.password':
     'The password of your JIRA account.',
-  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.rest.bearerToken':
     'The access token of your Magento 2 account.',
   'bigcommerce.connection.rest.basicAuth.username':
@@ -545,9 +543,7 @@ const extractedHelpkeys = {
     'Please specify whether the record is being created or updated using this field.',
   'rest.import.rest.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-};
 
-export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':
@@ -753,9 +749,14 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'connection.snowflake.rdbms.queryType': `Please select this option if you want to import (or insert) multiple records at once into the database.Please use this option to provide INSERT/UPDATE queries to CREATE/UPDATE records in the database.`,
+  'snowflake.import.rdbms.queryType': `BULK INSERT supports binding an array of data, allowing you to insert multiple records. Binding a large array will impact performance and might be rejected if the size of data is too large to be handled by SnowFlake server. When you use BULK INSERT option, you must complete field mapping. Alternatively, you can insert records using option “Use SQL Query” by writing your own SQL statement in the Query Builder editor.`,
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
+  'snowflake.connection.rdbms.host': 'Account name of Snowflake instance.',
+  'snowflake.connection.rdbms.database':
+    'Snowflake database that you want to connect.',
+  'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -1125,6 +1126,8 @@ export default {
   'export.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'export.rdbms.query': 'The query that fetches records to be exported.',
+  'snowflake.export.rdbms.query':
+    'Build the query command to query the database and retrieves a set of rows.',
   'export.rdbms.once.query':
     "Please specify the query to update each record as exported in the database (i.e. integrator.io will make a request back into the database to set this field to true for all the records that were exported so that those same records are not exported again). For example, you can give the query like 'Update Employee set exported=true where id={ {data.id }}'. Here, 'Employee' is the table name, 'exported' is the boolean field to identify whether a record is exported or not, and 'id' is the unique identifier of the record.",
   'export.mongodb.method':
@@ -1387,6 +1390,8 @@ export default {
     'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'import.http.ignoreEmptyNodes':
     'IF this flag is set to true, then the XML or JSON that makes up the HTTP request body will be stripped of all nodes that do not have a value. For example, if the body template resolves to: <customer id="1"><phone></phone></customer> and this flag is set, then the actual XML that will be used in the HTTP request will be: <customer id="1"></customer>',
+  'import.rdbms.bulkInsert.batchSize':
+    'BatchSize indicates number of records that will be imported in one request. The default value is 100. Please note that there is a query limit of 1 MB in the Snowflake. So, for larger values of batchSize, the number of records getting imported in a single request will be adjusted to the 1MB size limit.',
   'import.file.skipAggregation':
     'By default, integrator.io will aggregate all the pages of data that get generated by an export into one (possibly large) file.  If you prefer multiple smaller files (vs one large file) then please set this field to true.',
   'import.file.type':

@@ -130,6 +130,7 @@ export default {
 
   // check it is referenced to a single table
   'salesforce-sObjects-referenceFields': data =>
+    data.fields &&
     data.fields
       .filter(
         r => r.referenceTo && r.referenceTo.length > 0 && r.relationshipName
@@ -144,6 +145,7 @@ export default {
       }))
       .sort(sortElements),
   'salesforce-sObjects-nonReferenceFields': data =>
+    data.fields &&
     data.fields
       .filter(r => !r.referenceTo || r.referenceTo.length === 0)
       .map(d => ({
@@ -154,6 +156,7 @@ export default {
       }))
       .sort(sortElements),
   'salesforce-sObjects-childReferenceTo': data =>
+    data.childRelationships &&
     data.childRelationships
       .filter(r => !!r.relationshipName)
       .map(d => ({
@@ -184,6 +187,7 @@ export default {
       })),
   'salesforce-soqlQuery': data => data,
   'salesforce-externalIdFields': data =>
+    data.fields &&
     data.fields
       .filter(f => f.externalId || f.name === 'Id')
       .map(d => ({

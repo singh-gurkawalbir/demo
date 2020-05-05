@@ -18,6 +18,7 @@ export default {
       fieldId: 'http.baseURI',
       endAdornment: '/api',
       label: 'Base URI',
+      helpKey: 'spreecommerce.connection.http.baseURI',
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
@@ -28,6 +29,7 @@ export default {
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
+      helpKey: 'spreecommerce.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

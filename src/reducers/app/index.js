@@ -1,47 +1,43 @@
+import produce from 'immer';
 import actionTypes from '../../actions/types';
 
-export default function(
-  state = {
-    appErrored: false,
-    drawerOpened: true,
-    bannerOpened: true,
-    count: 1,
-  },
-  action
-) {
-  switch (action.type) {
-    case actionTypes.APP_RELOAD: {
-      const { count, drawerOpened } = state;
-      const newCount = count + 1;
+const defaultState = {
+  appErrored: false,
+  drawerOpened: true,
+  bannerOpened: true,
+  count: 1,
+};
 
-      return { count: newCount, drawerOpened };
+// #region Reducers
+export default function(state = defaultState, action) {
+  return produce(state, draft => {
+    switch (action.type) {
+      case actionTypes.APP_RELOAD:
+        draft.count += 1;
+        delete draft.bannerOpened;
+        break;
+
+      case actionTypes.APP_TOGGLE_BANNER:
+        draft.bannerOpened = !draft.bannerOpened;
+        break;
+
+      case actionTypes.APP_TOGGLE_DRAWER:
+        draft.drawerOpened = !draft.drawerOpened;
+        break;
+
+      case actionTypes.APP_ERRORED:
+        draft.appErrored = true;
+        break;
+
+      case actionTypes.APP_CLEAR_ERROR:
+        delete draft.appErrored;
+        break;
+
+      default:
     }
-
-    case actionTypes.APP_TOGGLE_BANNER: {
-      return { ...state, bannerOpened: !state.bannerOpened };
-    }
-
-    case actionTypes.APP_TOGGLE_DRAWER: {
-      return { ...state, drawerOpened: !state.drawerOpened };
-    }
-
-    case actionTypes.APP_ERRORED: {
-      return { ...state, appErrored: true };
-    }
-
-    case actionTypes.APP_CLEAR_ERROR: {
-      const newState = { ...state };
-
-      delete newState.appErrored;
-
-      return newState;
-    }
-
-    default: {
-      return state;
-    }
-  }
+  });
 }
+// #endregion Reducers
 
 // #region Selectors
 export function bannerOpened(state) {

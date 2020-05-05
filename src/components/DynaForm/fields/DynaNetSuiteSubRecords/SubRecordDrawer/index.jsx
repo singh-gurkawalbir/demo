@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -54,6 +54,9 @@ function SubRecordDrawer(props) {
       })
       .data.find(record => record.value === recordType)
   );
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const recordTypeLabel = recordTypeObj && recordTypeObj.label;
   const subrecordFields =
     recordTypeObj &&
@@ -82,6 +85,11 @@ function SubRecordDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const handleSubmit = useCallback(
     formValues => {
       const jsonPathFieldId = `jsonPath_${formValues.fieldId.replace(
@@ -156,11 +164,15 @@ function SubRecordDrawer(props) {
           {fieldMeta && (
             <DynaForm
               // disabled={disabled}
-              fieldMeta={fieldMeta}>
+              fieldMeta={fieldMeta}
+              formState={formState}>
               <Button data-test="cancel-subrecord" onClick={handleClose}>
                 Cancel
               </Button>
-              <DynaSubmit data-test="save-subrecord" onClick={handleSubmit}>
+              <DynaSubmit
+                data-test="save-subrecord"
+                showCustomFormValidations={showCustomFormValidations}
+                onClick={handleSubmit}>
                 Save
               </DynaSubmit>
             </DynaForm>
