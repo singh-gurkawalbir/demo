@@ -35,7 +35,7 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
-export default function useForm({ formKey, ...formSpecificProps }) {
+export default function useForm({ formKey, metaValue, ...formSpecificProps }) {
   const [formKeyUsed, setFormKeyUsed] = useState();
   const {
     disabled,
@@ -76,6 +76,21 @@ export default function useForm({ formKey, ...formSpecificProps }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, fieldsMeta, formKey]);
 
+  useEffect(() => {
+    if (formKeyUsed && metaValue) {
+      Object.keys(metaValue).forEach(fieldId => {
+        fieldId &&
+          dispatch(
+            actions.form.field.onFieldChange(formKeyUsed)(
+              fieldId,
+              metaValue[fieldId],
+              true
+            )
+          );
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, formKeyUsed, metaValue]);
   useEffect(() => {
     if (formKeyUsed) {
       dispatch(

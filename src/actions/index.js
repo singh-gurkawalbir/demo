@@ -35,10 +35,10 @@ const form = {
   field: {
     registerField: formKey => fieldProps =>
       action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
-    onFieldChange: formKey => (id, value) =>
+    onFieldChange: formKey => (id, value, skipFieldTouched) =>
       action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
         formKey,
-        fieldProps: { id, value },
+        fieldProps: { id, value, skipFieldTouched },
       }),
     onFieldBlur: formKey => id =>
       action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
