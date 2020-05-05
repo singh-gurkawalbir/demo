@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
 import { generateNewId } from '../../../utils/resource';
-import { resourceErrors, errorRetryIds, filter } from '../../../reducers';
+import { resourceErrors, errorRetryDataKeys, filter } from '../../../reducers';
 import CeligoPaginatedTable from '../../CeligoPaginatedTable';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
@@ -42,8 +42,11 @@ export default function OpenErrors({ flowId, resourceId }) {
   );
   const areSelectedErrorsRetriable = useSelector(
     state =>
-      !!errorRetryIds(state, { flowId, resourceId, errorIds: selectedErrorIds })
-        .length
+      !!errorRetryDataKeys(state, {
+        flowId,
+        resourceId,
+        errorIds: selectedErrorIds,
+      }).length
   );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
@@ -92,10 +95,25 @@ export default function OpenErrors({ flowId, resourceId }) {
     [fetchMoreData, nextPageURL, status]
   );
   const retryErrors = useCallback(() => {
+    dispatch(
+      actions.errorManager.flowErrorDetails.retry({
+        flowId,
+        resourceId,
+        errorIds: selectedErrorIds,
+      })
+    );
+
     setTableKey(generateNewId());
     setSelectedErrorIds([]);
-  }, []);
+  }, [dispatch, flowId, resourceId, selectedErrorIds]);
   const resolveErrors = useCallback(() => {
+    dispatch(
+      actions.errorManager.flowErrorDetails.resolve({
+        flowId,
+        resourceId,
+        errorIds: selectedErrorIds,
+      })
+    );
     setTableKey(generateNewId());
     setSelectedErrorIds([]);
   });

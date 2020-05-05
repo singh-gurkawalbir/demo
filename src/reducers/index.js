@@ -3975,7 +3975,7 @@ export function resourceErrors(state, { flowId, resourceId, options = {} }) {
   });
 }
 
-export function errorRetryIds(
+export function errorRetryDataKeys(
   state,
   { flowId, resourceId, errorIds = [], options = {} }
 ) {

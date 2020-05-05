@@ -1,6 +1,6 @@
 import { put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
-import { resourceErrors, filter } from '../../../reducers';
+import { resourceErrors, filter, errorRetryDataKeys } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 
@@ -72,6 +72,48 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
   );
 }
 
+function* retryErrors({ flowId, resourceId, errorIds }) {
+  const retryDataKeys = yield select(errorRetryDataKeys, {
+    flowId,
+    resourceId,
+    errorIds,
+  });
+
+  try {
+    yield apiCallWithRetry({
+      path: `/flows/${flowId}/${resourceId}/retry`,
+      opts: {
+        method: 'POST',
+        body: {
+          retryDataKeys,
+        },
+      },
+    });
+
+    // console.log(retryResponse);
+  } catch (e) {
+    // console.log('error');
+  }
+}
+
+function* resolveErrors({ flowId, resourceId, errorIds }) {
+  try {
+    yield apiCallWithRetry({
+      path: `/flows/${flowId}/${resourceId}/resolved`,
+      opts: {
+        method: 'PUT',
+        body: {
+          errors: errorIds,
+        },
+      },
+    });
+
+    // console.log(resolveResponse);
+  } catch (e) {
+    // console.log('error');
+  }
+}
+
 export default [
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
@@ -80,5 +122,10 @@ export default [
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS,
     selectAllErrorDetails
+  ),
+  takeLatest(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RETRY, retryErrors),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVE,
+    resolveErrors
   ),
 ];
