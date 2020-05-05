@@ -55,10 +55,14 @@ export function categoryRelationshipData(state, integrationId, flowId) {
     flowId
   );
 }
-
 // #endregion
-export function processors(state) {
-  return fromResources.processors(state && state.resources);
+
+export function resourceState(state) {
+  return fromResources.resourceState(state && state.resources);
+}
+
+export function marketPlaceState(state) {
+  return fromMarketplace.marketPlaceState(state && state.marketplace);
 }
 
 export function hasData(state, resourceType) {
@@ -109,7 +113,9 @@ export function auditLogs(state, resourceType, resourceId, filters) {
 
     if (resourceDetails && resourceDetails._connectorId) {
       if (
-        ['integrations', 'flows', 'connections'].includes(resourceTypePlural)
+        ['integrations', 'flows', 'connections', 'imports', 'exports'].includes(
+          resourceTypePlural
+        )
       ) {
         return true;
       }
@@ -191,15 +197,6 @@ export function suiteScriptIntegrations(state, connectionId) {
   return fromSuiteScript.integrations(state.suiteScript, connectionId);
 }
 
-export function marketplaceConnectors(state, application, sandbox, licenses) {
-  return fromMarketplace.connectors(
-    state && state.marketplace,
-    application,
-    sandbox,
-    licenses
-  );
-}
-
 export function integrationAppList(state) {
   return fromMarketplace.integrationAppList(state && state.marketplace);
 }
@@ -244,6 +241,9 @@ export function jobErrorRetryObject(state, retryId) {
   return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
 
+// TODO: Santosh, since ALL selectors "get" something, its meaningless to add
+// "get" prefix to selector names. If you run into examples like this, pls
+// rename.
 export const getPreBuiltFileDefinitions = (state, format) =>
   fromFileDefinitions.getPreBuiltFileDefinitions(
     state && state.fileDefinitions,

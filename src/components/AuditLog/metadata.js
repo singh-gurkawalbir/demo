@@ -47,12 +47,12 @@ export default {
       width: '13%',
     },
     {
-      heading: 'Old Value',
+      heading: 'Old value',
       value: al => getOldValue(al),
       width: '13%',
     },
     {
-      heading: 'New Value',
+      heading: 'New value',
       value: al => getNewValue(al),
       width: '13%',
     },

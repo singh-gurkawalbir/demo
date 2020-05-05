@@ -14,6 +14,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
 }));
+const scriptFilterConfig = { type: 'scripts' };
 
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey } = props;
@@ -55,9 +57,7 @@ export default function JavaScriptPanel(props) {
 
     return data && data.merged && data.merged.content;
   });
-  const allScripts = useSelector(
-    state => selectors.resourceList(state, { type: 'scripts' }).resources
-  );
+  const allScripts = useResourceList(scriptFilterConfig).resources;
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     val => {

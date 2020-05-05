@@ -2,7 +2,6 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import mappingUtil from '../../../utils/mapping';
-import lookupUtil from '../../../utils/lookup';
 
 const emptyObj = {};
 const emptySet = [];
@@ -17,6 +16,7 @@ function flattenChildrenStructrue(
     deleted = [],
     isParentDeleted = false,
     deleteChildlessParent = false,
+    depth = 0,
   } = options;
 
   if (meta) {
@@ -31,6 +31,7 @@ function flattenChildrenStructrue(
     result.push({
       ...meta,
       isRoot,
+      depth,
       deleted:
         allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
@@ -39,6 +40,7 @@ function flattenChildrenStructrue(
       meta.children.forEach(child =>
         flattenChildrenStructrue(result, child, false, {
           deleted,
+          depth: depth + 1,
           isParentDeleted: deleted.includes(meta.id),
           deleteChildlessParent,
         })
@@ -229,6 +231,7 @@ export default (state = {}, action) => {
             adaptorType,
             resourceData,
             application,
+            lookups,
             isGroupedSampleData,
             isVariationMapping,
             categoryId,
@@ -266,7 +269,6 @@ export default (state = {}, action) => {
                 isVariationMapping,
               }
             );
-          const lookups = lookupUtil.getLookupFromResource(resourceData);
           const initChangeIdentifier =
             (draft[cKey] &&
               draft[cKey].mappings &&

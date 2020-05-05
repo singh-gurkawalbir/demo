@@ -44,7 +44,7 @@ export default {
         items: [
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
-          { label: 'Add or Update', value: 'addupdate' },
+          { label: 'Add or update', value: 'addupdate' },
         ],
       },
     ],
@@ -64,7 +64,7 @@ export default {
         items: [
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
-          { label: 'Add or Update', value: 'addupdate' },
+          { label: 'Add or update', value: 'addupdate' },
           { label: 'Delete', value: 'delete' },
         ],
       },

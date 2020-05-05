@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
         margin: 0,
         minWidth: 0,
         maxWidth: '85%',
+        paddingTop: theme.spacing(0.5),
       },
       '& >:nth-child(2)': {
         minHeight: `16px !important`,

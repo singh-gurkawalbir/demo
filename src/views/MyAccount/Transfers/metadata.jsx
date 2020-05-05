@@ -6,12 +6,12 @@ export default {
   columns: () => {
     const columns = [
       {
-        heading: 'From User',
+        heading: 'From user',
         value: r => r && r.fromUser,
         orderBy: 'name',
       },
       {
-        heading: 'To User',
+        heading: 'To user',
         value: r => r && r.toUser,
       },
       {
@@ -20,7 +20,7 @@ export default {
       },
       { heading: 'Status', value: r => r && r.status },
       {
-        heading: 'Transfer Date',
+        heading: 'Transfer date',
         value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
       },
     ];

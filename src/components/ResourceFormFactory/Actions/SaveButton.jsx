@@ -21,6 +21,7 @@ const SaveButton = props => {
     match,
     disabled = false,
     isGenerate = false,
+    flowId,
   } = props;
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
@@ -35,11 +36,12 @@ const SaveButton = props => {
           values,
           match,
           false,
-          isGenerate
+          isGenerate,
+          flowId
         )
       );
     },
-    [dispatch, isGenerate, match, resourceId, resourceType]
+    [dispatch, flowId, isGenerate, match, resourceId, resourceType]
   );
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,

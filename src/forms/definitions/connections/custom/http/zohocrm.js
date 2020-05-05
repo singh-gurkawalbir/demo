@@ -26,6 +26,7 @@ export default {
     'http.zohoSubdomain': {
       id: 'http.zohoSubdomain',
       type: 'text',
+      helpKey: 'zohocrm.connection.http.zohoSubdomain',
       startAdornment: 'https://www.zohoapis',
       endAdornment: '/crm',
       label: 'Subdomain',

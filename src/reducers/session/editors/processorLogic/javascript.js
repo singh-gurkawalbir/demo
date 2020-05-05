@@ -35,7 +35,7 @@ export default {
     // in case script is used in javascript editor
     if ('scriptId' in editor) {
       // special case check where none is selected as scriptId by default and user types in code section and removes it.
-      // TODO: Raghu to check why we have scriptId as undefined when none is selected by defualt and ''(empty quotes) when user selects none manually
+      // TODO: Raghu to check why we have scriptId as undefined when none is selected by default and ''(empty quotes) when user selects none manually
       if (
         initScriptId === undefined &&
         (scriptId === '' || scriptId === undefined) &&

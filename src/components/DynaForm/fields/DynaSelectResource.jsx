@@ -1,5 +1,5 @@
 import { Chip } from '@material-ui/core';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,7 +18,9 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
+import useResourceList from '../../../hooks/useResourceList';
 
+const emptyArray = [];
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -155,12 +157,14 @@ function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
-  const { resources = [] } = useSelector(state =>
-    selectors.resourceList(state, {
+  const filterConfig = useMemo(
+    () => ({
       type: resourceType,
       ignoreEnvironmentFilter,
-    })
+    }),
+    [ignoreEnvironmentFilter, resourceType]
   );
+  const { resources = emptyArray } = useResourceList(filterConfig);
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );

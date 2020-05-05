@@ -159,9 +159,7 @@ export default function RefreshGenericResource(props) {
           </ActionButton>
         )}
         {description && <FormHelperText>{description}</FormHelperText>}
-        {fieldError && (
-          <FormHelperText error="true">{fieldError}</FormHelperText>
-        )}
+        {fieldError && <FormHelperText error>{fieldError}</FormHelperText>}
       </FormControl>
     </div>
   );

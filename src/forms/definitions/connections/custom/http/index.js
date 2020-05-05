@@ -168,8 +168,10 @@ import loopreturns from './loopreturns';
 import saplitmos from './saplitmos';
 import redshift from './redshift';
 import bigquery from './bigquery';
+import zendesksell from './zendesksell';
 import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
+import inspectorio from './inspectorio';
 
 export default {
   bigquery,
@@ -343,4 +345,6 @@ export default {
   target,
   '3plcentral': threeplcentral,
   loopreturns,
+  zendesksell,
+  inspectorio,
 };

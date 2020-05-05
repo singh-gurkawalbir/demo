@@ -34,6 +34,7 @@ export default {
     },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
+      helpKey: 'magento.connection.http.unencrypted.username',
       type: 'text',
       label: 'Username',
       required: true,
@@ -42,6 +43,7 @@ export default {
       id: 'http.encrypted.password',
       type: 'text',
       label: 'Password',
+      helpKey: 'magento.connection.http.encrypted.password',
       inputType: 'password',
       defaultValue: '',
       description:

@@ -85,7 +85,7 @@ describe('installConnector saga', () => {
     const saga = installConnector({ connectorId, sandbox });
 
     expect(saga.next(connectorResource).value).toEqual(
-      select(selectors.resource, 'connectors', connectorId)
+      select(selectors.integrationAppList)
     );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {
@@ -112,7 +112,7 @@ describe('installConnector saga', () => {
     const saga = installConnector({ connectorId, sandbox });
 
     expect(saga.next(connectorResource).value).toEqual(
-      select(selectors.resource, 'connectors', connectorId)
+      select(selectors.integrationAppList)
     );
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, {

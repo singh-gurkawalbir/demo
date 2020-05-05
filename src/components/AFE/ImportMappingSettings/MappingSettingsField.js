@@ -18,6 +18,7 @@ export default function MappingSettingsField(props) {
     options,
     value,
     disabled,
+    isCategoryMapping,
     lookups,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
@@ -43,6 +44,7 @@ export default function MappingSettingsField(props) {
           updateLookup={updateLookup}
           title="Settings"
           value={value}
+          isCategoryMapping={isCategoryMapping}
           onClose={handleClose}
           options={options}
           extractFields={extractFields}

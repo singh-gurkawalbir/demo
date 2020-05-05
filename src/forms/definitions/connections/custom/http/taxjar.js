@@ -18,6 +18,7 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'API key',
       required: true,
+      helpKey: 'taxjar.connection.http.auth.token.token',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

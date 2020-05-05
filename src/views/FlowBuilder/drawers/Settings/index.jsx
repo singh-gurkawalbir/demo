@@ -5,14 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import {
-  resourceList,
-  getNextDataFlows,
-  developerMode,
-} from '../../../../reducers';
+import { nextDataFlowsForFlow, developerMode } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
+import useResourceList from '../../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -22,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(-1),
   },
 }));
+const integrationsFilterConfig = { type: 'integrations' };
 
 export default function SettingsDrawer({
   flow,
@@ -33,10 +31,8 @@ export default function SettingsDrawer({
   const dispatch = useDispatch();
   const history = useHistory();
   const developerModeOn = useSelector(state => developerMode(state));
-  const { resources: integrations } = useSelector(state =>
-    resourceList(state, { type: 'integrations' })
-  );
-  const nextDataFlows = useSelector(state => getNextDataFlows(state, flow));
+  const { resources: integrations } = useResourceList(integrationsFilterConfig);
+  const nextDataFlows = useSelector(state => nextDataFlowsForFlow(state, flow));
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = {
     fieldMap: {
@@ -84,7 +80,7 @@ export default function SettingsDrawer({
         type: 'multiselect',
         placeholder: 'Please select flow',
         helpKey: 'flow._runNextFlowIds',
-        label: 'Next Data Flow:',
+        label: 'Next data flow:',
         displayEmpty: true,
         defaultValue: (flow && flow._runNextFlowIds) || [],
         options: [
@@ -107,7 +103,7 @@ export default function SettingsDrawer({
         type: 'editor',
         mode: 'json',
         label: 'Settings',
-        showOnDeveloperMode: true,
+        developerModeOnly: true,
         defaultValue:
           (flow && flow.settings && JSON.stringify(flow.settings)) || '{}',
       },
