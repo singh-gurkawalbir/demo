@@ -132,6 +132,10 @@ export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
 
+// TODO: Santosh, here is another case where we are returning a new object
+// in order to "infer" the error message from the state. we cold use re-select, or
+// simply refactor the single place this is used to call the existing util method,
+// "inferErrorMessage", from the component itself.
 export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
   const resourceStatuses = allLoadingOrErrored(state);
 
@@ -1799,10 +1803,6 @@ export function resourceReferences(state) {
 
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
-}
-
-export function processors(state) {
-  return fromData.processors(state.data);
 }
 
 export function isAgentOnline(state, agentId) {
@@ -3971,4 +3971,8 @@ export function getJobErrorsPreview(state, jobId) {
 
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
+}
+
+export function customSettingsStatus(state, resourceId) {
+  return fromSession.customSettingsStatus(state && state.session, resourceId);
 }

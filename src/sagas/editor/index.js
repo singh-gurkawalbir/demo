@@ -25,32 +25,41 @@ export function* invokeProcessor({ processor, body }) {
 }
 
 export function* evaluateProcessor({ id }) {
+  const editor = yield select(selectors.editor, id);
+  // const reqOpts = processorLogic.requestOptions(editor);
   const reqOpts = yield select(selectors.processorRequestOptions, id);
 
   if (!reqOpts) {
     return; // nothing to do...
   }
 
-  const { violations, processor, body } = reqOpts;
+  const { violations, skipPreview, processor, body } = reqOpts;
 
   if (violations) {
     return yield put(actions.editor.validateFailure(id, violations));
   }
 
-  try {
-    // we are hiding this comm activity from the network snackbar
+  let result;
 
-    const results = yield call(invokeProcessor, { processor, body });
+  if (!skipPreview) {
+    try {
+      // we are hiding this comm activity from the network snackbar
 
-    return yield put(actions.editor.evaluateResponse(id, results));
-  } catch (e) {
-    // Error with status code between 400 and 500 are json, hence we can parse them
-    if (e.status >= 400 && e.status < 500) {
-      const errJSON = JSON.parse(e.message);
+      result = yield call(invokeProcessor, { processor, body });
+    } catch (e) {
+      // Error with status code between 400 and 500 are json, hence we can parse them
+      if (e.status >= 400 && e.status < 500) {
+        const errJSON = JSON.parse(e.message);
 
-      return yield put(actions.editor.evaluateFailure(id, errJSON.message));
+        return yield put(actions.editor.evaluateFailure(id, errJSON.message));
+      }
     }
   }
+
+  const processResult = processorLogic.processResult(editor);
+  const finalResult = processResult ? processResult(editor, result) : result;
+
+  return yield put(actions.editor.evaluateResponse(id, finalResult));
 }
 
 export function* evaluateExternalProcessor({ processorData }) {

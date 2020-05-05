@@ -23,9 +23,8 @@ const useStyles = makeStyles(theme => ({
   panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
-export default function ErrorGridItem(props) {
-  const { error, violations } = props;
-  const classes = useStyles(props);
+export default function ErrorGridItem({ error, violations }) {
+  const classes = useStyles();
 
   if (!error && !violations) return null;
 
