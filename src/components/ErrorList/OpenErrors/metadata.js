@@ -30,11 +30,11 @@ export default {
       value: r => r.occurredAt,
     },
   ],
-  rowActions: ({ errorId }) => {
+  rowActions: ({ retryDataKey }) => {
     const actions = [
-      ...(errorId ? [EditRetryData] : []),
+      ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
-      ...(errorId ? [Retry] : []),
+      ...(retryDataKey ? [Retry] : []),
       ViewErrorDetails,
     ];
 

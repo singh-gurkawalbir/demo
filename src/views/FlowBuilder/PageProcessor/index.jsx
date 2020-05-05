@@ -53,6 +53,7 @@ const PageProcessor = ({
   isViewMode,
   isMonitorLevelAccess,
   onDelete,
+  openErrorCount,
   onErrors,
   ...pp
 }) => {
@@ -310,6 +311,7 @@ const PageProcessor = ({
           }
           onDelete={onDelete}
           onErrors={onErrors}
+          openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}
           onBlockClick={handleBlockClick}
