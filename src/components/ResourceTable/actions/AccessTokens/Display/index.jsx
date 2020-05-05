@@ -78,7 +78,7 @@ export default function Display({ accessToken }) {
                     onClick={() => {
                       handleDisplayClick('display');
                     }}>
-                    Click to Display
+                    Click to display
                   </Button>
                 ))}
             </Fragment>
