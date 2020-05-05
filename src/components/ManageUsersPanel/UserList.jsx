@@ -130,15 +130,14 @@ class UserList extends Component {
                 <TableCell>
                   User
                   <Help
-                    helpKey="User"
-                    helpText="users.user"
+                    title="User"
+                    helpKey="users.user"
                     caption="users.user"
                   />
                 </TableCell>
                 <TableCell>
                   Access Level
                   <Help
-                    helpText="ffdfawerw3434t54  ewrr3t rt"
                     title="Access Level"
                     helpKey="users.accesslevel"
                     caption="users.accesslevel"
