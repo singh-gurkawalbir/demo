@@ -33,7 +33,7 @@ describe('isDeltaFlow', () => {
       type: 'delta',
     },
   ];
-  const exportsWithDeltaLagoffset = [
+  const exportsWithDeltaandLagoffset = [
     {
       _id: 'e1',
       type: 'delta',
@@ -42,7 +42,7 @@ describe('isDeltaFlow', () => {
       },
     },
   ];
-  const exportsWithDeltaTypeDateFormat = [
+  const exportsWithDeltaandDateFormat = [
     {
       _id: 'e1',
       type: 'delta',
@@ -65,14 +65,14 @@ describe('isDeltaFlow', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toEqual(true);
   });
   test('should return false when flow has pageGenerators with type as delta and lagoffset', () => {
-    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaLagoffset)).toEqual(
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaandLagoffset)).toEqual(
       false
     );
   });
   test('should return true when flow has pageGenerators with type as delta and dateformat', () => {
-    expect(
-      isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaTypeDateFormat)
-    ).toEqual(true);
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaandDateFormat)).toEqual(
+      true
+    );
   });
   test('should return false when flow has pageGenerators with type is not a delta', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithNotDeltaType)).toEqual(
