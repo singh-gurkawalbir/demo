@@ -54,8 +54,8 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic Search', value: 'dynamic' },
-                { label: 'Static: Value to Value', value: 'static' },
+                { label: 'Dynamic search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
@@ -67,9 +67,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export Field',
+          keyLabel: 'Export field',
           valueName: 'import',
-          valueLabel: 'Import Field (HTTP)',
+          valueLabel: 'Import field (HTTP)',
           map: lookup && lookup.map,
           visibleWhen: [
             {
@@ -99,19 +99,19 @@ export default {
             {
               items: [
                 {
-                  label: 'Fail Record',
+                  label: 'Fail record',
                   value: 'disallowFailure',
                 },
                 {
-                  label: 'Use Empty String as Default Value',
+                  label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as Default Value',
+                  label: 'Use null as default value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Default Value',
+                  label: 'Use custom default value',
                   value: 'default',
                 },
               ],
@@ -122,9 +122,9 @@ export default {
           id: 'default',
           name: 'default',
           type: 'text',
-          label: 'Enter Default Value',
+          label: 'Enter default value',
           defaultValue: lookup.default,
-          placeholder: 'Enter Default Value',
+          placeholder: 'Enter default value',
           visibleWhen: [
             {
               field: 'failRecord',

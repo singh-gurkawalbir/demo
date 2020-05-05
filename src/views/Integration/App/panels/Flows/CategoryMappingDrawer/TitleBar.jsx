@@ -63,9 +63,11 @@ export default function DrawerTitleBar({
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const flow =
-    useSelector(state => selectors.resource(state, 'flows', flowId)) || {};
-  const flowName = flow.name || flow._id;
+  const flowName = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    return flow ? flow.name : flowId;
+  });
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       onClose();

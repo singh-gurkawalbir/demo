@@ -185,6 +185,20 @@ export default {
       retValues['/http/paging/page'] = undefined;
       retValues['/http/paging/maxPagePath'] = undefined;
       retValues['/http/paging/maxCountPath'] = undefined;
+    } else {
+      retValues['/http/paging'] = undefined;
+      delete retValues['/http/paging/method'];
+      delete retValues['/http/paging/path'];
+      delete retValues['/http/paging/relativeURI'];
+      delete retValues['/http/paging/resourcePath'];
+      delete retValues['/http/paging/token'];
+      delete retValues['/http/paging/linkHeaderRelation'];
+      delete retValues['/http/paging/skip'];
+      delete retValues['/http/paging/pathAfterFirstRequest'];
+      delete retValues['/http/paging/page'];
+      delete retValues['/http/paging/maxPagePath'];
+      delete retValues['/http/paging/maxCountPath'];
+      delete retValues['/http/paging/body'];
     }
 
     retValues['/statusExport'] = undefined;
@@ -218,7 +232,7 @@ export default {
         {
           items: [
             { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            { label: 'Blob keys', value: 'blob' },
           ],
         },
       ],
