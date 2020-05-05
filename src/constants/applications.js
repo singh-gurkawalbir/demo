@@ -1,3 +1,5 @@
+import { isProduction } from '../forms/utils';
+
 // Schema details:
 // ---------------
 // id: Required. Any unique token.
@@ -179,7 +181,12 @@ const connectors = [
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
-  { id: 'aptrinsic', name: 'Gainsight', type: 'rest', assistant: 'aptrinsic' },
+  {
+    id: 'aptrinsic',
+    name: 'Gainsight PX',
+    type: 'rest',
+    assistant: 'aptrinsic',
+  },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
@@ -394,6 +401,12 @@ const connectors = [
     webhook: true,
   },
   { id: 'insightly', name: 'Insightly', type: 'rest', assistant: 'insightly' },
+  {
+    id: 'inspectorio',
+    name: 'Inspectorio',
+    type: 'http',
+    assistant: 'inspectorio',
+  },
   {
     id: 'integratorio',
     name: 'integrator.io',
@@ -728,7 +741,18 @@ const connectors = [
   { id: 'xcart', name: 'XCart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
   // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
-  { id: 'zendesk', name: 'Zendesk', type: 'rest', assistant: 'zendesk' },
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    type: 'rest',
+    assistant: 'zendesk',
+  },
+  {
+    id: 'zendesksell',
+    name: 'Zendesk Sell',
+    type: 'http',
+    assistant: 'zendesksell',
+  },
   { id: 'zimbra', name: 'Zimbra', type: 'http', assistant: 'zimbra' },
   // { id: 'zoho', name: 'Zoho', type: 'http', assistant: 'zoho' },
   { id: 'zohobooks', name: 'Zoho Books', type: 'rest', assistant: 'zohobooks' },
@@ -793,12 +817,18 @@ export const groupApplications = (
     return 0; // names must be equal
   });
 
-  const filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.assistant && resourceType !== 'connections') {
-      if (appType === 'import') {
-        return connector.import;
-      } else if (appType === 'export') {
-        return connector.export;
+  let filteredConnectors = assistantConnectors.filter(connector => {
+    if (connector.assistant && assistants && resourceType !== 'connections') {
+      const assistant = assistants.find(a => a.id === connector.assistant);
+
+      if (assistant) {
+        if (appType === 'import') {
+          return assistant.import;
+        } else if (appType === 'export') {
+          return assistant.export;
+        }
+
+        return true;
       }
 
       return true;
@@ -826,6 +856,10 @@ export const groupApplications = (
 
     return true;
   });
+
+  if (isProduction()) {
+    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
+  }
 
   return [
     {

@@ -377,7 +377,7 @@ export default {
         {
           items: [
             { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            { label: 'Blob keys', value: 'blob' },
           ],
         },
       ],
@@ -570,6 +570,7 @@ export default {
       id: 'http.requestTypeCreate',
       type: 'select',
       label: 'RequestType',
+      helpKey: 'http.import.http.requestTypeCreate',
       required: true,
       options: [
         {
@@ -1114,6 +1115,7 @@ export default {
       id: 'http.requestTypeUpdate',
       type: 'select',
       label: 'Request type',
+      helpKey: 'http.import.http.requestTypeUpdate',
       required: true,
       options: [
         {

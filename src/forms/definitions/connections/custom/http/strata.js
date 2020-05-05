@@ -55,6 +55,7 @@ export default {
     'http.unencrypted.applicationKey': {
       id: 'http.unencrypted.applicationKey',
       required: true,
+      helpKey: 'strata.connection.http.unencrypted.applicationKey',
       type: 'text',
       label: 'Application key',
     },
@@ -63,6 +64,7 @@ export default {
       required: true,
       type: 'text',
       inputType: 'password',
+      helpKey: 'strata.connection.http.encrypted.subscriptionKey',
       defaultValue: '',
       label: 'Ocp-Apim-Subscription-Key',
     },
@@ -70,6 +72,7 @@ export default {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
       inputType: 'password',
+      helpKey: 'strata.connection.http.auth.token.token',
       resourceId: r => r._id,
       disabledWhen: [
         { field: 'http.unencrypted.applicationKey', is: [''] },

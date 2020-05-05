@@ -4,11 +4,14 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { some, map, keys, isEmpty } from 'lodash';
+import { some, map, isEmpty } from 'lodash';
 import app, * as fromApp from './app';
 import data, * as fromData from './data';
+import * as fromResources from './data/resources';
+import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
 import comms, * as fromComms from './comms';
+import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
@@ -28,17 +31,19 @@ import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
-  isRealtimeExport,
-  isSimpleImportFlow,
-  isRunnable,
-  showScheduleIcon,
-} from './flowsUtil';
-import {
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
   getUsedActionsMapForResource,
   isPageGeneratorResource,
+  getImportsFromFlow,
+  getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
+  getFlowReferencesForResource,
 } from '../utils/flows';
 import {
-  isValidResourceReference,
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
@@ -50,7 +55,6 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
-import { COMM_STATES } from './comms/networkComms';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 
@@ -78,6 +82,21 @@ const rootReducer = (state, action) => {
 
 export default rootReducer;
 
+export function marketPlaceState(state) {
+  return fromData.marketPlaceState(state && state.data);
+}
+
+export function resourcesState(state) {
+  return fromData.resourceState(state && state.data);
+}
+
+export function networkCommState(state) {
+  return fromComms.networkCommState(state && state.comms);
+}
+
+export function userState(state) {
+  return state && state.user;
+}
 // TODO: Do we really need to proxy all selectors here?
 // Instead, we could only have the selectors that cross
 // state subdivisions (marked GLOBAL right now)
@@ -113,6 +132,10 @@ export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
 
+// TODO: Santosh, here is another case where we are returning a new object
+// in order to "infer" the error message from the state. we cold use re-select, or
+// simply refactor the single place this is used to call the existing util method,
+// "inferErrorMessage", from the component itself.
 export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
   const resourceStatuses = allLoadingOrErrored(state);
 
@@ -137,7 +160,7 @@ export function isAllLoadingCommsAboveThreshold(state) {
   return (
     loadingOrErrored.filter(
       resource =>
-        resource.status === COMM_STATES.LOADING &&
+        resource.status === fromNetworkComms.COMM_STATES.LOADING &&
         Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
     ).length === 0
   );
@@ -485,7 +508,7 @@ export function developerMode(state) {
 }
 
 export function userPreferences(state) {
-  return fromUser.userPreferences((state && state.user) || null);
+  return fromUser.userPreferences(state && state.user);
 }
 
 export function currentEnvironment(state) {
@@ -569,7 +592,11 @@ export function isAuthInitialized(state) {
 }
 
 export function isAuthLoading(state) {
-  return state && state.auth && state.auth.commStatus === COMM_STATES.LOADING;
+  return (
+    state &&
+    state.auth &&
+    state.auth.commStatus === fromNetworkComms.COMM_STATES.LOADING
+  );
 }
 
 export function authenticationErrored(state) {
@@ -623,7 +650,7 @@ export function changePasswordSuccess(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.SUCCESS;
+  return status === fromNetworkComms.COMM_STATES.SUCCESS;
 }
 
 export function changePasswordFailure(state) {
@@ -633,7 +660,7 @@ export function changePasswordFailure(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.ERROR;
+  return status === fromNetworkComms.COMM_STATES.ERROR;
 }
 
 export function changePasswordMsg(state) {
@@ -653,7 +680,7 @@ export function changeEmailFailure(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.ERROR;
+  return status === fromNetworkComms.COMM_STATES.ERROR;
 }
 
 export function changeEmailSuccess(state) {
@@ -663,7 +690,7 @@ export function changeEmailSuccess(state) {
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === COMM_STATES.SUCCESS;
+  return status === fromNetworkComms.COMM_STATES.SUCCESS;
 }
 
 export function changeEmailMsg(state) {
@@ -679,6 +706,10 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
+export function debugOn(state) {
+  return fromUser.debugOn(state && state.user);
+}
+
 export function testConnectionCommState(state, resourceId) {
   const status = fromComms.testConnectionStatus(
     state && state.comms,
@@ -727,7 +758,7 @@ export function resourceList(state, options = {}) {
     ![
       'accesstokens',
       'agents',
-      'iclients',
+      'iClients',
       'scripts',
       'stacks',
       'templates',
@@ -747,62 +778,45 @@ export function resourceList(state, options = {}) {
   return fromData.resourceList(state && state.data, options);
 }
 
-export function getIAFlowSettings(state, integrationId, flowId) {
-  const integration = resource(state, 'integrations', integrationId);
-  const allFlows = [];
+export function resourceListModified(userState, resourcesState, options = {}) {
+  if (
+    !options.ignoreEnvironmentFilter &&
+    ![
+      'accesstokens',
+      'agents',
+      'iclients',
+      'scripts',
+      'stacks',
+      'templates',
+      'published',
+      'transfers',
+    ].includes(
+      /* These resources are common for both production & sandbox environments. */
+      options.type
+    )
+  ) {
+    const preferences = fromUser.userPreferences(userState);
 
-  if (!integration || !integration._connectorId) {
-    // return empty object for DIY integrations.
-    return emptyObject;
+    // eslint-disable-next-line no-param-reassign
+    options.sandbox = preferences.environment === 'sandbox';
   }
 
-  if (integration.settings && integration.settings.supportsMultiStore) {
-    integration.settings.sections.forEach(section => {
-      if (!section.sections) {
-        return;
-      }
-
-      const { flows } = section.sections.reduce((a, b) => ({
-        flows: [...a.flows, ...b.flows],
-      }));
-
-      allFlows.push(...(flows || []));
-    });
-  } else {
-    const { flows } = integration.settings.sections.reduce((a, b) => ({
-      flows: [...a.flows, ...b.flows],
-    }));
-
-    allFlows.push(...(flows || []));
-  }
-
-  return allFlows.find(flow => flow._id === flowId) || emptyObject;
+  return fromResources.resourceList(resourcesState, options);
 }
 
-export function isDeltaFlow(state, id) {
-  const flow = resource(state, 'flows', id);
-  const exports = resourceList(state, {
-    type: 'exports',
-  }).resources;
+export const makeResourceListSelector = () =>
+  createSelector(
+    userState,
+    resourcesState,
+    (_, options) => options,
+    (userState, resourcesState, options) =>
+      resourceListModified(userState, resourcesState, options)
+  );
 
-  if (!flow) return false;
-  let isDeltaFlow = false;
+export function iaFlowSettings(state, integrationId, flowId) {
+  const integration = resource(state, 'integrations', integrationId);
 
-  flow &&
-    flow.pageGenerators &&
-    flow.pageGenerators.forEach(pg => {
-      const flowExp = exports && exports.find(e => e._id === pg._exportId);
-
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
-        isDeltaFlow = true;
-      }
-    });
-
-  return isDeltaFlow;
+  return getIAFlowSettings(integration, flowId);
 }
 
 // TODO: The object returned from this selector needs to be overhauled.
@@ -814,90 +828,30 @@ export function flowDetails(state, id) {
   const flow = resource(state, 'flows', id);
 
   if (!flow) return emptyObject;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  return produce(flow, draft => {
-    const exportId =
-      draft.pageGenerators && draft.pageGenerators.length
-        ? draft.pageGenerators[0]._exportId
-        : draft._exportId;
-    const pg = resource(state, 'exports', exportId);
-    const allExports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    draft.isRealtime = isRealtimeExport(pg);
-    draft.isSimpleImport = isSimpleImportFlow(pg);
-    draft.isRunnable = isRunnable(allExports, pg, draft);
-    draft.canSchedule = showScheduleIcon(allExports, pg, draft);
-    draft.isDeltaFlow = isDeltaFlow(state, id);
-    const flowSettings = getIAFlowSettings(state, flow._integrationId, id);
-
-    draft.showMapping = flowSettings.showMapping;
-    draft.hasSettings = !!(
-      (flowSettings.settings && flowSettings.settings.length) ||
-      (flowSettings.sections && flowSettings.sections.length)
-    );
-    draft.showSchedule = draft._connectorId
-      ? draft.canSchedule && !!flowSettings.showSchedule
-      : draft.canSchedule;
-    draft.showStartDateDialog = flowSettings.showStartDateDialog;
-    draft.disableSlider = flowSettings.disableSlider;
-    draft.showUtilityMapping = flowSettings.showUtilityMapping;
-  });
+  return getFlowDetails(flow, integration, exports);
 }
 
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
 
-  flows.forEach((f, i) => {
-    const _exportId =
-      f.pageGenerators && f.pageGenerators.length
-        ? f.pageGenerators[0]._exportId
-        : f._exportId;
-    const exp = resource(state, 'exports', _exportId);
-    const exports = resourceList(state, {
-      type: 'exports',
-    }).resources;
-
-    if (isRealtimeExport(exp)) {
-      flows[i].isRealtime = true;
-    }
-
-    if (isSimpleImportFlow(exp)) {
-      flows[i].isSimpleImport = true;
-    }
-
-    if (isRunnable(exports, exp, f)) {
-      flows[i].isRunnable = true;
-    }
-
-    if (showScheduleIcon(exports, exp, f)) {
-      flows[i].showScheduleIcon = true;
-    }
-  });
-
-  return { resources: flows };
+  return getFlowListWithMetadata(flows, exports);
 }
 
 /*
  * Gives all other valid flows of same Integration
  */
-export function getNextDataFlows(state, flow) {
+export function nextDataFlowsForFlow(state, flow) {
   const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
-  const { _integrationId } = flow;
-  // Incase of standalone Integrations, _integrationId is undefined for flow resources
-  const flowIntegrationId =
-    _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
 
-  // Returns all valid flows under this integration
-  return flows.filter(
-    f =>
-      f._integrationId === flowIntegrationId &&
-      f._id !== flow._id &&
-      !f.isRealtime &&
-      !f.isSimpleImport &&
-      !f.disabled
-  );
+  return getNextDataFlows(flows, flow);
 }
 
 export function isConnectionOffline(state, id) {
@@ -981,10 +935,16 @@ export function integrationAppList(state) {
   return fromData.integrationAppList(state && state.data);
 }
 
-export function marketplaceConnectors(state, application, sandbox) {
-  const licenses = fromUser.licenses(state && state.user);
-  const connectors = fromData.marketplaceConnectors(
-    state && state.data,
+export function marketplaceConnectors(
+  userState,
+  marketPlaceState,
+  resourceState,
+  application,
+  sandbox
+) {
+  const licenses = fromUser.licenses(userState);
+  const connectors = fromMarketPlace.connectors(
+    marketPlaceState,
     application,
     sandbox,
     licenses
@@ -992,76 +952,45 @@ export function marketplaceConnectors(state, application, sandbox) {
 
   return connectors
     .map(c => {
-      const installedIntegrationApps = resourceList(state, {
-        type: 'integrations',
-        sandbox,
-        filter: { _connectorId: c._id },
-      });
+      const installedIntegrationApps = resourceListModified(
+        userState,
+        resourceState,
+        {
+          type: 'integrations',
+          sandbox,
+          filter: { _connectorId: c._id },
+        }
+      );
 
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+export const makeMarketPlaceConnectorsSelector = () =>
+  createSelector(
+    userState,
+    marketPlaceState,
+    resourcesState,
+    (_, application) => application,
+    (_1, _2, sandbox) => sandbox,
+    (userState, marketPlaceState, resourceState, application, sandbox) =>
+      marketplaceConnectors(
+        userState,
+        marketPlaceState,
+        resourceState,
+        application,
+        sandbox
+      )
+  );
+
 export function marketplaceTemplates(state, application) {
   return fromData.marketplaceTemplates(state.data, application);
 }
 
-export function getAllExportIdsUsedInTheFlow(state, flow) {
-  const exportIds = [];
-
-  if (!flow) {
-    return exportIds;
-  }
-
-  if (flow._exportId) {
-    exportIds.push(flow._exportId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._exportId) {
-        exportIds.push(pp._exportId);
-      }
-    });
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length > 0) {
-    flow.pageGenerators.forEach(pg => {
-      if (pg._exportId) {
-        exportIds.push(pg._exportId);
-      }
-    });
-  }
-
-  return exportIds;
-}
-
-export function getAllImportIdsUsedInTheFlow(state, flow) {
-  const importIds = [];
-
-  if (!flow) {
-    return importIds;
-  }
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length > 0) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp._importId) {
-        importIds.push(pp._importId);
-      }
-    });
-  }
-
-  return importIds;
-}
-
 export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
-  const exportIds = getAllExportIdsUsedInTheFlow(state, flow);
-  const importIds = getAllImportIdsUsedInTheFlow(state, flow);
+  const exportIds = getExportIdsFromFlow(flow);
+  const importIds = getImportIdsFromFlow(flow);
   const connectionIds = [];
   const connections = resourceList(state, { type: 'connections' }).resources;
   const exports = resourceList(state, { type: 'exports' }).resources;
@@ -1155,6 +1084,10 @@ export function queuedJobs(state, connectionId) {
   return fromSession.queuedJobs(state && state.session, connectionId);
 }
 
+export function iClients(state, connectionId) {
+  return fromSession.iClients(state && state.session, connectionId);
+}
+
 export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(
     state && state.session,
@@ -1242,8 +1175,8 @@ export function integrationAppResourceList(
     const flow = resource(state, 'flows', f) || {};
 
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
-    exports.push(...getAllExportIdsUsedInTheFlow(state, flow));
-    imports.push(...getAllImportIdsUsedInTheFlow(state, flow));
+    exports.push(...getExportIdsFromFlow(state, flow));
+    imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {
@@ -1552,7 +1485,7 @@ export function integrationAppLicense(state, id) {
   );
   const plan = `${
     edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } Plan`;
+  } plan`;
 
   return {
     ...license,
@@ -1874,10 +1807,6 @@ export function resourceReferences(state) {
 
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
-}
-
-export function processors(state) {
-  return fromData.processors(state.data);
 }
 
 export function isAgentOnline(state, agentId) {
@@ -2412,13 +2341,15 @@ export const resourcePermissions = (
         emptyObject
       );
     }
+
+    return emptyObject;
   } else if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
-  } else {
-    return permissions;
   }
+
+  return permissions || emptyObject;
 };
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -2782,6 +2713,7 @@ export function tiles(state) {
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS
+
 export function isProfileDataReady(state) {
   const commKey = commKeyGen('/profile', 'GET');
 
@@ -2833,6 +2765,56 @@ export function resourceStatus(
     isReady,
   };
 }
+
+export function resourceStatusModified(
+  resourceState,
+  networkCommState,
+  origResourceType,
+  resourceReqMethod = 'GET'
+) {
+  let resourceType;
+
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
+  else resourceType = `/${origResourceType}`;
+  const commKey = commKeyGen(resourceType, resourceReqMethod);
+  const method = resourceReqMethod;
+  const hasData = fromResources.hasData(resourceState, origResourceType);
+  const isLoading = fromNetworkComms.isLoading(networkCommState, commKey);
+  const retryCount = fromNetworkComms.retryCount(networkCommState, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
+
+  return {
+    resourceType: origResourceType,
+    hasData,
+    isLoading,
+    retryCount,
+    method,
+    isReady,
+  };
+}
+
+export function allResourceStatus(
+  resourceState,
+  networkCommState,
+  resourceTypes
+) {
+  return (typeof resourceTypes === 'string'
+    ? resourceTypes.split(',')
+    : resourceTypes
+  ).map(resourceType =>
+    resourceStatusModified(resourceState, networkCommState, resourceType.trim())
+  );
+}
+
+export const makeAllResourceStatusSelector = () =>
+  createSelector(
+    resourcesState,
+    networkCommState,
+    (_, resourceTypes) => resourceTypes,
+    (resourcesState, networkCommState, resourceTypes) =>
+      allResourceStatus(resourcesState, networkCommState, resourceTypes)
+  );
 
 export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
@@ -3384,58 +3366,21 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
   return connectionIdsToRegister;
 }
 
-const emptyList = [];
-
 // returns a list of import resources for a given flow,
 // identified by flowId.
 export function flowImports(state, id) {
-  const importIds = [];
   const flow = resource(state, 'flows', id);
-
-  if (!flow) return emptyList;
-
-  if (flow._importId) {
-    importIds.push(flow._importId);
-  } else if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(p => {
-      if (p._importId) {
-        importIds.push(p._importId);
-      }
-    });
-  }
-
-  // wherever possible, to prevent re-renders in components using this
-  // selector, return a static pointer.
-  if (importIds.length === 0) return emptyList;
-
   const imports = resourceList(state, { type: 'imports' }).resources;
 
-  // possibly imports are not loaded in the state yet?
-  if (!imports || imports.length === 0) return emptyList;
-
-  return imports.filter(i => importIds.indexOf(i._id) > -1);
+  return getImportsFromFlow(flow, imports);
 }
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
 export function getAllPageProcessorImports(state, pageProcessors) {
-  let ppImports = [];
-  const pageProcessorIds = [];
   const imports = resourceList(state, { type: 'imports' }).resources;
 
-  if (!pageProcessors) {
-    return imports;
-  }
-
-  pageProcessors.forEach(pageProcessor => {
-    if (pageProcessor && pageProcessor._importId) {
-      pageProcessorIds.push(pageProcessor._importId);
-    }
-  });
-  ppImports =
-    imports && imports.filter(i => pageProcessorIds.indexOf(i._id) > -1);
-
-  return ppImports;
+  return getPageProcessorImportsFromFlow(imports, pageProcessors);
 }
 
 export function getImportSampleData(state, resourceId, options = {}) {
@@ -3525,54 +3470,22 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
-export function getFlowReferencesForResource(state, resourceId, resourceType) {
+export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
-  const existingFlows = keys(flowsState);
-  const flowRefs = [];
+  const exports = resourceList(state, {
+    type: 'exports',
+  }).resources;
+  const imports = resourceList(state, {
+    type: 'imports',
+  }).resources;
 
-  existingFlows.forEach(flowId => {
-    const { pageGenerators = [], pageProcessors = [] } = flowsState[flowId];
-    let [pgIndex, ppIndex] = [0, 0];
-
-    while (pgIndex < pageGenerators.length) {
-      const pg = pageGenerators[pgIndex];
-      const pgResource = resource(state, 'exports', pg._exportId);
-
-      if (
-        isValidResourceReference(
-          pgResource,
-          pg._exportId,
-          resourceType,
-          resourceId
-        )
-      ) {
-        flowRefs.push({ flowId, resourceId: pg._exportId });
-
-        return;
-      }
-
-      pgIndex += 1;
-    }
-
-    while (ppIndex < pageProcessors.length) {
-      const pp = pageProcessors[ppIndex];
-      const ppId = pp._exportId || pp._importId;
-      const ppResourceType = pp._exportId ? 'exports' : 'imports';
-      const ppResource = resource(state, ppResourceType, ppId);
-
-      if (
-        isValidResourceReference(ppResource, ppId, resourceType, resourceId)
-      ) {
-        flowRefs.push({ flowId, resourceId: ppId });
-
-        return;
-      }
-
-      ppIndex += 1;
-    }
-  });
-
-  return flowRefs;
+  return getFlowReferencesForResource(
+    flowsState,
+    exports,
+    imports,
+    resourceType,
+    resourceId
+  );
 }
 
 /*
@@ -3619,15 +3532,6 @@ export function debugLogs(state) {
 
 export function getLastExportDateTime(state, flowId) {
   return fromSession.getLastExportDateTime(state && state.session, flowId);
-}
-
-export function resourceNamesByIds(state, type) {
-  const { resources } = resourceList(state, { type });
-  const resourceIdNameMap = {};
-
-  resources.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
-
-  return resourceIdNameMap;
 }
 
 export function getTransferPreviewData(state) {
@@ -4071,4 +3975,8 @@ export function getJobErrorsPreview(state, jobId) {
 
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
+}
+
+export function customSettingsStatus(state, resourceId) {
+  return fromSession.customSettingsStatus(state && state.session, resourceId);
 }

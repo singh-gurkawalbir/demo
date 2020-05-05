@@ -5,6 +5,7 @@ import exportFilter from './exportFilter';
 import inputFilter from './inputFilter';
 import outputFilter from './outputFilter';
 import responseTransform from './responseTransform';
+import settingsForm from './settingsForm';
 
 const logicMap = {
   transform,
@@ -14,10 +15,13 @@ const logicMap = {
   inputFilter,
   outputFilter,
   responseTransform,
+  settingsForm,
 };
 
 function getLogic(editor) {
-  const { processorKey } = (editor && editor.optionalSaveParams) || {};
+  const processorKey =
+    (editor.optionalSaveParams && editor.optionalSaveParams.processorKey) ||
+    editor.processor;
 
   if (!processorKey) {
     throw new Error(`Not supported.`);

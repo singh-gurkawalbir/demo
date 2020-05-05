@@ -81,7 +81,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   // console.log('commitStaged saga', resourceType, id, patch, merged, master);
 
-  if (!patch) return; // nothing to do.
+  if (!patch || !patch.length) return; // nothing to do.
 
   // For accesstokens and connections within an integration for edit case
   if (!isNew && resourceType.indexOf('integrations/') >= 0) {
@@ -146,7 +146,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
       resourceType
     )
   ) {
-    merged.sandbox = isSandbox;
+    // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
+    // For all other cases, set the sandbox property to current environment
+    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox'))
+      merged.sandbox = isSandbox;
   }
 
   let updated;

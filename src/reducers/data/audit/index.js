@@ -1,14 +1,13 @@
 import actionTypes from '../../../actions/types';
 
-export default (state = {}, action) => {
+const defaultState = {};
+const emptySet = [];
+
+export default (state = defaultState, action) => {
   const { type, resourceType, collection } = action;
 
-  if (!type) {
-    return state;
-  }
-
   if (type === actionTypes.AUDIT_LOGS_CLEAR) {
-    return {};
+    return defaultState;
   }
 
   if (!resourceType) {
@@ -17,7 +16,7 @@ export default (state = {}, action) => {
 
   if (type === actionTypes.RESOURCE.RECEIVED_COLLECTION) {
     if (resourceType === 'audit') {
-      return { all: collection || [] };
+      return { all: collection || emptySet };
     } else if (resourceType.endsWith('/audit')) {
       const resourceTypeParts = resourceType.split('/');
 
@@ -32,7 +31,7 @@ export default (state = {}, action) => {
 
 // #region PUBLIC SELECTORS
 export function auditLogs(state, resourceType, resourceId, filters) {
-  let logs = [];
+  let logs = emptySet;
 
   if (!state) {
     return logs;
@@ -45,7 +44,7 @@ export function auditLogs(state, resourceType, resourceId, filters) {
   }
 
   if (!logs) {
-    logs = [];
+    logs = emptySet;
   }
 
   if (!filters) {

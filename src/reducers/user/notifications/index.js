@@ -1,13 +1,14 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const defaultState = {
   accounts: [],
   stacks: [],
 };
+const emptySet = [];
 
 export default (state = defaultState, action) => {
-  const { type, resourceType } = action;
-  const { collection = [] } = action;
+  const { type, resourceType, collection = [] } = action;
 
   switch (type) {
     case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
@@ -20,10 +21,7 @@ export default (state = defaultState, action) => {
       );
 
       if (resourceType === 'shared/ashares') {
-        return {
-          ...state,
-          accounts: pendingShares,
-        };
+        return produce((state, draft) => (draft.accounts = pendingShares));
       } else if (resourceType === 'shared/sshares') {
         return { ...state, stacks: pendingShares };
       }
@@ -37,7 +35,7 @@ export default (state = defaultState, action) => {
 };
 
 export function userNotifications(state) {
-  const notifications = [];
+  const notifications = emptySet;
 
   if (!state) {
     return notifications;

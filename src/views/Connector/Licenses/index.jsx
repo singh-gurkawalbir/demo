@@ -2,6 +2,7 @@ import { useEffect, useMemo, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -15,6 +16,7 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -47,13 +49,15 @@ export default function Licenses(props) {
   const filter =
     useSelector(state => selectors.filter(state, sortFilterKey)) ||
     defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const connectorLicensesFilterConfig = useMemo(
+    () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
       ...{ ...defaultFilter, ...filter },
-    })
+    }),
+    [defaultFilter, filter]
   );
+  const list = useResourceList(connectorLicensesFilterConfig);
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
@@ -94,12 +98,24 @@ export default function Licenses(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <CeligoTable
-          data={list.resources}
-          {...metadata}
-          filterKey={sortFilterKey}
-          actionProps={{ resourceType: `connectors/${connectorId}/licenses` }}
-        />
+        <LoadResources required resources="connectorLicenses">
+          {list.count === 0 ? (
+            <Typography>
+              {list.total === 0
+                ? `You don't have any licenses.`
+                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+            </Typography>
+          ) : (
+            <CeligoTable
+              data={list.resources}
+              {...metadata}
+              filterKey={sortFilterKey}
+              actionProps={{
+                resourceType: `connectors/${connectorId}/licenses`,
+              }}
+            />
+          )}
+        </LoadResources>
       </div>
       <ShowMoreDrawer
         filterKey="connectorLicenses"

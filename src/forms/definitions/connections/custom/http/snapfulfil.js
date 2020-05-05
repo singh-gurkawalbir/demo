@@ -18,6 +18,7 @@ export default {
       endAdornment: '.snapfulfil.net/',
       label: 'Subdomain',
       required: true,
+      helpKey: 'snapfulfil.connection.http.subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -38,9 +39,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'snapfulfil.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'snapfulfil.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

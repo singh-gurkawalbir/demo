@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -19,6 +19,7 @@ import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
+import useResourceList from '../../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -100,6 +101,10 @@ function TabPanel({ children, value, index, classes }) {
   );
 }
 
+const connectionsFilterConfig = {
+  type: 'connections',
+};
+
 export default function BottomDrawer({
   size,
   setSize,
@@ -114,9 +119,14 @@ export default function BottomDrawer({
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
-  const connectionIdNameMap = useSelector(state =>
-    selectors.resourceNamesByIds(state, 'connections')
-  );
+  const connections = useResourceList(connectionsFilterConfig).resources;
+  const connectionIdNameMap = useMemo(() => {
+    const resourceIdNameMap = {};
+
+    connections.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+
+    return resourceIdNameMap;
+  }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
   const handleSizeChange = useCallback(
@@ -163,12 +173,13 @@ export default function BottomDrawer({
     }
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
-  function tabProps(index) {
-    return {
+  const tabProps = useCallback(
+    index => ({
       id: `tab-${index}`,
       'aria-controls': `tabpanel-${index}`,
-    };
-  }
+    }),
+    []
+  );
 
   return (
     <Drawer
@@ -203,8 +214,8 @@ export default function BottomDrawer({
             }
             label="Connections"
           />
-          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run Dashboard" />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit Log" />
+          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
           {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>

@@ -32,7 +32,7 @@ const SearchParamsModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <Fragment>
-        <span>Search Parameters</span>
+        <span>Search parameters</span>
       </Fragment>
       <Fragment>
         <DynaForm
@@ -65,8 +65,8 @@ export default function DynaAssistantSearchParams(props) {
   if (!label) {
     label =
       paramMeta.paramLocation === PARAMETER_LOCATION.BODY
-        ? 'Configure Body Parameters'
-        : 'Configure Search Parameters';
+        ? 'Configure body parameters'
+        : 'Configure search parameters';
   }
 
   return (

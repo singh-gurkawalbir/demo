@@ -24,7 +24,7 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, queuedJobs } = action;
+  const { type, debugLogs, connectionId, queuedJobs, iClients } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -45,6 +45,10 @@ export default (state = {}, action) => {
         }
 
         break;
+      case actionTypes.CONNECTION.UPDATE_ICLIENTS:
+        draft.iClients = { ...draft.iClients, [connectionId]: iClients };
+
+        break;
 
       case actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED:
         draft.queuedJobs = { ...draft.queuedJobs, [connectionId]: queuedJobs };
@@ -60,6 +64,14 @@ export function debugLogs(state) {
   }
 
   return state.debugLogs;
+}
+
+export function iClients(state, connectionId) {
+  if (!state || !state.iClients || !connectionId) {
+    return emptySet;
+  }
+
+  return state.iClients[connectionId] || emptySet;
 }
 
 export function queuedJobs(state, connectionId) {
