@@ -77,7 +77,7 @@ const DynaRelativeUri = props => {
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: id,
-          requestedEditorVersion: enableEditorV2 ? version : 1,
+          requestedTemplateVersion: enableEditorV2 ? version : 1,
         })
       );
     },

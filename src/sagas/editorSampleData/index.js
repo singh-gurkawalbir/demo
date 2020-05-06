@@ -13,7 +13,7 @@ export function* requestEditorSampleData({
   stage,
   fieldType,
   formValues,
-  requestedEditorVersion,
+  requestedTemplateVersion,
 }) {
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
@@ -82,7 +82,7 @@ export function* requestEditorSampleData({
   } else {
     const body = {
       sampleData: flowSampleData.data || { myField: 'sample' },
-      templateVersion: requestedEditorVersion,
+      templateVersion: requestedTemplateVersion,
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;

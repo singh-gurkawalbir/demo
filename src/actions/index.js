@@ -1555,7 +1555,7 @@ const editorSampleData = {
     stage,
     formValues,
     fieldType,
-    requestedEditorVersion,
+    requestedTemplateVersion,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
@@ -1564,7 +1564,7 @@ const editorSampleData = {
       stage,
       formValues,
       fieldType,
-      requestedEditorVersion,
+      requestedTemplateVersion,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {

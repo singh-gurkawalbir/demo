@@ -10,7 +10,6 @@ import {
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
-// import getFormattedSampleData from '../../../utils/sampleData';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const ManageLookup = props => {
@@ -55,15 +54,10 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     enableEditorV2 = true,
   } = props;
-  const { lookups: lookupsObj } = options;
+  const { lookups: _lookupObj = {} } = options;
+  const { fieldId: lookupFieldId, data: lookups } = _lookupObj;
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  const lookupFieldId = lookupsObj && lookupsObj.fieldId;
-  const lookups = lookupsObj && lookupsObj.data;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
-
   const dispatch = useDispatch();
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
@@ -82,71 +76,6 @@ const DynaHttpRequestBody = props => {
       fieldType: id,
     })
   );
-  const loadEditorSampleData = useCallback(
-    version => {
-      dispatch(
-        actions.editorSampleData.request({
-          flowId,
-          resourceId,
-          resourceType,
-          stage: 'flowInput',
-          formValues: formContext.value,
-          fieldType: id,
-          requestedEditorVersion: enableEditorV2 ? version : 1,
-        })
-      );
-    },
-    [
-      dispatch,
-      enableEditorV2,
-      flowId,
-      formContext.value,
-      id,
-      resourceId,
-      resourceType,
-    ]
-  );
-  const handleEditorVersionToggle = useCallback(
-    version => {
-      loadEditorSampleData(version);
-    },
-    [loadEditorSampleData]
-  );
-
-  useEffect(() => {
-    if (flowId && !isPageGenerator) {
-      loadEditorSampleData();
-    }
-  }, [
-    dispatch,
-    flowId,
-    formContext.value,
-    id,
-    isPageGenerator,
-    loadEditorSampleData,
-    resourceId,
-    resourceType,
-  ]);
-
-  const handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { template } = editorValues;
-
-      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
-        // save to array at position arrayIndex
-        const valueTmp = value;
-
-        valueTmp[arrayIndex] = template;
-        onFieldChange(id, valueTmp);
-      } else {
-        // save to field
-        onFieldChange(id, template);
-      }
-    }
-
-    handleEditorClick();
-  };
-
   const formattedRule = useMemo(() => {
     let rule = Array.isArray(value) ? value[arrayIndex] : value;
 
@@ -178,6 +107,74 @@ const DynaHttpRequestBody = props => {
     lookupFieldId,
     lookups,
     onFieldChange,
+    resourceId,
+    resourceType,
+  ]);
+  const loadEditorSampleData = useCallback(
+    version => {
+      dispatch(
+        actions.editorSampleData.request({
+          flowId,
+          resourceId,
+          resourceType,
+          stage: 'flowInput',
+          formValues: formContext.value,
+          fieldType: id,
+          requestedTemplateVersion: enableEditorV2 ? version : 1,
+        })
+      );
+    },
+    [
+      dispatch,
+      enableEditorV2,
+      flowId,
+      formContext.value,
+      id,
+      resourceId,
+      resourceType,
+    ]
+  );
+  const handleEditorClick = useCallback(() => {
+    setShowEditor(!showEditor);
+  }, [showEditor]);
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      loadEditorSampleData(version);
+    },
+    [loadEditorSampleData]
+  );
+  // TODO: break into different function. To be done across all editors
+  const handleClose = (shouldCommit, editorValues) => {
+    if (shouldCommit) {
+      const { template } = editorValues;
+
+      // TODO: Give better name for arrayIndex
+      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
+        // save to array at position arrayIndex
+        const valueTmp = value;
+
+        valueTmp[arrayIndex] = template;
+        onFieldChange(id, valueTmp);
+      } else {
+        // save to field
+        onFieldChange(id, template);
+      }
+    }
+
+    handleEditorClick();
+  };
+
+  useEffect(() => {
+    if (flowId && !isPageGenerator) {
+      loadEditorSampleData();
+    }
+  }, [
+    dispatch,
+    flowId,
+    formContext.value,
+    id,
+    isPageGenerator,
+    loadEditorSampleData,
     resourceId,
     resourceType,
   ]);
