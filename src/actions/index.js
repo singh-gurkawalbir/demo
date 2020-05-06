@@ -1580,10 +1580,10 @@ const editorSampleData = {
       flowId,
       fieldType,
     }),
-  clear: ({ resourceId, resourceType }) =>
+  clear: ({ resourceId, flowId }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
       resourceId,
-      resourceType,
+      flowId,
     }),
 };
 

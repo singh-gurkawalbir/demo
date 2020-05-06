@@ -26,9 +26,6 @@ export default function reducer(state = {}, action) {
           draft[resourceId][flowId] = {};
         }
 
-        // draft[resourceId][flowId][fieldType] = {
-        //   status: 'requested',
-        // };
         if (!draft[resourceId][flowId][fieldType]) {
           draft[resourceId][flowId][fieldType] = { status: 'requested' };
         } else {
@@ -50,9 +47,13 @@ export default function reducer(state = {}, action) {
         };
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.CLEAR:
-        if (resourceType === 'flows') {
-          // delete all items for flows
-        } else if (['exports', 'imports'].includes(resourceType)) {
+        if (flowId) {
+          Object.keys(draft).forEach(id => {
+            if (draft[id][flowId]) {
+              delete draft[id][flowId];
+            }
+          });
+        } else {
           delete draft[resourceId];
         }
 

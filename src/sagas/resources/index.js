@@ -269,10 +269,14 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
     // clear sample data V2
     if (['flows', 'imports', 'exports'].includes(resourceType)) {
-      actions.editorSampleData.clear({
-        resourceType,
-        resourceId: updated._id,
-      });
+      const options =
+        resourceType === 'flows'
+          ? { flowId: updated._id }
+          : {
+              resourceId: updated._id,
+            };
+
+      yield put(actions.editorSampleData.clear(options));
     }
   }
 
