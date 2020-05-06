@@ -21,3 +21,5 @@ export default function getFilteredErrors(errors = [], options = {}) {
 
   return errors.filter(errorFilter);
 }
+
+export const formatErrorDetails = error => ({ ...error, test: 5 });

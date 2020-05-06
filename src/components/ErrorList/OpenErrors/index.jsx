@@ -116,7 +116,7 @@ export default function OpenErrors({ flowId, resourceId }) {
     );
     setTableKey(generateNewId());
     setSelectedErrorIds([]);
-  });
+  }, [dispatch, flowId, resourceId, selectedErrorIds]);
 
   return (
     <Fragment>

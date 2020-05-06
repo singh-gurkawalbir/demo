@@ -3975,6 +3975,17 @@ export function resourceErrors(state, { flowId, resourceId, options = {} }) {
   });
 }
 
+// Given an errorId, gives back error doc
+export function resourceError(state, { flowId, resourceId, options, errorId }) {
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options,
+  });
+
+  return errors.find(error => error.errorId === errorId);
+}
+
 export function errorRetryDataKeys(
   state,
   { flowId, resourceId, errorIds = [], options = {} }

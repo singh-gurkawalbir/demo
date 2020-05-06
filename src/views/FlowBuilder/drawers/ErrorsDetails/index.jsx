@@ -31,6 +31,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       path="errors/:resourceId"
       width="full"
       title="Error List"
+      variant="temporary"
       hideBackButton>
       <ErrorList
         flowId={flowId}
