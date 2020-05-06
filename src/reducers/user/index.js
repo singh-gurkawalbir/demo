@@ -21,6 +21,10 @@ export default combineReducers({
   debug,
 });
 
+function userProfile(state) {
+  return state && state.profile;
+}
+
 // #region PUBLIC USER SELECTORS
 // #region DEBUG SELECTORS
 export function debugOn(state) {
@@ -90,6 +94,41 @@ export function userPreferences(state) {
   }
 
   return mergedPreferences;
+}
+
+export function userProfilePreferencesProps(state) {
+  const profile = userProfile(state);
+  const preferences = userPreferences(state);
+  const {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
+  } = { ...profile, ...preferences };
+
+  return {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
+  };
 }
 
 export function userOwnPreferences(state) {

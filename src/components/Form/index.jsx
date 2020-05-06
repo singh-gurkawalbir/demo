@@ -76,6 +76,8 @@ export default function useForm({ formKey, metaValue, ...formSpecificProps }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, fieldsMeta, formKey]);
 
+  // this hook is sensitive to meta value changes...ideally this is where default value should go
+
   useEffect(() => {
     if (formKeyUsed && metaValue) {
       Object.keys(metaValue).forEach(fieldId => {

@@ -241,7 +241,6 @@ export default function Panel(props) {
     dispatch,
     editUrl,
     enqueueSnackbar,
-    formState.skipClose,
     id,
     isMultiStepSaveResource,
     isNew,
@@ -252,6 +251,7 @@ export default function Panel(props) {
     props.history,
     resourceLabel,
     resourceType,
+    skipFormClose,
     stagedProcessorResourceId,
   ]);
   const showApplicationLogo =

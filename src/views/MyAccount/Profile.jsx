@@ -240,7 +240,7 @@ export default function ProfileComponent() {
   return (
     <Fragment>
       <PanelHeader title="Profile" />
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} render />
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
       <DynaSubmit formKey={formKey} onClick={handleSubmit}>
         Save
       </DynaSubmit>
