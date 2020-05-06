@@ -26,6 +26,7 @@ import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import customSettings, * as fromCustomSettingsStatus from './customSettings';
+import exportDataReducer, * as fromExportData from './exportData';
 
 export default combineReducers({
   stage,
@@ -54,6 +55,7 @@ export default combineReducers({
   fileUpload,
   jobErrorsPreview,
   customSettings,
+  exportData: exportDataReducer,
   editorSampleData,
 });
 
@@ -553,4 +555,6 @@ export function customSettingsStatus(state, resourceId) {
   );
 }
 
+export const exportData = (state, identifier) =>
+  fromExportData.exportData(state && state.exportData, identifier);
 // #endregion

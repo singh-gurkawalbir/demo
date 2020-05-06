@@ -1526,6 +1526,26 @@ const customSettings = {
       resourceId,
     }),
 };
+const exportData = {
+  request: (kind, identifier, resource) =>
+    action(actionTypes.EXPORTDATA.REQUEST, {
+      kind,
+      identifier,
+      resource,
+    }),
+  receive: (kind, identifier, data) =>
+    action(actionTypes.EXPORTDATA.RECEIVED, {
+      kind,
+      identifier,
+      data,
+    }),
+  receiveError: (kind, identifier, err) =>
+    action(actionTypes.EXPORTDATA.ERROR_RECEIVED, {
+      kind,
+      identifier,
+      error: err,
+    }),
+};
 // #endregion
 const editorSampleData = {
   request: ({
@@ -1610,5 +1630,6 @@ export default {
   transfer,
   responseMapping,
   customSettings,
+  exportData,
   editorSampleData,
 };

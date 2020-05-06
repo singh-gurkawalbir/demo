@@ -74,7 +74,7 @@ export default function DynaRefreshableStaticMap(props) {
 
     return obj;
   });
-  const handleFetchResource = useCallback(() => {
+  const onFetch = useCallback(() => {
     if (!metadata && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request(
@@ -93,10 +93,10 @@ export default function DynaRefreshableStaticMap(props) {
   ]);
 
   useEffect(() => {
-    if (!metadata && !disableOptionsLoad && handleFetchResource) {
-      handleFetchResource();
+    if (!metadata && !disableOptionsLoad && onFetch) {
+      onFetch();
     }
-  }, [disableOptionsLoad, handleFetchResource, metadata]);
+  }, [disableOptionsLoad, onFetch, metadata]);
 
   const handleRefreshClick = () => {
     dispatch(
