@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import moment from 'moment';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
-import { isOldFlowSchema } from '../../../utils/flows';
+import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
 
 const emptyObject = {};
 const emptyList = [];
@@ -15,49 +15,6 @@ const resourceTypesToIgnore = [
   ...accountResources,
   'audit',
 ];
-const convertOldFlowSchemaToNewOne = flow => {
-  const {
-    pageGenerators,
-    pageProcessors,
-    _exportId,
-    _importId,
-    ...rest
-  } = flow;
-
-  // a new schema just return the flow unaltered
-  if (!isOldFlowSchema(flow)) {
-    return flow;
-  }
-
-  const updatedFlow = {
-    ...rest,
-    pageGenerators,
-    pageProcessors,
-    // set this flag when converting it to new schema
-    flowConvertedToNewSchema: true,
-  };
-
-  // Supports Old Flows with _exportId and _importId converted to __pageGenerators and _pageProcessors
-  if (!pageGenerators && _exportId) {
-    updatedFlow.pageGenerators = [
-      {
-        type: 'export',
-        _exportId,
-      },
-    ];
-  }
-
-  if (!pageProcessors && _importId) {
-    updatedFlow.pageProcessors = [
-      {
-        type: 'import',
-        _importId,
-      },
-    ];
-  }
-
-  return updatedFlow;
-};
 
 function replaceOrInsertResource(state, resourceType, resourceValue) {
   // handle case of no collection
@@ -135,7 +92,7 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.installerFunction === step.installerFunction
+            s => s.name === step.name
           );
 
           if (stepIndex !== -1) {
@@ -159,7 +116,6 @@ export default (state = {}, action) => {
     connectionIds,
     integrationId,
     deregisteredId,
-    iClients,
     connectionId,
   } = action;
 
@@ -300,11 +256,6 @@ export default (state = {}, action) => {
       }
 
       return state;
-    case actionTypes.CONNECTION.UPDATE_ICLIENTS:
-      resourceIndex = state.connections.findIndex(r => r._id === connectionId);
-      newState.connections[resourceIndex].iClients = iClients;
-
-      return newState;
 
     case actionTypes.RESOURCE.CLEAR_COLLECTION:
       return produce(state, draft => {
@@ -390,6 +341,12 @@ export function resource(state, resourceType, id) {
 
   if (!match) return null;
 
+  // TODO: Santosh. This is an example of a bad practice where the selector, which should
+  // only return some part of the state, is actually mutating the state prior to returning
+  // the value.  Instead, the reducer should do the work of normalizing the data if needed.
+  // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
+  // the components) using this property should be smart enough to work with an undefined prop.
+  // Could you find the best solution for this? I favour the latter if that approach is easy.
   if (['exports', 'imports'].includes(resourceType)) {
     if (match.assistant && !match.assistantMetadata) {
       match.assistantMetadata = {};
@@ -449,6 +406,12 @@ export function integrationInstallSteps(state, id) {
     return emptyList;
   }
 
+  // TODO: These two next blocks seem strange to me. They do NOT
+  // mutate the app state since produce is used to return an new object (good thing),
+  // but these selectors will always return a new object because of this.
+  // its probably an easy change to have the component logic find the current step
+  // instead. Thus always returning the same steps, and only re-rendering the component
+  // when the steps themselves change.
   if (integration.installSteps && integration.installSteps.length) {
     return produce(integration.installSteps, draft => {
       if (draft.find(step => !step.completed)) {
@@ -464,6 +427,14 @@ export function integrationInstallSteps(state, id) {
   });
 }
 
+// TODO: Santosh, All this selector does is transform the integration settings.
+// Its probably best if the component uses the resource selector directly
+// to fetch the integration, then use a util method to do the transform
+// currently done in this selector.  This way the data-layer team cold still
+// manage the below logic (and easily test it by applying tests to the integrationUtil.js file)
+// and the component developer ALMOST has the same experience, wherein the just
+// need to pass the integration resource to the new util method for the transformation to take
+// effect.
 export function integrationAppSettings(state, id) {
   const integration = resource(state, 'integrations', id);
 
@@ -604,20 +575,12 @@ export function resourceList(
   };
 }
 
-export function hasData(state, resourceType) {
-  return !!(state && state[resourceType]);
+export function resourceState(state) {
+  return state;
 }
 
-const processorBlacklist = ['exportDataConverter'];
-
-export function processors(state) {
-  const processorMap = state.processors;
-
-  if (!processorMap) return [];
-
-  const list = Object.entries(processorMap).map(i => i[1]);
-
-  return list.filter(p => !processorBlacklist.includes(p.name));
+export function hasData(state, resourceType) {
+  return !!(state && state[resourceType]);
 }
 
 export function resourceDetailsMap(state) {
@@ -662,7 +625,7 @@ export function resourceDetailsMap(state) {
   return allResources;
 }
 
-// TODO Vamshi unit tests for selector
+// TODO: Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {
   if (!state) return false;
   const matchingAgent =
@@ -675,5 +638,4 @@ export function isAgentOnline(state, agentId) {
       process.env.AGENT_STATUS_INTERVAL
   );
 }
-
 // #endregion

@@ -81,7 +81,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   // console.log('commitStaged saga', resourceType, id, patch, merged, master);
 
-  if (!patch) return; // nothing to do.
+  if (!patch || !patch.length) return; // nothing to do.
 
   // For accesstokens and connections within an integration for edit case
   if (!isNew && resourceType.indexOf('integrations/') >= 0) {

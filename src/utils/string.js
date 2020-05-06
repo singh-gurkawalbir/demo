@@ -1,10 +1,13 @@
-export const hashCode = s => {
+import stableStringify from 'fast-json-stable-stringify';
+
+export const hashCode = (s, stable) => {
   let hash = 0;
   let i;
   let chr;
   let str = s;
 
-  if (typeof s === 'object') str = JSON.stringify(s);
+  if (typeof s === 'object')
+    str = stable ? stableStringify(s) : JSON.stringify(s);
 
   if (!str || str.length === 0) return hash;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { whyDidYouUpdate } from 'why-did-you-update';
+import whyDidYouRender from '@welldone-software/why-did-you-render';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
@@ -39,8 +39,9 @@ const logOptions = {
 if (
   process.env.NODE_ENV === 'development' &&
   process.env.WHY_RERENDER === 'true'
-)
-  whyDidYouUpdate(React);
+) {
+  whyDidYouRender(React, { trackAllPureComponents: true });
+}
 
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger(logOptions));

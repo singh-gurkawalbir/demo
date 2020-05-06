@@ -2,6 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -16,6 +17,7 @@ import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
+import useResourceList from '../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -32,12 +34,14 @@ export default function TemplateList(props) {
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const templatesFilterConfig = useMemo(
+    () => ({
       type: 'templates',
       ...filter,
-    })
+    }),
+    [filter]
   );
+  const list = useResourceList(templatesFilterConfig);
 
   return (
     <Fragment>
@@ -67,12 +71,20 @@ export default function TemplateList(props) {
 
         <div className={classes.resultContainer}>
           <LoadResources required resources={['templates', 'integrations']}>
-            <CeligoTable
-              data={list.resources}
-              filterKey="templates"
-              {...metadata}
-              actionProps={{ resourceType: 'templates' }}
-            />
+            {list.count === 0 ? (
+              <Typography>
+                {list.total === 0
+                  ? `You don't have any templates.`
+                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+              </Typography>
+            ) : (
+              <CeligoTable
+                data={list.resources}
+                filterKey="templates"
+                {...metadata}
+                actionProps={{ resourceType: 'templates' }}
+              />
+            )}
           </LoadResources>
         </div>
         <ShowMoreDrawer

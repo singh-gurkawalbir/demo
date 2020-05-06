@@ -9,19 +9,18 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import IconTextButton from '../../../../components/IconTextButton';
 import metadata from './metadata';
 import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
+import useResourceList from '../../../../hooks/useResourceList';
+
+const integrationsFilterConfig = {
+  type: 'integrations',
+  ignoreEnvironmentFilter: true,
+};
 
 export default function Invite(props) {
   const { setShowInviteView } = props;
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const integrations = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'integrations',
-        ignoreEnvironmentFilter: true,
-      }),
-    (left, right) => left.length === right.length
-  ).resources;
+  const integrations = useResourceList(integrationsFilterConfig).resources;
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
   }, [dispatch]);
@@ -47,7 +46,7 @@ export default function Invite(props) {
         id: 'email',
         name: 'email',
         type: 'text',
-        label: "New Owner's Email",
+        label: "New owner's email",
         required: true,
         helpText:
           'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',

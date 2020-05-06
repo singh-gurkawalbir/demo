@@ -2,6 +2,7 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     description: { fieldId: 'description' },
+    // TODO: double check why we have ftp stuff here @Surya. (talk to dave)
     ftp: {
       formId: 'ftp',
       visibleWhenAll: [{ field: 'assistant', is: ['ftp'] }],

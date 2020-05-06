@@ -1,6 +1,6 @@
 export default {
   'as2.fileNameTemplate': {
-    type: 'timestampfilename',
+    type: 'textwithlookupextract',
     fieldType: 'templateeditor',
     label: 'File name',
     required: true,

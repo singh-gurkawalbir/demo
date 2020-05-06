@@ -83,6 +83,7 @@ export default function RightDrawer({
   children,
   onClose,
   infoText,
+  actions,
   variant = 'persistent',
   ...rest
 }) {
@@ -143,6 +144,7 @@ export default function RightDrawer({
               {title}
               {infoText && <InfoIconButton info={infoText} />}
             </Typography>
+            {actions}
             <IconButton
               size="small"
               data-test="closeRightDrawer"

@@ -25,7 +25,10 @@ function OAuthButton(props) {
     connectionId: resource._id,
     disableLoad:
       !resource._connectorId ||
-      !['shopify', 'squareup'].includes(resource.assistant),
+      !(
+        ['shopify', 'squareup'].includes(resource.assistant) ||
+        (resource.type === 'salesforce' && resource.newIA)
+      ),
   });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
@@ -39,13 +42,28 @@ function OAuthButton(props) {
       ) {
         newValues['/http/_iClientId'] =
           iClients && iClients[0] && iClients[0]._id;
+      } else if (
+        resource._connectorId &&
+        resource.newIA &&
+        resource.type === 'salesforce'
+      ) {
+        newValues['/salesforce/_iClientId'] =
+          iClients && iClients[0] && iClients[0]._id;
       }
 
       dispatch(
         actions.resource.connections.saveAndAuthorize(resourceId, newValues)
       );
     },
-    [dispatch, iClients, resource._connectorId, resource.assistant, resourceId]
+    [
+      dispatch,
+      iClients,
+      resource._connectorId,
+      resource.assistant,
+      resource.newIA,
+      resource.type,
+      resourceId,
+    ]
   );
 
   window.connectionAuthorized = _connectionId => {
@@ -125,7 +143,7 @@ function OAuthButton(props) {
       className={classes.actionButton}
       ignoreFormTouchedCheck
       onClick={saveAndAuthorizeWhenScopesArePresent}>
-      {disableSave ? 'Authorizing' : label || 'Save & Authorize'}
+      {disableSave ? 'Authorizing' : label || 'Save & authorize'}
     </DynaAction>
   );
 }

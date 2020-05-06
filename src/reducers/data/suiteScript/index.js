@@ -2,6 +2,8 @@ import { isArray } from 'lodash';
 import actionTypes from '../../../actions/types';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
+const emptySet = [];
+
 export default (state = {}, action) => {
   const { type, resourceType, collection } = action;
 
@@ -30,6 +32,11 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+// TODO: Santosh, another example of where re-select could come in handy.
+// Notice how connectionId is the only variable controlling what is returned...
+// so we could cache the results and only discard the cache when the conn changes.
+// This selector logic is not heavy, but it is responsible for re-rendering a lot of browser DOM.
+// same logic holds for the subsequent selector as well.
 export function tiles(state, connectionId) {
   if (
     !state ||
@@ -37,7 +44,7 @@ export function tiles(state, connectionId) {
     !state[connectionId] ||
     !state[connectionId].tiles
   ) {
-    return [];
+    return emptySet;
   }
 
   const tileList = state[connectionId].tiles;

@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   copybtn: {
     marginLeft: 6,
   },
+  textFieldWithClipBoard: {
+    width: '100%',
+  },
 }));
 
 function DynaText(props) {
@@ -182,8 +185,7 @@ export default function TextFieldWithClipboardSupport(props) {
       className={clsx(classes.dynaFieldWrapper, {
         [classes.subSection]: subSectionField,
       })}>
-      <DynaText {...props} />
-      {}
+      <DynaText {...props} className={classes.textFieldWithClipBoard} />
     </div>
   );
 }

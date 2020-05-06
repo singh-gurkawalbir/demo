@@ -20,11 +20,13 @@ export default {
       id: 'http.unencrypted.companyId',
       label: 'Company ID',
       required: true,
+      helpKey: 'trinet.connection.http.unencrypted.companyId',
       type: 'text',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'API key',
+      helpKey: 'trinet.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

@@ -11,7 +11,7 @@ export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
 
   return (
     <ModalDialog onClose={onClose} show maxWidth="xl">
-      <div>Audit Log{name}</div>
+      <div>Audit log{name}</div>
       <div>
         <AuditLog
           onClick={onClose}

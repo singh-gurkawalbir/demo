@@ -1,10 +1,12 @@
 /* eslint-disable import/no-duplicates */
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import useResourceList from '../../../hooks/useResourceList';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaNSQualifier from './DynaNetSuiteQualifier';
 import DynaSFLookup from './DynaSalesforceLookup';
 import DynaSFQualifier from './DynaSalesforceQualifier';
-import DynaNSQualifier from './DynaNetSuiteQualifier';
 
 export default function DynaIAExpression(props) {
   const {
@@ -49,20 +51,21 @@ export default function DynaIAExpression(props) {
       resourceId
     )
   );
-  const connection = useSelector(state => {
-    if (resource) {
-      return selectors.resource(
-        state,
-        'connections',
-        resource && resource._connectionId
-      );
-    } else if (recordType) {
-      return selectors.resourceList(state, {
-        type: 'connections',
-        filter: { type: 'netsuite', _integrationId },
-      }).resources[0];
-    }
-  });
+  const filterConfig = useMemo(
+    () => ({
+      type: 'connections',
+      filter: { type: 'netsuite', _integrationId },
+    }),
+    [_integrationId]
+  );
+  const connectionRecordType = useResourceList(filterConfig).resources[0];
+  const connectionOrig = useSelector(state =>
+    selectors.resource(state, 'connections', resource && resource._connectionId)
+  );
+  const connection = useMemo(() => {
+    if (resource) return connectionOrig;
+    else if (recordType) return connectionRecordType;
+  }, [connectionOrig, connectionRecordType, recordType, resource]);
 
   if (!connection) {
     return null;
