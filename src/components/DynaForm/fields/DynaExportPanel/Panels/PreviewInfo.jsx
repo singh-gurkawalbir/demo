@@ -56,6 +56,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
     marginTop: theme.spacing(-0.5),
   },
+  msgSuccess: {
+    marginLeft: 4,
+  },
 }));
 
 export default function PreviewInfo(props) {
@@ -117,7 +120,9 @@ export default function PreviewInfo(props) {
 
         <div className={classes.previewDataRight}>
           {sampleDataStatus && <div> {sampleDataStatus}</div>}
-          {sampleDataOverview && <div> {sampleDataOverview} </div>}
+          {sampleDataOverview && (
+            <div className={classes.msgSuccess}>{sampleDataOverview} </div>
+          )}
         </div>
       </div>
     </div>

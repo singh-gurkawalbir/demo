@@ -7,6 +7,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(0.5),
     display: 'flex',
     alignItems: 'center',
+    color: theme.palette.secondary.light,
     '&:empty': {
       display: 'none',
     },

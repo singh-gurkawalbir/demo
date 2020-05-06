@@ -1,22 +1,13 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormLabel, FormControl } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { FormControl } from '@material-ui/core';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
-import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-
-const useStyles = makeStyles(theme => ({
-  dynaFieldWrapper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-}));
 
 export const useSetInitializeFormData = ({
   resourceType,
@@ -67,7 +58,6 @@ function DynaAssistantOptions(props) {
     onFieldChange: onFieldChangeFn,
     flowId,
   } = props;
-  const classes = useStyles();
   const formContext = useMemo(
     () =>
       [
@@ -199,10 +189,6 @@ function DynaAssistantOptions(props) {
   return (
     <div>
       <FormControl>
-        <div className={classes.fieldWrapper}>
-          <FormLabel htmlFor={id}>{label}</FormLabel>
-          <FieldHelp {...props} helpText="just added a dummy text into it" />
-        </div>
         <MaterialUiSelect
           {...props}
           label={label}

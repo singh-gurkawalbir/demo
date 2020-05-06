@@ -7,7 +7,7 @@ import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
-import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
+import ExpandWindowIcon from '../../icons/ScriptsIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
@@ -18,10 +18,8 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   exitButtonRelativeUrl: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
-    alignSelf: 'flex-end',
-    marginBottom: theme.spacing(1),
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(5),
   },
   relativeUriWrapper: {
     flexDirection: `row !important`,

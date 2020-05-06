@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import UrlEditorDialog from '../../../../components/AFE/UrlEditor/Dialog';
 import InputWithLookupHandlebars from './InputWithLookupHandlebars';
 import ActionButton from '../../../ActionButton';
-import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
+import ExpandWindowIcon from '../../../icons/ScriptsIcon';
 import { adaptorTypeMap } from '../../../../utils/resource';
 import sampleTemplateUtil from '../../../../utils/sampleTemplate';
 import FieldHelp from '../../FieldHelp';

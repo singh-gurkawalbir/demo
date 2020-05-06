@@ -288,10 +288,10 @@ export default {
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '15px',
+        fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto500',
+        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',
@@ -520,9 +520,15 @@ export default {
       root: {
         color: colors.celigoNeutral5,
         padding: 0,
-        marginRight: 4,
         borderRadius: 0,
         marginTop: -4,
+        '& svg': {
+          fontSize: 20,
+        },
+        '&:hover': {
+          background: 'none',
+          color: colors.celigoAccent2,
+        },
       },
     },
     MuiTabs: {
@@ -581,4 +587,11 @@ export default {
   //     checkedIcon: <RadioBtnSelectedIcon />,
   //   },
   // },
+
+  props: {
+    MuiCheckbox: {
+      disableRipple: true,
+      color: 'primary',
+    },
+  },
 };
