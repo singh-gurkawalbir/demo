@@ -29,7 +29,7 @@ export function* requestEditorSampleData({
     resourceType,
     stage,
   });
-  // Temp fix to remove fieldEditorVersion;
+  // Temp fix to remove templateVersion;
   // To delete starts
   const resource = deepClone(_resource);
 
@@ -67,13 +67,28 @@ export function* requestEditorSampleData({
     return;
   }
 
-  const isEditorV2Supported = yield call(
-    requestSampleData,
+  const isEditorV2Supported = yield select(
+    selectors.isEditorV2Supported,
     resourceId,
     resourceType
   );
 
   if (!isEditorV2Supported) {
+    const _sampleData = {
+      data: flowSampleData.data || {
+        myField: 'sample',
+      },
+    };
+
+    yield put(
+      actions.editorSampleData.received({
+        flowId,
+        resourceId,
+        fieldType,
+        sampleData: _sampleData,
+      })
+    );
+
     // call diff action to render old sample data
   } else {
     const body = {
@@ -81,7 +96,7 @@ export function* requestEditorSampleData({
     };
 
     if (requestedEditorVersion)
-      resource.fieldEditorVersion = requestedEditorVersion;
+      resource.templateVersion = requestedEditorVersion;
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
 
     body.fieldPath = fieldType;
@@ -98,7 +113,7 @@ export function* requestEditorSampleData({
     });
 
     if (response) {
-      const { context, fieldEditorVersion } = response;
+      const { context, templateVersion } = response;
 
       yield put(
         actions.editorSampleData.received({
@@ -106,7 +121,7 @@ export function* requestEditorSampleData({
           resourceId,
           fieldType,
           sampleData: context,
-          fieldEditorVersion,
+          templateVersion,
         })
       );
     } else {

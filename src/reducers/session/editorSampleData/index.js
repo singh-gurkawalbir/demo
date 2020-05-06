@@ -12,7 +12,7 @@ export default function reducer(state = {}, action) {
     fieldType,
     sampleData,
     // formValue,
-    fieldEditorVersion,
+    templateVersion,
   } = action;
 
   return produce(state, draft => {
@@ -39,7 +39,7 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR_SAMPLE_DATA.RECEIVED:
         draft[resourceId][flowId][fieldType] = {
           data: sampleData,
-          fieldEditorVersion,
+          templateVersion,
           status: 'received',
         };
 

@@ -52,7 +52,7 @@ const DynaRelativeUri = props => {
     handleEditorClick();
   };
 
-  const { data: sampleData, fieldEditorVersion } = useSelector(state =>
+  const { data: sampleData, templateVersion } = useSelector(state =>
     selectors.getEditorSampleData(state, {
       flowId,
       resourceId,
@@ -122,7 +122,7 @@ const DynaRelativeUri = props => {
             // sampleRule={sampleRule}
             onClose={handleClose}
             showVersionToggle
-            editorVersion={fieldEditorVersion}
+            editorVersion={templateVersion}
             onVersionToggle={handleEditorVersionToggle}
           />
         </div>

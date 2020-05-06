@@ -1546,19 +1546,13 @@ const editorSampleData = {
       fieldType,
       requestedEditorVersion,
     }),
-  received: ({
-    flowId,
-    resourceId,
-    fieldType,
-    sampleData,
-    fieldEditorVersion,
-  }) =>
+  received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
       flowId,
       resourceId,
       fieldType,
       sampleData,
-      fieldEditorVersion,
+      templateVersion,
     }),
   failed: ({ flowId, resourceId, fieldType }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {

@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
-export default function DynaAddEditLookup(props) {
+export default function DynaManageLookup(props) {
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
   const {
