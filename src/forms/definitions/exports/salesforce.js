@@ -131,7 +131,7 @@ export default {
         {
           items: [
             { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            { label: 'Blob keys', value: 'blob' },
           ],
         },
       ],
@@ -251,6 +251,7 @@ export default {
     'salesforce.distributed.requiredTrigger': {
       type: 'salesforcerequiredtrigger',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
+      defaultDisabled: true,
       fieldId: 'salesforce.distributed.requiredTrigger',
     },
     'salesforce.distributed.referencedFields': {

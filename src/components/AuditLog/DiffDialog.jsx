@@ -25,7 +25,7 @@ export default class DiffDialog extends Component {
         <div>
           {`${
             RESOURCE_TYPE_SINGULAR_TO_LABEL[auditLog.resourceType]
-          } Audit Log`}
+          } Audit log`}
           <Typography>{`Field: ${auditLog.fieldChange.fieldPath}`}</Typography>
         </div>
 

@@ -77,6 +77,7 @@ export default function SearchCriteriaEditor(props) {
     () =>
       [...(searchCriteria || []), {}].map((obj, index) => ({
         ...obj,
+        field: obj.join ? [obj.join, obj.field].join('.') : obj.field,
         index,
       })),
     [searchCriteria]

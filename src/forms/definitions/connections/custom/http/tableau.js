@@ -36,6 +36,7 @@ export default {
       endAdornment: '.online.tableau.com/api',
       type: 'text',
       label: 'My server',
+      helpKey: 'tableau.connection.http.myServer',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -51,13 +52,16 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'tableau.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'tableau.connection.http.auth.basic.password',
       defaultValue: '',
     },
     'http.unencrypted.contentUrl': {
       id: 'http.unencrypted.contentUrl',
+      helpKey: 'tableau.connection.http.unencrypted.contentUrl',
       required: true,
       type: 'text',
       label: 'Content URL',
@@ -65,6 +69,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       type: 'tokengen',
+      helpKey: 'tableau.connection.http.auth.token.token',
       inputType: 'password',
       resourceId: r => r._id,
       disabledWhen: [

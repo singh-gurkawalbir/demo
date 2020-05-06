@@ -38,7 +38,7 @@ export default {
       orderBy: 'lastModified',
     },
     {
-      heading: 'Queue Size',
+      heading: 'Queue size',
       value: r => r.queueSize || 0,
     },
   ],

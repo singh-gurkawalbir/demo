@@ -85,6 +85,7 @@ export default {
       id: 'http.auth.type',
       type: 'select',
       label: 'Authentication type',
+      helpKey: 'shopify.connection.http.auth.type',
       options: [
         {
           items: [
@@ -108,7 +109,8 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.myshopify.com',
       type: 'text',
-      label: 'Store URL',
+      label: 'Store url',
+      helpKey: 'shopify.connection.http.storeURL',
       required: true,
       validWhen: {
         matchesRegEx: {
@@ -131,10 +133,12 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API key',
+      helpKey: 'shopify.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'shopify.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
     },
     'http.auth.oauth.scope': {

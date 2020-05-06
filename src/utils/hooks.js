@@ -51,6 +51,7 @@ export const hooksLabelMap = {
   contentBasedFlowRouter: 'Content based flow router',
   transform: 'Transform',
   filter: 'Filter',
+  formInit: 'Form init',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];

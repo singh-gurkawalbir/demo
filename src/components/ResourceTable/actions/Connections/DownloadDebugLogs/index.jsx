@@ -12,12 +12,6 @@ export default {
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
     );
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit
-    );
-
-    if (!canAccess) return null;
     const handleDownloadDebugLogsClick = () => {
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
         url += `?integrator-ashareid=${

@@ -132,6 +132,10 @@ export function allLoadingOrErrored(state) {
   return fromComms.allLoadingOrErrored(state.comms);
 }
 
+// TODO: Santosh, here is another case where we are returning a new object
+// in order to "infer" the error message from the state. we cold use re-select, or
+// simply refactor the single place this is used to call the existing util method,
+// "inferErrorMessage", from the component itself.
 export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
   const resourceStatuses = allLoadingOrErrored(state);
 
@@ -504,7 +508,7 @@ export function developerMode(state) {
 }
 
 export function userPreferences(state) {
-  return fromUser.userPreferences((state && state.user) || null);
+  return fromUser.userPreferences(state && state.user);
 }
 
 export function currentEnvironment(state) {
@@ -702,6 +706,10 @@ export function changeEmailMsg(state) {
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
+export function debugOn(state) {
+  return fromUser.debugOn(state && state.user);
+}
+
 export function testConnectionCommState(state, resourceId) {
   const status = fromComms.testConnectionStatus(
     state && state.comms,
@@ -750,7 +758,7 @@ export function resourceList(state, options = {}) {
     ![
       'accesstokens',
       'agents',
-      'iclients',
+      'iClients',
       'scripts',
       'stacks',
       'templates',
@@ -1076,6 +1084,10 @@ export function queuedJobs(state, connectionId) {
   return fromSession.queuedJobs(state && state.session, connectionId);
 }
 
+export function iClients(state, connectionId) {
+  return fromSession.iClients(state && state.session, connectionId);
+}
+
 export function integrationAppAddOnState(state, integrationId) {
   return fromSession.integrationAppAddOnState(
     state && state.session,
@@ -1236,7 +1248,7 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
 }
 
 export function pendingCategoryMappings(state, integrationId, flowId) {
-  const { response, mappings, deleted } =
+  const { response, mappings, deleted, uiAssistant } =
     fromSession.categoryMapping(
       state && state.session,
       integrationId,
@@ -1258,7 +1270,8 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
     sessionMappings,
     mappings,
     deleted,
-    categoryRelationshipData
+    categoryRelationshipData,
+    uiAssistant !== 'jet'
   );
 
   return sessionMappings;
@@ -1473,7 +1486,7 @@ export function integrationAppLicense(state, id) {
   );
   const plan = `${
     edition ? edition.charAt(0).toUpperCase() + edition.slice(1) : 'Standard'
-  } Plan`;
+  } plan`;
 
   return {
     ...license,
@@ -1795,10 +1808,6 @@ export function resourceReferences(state) {
 
 export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
-}
-
-export function processors(state) {
-  return fromData.processors(state.data);
 }
 
 export function isAgentOnline(state, agentId) {
@@ -2333,13 +2342,15 @@ export const resourcePermissions = (
         emptyObject
       );
     }
+
+    return emptyObject;
   } else if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
-  } else {
-    return permissions;
   }
+
+  return permissions || emptyObject;
 };
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
@@ -4023,3 +4034,10 @@ export function isAllErrorsSelected(
 export function flowErrorMap(state, flowId) {
   return fromSession.flowErrorMap(state && state.session, flowId);
 }
+
+export function customSettingsStatus(state, resourceId) {
+  return fromSession.customSettingsStatus(state && state.session, resourceId);
+}
+
+export const exportData = (state, identifier) =>
+  fromSession.exportData(state && state.session, identifier);

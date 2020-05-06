@@ -51,6 +51,8 @@ import { transferSagas } from './transfer';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
+import { customSettingsSagas } from './customSettings';
+import exportDataSagas from './exportData';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -151,5 +153,7 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
+    ...customSettingsSagas,
+    ...exportDataSagas,
   ]);
 }

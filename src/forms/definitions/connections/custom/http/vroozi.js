@@ -28,6 +28,7 @@ export default {
       type: 'select',
       label: 'Account type',
       required: true,
+      helpKey: 'vroozi.connection.accountType',
       options: [
         {
           items: [
@@ -52,11 +53,13 @@ export default {
       id: 'http.unencrypted.apiKey',
       type: 'text',
       label: 'API key',
+      helpKey: 'vroozi.connection.http.unencrypted.apiKey',
       required: true,
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       label: 'Access token',
+      helpKey: 'vroozi.connection.http.auth.token.token',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
