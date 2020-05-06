@@ -24,7 +24,8 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
-import customSettings, * as fromCustomSettingsForm from './customSettings';
+import exportDataReducer, * as fromExportData from './exportData';
+import customSettings, * as fromCustomSettings from './customSettings';
 
 export default combineReducers({
   stage,
@@ -53,6 +54,7 @@ export default combineReducers({
   fileUpload,
   jobErrorsPreview,
   customSettings,
+  exportData: exportDataReducer,
 });
 
 // #region PUBLIC SELECTORS
@@ -533,11 +535,13 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
+export const exportData = (state, identifier) =>
+  fromExportData.exportData(state && state.exportData, identifier);
+
 export function customSettingsForm(state, resourceId) {
-  return fromCustomSettingsForm.customSettingsForm(
+  return fromCustomSettings.customSettingsForm(
     state && state.customSettings,
     resourceId
   );
 }
-
 // #endregion

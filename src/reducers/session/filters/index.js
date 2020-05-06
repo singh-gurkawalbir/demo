@@ -9,7 +9,14 @@ export default function reducer(state = {}, action) {
   switch (type) {
     case actionTypes.CLEAR_FILTER:
       newState = { ...state };
-      delete newState[name];
+
+      if (name === 'jobs' && newState[name]) {
+        const { status } = newState[name];
+
+        newState[name] = { status };
+      } else {
+        delete newState[name];
+      }
 
       return newState;
 

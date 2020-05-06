@@ -3981,3 +3981,6 @@ export function integrationAppClonedDetails(state, id) {
 export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
 }
+
+export const exportData = (state, identifier) =>
+  fromSession.exportData(state && state.session, identifier);
