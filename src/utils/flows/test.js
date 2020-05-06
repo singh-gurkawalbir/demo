@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import { getExportIdsFromFlow, getImportIdsFromFlow } from '.';
+import { getExportIdsFromFlow, getImportIdsFromFlow, isDeltaFlow } from '.';
 
 const oldFlow = {
   _exportId: 'e1',
@@ -26,6 +26,63 @@ const flowWithPGsandPPs = {
   ],
 };
 
+describe('isDeltaFlow', () => {
+  const exportsWithDeltaType = [
+    {
+      _id: 'e1',
+      type: 'delta',
+    },
+  ];
+  const exportsWithDeltaAndLagOffset = [
+    {
+      _id: 'e1',
+      type: 'delta',
+      delta: {
+        lagOffset: 15000,
+      },
+    },
+  ];
+  const exportsWithDeltaAndDateFormat = [
+    {
+      _id: 'e1',
+      type: 'delta',
+      delta: {
+        dateFormat: 'YYYY-MM-DDTHH:mm:ss',
+      },
+    },
+  ];
+  const exportsWithNonDeltaType = [
+    {
+      _id: 'e1',
+      type: 'test',
+    },
+  ];
+
+  test('should return false when flow is empty', () => {
+    expect(isDeltaFlow()).toEqual(false);
+  });
+  test('should return false when exports are empty', () => {
+    expect(isDeltaFlow(flowWithOnlyPGs)).toEqual(false);
+  });
+  test('should return true when flow has pageGenerators with type as delta', () => {
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toEqual(true);
+  });
+  test('should return true when flow has pageGenerators with type as delta and lagoffset', () => {
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaAndLagOffset)).toEqual(
+      true
+    );
+  });
+  test('should return true when flow has pageGenerators with type as delta and dateformat', () => {
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaAndDateFormat)).toEqual(
+      true
+    );
+  });
+  test('should return false when flow has pageGenerators with type is not a delta', () => {
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithNonDeltaType)).toEqual(
+      false
+    );
+  });
+});
 describe('getExportIdsFromFlow', () => {
   test('should return empty set when flow is empty', () => {
     expect(getExportIdsFromFlow()).toEqual([]);
