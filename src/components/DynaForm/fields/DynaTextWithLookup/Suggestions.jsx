@@ -17,50 +17,6 @@ const getMatchingText = (value, cursorPosition) => {
   return matchedString;
 };
 
-const insertSuggestionInValue = ({
-  value,
-  cursorPosition,
-  valueToInsert,
-  isLookup,
-}) => {
-  const tmpStr = value.substring(0, cursorPosition);
-  const lastIndexOfBracesBeforeCursor = tmpStr.lastIndexOf('{');
-  let handlebarExp = '';
-
-  if (isLookup) {
-    handlebarExp = `{lookup "${valueToInsert}" this}`;
-  } else {
-    handlebarExp = `{${valueToInsert}}`;
-  }
-
-  const closeBraceIndexAfterCursor = value.indexOf(
-    '}',
-    lastIndexOfBracesBeforeCursor + 1
-  );
-  const openBraceIndexAfterCursor = value.indexOf(
-    '{',
-    lastIndexOfBracesBeforeCursor + 1
-  );
-  let newValue = '';
-  const preText = `${value.substring(0, lastIndexOfBracesBeforeCursor + 1)}`;
-
-  if (
-    closeBraceIndexAfterCursor === -1 ||
-    (openBraceIndexAfterCursor !== -1 &&
-      openBraceIndexAfterCursor < closeBraceIndexAfterCursor)
-  ) {
-    const postText = `${value.substring(lastIndexOfBracesBeforeCursor + 1)}`;
-
-    newValue = `${preText}${handlebarExp}}}${postText}`;
-  } else {
-    const postText = `${value.substring(closeBraceIndexAfterCursor)}`;
-
-    newValue = `${preText}${handlebarExp}${postText}`;
-  }
-
-  return newValue;
-};
-
 const useStyles = makeStyles(theme => ({
   suggestions: {
     width: '100%',
@@ -86,6 +42,11 @@ const ExtractItem = props => {
 
   return <Button onClick={handleItemSelect}>{label}</Button>;
 };
+
+const getValueAfterInsert = (value, cursorPosition, insertedVal) =>
+  `${value.substring(0, cursorPosition)}${insertedVal}}}${value.substring(
+    cursorPosition
+  )}`;
 
 export default function Suggestions(props) {
   const {
@@ -127,16 +88,12 @@ export default function Suggestions(props) {
   }, [sampleData]);
   const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const handleExtractSelect = useCallback(
-    value => {
-      const newValue = insertSuggestionInValue({
-        value,
-        cursorPosition,
-        valueToInsert: value,
-      });
+    _val => {
+      const newValue = getValueAfterInsert(value, cursorPosition, _val);
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate]
+    [cursorPosition, onValueUpdate, value]
   );
   const matchingText = getMatchingText(value, cursorPosition);
   const filteredLookup = lookups.filter(
@@ -144,17 +101,20 @@ export default function Suggestions(props) {
   );
   const handleLookupSelect = useCallback(
     lookup => {
+      const valueToInsert =
+        resourceData.adaptorType === 'HTTPImport'
+          ? `lookup "${lookup.name}" this`
+          : lookup.name;
       // update text field with selected lookup
-      const newValue = insertSuggestionInValue({
+      const newValue = getValueAfterInsert(
         value,
         cursorPosition,
-        valueToInsert: lookup.name,
-        isLookup: true,
-      });
+        valueToInsert
+      );
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate, value]
+    [cursorPosition, onValueUpdate, resourceData.adaptorType, value]
   );
   const handleLookupEdit = useCallback(
     (lookup = {}) => {
