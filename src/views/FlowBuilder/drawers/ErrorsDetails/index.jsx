@@ -27,7 +27,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const classes = useStyle();
 
   return (
-    <RightDrawer path="errors/:resourceId" width="full" title="Error List">
+    <RightDrawer
+      path="errors/:resourceId"
+      width="full"
+      title="Error List"
+      hideBackButton>
       <ErrorList
         flowId={flowId}
         onClose={handleClose}
