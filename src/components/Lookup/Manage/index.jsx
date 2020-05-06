@@ -15,7 +15,7 @@ import rdbmsMetadata from './metadata/rdbms';
 export default function ManageLookup(props) {
   const {
     onSave,
-    lookup = {},
+    value = {},
     onCancel,
     error,
     disabled,
@@ -50,13 +50,13 @@ export default function ManageLookup(props) {
       ),
     [resourceType, sampleData]
   );
-  const isEdit = !!lookup.name;
+  const isEdit = !!value.name;
   const handleSubmit = formVal => {
     let lookupObj = {};
     const lookupTmp = {};
 
     if (isEdit) {
-      lookupTmp.name = lookup.name;
+      lookupTmp.name = value.name;
     } else {
       lookupTmp.name = shortid.generate();
     }
@@ -134,7 +134,7 @@ export default function ManageLookup(props) {
 
   if (resource.adaptorType === 'NetSuiteImport') {
     fieldMeta = netsuiteMetadata.getLookupMetadata({
-      lookup,
+      lookup: value,
       connectionId,
       resourceId,
       resourceType,
@@ -145,7 +145,7 @@ export default function ManageLookup(props) {
     });
   } else if (resource.adaptorType === 'SalesforceImport') {
     fieldMeta = salesforceMetadata.getLookupMetadata({
-      lookup,
+      lookup: value,
       showDynamicLookupOnly,
       connectionId,
       resourceId,
@@ -157,14 +157,14 @@ export default function ManageLookup(props) {
     });
   } else if (resource.adaptorType === 'RDBMSImport') {
     fieldMeta = rdbmsMetadata.getLookupMetadata({
-      lookup,
+      lookup: value,
       showDynamicLookupOnly,
       sampleData: formattedSampleData,
       connectionId,
     });
   } else {
     fieldMeta = defaultMetadata.getLookupMetadata({
-      lookup,
+      lookup: value,
       showDynamicLookupOnly,
       connectionId,
       resourceId,

@@ -20,8 +20,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const DynaRelativeUri = props => {
-  const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -29,12 +27,19 @@ const DynaRelativeUri = props => {
     editorTitle = 'Build Relative URI',
     resourceId,
     resourceType,
+    connectionId,
     flowId,
     options = {},
     formContext,
     arrayIndex,
     enableEditorV2 = true,
   } = props;
+  const [showEditor, setShowEditor] = useState(false);
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
@@ -45,11 +50,30 @@ const DynaRelativeUri = props => {
 
     return false;
   });
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const { data: sampleData, templateVersion } = useSelector(state =>
+    selectors.getEditorSampleData(state, {
+      flowId,
+      resourceId,
+      fieldType: id,
+    })
+  );
+  const description = useMemo(() => {
+    const { type } = connection || {};
 
-  const dispatch = useDispatch();
+    return type === 'http' || type === 'rest'
+      ? `Relative to: ${connection[type].baseURI}`
+      : '';
+  }, [connection]);
+  const inputValue = useMemo(
+    () =>
+      options && typeof arrayIndex === 'number' && Array.isArray(value)
+        ? value[arrayIndex]
+        : value,
+    [arrayIndex, options, value]
+  );
+  const handleEditorClick = useCallback(() => {
+    setShowEditor(!showEditor);
+  }, [showEditor]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
@@ -60,13 +84,6 @@ const DynaRelativeUri = props => {
     handleEditorClick();
   };
 
-  const { data: sampleData, templateVersion } = useSelector(state =>
-    selectors.getEditorSampleData(state, {
-      flowId,
-      resourceId,
-      fieldType: id,
-    })
-  );
   const loadEditorSampleData = useCallback(
     version => {
       dispatch(
@@ -113,19 +130,6 @@ const DynaRelativeUri = props => {
     resourceType,
   ]);
 
-  const inputValue = useMemo(
-    () =>
-      options && typeof arrayIndex === 'number' && Array.isArray(value)
-        ? value[arrayIndex]
-        : value,
-    [arrayIndex, options, value]
-  );
-  // const sampleRule = sampleTemplateUtil.getSampleRuleTemplate(resource);
-  // const { type } = connection || {};
-
-  // if (type === 'http' || type === 'rest') {
-  //   description = `Relative to: ${connection[type].baseURI}`;
-  // }
   return (
     <Fragment>
       {showEditor && (
@@ -135,7 +139,6 @@ const DynaRelativeUri = props => {
             id={id}
             data={JSON.stringify(sampleData, null, 2)}
             rule={inputValue}
-            // sampleRule={sampleRule}
             onClose={handleClose}
             showVersionToggle={isEditorV2Supported}
             editorVersion={templateVersion}
@@ -151,6 +154,7 @@ const DynaRelativeUri = props => {
       </ActionButton>
 
       <DynaTextWithLookup
+        description={description}
         key={`text-${id}`}
         id={id}
         value={inputValue}

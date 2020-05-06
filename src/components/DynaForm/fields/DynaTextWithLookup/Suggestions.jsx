@@ -73,10 +73,16 @@ export default function Suggestions(props) {
       stage: 'flowInput',
     })
   );
-  const { merged: resourceData } = useSelector(state =>
-    selectors.resourceData(state, 'imports', resourceId)
-  );
-  const { adaptorType } = resourceData || {};
+  const adaptorType = useSelector(state => {
+    const { merged: resourceData = {} } = selectors.resourceData(
+      state,
+      'imports',
+      resourceId
+    );
+
+    return resourceData && resourceData.adaptorType;
+  });
+  const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const extracts = useMemo(() => {
     const extractPaths = getJSONPaths(pickFirstObject(sampleData));
 
@@ -86,7 +92,29 @@ export default function Suggestions(props) {
       []
     );
   }, [sampleData]);
-  const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
+  const matchingText = useMemo(() => getMatchingText(value, cursorPosition), [
+    cursorPosition,
+    value,
+  ]);
+  const filteredLookup = useMemo(
+    () =>
+      lookups.filter(
+        l => l.name.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
+      ),
+    [lookups, matchingText]
+  );
+  const filteredExtracts = useMemo(
+    () =>
+      extracts
+        .map(field => ({
+          label: field.name,
+          value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
+        }))
+        .filter(
+          e => e.label.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
+        ),
+    [extracts, matchingText]
+  );
   const handleExtractSelect = useCallback(
     _val => {
       const newValue = getValueAfterInsert(value, cursorPosition, _val);
@@ -95,14 +123,10 @@ export default function Suggestions(props) {
     },
     [cursorPosition, onValueUpdate, value]
   );
-  const matchingText = getMatchingText(value, cursorPosition);
-  const filteredLookup = lookups.filter(
-    l => l.name.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
-  );
   const handleLookupSelect = useCallback(
     lookup => {
       const valueToInsert =
-        resourceData.adaptorType === 'HTTPImport'
+        adaptorType === 'HTTPImport'
           ? `lookup "${lookup.name}" this`
           : lookup.name;
       // update text field with selected lookup
@@ -114,7 +138,20 @@ export default function Suggestions(props) {
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate, resourceData.adaptorType, value]
+    [adaptorType, cursorPosition, onValueUpdate, value]
+  );
+  const handleLookupAdd = useCallback(
+    lookup => {
+      handleLookupSelect(lookup);
+      // update lookup in resouce doc
+      const modifiedLookup = deepClone(lookups);
+
+      modifiedLookup.push(lookup);
+      const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+
+      onFieldChange(lookupFieldId, modifiedLookup);
+    },
+    [adaptorType, handleLookupSelect, lookups, onFieldChange]
   );
   const handleLookupEdit = useCallback(
     (lookup = {}) => {
@@ -133,31 +170,6 @@ export default function Suggestions(props) {
       onFieldChange(lookupFieldId, modifiedLookups);
     },
     [adaptorType, lookups, onFieldChange]
-  );
-  const handleLookupAdd = useCallback(
-    lookup => {
-      handleLookupSelect(lookup);
-      // update lookup in resouce doc
-      const modifiedLookup = deepClone(lookups);
-
-      modifiedLookup.push(lookup);
-      const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
-
-      onFieldChange(lookupFieldId, modifiedLookup);
-    },
-    [adaptorType, handleLookupSelect, lookups, onFieldChange]
-  );
-  const filteredExtracts = useMemo(
-    () =>
-      extracts
-        .map(field => ({
-          label: field.name,
-          value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
-        }))
-        .filter(
-          e => e.label.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
-        ),
-    [extracts, matchingText]
   );
   const showSuggestion = !!value
     .substring(0, cursorPosition)

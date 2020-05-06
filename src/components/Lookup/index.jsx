@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import _ from 'lodash';
+import React, { useState, useCallback } from 'react';
+import { Button } from '@material-ui/core';
+import { filter } from 'lodash';
 import ModalDialog from '../ModalDialog';
 import ManageLookup from './Manage';
-import LookupListing from './Listing';
+import LookupListRow from './LookupListRow';
 
 export default function Lookup(props) {
   const {
-    lookups,
-    onUpdate,
+    lookups = [],
+    onSave,
     onCancel,
     resourceId,
     resourceType,
@@ -15,77 +16,92 @@ export default function Lookup(props) {
     disabled,
     options,
   } = props;
-  const [isListView, showListView] = useState(true);
-  const [lookup, setLookup] = useState({});
+  const [value, setValue] = useState(lookups);
+  const [showListView, setShowListView] = useState(true);
+  const [selectedLookup, setSelectedLookup] = useState({});
   const [error, setError] = useState();
-  const handleSubmit = (isEdit, val) => {
-    const lookupsTmp = [...lookups];
+  const handleSubmit = useCallback(
+    (isEdit, val) => {
+      const lookupsTmp = [...value];
 
-    if (!isEdit) {
-      if (!lookupsTmp.find(ele => ele.name === val.name)) {
+      if (!isEdit) {
+        if (!lookupsTmp.find(ele => ele.name === val.name)) {
+          setError();
+          lookupsTmp.push(val);
+          onSave(lookupsTmp);
+        } else {
+          // showing error for duplicate name
+
+          setError('Lookup with same name is already present!');
+
+          return;
+        }
+      } else if (selectedLookup) {
         setError();
-        lookupsTmp.push(val);
-        onUpdate(lookupsTmp);
-      } else {
-        // showing error for duplicate name
+        const index = lookupsTmp.findIndex(
+          ele => ele.name === selectedLookup.name
+        );
 
-        setError('Lookup with same name is already present!');
+        lookupsTmp[index] = val;
 
-        return;
+        onSave(lookupsTmp);
       }
-    } else if (lookup) {
-      setError();
-      const index = lookupsTmp.findIndex(ele => ele.name === lookup.name);
 
-      lookupsTmp[index] = val;
+      setValue(lookupsTmp);
+      setShowListView(!showListView);
+    },
+    [onSave, selectedLookup, showListView, value]
+  );
+  const handleDelete = useCallback(
+    lookupObj => {
+      if (lookupObj && lookupObj.name) {
+        const modifiedLookups = filter(
+          value,
+          obj => obj.name !== lookupObj.name
+        );
 
-      onUpdate(lookupsTmp);
-    }
-
-    showListView(!isListView);
-  };
-
+        onSave(modifiedLookups);
+      }
+    },
+    [onSave, value]
+  );
   const handleEdit = val => {
-    setLookup(val);
-    showListView(false);
-  };
-
-  const handleDelete = lookupObj => {
-    if (lookupObj && lookupObj.name) {
-      const modifiedLookups = _.filter(
-        lookups,
-        obj => obj.name !== lookupObj.name
-      );
-
-      onUpdate(modifiedLookups);
-    }
+    setSelectedLookup(val);
+    setShowListView(false);
   };
 
   const toggleLookupMode = () => {
     setError();
-    setLookup({});
-    showListView(!isListView);
+    setSelectedLookup({});
+    setShowListView(!showListView);
   };
 
   return (
     <ModalDialog
       show
-      actionLabel={isListView ? 'New Lookup' : 'Back to Lookup'}
+      actionLabel={showListView ? 'New Lookup' : 'Back to Lookup'}
       actionHandler={toggleLookupMode}
       minWidth="sm"
       maxWidth="lg">
       <span>Manage Lookups</span>
-      {isListView ? (
-        <LookupListing
-          lookups={lookups}
-          onUpdate={handleEdit}
-          onDelete={handleDelete}
-          onCancel={onCancel}
-          disabled={disabled}
-        />
+      {showListView ? (
+        <div>
+          {value.map(r => (
+            <LookupListRow
+              value={r}
+              key={r.name}
+              disabled={disabled}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          ))}
+          <Button data-test="closeLookupListing" onClick={onCancel}>
+            Close
+          </Button>
+        </div>
       ) : (
         <ManageLookup
-          lookup={lookup}
+          value={selectedLookup}
           error={error}
           onCancel={toggleLookupMode}
           options={options}

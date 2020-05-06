@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import { useState, useCallback, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
@@ -12,7 +14,7 @@ import {
 import actions from '../../../actions';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
-const ManageLookup = props => {
+const ManageLookup = (props) => {
   const {
     label = 'Manage Lookups',
     lookupFieldId,
@@ -38,7 +40,7 @@ const ManageLookup = props => {
   );
 };
 
-const DynaHttpRequestBody = props => {
+const DynaHttpRequestBody = (props) => {
   const {
     id,
     formContext,
@@ -59,17 +61,17 @@ const DynaHttpRequestBody = props => {
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
-  const isPageGenerator = useSelector(state =>
+  const isPageGenerator = useSelector((state) =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const isEditorV2Supported = useSelector(state => {
+  const isEditorV2Supported = useSelector((state) => {
     if (enableEditorV2) {
       return selectors.isEditorV2Supported(state, resourceId, resourceType);
     }
 
     return false;
   });
-  const { data: sampleData, templateVersion } = useSelector(state =>
+  const { data: sampleData, templateVersion } = useSelector((state) =>
     selectors.getEditorSampleData(state, {
       flowId,
       resourceId,
@@ -79,15 +81,15 @@ const DynaHttpRequestBody = props => {
   const formattedRule = useMemo(() => {
     let rule = Array.isArray(value) ? value[arrayIndex] : value;
 
-    if (!rule) {
+    if (!rule && templateVersion === 1) {
       // load sample template when rule is not yet defined
       if (contentType === 'json')
-        rule = getJSONSampleTemplate(sampleData || []);
-      else rule = getXMLSampleTemplate(sampleData);
+        rule = getJSONSampleTemplate((sampleData && sampleData.data) || []);
+      else rule = getXMLSampleTemplate((sampleData && sampleData.data) || []);
     }
 
     return rule;
-  }, [arrayIndex, contentType, sampleData, value]);
+  }, [arrayIndex, contentType, sampleData, templateVersion, value]);
   const action = useMemo(() => {
     if (!lookupFieldId) return;
 
@@ -111,7 +113,7 @@ const DynaHttpRequestBody = props => {
     resourceType,
   ]);
   const loadEditorSampleData = useCallback(
-    version => {
+    (version) => {
       dispatch(
         actions.editorSampleData.request({
           flowId,
@@ -124,21 +126,13 @@ const DynaHttpRequestBody = props => {
         })
       );
     },
-    [
-      dispatch,
-      enableEditorV2,
-      flowId,
-      formContext.value,
-      id,
-      resourceId,
-      resourceType,
-    ]
+    [dispatch, enableEditorV2, flowId, id, resourceId, resourceType]
   );
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
   const handleEditorVersionToggle = useCallback(
-    version => {
+    (version) => {
       loadEditorSampleData(version);
     },
     [loadEditorSampleData]
@@ -171,7 +165,6 @@ const DynaHttpRequestBody = props => {
   }, [
     dispatch,
     flowId,
-    formContext.value,
     id,
     isPageGenerator,
     loadEditorSampleData,
@@ -214,7 +207,7 @@ const DynaHttpRequestBody = props => {
 export default function DynaHttpRequestBodyWrapper(props) {
   return (
     <FormContext.Consumer>
-      {form => <DynaHttpRequestBody {...props} formContext={form} />}
+      {(form) => <DynaHttpRequestBody {...props} formContext={form} />}
     </FormContext.Consumer>
   );
 }

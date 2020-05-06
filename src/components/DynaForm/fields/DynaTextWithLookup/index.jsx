@@ -24,18 +24,6 @@ const DynaTextWithLookup = props => {
     showLookup = true,
     showExtract = true,
     connectionId,
-    // isSqlImport,
-    // onLookupUpdate,
-    // lookups,
-    // getUpdatedFieldValue,
-    // extractFields = [],
-    // prefixRegexp = '',
-    // getMatchedValueforSuggestion,
-    // showLookup,
-    // fieldMetadata,
-    // fieldId,
-    // recordType,
-    // hideExtractFields,
   } = props;
   const ref = useRef(null);
   const [cursorPosition, setCursorPosition] = useState(0);
