@@ -69,7 +69,7 @@ describe('isDeltaFlow', () => {
   });
   test('should return true when flow has pageGenerators with type as delta and lagoffset', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaAndLagOffset)).toEqual(
-      false
+      true
     );
   });
   test('should return true when flow has pageGenerators with type as delta and dateformat', () => {
