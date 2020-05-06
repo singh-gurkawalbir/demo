@@ -7,7 +7,6 @@ export default function reducer(state = {}, action) {
   const {
     type,
     flowId,
-    resourceType,
     resourceId,
     fieldType,
     sampleData,
