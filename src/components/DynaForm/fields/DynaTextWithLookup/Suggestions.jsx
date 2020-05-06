@@ -156,6 +156,24 @@ export default function Suggestions(props) {
     },
     [cursorPosition, onValueUpdate, value]
   );
+  const handleLookupEdit = useCallback(
+    (lookup = {}) => {
+      const lookupIndex = lookups.findIndex(item => item.name === lookup.name);
+
+      if (lookupIndex !== -1) {
+        return;
+      }
+
+      const modifiedLookups = [...lookups];
+
+      modifiedLookups.splice(lookupIndex, 1);
+      modifiedLookups.splice(lookupIndex, 0, lookup);
+      const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+
+      onFieldChange(lookupFieldId, modifiedLookups);
+    },
+    [adaptorType, lookups, onFieldChange]
+  );
   const handleLookupAdd = useCallback(
     lookup => {
       handleLookupSelect(lookup);
@@ -216,7 +234,7 @@ export default function Suggestions(props) {
               flowId={flowId}
               fieldId={id}
               isEdit
-              onSave={handleLookupAdd}
+              onSave={handleLookupEdit}
               onSelect={handleLookupSelect}
               showDynamicLookupOnly
               value={lookup}

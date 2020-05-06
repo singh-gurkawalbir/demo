@@ -55,13 +55,13 @@ export default function ManageLookup(props) {
     let lookupObj = {};
     const lookupTmp = {};
 
-    if (resource.adaptorType === 'NetSuiteImport') {
-      if (isEdit) {
-        lookupTmp.name = lookup.name;
-      } else {
-        lookupTmp.name = shortid.generate();
-      }
+    if (isEdit) {
+      lookupTmp.name = lookup.name;
+    } else {
+      lookupTmp.name = shortid.generate();
+    }
 
+    if (resource.adaptorType === 'NetSuiteImport') {
       if (formVal._mode === 'dynamic') {
         lookupTmp.extract = formVal._extract;
         lookupTmp.recordType = formVal.recordType;
@@ -76,12 +76,6 @@ export default function ManageLookup(props) {
 
       lookupObj = lookupTmp;
     } else if (resource.adaptorType === 'SalesforceImport') {
-      if (isEdit) {
-        lookupTmp.name = lookup.name;
-      } else {
-        lookupTmp.name = shortid.generate();
-      }
-
       if (formVal._mode === 'dynamic') {
         lookupTmp.whereClause = formVal.whereClause;
         lookupTmp.sObjectType = formVal.sObjectType;
