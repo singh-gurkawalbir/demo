@@ -20,7 +20,6 @@ const getLookupMetadata = ({
   resourceId,
   resourceType,
   flowId,
-  resourceName,
 }) => {
   const fieldMeta = {
     fieldMap: {
@@ -43,10 +42,10 @@ const getLookupMetadata = ({
         id: 'relativeURI',
         name: 'relativeURI',
         type: 'relativeuri',
+        enableEditorV2: false,
         showLookup: false,
         label: 'Relative URI',
         connectionId,
-        resourceName,
         resourceId,
         resourceType,
         flowId,
@@ -91,7 +90,11 @@ const getLookupMetadata = ({
         id: 'body',
         name: 'body',
         type: 'httprequestbody',
-        connectionId: r => r && r._connectionId,
+        enableEditorV2: false,
+        connectionId,
+        resourceId,
+        resourceType,
+        flowId,
         label: 'Build HTTP Request Body',
         defaultValue: lookup.body,
         visibleWhenAll: [
@@ -193,7 +196,17 @@ const getLookupMetadata = ({
       },
     },
     layout: {
-      fields: ['relativeURI', 'method', 'body', 'extract'],
+      fields: [
+        'mode',
+        'relativeURI',
+        'method',
+        'body',
+        'extract',
+        'mapList',
+        'name',
+        'failRecord',
+        'default',
+      ],
     },
   };
 

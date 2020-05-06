@@ -1,5 +1,4 @@
 import { call, put, select, takeEvery } from 'redux-saga/effects';
-import { deepClone } from 'fast-json-patch/lib/core';
 import { requestSampleData } from '../sampleData/flows';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -16,30 +15,20 @@ export function* requestEditorSampleData({
   formValues,
   requestedEditorVersion,
 }) {
-  const _resource = yield call(constructResourceFromFormValues, {
+  const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
     resourceType,
   });
-  // const resource = yield select(selectors.resource, resourceType, resourceId);
-  const path = '/processors/handleBar/getContext';
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,
     stage,
   });
-  // Temp fix to remove templateVersion;
-  // To delete starts
-  const resource = deepClone(_resource);
-
-  delete resource.fieldEditorVersion;
-
-  // To delete ends
 
   if (!flowSampleData || !flowSampleData.data) {
-    // sample data not present.
-    // trigger action to get sample data
+    // sample data not present.trigger action to get sample data
     yield call(requestSampleData, {
       flowId,
       resourceId,
@@ -93,10 +82,9 @@ export function* requestEditorSampleData({
   } else {
     const body = {
       sampleData: flowSampleData.data || { myField: 'sample' },
+      templateVersion: requestedEditorVersion,
     };
 
-    if (requestedEditorVersion)
-      resource.templateVersion = requestedEditorVersion;
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
 
     body.fieldPath = fieldType;
@@ -105,6 +93,7 @@ export function* requestEditorSampleData({
       method: 'POST',
       body,
     };
+    const path = '/processors/handleBar/getContext';
     const response = yield call(apiCallWithRetry, {
       path,
       opts,

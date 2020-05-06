@@ -27,8 +27,8 @@ export default function ManageLookup(props) {
     showDynamicLookupOnly = false,
     options = {},
   } = props;
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
+  const { merged: resource = {} } = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
   );
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {

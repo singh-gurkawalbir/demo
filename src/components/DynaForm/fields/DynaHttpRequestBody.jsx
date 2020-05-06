@@ -19,7 +19,10 @@ const ManageLookup = props => {
     lookupFieldId,
     value,
     onFieldChange,
-    options = {},
+    flowId,
+    resourceType,
+    resourceId,
+    connectionId,
   } = props;
 
   return (
@@ -28,7 +31,10 @@ const ManageLookup = props => {
       label={label}
       value={value}
       onFieldChange={onFieldChange}
-      options={options}
+      flowId={flowId}
+      resourceType={resourceType}
+      resourceId={resourceId}
+      connectionId={connectionId}
     />
   );
 };
@@ -47,8 +53,9 @@ const DynaHttpRequestBody = props => {
     resourceType,
     flowId,
     arrayIndex,
+    enableEditorV2 = true,
   } = props;
-  const { lookups: lookupsObj, resourceName } = options;
+  const { lookups: lookupsObj } = options;
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   const lookupFieldId = lookupsObj && lookupsObj.fieldId;
@@ -61,9 +68,13 @@ const DynaHttpRequestBody = props => {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const isEditorV2Supported = useSelector(state =>
-    selectors.isEditorV2Supported(state, resourceId, resourceType)
-  );
+  const isEditorV2Supported = useSelector(state => {
+    if (enableEditorV2) {
+      return selectors.isEditorV2Supported(state, resourceId, resourceType);
+    }
+
+    return false;
+  });
   const { data: sampleData, templateVersion } = useSelector(state =>
     selectors.getEditorSampleData(state, {
       flowId,
@@ -81,11 +92,19 @@ const DynaHttpRequestBody = props => {
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: id,
-          requestedEditorVersion: version,
+          requestedEditorVersion: enableEditorV2 ? version : 1,
         })
       );
     },
-    [dispatch, flowId, formContext.value, id, resourceId, resourceType]
+    [
+      dispatch,
+      enableEditorV2,
+      flowId,
+      formContext.value,
+      id,
+      resourceId,
+      resourceType,
+    ]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
@@ -142,22 +161,16 @@ const DynaHttpRequestBody = props => {
   }, [arrayIndex, contentType, sampleData, value]);
   const action = useMemo(() => {
     if (!lookupFieldId) return;
-    const options = {
-      isSQLLookup: false,
-      sampleData,
-      resourceId,
-      resourceType,
-      flowId,
-      connectionId,
-      resourceName,
-    };
 
     return ManageLookup({
       label: 'Manage Lookups',
       lookupFieldId,
       value: lookups,
       onFieldChange,
-      options,
+      flowId,
+      resourceType,
+      resourceId,
+      connectionId,
     });
   }, [
     connectionId,
@@ -166,9 +179,7 @@ const DynaHttpRequestBody = props => {
     lookups,
     onFieldChange,
     resourceId,
-    resourceName,
     resourceType,
-    sampleData,
   ]);
 
   return (

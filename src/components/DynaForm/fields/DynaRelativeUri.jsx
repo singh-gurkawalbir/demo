@@ -33,10 +33,18 @@ const DynaRelativeUri = props => {
     options = {},
     formContext,
     arrayIndex,
+    enableEditorV2 = true,
   } = props;
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
+  const isEditorV2Supported = useSelector(state => {
+    if (enableEditorV2) {
+      return selectors.isEditorV2Supported(state, resourceId, resourceType);
+    }
+
+    return false;
+  });
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -69,11 +77,19 @@ const DynaRelativeUri = props => {
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: id,
-          requestedEditorVersion: version,
+          requestedEditorVersion: enableEditorV2 ? version : 1,
         })
       );
     },
-    [dispatch, flowId, formContext.value, id, resourceId, resourceType]
+    [
+      dispatch,
+      enableEditorV2,
+      flowId,
+      formContext.value,
+      id,
+      resourceId,
+      resourceType,
+    ]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
@@ -121,7 +137,7 @@ const DynaRelativeUri = props => {
             rule={inputValue}
             // sampleRule={sampleRule}
             onClose={handleClose}
-            showVersionToggle
+            showVersionToggle={isEditorV2Supported}
             editorVersion={templateVersion}
             onVersionToggle={handleEditorVersionToggle}
           />

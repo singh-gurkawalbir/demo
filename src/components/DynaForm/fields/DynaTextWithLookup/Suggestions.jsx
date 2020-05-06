@@ -185,26 +185,7 @@ export default function Suggestions(props) {
     .substring(0, cursorPosition)
     .match(prefixRegexp);
 
-  // TODO: Remove Start
   if (!showSuggestion) return null;
-  // const isSqlImport =
-  //   adaptorType && adaptorTypeMap[adaptorType] === adaptorTypeMap.RDBMSImport;
-  // const options = {
-  //   isSQLLookup: isSqlImport,
-  //   sampleData,
-  //   connectionId,
-  //   // passed in ignore existing. todo enable
-  //   // importType,
-  //   // fieldMetadata,
-  //   resourceId,
-  //   resourceType,
-  //   flowId,
-  //   fieldId: id,
-  //   // recordType,
-  //   // extractFields,
-  // };
-  // ends
-  // const options = { fieldMetadata };
 
   return (
     <ul className={classes.suggestions}>

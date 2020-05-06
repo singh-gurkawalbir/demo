@@ -2895,7 +2895,7 @@ export function isEditorV2Supported(state, resourceId, resourceType) {
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(resource.adaporType);
+  ].includes(resource.adaptorType);
 }
 
 export function resourceFormField(state, resourceType, resourceId, id) {

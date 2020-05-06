@@ -5,7 +5,16 @@ import ManageLookup from './Manage';
 import LookupListing from './Listing';
 
 export default function Lookup(props) {
-  const { lookups, onUpdate, onCancel, disabled, options } = props;
+  const {
+    lookups,
+    onUpdate,
+    onCancel,
+    resourceId,
+    resourceType,
+    flowId,
+    disabled,
+    options,
+  } = props;
   const [isListView, showListView] = useState(true);
   const [lookup, setLookup] = useState({});
   const [error, setError] = useState();
@@ -82,6 +91,9 @@ export default function Lookup(props) {
           options={options}
           onSave={handleSubmit}
           disabled={disabled}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          flowId={flowId}
         />
       )}
     </ModalDialog>
