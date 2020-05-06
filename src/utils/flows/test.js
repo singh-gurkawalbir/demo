@@ -67,7 +67,7 @@ describe('isDeltaFlow', () => {
   test('should return true when flow has pageGenerators with type as delta', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toEqual(true);
   });
-  test('should return false when flow has pageGenerators with type as delta and lagoffset', () => {
+  test('should return true when flow has pageGenerators with type as delta and lagoffset', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaAndLagOffset)).toEqual(
       false
     );
