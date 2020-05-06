@@ -27,6 +27,7 @@ export default {
       id: 'http.encrypted.securityKey',
       label: 'Security key',
       type: 'text',
+      helpKey: 'solidcommerce.connection.http.encrypted.securityKey',
       inputType: 'password',
       required: true,
       description:
@@ -38,6 +39,7 @@ export default {
       type: 'text',
       inputType: 'password',
       required: true,
+      helpKey: 'solidcommerce.connection.http.encrypted.appKey',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },

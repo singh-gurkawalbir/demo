@@ -4,7 +4,7 @@ import NetsuiteMappingSettings from './netsuite';
 import SalesforceMappingSettings from './salesforce';
 import FTPMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
-
+import rdbmsMappingSettings from './rdbms';
 // TODO (Aditya) test cases to be added for save functionality
 
 const getFormattedLookup = (lookup, formVal) => {
@@ -129,6 +129,18 @@ export default {
           lookup,
         });
         break;
+      case adaptorTypeMap.RDBMSImport: {
+        fieldMeta = rdbmsMappingSettings.getMetaData({
+          value,
+          extractFields,
+          generate,
+          options,
+          lookups,
+          lookup,
+        });
+        break;
+      }
+
       default:
     }
 

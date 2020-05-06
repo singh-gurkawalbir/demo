@@ -16,6 +16,7 @@ function flattenChildrenStructrue(
     deleted = [],
     isParentDeleted = false,
     deleteChildlessParent = false,
+    depth = 0,
   } = options;
 
   if (meta) {
@@ -30,6 +31,7 @@ function flattenChildrenStructrue(
     result.push({
       ...meta,
       isRoot,
+      depth,
       deleted:
         allChildrenDeleted || deleted.includes(meta.id) || isParentDeleted,
     });
@@ -38,6 +40,7 @@ function flattenChildrenStructrue(
       meta.children.forEach(child =>
         flattenChildrenStructrue(result, child, false, {
           deleted,
+          depth: depth + 1,
           isParentDeleted: deleted.includes(meta.id),
           deleteChildlessParent,
         })

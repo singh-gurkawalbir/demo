@@ -2,6 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
@@ -70,12 +71,20 @@ export default function TemplateList(props) {
 
         <div className={classes.resultContainer}>
           <LoadResources required resources={['templates', 'integrations']}>
-            <CeligoTable
-              data={list.resources}
-              filterKey="templates"
-              {...metadata}
-              actionProps={{ resourceType: 'templates' }}
-            />
+            {list.count === 0 ? (
+              <Typography>
+                {list.total === 0
+                  ? `You don't have any templates.`
+                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+              </Typography>
+            ) : (
+              <CeligoTable
+                data={list.resources}
+                filterKey="templates"
+                {...metadata}
+                actionProps={{ resourceType: 'templates' }}
+              />
+            )}
           </LoadResources>
         </div>
         <ShowMoreDrawer

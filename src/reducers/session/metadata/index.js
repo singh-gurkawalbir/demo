@@ -151,10 +151,12 @@ export const optionsFromMetadata = ({
   }
 
   const metaFilter = metadataFilterMap[filterKey || 'default'];
-  const transformedData = metaFilter(data, {
-    applicationResource,
-    connectionId,
-  });
+  const transformedData =
+    data &&
+    metaFilter(data, {
+      applicationResource,
+      connectionId,
+    });
 
   return { data: transformedData, status, errorMessage, changeIdentifier };
 };

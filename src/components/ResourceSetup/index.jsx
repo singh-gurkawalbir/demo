@@ -10,7 +10,6 @@ import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    marginTop: theme.appBarHeight,
     width: 660,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,

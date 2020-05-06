@@ -1,18 +1,17 @@
+import { useMemo, Fragment, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useCallback, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
 import actions from '../../actions';
+import * as selectors from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
-import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../reducers';
 import dateTimezones from '../../utils/dateTimezones';
-import getImageUrl from '../../utils/image';
 import { getDomain } from '../../utils/resource';
+import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -38,7 +37,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: 0,
   },
 }));
-// const preferences = { name: 'suRYA' };
 const dateFormats = [
   { value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'DD/MM/YYYY', label: '31/12/1900' },
@@ -52,29 +50,9 @@ const dateFormats = [
 
 export default function ProfileComponent() {
   const classes = useStyles();
-
-  useEffect(() => {
-    console.log('component mounted');
-  }, []);
-
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
-
-  // const preferences = useSelector(
-  //   state => {
-  //     console.log('state ,');
-
-  //     return { name: 'surya' };
-  //   },
-  //   (left, right) => {
-  //     console.log('shallow equal ,', shallowEqual(left.name, right.name));
-
-  //     return left.name === right.name;
-  //   }
-  // );
-
-  console.log('check preferences ', preferences);
   const dateTimeZonesList = useMemo(
     () => [
       {
@@ -150,16 +128,20 @@ export default function ProfileComponent() {
           type: 'text',
           label: 'Name',
           required: true,
+          helpKey: 'myaccount.name',
         },
         email: {
           id: 'email',
           name: 'email',
           type: 'useremail',
           label: 'Email',
+          helpKey: 'myaccount.email',
+          value: preferences && preferences.email,
         },
         password: {
           id: 'password',
           name: 'password',
+          helpKey: 'myaccount.password',
           type: 'userpassword',
         },
         company: {
@@ -167,25 +149,29 @@ export default function ProfileComponent() {
           name: 'company',
           type: 'text',
           label: 'Company',
+          helpKey: 'myaccount.company',
         },
         phone: {
           id: 'phone',
           name: 'phone',
           type: 'text',
           label: 'Phone',
+          helpKey: 'myaccount.phone',
         },
         role: {
           id: 'role',
           name: 'role',
           type: 'text',
+          helpKey: 'myaccount.role',
           label: 'Role',
         },
         timezone: {
           id: 'timezone',
           name: 'timezone',
           type: 'select',
-          label: 'Time Zone',
+          label: 'Time zone',
           required: true,
+          helpKey: 'myaccount.timezone',
 
           options: dateTimeZonesList,
         },
@@ -194,6 +180,7 @@ export default function ProfileComponent() {
           name: 'dateFormat',
           type: 'select',
           required: true,
+          helpKey: 'myaccount.dateFormat',
           label: 'Date format',
 
           options: dateFormatList,
@@ -202,16 +189,17 @@ export default function ProfileComponent() {
           id: 'timeFormat',
           name: 'timeFormat',
           type: 'select',
+          helpKey: 'myaccount.timeFormat',
           required: true,
-          label: 'Time Format',
-
+          label: 'Time format',
           options: timeFormatList,
         },
         developer: {
           id: 'developer',
           name: 'developer',
           type: 'checkbox',
-          label: 'Developer Mode',
+          helpKey: 'myaccount.developer',
+          label: 'Developer mode',
         },
       },
       layout: {
@@ -229,14 +217,11 @@ export default function ProfileComponent() {
         ],
       },
     }),
-    [dateFormatList, dateTimeZonesList, timeFormatList]
+    [dateFormatList, dateTimeZonesList, preferences, timeFormatList]
   );
-  const metaValue = useMemo(() => {
-    console.log('re executing');
-
-    return {
+  const metaValue = useMemo(
+    () => ({
       name: preferences && preferences.name,
-      email: preferences && preferences.email,
       company: preferences && preferences.company,
       phone: preferences && preferences.phone,
       role: preferences && preferences.role,
@@ -244,19 +229,18 @@ export default function ProfileComponent() {
       dateFormat: preferences && preferences.dateFormat,
       timeFormat: preferences && preferences.timeFormat,
       developer: preferences && preferences.developer,
-    };
-  }, [preferences]);
+    }),
+    [preferences]
+  );
   const formKey = useFormInitWithPermissions({
     fieldsMeta: fieldMeta,
     metaValue,
   });
 
-  useTraceUpdate(preferences);
-
   return (
     <Fragment>
       <PanelHeader title="Profile" />
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} render />
       <DynaSubmit formKey={formKey} onClick={handleSubmit}>
         Save
       </DynaSubmit>

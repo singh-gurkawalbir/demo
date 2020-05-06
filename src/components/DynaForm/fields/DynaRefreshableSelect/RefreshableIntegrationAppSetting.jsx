@@ -18,7 +18,7 @@ export default function RefreshableIntegrationAppSetting(props) {
   const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
   const dispatch = useDispatch();
   const [autofill, setAutofill] = useState(false);
-  const handleRefreshResource = useCallback(() => {
+  const onRefresh = useCallback(() => {
     dispatch(
       actions.connectors.refreshMetadata(null, fieldName, _integrationId)
     );
@@ -84,8 +84,8 @@ export default function RefreshableIntegrationAppSetting(props) {
       {...props}
       resourceToFetch={null}
       resetValue={null}
-      handleFetchResource={null}
-      handleRefreshResource={handleRefreshResource}
+      onFetch={null}
+      onRefresh={onRefresh}
       fieldStatus={!isLoading}
       fieldData={options || []}
       fieldError={null}

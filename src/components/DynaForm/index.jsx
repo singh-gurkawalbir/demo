@@ -42,9 +42,7 @@ const DynaForm = props => {
   // console.log('RENDER: DynaForm', layout);
   // useTraceUpdate(props);
 
-  if (!layout || !formKey) {
-    return null;
-  }
+  if (!layout || !formKey) return null;
 
   return (
     <Fragment>

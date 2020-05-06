@@ -102,8 +102,8 @@ export default function Panel(props) {
     ...props,
     occupyFullWidth,
   });
-  const formState = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, id)
+  const skipFormClose = useSelector(
+    state => selectors.resourceFormState(state, resourceType, id).skipClose
   );
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
@@ -218,7 +218,7 @@ export default function Panel(props) {
       // For web hook generate URL case
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
-      if (formState.skipClose) {
+      if (skipFormClose) {
         props.history.replace(
           generatePath(match.path, {
             id: newResourceId || id,

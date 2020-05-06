@@ -27,12 +27,14 @@ export default {
       type: 'text',
       label: '3PL GUID',
       required: true,
+      helpKey: '3plcentral.connection.http.unencrypted.tpl',
       defaultValue: '',
     },
     'http.unencrypted.userLoginId': {
       id: 'http.unencrypted.userLoginId',
       type: 'text',
-      label: 'UserLogin ID',
+      label: 'UserLogin id',
+      helpKey: '3plcentral.connection.http.unencrypted.userLoginId',
       required: true,
     },
     'http._iClientId': {

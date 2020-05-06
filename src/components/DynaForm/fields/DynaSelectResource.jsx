@@ -20,6 +20,7 @@ import {
 import ActionButton from '../../../components/ActionButton';
 import useResourceList from '../../../hooks/selectors/useResourceList';
 
+const emptyArray = [];
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -167,7 +168,7 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
-  const { resources = [] } = useResourceList(filterConfig);
+  const { resources = emptyArray } = useResourceList(filterConfig);
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );

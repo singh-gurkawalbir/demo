@@ -46,7 +46,7 @@ export default function Invite(props) {
         id: 'email',
         name: 'email',
         type: 'text',
-        label: "New Owner's Email",
+        label: "New owner's email",
         required: true,
         helpText:
           'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',

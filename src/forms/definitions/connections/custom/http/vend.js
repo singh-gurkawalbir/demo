@@ -23,6 +23,7 @@ export default {
       endAdornment: '.vendhq.com',
       label: 'Subdomain',
       required: true,
+      helpKey: 'vend.connection.http.subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',

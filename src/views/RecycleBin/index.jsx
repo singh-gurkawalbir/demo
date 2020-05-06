@@ -1,6 +1,7 @@
 import { Fragment, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import infoText from '../ResourceList/infoText';
 import * as selectors from '../../reducers';
@@ -62,12 +63,20 @@ export default function RecycleBin(props) {
         </CeligoPageBar>
         <div className={classes.resultContainer}>
           <LoadResources required resources="recycleBinTTL">
-            <CeligoTable
-              data={list.resources}
-              filterKey="recycleBinTTL"
-              {...metadata}
-              actionProps={{ resourceType: 'recycleBinTTL' }}
-            />
+            {list.count === 0 ? (
+              <Typography>
+                {list.total === 0
+                  ? `Recycle bin is empty.`
+                  : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+              </Typography>
+            ) : (
+              <CeligoTable
+                data={list.resources}
+                filterKey="recycleBinTTL"
+                {...metadata}
+                actionProps={{ resourceType: 'recycleBinTTL' }}
+              />
+            )}
           </LoadResources>
         </div>
         <ShowMoreDrawer

@@ -1,6 +1,8 @@
 import actionTypes from '../../../actions/types';
 import { fieldsTouchedForMeta } from '../../../forms/utils';
 
+const emptyObj = {};
+
 export default function reducer(state = {}, action) {
   const {
     type,
@@ -110,12 +112,12 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export function resourceFormState(state, resourceType, resourceId) {
   if (!state) {
-    return {};
+    return emptyObj;
   }
 
   const key = `${resourceType}-${resourceId}`;
 
-  return state[key] || {};
+  return state[key] || emptyObj;
 }
 
 export function resourceFormSaveProcessTerminated(

@@ -1,5 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData, getFlowReferencesForResource } from '../../../reducers';
+import { resourceData, flowReferencesForResource } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import { getFlowUpdatesFromPatch } from '../../../utils/flowData';
@@ -75,9 +75,9 @@ export function* updateFlowsDataForResource({ resourceId, resourceType }) {
    * flowRefs : [{flowId, resourceId}, ..] for all the flows ( PP / PG )
    */
   const flowRefs = yield select(
-    getFlowReferencesForResource,
-    resourceId,
-    resourceType
+    flowReferencesForResource,
+    resourceType,
+    resourceId
   );
   let flowIndex = 0;
 
