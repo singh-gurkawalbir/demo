@@ -28,10 +28,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
       });
     } catch (error) {
       yield put(
-        actions.customSettings.formError(
-          resourceId,
-          inferErrorMessage(error.message)
-        )
+        actions.customSettings.formError(resourceId, inferErrorMessage(error))
       );
 
       return;

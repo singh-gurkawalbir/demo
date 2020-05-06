@@ -18,7 +18,6 @@ export default function reducer(state = {}, action) {
       case actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED:
         if (!draft[resourceId]) {
           draft[resourceId] = {};
-          break;
         }
 
         draft[resourceId].status = 'received';
@@ -37,11 +36,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.RESOURCE.UPDATED:
         // console.log(patch);
-        formPatches = patch.filter(
-          patch =>
-            // removed /settings path from filter as this condition will be taken care by formClear action
-            patch.path === '/settingsForm' /* || patch.path === '/settings' */
-        );
+        formPatches = patch.filter(patch => patch.path === '/settingsForm');
 
         scriptPatches = patch.filter(patch => patch.path === '/content');
 

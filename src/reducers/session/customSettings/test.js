@@ -2,7 +2,7 @@
 import reducer, * as selectors from './';
 import actions from '../../../actions';
 
-describe('customSettings reducers', () => {
+describe('customSettings reducer', () => {
   const resourceType = 'imports';
   const resourceId = '123';
 
@@ -24,11 +24,36 @@ describe('customSettings reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+
+    test('should not alter other sibling state entries', () => {
+      const state = {
+        123: {},
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const expectedState = {
+        123: { status: 'request' },
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const newState = reducer(
+        state,
+        actions.customSettings.formRequest(resourceType, resourceId)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
   });
 
   describe('FORM_RECEIVED action', () => {
-    test('should return empty state if not exists', () => {
-      const expectedState = { 123: {} };
+    test('should not throw error if state doesnt exist', () => {
+      const expectedState = {
+        123: {
+          meta: '',
+          status: 'received',
+          key: expect.any(String),
+        },
+      };
       const newState = reducer(
         undefined,
         actions.customSettings.formReceived(resourceId, '')
@@ -42,7 +67,7 @@ describe('customSettings reducers', () => {
         123: {
           meta: { fieldMap: { store: { name: 'store' } } },
           status: 'received',
-          scriptId: undefined,
+          key: expect.any(String),
         },
       };
       const state = reducer(
@@ -56,7 +81,31 @@ describe('customSettings reducers', () => {
         })
       );
 
-      expect(newState).toMatchObject(expectedState);
+      expect(newState).toEqual(expectedState);
+    });
+
+    test('should not alter other sibling state entries', () => {
+      const state = {
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const expectedState = {
+        123: {
+          meta: { fieldMap: { store: { name: 'store' } } },
+          status: 'received',
+          key: expect.any(String),
+        },
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const newState = reducer(
+        state,
+        actions.customSettings.formReceived(resourceId, {
+          fieldMap: { store: { name: 'store' } },
+        })
+      );
+
+      expect(newState).toEqual(expectedState);
     });
   });
 
@@ -70,10 +119,40 @@ describe('customSettings reducers', () => {
 
       expect(newState).toEqual(expectedState);
     });
+
+    test('should not alter other sibling state entries', () => {
+      const state = {
+        123: {},
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const expectedState = {
+        123: { status: 'error', error: 'Dummy error' },
+        456: { status: 'received', scriptId: '999' },
+        789: { status: 'received', scriptId: '888' },
+      };
+      const newState = reducer(
+        state,
+        actions.customSettings.formError(resourceId, 'Dummy error')
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
   });
 
   describe('FORM_CLEAR action', () => {
     test('should delete the resource reference from the state', () => {
+      const state = { 123: { status: 'request' } };
+      const expectedState = {};
+      const newState = reducer(
+        state,
+        actions.customSettings.formClear(resourceId)
+      );
+
+      expect(newState).toEqual(expectedState);
+    });
+
+    test('should not alter other sibling state entries', () => {
       const state = { 123: { status: 'request' }, 456: { status: 'request' } };
       const expectedState = { 456: { status: 'request' } };
       const newState = reducer(
