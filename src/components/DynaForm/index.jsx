@@ -34,7 +34,8 @@ const DynaForm = props => {
     ...rest
   } = props;
   const classes = useStyles();
-  const { layout, fieldMap } = fieldMeta;
+  const { fieldMap } = fieldMeta;
+  let layout = fieldMeta;
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy
@@ -42,7 +43,20 @@ const DynaForm = props => {
   // console.log('RENDER: DynaForm', layout);
   // useTraceUpdate(props);
 
-  if (!layout || !formKey) return null;
+  if (!formKey) return null;
+
+  if (!layout) {
+    if (!fieldMap) {
+      return null;
+    }
+
+    // if no layout metadata accompanies the fieldMap,
+    // then the order in which the fields are defined in the map are used as the layout.
+    layout = { fields: [] };
+    Object.keys(fieldMap).forEach(fieldId => {
+      layout.fields.push(fieldId);
+    });
+  }
 
   return (
     <Fragment>
