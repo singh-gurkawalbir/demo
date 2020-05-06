@@ -63,7 +63,7 @@ export default function App() {
   );
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
-    dispatch(actions.user.preferences.toggleDebug());
+    dispatch(actions.user.toggleDebug());
   }, [dispatch]);
 
   useKeyboardShortcut(['Shift', 'Control', 'D'], toggleDebugMode);
@@ -71,14 +71,17 @@ export default function App() {
   // console.log('render: <App>', reloadCount);
 
   useEffect(() => {
-    const tagKey = {
-      'localhost.io': 'AP-CAGNPCDUT5BV-2',
-      'staging.integrator.io': 'AP-YRACIJBGZVAM-2',
-      'integrator.io': 'AP-JB3PQTNZWXAO-2',
-      'eu.integrator.io': 'AP-NDDMWBJ5SKRY-2',
-    }[getDomain()];
+    const domain = getDomain();
 
-    gainsight.initialize({ tagKey });
+    /**
+     * We need to initialize the gainsight here for localhost.io only.
+     * We are injecting this intialization script into index.html from
+     * backend for other domains as per the gainsight support's suggestion
+     * for their "Product Mapper" to work properly.
+     */
+    if (domain === 'localhost.io') {
+      gainsight.initialize({ tagKey: 'AP-CAGNPCDUT5BV-2' });
+    }
   }, []);
 
   return (

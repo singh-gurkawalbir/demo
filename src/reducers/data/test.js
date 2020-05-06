@@ -132,7 +132,11 @@ function getExpectedLogs(allLogs, filters = {}) {
       return true;
     }
 
-    if (['integration', 'connection', 'flow'].includes(l.resourceType)) {
+    if (
+      ['integration', 'connection', 'flow', 'export', 'import'].includes(
+        l.resourceType
+      )
+    ) {
       return true;
     }
 
@@ -298,7 +302,7 @@ function getTestCases(resourceType = undefined, resourceId = undefined) {
           source: 'source2',
           byUser: 'user2',
         },
-        false,
+        true,
       ],
       [
         resourceType,

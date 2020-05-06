@@ -437,10 +437,11 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues) =>
+      save: (definitionRules, formValues, flowId) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
+          flowId,
         }),
     },
   },
@@ -969,6 +970,7 @@ const stack = {
     action(actionTypes.STACK.USER_REINVITE, { userInfo, userId }),
 };
 const user = {
+  toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   profile: {
     request: message => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
@@ -1017,7 +1019,6 @@ const user = {
     request: message => resource.request('preferences', undefined, message),
     update: preferences =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
-    toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>
@@ -1255,7 +1256,15 @@ const resourceForm = {
       resourceType,
       resourceId,
     }),
-  submit: (resourceType, resourceId, values, match, skipClose, isGenerate) =>
+  submit: (
+    resourceType,
+    resourceId,
+    values,
+    match,
+    skipClose,
+    isGenerate,
+    flowId
+  ) =>
     action(actionTypes.RESOURCE_FORM.SUBMIT, {
       resourceType,
       resourceId,
@@ -1263,6 +1272,7 @@ const resourceForm = {
       match,
       skipClose,
       isGenerate,
+      flowId,
     }),
   saveAndContinue: (resourceType, resourceId, values, match, skipClose) =>
     action(actionTypes.RESOURCE_FORM.SAVE_AND_CONTINUE, {
@@ -1494,6 +1504,48 @@ const responseMapping = {
   saveComplete: id =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
+const customSettings = {
+  formRequest: (resourceType, resourceId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_REQUEST, {
+      resourceType,
+      resourceId,
+    }),
+  formReceived: (resourceId, formMeta, scriptId) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED, {
+      resourceId,
+      formMeta,
+      scriptId,
+    }),
+  formError: (resourceId, error) =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_ERROR, {
+      resourceId,
+      error,
+    }),
+  formClear: resourceId =>
+    action(actionTypes.CUSTOM_SETTINGS.FORM_CLEAR, {
+      resourceId,
+    }),
+};
+const exportData = {
+  request: (kind, identifier, resource) =>
+    action(actionTypes.EXPORTDATA.REQUEST, {
+      kind,
+      identifier,
+      resource,
+    }),
+  receive: (kind, identifier, data) =>
+    action(actionTypes.EXPORTDATA.RECEIVED, {
+      kind,
+      identifier,
+      data,
+    }),
+  receiveError: (kind, identifier, err) =>
+    action(actionTypes.EXPORTDATA.ERROR_RECEIVED, {
+      kind,
+      identifier,
+      error: err,
+    }),
+};
 // #endregion
 
 export default {
@@ -1538,4 +1590,6 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  customSettings,
+  exportData,
 };

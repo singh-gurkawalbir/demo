@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import openExternalUrl from '../../utils/window';
+import RawHtml from '../RawHtml';
 
 function isValidURL(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
@@ -38,7 +39,7 @@ export default function JobErrorMessage({
 
   return (
     <Fragment>
-      {message}
+      <RawHtml html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {exportRecordLink && (
           <Button

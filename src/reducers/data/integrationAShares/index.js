@@ -1,28 +1,25 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, resourceType, collection } = action;
 
-  if (!resourceType) {
-    return state;
-  }
+  return produce(state, draft => {
+    if (!resourceType && type !== actionTypes.RESOURCE.RECEIVED_COLLECTION) {
+      return;
+    }
 
-  if (type !== actionTypes.RESOURCE.RECEIVED_COLLECTION) {
-    return state;
-  }
+    if (
+      resourceType.startsWith('integrations/') &&
+      resourceType.endsWith('/ashares')
+    ) {
+      const integrationId = resourceType
+        .replace('integrations/', '')
+        .replace('/ashares', '');
 
-  if (
-    resourceType.startsWith('integrations/') &&
-    resourceType.endsWith('/ashares')
-  ) {
-    const integrationId = resourceType
-      .replace('integrations/', '')
-      .replace('/ashares', '');
-
-    return { ...state, [integrationId]: collection || [] };
-  }
-
-  return state;
+      draft[integrationId] = collection || [];
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS

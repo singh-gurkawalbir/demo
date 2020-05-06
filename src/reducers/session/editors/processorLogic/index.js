@@ -5,6 +5,7 @@ import merge from './merge';
 import transform from './transform';
 import handlebars from './handlebars';
 import javascript from './javascript';
+import settingsForm from './settingsForm';
 import structuredFileParser from './structuredFileParser';
 import structuredFileGenerator from './structuredFileGenerator';
 import sql from './sql';
@@ -22,6 +23,7 @@ const logicMap = {
   transform,
   handlebars,
   javascript,
+  settingsForm,
   structuredFileParser,
   structuredFileGenerator,
   sql,
@@ -53,15 +55,17 @@ const validate = editor => {
 };
 
 const requestOptions = editor => {
+  const logic = getLogic(editor);
+  const skipPreview = logic.skipPreview && logic.skipPreview(editor);
   const violations = validate(editor);
 
-  if (violations) {
-    return { violations };
+  if (violations || skipPreview) {
+    return { violations, skipPreview };
   }
 
   return {
-    processor: getLogic(editor).processor || editor.processor,
-    body: getLogic(editor).requestBody(editor),
+    processor: logic.processor || editor.processor,
+    body: logic.requestBody(editor),
   };
 };
 
@@ -82,6 +86,12 @@ const init = processor => {
   return logic.init;
 };
 
+const processResult = editor => {
+  const logic = getLogic(editor);
+
+  return logic.processResult;
+};
+
 /**
  * init is optional for processors and is called during EDITOR_INIT.
  * data saved during EDITOR.INIT can be modified with it
@@ -92,4 +102,5 @@ export default {
   validate,
   isDirty,
   init,
+  processResult,
 };

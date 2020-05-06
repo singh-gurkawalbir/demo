@@ -29,6 +29,7 @@ export default {
       type: 'select',
       label: 'Account type',
       required: true,
+      helpKey: 'target.connection.accType',
       options: [
         {
           items: [
@@ -53,6 +54,7 @@ export default {
       id: 'http.auth.token.token',
       type: 'text',
       label: 'X-SELLER-TOKEN',
+      helpKey: 'target.connection.http.auth.token.token',
       required: true,
       inputType: 'password',
     },
@@ -60,6 +62,7 @@ export default {
       id: 'http.unencrypted.x-seller-id',
       type: 'text',
       label: 'X-SELLER-ID',
+      helpKey: 'target.connection.http.unencrypted.x-seller-id',
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },

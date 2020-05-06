@@ -437,6 +437,26 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     categoryId,
   ]);
   useEffect(() => {
+    const invalidCategory = !mappedCategories.find(c => c.id === categoryId);
+
+    if (metadataLoaded && invalidCategory) {
+      history.push(
+        generatePath(match.path, {
+          ...match.params,
+          categoryId: 'commonAttributes',
+        })
+      );
+    }
+  }, [
+    categoryId,
+    flowId,
+    history,
+    mappedCategories,
+    match.params,
+    match.path,
+    metadataLoaded,
+  ]);
+  useEffect(() => {
     if (mappingSaveStatus === 'saved' || mappingSaveStatus === 'close') {
       enqueueSnackbar({
         variant: 'success',
@@ -609,7 +629,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
                       disabled={isSaving}
                       data-test="saveAndCloseImportMapping"
                       onClick={handleSaveAndClose}>
-                      Save & Close
+                      Save & close
                     </Button>
                   )}
                   <Button
