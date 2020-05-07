@@ -42,3 +42,15 @@ export function isAllErrorsSelected(
 export function flowErrorMap(state, flowId) {
   return fromOpenErrors.flowErrorMap(state && state.openErrors, flowId);
 }
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromErrorDetails.errorActionsContext(state && state.errorDetails, {
+    flowId,
+    resourceId,
+    actionType,
+    errorType,
+  });
+}

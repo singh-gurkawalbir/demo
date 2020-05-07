@@ -567,6 +567,21 @@ export function flowErrorMap(state, flowId) {
   );
 }
 
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromErrorManagement.errorActionsContext(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      actionType,
+      errorType,
+    }
+  );
+}
+
 export function customSettingsStatus(state, resourceId) {
   return fromCustomSettingsStatus.customSettingsStatus(
     state && state.customSettings,

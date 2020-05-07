@@ -90,7 +90,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
   }
 
   try {
-    yield apiCallWithRetry({
+    const response = yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/retry`,
       opts: {
         method: 'POST',
@@ -99,6 +99,15 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
         },
       },
     });
+
+    yield put(
+      actions.errorManager.flowErrorDetails.retryReceived({
+        flowId,
+        resourceId,
+        response,
+        retryCount: retryDataKeys.length,
+      })
+    );
     const { errors } = yield select(resourceErrors, {
       flowId,
       resourceId,
@@ -117,7 +126,6 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
     yield put(
       actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
     );
-    // console.log(retryResponse);
   } catch (e) {
     // console.log('error');
   }
@@ -146,6 +154,12 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       },
     });
     yield put(
+      actions.errorManager.flowErrorDetails.resolveReceived({
+        flowId,
+        resourceId,
+      })
+    );
+    yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
         resourceId,
@@ -169,9 +183,12 @@ export default [
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS,
     selectAllErrorDetails
   ),
-  takeLatest(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RETRY, retryErrors),
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVE,
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
+    retryErrors
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
     resolveErrors
   ),
 ];

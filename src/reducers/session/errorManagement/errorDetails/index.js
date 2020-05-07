@@ -13,6 +13,7 @@ export default (state = {}, action) => {
     isResolved,
     checked,
     errorIds,
+    retryCount,
   } = action;
 
   return produce(state, draft => {
@@ -67,6 +68,53 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST:
+        if (!draft[flowId][resourceId][errorType].actions) {
+          draft[flowId][resourceId][errorType].actions = {};
+        }
+
+        if (!draft[flowId][resourceId][errorType].actions.retry) {
+          draft[flowId][resourceId][errorType].actions.retry = {
+            status: 'requested',
+          };
+        }
+
+        draft[flowId][resourceId][errorType].actions.retry.status = 'requested';
+
+        break;
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST:
+        if (!draft[flowId][resourceId][errorType].actions) {
+          draft[flowId][resourceId][errorType].actions = {};
+        }
+
+        if (!draft[flowId][resourceId][errorType].actions.resolve) {
+          draft[flowId][resourceId][errorType].actions.resolve = {
+            status: 'requested',
+          };
+        }
+
+        draft[flowId][resourceId][errorType].actions.resolve.status =
+          'requested';
+
+        break;
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
+        .RECEIVED:
+        draft[flowId][resourceId][errorType].actions.resolve.status =
+          'received';
+        break;
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY
+        .RECEIVED: {
+        draft[flowId][resourceId][errorType].actions.retry.status = 'received';
+        const count =
+          draft[flowId][resourceId][errorType].actions.retry.count || 0;
+
+        draft[flowId][resourceId][errorType].actions.retry.count =
+          count + retryCount;
+        break;
+      }
+
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OUTDATED:
         draft[flowId][resourceId].open.outdated = true;
         draft[flowId][resourceId].resolved.outdated = true;
@@ -82,6 +130,21 @@ export function getErrors(state, { flowId, resourceId, errorType }) {
       state[flowId] &&
       state[flowId][resourceId] &&
       state[flowId][resourceId][errorType]) ||
+    defaultObject
+  );
+}
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType = 'retry', errorType = 'open' }
+) {
+  return (
+    (state &&
+      state[flowId] &&
+      state[flowId][resourceId] &&
+      state[flowId][resourceId][errorType] &&
+      state[flowId][resourceId][errorType].actions &&
+      state[flowId][resourceId][errorType].actions[actionType]) ||
     defaultObject
   );
 }

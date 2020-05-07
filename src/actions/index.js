@@ -1497,18 +1497,40 @@ const errorManager = {
         options,
       }),
     retry: ({ flowId, resourceId, retryIds = [] }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RETRY, {
-        flowId,
-        resourceId,
-        retryIds,
-      }),
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
+        {
+          flowId,
+          resourceId,
+          retryIds,
+        }
+      ),
     resolve: ({ flowId, resourceId, errorIds = [] }) =>
-      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RESOLVE, {
-        flowId,
-        resourceId,
-        errorIds,
-      }),
-
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
+        {
+          flowId,
+          resourceId,
+          errorIds,
+        }
+      ),
+    retryReceived: ({ flowId, resourceId, retryCount }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
+        {
+          flowId,
+          resourceId,
+          retryCount,
+        }
+      ),
+    resolveReceived: ({ flowId, resourceId }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,
+        {
+          flowId,
+          resourceId,
+        }
+      ),
     remove: ({ flowId, resourceId, errorIds = [], isResolved = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE, {
         flowId,

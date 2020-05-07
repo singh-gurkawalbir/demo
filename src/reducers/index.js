@@ -4035,6 +4035,18 @@ export function flowErrorMap(state, flowId) {
   return fromSession.flowErrorMap(state && state.session, flowId);
 }
 
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromSession.errorActionsContext(state && state.session, {
+    flowId,
+    resourceId,
+    actionType,
+    errorType,
+  });
+}
+
 export function customSettingsStatus(state, resourceId) {
   return fromSession.customSettingsStatus(state && state.session, resourceId);
 }

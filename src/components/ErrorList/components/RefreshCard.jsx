@@ -4,16 +4,20 @@ import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import Icon from '../../../components/icons/RefreshIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   card: {
     position: 'absolute',
     top: 10,
     textAlign: 'center',
     left: 500,
     width: 300,
+    background: '#D6E4ED',
   },
   hide: {
     display: 'none',
+  },
+  refresh: {
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -30,7 +34,7 @@ export default function RefreshCard(props) {
         [className]: !!className,
         [classes.hide]: !show,
       })}>
-      <IconTextButton onClick={handleClick}>
+      <IconTextButton onClick={handleClick} className={classes.refresh}>
         <Icon /> Refresh
       </IconTextButton>
       to view new errors
