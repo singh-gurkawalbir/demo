@@ -345,6 +345,12 @@ const connectors = [
     assistant: 'github',
     webhook: true,
   },
+  {
+    id: 'gorgias',
+    name: 'Gorgias',
+    type: 'http',
+    assistant: 'gorgias',
+  },
   // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
   // { id: 'google', name: 'Google', type: 'http', assistant: 'google' },
   {

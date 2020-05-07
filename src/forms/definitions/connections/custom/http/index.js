@@ -174,6 +174,7 @@ import surveymonkey from './surveymonkey';
 import inspectorio from './inspectorio';
 import orderful from './orderful';
 import logisense from './logisense';
+import gorgias from './gorgias';
 
 export default {
   bigquery,
@@ -351,4 +352,5 @@ export default {
   inspectorio,
   orderful,
   logisense,
+  gorgias,
 };

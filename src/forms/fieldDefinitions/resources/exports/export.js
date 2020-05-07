@@ -193,6 +193,7 @@ export default {
           { label: 'Freshdesk', value: 'freshdesk' },
           { label: 'Ftp', value: 'ftp' },
           { label: 'Github', value: 'github' },
+          { label: 'Gorgias', value: 'gorgias' },
           { label: 'Gooddata', value: 'gooddata' },
           { label: 'Google', value: 'google' },
           { label: 'Googleanalytics', value: 'googleanalytics' },

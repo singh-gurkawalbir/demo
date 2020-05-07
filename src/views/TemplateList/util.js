@@ -21,7 +21,7 @@ export const templateList = [
   { label: 'eBay', value: 'ebay' },
   { label: 'FTP', value: 'ftp' },
   { label: 'Facebook Ads', value: 'facebookads' },
-  { label: 'Gainsight CS', value: 'gainsightcs' },
+  { label: 'Gainsight CS', value: 'gainsight' },
   { label: 'GitHub', value: 'github' },
   { label: 'Google', value: 'google' },
   { label: 'Jet', value: 'jet' },
