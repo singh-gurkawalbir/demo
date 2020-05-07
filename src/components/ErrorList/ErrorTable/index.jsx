@@ -7,11 +7,22 @@ import { filter } from '../../../reducers';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
+  emptyRow: {
+    position: 'relative',
+    top: 100,
+    textAlign: 'center',
+  },
 }));
 
 export default function ErrorTable(props) {
   const classes = useStyles();
-  const { paginationOptions, actionProps, data = [], metadata } = props;
+  const {
+    paginationOptions,
+    actionProps,
+    data = [],
+    metadata,
+    emptyRowsLabel,
+  } = props;
   const { filterKey, defaultFilter } = actionProps;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -62,7 +73,7 @@ export default function ErrorTable(props) {
           />
         </Fragment>
       ) : (
-        <div> No Rows </div>
+        <div className={classes.emptyRow}>{emptyRowsLabel || 'No Rows'} </div>
       )}
     </Fragment>
   );

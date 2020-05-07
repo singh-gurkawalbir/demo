@@ -111,6 +111,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
         metadata={metadata}
         data={resolvedErrors}
         actionProps={actionProps}
+        emptyRowsLabel="No Resolved errors"
       />
     </Fragment>
   );

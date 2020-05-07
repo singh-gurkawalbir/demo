@@ -108,6 +108,7 @@ export default function OpenErrors({ flowId, resourceId }) {
         metadata={metadata}
         data={openErrors}
         actionProps={actionProps}
+        emptyRowsLabel="No Open errors"
       />
     </Fragment>
   );
