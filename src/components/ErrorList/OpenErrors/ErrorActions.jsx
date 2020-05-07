@@ -9,8 +9,9 @@ import {
   errorActionsContext,
 } from '../../../reducers';
 import Spinner from '../../Spinner';
+import Icon from '../../../components/icons/RefreshIcon';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   actionButtonsContainer: {
     position: 'relative',
     top: '30px',
@@ -23,6 +24,10 @@ const useStyles = makeStyles(() => ({
     '& > div': {
       width: 150,
     },
+  },
+  icon: {
+    position: 'relative',
+    top: theme.spacing(1),
   },
 }));
 
@@ -71,20 +76,37 @@ export default function ErrorActions(props) {
 
   return (
     <div className={classes.actionButtonsContainer}>
-      {count ? <span> Retrying {count} errors </span> : null}
-      <Button
-        variant="outlined"
-        disabled={!areSelectedErrorsRetriable || retryStatus === 'requested'}
-        onClick={retryErrors}>
-        Retry &nbsp;{retryStatus === 'requested' ? <Spinner size={20} /> : null}
-      </Button>
-      <Button
-        variant="outlined"
-        disabled={!isAtleastOneErrorSelected || resolveStatus === 'requested'}
-        onClick={resolveErrors}>
-        Resolve &nbsp;
-        {resolveStatus === 'requested' ? <Spinner size={20} /> : null}
-      </Button>
+      {count ? (
+        <span>
+          <Icon className={classes.icon} /> Retrying {count} errors
+        </span>
+      ) : null}
+      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
+        <Button variant="outlined" disabled onClick={retryErrors}>
+          Retry &nbsp;
+          {retryStatus === 'requested' ? <Spinner size={20} /> : null}
+        </Button>
+      ) : (
+        <Button
+          variant="outlined"
+          disabled={!areSelectedErrorsRetriable || retryStatus === 'requested'}
+          onClick={retryErrors}>
+          Retry
+        </Button>
+      )}
+      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
+        <Button variant="outlined" disabled onClick={resolveErrors}>
+          Resolve &nbsp;
+          {resolveStatus === 'requested' ? <Spinner size={20} /> : null}
+        </Button>
+      ) : (
+        <Button
+          variant="outlined"
+          disabled={!isAtleastOneErrorSelected}
+          onClick={resolveErrors}>
+          Resolve
+        </Button>
+      )}
     </div>
   );
 }
