@@ -1,29 +1,27 @@
-import { useState, Fragment, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, IconButton } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { isArray } from 'lodash';
-import OpenInNewIcon from '../../../components/icons/ExitIcon';
+import OpenInNewIcon from '../../../components/icons/ExpandWindowIcon';
 import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   textField: {
-    minWidth: 200,
+    width: '100%',
   },
-  editorButton: {
-    float: 'right',
-    marginLeft: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
+  dynaNetsuiteQWrapper: {
+    flexDirection: `row !important`,
+  },
+  editorButtonNetsuiteQ: {
+    alignSelf: 'flex-end',
+    marginBottom: theme.spacing(1),
+  },
+  dynaNetsuiteLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -94,36 +92,48 @@ export default function DynaNetSuiteQualifier(props) {
   }
 
   return (
-    <Fragment>
-      {showEditor && (
-        <NetSuiteQualificationCriteriaEditor
-          title="Qualification Criteria"
-          id={id}
-          value={rule}
-          onClose={handleClose}
-          // disabled={disabled}
-          options={options}
+    <div className={classes.dynaNetsuiteQWrapper}>
+      <FormControl className={classes.textField}>
+        <div className={classes.dynaNetsuiteLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        {showEditor && (
+          <NetSuiteQualificationCriteriaEditor
+            title="Qualification Criteria"
+            id={id}
+            value={rule}
+            onClose={handleClose}
+            // disabled={disabled}
+            options={options}
+          />
+        )}
+
+        <TextField
+          key={id}
+          name={name}
+          className={classes.textField}
+          placeholder={placeholder}
+          disabled
+          required={required}
+          error={!isValid}
+          value={isArray(value) ? JSON.stringify(value) : value}
+          variant="filled"
         />
-      )}
-      <IconButton
+
+        <ErroredMessageComponent
+          isValid={isValid}
+          errorMessages={errorMessages}
+        />
+      </FormControl>
+      <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.editorButton}>
+        className={classes.editorButtonNetsuiteQ}>
         <OpenInNewIcon />
-      </IconButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? '' : errorMessages}
-        disabled
-        required={required}
-        error={!isValid}
-        value={isArray(value) ? JSON.stringify(value) : value}
-        variant="filled"
-      />
-    </Fragment>
+      </ActionButton>
+    </div>
   );
 }

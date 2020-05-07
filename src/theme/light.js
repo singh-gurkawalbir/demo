@@ -92,7 +92,7 @@ export default {
         '&:disabled': {
           color: colors.celigoNeutral4,
           background: colors.celigoNeutral2,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoNeutral2,
         },
       },
       containedSecondary: {
@@ -120,7 +120,7 @@ export default {
         '&:disabled': {
           color: colors.celigoNeutral4,
           background: colors.celigoNeutral2,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoNeutral2,
         },
       },
       outlinedPrimary: {
@@ -134,10 +134,10 @@ export default {
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral6,
+        borderColor: colors.celigoAccent2,
+        color: colors.celigoAccent2,
         '&:hover': {
-          color: colors.celigoNeutral7,
+          color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
         },
@@ -188,6 +188,7 @@ export default {
         marginBottom: 8,
       },
     },
+
     MuiMenu: {
       list: {
         maxHeight: 300,
@@ -288,10 +289,10 @@ export default {
         letterSpacing: 'normal',
       },
       subtitle2: {
-        fontSize: '15px',
+        fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
-        fontFamily: 'Roboto500',
+        fontFamily: 'Roboto400',
       },
       overline: {
         fontSize: '12px',
@@ -378,8 +379,12 @@ export default {
     MuiFormLabel: {
       root: {
         fontFamily: 'source sans pro',
-        '&$disabled': {
-          color: colors.celigoNeutral6,
+        fontSize: 14,
+        marginBottom: 8,
+        lineHeight: '24px',
+        color: colors.celigoNeutral6,
+        '&.Mui-required': {
+          fontWeight: 'bold',
         },
       },
     },
@@ -394,21 +399,23 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&.Mui-disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
         },
       },
       input: {
         background: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
-        height: 50,
+        height: 38,
+        fontSize: 16,
+        padding: '0px 12px',
         boxSizing: 'border-box',
         borderRadius: 2,
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -431,7 +438,7 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&:disabled': {
-          backgroundColor: colors.celigoNeutral3,
+          backgroundColor: colors.celigoNeutral2,
         },
       },
       inputMultiline: {
@@ -451,8 +458,11 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: '15px',
         '&$disabled': {
-          background: colors.celigoNeutral3,
-          color: colors.celigoNeutral6,
+          background: colors.celigoNeutral2,
+          color: colors.celigoNeutral4,
+          '&hover': {
+            borderColor: '#cc0000',
+          },
         },
       },
     },
@@ -511,9 +521,15 @@ export default {
       root: {
         color: colors.celigoNeutral5,
         padding: 0,
-        marginRight: 4,
         borderRadius: 0,
         marginTop: -4,
+        '& svg': {
+          fontSize: 20,
+        },
+        '&:hover': {
+          background: 'none',
+          color: colors.celigoAccent2,
+        },
       },
     },
     MuiTabs: {
@@ -555,7 +571,7 @@ export default {
     MuiFormControlLabel: {
       root: {
         marginLeft: 0,
-        marginTop: 6,
+        marginRight: 24,
       },
     },
   },
@@ -572,4 +588,11 @@ export default {
   //     checkedIcon: <RadioBtnSelectedIcon />,
   //   },
   // },
+
+  props: {
+    MuiCheckbox: {
+      disableRipple: true,
+      color: 'primary',
+    },
+  },
 };

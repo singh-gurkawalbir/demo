@@ -5,12 +5,10 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   editorButton: {
-    marginRight: 5,
+    marginLeft: theme.spacing(1),
+    display: 'inline-block',
     background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
+    padding: 0,
     borderRadius: 2,
     color: theme.palette.text.hint,
     cursor: 'pointer',
@@ -19,6 +17,9 @@ const useStyles = makeStyles(theme => ({
       '& > span': {
         color: theme.palette.primary.main,
       },
+    },
+    '&:first-child': {
+      marginRight: 0,
     },
   },
 }));

@@ -1,21 +1,35 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import getFormattedSampleData from '../../../utils/sampleData';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ExpandWindowIcon from '../../icons/ScriptsIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    width: '100%',
   },
-  exitButton: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
+  exitButtonRelativeUrl: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(5),
+  },
+  relativeUriWrapper: {
+    flexDirection: `row !important`,
+  },
+  textField: {
+    width: '100%',
+  },
+  relativeUrilabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -115,7 +129,7 @@ export default function DynaRelativeUri(props) {
   }
 
   return (
-    <Fragment>
+    <div className={classes.relativeUriWrapper}>
       {showEditor && (
         <UrlEditorDialog
           title="Relative URI Editor"
@@ -126,26 +140,40 @@ export default function DynaRelativeUri(props) {
           disabled={disabled}
         />
       )}
+      <div className={classes.textField}>
+        <div className={classes.relativeUrilabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
+
+        <FormControl className={classes.fieldWrapper}>
+          <TextField
+            key={id}
+            name={name}
+            className={classes.textField}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            error={!isValid}
+            value={value}
+            variant="filled"
+            onChange={handleFieldChange}
+          />
+          <ErroredMessageComponent
+            isValid={isValid}
+            errorMessages={errorMessages}
+            description={description}
+          />
+        </FormControl>
+      </div>
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
+        className={classes.exitButtonRelativeUrl}>
+        <ExpandWindowIcon />
       </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        required={required}
-        error={!isValid}
-        value={value}
-        variant="filled"
-        onChange={handleFieldChange}
-      />
-    </Fragment>
+    </div>
   );
 }
