@@ -56,6 +56,19 @@ export default (state = {}, action) => {
           delete error.selected;
         });
         break;
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE: {
+        const { errors = [] } = draft[flowId][resourceId][errorType];
+
+        draft[flowId][resourceId][errorType].errors = errors.filter(
+          error => !errorIds.includes(error.errorId)
+        );
+        break;
+      }
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OUTDATED:
+        draft[flowId][resourceId].open.outdated = true;
+        draft[flowId][resourceId].resolved.outdated = true;
+        break;
       default:
     }
   });

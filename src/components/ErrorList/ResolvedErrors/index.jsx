@@ -38,13 +38,17 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
-  const { status, errors: resolvedErrors = [], nextPageURL } = useSelector(
-    state =>
-      resourceErrors(state, {
-        flowId,
-        resourceId,
-        options: { ...errorFilter, isResolved: true },
-      })
+  const {
+    status,
+    errors: resolvedErrors = [],
+    nextPageURL,
+    outdated,
+  } = useSelector(state =>
+    resourceErrors(state, {
+      flowId,
+      resourceId,
+      options: { ...errorFilter, isResolved: true },
+    })
   );
   const fetchResolvedData = useCallback(
     loadMore => {
@@ -74,7 +78,20 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     if (!status) {
       fetchResolvedData();
     }
-  }, [dispatch, fetchResolvedData, flowId, resourceId, status]);
+
+    if (status === 'received' && !resolvedErrors.length && outdated) {
+      fetchMoreData();
+    }
+  }, [
+    dispatch,
+    fetchMoreData,
+    fetchResolvedData,
+    flowId,
+    outdated,
+    resolvedErrors.length,
+    resourceId,
+    status,
+  ]);
   useEffect(() => {
     const currentErrorList = resolvedErrors.slice(
       page * rowsPerPage,
@@ -100,6 +117,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
+      {outdated && <div> Please refresh </div>}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>

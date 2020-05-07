@@ -78,13 +78,15 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
 }
 
 function* retryErrors({ flowId, resourceId, retryIds = [] }) {
-  let retryIdList;
+  let retryDataKeys = retryIds;
 
   if (!retryIds.length) {
-    retryIdList = yield select(selectedRetryIds, {
+    const retryIdList = yield select(selectedRetryIds, {
       flowId,
       resourceId,
     });
+
+    retryDataKeys = retryIdList;
   }
 
   try {
@@ -93,11 +95,28 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
       opts: {
         method: 'POST',
         body: {
-          retryDataKeys: retryIdList || retryIds,
+          retryDataKeys,
         },
       },
     });
+    const { errors } = yield select(resourceErrors, {
+      flowId,
+      resourceId,
+    });
+    const errorIds = errors
+      .filter(error => retryDataKeys.includes(error.retryDataKey))
+      .map(error => error.errorId);
 
+    yield put(
+      actions.errorManager.flowErrorDetails.remove({
+        flowId,
+        resourceId,
+        errorIds,
+      })
+    );
+    yield put(
+      actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
+    );
     // console.log(retryResponse);
   } catch (e) {
     // console.log('error');
@@ -105,13 +124,15 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
 }
 
 function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
-  let errorIdList;
+  let errors = errorIds;
 
   if (!errorIds.length) {
-    errorIdList = yield select(selectedErrorIds, {
+    const errorIdList = yield select(selectedErrorIds, {
       flowId,
       resourceId,
     });
+
+    errors = errorIdList;
   }
 
   try {
@@ -120,12 +141,20 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       opts: {
         method: 'PUT',
         body: {
-          errors: errorIdList || errorIds,
+          errors,
         },
       },
     });
-
-    // console.log(resolveResponse);
+    yield put(
+      actions.errorManager.flowErrorDetails.remove({
+        flowId,
+        resourceId,
+        errorIds: errors,
+      })
+    );
+    yield put(
+      actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
+    );
   } catch (e) {
     // console.log('error');
   }

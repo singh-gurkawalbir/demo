@@ -50,7 +50,12 @@ export default function OpenErrors({ flowId, resourceId }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
-  const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
+  const {
+    status,
+    errors: openErrors = [],
+    nextPageURL,
+    outdated = false,
+  } = useSelector(state =>
     resourceErrors(state, {
       flowId,
       resourceId,
@@ -71,38 +76,20 @@ export default function OpenErrors({ flowId, resourceId }) {
         resourceId,
       }).length
   );
-
-  useEffect(() => {
-    if (!status) {
+  const requestOpenErrors = useCallback(
+    loadMore =>
       dispatch(
         actions.errorManager.flowErrorDetails.request({
           flowId,
           resourceId,
+          loadMore,
         })
-      );
-    }
-  }, [dispatch, flowId, resourceId, status]);
-  useEffect(() => {
-    const currentErrorList = openErrors.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
-
-    setErrorsInCurrentPage(currentErrorList);
-  }, [openErrors, page, rowsPerPage]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [errorFilter, rowsPerPage]);
-  const fetchMoreData = useCallback(() => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.request({
-        flowId,
-        resourceId,
-        loadMore: true,
-      })
-    );
-  }, [dispatch, flowId, resourceId]);
+      ),
+    [dispatch, flowId, resourceId]
+  );
+  const fetchMoreData = useCallback(() => requestOpenErrors(true), [
+    requestOpenErrors,
+  ]);
   const handleChangePage = useCallback(
     (event, newPage) => setPage(newPage),
     []
@@ -136,8 +123,40 @@ export default function OpenErrors({ flowId, resourceId }) {
     );
   }, [dispatch, flowId, resourceId]);
 
+  useEffect(() => {
+    if (!status) {
+      requestOpenErrors();
+    }
+
+    if (status === 'received' && !openErrors.length && outdated) {
+      fetchMoreData();
+    }
+  }, [
+    dispatch,
+    fetchMoreData,
+    flowId,
+    openErrors.length,
+    outdated,
+    requestOpenErrors,
+    resourceId,
+    status,
+  ]);
+  useEffect(() => {
+    const currentErrorList = openErrors.slice(
+      page * rowsPerPage,
+      (page + 1) * rowsPerPage
+    );
+
+    setErrorsInCurrentPage(currentErrorList);
+  }, [openErrors, page, rowsPerPage]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [errorFilter, rowsPerPage]);
+
   return (
     <Fragment>
+      {outdated && <div> Please refresh </div>}
       {openErrors.length ? (
         <div className={classes.actionButtonsContainer}>
           <Button

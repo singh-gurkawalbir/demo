@@ -1508,6 +1508,20 @@ const errorManager = {
         resourceId,
         errorIds,
       }),
+
+    remove: ({ flowId, resourceId, errorIds = [], isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE, {
+        flowId,
+        resourceId,
+        isResolved,
+        errorIds,
+      }),
+
+    invalidate: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OUTDATED, {
+        flowId,
+        resourceId,
+      }),
   },
 };
 const flow = {
