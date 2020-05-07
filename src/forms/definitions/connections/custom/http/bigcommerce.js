@@ -8,14 +8,37 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
+      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
           value: retValues['/http/unencrypted/clientId'],
         },
       ];
+    } else if (retValues['/http/auth/type'] === 'oauth') {
+      retValues['/http/auth/oauth/authURI'] =
+        'https://login.bigcommerce.com/oauth2/authorize';
+      retValues['/http/auth/token/refreshMethod'] = 'POST';
+      retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
+      retValues['/http/auth/oauth/tokenURI'] =
+        'https://login.bigcommerce.com/oauth2/token';
+      retValues['/http/auth/oauth/scopeDelimiter'] = '+';
+      retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
+      retValues['/http/auth/token/scheme'] = undefined;
+      retValues['/http/auth/token/token'] = undefined;
+      retValues['/http/auth/basic/username'] = undefined;
+      retValues['/http/auth/basic/password'] = undefined;
+      retValues['/http/headers'] = undefined;
     } else {
       retValues['/http/auth/token/token'] = undefined;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
+      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Token',
@@ -56,6 +79,7 @@ export default {
           items: [
             { label: 'Basic', value: 'basic' },
             { label: 'Token', value: 'token' },
+            { label: 'OAuth 2.0', value: 'oauth' },
           ],
         },
       ],
@@ -91,7 +115,9 @@ export default {
       required: true,
       type: 'text',
       label: 'Store hash',
-      visibleWhen: [{ field: 'http.auth.type', is: ['token', 'basic'] }],
+      visibleWhen: [
+        { field: 'http.auth.type', is: ['token', 'basic', 'oauth'] },
+      ],
       defaultValue: r => {
         let value = '';
 
@@ -110,6 +136,23 @@ export default {
         return value;
       },
     },
+    genericOauthConnector: {
+      formId: 'genericOauthConnector',
+    },
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
+      scopes: [
+        'store_v2_content',
+        'store_v2_customers',
+        'store_v2_default',
+        'store_v2_information_read_only',
+        'store_v2_marketing',
+        'store_v2_orders',
+        'store_v2_products',
+        'users_basic_information',
+      ],
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -121,10 +164,46 @@ export default {
       'http.auth.token.token',
       'http.unencrypted.clientId',
       'storeHash',
+      'http.auth.oauth.scope',
+      'genericOauthConnector',
     ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
+  actions: [
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'oauth',
+      label: 'Save & authorize',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+      ],
+    },
+    {
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+      ],
+    },
+  ],
 };
