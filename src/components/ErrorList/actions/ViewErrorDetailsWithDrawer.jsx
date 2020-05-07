@@ -16,15 +16,14 @@ export default {
         <IconButton data-test="viewDetails" size="small" onClick={handleClick}>
           <Icon />
         </IconButton>
-        {showDrawer ? (
-          <ErrorDetailsDrawer
-            flowId={flowId}
-            resourceId={resourceId}
-            errorId={errorId}
-            mode="view"
-            onClose={handleClose}
-          />
-        ) : null}
+        <ErrorDetailsDrawer
+          flowId={flowId}
+          open={showDrawer}
+          resourceId={resourceId}
+          errorId={errorId}
+          mode="view"
+          onClose={handleClose}
+        />
       </Fragment>
     );
   },

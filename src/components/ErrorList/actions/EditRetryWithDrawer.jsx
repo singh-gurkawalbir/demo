@@ -16,15 +16,14 @@ export default {
         <IconButton data-test="editRetry" size="small" onClick={handleClick}>
           <Icon />
         </IconButton>
-        {showDrawer ? (
-          <ErrorDetailsDrawer
-            flowId={flowId}
-            resourceId={resourceId}
-            errorId={errorId}
-            mode="edit"
-            onClose={handleClose}
-          />
-        ) : null}
+        <ErrorDetailsDrawer
+          open={showDrawer}
+          flowId={flowId}
+          resourceId={resourceId}
+          errorId={errorId}
+          mode="edit"
+          onClose={handleClose}
+        />
       </Fragment>
     );
   },

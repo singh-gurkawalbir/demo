@@ -7,7 +7,7 @@ import Icon from '../../../components/icons/RefreshIcon';
 const useStyles = makeStyles(theme => ({
   card: {
     position: 'absolute',
-    top: 10,
+    top: 0,
     textAlign: 'center',
     left: 500,
     width: 300,

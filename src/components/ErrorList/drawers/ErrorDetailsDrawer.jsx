@@ -19,6 +19,7 @@ export default function ErrorDetailsDrawer({
   flowId,
   resourceId,
   errorId,
+  open = false,
   mode = 'view',
   onClose,
 }) {
@@ -30,7 +31,7 @@ export default function ErrorDetailsDrawer({
   return (
     <Drawer
       anchor="right"
-      open
+      open={open}
       classes={{
         paper: classes.drawerPaper,
         width: classes.xl,
