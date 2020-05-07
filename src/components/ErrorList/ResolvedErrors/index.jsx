@@ -1,13 +1,12 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
+import { useCallback, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import CeligPagination from '../../CeligoPaginatedTable/Pagination';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
-import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 import IconTextButton from '../../IconTextButton';
 import KeywordSearch from '../../../components/KeywordSearch';
+import ErrorTable from '../ErrorTable';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -32,13 +31,18 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     []
   );
   const filterKey = `resolvedErrors-${flowId}-${resourceId}`;
+  const actionProps = useMemo(
+    () => ({
+      filterKey,
+      defaultFilter,
+      resourceId,
+      flowId,
+    }),
+    [defaultFilter, filterKey, flowId, resourceId]
+  );
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
   );
-  const actionProps = { filterKey, defaultFilter, resourceId, flowId };
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const {
     status,
     errors: resolvedErrors = [],
@@ -67,13 +71,6 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   const fetchMoreData = useCallback(() => fetchResolvedData(true), [
     fetchResolvedData,
   ]);
-  const handleChangePage = useCallback(
-    (event, newPage) => setPage(newPage),
-    []
-  );
-  const handleChangeRowsPerPage = useCallback(event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-  }, []);
 
   useEffect(() => {
     if (!status) {
@@ -93,22 +90,9 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     resourceId,
     status,
   ]);
-  useEffect(() => {
-    const currentErrorList = resolvedErrors.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
-
-    setErrorsInCurrentPage(currentErrorList);
-  }, [resolvedErrors, page, rowsPerPage]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [errorFilter, rowsPerPage]);
 
   const paginationOptions = useMemo(
     () => ({
-      rowsPerPageOptions: [10, 25, 50, 100],
       loadMoreHandler: fetchMoreData,
       hasMore: !!nextPageURL,
       loading: status === 'requested',
@@ -128,23 +112,12 @@ export default function ResolvedErrors({ flowId, resourceId }) {
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      <Fragment>
-        <CeligPagination
-          {...paginationOptions}
-          className={classes.tablePaginationRoot}
-          count={resolvedErrors.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-        <CeligoTable
-          data={errorsInCurrentPage}
-          filterKey="openErrors"
-          {...metadata}
-          actionProps={actionProps}
-        />
-      </Fragment>
+      <ErrorTable
+        paginationOptions={paginationOptions}
+        metadata={metadata}
+        data={resolvedErrors}
+        actionProps={actionProps}
+      />
     </Fragment>
   );
 }

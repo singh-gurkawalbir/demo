@@ -1,8 +1,7 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
+import { useCallback, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import CeligPagination from '../../CeligoPaginatedTable/Pagination';
 import actions from '../../../actions';
 import IconTextButton from '../../IconTextButton';
 import {
@@ -11,9 +10,9 @@ import {
   selectedRetryIds,
   selectedErrorIds,
 } from '../../../reducers';
-import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
+import ErrorTable from '../ErrorTable';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -48,9 +47,6 @@ export default function OpenErrors({ flowId, resourceId }) {
     state => filter(state, filterKey) || defaultFilter
   );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const {
     status,
     errors: openErrors = [],
@@ -91,16 +87,8 @@ export default function OpenErrors({ flowId, resourceId }) {
   const fetchMoreData = useCallback(() => requestOpenErrors(true), [
     requestOpenErrors,
   ]);
-  const handleChangePage = useCallback(
-    (event, newPage) => setPage(newPage),
-    []
-  );
-  const handleChangeRowsPerPage = useCallback(event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-  }, []);
   const paginationOptions = useMemo(
     () => ({
-      rowsPerPageOptions: [10, 25, 50, 100],
       loadMoreHandler: fetchMoreData,
       hasMore: !!nextPageURL,
       loading: status === 'requested',
@@ -148,18 +136,6 @@ export default function OpenErrors({ flowId, resourceId }) {
     resourceId,
     status,
   ]);
-  useEffect(() => {
-    const currentErrorList = openErrors.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
-
-    setErrorsInCurrentPage(currentErrorList);
-  }, [openErrors, page, rowsPerPage]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [errorFilter, rowsPerPage]);
 
   return (
     <Fragment>
@@ -189,23 +165,12 @@ export default function OpenErrors({ flowId, resourceId }) {
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      <Fragment>
-        <CeligPagination
-          {...paginationOptions}
-          className={classes.tablePaginationRoot}
-          count={openErrors.length}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-        <CeligoTable
-          data={errorsInCurrentPage}
-          filterKey={filterKey}
-          {...metadata}
-          actionProps={actionProps}
-        />
-      </Fragment>
+      <ErrorTable
+        paginationOptions={paginationOptions}
+        metadata={metadata}
+        data={openErrors}
+        actionProps={actionProps}
+      />
     </Fragment>
   );
 }
