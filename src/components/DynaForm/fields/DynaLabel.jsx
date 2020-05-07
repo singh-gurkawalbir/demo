@@ -44,7 +44,6 @@ function DynaLabel(props) {
           id="helpBubble"
           open={!!anchorEl}
           anchorEl={anchorEl}>
-          {/* TODO: (Sravan): when there is no content we can see the help popper broken  */}
           <Typography className={classes.label}>
             {helpText || helpTextMap[helpKey]}
           </Typography>

@@ -1,13 +1,11 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FormControl } from '@material-ui/core';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
-import ErroredMessageComponent from '../ErroredMessageComponent';
 
 export const useSetInitializeFormData = ({
   resourceType,
@@ -187,17 +185,12 @@ function DynaAssistantOptions(props) {
   }
 
   return (
-    <div>
-      <FormControl>
-        <MaterialUiSelect
-          {...props}
-          label={label}
-          options={[{ items: selectOptionsItems }]}
-          onFieldChange={onFieldChange}
-        />
-        <ErroredMessageComponent {...props} />
-      </FormControl>
-    </div>
+    <MaterialUiSelect
+      {...props}
+      label={label}
+      options={[{ items: selectOptionsItems }]}
+      onFieldChange={onFieldChange}
+    />
   );
 }
 

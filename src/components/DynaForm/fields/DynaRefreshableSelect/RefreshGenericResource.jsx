@@ -11,29 +11,13 @@ import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
-  inlineElements: {
+  refreshGenericResourceWrapper: {
     display: 'flex',
     flexDirection: `row !important`,
   },
-  label: {
-    '& + div': {
-      width: '100%',
-    },
-  },
   refreshGenericActionBtn: {
-    marginLeft: theme.spacing(1),
-    alignSelf: 'flex-end',
-    marginBottom: theme.spacing(1),
-  },
-  selectElement: {
-    width: '80%',
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing(0.25),
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(5),
   },
   refreshRoot: {
     width: '100%',
@@ -55,7 +39,6 @@ export default function RefreshGenericResource(props) {
     disabled,
     disableOptionsLoad,
     id,
-
     resourceToFetch,
     resetValue,
     multiselect,
@@ -130,7 +113,7 @@ export default function RefreshGenericResource(props) {
       <FormControl
         key={id}
         disabled={disabled}
-        className={classes.inlineElements}>
+        className={classes.refreshGenericResourceWrapper}>
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
