@@ -10,7 +10,7 @@ export default {
     const dispatch = useDispatch();
     const handleClick = useCallback(() => {
       dispatch(
-        actions.errorManager.flowErrorDetails.retry({
+        actions.errorManager.flowErrorDetails.resolve({
           flowId,
           resourceId,
           errorIds: [resource.errorId],

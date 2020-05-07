@@ -82,12 +82,12 @@ export default function ErrorDetails({
       actions.errorManager.flowErrorDetails.retry({
         flowId,
         resourceId,
-        retryIds: [details.retryDataKey],
+        retryIds: [retryId],
       })
     );
 
     if (onClose) onClose();
-  }, [details.retryDataKey, dispatch, flowId, onClose, resourceId]);
+  }, [dispatch, flowId, onClose, resourceId, retryId]);
 
   return (
     <div className={classes.wrapper}>
