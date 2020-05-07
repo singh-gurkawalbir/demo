@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     '& > button': {
       marginLeft: '10px',
       width: 120,
+      float: 'right',
     },
     '& > div': {
       width: 150,
@@ -82,19 +83,6 @@ export default function ErrorActions(props) {
         </span>
       ) : null}
       {retryStatus === 'requested' || resolveStatus === 'requested' ? (
-        <Button variant="outlined" disabled onClick={retryErrors}>
-          Retry &nbsp;
-          {retryStatus === 'requested' ? <Spinner size={20} /> : null}
-        </Button>
-      ) : (
-        <Button
-          variant="outlined"
-          disabled={!areSelectedErrorsRetriable || retryStatus === 'requested'}
-          onClick={retryErrors}>
-          Retry
-        </Button>
-      )}
-      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
         <Button variant="outlined" disabled onClick={resolveErrors}>
           Resolve &nbsp;
           {resolveStatus === 'requested' ? <Spinner size={20} /> : null}
@@ -105,6 +93,19 @@ export default function ErrorActions(props) {
           disabled={!isAtleastOneErrorSelected}
           onClick={resolveErrors}>
           Resolve
+        </Button>
+      )}
+      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
+        <Button variant="outlined" disabled onClick={retryErrors}>
+          Retry &nbsp;
+          {retryStatus === 'requested' ? <Spinner size={20} /> : null}
+        </Button>
+      ) : (
+        <Button
+          variant="outlined"
+          disabled={!areSelectedErrorsRetriable || retryStatus === 'requested'}
+          onClick={retryErrors}>
+          Retry
         </Button>
       )}
     </div>
