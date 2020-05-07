@@ -4,9 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
 import metadata from './metadata';
-import IconTextButton from '../../IconTextButton';
 import KeywordSearch from '../../../components/KeywordSearch';
 import ErrorTable from '../ErrorTable';
+import RefreshCard from '../components/RefreshCard';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -102,13 +102,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
-      {outdated && (
-        <div>
-          <IconTextButton onClick={() => fetchResolvedData()}>
-            Refresh
-          </IconTextButton>
-        </div>
-      )}
+      <RefreshCard show={outdated} onRefresh={fetchResolvedData} />
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
