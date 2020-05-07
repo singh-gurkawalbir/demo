@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(2),
   },
+  dynaTextFormControl: {
+    width: '100%',
+  },
   formField: {
     width: '100%',
   },
@@ -142,7 +145,7 @@ function DynaText(props) {
   ]);
 
   return (
-    <FormControl>
+    <FormControl className={classes.dynaTextFormControl}>
       <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -176,7 +179,7 @@ function DynaText(props) {
 }
 
 export default function TextFieldWithClipboardSupport(props) {
-  const { copyToClipboard, value, subSectionField } = props;
+  const { copyToClipboard, value, subSectionField, className } = props;
   const classes = useStyles();
 
   if (copyToClipboard) {
@@ -199,7 +202,7 @@ export default function TextFieldWithClipboardSupport(props) {
   // subsectionfield used to add the padding to the field.
   return (
     <div
-      className={clsx(classes.dynaFieldWrapper, {
+      className={clsx(classes.dynaFieldWrapper, className, {
         [classes.subSection]: subSectionField,
       })}>
       <DynaText {...props} className={classes.textFieldWithClipBoard} />

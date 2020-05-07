@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -10,9 +10,17 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
+  },
+  dynaWebhookTokenWrapper: {
+    flexDirection: `row !important`,
+  },
+
+  dynaWebhookTokenbtn: {
+    marginTop: 36,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -61,38 +69,38 @@ function GenerateUrl(props) {
   }, [finalResourceId, options, id, onFieldChange, url]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
+    <Fragment>
+      <div className={classes.dynaWebhookTokenWrapper}>
         <DynaText
           {...props}
           disabled
           required
           className={classes.children}
-          style={{ width: '100%' }}
           value={value}
         />
+        <div className={classes.dynaWebhookTokenbtn}>
+          {value && (
+            <CopyToClipboard
+              text={value}
+              onCopy={() =>
+                enqueueSnackbar({
+                  message: 'URL copied to clipboard.',
+                  variant: 'success',
+                })
+              }>
+              <Button
+                data-test="copyToClipboard"
+                title="Copy to clipboard"
+                variant="outlined"
+                color="secondary">
+                Copy URL
+              </Button>
+            </CopyToClipboard>
+          )}
+          {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
+        </div>
       </div>
-      <div>
-        {value && (
-          <CopyToClipboard
-            text={value}
-            onCopy={() =>
-              enqueueSnackbar({
-                message: 'URL copied to clipboard.',
-                variant: 'success',
-              })
-            }>
-            <Button
-              data-test="copyToClipboard"
-              title="Copy to clipboard"
-              size="small">
-              Copy URL
-            </Button>
-          </CopyToClipboard>
-        )}
-        {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
-      </div>
-    </div>
+    </Fragment>
   );
 }
 
