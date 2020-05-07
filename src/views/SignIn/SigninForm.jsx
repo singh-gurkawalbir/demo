@@ -250,9 +250,11 @@ class SignIn extends Component {
         </form>
         {getDomain() !== 'eu.integrator.io' && (
           <div>
-            <div className={classes.or}>
-              <Typography variant="body1">or</Typography>
-            </div>
+            {(!dialogOpen || userProfileLinkedWithGoogle) && (
+              <div className={classes.or}>
+                <Typography variant="body1">or</Typography>
+              </div>
+            )}
             {!dialogOpen && (
               <form onSubmit={this.handleSignInWithGoogle}>
                 <TextField
