@@ -1,15 +1,23 @@
-import { useCallback, useEffect, Fragment, useMemo, useState } from 'react';
+import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import CeligPagination from '../../CeligoPaginatedTable/Pagination';
 import actions from '../../../actions';
-import { generateNewId } from '../../../utils/resource';
-import { resourceErrors, errorRetryDataKeys, filter } from '../../../reducers';
-import CeligoPaginatedTable from '../../CeligoPaginatedTable';
+import {
+  resourceErrors,
+  filter,
+  selectedRetryIds,
+  selectedErrorIds,
+} from '../../../reducers';
+import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
+  tablePaginationRoot: {
+    float: 'right',
+  },
   search: {
     width: '300px',
     paddingTop: theme.spacing(1),
@@ -28,8 +36,6 @@ const useStyles = makeStyles(theme => ({
 export default function OpenErrors({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [selectedErrorIds, setSelectedErrorIds] = useState([]);
-  const [tableKey, setTableKey] = useState(generateNewId());
   const defaultFilter = useMemo(
     () => ({
       searchBy: ['message', 'source', 'code', 'occurredAt'],
@@ -40,21 +46,30 @@ export default function OpenErrors({ flowId, resourceId }) {
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
   );
-  const areSelectedErrorsRetriable = useSelector(
-    state =>
-      !!errorRetryDataKeys(state, {
-        flowId,
-        resourceId,
-        errorIds: selectedErrorIds,
-      }).length
-  );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const { status, errors: openErrors = [], nextPageURL } = useSelector(state =>
     resourceErrors(state, {
       flowId,
       resourceId,
       options: { ...errorFilter },
     })
+  );
+  const areSelectedErrorsRetriable = useSelector(
+    state =>
+      !!selectedRetryIds(state, {
+        flowId,
+        resourceId,
+      }).length
+  );
+  const isAtleastOneErrorSelected = useSelector(
+    state =>
+      !!selectedErrorIds(state, {
+        flowId,
+        resourceId,
+      }).length
   );
 
   useEffect(() => {
@@ -67,7 +82,18 @@ export default function OpenErrors({ flowId, resourceId }) {
       );
     }
   }, [dispatch, flowId, resourceId, status]);
+  useEffect(() => {
+    const currentErrorList = openErrors.slice(
+      page * rowsPerPage,
+      (page + 1) * rowsPerPage
+    );
 
+    setErrorsInCurrentPage(currentErrorList);
+  }, [openErrors, page, rowsPerPage]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [errorFilter, rowsPerPage]);
   const fetchMoreData = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.request({
@@ -77,16 +103,15 @@ export default function OpenErrors({ flowId, resourceId }) {
       })
     );
   }, [dispatch, flowId, resourceId]);
-  const onSelectChange = useCallback(selected => {
-    const selectedIds = Object.entries(selected)
-      .filter(([errorId, isSelected]) => !!(errorId && isSelected))
-      .map(([errorId]) => errorId);
-
-    setSelectedErrorIds(selectedIds);
+  const handleChangePage = useCallback(
+    (event, newPage) => setPage(newPage),
+    []
+  );
+  const handleChangeRowsPerPage = useCallback(event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
   }, []);
   const paginationOptions = useMemo(
     () => ({
-      rowsPerPage: 10,
       rowsPerPageOptions: [10, 25, 50, 100],
       loadMoreHandler: fetchMoreData,
       hasMore: !!nextPageURL,
@@ -99,24 +124,17 @@ export default function OpenErrors({ flowId, resourceId }) {
       actions.errorManager.flowErrorDetails.retry({
         flowId,
         resourceId,
-        errorIds: selectedErrorIds,
       })
     );
-
-    setTableKey(generateNewId());
-    setSelectedErrorIds([]);
-  }, [dispatch, flowId, resourceId, selectedErrorIds]);
+  }, [dispatch, flowId, resourceId]);
   const resolveErrors = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
         flowId,
         resourceId,
-        errorIds: selectedErrorIds,
       })
     );
-    setTableKey(generateNewId());
-    setSelectedErrorIds([]);
-  }, [dispatch, flowId, resourceId, selectedErrorIds]);
+  }, [dispatch, flowId, resourceId]);
 
   return (
     <Fragment>
@@ -130,7 +148,7 @@ export default function OpenErrors({ flowId, resourceId }) {
           </Button>
           <Button
             variant="outlined"
-            disabled={!selectedErrorIds.length}
+            disabled={!isAtleastOneErrorSelected}
             onClick={resolveErrors}>
             Resolve
           </Button>
@@ -140,16 +158,20 @@ export default function OpenErrors({ flowId, resourceId }) {
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       <Fragment>
-        <CeligoPaginatedTable
-          data={openErrors}
-          key={tableKey}
+        <CeligPagination
+          {...paginationOptions}
+          className={classes.tablePaginationRoot}
+          count={openErrors.length}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+        <CeligoTable
+          data={errorsInCurrentPage}
           filterKey={filterKey}
-          selectableRows
-          onSelectChange={onSelectChange}
-          resourceKey="errorId"
           {...metadata}
           actionProps={actionProps}
-          paginationOptions={paginationOptions}
         />
       </Fragment>
     </Fragment>
