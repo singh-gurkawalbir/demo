@@ -1,6 +1,8 @@
 import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { IconButton } from '@material-ui/core';
 import actions from '../../../actions';
+import Icon from '../../../components/icons/RevokeTokenIcon';
 
 export default {
   label: 'Resolve',
@@ -18,9 +20,9 @@ export default {
 
     return (
       <Fragment>
-        <div data-test="resolveError" onClick={handleClick}>
-          Resolve
-        </div>
+        <IconButton data-test="resolve" size="small" onClick={handleClick}>
+          <Icon />
+        </IconButton>
       </Fragment>
     );
   },

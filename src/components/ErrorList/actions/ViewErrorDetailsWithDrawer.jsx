@@ -1,5 +1,7 @@
 import { Fragment, useCallback, useState } from 'react';
+import { IconButton } from '@material-ui/core';
 import ErrorDetailsDrawer from '../drawers/ErrorDetailsDrawer';
+import Icon from '../../../components/icons/RevokeTokenIcon';
 
 export default {
   label: 'View Error Details',
@@ -11,9 +13,9 @@ export default {
 
     return (
       <Fragment>
-        <div data-test="viewErrorDetails" onClick={handleClick}>
-          View error details
-        </div>
+        <IconButton data-test="viewDetails" size="small" onClick={handleClick}>
+          <Icon />
+        </IconButton>
         {showDrawer ? (
           <ErrorDetailsDrawer
             flowId={flowId}

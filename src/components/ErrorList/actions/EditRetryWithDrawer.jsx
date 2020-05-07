@@ -1,5 +1,7 @@
 import { Fragment, useCallback, useState } from 'react';
+import { IconButton } from '@material-ui/core';
 import ErrorDetailsDrawer from '../drawers/ErrorDetailsDrawer';
+import Icon from '../../../components/icons/EditIcon';
 
 export default {
   label: 'Edit retry ',
@@ -11,9 +13,9 @@ export default {
 
     return (
       <Fragment>
-        <div data-test="editRetryData" onClick={handleClick}>
-          Edit retry data
-        </div>
+        <IconButton data-test="editRetry" size="small" onClick={handleClick}>
+          <Icon />
+        </IconButton>
         {showDrawer ? (
           <ErrorDetailsDrawer
             flowId={flowId}
