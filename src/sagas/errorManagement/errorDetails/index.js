@@ -24,7 +24,7 @@ function* requestErrorDetails({
       const { nextPageURL } = yield select(resourceErrors, {
         flowId,
         resourceId,
-        isResolved,
+        options: { isResolved },
       });
 
       if (!nextPageURL) return;
