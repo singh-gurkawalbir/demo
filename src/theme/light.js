@@ -134,10 +134,10 @@ export default {
       },
       outlinedSecondary: {
         backgroundColor: colors.celigoWhite,
-        borderColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral6,
+        borderColor: colors.celigoAccent2,
+        color: colors.celigoAccent2,
         '&:hover': {
-          color: colors.celigoNeutral7,
+          color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent3,
         },

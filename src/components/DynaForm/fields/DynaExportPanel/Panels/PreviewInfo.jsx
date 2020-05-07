@@ -40,9 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   previewDataRight: {
     display: 'flex',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingLeft: theme.spacing(1),
-
+    flexDirection: 'column',
     position: 'relative',
     width: '100%',
   },
@@ -75,7 +75,7 @@ export default function PreviewInfo(props) {
       return <Typography variant="body2"> Testing </Typography>;
 
     if (resourceSampleData.status === 'received')
-      return <Typography variant="body2"> Success </Typography>;
+      return <Typography variant="body2"> Success! </Typography>;
   }, [resourceSampleData.status]);
   // showSampleDataOverview Fn Used to show Preview Info
   const sampleDataOverview = useMemo(() => {
@@ -86,7 +86,7 @@ export default function PreviewInfo(props) {
 
       return (
         <ErroredMessageComponent
-          errorMessages={`you have ${errorCount} ${
+          errorMessages={`You have ${errorCount} ${
             errorCount > 1 ? 'errors' : 'error'
           }`}
         />
