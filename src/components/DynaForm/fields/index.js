@@ -91,6 +91,7 @@ import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
+import DynaExportSelect from './DynaExportSelect';
 
 export default {
   mode: DynaMode,
@@ -195,4 +196,5 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  exportSelect: DynaExportSelect,
 };

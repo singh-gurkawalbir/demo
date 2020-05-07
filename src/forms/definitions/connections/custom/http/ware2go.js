@@ -21,6 +21,7 @@ export default {
       id: 'http.accountType',
       type: 'select',
       label: 'Account type',
+      helpKey: 'ware2go.connection.http.accountType',
       options: [
         {
           items: [
@@ -44,14 +45,17 @@ export default {
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'Access token',
+      helpKey: 'ware2go.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'ware2go.connection.http.auth.basic.password',
       label: 'Access secret',
     },
     'http.unencrypted.merchantId': {
       id: 'http.unencrypted.merchantId',
-      label: 'Merchant ID',
+      helpKey: 'ware2go.connection.http.unencrypted.merchantId',
+      label: 'Merchant id',
       required: true,
       type: 'text',
     },

@@ -1115,7 +1115,7 @@ describe('form factory new layout', () => {
           exportData: {
             fieldId: 'exportData',
             someProp: 'blah',
-            showOnDeveloperMode: true,
+            developerModeOnly: true,
           },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },
@@ -1156,7 +1156,7 @@ describe('form factory new layout', () => {
             resourceId: undefined,
             resourceType: 'someResourceType',
             someProp: 'blah',
-            showOnDeveloperMode: true,
+            developerModeOnly: true,
           },
           'file.decompressFiles': {
             defaultValue: '',
@@ -1179,7 +1179,7 @@ describe('form factory new layout', () => {
           exportData: {
             fieldId: 'exportData',
             someProp: 'blah',
-            showOnDeveloperMode: true,
+            developerModeOnly: true,
           },
           'file.decompressFiles': { fieldId: 'file.decompressFiles' },
         },

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -10,13 +10,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PanelGrid(props) {
-  const { children, height, width, className } = props;
-  const classes = useStyles(props);
+export default function PanelGrid({ children, height, width, className }) {
+  const classes = useStyles();
   const size = { height, width };
 
   return (
-    <div className={classNames(classes.gridContainer, className)} style={size}>
+    <div className={clsx(classes.gridContainer, className)} style={size}>
       {children}
     </div>
   );

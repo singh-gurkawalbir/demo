@@ -1388,7 +1388,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
+          { label: 'Please select (Optional)', value: '' },
           { label: 'AES-256', value: 'AES-256' },
           { label: 'AES-192', value: 'AES-192' },
           { label: 'AES-128', value: 'AES-128' },
@@ -2538,7 +2538,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Settings',
-    showOnDeveloperMode: true,
+    developerModeOnly: true,
     defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
   // #region custom connection

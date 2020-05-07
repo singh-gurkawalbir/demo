@@ -270,6 +270,24 @@ const updateFunctionStub = `/*
 function update (options) {
   // your code
 }`;
+const formInitFunctionStub = `/*
+* formInit function stub:
+*
+* The name of the function can be changed to anything you like.
+*
+* The function will be passed one 'options' argument that has the following fields:
+*   'resource' - the resource being viewed in the UI.
+*   'parentResource' - the parent of the resource being viewed in the UI.
+*   'license' - integration apps only.  the license provisioned to the integration.
+*   'parentLicense' - integration apps only. the parent of the license provisioned to the integration.
+*   'sandbox' - boolean value indicating whether the script is invoked for sandbox.
+*
+* The function needs to return a form object for the UI to render.
+* Throwing an exception will signal an error.
+*/
+function formInit (options) {
+  return options.resource.settingsForm.form
+}`;
 
 export default {
   preSavePage: preSavePageFunctionStub,
@@ -283,4 +301,5 @@ export default {
   filter: filterFunctionStub,
   step: stepFunctionStub,
   update: updateFunctionStub,
+  formInit: formInitFunctionStub,
 };

@@ -34,8 +34,11 @@ describe('evaluateProcessor saga', () => {
   test('should do nothing if no editor exists with given id', () => {
     const id = 1;
     const saga = evaluateProcessor({ id });
-    const selectEffect = saga.next().value;
+    let selectEffect = saga.next().value;
 
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    selectEffect = saga.next().value;
     expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
     const effect = saga.next();
@@ -47,8 +50,11 @@ describe('evaluateProcessor saga', () => {
     const id = 1;
     const violations = ['violations'];
     const saga = evaluateProcessor({ id });
-    const selectEffect = saga.next().value;
+    let selectEffect = saga.next().value;
 
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    selectEffect = saga.next().value;
     expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
     const putEffect = saga.next({ violations }).value;
@@ -65,8 +71,11 @@ describe('evaluateProcessor saga', () => {
   test('should complete with dispatch of evaluate response when editor is valid.', () => {
     const id = 1;
     const saga = evaluateProcessor({ id });
-    const selectEffect = saga.next().value;
+    let selectEffect = saga.next().value;
 
+    expect(selectEffect).toEqual(select(selectors.editor, id));
+
+    selectEffect = saga.next({ id, processor: 'handlebars' }).value;
     expect(selectEffect).toEqual(select(selectors.processorRequestOptions, id));
 
     const selectResponse = { processor: 'p', body: 'body' };
@@ -117,7 +126,11 @@ describe('evaluateProcessor saga', () => {
 
     invalidCases.forEach(invalidCase => {
       const saga = evaluateProcessor({ id });
-      const selectEffect = saga.next().value;
+      let selectEffect = saga.next().value;
+
+      expect(selectEffect).toEqual(select(selectors.editor, id));
+
+      selectEffect = saga.next({ id, processor: 'handlebars' }).value;
 
       expect(selectEffect).toEqual(
         select(selectors.processorRequestOptions, id)
