@@ -489,6 +489,7 @@ export function getImportOperationDetails({
               !(
                 qp.readOnly &&
                 qp.defaultValue &&
+                qp.defaultValue.includes &&
                 qp.defaultValue.includes('{{export.')
               )
           );
