@@ -1302,9 +1302,9 @@ export function updateFormValues({
 }
 
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
-  let { version, resource, operation, lookupType, lookups } =
+  let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
-  const { dontConvert } = importDoc.assistantMetadata || {};
+  const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
 
