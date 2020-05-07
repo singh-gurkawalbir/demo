@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -44,48 +44,36 @@ function SubRecordDrawer(props) {
   const dispatch = useDispatch();
   const { fieldId } = match.params;
   const { resourceContext, flowId, connectionId, recordType } = props;
+  const recordTypeObj = useSelector(state =>
+    selectors
+      .metadataOptionsAndResources({
+        state,
+        connectionId,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+        filterKey: 'suitescript-recordTypes',
+      })
+      .data.find(record => record.value === recordType)
+  );
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
-  const recordTypeLabel = useSelector(
-    state =>
-      selectors
-        .metadataOptionsAndResources({
-          state,
-          connectionId,
-          commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
-          filterKey: 'suitescript-recordTypes',
-        })
-        .data.find(record => record.value === recordType).label
-  );
+  const recordTypeLabel = recordTypeObj && recordTypeObj.label;
+  const subrecordFields =
+    recordTypeObj &&
+    recordTypeObj.subRecordConfig &&
+    recordTypeObj.subRecordConfig.map(f => ({
+      ...f,
+      value: f.id,
+      label: f.name,
+      subRecordJsonPathLabel:
+        f.subRecordJsonPathLabel || 'Path to node that contains items data',
+    }));
   const subrecords = useSelector(
     state =>
       selectors.resourceData(state, 'imports', resourceContext.resourceId)
         .merged.netsuite_da.subrecords,
     (left, right) => left && right && left.length === right.length
   );
-  const subrecordFields = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`,
-        filterKey: 'suitescript-subrecord-fields',
-      }).data,
-    (left, right) => left.length === right.length
-  );
-
-  useEffect(() => {
-    if (connectionId && recordType) {
-      dispatch(
-        actions.metadata.request(
-          connectionId,
-          `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`
-        )
-      );
-    }
-  }, [connectionId, dispatch, recordType]);
-
   const fieldMeta = getFormFieldMetadata(
     recordTypeLabel,
     subrecords,

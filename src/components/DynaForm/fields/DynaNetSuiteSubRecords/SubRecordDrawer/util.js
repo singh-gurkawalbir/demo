@@ -23,7 +23,7 @@ export default function getFormFieldMetadata(
           {
             items: subrecordFields.filter(
               fld =>
-                !subrecordFieldsToIgnore.includes(fld.value) ||
+                !subrecordFieldsToIgnore.includes(fld.id) ||
                 fld.value === fieldId
             ),
           },
@@ -39,10 +39,7 @@ export default function getFormFieldMetadata(
   };
 
   subrecordFields.forEach(fld => {
-    const jsonPathFieldId = `jsonPath_${fld.value.replace(
-      '[*].',
-      '_sublist_'
-    )}`;
+    const jsonPathFieldId = `jsonPath_${fld.id.replace('[*].', '_sublist_')}`;
 
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,

@@ -12,15 +12,6 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  rowFlexWrapper: {
-    flexDirection: 'row',
-    paddingLeft: 5,
-  },
-  flexItems: {
-    // flex: 1,
-    wordBreak: 'break-all',
-    lineHeight: '20px',
-  },
   columnFlexWrapper: {
     flexDirection: 'column',
   },
@@ -28,20 +19,20 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  innerRadioWrapper: {
-    display: 'flex',
-  },
   radioGroup: {
     marginTop: 6,
     '& label': {
-      marginBottom: theme.spacing(1),
       marginLeft: 0,
+      marginRight: theme.spacing(3),
     },
   },
   radioGroupLabel: {
     marginBottom: 0,
     marginRight: 12,
     fontSize: 14,
+    '&:last-child': {
+      marginRight: theme.spacing(0.5),
+    },
   },
 }));
 

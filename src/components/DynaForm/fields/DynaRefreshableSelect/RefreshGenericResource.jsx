@@ -45,8 +45,8 @@ export default function RefreshGenericResource(props) {
     onFieldChange,
     fieldData,
     fieldStatus,
-    handleFetchResource,
-    handleRefreshResource,
+    onFetch,
+    onRefresh,
     fieldError,
     children,
     removeRefresh = false,
@@ -84,10 +84,10 @@ export default function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldData && !disableOptionsLoad && handleFetchResource) {
-      handleFetchResource();
+    if (!fieldData && !disableOptionsLoad && onFetch) {
+      onFetch();
     }
-  }, [disableOptionsLoad, fieldData, handleFetchResource]);
+  }, [disableOptionsLoad, fieldData, onFetch]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -102,12 +102,6 @@ export default function RefreshGenericResource(props) {
 
   if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
-  const options = (fieldData || []).map(options => {
-    const { label, value } = options;
-
-    return { label, value };
-  });
-
   return (
     <div>
       <FormControl
@@ -117,12 +111,12 @@ export default function RefreshGenericResource(props) {
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
-            options: [{ items: options || [] }],
+            options: [{ items: fieldData || [] }],
           })}
         </div>
         {!isLoading && !removeRefresh && (
           <ActionButton
-            onClick={handleRefreshResource}
+            onClick={onRefresh}
             className={classes.refreshGenericActionBtn}
             data-test="refreshResource">
             <RefreshIcon />

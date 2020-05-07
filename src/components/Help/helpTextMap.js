@@ -756,7 +756,7 @@ export default {
   'snowflake.connection.rdbms.database':
     'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
-  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -2037,6 +2037,11 @@ export default {
   'import.response.mapping': `Response mapping enables you to specify where fields returned by the destination application should be merged back into the source record. If you don't see a specific import response field in the drop-down below, you can still map it by manually typing in the field name, then the mapping will work as long as the field is returned by the destination application when the flow is running. You can merge import response fields into any existing field in the source record, or you can specify a new field in which case integrator.io will create the field on-the-fly. You can also merge errors back into the source record if you want to manually process errors downstream in your flow.Learn <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping" target="_blank">more about mapping.</a>`,
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'users.user': `All users who have access to your account and integrations, or who have been invited to join your account.`,
+  'users.accesslevel': `The role of each user per integration. This is <b>Manager</b> if the user has full managing access, or <b>Monitor</b> if the user has full monitoring access. However, if a user has Manager for one integration, but Monitor for another, access level will display as <b>Tile Level</b>. Each role has its own permissions. Find out more about <a href='https://docs.celigo.com/hc/en-us/articles/115003929872-User-Management-Account-and-Integration-Level-Access-Transfer-Ownership' target='_blank'>roles and permissions</a>.`,
+  'users.status': `Tells you who has accepted the invitation to join your account and who is still pending.`,
+  'users.offOn': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.`,
+  'users.actions': `These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.`,
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':

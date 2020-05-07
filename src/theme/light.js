@@ -188,6 +188,7 @@ export default {
         marginBottom: 8,
       },
     },
+
     MuiMenu: {
       list: {
         maxHeight: 300,
@@ -570,7 +571,7 @@ export default {
     MuiFormControlLabel: {
       root: {
         marginLeft: 0,
-        marginTop: 6,
+        marginRight: 24,
       },
     },
   },

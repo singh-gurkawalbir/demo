@@ -402,11 +402,7 @@ export function isDeltaFlow(flow, exports) {
     flow.pageGenerators.forEach(pg => {
       const flowExp = exports && exports.find(e => e._id === pg._exportId);
 
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
+      if (flowExp && flowExp.type === 'delta') {
         isDeltaFlow = true;
       }
     });

@@ -204,7 +204,7 @@ export default function NetSuiteMappingAssistant({
               onClick={handleLaunchAssistantClick}
               variant="outlined"
               color="primary">
-              Launch NetSuite Assistant
+              Launch NetSuite assistant
             </Button>
             <ol>
               <li>
@@ -222,7 +222,7 @@ export default function NetSuiteMappingAssistant({
               </li>
               <li>
                 After login, please click the &quot;Launch NetSuite
-                Assistant&quot; button.
+                assistant&quot; button.
               </li>
             </ol>
           </div>
