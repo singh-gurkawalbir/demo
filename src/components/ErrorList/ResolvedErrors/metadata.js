@@ -13,5 +13,9 @@ export default {
       heading: 'Time stamp',
       value: r => r.occurredAt,
     },
+    {
+      heading: 'Resolved By',
+      value: r => r.resolvedBy,
+    },
   ],
 };

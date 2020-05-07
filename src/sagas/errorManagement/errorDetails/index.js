@@ -1,6 +1,11 @@
 import { put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
-import { resourceErrors, filter, errorRetryDataKeys } from '../../../reducers';
+import {
+  resourceErrors,
+  filter,
+  selectedRetryIds,
+  selectedErrorIds,
+} from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 
@@ -72,12 +77,15 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
   );
 }
 
-function* retryErrors({ flowId, resourceId, errorIds }) {
-  const retryDataKeys = yield select(errorRetryDataKeys, {
-    flowId,
-    resourceId,
-    errorIds,
-  });
+function* retryErrors({ flowId, resourceId, retryIds = [] }) {
+  let retryIdList;
+
+  if (!retryIds.length) {
+    retryIdList = yield select(selectedRetryIds, {
+      flowId,
+      resourceId,
+    });
+  }
 
   try {
     yield apiCallWithRetry({
@@ -85,7 +93,7 @@ function* retryErrors({ flowId, resourceId, errorIds }) {
       opts: {
         method: 'POST',
         body: {
-          retryDataKeys,
+          retryDataKeys: retryIdList || retryIds,
         },
       },
     });
@@ -96,14 +104,23 @@ function* retryErrors({ flowId, resourceId, errorIds }) {
   }
 }
 
-function* resolveErrors({ flowId, resourceId, errorIds }) {
+function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
+  let errorIdList;
+
+  if (!errorIds.length) {
+    errorIdList = yield select(selectedErrorIds, {
+      flowId,
+      resourceId,
+    });
+  }
+
   try {
     yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/resolved`,
       opts: {
         method: 'PUT',
         body: {
-          errors: errorIds,
+          errors: errorIdList || errorIds,
         },
       },
     });

@@ -11,10 +11,10 @@ export default {
         actions.errorManager.flowErrorDetails.retry({
           flowId,
           resourceId,
-          errorIds: [resource.errorId],
+          retryIds: [resource.retryDataKey],
         })
       );
-    }, [dispatch, flowId, resource.errorId, resourceId]);
+    }, [dispatch, flowId, resource.retryDataKey, resourceId]);
 
     return (
       <Fragment>

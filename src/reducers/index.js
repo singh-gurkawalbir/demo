@@ -3997,18 +3997,18 @@ export function resourceError(state, { flowId, resourceId, options, errorId }) {
   return errors.find(error => error.errorId === errorId);
 }
 
-export function errorRetryDataKeys(
-  state,
-  { flowId, resourceId, errorIds = [], options = {} }
-) {
+export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
   const { errors } = resourceErrors(state, { flowId, resourceId, options });
 
   return errors
-    .filter(
-      ({ errorId, retryDataKey }) =>
-        errorIds.includes(errorId) && !!retryDataKey
-    )
+    .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
     .map(error => error.retryDataKey);
+}
+
+export function selectedErrorIds(state, { flowId, resourceId, options = {} }) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors.filter(({ selected }) => selected).map(error => error.errorId);
 }
 
 export function isAllErrorsSelected(

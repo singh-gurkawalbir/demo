@@ -28,7 +28,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   const rowsPerPage = 20;
   const defaultFilter = useMemo(
     () => ({
-      searchBy: ['message', 'source', 'code', 'occurredAt'],
+      searchBy: ['message', 'source', 'code', 'occurredAt', 'resolvedBy'],
     }),
     []
   );

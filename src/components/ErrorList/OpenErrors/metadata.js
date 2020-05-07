@@ -2,20 +2,20 @@ import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetailsWithDrawer';
 import EditRetryData from '../actions/EditRetryWithDrawer';
-// import SelectError from '../components/SelectError';
-// import SelectAllErrors from '../components/SelectAllErrors';
+import SelectError from '../components/SelectError';
+import SelectAllErrors from '../components/SelectAllErrors';
 
 export default {
   columns: [
-    // {
-    //   headerValue: function SelectAll(r, actionProps) {
-    //     return <SelectAllErrors {...actionProps} />;
-    //   },
-    //   heading: 'Select All',
-    //   value: function Select(error, actionProps) {
-    //     return <SelectError error={error} {...actionProps} />;
-    //   },
-    // },
+    {
+      headerValue: function SelectAll(r, actionProps) {
+        return <SelectAllErrors {...actionProps} />;
+      },
+      heading: 'Select All',
+      value: function Select(error, actionProps) {
+        return <SelectError error={error} {...actionProps} />;
+      },
+    },
     {
       heading: 'Message',
       value: r => r.message,
