@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
+import IconTextButton from '../../IconTextButton';
 import KeywordSearch from '../../../components/KeywordSearch';
 
 const useStyles = makeStyles(theme => ({
@@ -117,7 +118,13 @@ export default function ResolvedErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
-      {outdated && <div> Please refresh </div>}
+      {outdated && (
+        <div>
+          <IconTextButton onClick={() => fetchResolvedData()}>
+            Refresh
+          </IconTextButton>
+        </div>
+      )}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>

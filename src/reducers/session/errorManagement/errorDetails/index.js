@@ -26,6 +26,8 @@ export default (state = {}, action) => {
         if (!draft[flowId][resourceId])
           draft[flowId][resourceId] = { open: {}, resolved: {} };
         draft[flowId][resourceId][errorType].status = 'requested';
+
+        if (!loadMore) delete draft[flowId][resourceId][errorType].outdated;
         break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED: {
         const errors =

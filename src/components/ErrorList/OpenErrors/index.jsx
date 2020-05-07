@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CeligPagination from '../../CeligoPaginatedTable/Pagination';
 import actions from '../../../actions';
+import IconTextButton from '../../IconTextButton';
 import {
   resourceErrors,
   filter,
@@ -128,13 +129,19 @@ export default function OpenErrors({ flowId, resourceId }) {
       requestOpenErrors();
     }
 
-    if (status === 'received' && !openErrors.length && outdated) {
+    if (
+      status === 'received' &&
+      !openErrors.length &&
+      outdated &&
+      nextPageURL
+    ) {
       fetchMoreData();
     }
   }, [
     dispatch,
     fetchMoreData,
     flowId,
+    nextPageURL,
     openErrors.length,
     outdated,
     requestOpenErrors,
@@ -156,7 +163,13 @@ export default function OpenErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
-      {outdated && <div> Please refresh </div>}
+      {outdated && (
+        <div>
+          <IconTextButton onClick={() => requestOpenErrors()}>
+            Refresh
+          </IconTextButton>
+        </div>
+      )}
       {openErrors.length ? (
         <div className={classes.actionButtonsContainer}>
           <Button
