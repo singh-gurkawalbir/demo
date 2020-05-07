@@ -1,8 +1,7 @@
 import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import TablePagination from '@material-ui/core/TablePagination';
+import CeligPagination from '../../CeligoPaginatedTable/Pagination';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
 import CeligoTable from '../../CeligoTable';
@@ -25,7 +24,6 @@ const useStyles = makeStyles(theme => ({
 export default function ResolvedErrors({ flowId, resourceId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const rowsPerPage = 20;
   const defaultFilter = useMemo(
     () => ({
       searchBy: ['message', 'source', 'code', 'occurredAt', 'resolvedBy'],
@@ -38,6 +36,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   );
   const actionProps = { filterKey, defaultFilter, resourceId, flowId };
   const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const { status, errors: resolvedErrors = [], nextPageURL } = useSelector(
     state =>
@@ -47,7 +46,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
         options: { ...errorFilter, isResolved: true },
       })
   );
-  const fetchErrorData = useCallback(
+  const fetchResolvedData = useCallback(
     loadMore => {
       dispatch(
         actions.errorManager.flowErrorDetails.request({
@@ -60,16 +59,22 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     },
     [dispatch, flowId, resourceId]
   );
+  const fetchMoreData = useCallback(() => fetchResolvedData(true), [
+    fetchResolvedData,
+  ]);
   const handleChangePage = useCallback(
     (event, newPage) => setPage(newPage),
     []
   );
+  const handleChangeRowsPerPage = useCallback(event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+  }, []);
 
   useEffect(() => {
     if (!status) {
-      fetchErrorData();
+      fetchResolvedData();
     }
-  }, [dispatch, fetchErrorData, flowId, resourceId, status]);
+  }, [dispatch, fetchResolvedData, flowId, resourceId, status]);
   useEffect(() => {
     const currentErrorList = resolvedErrors.slice(
       page * rowsPerPage,
@@ -77,39 +82,36 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     );
 
     setErrorsInCurrentPage(currentErrorList);
-  }, [resolvedErrors, page]);
+  }, [resolvedErrors, page, rowsPerPage]);
 
   useEffect(() => {
     setPage(0);
-  }, [errorFilter]);
+  }, [errorFilter, rowsPerPage]);
+
+  const paginationOptions = useMemo(
+    () => ({
+      rowsPerPageOptions: [10, 25, 50, 100],
+      loadMoreHandler: fetchMoreData,
+      hasMore: !!nextPageURL,
+      loading: status === 'requested',
+    }),
+    [fetchMoreData, nextPageURL, status]
+  );
 
   return (
     <Fragment>
-      {nextPageURL && (
-        <div className={classes.loadMore}>
-          <Button class="primary" onClick={() => fetchErrorData(true)}>
-            Load more
-          </Button>
-        </div>
-      )}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       <Fragment>
-        <TablePagination
+        <CeligPagination
+          {...paginationOptions}
           className={classes.tablePaginationRoot}
-          component="div"
           count={resolvedErrors.length}
-          rowsPerPageOptions={[rowsPerPage]}
-          rowsPerPage={rowsPerPage}
           page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
+          rowsPerPage={rowsPerPage}
           onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
         />
         <CeligoTable
           data={errorsInCurrentPage}
