@@ -1292,7 +1292,7 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
       state && state.session,
       integrationId,
       flowId
-    ) || emptySet;
+    ) || emptyObject;
   const categoryMappingMetadata = {};
   const { response } = categoryMappingData;
 
