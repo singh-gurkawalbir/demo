@@ -1544,11 +1544,11 @@ const errorManager = {
         flowId,
         resourceId,
       }),
-    clear: ({ flowId, resourceId, options = {} }) =>
+    clear: ({ flowId, resourceId, isResolved = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
         flowId,
         resourceId,
-        options,
+        isResolved,
       }),
   },
 };
