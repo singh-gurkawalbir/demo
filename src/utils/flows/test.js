@@ -49,6 +49,12 @@ describe('isDeltaFlow', () => {
   test('should return true when flow has pageGenerators with type as delta', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toEqual(true);
   });
+  test('should return true when flow is of old model type and with type as delta', () => {
+    expect(isDeltaFlow(oldFlow, exportsWithDeltaType)).toEqual(true);
+  });
+  test('should return false when flow is of old model type and with type not as delta', () => {
+    expect(isDeltaFlow(oldFlow, exportsWithNonDeltaType)).toEqual(false);
+  });
 
   test('should return false when flow has pageGenerators with type is not a delta', () => {
     expect(isDeltaFlow(flowWithOnlyPGs, exportsWithNonDeltaType)).toEqual(

@@ -397,6 +397,16 @@ export function isDeltaFlow(flow, exports) {
   if (!flow) return false;
   let isDeltaFlow = false;
 
+  if (flow && flow._exportId) {
+    const exp = exports && exports.find(e => e._id === flow._exportId);
+
+    if (exp && exp.type === 'delta') {
+      isDeltaFlow = true;
+    }
+
+    return isDeltaFlow;
+  }
+
   flow &&
     flow.pageGenerators &&
     flow.pageGenerators.forEach(pg => {
