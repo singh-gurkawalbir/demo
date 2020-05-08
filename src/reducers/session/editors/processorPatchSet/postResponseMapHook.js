@@ -1,7 +1,7 @@
 export default {
   patchSet: editor => {
     const patches = {
-      foregroundPatch: undefined,
+      foregroundPatches: undefined,
       backgroundPatches: [],
     };
     const { code, scriptId, entryFunction, optionalSaveParams } = editor;
@@ -41,7 +41,7 @@ export default {
       });
     }
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches = {
       patch: foregroundPatchSet,
       resourceType: 'flows',
       resourceId: flowId,
