@@ -1,11 +1,9 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import OpenErrors from './OpenErrors';
 import ResolvedErrors from './ResolvedErrors';
-import ErrorDetails from './ErrorDetails';
-import RightDrawer from '../drawer/Right';
 
 const useStyles = makeStyles(() => ({
   errorType: {
@@ -21,13 +19,13 @@ export default function ErrorList({ flowId }) {
   const match = useRouteMatch();
   const { resourceId } = match.params;
   const [isResolvedErrorType, setIsResolvedErrorType] = useState(false);
-  const handleClose = () => {};
+  const handleErrorTypeChange = useCallback(() => {
+    setIsResolvedErrorType(!isResolvedErrorType);
+  }, [isResolvedErrorType]);
 
   return (
     <Fragment>
-      <Button
-        onClick={() => setIsResolvedErrorType(!isResolvedErrorType)}
-        className={classes.errorType}>
+      <Button onClick={handleErrorTypeChange} className={classes.errorType}>
         {isResolvedErrorType ? 'View Open Errors' : 'View Resolved History'}
       </Button>
       {!isResolvedErrorType ? (
@@ -35,14 +33,6 @@ export default function ErrorList({ flowId }) {
       ) : (
         <ResolvedErrors flowId={flowId} resourceId={resourceId} />
       )}
-      <RightDrawer path="details/:errorId/:mode" width="xl" title="Edit Record">
-        <ErrorDetails
-          flowId={flowId}
-          resourceId={resourceId}
-          onClose={handleClose}
-          className={classes.scheduleContainer}
-        />
-      </RightDrawer>
     </Fragment>
   );
 }
