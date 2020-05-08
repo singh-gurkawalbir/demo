@@ -93,6 +93,19 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     status,
   ]);
 
+  useEffect(
+    () => () => {
+      dispatch(
+        actions.errorManager.flowErrorDetails.clear({
+          flowId,
+          resourceId,
+          isResolved: true,
+        })
+      );
+    },
+    [dispatch, flowId, resourceId]
+  );
+
   const paginationOptions = useMemo(
     () => ({
       loadMoreHandler: fetchMoreData,

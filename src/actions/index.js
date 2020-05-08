@@ -1544,6 +1544,12 @@ const errorManager = {
         flowId,
         resourceId,
       }),
+    clear: ({ flowId, resourceId, options = {} }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
+        flowId,
+        resourceId,
+        options,
+      }),
   },
 };
 const flow = {

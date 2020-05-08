@@ -119,6 +119,10 @@ export default (state = {}, action) => {
         draft[flowId][resourceId].open.outdated = true;
         draft[flowId][resourceId].resolved.outdated = true;
         break;
+
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
+        draft[flowId][resourceId][errorType] = {};
+        break;
       default:
     }
   });

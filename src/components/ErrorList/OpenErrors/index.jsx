@@ -101,6 +101,18 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     status,
   ]);
 
+  useEffect(
+    () => () => {
+      dispatch(
+        actions.errorManager.flowErrorDetails.clear({
+          flowId,
+          resourceId,
+        })
+      );
+    },
+    [dispatch, flowId, resourceId]
+  );
+
   return (
     <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={requestOpenErrors} />
