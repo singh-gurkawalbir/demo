@@ -12,9 +12,9 @@ import {
   Line,
 } from 'recharts';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import PanelHeader from '../../../components/PanelHeader';
-import actions from '../../../actions';
+import * as selectors from '../../reducers';
+import actions from '../../actions';
+import PanelHeader from '../PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,8 +37,6 @@ const getRandomData = count => {
 
   return data;
 };
-
-const flowId = '5e5df1f6f6f85b2b9ae4a456';
 
 export function CustomizedDot(props) {
   const { cx, cy, value } = props;
@@ -70,7 +68,7 @@ export function CustomizedDot(props) {
   );
 }
 
-export default function Recharts() {
+export default function Recharts({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const flowData = useSelector(state => selectors.lineGraphData(state, flowId));
@@ -79,7 +77,7 @@ export default function Recharts() {
     if (!flowData) {
       dispatch(actions.resource.flows.requestLineGraphDetails(flowId));
     }
-  }, [dispatch, flowData]);
+  }, [dispatch, flowData, flowId]);
   const data = flowData || getRandomData(25);
 
   return (

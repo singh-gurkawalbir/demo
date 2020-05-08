@@ -16,6 +16,7 @@ import BottomDrawer from './drawers/BottomDrawer';
 import ScheduleDrawer from './drawers/Schedule';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
+import ChartsDrawer from './drawers/LineGraph';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
@@ -29,6 +30,7 @@ import { generateNewId, isNewId } from '../../utils/resource';
 import { isConnector, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
+import HelpIcon from '../../components/icons/HelpIcon';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -443,6 +445,7 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
         resourceType="flows"
@@ -489,6 +492,14 @@ function FlowBuilder() {
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
 
+          {flowDetails && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={() => handleDrawerOpen('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton
               disabled={isNewFlow}

@@ -580,10 +580,9 @@ export function* requestLineGraphs({ flowId }) {
   const path = '/stats/tsdb';
   const user = yield select(selectors.userProfile);
   const query = `from(bucket: "flowEvents_1hr") 
-      |> range(start: -7d, stop: -1s) 
+      |> range(start: -300d, stop: -1s) 
       |> filter(fn: (r) => r.u == "${user._id}") 
-      |> filter(fn: (r) => r.f == "${flowId}") 
-      |> filter(fn: (r) => r._measurement == "s") 
+      |> filter(fn: (r) => r.f == "${flowId}")
       |> drop(columns: ["_start", "_stop"])`;
   const body = { query };
 
