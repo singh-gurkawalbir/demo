@@ -69,20 +69,19 @@ export default {
       defaultValue: r => (r && r.type) || 'api',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
-
       options: [
         {
           items: [
             {
-              label: 'Export records from source application',
+              label: 'Export records from source applicationaa',
               value: 'Export records from source application',
             },
             {
-              label: 'Transfer files out of source application',
+              label: 'Transfer files out of source applicationaa',
               value: 'api',
             },
             {
-              label: 'Listen for real-time data from source applications',
+              label: 'Listen for real-time data from source applicationsaa',
               value: 'Listen for real-time data from source applications',
             },
           ],
@@ -127,7 +126,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', is: ['api'] },
+        { field: 'type', isNot: ['webhook'] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -141,10 +140,10 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
 
-    if (fieldId === 'type' && ['s3', 'ftp'].includes(app.type)) {
+    if (fieldId === 'type') {
       return [
         {
-          items: exportFileProviderOptions[app.type] || [],
+          items: exportFileProviderOptions[app.assistant || app.type] || [],
         },
       ];
     }

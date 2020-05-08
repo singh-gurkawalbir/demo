@@ -2,6 +2,7 @@ import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
 // import { importOptions } from '../../utils';
+import { importFileProviderOptions } from '../../utils';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
@@ -20,6 +21,7 @@ export default {
     // used by the resource form code within the panel
     // component of the <ResourceDrawer> to properly
     // handle this special case.
+
     if (importId || exportId) {
       return { '/resourceId': importId || exportId };
     }
@@ -28,9 +30,13 @@ export default {
     const newValues = {
       ...rest,
       '/adaptorType': `${appTypeToAdaptorType[app.type]}${
-        resourceType === 'exports' ? 'Export' : 'Import'
+        ['importRecords', 'transferRecords'].indexOf(resourceType) >= 0
+          ? 'Import'
+          : 'Export'
       }`,
     };
+
+    newValues['/resourceType'] = resourceType;
 
     if (newValues['/adaptorType'] === 'NetSuiteImport') {
       newValues['/adaptorType'] = 'NetSuiteDistributedImport';
@@ -45,7 +51,7 @@ export default {
       newValues['/isLookup'] = true;
     }
 
-    // console.log('presave values', newValues);
+    console.log('presave values123', newValues);
 
     return newValues;
   },
@@ -55,9 +61,9 @@ export default {
       name: 'resourceType',
       type: 'select',
       label: 'What would you like to do?',
-      // refreshOptionsOnChangesTo: ['application'],
+      refreshOptionsOnChangesTo: ['application'],
       required: true,
-      defaultValue: r => (r && r.resourceType) || 'imports',
+      defaultValue: r => (r && r.resourceType) || 'importRecords',
       options: [
         {
           items: [
@@ -134,8 +140,8 @@ export default {
   },
   layout: {
     fields: [
-      'resourceType',
       'application',
+      'resourceType',
       'connection',
       'existingImport',
       'existingExport',
@@ -157,6 +163,15 @@ export default {
     //     },
     //   ];
     // }
+    if (fieldId === 'resourceType') {
+      // const appField = fields.find(field => field.id === 'application');
+
+      return [
+        {
+          items: importFileProviderOptions[app.assistant || app.type] || [],
+        },
+      ];
+    }
 
     if (fieldId === 'connection') {
       const expression = [];
@@ -210,15 +225,15 @@ export default {
       return { filter, appType: app.type };
     }
 
-    if (fieldId === 'application') {
-      const resourceTypeField = fields.find(
-        field => field.id === 'resourceType'
-      );
+    // if (fieldId === 'application') {
+    //   const resourceTypeField = fields.find(
+    //     field => field.id === 'resourceType'
+    //   );
 
-      return {
-        appType: resourceTypeField.value === 'exports' ? 'export' : 'import',
-      };
-    }
+    //   return {
+    //     appType: resourceTypeField.value === 'exports' ? 'export' : 'import',
+    //   };
+    // }
 
     return null;
   },

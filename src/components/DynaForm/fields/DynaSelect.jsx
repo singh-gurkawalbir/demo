@@ -68,40 +68,42 @@ export default function DynaSelect(props) {
     onFieldChange,
   } = props;
   const classes = useStyles();
-  let items = options.reduce(
-    (itemsSoFar, option) =>
-      itemsSoFar.concat(
-        option.items.map(item => {
-          let label;
-          let value;
+  let items =
+    options &&
+    options.reduce(
+      (itemsSoFar, option) =>
+        itemsSoFar.concat(
+          option.items.map(item => {
+            let label;
+            let value;
 
-          if (typeof item === 'string') {
-            label = item;
-            value = item;
-          } else {
-            ({ value } = item);
-            label = item.label || item.value;
-          }
+            if (typeof item === 'string') {
+              label = item;
+              value = item;
+            } else {
+              ({ value } = item);
+              label = item.label || item.value;
+            }
 
-          const { subHeader, disabled = false } = item;
+            const { subHeader, disabled = false } = item;
 
-          if (subHeader) {
+            if (subHeader) {
+              return (
+                <ListSubheader disableSticky key={subHeader}>
+                  {subHeader}
+                </ListSubheader>
+              );
+            }
+
             return (
-              <ListSubheader disableSticky key={subHeader}>
-                {subHeader}
-              </ListSubheader>
+              <MenuItem key={value} value={value} disabled={disabled}>
+                {label}
+              </MenuItem>
             );
-          }
-
-          return (
-            <MenuItem key={value} value={value} disabled={disabled}>
-              {label}
-            </MenuItem>
-          );
-        })
-      ),
-    []
-  );
+          })
+        ),
+      []
+    );
   let finalTextValue;
 
   if (value === undefined || value === null) {

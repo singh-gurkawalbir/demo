@@ -729,24 +729,131 @@ export const exportFileProviderOptions = {
   ftp: [
     {
       label: 'You can only transfer files using FTP',
-      value: 'api',
+      value: 'transferFiles',
     },
   ],
   s3: [
     {
       label: 'You can only transfer files using Amazon S3',
-      value: 'api',
+      value: 'transferFiles',
     },
   ],
-  http: [],
-  rest: [],
-  webhook: [],
-  mysql: [],
-  mssql: [],
-  postgresql: [],
-  mongodb: [],
-  netsuite: [],
-  salesforce: [],
+  http: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  rest: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  webhook: [
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'realtime',
+    },
+  ],
+  mysql: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  mssql: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  postgresql: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  mongodb: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'realtime',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'realtime',
+    },
+  ],
+  slack: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'webhook',
+    },
+  ],
+  box: [
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'webhook',
+    },
+  ],
+  dropbox: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'webhook',
+    },
+  ],
+  as2: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  shopify: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source applications',
+      value: 'webhook',
+    },
+  ],
+  zendesk: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+  asana: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
   default: [
     {
       label: 'Export records from source application',
@@ -754,11 +861,11 @@ export const exportFileProviderOptions = {
     },
     {
       label: 'Transfer files out of source application',
-      value: 'Transfer files out of source application',
+      value: 'api',
     },
     {
       label: 'Listen for real-time data from source applications',
-      value: 'Listen for real-time data from source applications',
+      value: 'webhook',
     },
   ],
 };
@@ -766,50 +873,268 @@ export const importFileProviderOptions = {
   ftp: [
     {
       label: 'Transfer records into destination application',
-      value: 'imports',
+      value: 'importRecords',
     },
 
     {
       label: 'Lookup addition files (per record)',
-      value: 'exports',
+      value: 'lookupFiles',
     },
   ],
   s3: [
     {
       label: 'Transfer records into destination application',
-      value: 'imports',
+      value: 'importRecords',
     },
 
     {
       label: 'Lookup addition files (per record)',
-      value: 'exports',
+      value: 'lookupFiles',
     },
   ],
-  http: [],
-  rest: [],
-  webhook: [],
-  mysql: [],
-  mssql: [],
-  postgresql: [],
-  mongodb: [],
-  netsuite: [],
-  salesforce: [],
-  default: [
+  http: [
     {
       label: 'Import records into destination application',
-      value: 'Import records into destination application',
+      value: 'importRecords',
     },
     {
       label: 'Transfer records into destination application',
-      value: 'Transfer records into destination application',
+      value: 'transferRecords',
     },
     {
       label: 'Lookup addition records (per record)',
-      value: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
     },
     {
       label: 'Lookup addition files (per record)',
-      value: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  rest: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  webhook: [],
+  mysql: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+  mssql: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+  postgresql: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+  mongodb: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  slack: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  box: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  dropbox: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  as2: [
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+  ],
+  shopify: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  zendesk: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  asana: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  default: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer records into destination application',
+      value: 'transferRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
     },
   ],
 };

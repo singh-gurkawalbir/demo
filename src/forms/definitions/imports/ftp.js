@@ -198,7 +198,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Do you need to parse files?',
+      label: 'Generate file from records?',
       options: [
         {
           items: [
