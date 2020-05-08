@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import IconTextButton from '../../../components/IconTextButton';
-import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
-import ArrowLeftIcon from '../../../components/icons/ArrowLeftIcon';
-import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import Spinner from '../../../components/Spinner';
+import IconTextButton from '../../components/IconTextButton';
+import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
+import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
+import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(() => ({
   label: {

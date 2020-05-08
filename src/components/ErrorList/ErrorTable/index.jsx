@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import CeligPagination from '../../CeligoPaginatedTable/Pagination';
+import CeligPagination from '../../CeligoPagination';
 import CeligoTable from '../../CeligoTable';
 import { filter } from '../../../reducers';
 

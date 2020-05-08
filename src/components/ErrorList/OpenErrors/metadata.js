@@ -1,7 +1,7 @@
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
-import ViewErrorDetails from '../actions/ViewErrorDetailsWithDrawer';
-import EditRetryData from '../actions/EditRetryWithDrawer';
+import ViewErrorDetails from '../actions/ViewErrorDetails';
+import EditRetryData from '../actions/EditRetry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
 
