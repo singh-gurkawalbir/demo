@@ -102,7 +102,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
-      <RefreshCard show={outdated} onRefresh={fetchResolvedData} />
+      <RefreshCard onRefresh={fetchResolvedData} />
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>

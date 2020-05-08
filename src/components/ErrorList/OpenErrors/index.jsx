@@ -96,7 +96,7 @@ export default function OpenErrors({ flowId, resourceId }) {
 
   return (
     <Fragment>
-      <RefreshCard show={outdated} onRefresh={requestOpenErrors} />
+      <RefreshCard onRefresh={requestOpenErrors} />
       {openErrors.length ? (
         <ErrorActions flowId={flowId} resourceId={resourceId} />
       ) : null}

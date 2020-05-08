@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import Icon from '../../../components/icons/RefreshIcon';
@@ -13,9 +12,6 @@ const useStyles = makeStyles(theme => ({
     width: 300,
     background: '#D6E4ED',
   },
-  hide: {
-    display: 'none',
-  },
   refresh: {
     color: theme.palette.primary.main,
   },
@@ -23,17 +19,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function RefreshCard(props) {
   const classes = useStyles();
-  const { onRefresh, className, show } = props;
+  const { onRefresh } = props;
   const handleClick = useCallback(() => {
     if (onRefresh) onRefresh();
   }, [onRefresh]);
 
   return (
-    <div
-      className={clsx(classes.card, {
-        [className]: !!className,
-        [classes.hide]: !show,
-      })}>
+    <div className={classes.card}>
       <IconTextButton onClick={handleClick} className={classes.refresh}>
         <Icon /> Refresh
       </IconTextButton>
