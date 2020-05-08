@@ -10,9 +10,6 @@ const useStyle = makeStyles(theme => ({
     overflowX: 'hidden',
     marginTop: -1,
     padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
   },
   closeButton: {
     position: 'absolute',

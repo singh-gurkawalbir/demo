@@ -5,14 +5,52 @@ import {
   FormLabel,
   FormControl,
 } from '@material-ui/core';
-import { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
+
+const useStyles = makeStyles(theme => ({
+  nsSavedSearch: {
+    marginBottom: 12,
+  },
+  dynaNsInternalID: {
+    width: '100%',
+  },
+  dynaNsSearched: {
+    paddingLeft: theme.spacing(1),
+    width: '100%',
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  radioGroupWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+  radioGroup: {
+    marginTop: 6,
+    '& label': {
+      marginLeft: 0,
+      marginRight: theme.spacing(3),
+    },
+  },
+  radioGroupLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    fontSize: 14,
+    '&:last-child': {
+      marginRight: theme.spacing(0.5),
+    },
+  },
+}));
 
 export default function DynaNSSavedSearch(props) {
+  const classes = useStyles();
   const [searchType, setSearchType] = useState('public');
   // Use this state to set Search type for the first time
   const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
@@ -80,48 +118,63 @@ export default function DynaNSSavedSearch(props) {
   }, [value, netSuiteSystemDomain]);
 
   return (
-    <div>
-      <FormControl
-        error={!isValid}
-        required={required}
-        disabled={disabled}
-        component="fieldset">
-        <FormLabel component="legend">Saved search type</FormLabel>
-        <RadioGroup
-          name="searchType"
-          defaultValue="public"
-          value={searchType}
-          data-test={id}
-          onChange={handleChange}>
-          <FormControlLabel
-            value="public"
-            control={<Radio color="primary" />}
-            label="Public"
-          />
-          <FormControlLabel
-            value="private"
-            control={<Radio color="primary" />}
-            label="Private"
-          />
-        </RadioGroup>
-      </FormControl>
-      <FormControl component="fieldset">
+    <Fragment>
+      <div>
+        <FormControl
+          error={!isValid}
+          required={required}
+          disabled={disabled}
+          className={classes.nsSavedSearch}
+          component="fieldset">
+          <div className={classes.radioGroupWrapper}>
+            <FormLabel component="legend" className={classes.radioGroupLabel}>
+              Saved search type
+            </FormLabel>
+            <div className={classes.radioGroupWrapper}>
+              <RadioGroup
+                name="searchType"
+                defaultValue="public"
+                value={searchType}
+                data-test={id}
+                onChange={handleChange}>
+                <FormControlLabel
+                  value="public"
+                  control={<Radio color="primary" />}
+                  label="Public"
+                />
+                <FormControlLabel
+                  value="private"
+                  control={<Radio color="primary" />}
+                  label="Private"
+                />
+              </RadioGroup>
+              <FieldHelp {...props} />
+            </div>
+          </div>
+        </FormControl>
+        <ErroredMessageComponent {...props} />
+      </div>
+      <FormControl component="fieldset" className={classes.dynaNsSearched}>
         {searchType === 'public' ? (
-          <DynaRefreshableSelect
-            {...searchIdOptions}
-            {...props}
-            urlToOpen={savedSearchUrl}
-          />
+          <div className={classes.dynaNsInternalID}>
+            <DynaRefreshableSelect
+              {...searchIdOptions}
+              {...props}
+              urlToOpen={savedSearchUrl}
+              className={classes.dynaNsInternalID}
+            />
+          </div>
         ) : (
-          <div className="layout">
+          <div className={classes.dynaNsInternalID}>
             <DynaNSSavedSearchInternalID
               {...searchInternalIdOptions}
               {...props}
               urlToOpen={savedSearchUrl}
+              className={classes.dynaNsInternalID}
             />
           </div>
         )}
       </FormControl>
-    </div>
+    </Fragment>
   );
 }
