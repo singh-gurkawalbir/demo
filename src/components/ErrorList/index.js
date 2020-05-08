@@ -28,11 +28,16 @@ export default function ErrorList({ flowId }) {
       <Button onClick={handleErrorTypeChange} className={classes.errorType}>
         {isResolvedErrorType ? 'View Open Errors' : 'View Resolved History'}
       </Button>
-      {!isResolvedErrorType ? (
-        <OpenErrors flowId={flowId} resourceId={resourceId} />
-      ) : (
-        <ResolvedErrors flowId={flowId} resourceId={resourceId} />
-      )}
+      <OpenErrors
+        flowId={flowId}
+        resourceId={resourceId}
+        show={!isResolvedErrorType}
+      />
+      <ResolvedErrors
+        flowId={flowId}
+        resourceId={resourceId}
+        show={isResolvedErrorType}
+      />
     </Fragment>
   );
 }

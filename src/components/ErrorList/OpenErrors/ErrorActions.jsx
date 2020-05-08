@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     top: '30px',
     left: 600,
-    width: 400,
+    width: 430,
     '& > button': {
       marginLeft: '10px',
       width: 120,

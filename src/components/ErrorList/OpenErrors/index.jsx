@@ -1,5 +1,6 @@
-import { useCallback, useEffect, Fragment, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
@@ -18,9 +19,12 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     float: 'left',
   },
+  hide: {
+    display: 'none',
+  },
 }));
 
-export default function OpenErrors({ flowId, resourceId }) {
+export default function OpenErrors({ flowId, resourceId, show }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const defaultFilter = useMemo(
@@ -70,17 +74,19 @@ export default function OpenErrors({ flowId, resourceId }) {
   );
 
   useEffect(() => {
-    if (!status) {
-      requestOpenErrors();
-    }
+    if (show) {
+      if (!status) {
+        requestOpenErrors();
+      }
 
-    if (
-      status === 'received' &&
-      !openErrors.length &&
-      outdated &&
-      nextPageURL
-    ) {
-      fetchMoreData();
+      if (
+        status === 'received' &&
+        !openErrors.length &&
+        outdated &&
+        nextPageURL
+      ) {
+        fetchMoreData();
+      }
     }
   }, [
     dispatch,
@@ -91,11 +97,12 @@ export default function OpenErrors({ flowId, resourceId }) {
     outdated,
     requestOpenErrors,
     resourceId,
+    show,
     status,
   ]);
 
   return (
-    <Fragment>
+    <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={requestOpenErrors} />
       {openErrors.length ? (
         <ErrorActions flowId={flowId} resourceId={resourceId} />
@@ -110,6 +117,6 @@ export default function OpenErrors({ flowId, resourceId }) {
         actionProps={actionProps}
         emptyRowsLabel="No Open errors"
       />
-    </Fragment>
+    </div>
   );
 }

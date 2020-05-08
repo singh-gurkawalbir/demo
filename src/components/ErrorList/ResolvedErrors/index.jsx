@@ -1,6 +1,7 @@
-import { useCallback, useEffect, Fragment, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import actions from '../../../actions';
 import { resourceErrors, filter } from '../../../reducers';
 import metadata from './metadata';
@@ -9,19 +10,17 @@ import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: { float: 'right' },
   search: {
     width: '300px',
     paddingTop: theme.spacing(1),
     float: 'left',
   },
-  loadMore: {
-    float: 'right',
-    paddingTop: theme.spacing(2),
+  hide: {
+    display: 'none',
   },
 }));
 
-export default function ResolvedErrors({ flowId, resourceId }) {
+export default function ResolvedErrors({ flowId, resourceId, show }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const defaultFilter = useMemo(
@@ -73,12 +72,14 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   ]);
 
   useEffect(() => {
-    if (!status) {
-      fetchResolvedData();
-    }
+    if (show) {
+      if (!status) {
+        fetchResolvedData();
+      }
 
-    if (status === 'received' && !resolvedErrors.length && outdated) {
-      fetchMoreData();
+      if (status === 'received' && !resolvedErrors.length && outdated) {
+        fetchMoreData();
+      }
     }
   }, [
     dispatch,
@@ -88,6 +89,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
     outdated,
     resolvedErrors.length,
     resourceId,
+    show,
     status,
   ]);
 
@@ -101,7 +103,7 @@ export default function ResolvedErrors({ flowId, resourceId }) {
   );
 
   return (
-    <Fragment>
+    <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={fetchResolvedData} />
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
@@ -113,6 +115,6 @@ export default function ResolvedErrors({ flowId, resourceId }) {
         actionProps={actionProps}
         emptyRowsLabel="No Resolved errors"
       />
-    </Fragment>
+    </div>
   );
 }
