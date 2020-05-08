@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -9,7 +9,7 @@ import {
   errorActionsContext,
 } from '../../../reducers';
 import Spinner from '../../Spinner';
-import Icon from '../../../components/icons/RefreshIcon';
+import ActionStatus from '../components/ActionStatus';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsContainer: {
@@ -36,13 +36,19 @@ export default function ErrorActions(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const { flowId, resourceId } = props;
-  const { status: retryStatus, count } = useSelector(state =>
-    errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+  const retryStatus = useSelector(
+    state =>
+      errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+        .status
   );
   const resolveStatus = useSelector(
     state =>
       errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
         .status
+  );
+  const isActionInProgress = useMemo(
+    () => retryStatus === 'requested' || resolveStatus === 'requested',
+    [resolveStatus, retryStatus]
   );
   const areSelectedErrorsRetriable = useSelector(
     state =>
@@ -77,36 +83,35 @@ export default function ErrorActions(props) {
 
   return (
     <div className={classes.actionButtonsContainer}>
-      {count ? (
-        <span>
-          <Icon className={classes.icon} /> Retrying {count} errors
-        </span>
-      ) : null}
-      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
-        <Button variant="outlined" disabled onClick={resolveErrors}>
-          Resolve &nbsp;
-          {resolveStatus === 'requested' ? <Spinner size={20} /> : null}
-        </Button>
+      <ActionStatus flowId={flowId} resourceId={resourceId} />
+      {isActionInProgress ? (
+        <Fragment>
+          <Button variant="outlined" disabled onClick={resolveErrors}>
+            Resolve &nbsp;
+            {resolveStatus === 'requested' ? <Spinner size={16} /> : null}
+          </Button>
+          <Button variant="outlined" disabled onClick={retryErrors}>
+            Retry &nbsp;
+            {retryStatus === 'requested' ? <Spinner size={16} /> : null}
+          </Button>
+        </Fragment>
       ) : (
-        <Button
-          variant="outlined"
-          disabled={!isAtleastOneErrorSelected}
-          onClick={resolveErrors}>
-          Resolve
-        </Button>
-      )}
-      {retryStatus === 'requested' || resolveStatus === 'requested' ? (
-        <Button variant="outlined" disabled onClick={retryErrors}>
-          Retry &nbsp;
-          {retryStatus === 'requested' ? <Spinner size={20} /> : null}
-        </Button>
-      ) : (
-        <Button
-          variant="outlined"
-          disabled={!areSelectedErrorsRetriable || retryStatus === 'requested'}
-          onClick={retryErrors}>
-          Retry
-        </Button>
+        <Fragment>
+          <Button
+            variant="outlined"
+            disabled={!isAtleastOneErrorSelected}
+            onClick={resolveErrors}>
+            Resolve
+          </Button>
+          <Button
+            variant="outlined"
+            disabled={
+              !areSelectedErrorsRetriable || retryStatus === 'requested'
+            }
+            onClick={retryErrors}>
+            Retry
+          </Button>
+        </Fragment>
       )}
     </div>
   );

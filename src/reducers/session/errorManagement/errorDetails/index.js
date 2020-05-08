@@ -14,6 +14,7 @@ export default (state = {}, action) => {
     checked,
     errorIds,
     retryCount,
+    resolveCount,
   } = action;
 
   return produce(state, draft => {
@@ -100,10 +101,17 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
-        .RECEIVED:
+        .RECEIVED: {
         draft[flowId][resourceId][errorType].actions.resolve.status =
           'received';
+        const count =
+          draft[flowId][resourceId][errorType].actions.resolve.count || 0;
+
+        draft[flowId][resourceId][errorType].actions.resolve.count =
+          count + resolveCount;
         break;
+      }
+
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY
         .RECEIVED: {
         draft[flowId][resourceId][errorType].actions.retry.status = 'received';

@@ -157,6 +157,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       actions.errorManager.flowErrorDetails.resolveReceived({
         flowId,
         resourceId,
+        resolveCount: errors.length,
       })
     );
     yield put(

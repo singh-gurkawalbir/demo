@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -117,7 +117,9 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={requestOpenErrors} />
       {openErrors.length ? (
-        <ErrorActions flowId={flowId} resourceId={resourceId} />
+        <Fragment>
+          <ErrorActions flowId={flowId} resourceId={resourceId} />
+        </Fragment>
       ) : null}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
