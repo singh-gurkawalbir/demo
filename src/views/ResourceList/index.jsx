@@ -18,7 +18,7 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -48,7 +48,10 @@ export default function ResourceList(props) {
     }),
     [filter, resourceType]
   );
-  const list = useResourceList(filterConfig);
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    filterConfig
+  );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   useEffect(() => {

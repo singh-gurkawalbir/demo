@@ -18,7 +18,7 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
-import useResourceList from '../../../hooks/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -164,7 +164,10 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
-  const { resources = emptyArray } = useResourceList(filterConfig);
+  const { resources = emptyArray } = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    filterConfig
+  );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );

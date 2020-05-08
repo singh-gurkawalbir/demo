@@ -4,7 +4,8 @@ import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import CeligoSelect from '../../components/CeligoSelect';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   selectIntegration: {
@@ -21,7 +22,10 @@ const integrationFilterConfig = { type: 'integrations' };
 export default function GenerateZip({ onClose, invalid = 'invalid' }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const integrations = useResourceList(integrationFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationFilterConfig
+  ).resources;
   const filteredIntegrations = useMemo(
     () => integrations.filter(i => !i._connectorId && !i.isShared),
     [integrations]
