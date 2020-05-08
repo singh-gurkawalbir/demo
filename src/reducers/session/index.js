@@ -149,6 +149,14 @@ export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
 }
 
+export function stagedIdState(state, id) {
+  return fromStage.stagedIdState(state, id);
+}
+
+export function makeTransformStagedResource() {
+  return fromStage.makeTransformStagedResource();
+}
+
 export function stagedResource(state, id, scope) {
   return fromStage.stagedResource(state && state.stage, id, scope);
 }

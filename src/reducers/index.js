@@ -528,41 +528,11 @@ export const userOwnPreferences = createSelector(
 //   return fromUser.userOwnPreferences(state && state.user);
 // }
 
-export function userProfilePreferencesProps(state) {
-  const profile = userProfile(state);
-  const preferences = userPreferences(state);
-  const {
-    _id,
-    name,
-    email,
-    company,
-    role,
-    developer,
-    phone,
-    dateFormat,
-    timezone,
-    timeFormat,
-    scheduleShiftForFlowsCreatedAfter,
-    // eslint-disable-next-line camelcase
-    auth_type_google,
-  } = { ...profile, ...preferences };
-
-  return {
-    _id,
-    name,
-    email,
-    company,
-    role,
-    developer,
-    phone,
-    dateFormat,
-    timezone,
-    timeFormat,
-    scheduleShiftForFlowsCreatedAfter,
-    auth_type_google,
-  };
-}
-
+// TODO: make this selector a lot more granular...its dependency is user
+export const userProfilePreferencesProps = createSelector(
+  userState,
+  fromUser.userProfilePreferencesProps
+);
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
@@ -837,7 +807,7 @@ export function flowDetails(state, id) {
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows = resourceList(state, options).resources || [];
+  const flows = resourceList(state, options).resources || emptySet;
   const exports = resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1291,7 +1261,7 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    ) || emptySet;
   const categoryMappingMetadata = {};
   const { response } = categoryMappingData;
 
@@ -2871,6 +2841,88 @@ export function resourceData(state, resourceType, id, scope) {
   return data;
 }
 
+export function resourceDataModified(
+  resourceIdState,
+  stagedIdState,
+  resourceType,
+  id
+) {
+  if ((!resourceIdState && !stagedIdState) || !resourceType || !id)
+    return emptyObject;
+
+  const master = resourceIdState;
+  const { patch, conflict } = stagedIdState;
+
+  if (!master && !patch) return { merged: emptyObject };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+}
+
+// fromResources.resourceIdState
+// nothing but state && state.data && state.data.resources && state.data.resources.type
+export const makeResourceDataSelector = () => {
+  const cachedStageSelector = fromSession.makeTransformStagedResource();
+  const cachedResourceSelector = fromData.makeResourceSelector();
+
+  createSelector(
+    (state, resourceType, id) => {
+      let type = resourceType;
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        type = 'connectorLicenses';
+      }
+
+      // For accesstokens and connections within an integration
+      if (resourceType.indexOf('integrations/') >= 0) {
+        type = resourceType.split('/').pop();
+      }
+
+      return cachedResourceSelector(
+        fromResources.resourceIdState(state, type, id)
+      );
+    },
+    (state, resourceType, id, scope) =>
+      cachedStageSelector(fromSession.stagedIdState(state, id, scope)),
+
+    (_1, resourceType) => resourceType,
+    (_1, _2, id) => id,
+    (_1, _2, _3, scope) => scope,
+    (resourceIdState, stagedIdState, resourceType, id, scope) =>
+      resourceDataModified(
+        resourceIdState,
+        stagedIdState,
+        resourceType,
+        id,
+        scope
+      )
+  );
+};
+
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);
 
@@ -3978,8 +4030,57 @@ export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
 }
 
-export function customSettingsForm(state, resourceId) {
-  return fromSession.customSettingsForm(state && state.session, resourceId);
+const lookupProcessorResourceType = (state, id) => {
+  const stagedProcessor = stagedResource(state, id);
+
+  if (!stagedProcessor || !stagedProcessor.patch) {
+    // TODO: we need a better pattern for logging warnings. We need a common util method
+    // which logs these warning only if the build is dev... if build is prod, these
+    // console.warn/logs should not even be bundled by webpack...
+    // eslint-disable-next-line
+    return console.warn(
+      'No patch-set available to determine new Page Processor resourceType.'
+    );
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = stagedProcessor.patch.find(
+    p => p.op === 'replace' && p.path === '/adaptorType'
+  );
+
+  // console.log(`adaptorType-${id}`, adaptorType);
+
+  if (!adaptorType || !adaptorType.value) {
+    // eslint-disable-next-line
+    console.warn(
+      'No replace operation against /adaptorType found in the patch-set.'
+    );
+  }
+
+  return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+};
+
+export function drawerEditUrl(state, resourceType, id, pathname) {
+  // console.log(location);
+  const segments = pathname.split('/');
+  const { length } = segments;
+
+  segments[length - 1] = id;
+  segments[length - 3] = 'edit';
+
+  if (resourceType === 'pageGenerator') {
+    segments[length - 2] = 'exports';
+  } else if (resourceType === 'pageProcessor') {
+    segments[length - 2] = lookupProcessorResourceType(state, id);
+  }
+
+  const url = segments.join('/');
+
+  return url;
+}
+
+export function customSettingsStatus(state, resourceId) {
+  return fromSession.customSettingsStatus(state && state.session, resourceId);
 }
 
 export const exportData = (state, identifier) =>
