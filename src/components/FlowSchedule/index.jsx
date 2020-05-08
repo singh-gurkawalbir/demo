@@ -15,6 +15,7 @@ import {
   getScheduleVal,
 } from './util';
 import useResourceList from '../../hooks/selectors/useResourceList';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const exportFilterConfig = { type: 'exports' };
 const flowsFilterConfig = { type: 'flows' };
@@ -123,24 +124,25 @@ export default function FlowSchedule({
     flows,
     scheduleStartMinute,
   });
+  const formKey = useFormInitWithPermissions({
+    integrationId,
+    resourceType,
+    resourceId,
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
     <Fragment>
       <div className={className}>
-        <DynaForm
-          integrationId={integrationId}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
-          <DynaSubmit onClick={handleSubmit} color="primary">
-            Save
-          </DynaSubmit>
-          <Button onClick={onClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit formKey={formKey} onClick={handleSubmit} color="primary">
+          Save
+        </DynaSubmit>
+        <Button onClick={onClose} variant="text" color="primary">
+          Cancel
+        </Button>
       </div>
     </Fragment>
   );

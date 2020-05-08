@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
@@ -11,6 +11,7 @@ import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -93,6 +94,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
+
   return (
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
@@ -124,11 +130,12 @@ export default function AddOrSelect(props) {
               connectionType={connectionType}
             />
           ) : (
-            <DynaForm
-              fieldMeta={fieldMeta}
-              optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
-            </DynaForm>
+            <Fragment>
+              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+              <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+                Done
+              </DynaSubmit>
+            </Fragment>
           )}
         </div>
       </div>

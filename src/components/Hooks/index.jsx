@@ -14,6 +14,7 @@ import {
   importHooksList,
   importSuiteScriptHooksList,
 } from '../../utils/hooks';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   fbContDrawer: {
@@ -124,23 +125,26 @@ export default function Hooks(props) {
     },
     [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, onSave]
   );
-
   // console.log('RENDER: Hooks');
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    disabled,
+  });
 
   return (
     <LoadResources resources="scripts, stacks">
       <div className={classes.fbContDrawer}>
-        <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
-          <DynaSubmit
-            disabled={disabled}
-            data-test={`saveHook-${resourceId}`}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disabled}
+          data-test={`saveHook-${resourceId}`}
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
+          Cancel
+        </Button>
       </div>
     </LoadResources>
   );

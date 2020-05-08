@@ -9,6 +9,7 @@ import ModalDialog from '../../../../components/ModalDialog';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../components/LoadResources';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 const getFieldMeta = defaultValue => ({
   fieldMap: {
@@ -69,24 +70,28 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
       ? connection.as2.contentBasedFlowRouter
       : {};
   const fieldMeta = getFieldMeta(value);
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    disabled: isViewMode,
+  });
 
   return (
     <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
-        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode}>
-          <DynaSubmit
-            disabled={isViewMode}
-            data-test={`as2routing-${connectionId}`}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test={`cancelAs2routing-${connectionId}`}
-            onClick={onClose}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={isViewMode}
+          data-test={`as2routing-${connectionId}`}
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button
+          data-test={`cancelAs2routing-${connectionId}`}
+          onClick={onClose}>
+          Cancel
+        </Button>
       </LoadResources>
     </ModalDialog>
   );

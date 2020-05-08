@@ -9,6 +9,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { isJsonString } from '../../../../../../utils/string';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -115,20 +116,23 @@ export default function GeneralSection({ integrationId }) {
     setCount(count => count + 1);
   };
 
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    disabled: !canEditIntegration,
+  });
+
   return (
     <Fragment>
       <PanelHeader title="General" />
 
       <div className={classes.form}>
-        <DynaForm
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} key={count} />
+        <DynaSubmit
+          formKey={formKey}
           disabled={!canEditIntegration}
-          fieldMeta={fieldMeta}
-          key={count}
-          render>
-          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-        </DynaForm>
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </div>
     </Fragment>
   );

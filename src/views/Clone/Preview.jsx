@@ -17,6 +17,7 @@ import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useResourceList from '../../hooks/selectors/useResourceList';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -183,15 +184,6 @@ export default function ClonePreview(props) {
     }
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
-  if (!components || isEmpty(components)) {
-    return (
-      <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner color="primary" />
-      </Loader>
-    );
-  }
-
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
@@ -312,6 +304,20 @@ export default function ClonePreview(props) {
       return null;
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
+
+  if (!components || isEmpty(components)) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
+
   const clone = ({ name, environment, integration, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
@@ -379,13 +385,10 @@ export default function ClonePreview(props) {
       <Fragment>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
-            <DynaForm
-              fieldMeta={fieldMeta}
-              optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit data-test="clone" onClick={clone}>
-                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
-              </DynaSubmit>
-            </DynaForm>
+            <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+            <DynaSubmit formKey={formKey} data-test="clone" onClick={clone}>
+              {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+            </DynaSubmit>
           </Grid>
         </Grid>
       </Fragment>

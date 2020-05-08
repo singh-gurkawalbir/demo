@@ -7,6 +7,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
@@ -63,21 +64,26 @@ function ProceedOnFailureDialog(props) {
     onClose();
   };
 
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    disabled: isViewMode,
+  });
+
   return (
     <ModalDialog show={open} onClose={onClose}>
       <div> What should happen to a record if the lookup fails?</div>
       <div>
-        <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
-          <DynaSubmit
-            disabled={isViewMode}
-            data-test="saveProceedOnFailure"
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button data-test="cancelProceedOnFailure" onClick={onClose}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={isViewMode}
+          data-test="saveProceedOnFailure"
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button data-test="cancelProceedOnFailure" onClick={onClose}>
+          Cancel
+        </Button>
       </div>
     </ModalDialog>
   );

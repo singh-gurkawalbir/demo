@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
 import useResourceList from '../../../../hooks/selectors/useResourceList';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -172,23 +173,27 @@ export default function SettingsDrawer({
     known as job errors.  If you have these notifications enabled or disabled for 
     the integration containing this flow, this flow-level setting will override 
     the integration-level setting.`;
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    integrationId,
+    resourceType,
+    resourceId,
+  });
 
   return (
     <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
       <div className={classes.scheduleContainer}>
-        <DynaForm
-          integrationId={integrationId}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          fieldMeta={fieldMeta}
-          render>
-          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
-            Save
-          </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          onClick={handleSubmit}
+          color="primary"
+          variant="outlined">
+          Save
+        </DynaSubmit>
+        <Button onClick={handleClose} variant="text" color="primary">
+          Cancel
+        </Button>
       </div>
     </RightDrawer>
   );

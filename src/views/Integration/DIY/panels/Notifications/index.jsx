@@ -7,6 +7,7 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -101,6 +102,7 @@ export default function NotificationsSection({ integrationId }) {
 
   const infoTextNotifications =
     'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
+  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
 
   return (
     <div className={classes.root}>
@@ -108,9 +110,11 @@ export default function NotificationsSection({ integrationId }) {
 
       <LoadResources required resources="notifications,flows,connections">
         <div className={classes.form}>
-          <DynaForm fieldMeta={fieldMeta} key={count} render>
-            <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
-          </DynaForm>
+          <DynaForm formKey={formKey} fieldMeta={fieldMeta} key={count} />
+
+          <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
         </div>
       </LoadResources>
     </div>

@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, Fragment } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -15,6 +15,7 @@ import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
 import Spinner from '../../../../../../components/Spinner';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -198,6 +199,11 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
       return null;
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    showValidationBeforeTouched: !!formState.showValidationBeforeTouched,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
     <Drawer
@@ -214,11 +220,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         backToParent
       />
       {metadataLoaded ? (
-        <DynaForm
-          fieldMeta={fieldMeta}
-          formState={formState}
-          optionsHandler={fieldMeta.optionsHandler}>
+        <Fragment>
+          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
           <DynaSubmit
+            formKey={formKey}
             showCustomFormValidations={showCustomFormValidations}
             data-test="addCategory"
             onClick={handleSave}>
@@ -227,7 +232,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           <Button variant="text" color="primary" onClick={handleClose}>
             Cancel
           </Button>
-        </DynaForm>
+        </Fragment>
       ) : (
         <Spinner />
       )}
