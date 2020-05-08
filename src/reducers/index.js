@@ -4047,8 +4047,8 @@ export function errorActionsContext(
   });
 }
 
-export function customSettingsStatus(state, resourceId) {
-  return fromSession.customSettingsStatus(state && state.session, resourceId);
+export function customSettingsForm(state, resourceId) {
+  return fromSession.customSettingsForm(state && state.session, resourceId);
 }
 
 export const exportData = (state, identifier) =>

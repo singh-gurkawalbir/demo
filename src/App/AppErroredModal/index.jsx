@@ -13,7 +13,7 @@ function AppErroredModal({ history }) {
   return appErrored ? (
     <ModalDialog show>
       <Fragment>
-        <span>Application Errored</span>
+        <span>Application errored</span>
       </Fragment>
       <Typography>
         Oops! Something caused our app to crash. <br />
