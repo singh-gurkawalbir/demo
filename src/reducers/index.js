@@ -529,10 +529,41 @@ export const userOwnPreferences = createSelector(
 // }
 
 // TODO: make this selector a lot more granular...its dependency is user
-export const userProfilePreferencesProps = createSelector(
-  userState,
-  fromUser.userProfilePreferencesProps
-);
+export function userProfilePreferencesProps(state) {
+  const profile = userProfile(state);
+  const preferences = userPreferences(state);
+  const {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
+  } = { ...profile, ...preferences };
+
+  return {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
+  };
+}
+
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
@@ -2847,11 +2878,10 @@ export function resourceDataModified(
   resourceType,
   id
 ) {
-  if ((!resourceIdState && !stagedIdState) || !resourceType || !id)
-    return emptyObject;
+  if (!resourceType || !id) return emptyObject;
 
   const master = resourceIdState;
-  const { patch, conflict } = stagedIdState;
+  const { patch, conflict } = stagedIdState || {};
 
   if (!master && !patch) return { merged: emptyObject };
 
@@ -2889,8 +2919,9 @@ export const makeResourceDataSelector = () => {
   const cachedStageSelector = fromSession.makeTransformStagedResource();
   const cachedResourceSelector = fromData.makeResourceSelector();
 
-  createSelector(
+  return createSelector(
     (state, resourceType, id) => {
+      if (!resourceType || !id) return null;
       let type = resourceType;
 
       if (resourceType.indexOf('/licenses') >= 0) {
@@ -2903,23 +2934,22 @@ export const makeResourceDataSelector = () => {
       }
 
       return cachedResourceSelector(
-        fromResources.resourceIdState(state, type, id)
+        fromData.resourceState(state && state.data),
+        type,
+        id
       );
     },
     (state, resourceType, id, scope) =>
-      cachedStageSelector(fromSession.stagedIdState(state, id, scope)),
-
-    (_1, resourceType) => resourceType,
-    (_1, _2, id) => id,
-    (_1, _2, _3, scope) => scope,
-    (resourceIdState, stagedIdState, resourceType, id, scope) =>
-      resourceDataModified(
-        resourceIdState,
-        stagedIdState,
-        resourceType,
+      cachedStageSelector(
+        fromSession.stagedState(state && state.session),
         id,
         scope
-      )
+      ),
+    (_1, resourceType) => resourceType,
+    (_1, _2, id) => id,
+
+    (resourceIdState, stagedIdState, resourceType, id) =>
+      resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
 
@@ -4079,8 +4109,8 @@ export function drawerEditUrl(state, resourceType, id, pathname) {
   return url;
 }
 
-export function customSettingsStatus(state, resourceId) {
-  return fromSession.customSettingsStatus(state && state.session, resourceId);
+export function customSettingsForm(state, resourceId) {
+  return fromSession.customSettingsForm(state && state.session, resourceId);
 }
 
 export const exportData = (state, identifier) =>

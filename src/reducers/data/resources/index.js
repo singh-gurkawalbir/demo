@@ -385,7 +385,7 @@ function resourceTransformed(resourceIdState, resourceType) {
 
 export const makeResourceSelector = () =>
   createSelector(
-    resourceIdState,
+    (state, resourceType, id) => resourceIdState(state, resourceType, id),
     (_, resourceType) => resourceType,
     (resourceIdState, resourceType) =>
       resourceTransformed(resourceIdState, resourceType)
