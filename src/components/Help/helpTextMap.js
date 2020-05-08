@@ -550,6 +550,12 @@ export default {
     'Please enter the Username of your Gorgias account',
   'gorgias.connection.http.auth.basic.password':
     'Please enter the Password of your Gorgias account',
+  'walmart.connection.environment':
+    'Please select the enviornment of your Walmart account here.',
+  'walmart.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Walmart Account.',
+  'walmart.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':

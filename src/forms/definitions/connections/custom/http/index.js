@@ -175,6 +175,7 @@ import inspectorio from './inspectorio';
 import orderful from './orderful';
 import logisense from './logisense';
 import gorgias from './gorgias';
+import walmart from './walmart';
 
 export default {
   bigquery,
@@ -353,4 +354,5 @@ export default {
   orderful,
   logisense,
   gorgias,
+  walmart,
 };
