@@ -26,7 +26,7 @@ export default (state = {}, action) => {
         if (!draft[flowId]) draft[flowId] = {};
 
         if (!draft[flowId][resourceId])
-          draft[flowId][resourceId] = { open: {}, resolved: {} };
+          draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
         draft[flowId][resourceId][errorType].status = 'requested';
 
         if (!loadMore) delete draft[flowId][resourceId][errorType].outdated;
@@ -70,56 +70,50 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST:
-        if (!draft[flowId][resourceId][errorType].actions) {
-          draft[flowId][resourceId][errorType].actions = {};
+        if (!draft[flowId][resourceId].actions) {
+          draft[flowId][resourceId].actions = {};
         }
 
-        if (!draft[flowId][resourceId][errorType].actions.retry) {
-          draft[flowId][resourceId][errorType].actions.retry = {
+        if (!draft[flowId][resourceId].actions.retry) {
+          draft[flowId][resourceId].actions.retry = {
             status: 'requested',
           };
         }
 
-        draft[flowId][resourceId][errorType].actions.retry.status = 'requested';
+        draft[flowId][resourceId].actions.retry.status = 'requested';
 
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST:
-        if (!draft[flowId][resourceId][errorType].actions) {
-          draft[flowId][resourceId][errorType].actions = {};
+        if (!draft[flowId][resourceId].actions) {
+          draft[flowId][resourceId].actions = {};
         }
 
-        if (!draft[flowId][resourceId][errorType].actions.resolve) {
-          draft[flowId][resourceId][errorType].actions.resolve = {
+        if (!draft[flowId][resourceId].actions.resolve) {
+          draft[flowId][resourceId].actions.resolve = {
             status: 'requested',
           };
         }
 
-        draft[flowId][resourceId][errorType].actions.resolve.status =
-          'requested';
+        draft[flowId][resourceId].actions.resolve.status = 'requested';
 
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
         .RECEIVED: {
-        draft[flowId][resourceId][errorType].actions.resolve.status =
-          'received';
-        const count =
-          draft[flowId][resourceId][errorType].actions.resolve.count || 0;
+        draft[flowId][resourceId].actions.resolve.status = 'received';
+        const count = draft[flowId][resourceId].actions.resolve.count || 0;
 
-        draft[flowId][resourceId][errorType].actions.resolve.count =
-          count + resolveCount;
+        draft[flowId][resourceId].actions.resolve.count = count + resolveCount;
         break;
       }
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY
         .RECEIVED: {
-        draft[flowId][resourceId][errorType].actions.retry.status = 'received';
-        const count =
-          draft[flowId][resourceId][errorType].actions.retry.count || 0;
+        draft[flowId][resourceId].actions.retry.status = 'received';
+        const count = draft[flowId][resourceId].actions.retry.count || 0;
 
-        draft[flowId][resourceId][errorType].actions.retry.count =
-          count + retryCount;
+        draft[flowId][resourceId].actions.retry.count = count + retryCount;
         break;
       }
 
@@ -148,15 +142,14 @@ export function getErrors(state, { flowId, resourceId, errorType }) {
 
 export function errorActionsContext(
   state,
-  { flowId, resourceId, actionType = 'retry', errorType = 'open' }
+  { flowId, resourceId, actionType = 'retry' }
 ) {
   return (
     (state &&
       state[flowId] &&
       state[flowId][resourceId] &&
-      state[flowId][resourceId][errorType] &&
-      state[flowId][resourceId][errorType].actions &&
-      state[flowId][resourceId][errorType].actions[actionType]) ||
+      state[flowId][resourceId].actions &&
+      state[flowId][resourceId].actions[actionType]) ||
     defaultObject
   );
 }

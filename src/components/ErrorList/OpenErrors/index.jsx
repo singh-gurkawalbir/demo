@@ -8,7 +8,7 @@ import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
-import ErrorActions from './ErrorActions';
+import ErrorActions from '../components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {

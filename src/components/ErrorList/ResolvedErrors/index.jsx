@@ -8,6 +8,7 @@ import metadata from './metadata';
 import KeywordSearch from '../../../components/KeywordSearch';
 import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
+import ErrorActions from '../components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -36,6 +37,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       defaultFilter,
       resourceId,
       flowId,
+      isResolved: true,
     }),
     [defaultFilter, filterKey, flowId, resourceId]
   );
@@ -118,6 +120,9 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
   return (
     <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={fetchResolvedData} />
+      {resolvedErrors.length ? (
+        <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
+      ) : null}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>

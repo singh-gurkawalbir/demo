@@ -77,13 +77,14 @@ function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
   );
 }
 
-function* retryErrors({ flowId, resourceId, retryIds = [] }) {
+function* retryErrors({ flowId, resourceId, retryIds = [], options = {} }) {
   let retryDataKeys = retryIds;
 
   if (!retryIds.length) {
     const retryIdList = yield select(selectedRetryIds, {
       flowId,
       resourceId,
+      options,
     });
 
     retryDataKeys = retryIdList;
@@ -104,6 +105,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
       actions.errorManager.flowErrorDetails.retryReceived({
         flowId,
         resourceId,
+        isResolved: !!options.isResolved,
         response,
         retryCount: retryDataKeys.length,
       })
@@ -111,6 +113,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
     const { errors } = yield select(resourceErrors, {
       flowId,
       resourceId,
+      options,
     });
     const errorIds = errors
       .filter(error => retryDataKeys.includes(error.retryDataKey))
@@ -120,6 +123,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [] }) {
       actions.errorManager.flowErrorDetails.remove({
         flowId,
         resourceId,
+        isResolved: !!options.isResolved,
         errorIds,
       })
     );

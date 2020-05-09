@@ -4,7 +4,7 @@ import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import actions from '../../../actions';
 
-export default function SelectError({ flowId, resourceId, error }) {
+export default function SelectError({ flowId, resourceId, error, isResolved }) {
   const dispatch = useDispatch();
   const handleChange = event => {
     const { checked } = event.target;
@@ -13,6 +13,7 @@ export default function SelectError({ flowId, resourceId, error }) {
       actions.errorManager.flowErrorDetails.selectErrors({
         flowId,
         resourceId,
+        isResolved,
         errorIds: [error.errorId],
         checked,
       })

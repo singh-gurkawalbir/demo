@@ -6,7 +6,7 @@ import Icon from '../../../components/icons/RefreshIcon';
 
 export default {
   label: 'Retry',
-  component: function Retry({ flowId, resourceId, resource }) {
+  component: function Retry({ flowId, resourceId, resource, isResolved }) {
     const dispatch = useDispatch();
     const handleClick = useCallback(() => {
       dispatch(
@@ -14,9 +14,10 @@ export default {
           flowId,
           resourceId,
           retryIds: [resource.retryDataKey],
+          options: { isResolved },
         })
       );
-    }, [dispatch, flowId, resource.retryDataKey, resourceId]);
+    }, [dispatch, flowId, isResolved, resource.retryDataKey, resourceId]);
 
     return (
       <Fragment>

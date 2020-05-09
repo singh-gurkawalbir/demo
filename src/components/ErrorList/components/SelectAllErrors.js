@@ -8,7 +8,7 @@ import { isAllErrorsSelected } from '../../../reducers';
 export default function SelectAllErrors({
   flowId,
   resourceId,
-  type = 'open',
+  isResolved,
   filterKey,
   defaultFilter,
 }) {
@@ -17,7 +17,7 @@ export default function SelectAllErrors({
     isAllErrorsSelected(state, {
       flowId,
       resourceId,
-      type,
+      isResolved,
       filterKey,
       defaultFilter,
     })
@@ -33,7 +33,7 @@ export default function SelectAllErrors({
         options: {
           filterKey,
           defaultFilter,
-          isResolved: type === 'resolved',
+          isResolved,
         },
       })
     );
