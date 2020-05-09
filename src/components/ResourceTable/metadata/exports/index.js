@@ -1,3 +1,4 @@
+import React from 'react';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import AuditLogs from '../../actions/AuditLogs';

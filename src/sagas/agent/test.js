@@ -4,7 +4,7 @@ import actions, { availableOSTypes } from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { displayToken, changeToken, downloadInstaller } from './';
+import { displayToken, changeToken, downloadInstaller } from '.';
 
 describe('agent tokens sagas', () => {
   describe('displayToken saga', () => {

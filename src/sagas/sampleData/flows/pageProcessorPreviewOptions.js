@@ -27,8 +27,7 @@ function* getUIDataForResource({ resource, connection, flow }) {
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
-  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader)
-    return yield call(requestFileAdaptorSampleData, { resource });
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {
@@ -38,8 +37,7 @@ function* getUIDataForResource({ resource, connection, flow }) {
         // Incase of other NS/SF exports -
         // Non IAs : pageProcessorPreview call fetches sampleData
         // IAs: If there is sampledata on resource, returns it as uiData below at line:60
-        if (isRealTimeOrDistributedResource(resource))
-          return yield call(requestRealTimeMetadata, { resource });
+        if (isRealTimeOrDistributedResource(resource)) return yield call(requestRealTimeMetadata, { resource });
         break;
       case 'FTPExport':
       case 'S3Export':

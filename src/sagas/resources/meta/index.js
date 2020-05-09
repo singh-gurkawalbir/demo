@@ -36,7 +36,7 @@ export function* getNetsuiteOrSalesforceMeta({
       });
 
       if (bundleCheckResponse && !bundleCheckResponse.success) {
-        if (bundleCheckResponse.bundleURL)
+        if (bundleCheckResponse.bundleURL) {
           yield put(
             actions.metadata.validationError(
               addInfo.bundleUrlHelp.replace(
@@ -47,6 +47,7 @@ export function* getNetsuiteOrSalesforceMeta({
               commMetaPath
             )
           );
+        }
 
         return undefined;
       }
@@ -55,7 +56,7 @@ export function* getNetsuiteOrSalesforceMeta({
     const metadata = yield call(apiCallWithRetry, {
       path,
       opts: {},
-      message: `Fetching`,
+      message: 'Fetching',
     });
 
     // Handle Errors sent as part of response object  with status 200

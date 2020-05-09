@@ -131,7 +131,7 @@ export function* requestEditorSampleData({
     const response = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: `Fetching editor sample data`,
+      message: 'Fetching editor sample data',
       hidden: false,
     });
 
@@ -168,8 +168,8 @@ export function* clearEditorSampleData({ resourceType, id }) {
         resourceType === 'flows'
           ? { flowId: id }
           : {
-              resourceId: id,
-            };
+            resourceId: id,
+          };
 
       yield put(actions.editorSampleData.clear(options));
     }

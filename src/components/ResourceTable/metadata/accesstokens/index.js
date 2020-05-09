@@ -1,3 +1,4 @@
+import React from 'react';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import AuditLogs from '../../actions/AuditLogs';

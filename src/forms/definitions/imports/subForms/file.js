@@ -32,7 +32,8 @@ export default {
           wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
         },
       };
-    } else if (fieldId === 'uploadFile') {
+    }
+    if (fieldId === 'uploadFile') {
       const uploadFileField = fields.find(
         field => field.fieldId === 'uploadFile'
       );

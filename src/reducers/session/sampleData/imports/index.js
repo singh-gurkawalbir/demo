@@ -6,7 +6,7 @@ import actionTypes from '../../../../actions/types';
 
 const DEFAULT_VALUE = {};
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const { type, _importId, metadata } = action;
 
   return produce(state, draft => {

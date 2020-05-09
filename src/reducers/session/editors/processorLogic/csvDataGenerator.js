@@ -34,11 +34,11 @@ const dirty = editor => {
 
     if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
       return true;
-    } else if (
+    }
+    if (
       ['string', 'number'].includes(typeof editor[key]) &&
       initRule[key] !== editor[key]
-    )
-      return true;
+    ) return true;
   }
 
   return false;

@@ -28,9 +28,9 @@ export function updateNetSuiteLookupFilterExpressionForNOTs(expression) {
     if (expression[i] === 'NOT') {
       expression[i] = isArray(expression[i + 1][0])
         ? [
-            'NOT',
-            updateNetSuiteLookupFilterExpressionForNOTs(expression[i + 1]),
-          ]
+          'NOT',
+          updateNetSuiteLookupFilterExpressionForNOTs(expression[i + 1]),
+        ]
         : ['NOT', expression[i + 1]];
       expression.splice(i + 1, 1);
     } else if (isArray(expression[i])) {

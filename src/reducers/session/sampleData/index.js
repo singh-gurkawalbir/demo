@@ -32,7 +32,7 @@ function extractStages(sampleData) {
   return stageMap;
 }
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const { type, resourceId, previewData, processedData, stage, error } = action;
 
   return produce(state, draft => {
