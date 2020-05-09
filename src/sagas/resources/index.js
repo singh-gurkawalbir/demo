@@ -575,35 +575,6 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* requestLineGraphs({ flowId }) {
-  let response;
-  const path = '/stats/tsdb';
-  const user = yield select(selectors.userProfile);
-  const query = `from(bucket: "flowEvents_1hr") 
-      |> range(start: -300d, stop: -1s) 
-      |> filter(fn: (r) => r.u == "${user._id}") 
-      |> filter(fn: (r) => r.f == "${flowId}")
-      |> drop(columns: ["_start", "_stop"])`;
-  const body = { query };
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        body,
-        method: 'POST',
-      },
-      message: 'Fetching Graph Data.',
-    });
-  } catch (e) {
-    return undefined;
-  }
-
-  if (response) {
-    yield put(actions.resource.requestCollection('notifications'));
-  }
-}
-
 export function* updateNotifications({ notifications }) {
   let response;
   const path = '/notifications';
@@ -792,7 +763,6 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
-  takeEvery(actionTypes.RESOURCE.REQUEST_LINE_GRAPH_DETAILS, requestLineGraphs),
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),

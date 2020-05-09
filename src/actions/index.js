@@ -138,6 +138,15 @@ const recycleBin = {
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
+const flowMetrics = {
+  request: (flowId, filters) =>
+    action(actionTypes.FLOW_METRICS.REQUEST, {
+      flowId,
+      filters,
+    }),
+
+  received: response => action(actionTypes.FLOW_METRICS.RECEIVED, { response }),
+};
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -229,10 +238,6 @@ const resource = {
       op,
       offset,
     }),
-  flows: {
-    requestLineGraphDetails: flowId =>
-      action(actionTypes.RESOURCE.REQUEST_LINE_GRAPH_DETAILS, { flowId }),
-  },
   connections: {
     pingAndUpdate: connectionId =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
@@ -1575,6 +1580,7 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  flowMetrics,
   job,
   flow,
   agent,

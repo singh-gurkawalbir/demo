@@ -75,7 +75,7 @@ export default function Recharts({ flowId }) {
 
   useEffect(() => {
     if (!flowData) {
-      dispatch(actions.resource.flows.requestLineGraphDetails(flowId));
+      dispatch(actions.flowMetrics.request(flowId, {}));
     }
   }, [dispatch, flowData, flowId]);
   const data = flowData || getRandomData(25);
