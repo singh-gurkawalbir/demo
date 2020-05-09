@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, Fragment } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -21,6 +22,12 @@ const useStyles = makeStyles(theme => ({
   },
   hide: {
     display: 'none',
+  },
+  loading: {
+    textAlign: 'center',
+    position: 'relative',
+    top: 100,
+    width: '100%',
   },
 }));
 
@@ -117,20 +124,24 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={requestOpenErrors} />
       {openErrors.length ? (
-        <Fragment>
-          <ErrorActions flowId={flowId} resourceId={resourceId} />
-        </Fragment>
+        <ErrorActions flowId={flowId} resourceId={resourceId} />
       ) : null}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      <ErrorTable
-        paginationOptions={paginationOptions}
-        metadata={metadata}
-        data={openErrors}
-        actionProps={actionProps}
-        emptyRowsLabel="No Open errors"
-      />
+      {(!status || status === 'requested') && !nextPageURL ? (
+        <div className={classes.loading}>
+          Loading Errors <Spinner size={20} />
+        </div>
+      ) : (
+        <ErrorTable
+          paginationOptions={paginationOptions}
+          metadata={metadata}
+          data={openErrors}
+          actionProps={actionProps}
+          emptyRowsLabel="No Open errors"
+        />
+      )}
     </div>
   );
 }

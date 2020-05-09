@@ -9,6 +9,7 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -18,6 +19,12 @@ const useStyles = makeStyles(theme => ({
   },
   hide: {
     display: 'none',
+  },
+  loading: {
+    textAlign: 'center',
+    position: 'relative',
+    top: 100,
+    width: '100%',
   },
 }));
 
@@ -126,13 +133,19 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      <ErrorTable
-        paginationOptions={paginationOptions}
-        metadata={metadata}
-        data={resolvedErrors}
-        actionProps={actionProps}
-        emptyRowsLabel="No Resolved errors"
-      />
+      {(!status || status === 'requested') && !nextPageURL ? (
+        <div className={classes.loading}>
+          Loading Errors <Spinner size={20} />
+        </div>
+      ) : (
+        <ErrorTable
+          paginationOptions={paginationOptions}
+          metadata={metadata}
+          data={resolvedErrors}
+          actionProps={actionProps}
+          emptyRowsLabel="No Resolved errors"
+        />
+      )}
     </div>
   );
 }
