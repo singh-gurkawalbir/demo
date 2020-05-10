@@ -3,17 +3,21 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import * as selectors from '../../reducers';
-import { getFlowMetricsQuery } from '../../utils/flowMetrics';
+import {
+  getFlowMetricsQuery,
+  parseFlowMetricsJson,
+} from '../../utils/flowMetrics';
+import { invokeProcessor } from '../editor';
 
 export function* requestFlowMetrics({ flowId, filters }) {
-  let response;
+  let csvResponse;
   const path = '/stats/tsdb';
   const user = yield select(selectors.userProfile);
   const query = getFlowMetricsQuery(flowId, user._id, filters);
   const body = { query };
 
   try {
-    response = yield call(apiCallWithRetry, {
+    csvResponse = yield call(apiCallWithRetry, {
       path,
       opts: {
         body,
@@ -25,8 +29,23 @@ export function* requestFlowMetrics({ flowId, filters }) {
     return undefined;
   }
 
-  if (response) {
-    yield put(actions.resource.requestCollection('notifications'));
+  if (csvResponse) {
+    const json = yield call(invokeProcessor, {
+      processor: 'csvParser',
+      body: {
+        rules: {
+          columnDelimiter: ',',
+          hasHeaderRow: true,
+          trimSpaces: true,
+          rowsToSkip: 0,
+        },
+        data: csvResponse,
+        options: { includeEmptyValues: true },
+      },
+    });
+    const parsedJson = parseFlowMetricsJson(json);
+
+    yield put(actions.flowMetrics.received(parsedJson));
   }
 }
 
