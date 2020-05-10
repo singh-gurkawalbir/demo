@@ -15,6 +15,8 @@ export default function reducer(state = {}, action) {
   } = action;
 
   return produce(state, draft => {
+    if (!resourceId) return;
+
     switch (type) {
       case actionTypes.EDITOR_SAMPLE_DATA.REQUEST:
         if (!draft[resourceId]) {
