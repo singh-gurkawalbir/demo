@@ -1,5 +1,5 @@
 import { useRouteMatch } from 'react-router-dom';
-import FlowAuditLog from '../../FlowAuditLog';
+import FlowAuditLog from '../../../FlowAuditLog';
 
 export default function AuditLog() {
   const match = useRouteMatch();

@@ -431,10 +431,10 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
-    if (!openFlowErrorsStatus && !newFlowId) {
+    if (!openFlowErrorsStatus && !isNewFlow) {
       dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
     }
-  }, [dispatch, flowId, newFlowId, openFlowErrorsStatus]);
+  }, [dispatch, flowId, isNewFlow, openFlowErrorsStatus]);
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
