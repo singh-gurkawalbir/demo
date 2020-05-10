@@ -14,6 +14,8 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import ConnectionsDrawer from './drawers/Connections';
+import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -23,6 +25,8 @@ import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
+import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
+import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
@@ -489,6 +493,8 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ConnectionsDrawer integrationId={integrationId} flowId={flowId} />
+      <AuditLogDrawer integrationId={integrationId} flowId={flowId} />
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
@@ -558,6 +564,18 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
+          <IconButton
+            disabled={isNewFlow}
+            onClick={() => handleDrawerOpen('connections')}
+            data-test="flowConnections">
+            <ConnectionsIcon />
+          </IconButton>
+          <IconButton
+            disabled={isNewFlow}
+            onClick={() => handleDrawerOpen('auditlog')}
+            data-test="flowAuditLog">
+            <AuditLogIcon />
+          </IconButton>
         </div>
       </CeligoPageBar>
       <div

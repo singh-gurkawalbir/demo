@@ -3471,6 +3471,12 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
+export function flowConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  return flowConnectionList(state, flow);
+}
+
 export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
   const exports = resourceList(state, {
