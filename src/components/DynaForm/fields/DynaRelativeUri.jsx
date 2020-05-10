@@ -24,7 +24,7 @@ const DynaRelativeUri = props => {
     id,
     onFieldChange,
     value,
-    editorTitle = 'Build Relative URI',
+    editorTitle = 'Build relative URI',
     resourceId,
     resourceType,
     connectionId,

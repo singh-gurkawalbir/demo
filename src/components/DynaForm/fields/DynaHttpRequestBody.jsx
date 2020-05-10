@@ -188,7 +188,7 @@ const DynaHttpRequestBody = props => {
       {showEditor && (
         <HttpRequestBodyEditorDialog
           contentType={contentType === 'json' ? 'json' : 'xml'}
-          title={title || 'Build HTTP Request Body'}
+          title={title || 'Build HTTP request body'}
           id={`${resourceId}-${id}`}
           rule={formattedRule}
           sampleRule={sampleRule}

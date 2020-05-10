@@ -11,7 +11,7 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build Data URI Template',
+    editorTitle: 'Build data URI template',
     refreshOptionsOnChangesTo: ['name'],
     connectionId: r => r && r._connectionId,
   },

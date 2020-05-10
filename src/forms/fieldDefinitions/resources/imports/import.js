@@ -51,7 +51,7 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Override data URI template',
-    editorTitle: 'Build Override Data URI Template',
+    editorTitle: 'Build override data URI template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },

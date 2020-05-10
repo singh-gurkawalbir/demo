@@ -323,7 +323,7 @@ export default {
         contentType: requestMediaTypeField.value,
         lookups: {
           // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
+          //  from 'Manage lookups' option inside 'Build HTTP request body Editor'
           fieldId: 'http.lookups',
           data:
             (lookupField &&
