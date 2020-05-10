@@ -13,13 +13,9 @@ export function* requestEditorSampleData({
   stage,
   fieldType,
   formValues,
+  isV2NotSupported,
   requestedTemplateVersion,
 }) {
-  const resource = yield call(constructResourceFromFormValues, {
-    formValues,
-    resourceId,
-    resourceType,
-  });
   let flowSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
@@ -44,23 +40,17 @@ export function* requestEditorSampleData({
     });
   }
 
-  if (!resource) {
-    yield put(
-      actions.editorSampleData.receivedError({
-        resourceId,
-        flowId,
-        fieldType,
-      })
+  let isEditorV2Supported;
+
+  if (isV2NotSupported) {
+    isEditorV2Supported = false;
+  } else {
+    isEditorV2Supported = yield select(
+      selectors.isEditorV2Supported,
+      resourceId,
+      resourceType
     );
-
-    return;
   }
-
-  const isEditorV2Supported = yield select(
-    selectors.isEditorV2Supported,
-    resourceId,
-    resourceType
-  );
 
   if (!isEditorV2Supported) {
     const _sampleData = {
@@ -80,6 +70,11 @@ export function* requestEditorSampleData({
 
     // call diff action to render old sample data
   } else {
+    const resource = yield call(constructResourceFromFormValues, {
+      formValues,
+      resourceId,
+      resourceType,
+    });
     const body = {
       sampleData: flowSampleData.data || { myField: 'sample' },
       templateVersion: requestedTemplateVersion,

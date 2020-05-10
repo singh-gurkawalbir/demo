@@ -133,7 +133,6 @@ export default {
     connectionId: r => r && r._connectionId,
     defaultValue: r =>
       r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
-    refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -192,7 +191,6 @@ export default {
     label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
-    refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
         field: 'rest.method',

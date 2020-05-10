@@ -1,5 +1,5 @@
-import DynaRelativeUri from './DynaRelativeUri';
+import DynaURI from './DynaURI';
 
 export default function DynaDataURITemplate(props) {
-  return <DynaRelativeUri {...props} showLookup={false} />;
+  return <DynaURI {...props} showLookup={false} />;
 }

@@ -64,9 +64,9 @@ export default function ManageLookup(props) {
     if (resource.adaptorType === 'NetSuiteImport') {
       if (formVal._mode === 'dynamic') {
         lookupTmp.extract = formVal._extract;
-        lookupTmp.recordType = formVal.recordType;
-        lookupTmp.resultField = formVal.resultField;
-        lookupTmp.expression = formVal.lookupExpression;
+        lookupTmp.recordType = formVal._recordType;
+        lookupTmp.resultField = formVal._resultField;
+        lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
         formVal._mapList.forEach(obj => {
@@ -77,10 +77,10 @@ export default function ManageLookup(props) {
       lookupObj = lookupTmp;
     } else if (resource.adaptorType === 'SalesforceImport') {
       if (formVal._mode === 'dynamic') {
-        lookupTmp.whereClause = formVal.whereClause;
-        lookupTmp.sObjectType = formVal.sObjectType;
-        lookupTmp.resultField = formVal.resultField;
-        lookupTmp.expression = formVal.lookupExpression;
+        lookupTmp.whereClause = formVal._whereClause;
+        lookupTmp.sObjectType = formVal._sObjectType;
+        lookupTmp.resultField = formVal._resultField;
+        lookupTmp.expression = formVal._expression;
       } else {
         lookupTmp.map = {};
         formVal._mapList.forEach(obj => {
@@ -90,20 +90,20 @@ export default function ManageLookup(props) {
 
       lookupObj = lookupTmp;
     } else {
-      if (formVal.mode === 'static') {
+      if (formVal._mode === 'static') {
         lookupObj.map = {};
-        formVal.mapList.forEach(obj => {
+        formVal._mapList.forEach(obj => {
           lookupObj.map[obj.export] = obj.import;
         });
       } else {
-        lookupObj.query = formVal.query;
-        lookupObj.method = formVal.method;
-        lookupObj.relativeURI = formVal.relativeURI;
-        lookupObj.body = formVal.body;
-        lookupObj.extract = formVal.extract;
+        lookupObj.query = formVal._query;
+        lookupObj.method = formVal._method;
+        lookupObj.relativeURI = formVal._relativeURI;
+        lookupObj.body = formVal._body;
+        lookupObj.extract = formVal._extract;
       }
 
-      switch (formVal.failRecord) {
+      switch (formVal._failRecord) {
         case 'disallowFailure':
           lookupObj.allowFailures = false;
           delete lookupObj.default;
@@ -118,12 +118,12 @@ export default function ManageLookup(props) {
           break;
         case 'default':
           lookupObj.allowFailures = true;
-          lookupObj.default = formVal.default;
+          lookupObj.default = formVal._default;
           break;
         default:
       }
 
-      lookupObj.name = formVal.name;
+      lookupObj.name = formVal._name;
     }
 
     onSave(isEdit, lookupObj);

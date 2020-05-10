@@ -1556,6 +1556,7 @@ const editorSampleData = {
     formValues,
     fieldType,
     requestedTemplateVersion,
+    isV2NotSupported,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
@@ -1565,6 +1566,7 @@ const editorSampleData = {
       formValues,
       fieldType,
       requestedTemplateVersion,
+      isV2NotSupported,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {

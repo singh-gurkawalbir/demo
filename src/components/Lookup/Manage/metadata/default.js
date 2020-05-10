@@ -23,9 +23,9 @@ const getLookupMetadata = ({
 }) => {
   const fieldMeta = {
     fieldMap: {
-      mode: {
-        id: 'mode',
-        name: 'mode',
+      _mode: {
+        id: '_mode',
+        name: '_mode',
         type: 'radiogroup',
         label: '',
         defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
@@ -38,9 +38,9 @@ const getLookupMetadata = ({
           },
         ],
       },
-      relativeURI: {
-        id: 'relativeURI',
-        name: 'relativeURI',
+      _relativeURI: {
+        id: '_relativeURI',
+        name: '_relativeURI',
         type: 'relativeuri',
         enableEditorV2: false,
         showLookup: false,
@@ -53,14 +53,14 @@ const getLookupMetadata = ({
         defaultValue: lookup.relativeURI,
         visibleWhen: [
           {
-            field: 'mode',
+            field: '_mode',
             is: ['dynamic'],
           },
         ],
       },
-      method: {
-        id: 'method',
-        name: 'method',
+      _method: {
+        id: '_method',
+        name: '_method',
         type: 'select',
         label: 'HTTP Method',
         defaultValue: lookup.method,
@@ -81,51 +81,51 @@ const getLookupMetadata = ({
         ],
         visibleWhen: [
           {
-            field: 'mode',
+            field: '_mode',
             is: ['dynamic'],
           },
         ],
       },
-      body: {
-        id: 'body',
-        name: 'body',
+      _body: {
+        id: '_body',
+        name: '_body',
         type: 'httprequestbody',
         enableEditorV2: false,
         connectionId,
         resourceId,
         resourceType,
         flowId,
-        label: 'Build HTTP request body',
+        label: 'Build HTTP Request Body',
         defaultValue: lookup.body,
         visibleWhenAll: [
           {
-            field: 'mode',
+            field: '_mode',
             is: ['dynamic'],
           },
           {
-            field: 'method',
+            field: '_method',
             is: ['POST'],
           },
         ],
       },
-      extract: {
-        id: 'extract',
-        name: 'extract',
+      _extract: {
+        id: '_extract',
+        name: '_extract',
         type: 'text',
         label: 'Resource Identifier Path',
         placeholder: 'Resource Identifier Path',
         defaultValue: lookup.extract,
         visibleWhen: [
           {
-            field: 'mode',
+            field: '_mode',
             is: ['dynamic'],
           },
         ],
       },
 
-      mapList: {
-        id: 'mapList',
-        name: 'mapList',
+      _mapList: {
+        id: '_mapList',
+        name: '_mapList',
         type: 'staticMap',
         label: '',
         keyName: 'export',
@@ -135,14 +135,14 @@ const getLookupMetadata = ({
         map: lookup && lookup.map,
         visibleWhen: [
           {
-            field: 'mode',
+            field: '_mode',
             is: ['static'],
           },
         ],
       },
-      name: {
-        id: 'name',
-        name: 'name',
+      _name: {
+        id: '_name',
+        name: '_name',
         type: 'text',
         label: 'Name',
         defaultValue: lookup.name,
@@ -150,9 +150,9 @@ const getLookupMetadata = ({
         helpText:
           'Name of the lookups that will be exposed to the mapping to refer.',
       },
-      failRecord: {
-        id: 'failRecord',
-        name: 'failRecord',
+      _failRecord: {
+        id: '_failRecord',
+        name: '_failRecord',
         type: 'radiogroup',
         label: 'Action to take if unique match not found',
         showOptionsVertically: true,
@@ -180,16 +180,16 @@ const getLookupMetadata = ({
           },
         ],
       },
-      default: {
-        id: 'default',
-        name: 'default',
+      _default: {
+        id: '_default',
+        name: '_default',
         type: 'text',
         label: 'Enter Default Value',
         defaultValue: lookup.default,
         placeholder: 'Enter Default Value',
         visibleWhen: [
           {
-            field: 'failRecord',
+            field: '_failRecord',
             is: ['default'],
           },
         ],
@@ -197,15 +197,15 @@ const getLookupMetadata = ({
     },
     layout: {
       fields: [
-        'mode',
-        'relativeURI',
-        'method',
-        'body',
-        'extract',
-        'mapList',
-        'name',
-        'failRecord',
-        'default',
+        '_mode',
+        '_relativeURI',
+        '_method',
+        '_body',
+        '_extract',
+        '_mapList',
+        '_name',
+        '_failRecord',
+        '_default',
       ],
     },
   };
@@ -213,20 +213,20 @@ const getLookupMetadata = ({
   if (showDynamicLookupOnly) {
     const { fieldMap, layout } = fieldMeta;
 
-    delete fieldMap.relativeURI.visibleWhen;
-    delete fieldMap.method.visibleWhen;
-    delete fieldMap.body.visibleWhenAll;
-    delete fieldMap.extract.visibleWhen;
-    delete fieldMeta.fieldMap.mode;
-    delete fieldMeta.fieldMap.mapList;
-    fieldMap.body.visibleWhen = [
+    delete fieldMap._relativeURI.visibleWhen;
+    delete fieldMap._method.visibleWhen;
+    delete fieldMap._body.visibleWhenAll;
+    delete fieldMap._extract.visibleWhen;
+    delete fieldMeta.fieldMap._mode;
+    delete fieldMeta.fieldMap._mapList;
+    fieldMap._body.visibleWhen = [
       {
-        field: 'method',
+        field: '_method',
         is: ['POST'],
       },
     ];
     layout.fields = layout.fields.filter(
-      el => el !== 'mode' && el !== 'mapList'
+      el => el !== '_mode' && el !== '_mapList'
     );
   }
 

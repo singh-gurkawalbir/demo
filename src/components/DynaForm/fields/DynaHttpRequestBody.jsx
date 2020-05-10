@@ -11,6 +11,7 @@ import {
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
 import actions from '../../../actions';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import lookupUtil from '../../../utils/lookup';
 
 const ManageLookup = props => {
   const {
@@ -54,11 +55,18 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     enableEditorV2 = true,
   } = props;
-  const { lookups: _lookupObj = {} } = options;
-  const { fieldId: lookupFieldId, data: lookups } = _lookupObj;
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
+  const adaptorType = useSelector(state => {
+    const { merged: resourceData = {} } = selectors.resourceData(
+      state,
+      'imports',
+      resourceId
+    );
+
+    return resourceData && resourceData.adaptorType;
+  });
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
@@ -80,7 +88,7 @@ const DynaHttpRequestBody = props => {
       fieldType: id,
     })
   );
-  const sampleRule = useMemo(() => {
+  const defaultRule = useMemo(() => {
     if (templateVersion === 1) {
       // load sample template when rule is not yet defined
       if (contentType === 'json')
@@ -101,7 +109,10 @@ const DynaHttpRequestBody = props => {
 
     return rule;
   }, [arrayIndex, contentType, sampleData, templateVersion, value]);
+  const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const action = useMemo(() => {
+    const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+
     if (!lookupFieldId) return;
 
     return ManageLookup({
@@ -114,9 +125,9 @@ const DynaHttpRequestBody = props => {
       connectionId,
     });
   }, [
+    adaptorType,
     connectionId,
     flowId,
-    lookupFieldId,
     lookups,
     onFieldChange,
     resourceId,
@@ -132,7 +143,8 @@ const DynaHttpRequestBody = props => {
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: id,
-          requestedTemplateVersion: enableEditorV2 ? version : 1,
+          isV2NotSupported: !enableEditorV2,
+          requestedTemplateVersion: version,
         })
       );
     },
@@ -191,7 +203,7 @@ const DynaHttpRequestBody = props => {
           title={title || 'Build HTTP request body'}
           id={`${resourceId}-${id}`}
           rule={formattedRule}
-          sampleRule={sampleRule}
+          defaultRule={defaultRule}
           onFieldChange={onFieldChange}
           isSampleDataLoading={sampleDataRequestStatus === 'requested'}
           lookups={lookups}

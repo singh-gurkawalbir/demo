@@ -25,7 +25,6 @@ export default function HandlebarsEditor(props) {
     error,
     autoEvaluate,
     isSampleDataLoading,
-    sampleRule,
   } = useSelector(state => selectors.editor(state, editorId));
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -71,10 +70,9 @@ export default function HandlebarsEditor(props) {
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluateDelay: 500,
-        template: props.rule,
-        data: props.data,
+        template: props.rule ? props.rule : props.defaultRule,
         initTemplate: props.rule,
-        sampleRule: props.sampleRule,
+        data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
       })
     );
@@ -84,9 +82,9 @@ export default function HandlebarsEditor(props) {
     dispatch,
     editorId,
     props.data,
+    props.defaultRule,
     props.isSampleDataLoading,
     props.rule,
-    props.sampleRule,
     props.strict,
   ]);
   const handlePreview = () => {
@@ -119,7 +117,7 @@ export default function HandlebarsEditor(props) {
       dataTitle="Resources available in your template."
       resultTitle={resultTitle}
       violations={violations}
-      rule={template === undefined ? sampleRule : template}
+      rule={template}
       data={data}
       result={result ? result.data : ''}
       error={error}

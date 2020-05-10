@@ -228,7 +228,6 @@ export default {
       },
     },
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['name'],
   },
   'rest.successPath': {
     type: 'text',

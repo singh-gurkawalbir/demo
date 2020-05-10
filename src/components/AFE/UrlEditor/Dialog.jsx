@@ -1,5 +1,5 @@
-import EditorDialog from '../EditorDialog';
 import UrlEditor from './';
+import HanldebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function UrlEditorDialog(props) {
   const { id, rule, lookups = [], data, disabled, ...rest } = props;
@@ -11,7 +11,7 @@ export default function UrlEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <HanldebarEditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -24,6 +24,6 @@ export default function UrlEditorDialog(props) {
         rule={rule}
         data={data}
       />
-    </EditorDialog>
+    </HanldebarEditorDialog>
   );
 }

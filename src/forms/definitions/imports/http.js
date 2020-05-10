@@ -313,24 +313,8 @@ export default {
         }
       });
 
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
       return {
-        resourceName: nameField && nameField.value,
         contentType: requestMediaTypeField.value,
-        lookups: {
-          // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'Build HTTP request body Editor'
-          fieldId: 'http.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
       };
     }
 
@@ -592,11 +576,7 @@ export default {
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: [
-        'http.lookups',
-        'http.requestMediaType',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1131,11 +1111,7 @@ export default {
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: [
-        'http.lookups',
-        'http.requestMediaType',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1444,11 +1420,7 @@ export default {
     },
     'http.body': {
       fieldId: 'http.body',
-      refreshOptionsOnChangesTo: [
-        'http.requestMediaType',
-        'http.lookups',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
     },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },

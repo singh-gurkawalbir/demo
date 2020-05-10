@@ -22,8 +22,8 @@ export default {
   }) => {
     const fieldMeta = {
       fieldMap: {
-        'lookup.mode': {
-          id: 'lookup.mode',
+        _mode: {
+          id: '_mode',
           name: '_mode',
           type: 'radiogroup',
           label: '',
@@ -39,9 +39,9 @@ export default {
             },
           ],
         },
-        'lookup.recordType': {
-          id: 'lookup.recordType',
-          name: 'recordType',
+        _recordType: {
+          id: '_recordType',
+          name: '_recordType',
           filterKey: 'suitescript-recordTypes',
           commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
           defaultValue: lookup.recordType,
@@ -49,46 +49,45 @@ export default {
           label: 'Search Record Type',
           connectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
-          visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
+          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
         },
-        'lookup.expression': {
-          id: 'lookup.expression',
-          name: 'lookupExpression',
+        _expression: {
+          id: '_expression',
+          name: '_expression',
           type: 'netsuitelookupfilters',
           label: 'NS Filters',
           connectionId,
-          refreshOptionsOnChangesTo: ['lookup.recordType'],
-          visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
+          refreshOptionsOnChangesTo: ['_recordType'],
+          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
           value: lookup.expression,
           data: extractFields,
         },
-        'lookup.expressionText': {
-          id: 'lookup.expressionText',
-          name: 'expressionText',
+        _expressionText: {
+          id: '_expressionText',
+          name: '_expressionText',
           type: 'text',
           label: 'Lookup Filter Expression',
           multiline: true,
           disableText: true,
-          refreshOptionsOnChangesTo: ['lookup.expression'],
-          visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
+          refreshOptionsOnChangesTo: ['_expression'],
+          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
         },
-        'lookup.resultField': {
-          id: 'lookup.resultField',
-          name: 'resultField',
+        _resultField: {
+          id: '_resultField',
+          name: '_resultField',
           type: 'refreshableselect',
           label: 'Value Field',
           defaultValue: lookup.resultField,
-
           savedRecordType: lookup.recordType,
           connectionId,
-          refreshOptionsOnChangesTo: ['lookup.recordType'],
+          refreshOptionsOnChangesTo: ['_recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
-          visibleWhenAll: [{ field: 'lookup.mode', is: ['dynamic'] }],
+          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
         },
-        'lookup.mapList': {
-          id: 'lookup.mapList',
+        _mapList: {
+          id: '_mapList',
           name: '_mapList',
           type: 'staticMap',
           valueLabel: 'Import Field (NetSuite)',
@@ -112,36 +111,36 @@ export default {
               import: lookup.map[key],
             })),
           map: lookup.map,
-          visibleWhenAll: [{ field: 'lookup.mode', is: ['static'] }],
+          visibleWhenAll: [{ field: '_mode', is: ['static'] }],
         },
       },
       layout: {
         fields: [
-          'lookup.mode',
-          'lookup.recordType',
-          'lookup.expression',
-          'lookup.expressionText',
-          'lookup.resultField',
-          'lookup.mapList',
+          '_mode',
+          '_recordType',
+          '_expression',
+          '_expressionText',
+          '_resultField',
+          '_mapList',
         ],
       },
       optionsHandler: (fieldId, fields) => {
-        if (fieldId === 'lookup.recordType') {
+        if (fieldId === '_recordType') {
           return {
             resourceToFetch: 'recordTypes',
           };
-        } else if (fieldId === 'lookup.expressionText') {
-          const lookupExpressionField = fields.find(
-            field => field.id === 'lookup.expression'
+        } else if (fieldId === '_expressionText') {
+          const expressionField = fields.find(
+            field => field.id === '_expression'
           );
-          const lookupExpressionTextField = fields.find(
-            field => field.id === 'lookup.expressionText'
+          const expressionTextField = fields.find(
+            field => field.id === '_expressionText'
           );
 
-          lookupExpressionTextField.value = lookupExpressionField.value;
-        } else if (fieldId === 'lookup.expression') {
+          expressionTextField.value = expressionField.value;
+        } else if (fieldId === '_expression') {
           const recordTypeField = fields.find(
-            field => field.id === 'lookup.recordType'
+            field => field.id === '_recordType'
           );
 
           return {
@@ -150,14 +149,12 @@ export default {
               ? `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
               : '',
           };
-        } else if (fieldId === 'lookup.resultField') {
+        } else if (fieldId === '_resultField') {
           const recordTypeField = fields.find(
-            field => field.id === 'lookup.recordType'
+            field => field.id === '_recordType'
           );
           const recordType = recordTypeField.value;
-          const resultField = fields.find(
-            field => field.id === 'lookup.resultField'
-          );
+          const resultField = fields.find(field => field.id === '_resultField');
 
           if (resultField.savedRecordType !== recordType) {
             resultField.savedRecordType = recordType;
