@@ -6,7 +6,7 @@ export default function ManageLookupDialog(props) {
 
   return (
     <ModalDialog show onClose={onClose} key={id}>
-      <div>Add Lookup</div>
+      <div>Add lookup</div>
       <div>
         <ManageLookup {...props} />
       </div>

@@ -32,8 +32,8 @@ const getLookupMetadata = ({
         options: [
           {
             items: [
-              { label: 'Dynamic Search', value: 'dynamic' },
-              { label: 'Static: Value to Value', value: 'static' },
+              { label: 'Dynamic search', value: 'dynamic' },
+              { label: 'Static: value to value', value: 'static' },
             ],
           },
         ],
@@ -62,11 +62,11 @@ const getLookupMetadata = ({
         id: '_method',
         name: '_method',
         type: 'select',
-        label: 'HTTP Method',
+        label: 'HTTP method',
         defaultValue: lookup.method,
         options: [
           {
-            heading: 'Select Http Method',
+            heading: 'Select HTTP method',
             items: [
               {
                 label: 'GET',
@@ -95,7 +95,7 @@ const getLookupMetadata = ({
         resourceId,
         resourceType,
         flowId,
-        label: 'Build HTTP Request Body',
+        label: 'Build HTTP request body',
         defaultValue: lookup.body,
         visibleWhenAll: [
           {
@@ -112,8 +112,8 @@ const getLookupMetadata = ({
         id: '_extract',
         name: '_extract',
         type: 'text',
-        label: 'Resource Identifier Path',
-        placeholder: 'Resource Identifier Path',
+        label: 'Resource identifier path',
+        placeholder: 'Resource identifier path',
         defaultValue: lookup.extract,
         visibleWhen: [
           {
@@ -129,9 +129,9 @@ const getLookupMetadata = ({
         type: 'staticMap',
         label: '',
         keyName: 'export',
-        keyLabel: 'Export Field',
+        keyLabel: 'Export field',
         valueName: 'import',
-        valueLabel: 'Import Field (HTTP)',
+        valueLabel: 'Import field (HTTP)',
         map: lookup && lookup.map,
         visibleWhen: [
           {
@@ -161,19 +161,19 @@ const getLookupMetadata = ({
           {
             items: [
               {
-                label: 'Fail Record',
+                label: 'Fail record',
                 value: 'disallowFailure',
               },
               {
-                label: 'Use Empty String as Default Value',
+                label: 'Use empty string as default value',
                 value: 'useEmptyString',
               },
               {
-                label: 'Use Null as Default Value',
+                label: 'Use null as default value',
                 value: 'useNull',
               },
               {
-                label: 'Use Custom Default Value',
+                label: 'Use custom default value',
                 value: 'default',
               },
             ],
@@ -184,9 +184,9 @@ const getLookupMetadata = ({
         id: '_default',
         name: '_default',
         type: 'text',
-        label: 'Enter Default Value',
+        label: 'Enter default value',
         defaultValue: lookup.default,
-        placeholder: 'Enter Default Value',
+        placeholder: 'Enter default value',
         visibleWhen: [
           {
             field: '_failRecord',

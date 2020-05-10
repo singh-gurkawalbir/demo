@@ -162,7 +162,6 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
-          label: 'Build HTTP request body',
           defaultValue: lookup.body || '',
           // helpText not present
           visibleWhenAll: [

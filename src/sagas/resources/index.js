@@ -266,18 +266,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
     yield put(
       actions.resource.updated(resourceType, updated._id, master, patch)
     );
-
-    // clear sample data V2
-    if (['flows', 'imports', 'exports'].includes(resourceType)) {
-      const options =
-        resourceType === 'flows'
-          ? { flowId: updated._id }
-          : {
-              resourceId: updated._id,
-            };
-
-      yield put(actions.editorSampleData.clear(options));
-    }
   }
 
   if (options && options.action === 'flowEnableDisable') {

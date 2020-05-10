@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { constructResourceFromFormValues } from '../sampleData';
+import { isNewId } from '../../utils/resource';
 
 export function* requestEditorSampleData({
   flowId,
@@ -120,6 +121,24 @@ export function* requestEditorSampleData({
   }
 }
 
+export function* clearEditorSampleData({ resourceType, id }) {
+  const isNew = isNewId(id);
+
+  if (!isNew) {
+    if (['flows', 'imports', 'exports'].includes(resourceType)) {
+      const options =
+        resourceType === 'flows'
+          ? { flowId: id }
+          : {
+              resourceId: id,
+            };
+
+      yield put(actions.editorSampleData.clear(options));
+    }
+  }
+}
+
 export default [
   takeEvery(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, requestEditorSampleData),
+  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, clearEditorSampleData),
 ];

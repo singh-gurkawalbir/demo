@@ -20,8 +20,8 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: Salesforce Search', value: 'dynamic' },
-                { label: 'Static: Value to Value', value: 'static' },
+                { label: 'Dynamic: Salesforce search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
@@ -33,7 +33,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject Type',
+          label: 'SObject type',
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
@@ -53,7 +53,7 @@ export default {
         _whereClauseText: {
           id: '_whereClauseText',
           name: '_whereClauseText',
-          label: 'Where Clause',
+          label: 'Where clause',
           type: 'text',
           multiline: true,
           disableText: true,
@@ -80,9 +80,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export Field',
+          keyLabel: 'Export field',
           valueName: 'import',
-          valueLabel: 'Import Field (Salesforce)',
+          valueLabel: 'Import field (Salesforce)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
