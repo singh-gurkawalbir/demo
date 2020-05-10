@@ -1,12 +1,9 @@
 import { useRouteMatch } from 'react-router-dom';
+import FlowAuditLog from '../../FlowAuditLog';
 
-export default function AuditLog({ flowId }) {
+export default function AuditLog() {
   const match = useRouteMatch();
   const { connectionId } = match.params;
 
-  return (
-    <div>
-      Connections audit log {flowId} {connectionId}
-    </div>
-  );
+  return <FlowAuditLog resourceId={connectionId} resourceType="connections" />;
 }

@@ -34,7 +34,7 @@ export default function FlowConnections({ flowId }) {
         path=":connectionId/auditlog"
         width="medium"
         title="Flow Audit log">
-        <AuditLog flowId={flowId} />
+        <AuditLog />
       </RightDrawer>
     </Fragment>
   );

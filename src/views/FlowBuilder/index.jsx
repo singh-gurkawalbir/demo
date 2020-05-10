@@ -493,8 +493,8 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
-      <ConnectionsDrawer integrationId={integrationId} flowId={flowId} />
-      <AuditLogDrawer integrationId={integrationId} flowId={flowId} />
+      <ConnectionsDrawer flowId={flowId} />
+      <AuditLogDrawer flowId={flowId} />
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
