@@ -11,14 +11,10 @@ import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
-    borderStyle: 'solid',
-    borderWidth: '1px 0',
-    // backgroundColor: theme.palette.background.paper2,
-    borderColor: 'rgb(0,0,0,0.1)',
-    // minHeight: '30vh',
     maxHeight: `100%`,
     overflowY: 'auto',
     padding: theme.spacing(1),
+    border: 'none',
   },
   details: {
     display: 'block',

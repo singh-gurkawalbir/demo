@@ -16,6 +16,10 @@ export default function reducer(state = {}, action) {
         break;
 
       case actionTypes.CUSTOM_SETTINGS.FORM_RECEIVED:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+
         draft[resourceId].status = 'received';
         draft[resourceId].meta = formMeta;
         draft[resourceId].scriptId = scriptId;
@@ -32,11 +36,7 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.RESOURCE.UPDATED:
         // console.log(patch);
-        formPatches = patch.filter(
-          patch =>
-            // removed /settings path from filter as this condition will be taken care by formClear action
-            patch.path === '/settingsForm' /* || patch.path === '/settings' */
-        );
+        formPatches = patch.filter(patch => patch.path === '/settingsForm');
 
         scriptPatches = patch.filter(patch => patch.path === '/content');
 
@@ -63,7 +63,7 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function customSettingsStatus(state, resourceId) {
+export function customSettingsForm(state, resourceId) {
   if (!state) {
     return undefined;
   }
