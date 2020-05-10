@@ -7,7 +7,10 @@ export default function ConnectionsDrawer() {
   const { flowId } = match.params;
 
   return (
-    <RightDrawer path="connections" width="medium" title="Flow connections">
+    <RightDrawer
+      path="connections"
+      width="medium"
+      title="Connections used by this flow ">
       <FlowConnections flowId={flowId} />
     </RightDrawer>
   );
