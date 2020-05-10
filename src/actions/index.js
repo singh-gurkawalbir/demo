@@ -1574,8 +1574,8 @@ const editorSampleData = {
       sampleData,
       templateVersion,
     }),
-  failed: ({ flowId, resourceId, fieldType }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
+  receivedError: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR, {
       resourceId,
       flowId,
       fieldType,

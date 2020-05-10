@@ -103,12 +103,11 @@ export function getXMLSampleTemplate(data) {
   toReturn += '{{#each data}}\n';
 
   if (data) {
-    const eFields =
-      data && Array.isArray(data)
-        ? getJSONPaths(data[0], null, {
-            wrapSpecialChars: true,
-          })
-        : [];
+    const eFields = Array.isArray(data)
+      ? getJSONPaths(data[0], null, {
+          wrapSpecialChars: true,
+        })
+      : [];
 
     if (Array.isArray(data) && Array.isArray(data[0])) {
       toReturn += '  <record id="{{this.0.id}}">\n';

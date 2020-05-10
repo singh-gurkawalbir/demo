@@ -22,7 +22,6 @@ import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
-import TextToggle from '../../TextToggle';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
@@ -64,10 +63,6 @@ const useStyles = makeStyles(theme => ({
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
  */
-const toggleEditorOptions = [
-  { label: 'AFE 1.0', value: 1 },
-  { label: 'AFE 2.0', value: 2 },
-];
 
 export default function EditorDialog(props) {
   const {
@@ -85,9 +80,7 @@ export default function EditorDialog(props) {
     dataTest = 'editor',
     hidePreviewAction = false,
     patchOnSave = false,
-    showVersionToggle,
-    onVersionToggle,
-    editorVersion,
+    toggleAction,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -192,32 +185,20 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
-          <div>
-            <DynaCheckbox
-              disabled={disabled}
-              id="disableAutoPreview"
-              onFieldChange={handleAutoPreviewToggle}
-              label="Enable auto-preview"
-              value={!!editor.autoEvaluate}
-            />
-          </div>
+          <DynaCheckbox
+            disabled={disabled}
+            id="disableAutoPreview"
+            onFieldChange={handleAutoPreviewToggle}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
           {action}
         </div>
         <div className={classes.toggleContainer}>
-          {showVersionToggle && (
-            <div className={classes.editorToggleContainer}>
-              <TextToggle
-                disabled={disabled}
-                value={editorVersion}
-                onChange={onVersionToggle}
-                exclusive
-                options={toggleEditorOptions}
-              />
-            </div>
-          )}
+          {toggleAction}
           {showLayoutOptions && (
             <ToggleButtonGroup
               value={layout}

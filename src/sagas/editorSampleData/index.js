@@ -46,7 +46,7 @@ export function* requestEditorSampleData({
 
   if (!resource) {
     yield put(
-      actions.editorSampleData.failed({
+      actions.editorSampleData.receivedError({
         resourceId,
         flowId,
         fieldType,
@@ -115,7 +115,7 @@ export function* requestEditorSampleData({
       );
     } else {
       yield put(
-        actions.editorSampleData.failed({
+        actions.editorSampleData.receivedError({
           resourceId,
           flowId,
           fieldType,

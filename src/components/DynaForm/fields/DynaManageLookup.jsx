@@ -30,20 +30,19 @@ const useStyles = makeStyles({
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
-export default function DynaManageLookup(props) {
+export default function DynaManageLookup({
+  id,
+  isEdit = false,
+  onSelect,
+  label,
+  onSave,
+  showDynamicLookupOnly = false,
+  value = {},
+  options = {},
+  onClick,
+}) {
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
-  const {
-    id,
-    isEdit = false,
-    onSelect,
-    label,
-    onSave,
-    showDynamicLookupOnly = false,
-    value = {},
-    options = {},
-    onClick,
-  } = props;
   const handleEditorClick = () => {
     if (onClick) onClick(!showLookup);
     setShowLookup(!showLookup);

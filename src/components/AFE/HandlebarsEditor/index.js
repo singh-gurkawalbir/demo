@@ -17,9 +17,16 @@ export default function HandlebarsEditor(props) {
     enableAutocomplete,
     lookups = [],
   } = props;
-  const { template, data, result, error, autoEvaluate } = useSelector(state =>
-    selectors.editor(state, editorId)
-  );
+  const dispatch = useDispatch();
+  const {
+    template,
+    data,
+    result,
+    error,
+    autoEvaluate,
+    isSampleDataLoading,
+    sampleRule,
+  } = useSelector(state => selectors.editor(state, editorId));
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -34,7 +41,23 @@ export default function HandlebarsEditor(props) {
   useEffect(() => {
     completers.handleBarsCompleters.setJsonCompleter(data);
   }, [data]);
-  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      actions.editor.patch(editorId, {
+        sampleRule: props.sampleRule,
+      })
+    );
+  }, [dispatch, editorId, props.sampleRule]);
+
+  useEffect(() => {
+    if (props.isSampleDataLoading !== isSampleDataLoading) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          isSampleDataLoading: props.isSampleDataLoading,
+        })
+      );
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
   const handleRuleChange = rule => {
     dispatch(actions.editor.patch(editorId, { template: rule }));
   };
@@ -51,11 +74,21 @@ export default function HandlebarsEditor(props) {
         template: props.rule,
         data: props.data,
         initTemplate: props.rule,
+        sampleRule: props.sampleRule,
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch, editorId, props.data, props.rule, props.strict]);
+  }, [
+    dispatch,
+    editorId,
+    props.data,
+    props.isSampleDataLoading,
+    props.rule,
+    props.sampleRule,
+    props.strict,
+  ]);
   const handlePreview = () => {
     dispatch(actions.editor.evaluateRequest(editorId));
   };
@@ -86,11 +119,12 @@ export default function HandlebarsEditor(props) {
       dataTitle="Resources available in your template."
       resultTitle={resultTitle}
       violations={violations}
-      rule={template}
+      rule={template === undefined ? sampleRule : template}
       data={data}
       result={result ? result.data : ''}
       error={error}
       enableAutocomplete={enableAutocomplete}
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }

@@ -1,5 +1,5 @@
-import EditorDialog from '../EditorDialog';
 import HttpRequestBodyEditor from './';
+import HanldebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function HttpRequestBodyDialog(props) {
   const {
@@ -9,6 +9,9 @@ export default function HttpRequestBodyDialog(props) {
     contentType,
     lookups = [],
     disabled,
+    sampleRule,
+    isSampleDataLoading,
+    editorVersion,
     ...rest
   } = props;
   const defaults = {
@@ -19,15 +22,23 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest} disabled={disabled}>
+    <HanldebarEditorDialog
+      id={id}
+      {...defaults}
+      {...rest}
+      disabled={disabled}
+      editorVersion={editorVersion}>
       <HttpRequestBodyEditor
         contentType={contentType}
         editorId={id}
         lookups={lookups}
         rule={rule}
         data={data}
+        sampleRule={sampleRule}
+        isSampleDataLoading={isSampleDataLoading}
+        editorVersion={editorVersion}
         disabled={disabled}
       />
-    </EditorDialog>
+    </HanldebarEditorDialog>
   );
 }

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prettier/prettier */
 import { useState, useCallback, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
@@ -14,9 +12,9 @@ import {
 import actions from '../../../actions';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
-const ManageLookup = (props) => {
+const ManageLookup = props => {
   const {
-    label = 'Manage Lookups',
+    label = 'Manage lookups',
     lookupFieldId,
     value,
     onFieldChange,
@@ -40,7 +38,7 @@ const ManageLookup = (props) => {
   );
 };
 
-const DynaHttpRequestBody = (props) => {
+const DynaHttpRequestBody = props => {
   const {
     id,
     formContext,
@@ -61,23 +59,36 @@ const DynaHttpRequestBody = (props) => {
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
-  const isPageGenerator = useSelector((state) =>
+  const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const isEditorV2Supported = useSelector((state) => {
+  const isEditorV2Supported = useSelector(state => {
     if (enableEditorV2) {
       return selectors.isEditorV2Supported(state, resourceId, resourceType);
     }
 
     return false;
   });
-  const { data: sampleData, templateVersion } = useSelector((state) =>
+  const {
+    data: sampleData,
+    status: sampleDataRequestStatus,
+    templateVersion,
+  } = useSelector(state =>
     selectors.getEditorSampleData(state, {
       flowId,
       resourceId,
       fieldType: id,
     })
   );
+  const sampleRule = useMemo(() => {
+    if (templateVersion === 1) {
+      // load sample template when rule is not yet defined
+      if (contentType === 'json')
+        return getJSONSampleTemplate((sampleData && sampleData.data) || []);
+
+      return getXMLSampleTemplate((sampleData && sampleData.data) || []);
+    }
+  }, [contentType, sampleData, templateVersion]);
   const formattedRule = useMemo(() => {
     let rule = Array.isArray(value) ? value[arrayIndex] : value;
 
@@ -94,7 +105,6 @@ const DynaHttpRequestBody = (props) => {
     if (!lookupFieldId) return;
 
     return ManageLookup({
-      label: 'Manage Lookups',
       lookupFieldId,
       value: lookups,
       onFieldChange,
@@ -113,7 +123,7 @@ const DynaHttpRequestBody = (props) => {
     resourceType,
   ]);
   const loadEditorSampleData = useCallback(
-    (version) => {
+    version => {
       dispatch(
         actions.editorSampleData.request({
           flowId,
@@ -126,13 +136,14 @@ const DynaHttpRequestBody = (props) => {
         })
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, enableEditorV2, flowId, id, resourceId, resourceType]
   );
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
   const handleEditorVersionToggle = useCallback(
-    (version) => {
+    version => {
       loadEditorSampleData(version);
     },
     [loadEditorSampleData]
@@ -173,24 +184,24 @@ const DynaHttpRequestBody = (props) => {
   ]);
 
   return (
-    <Fragment>
+    <Fragment key={`${resourceId}-${id}`}>
       {showEditor && (
-        <div key={templateVersion}>
-          <HttpRequestBodyEditorDialog
-            contentType={contentType === 'json' ? 'json' : 'xml'}
-            title={title || 'Build HTTP Request Body'}
-            id={`${resourceId}-${id}`}
-            rule={formattedRule}
-            onFieldChange={onFieldChange}
-            lookups={lookups}
-            data={JSON.stringify(sampleData, null, 2)}
-            onClose={handleClose}
-            action={action}
-            showVersionToggle={isEditorV2Supported}
-            editorVersion={templateVersion}
-            onVersionToggle={handleEditorVersionToggle}
-          />
-        </div>
+        <HttpRequestBodyEditorDialog
+          contentType={contentType === 'json' ? 'json' : 'xml'}
+          title={title || 'Build HTTP Request Body'}
+          id={`${resourceId}-${id}`}
+          rule={formattedRule}
+          sampleRule={sampleRule}
+          onFieldChange={onFieldChange}
+          isSampleDataLoading={sampleDataRequestStatus === 'requested'}
+          lookups={lookups}
+          data={JSON.stringify(sampleData, null, 2)}
+          onClose={handleClose}
+          action={action}
+          showVersionToggle={isEditorV2Supported}
+          editorVersion={templateVersion}
+          onVersionToggle={handleEditorVersionToggle}
+        />
       )}
       <Button
         data-test={id}
@@ -207,7 +218,7 @@ const DynaHttpRequestBody = (props) => {
 export default function DynaHttpRequestBodyWrapper(props) {
   return (
     <FormContext.Consumer>
-      {(form) => <DynaHttpRequestBody {...props} formContext={form} />}
+      {form => <DynaHttpRequestBody {...props} formContext={form} />}
     </FormContext.Consumer>
   );
 }
