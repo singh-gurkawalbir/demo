@@ -156,8 +156,6 @@ export default function DynaAssistantParam(props) {
       const inpValue = e.target.value.substring(0, pointerIndex);
       const startIndexOfBraces = inpValue.lastIndexOf('{{');
       const inpValue2 = inpValue.substring(startIndexOfBraces + 2);
-
-      window.sampleDataFields = sampleDataFields;
       const suggestionsList = [
         ...sampleDataFields.map(f => ({
           ...f,
