@@ -236,6 +236,12 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     fontSize: '12px',
   },
+  divider: {
+    width: 1,
+    height: 30,
+    border: `1px solid #677A89`,
+    margin: 5,
+  },
 }));
 
 function FlowBuilder() {
@@ -564,6 +570,7 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
+          <div className={classes.divider} />
           <IconButton
             disabled={isNewFlow}
             onClick={() => handleDrawerOpen('connections')}
