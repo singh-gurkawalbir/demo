@@ -258,7 +258,7 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    label: 'If so,please paste it here',
+    label: 'Paste your sample data here',
     visibleWhenAll: [
       {
         field: 'inputMode',
