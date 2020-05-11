@@ -1,6 +1,7 @@
 import { uniq } from 'lodash';
 import moment from 'moment';
 import dateTimezones from '../../utils/dateTimezones';
+import { isDeltaFlow } from '../../utils/flows';
 
 const MINUTES = 1;
 const HOURS = 2;
@@ -57,31 +58,21 @@ export const getExportsFromSelectedDeltaFlow = (
   ];
 };
 
-export const getAllDeltaFlows = (flows, flow, exports) => {
+export const getRelevantDeltaFlows = (flows, flow, exports) => {
   const deltaFlows = flows.filter(f => {
-    let isDeltaFlow = false;
-
     if (f._id === flow._id) {
       return false;
     }
 
-    if (f.pageGenerators) {
-      f.pageGenerators.forEach(pg => {
-        const exp = exports && exports.find(e => e._id === pg._exportId);
-
-        if (exp && exp.type === 'delta') {
-          isDeltaFlow = true;
-        }
-      });
-    } else if (f && f._exportId) {
-      const exp = exports && exports.find(e => e._id === f._exportId);
-
-      if (exp && exp.type === 'delta') {
-        isDeltaFlow = true;
-      }
+    if (flow._connectorId && flow._connectorId !== f._connectorId) {
+      return false; // We link flows from same connector only.
     }
 
-    return isDeltaFlow;
+    if (!flow._connectorId && !!f._connectorId) {
+      return false; // We cant link connector flows to DIY.
+    }
+
+    return isDeltaFlow(f, exports);
   });
 
   return [
@@ -625,7 +616,7 @@ export const getMetadata = ({
         visible: isDeltaFlowModel(pg, exp, flow, exports),
         label: 'Master flow:',
         defaultValue: resource && resource._keepDeltaBehindFlowId,
-        options: getAllDeltaFlows(flows, flow, exports),
+        options: getRelevantDeltaFlows(flows, flow, exports),
       },
       _keepDeltaBehindExportId: {
         id: '_keepDeltaBehindExportId',
