@@ -110,6 +110,18 @@ export default {
       retValues['/rest/nextPageRelativeURI'] = undefined;
       retValues['/rest/pageArgument'] = undefined;
       retValues['/rest/skipArgument'] = undefined;
+    } else {
+      retValues['/rest/pagingMethod'] = undefined;
+      retValues['/rest/nextPagePath'] = undefined;
+      retValues['/rest/linkHeaderRelation'] = undefined;
+      retValues['/rest/nextPageRelativeURI'] = undefined;
+      retValues['/rest/pageArgument'] = undefined;
+      retValues['/rest/skipArgument'] = undefined;
+      retValues['/rest/maxPagePath'] = undefined;
+      retValues['/rest/maxCountPath'] = undefined;
+      retValues['/rest/lastPageStatusCode'] = undefined;
+      retValues['/rest/lastPagePath'] = undefined;
+      retValues['/rest/lastPageValue'] = undefined;
     }
 
     return {
@@ -148,7 +160,7 @@ export default {
         {
           items: [
             { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            { label: 'Blob keys', value: 'blob' },
           ],
         },
       ],

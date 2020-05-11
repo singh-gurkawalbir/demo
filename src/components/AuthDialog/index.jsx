@@ -8,6 +8,9 @@ import SignInForm from '../../views/SignIn/SigninForm';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 
+const contentWrapper = {
+  minWidth: 432,
+};
 const ExpiredSessionContent = () => (
   <Fragment>
     <DialogTitle>
@@ -15,7 +18,7 @@ const ExpiredSessionContent = () => (
       <br />
       <Typography>Please login again</Typography>
     </DialogTitle>
-    <DialogContent>
+    <DialogContent style={contentWrapper}>
       <SignInForm dialogOpen />
     </DialogContent>
   </Fragment>

@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
@@ -39,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   contentContainer: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(1, 2),
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -83,6 +84,7 @@ export default function RightDrawer({
   children,
   onClose,
   infoText,
+  actions,
   variant = 'persistent',
   ...rest
 }) {
@@ -143,6 +145,7 @@ export default function RightDrawer({
               {title}
               {infoText && <InfoIconButton info={infoText} />}
             </Typography>
+            {actions}
             <IconButton
               size="small"
               data-test="closeRightDrawer"

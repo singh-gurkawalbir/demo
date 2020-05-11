@@ -37,13 +37,13 @@ export default {
           type: 'checkbox',
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
-          label: 'Discard If Empty',
+          label: 'Discard if empty',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
           name: 'fieldMappingType',
           type: 'radiogroup',
-          label: 'Field Mapping Type',
+          label: 'Field mapping type',
           defaultValue: mappingUtil.getFieldMappingType(value),
           fullWidth: true,
           helpKey: 'mapping.fieldMappingType',
@@ -70,8 +70,8 @@ export default {
           options: [
             {
               items: [
-                { label: 'Dynamic: Salesforce Search', value: 'dynamic' },
-                { label: 'Static: Value to Value', value: 'static' },
+                { label: 'Dynamic: Salesforce search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
@@ -83,7 +83,7 @@ export default {
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject Type',
+          label: 'SObject type',
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -109,7 +109,7 @@ export default {
         'lookup.whereClauseText': {
           id: 'lookup.whereClauseText',
           name: 'whereClauseText',
-          label: 'Where Clause',
+          label: 'Where clause',
           type: 'text',
           multiline: true,
           disableText: true,
@@ -142,9 +142,9 @@ export default {
           type: 'staticMap',
           label: '',
           keyName: 'export',
-          keyLabel: 'Export Field',
+          keyLabel: 'Export field',
           valueName: 'import',
-          valueLabel: 'Import Field (Salesforce)',
+          valueLabel: 'Import field (Salesforce)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
@@ -205,11 +205,11 @@ export default {
             {
               items: [
                 {
-                  label: 'Use Empty String as Default Value',
+                  label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
-                { label: 'Use Null as Default Value', value: 'useNull' },
-                { label: 'Use Custom Default Value', value: 'default' },
+                { label: 'Use null as default value', value: 'useNull' },
+                { label: 'Use custom default value', value: 'default' },
               ],
             },
           ],
@@ -223,7 +223,7 @@ export default {
           id: 'default',
           name: 'default',
           type: 'text',
-          label: 'Default Value',
+          label: 'Default value',
           required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
@@ -237,7 +237,7 @@ export default {
           id: 'defaultSFSelect',
           name: 'defaultSFSelect',
           type: 'select',
-          label: 'Default Value',
+          label: 'Default value',
           required: true,
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
@@ -262,15 +262,15 @@ export default {
             {
               items: [
                 {
-                  label: `Use Empty String as hardcoded Value`,
+                  label: `Use empty string as hardcoded Value`,
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as hardcoded Value',
+                  label: 'Use null as hardcoded value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Value',
+                  label: 'Use custom value',
                   value: 'default',
                 },
               ],
@@ -292,19 +292,19 @@ export default {
             {
               items: [
                 {
-                  label: 'Fail Record',
+                  label: 'Fail record',
                   value: 'disallowFailure',
                 },
                 {
-                  label: 'Use Empty String as Default Value',
+                  label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use Null as Default Value',
+                  label: 'Use null as default value',
                   value: 'useNull',
                 },
                 {
-                  label: 'Use Custom Default Value',
+                  label: 'Use custom default value',
                   value: 'default',
                 },
               ],
@@ -371,7 +371,7 @@ export default {
           id: 'lookupDefault',
           name: 'lookupDefault',
           type: 'text',
-          label: 'Default Lookup Value',
+          label: 'Default lookup value',
           required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
@@ -384,7 +384,7 @@ export default {
           id: 'lookupSFSelect',
           name: 'lookupSFSelect',
           type: 'select',
-          label: 'Default Lookup Value',
+          label: 'Default lookup value',
           required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
@@ -416,7 +416,7 @@ export default {
           id: 'extractDateTimezone',
           name: 'extractDateTimezone',
           type: 'select',
-          label: 'Time Zone',
+          label: 'Time zone',
           defaultValue: value.extractDateTimezone,
           options: [
             {

@@ -4,6 +4,7 @@ import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
 import notifications, * as fromNotifications from './notifications';
 import profile, * as fromProfile from './profile';
+import debug, * as fromDebug from './debug';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -17,9 +18,16 @@ export default combineReducers({
     users,
     accounts,
   }),
+  debug,
 });
 
 // #region PUBLIC USER SELECTORS
+// #region DEBUG SELECTORS
+export function debugOn(state) {
+  return fromDebug.debugOn(state && state.debug);
+}
+// #endregion DEBUG SELECTORS
+
 // #region LICENSE
 export function integratorLicense(state, accountId) {
   return fromAccounts.integratorLicense(

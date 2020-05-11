@@ -1,32 +1,28 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
-/* eslint-disable no-dupe-keys */
-// eslint-disable-next-line no-unused-vars
-const extractedHelpkeys = {
+export default {
   // fieldDefinitions
-  'connections.connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
+  'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
-  'connections.connection.as2.userStationInfo.mdn.mdnURL':
-    "This is the URL via which integrator.io will send asynchronous MDNs to your trading partner. Note that this URL will typically be different to the Partner's AS2 URL field above.",
-  'connections.connection.partnerrequireasynchronousmdns':
+  'connection.partnerrequireasynchronousmdns':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
-  'exports.export.netsuite.distributed.executionContext':
+  'export.netsuite.distributed.executionContext':
     'The invited user will have permissions to manage the integrations selected here.',
-  'exports.export.netsuite.distributed.executionType':
+  'export.netsuite.distributed.executionType':
     'The invited user will have permissions to manage the integrations selected here.',
-  'iClients.iClient.oauth2.clientId':
+  'iClient.oauth2.clientId':
     'This is the ID for your client app that is registered with the API provider.',
-  'iClients.iClient.oauth2.clientSecret':
+  'iClient.oauth2.clientSecret':
     'This is the client secret the API provider gave you.',
-  'imports.import.http.requestType':
+  'import.http.requestType':
     'Please specify whether the record is being created or updated using this field.',
-  'imports.import.rdbms.queryType':
+  'import.rdbms.queryType':
     "Please select 'Insert' if you are only importing new records into the Database. Please select 'Update' if you are only importing changes to existing records in the Database. Please select 'Insert or Update' if you want your import to be more dynamic such that (1) if an existing record exists in the Database then that record will be updated, or (2) if an existing record does not exist then a new record will be created.",
-  'imports.import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.ignoreExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is the case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
+  'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'imports.import.rest.requestType':
+  'import.rest.requestType':
     'Please specify whether the record is being created or updated using this field.',
 
   // definitions
@@ -266,7 +262,8 @@ const extractedHelpkeys = {
     'Enter Password of your registered LiquidPlanner account. The Passeord is created when the account is created.',
   'liquidplanner.connection.http.auth.token.token':
     'The API Token of your LiquidPlanner account when using the Token authentication.',
-  'connection.http.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.http.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.http.auth.token.token':
     'The access token of your Magento 2 account.',
   'connection.http.mailchimpDataCenter':
@@ -520,7 +517,8 @@ const extractedHelpkeys = {
     'The username of your JIRA account.',
   'jira.connection.rest.basicAuth.password':
     'The password of your JIRA account.',
-  'connection.rest.baseURI': 'regex magento regex The Base URI of Magento 2.',
+  'magento.connection.rest.baseURI':
+    'regex magento regex The Base URI of Magento 2.',
   'magento.connection.rest.bearerToken':
     'The access token of your Magento 2 account.',
   'bigcommerce.connection.rest.basicAuth.username':
@@ -555,9 +553,7 @@ const extractedHelpkeys = {
     'Please specify whether the record is being created or updated using this field.',
   'rest.import.rest.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-};
 
-export default {
   'agent.name':
     "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
   'agent.description':
@@ -770,7 +766,7 @@ export default {
   'snowflake.connection.rdbms.database':
     'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
-  'snowflake.connection.rdbms.password': 'password to connect to Snowflake.',
+  'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':
@@ -1404,6 +1400,8 @@ export default {
     'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'import.http.ignoreEmptyNodes':
     'IF this flag is set to true, then the XML or JSON that makes up the HTTP request body will be stripped of all nodes that do not have a value. For example, if the body template resolves to: <customer id="1"><phone></phone></customer> and this flag is set, then the actual XML that will be used in the HTTP request will be: <customer id="1"></customer>',
+  'import.rdbms.bulkInsert.batchSize':
+    'BatchSize indicates number of records that will be imported in one request. The default value is 100. Please note that there is a query limit of 1 MB in the Snowflake. So, for larger values of batchSize, the number of records getting imported in a single request will be adjusted to the 1MB size limit.',
   'import.file.skipAggregation':
     'By default, integrator.io will aggregate all the pages of data that get generated by an export into one (possibly large) file.  If you prefer multiple smaller files (vs one large file) then please set this field to true.',
   'import.file.type':
@@ -2049,6 +2047,11 @@ export default {
   'import.response.mapping': `Response mapping enables you to specify where fields returned by the destination application should be merged back into the source record. If you don't see a specific import response field in the drop-down below, you can still map it by manually typing in the field name, then the mapping will work as long as the field is returned by the destination application when the flow is running. You can merge import response fields into any existing field in the source record, or you can specify a new field in which case integrator.io will create the field on-the-fly. You can also merge errors back into the source record if you want to manually process errors downstream in your flow.Learn <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360019506771-Understand-data-mapping" target="_blank">more about mapping.</a>`,
   'lookup.response.mapping':
     'The primary reason for defining a results mapping is to specify where the ‘data’ returned by the lookup should be merged back into the source record.  You can merge ‘data’ into any existing field in the source record, or you can specify a brand new field in which case integrator.io will create the field on the fly.  By default, integrator.io will add this mapping for you, and will create a brand new field in the source record following the naming convention ‘lookupResultsN’, but it is recommended that you change this name to match the type of data being returned (i.e. relatedContacts, linkedItems, etc…) so that your source records are more intuitive to read and map later.  Though much less common, you can also merge the results field ‘errors’ back into the source record if you want to manually process errors downstream in your flow logic.',
+  'users.user': `All users who have access to your account and integrations, or who have been invited to join your account.`,
+  'users.accesslevel': `The role of each user per integration. This is <b>Manager</b> if the user has full managing access, or <b>Monitor</b> if the user has full monitoring access. However, if a user has Manager for one integration, but Monitor for another, access level will display as <b>Tile Level</b>. Each role has its own permissions. Find out more about <a href='https://docs.celigo.com/hc/en-us/articles/115003929872-User-Management-Account-and-Integration-Level-Access-Transfer-Ownership' target='_blank'>roles and permissions</a>.`,
+  'users.status': `Tells you who has accepted the invitation to join your account and who is still pending.`,
+  'users.offOn': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.`,
+  'users.actions': `These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.`,
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
   'myaccount.email':

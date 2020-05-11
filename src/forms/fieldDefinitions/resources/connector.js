@@ -107,6 +107,7 @@ export default {
           { label: 'Walmart', value: 'walmart' },
           { label: 'WooCommerce', value: 'woocommerce' },
           { label: 'Zendesk', value: 'zendesk' },
+          { label: 'Zendesk Sell', value: 'zendesksell' },
           { label: 'Slack', value: 'slack' },
           { label: 'DCL', value: 'dcl' },
           { label: 'ShipStation', value: 'shipstation' },

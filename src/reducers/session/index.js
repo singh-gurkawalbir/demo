@@ -24,6 +24,8 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
+import exportDataReducer, * as fromExportData from './exportData';
+import customSettings, * as fromCustomSettings from './customSettings';
 
 export default combineReducers({
   stage,
@@ -51,6 +53,8 @@ export default combineReducers({
   responseMapping,
   fileUpload,
   jobErrorsPreview,
+  customSettings,
+  exportData: exportDataReducer,
 });
 
 // #region PUBLIC SELECTORS
@@ -503,6 +507,10 @@ export function queuedJobs(state, connectionId) {
   return fromConnections.queuedJobs(state && state.connections, connectionId);
 }
 
+export function iClients(state, connectionId) {
+  return fromConnections.iClients(state && state.connections, connectionId);
+}
+
 const lastExportDateTime = {};
 
 export function getLastExportDateTime(state, flowId) {
@@ -527,4 +535,13 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
+export const exportData = (state, identifier) =>
+  fromExportData.exportData(state && state.exportData, identifier);
+
+export function customSettingsForm(state, resourceId) {
+  return fromCustomSettings.customSettingsForm(
+    state && state.customSettings,
+    resourceId
+  );
+}
 // #endregion

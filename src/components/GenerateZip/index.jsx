@@ -48,7 +48,7 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
         onChange={e => setSelectedIntegrationId(e.target.value)}
         margin="dense">
         <MenuItem key={invalid} value={invalid}>
-          Select Integration
+          Select integration
         </MenuItem>
         {filteredIntegrations &&
           filteredIntegrations.map(integration => (
@@ -65,7 +65,7 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
         type="submit"
         onClick={handleGenerateZipClick}
         className={classes.submit}>
-        Generate Template Zip
+        Generate template zip
       </Button>
     </FormControl>
   );

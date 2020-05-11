@@ -32,13 +32,13 @@ export default function DynaNSSearchCriteria(props) {
       filterKey,
     })
   );
-  const handleFetchResource = useCallback(() => {
+  const onFetch = useCallback(() => {
     dispatch(actions.metadata.request(connectionId, commMetaPath));
   }, [commMetaPath, connectionId, dispatch]);
 
   useEffect(() => {
-    if (recordType) handleFetchResource();
-  }, [handleFetchResource, recordType]);
+    if (recordType) onFetch();
+  }, [onFetch, recordType]);
 
   const handleClose = (shouldCommit, _value) => {
     if (shouldCommit) {

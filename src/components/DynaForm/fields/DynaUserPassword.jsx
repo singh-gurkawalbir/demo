@@ -5,7 +5,7 @@ import { Button, InputLabel } from '@material-ui/core';
 import ChangePassword from '../../../views/MyAccount/ChangePassword';
 import actions from '../../../actions';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   editRowElement: {
     margin: `0 !important`,
     display: 'flex',
@@ -15,6 +15,9 @@ const useStyles = makeStyles(() => ({
     height: '50%',
     width: '70%',
     marginBottom: 6,
+  },
+  btnPassword: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -36,21 +39,18 @@ function DynaUserPassword() {
 
   return (
     <Fragment>
-      <div className={classes.editRowElement}>
-        <div>
-          <InputLabel>
-            Edit Password:
-            <Button
-              data-test="editPassword"
-              color="primary"
-              variant="contained"
-              style={{ marginLeft: '10px' }}
-              onClick={() => handleOpenModal('openPasswordModal')}>
-              Edit Password
-            </Button>
-          </InputLabel>
-        </div>
-      </div>
+      <InputLabel>
+        Password:
+        <Button
+          data-test="editPassword"
+          color="secondary"
+          className={classes.btnPassword}
+          variant="outlined"
+          onClick={() => handleOpenModal('openPasswordModal')}>
+          Edit password
+        </Button>
+      </InputLabel>
+
       <ChangePassword
         show={state.openPasswordModal}
         onhandleClose={() => handleCloseModal('openPasswordModal')}

@@ -17,9 +17,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     marginTop: -1,
     padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
   },
 }));
 const integrationsFilterConfig = { type: 'integrations' };
@@ -83,7 +80,7 @@ export default function SettingsDrawer({
         type: 'multiselect',
         placeholder: 'Please select flow',
         helpKey: 'flow._runNextFlowIds',
-        label: 'Next Data Flow:',
+        label: 'Next data flow:',
         displayEmpty: true,
         defaultValue: (flow && flow._runNextFlowIds) || [],
         options: [
@@ -106,7 +103,7 @@ export default function SettingsDrawer({
         type: 'editor',
         mode: 'json',
         label: 'Settings',
-        showOnDeveloperMode: true,
+        developerModeOnly: true,
         defaultValue:
           (flow && flow.settings && JSON.stringify(flow.settings)) || '{}',
       },
@@ -174,7 +171,11 @@ export default function SettingsDrawer({
     the integration-level setting.`;
 
   return (
-    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
+    <RightDrawer
+      path="settings"
+      title="Settings"
+      infoText={infoTextSettings}
+      width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm
           integrationId={integrationId}

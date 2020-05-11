@@ -397,16 +397,22 @@ export function isDeltaFlow(flow, exports) {
   if (!flow) return false;
   let isDeltaFlow = false;
 
+  if (flow && flow._exportId) {
+    const exp = exports && exports.find(e => e._id === flow._exportId);
+
+    if (exp && exp.type === 'delta') {
+      isDeltaFlow = true;
+    }
+
+    return isDeltaFlow;
+  }
+
   flow &&
     flow.pageGenerators &&
     flow.pageGenerators.forEach(pg => {
       const flowExp = exports && exports.find(e => e._id === pg._exportId);
 
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
+      if (flowExp && flowExp.type === 'delta') {
         isDeltaFlow = true;
       }
     });
@@ -497,7 +503,12 @@ export function getNextDataFlows(flows, flow) {
 export function getIAFlowSettings(integration, flowId) {
   const allFlows = [];
 
-  if (!integration || !integration._connectorId) {
+  // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
+  if (
+    !integration ||
+    !integration._connectorId ||
+    (integration.installSteps && integration.installSteps.length)
+  ) {
     // return empty object for DIY integrations.
     return emptyObject;
   }
