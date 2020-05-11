@@ -352,7 +352,7 @@ function AppBlock({
           <Status
             className={classes.status}
             onClick={onErrors}
-            label={`${openErrorCount} new errors`}>
+            label={`${openErrorCount} errors`}>
             <StatusCircle variant="error" size="small" />
           </Status>
         ) : null}
