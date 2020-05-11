@@ -22,7 +22,6 @@ const ManageLookup = props => {
     flowId,
     resourceType,
     resourceId,
-    connectionId,
   } = props;
 
   return (
@@ -34,7 +33,6 @@ const ManageLookup = props => {
       flowId={flowId}
       resourceType={resourceType}
       resourceId={resourceId}
-      connectionId={connectionId}
     />
   );
 };

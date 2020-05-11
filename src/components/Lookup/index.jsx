@@ -79,7 +79,7 @@ export default function Lookup(props) {
   return (
     <ModalDialog
       show
-      actionLabel={showListView ? 'New Lookup' : 'Back to Lookup'}
+      actionLabel={showListView ? 'New lookup' : 'Back to lookup'}
       actionHandler={toggleLookupMode}
       minWidth="sm"
       maxWidth="lg">

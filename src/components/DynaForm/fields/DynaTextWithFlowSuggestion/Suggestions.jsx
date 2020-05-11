@@ -53,7 +53,6 @@ export default function Suggestions(props) {
     id,
     flowId,
     resourceId,
-    connectionId,
     formContext,
     resourceType,
     showLookup,
@@ -201,8 +200,7 @@ export default function Suggestions(props) {
       {showLookup && (
         <DynaManageLookup
           id="add-lookup"
-          label="New Lookup"
-          connectionId={connectionId}
+          label="New lookup"
           resourceId={resourceId}
           resourceType={resourceType}
           flowId={flowId}
@@ -219,7 +217,6 @@ export default function Suggestions(props) {
             <DynaManageLookup
               id={lookup.name}
               label="Edit"
-              connectionId={connectionId}
               resourceId={resourceId}
               resourceType={resourceType}
               flowId={flowId}

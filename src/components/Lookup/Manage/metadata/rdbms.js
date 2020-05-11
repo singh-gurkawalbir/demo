@@ -1,10 +1,27 @@
+import getFailedRecordDefault from './util';
+
 export default {
   getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
     const fieldMeta = {
       fieldMap: {
-        query: {
-          id: 'query',
-          name: 'query',
+        _mode: {
+          id: '_mode',
+          name: '_mode',
+          type: 'radiogroup',
+          label: '',
+          defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
+          options: [
+            {
+              items: [
+                { label: 'Dynamic search', value: 'dynamic' },
+                { label: 'Static: Value to value', value: 'static' },
+              ],
+            },
+          ],
+        },
+        _query: {
+          id: '_query',
+          name: '_query',
           type: 'query',
           label: 'Query',
           helpText: 'The query that fetches records to be exported.',
@@ -12,14 +29,14 @@ export default {
           defaultValue: lookup.query,
           visibleWhen: [
             {
-              field: 'mode',
+              field: '_mode',
               is: ['dynamic'],
             },
           ],
         },
-        extract: {
-          id: 'extract',
-          name: 'extract',
+        _extract: {
+          id: '_extract',
+          name: '_extract',
           type: 'text',
           label: 'Column',
           helpText:
@@ -27,14 +44,93 @@ export default {
           defaultValue: lookup.extract,
           visibleWhen: [
             {
-              field: 'mode',
+              field: '_mode',
               is: ['dynamic'],
+            },
+          ],
+        },
+        _mapList: {
+          id: '_mapList',
+          name: '_mapList',
+          type: 'staticMap',
+          label: '',
+          keyName: 'export',
+          keyLabel: 'Export field',
+          valueName: 'import',
+          valueLabel: 'Import field',
+          map: lookup && lookup.map,
+          visibleWhen: [
+            {
+              field: '_mode',
+              is: ['static'],
+            },
+          ],
+        },
+        _name: {
+          id: '_name',
+          name: '_name',
+          type: 'text',
+          label: 'Name',
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpText:
+            'Name of the lookups that will be exposed to the mapping to refer.',
+        },
+        _failRecord: {
+          id: '_failRecord',
+          name: '_failRecord',
+          type: 'radiogroup',
+          label: 'Action to take if unique match not found',
+          showOptionsVertically: true,
+          defaultValue: getFailedRecordDefault(lookup) || 'disallowFailure',
+          options: [
+            {
+              items: [
+                {
+                  label: 'Fail record',
+                  value: 'disallowFailure',
+                },
+                {
+                  label: 'Use empty string as default value',
+                  value: 'useEmptyString',
+                },
+                {
+                  label: 'Use null as default value',
+                  value: 'useNull',
+                },
+                {
+                  label: 'Use custom default value',
+                  value: 'default',
+                },
+              ],
+            },
+          ],
+        },
+        _default: {
+          id: '_default',
+          name: 'default',
+          type: 'text',
+          label: 'Enter default value',
+          defaultValue: lookup.default,
+          placeholder: 'Enter default value',
+          visibleWhen: [
+            {
+              field: '_failRecord',
+              is: ['default'],
             },
           ],
         },
       },
       layout: {
-        fields: ['query', 'extract'],
+        fields: [
+          '_mode',
+          '_query',
+          '_extract',
+          '_mapList',
+          '_name',
+          '_failRecord',
+          '_default',
+        ],
       },
     };
 

@@ -18,8 +18,7 @@ export default function ManageLookup(props) {
     value = {},
     onCancel,
     error,
-    disabled,
-    connectionId,
+    disabled = false,
     resourceId,
     resourceType,
     flowId,
@@ -30,6 +29,7 @@ export default function ManageLookup(props) {
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(state, resourceType, resourceId)
   );
+  const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
       flowId,
