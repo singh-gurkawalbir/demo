@@ -173,7 +173,6 @@ import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
 import inspectorio from './inspectorio';
 import orderful from './orderful';
-import logisense from './logisense';
 import gorgias from './gorgias';
 import walmart from './walmart';
 
@@ -352,7 +351,6 @@ export default {
   zendesksell,
   inspectorio,
   orderful,
-  logisense,
   gorgias,
   walmart,
 };
