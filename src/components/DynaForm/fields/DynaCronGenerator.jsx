@@ -13,6 +13,8 @@ const useStyles = makeStyles(theme => ({
   },
   resetBtn: {
     marginLeft: theme.spacing(1),
+    alignSelf: 'flex-start',
+    marginTop: 36,
   },
 }));
 

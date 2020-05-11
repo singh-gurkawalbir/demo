@@ -434,6 +434,10 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
         borderRadius: 2,
+        padding: [[6, 15]],
+        minHeight: 38,
+        // Todo(Azhar): until final mock forms-design
+        lineHeight: '24px',
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
@@ -505,8 +509,10 @@ export default {
     },
     MuiChip: {
       root: {
-        backgroundColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral8,
+        backgroundColor: colors.celigoWhite,
+        color: colors.celigoNeutral6,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
       },
     },
     MuiBackdrop: {
@@ -580,6 +586,10 @@ export default {
       root: {
         marginLeft: 0,
         marginRight: 24,
+      },
+      label: {
+        fontSize: 14,
+        lineHeight: '18px',
       },
     },
   },

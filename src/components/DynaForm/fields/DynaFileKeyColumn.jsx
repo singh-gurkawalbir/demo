@@ -15,6 +15,8 @@ export default function DynaFileKeyColumn(props) {
     required,
     resourceId,
     isValid,
+    helpText,
+    helpKey,
     options = {},
   } = props;
   const [sampleData, setSampleData] = useState(props.sampleData || '');
@@ -49,12 +51,14 @@ export default function DynaFileKeyColumn(props) {
     <DynaMultiSelect
       disabled={disabled}
       id={id}
+      label={label}
       value={value}
+      helpText={helpText}
+      helpKey={helpKey}
       isValid={isValid}
       name={name}
       options={multiSelectOptions}
       required={required}
-      label={label}
       onFieldChange={onFieldChange}
     />
   );
