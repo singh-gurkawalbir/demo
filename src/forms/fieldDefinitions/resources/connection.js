@@ -1386,7 +1386,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Please Select (Optional)', value: '' },
+          { label: 'Please select (Optional)', value: '' },
           { label: 'AES-256', value: 'AES-256' },
           { label: 'AES-192', value: 'AES-192' },
           { label: 'AES-128', value: 'AES-128' },
@@ -1486,15 +1486,19 @@ export default {
   'as2.partnerStationInfo.mdn.mdnSigning': {
     type: 'select',
     label: 'MDN verification algorithm',
-    required: true,
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
         ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'as2.partnerStationInfo.mdn.verifyMDNSignature',
+        is: [true],
       },
     ],
   },
@@ -2532,7 +2536,7 @@ export default {
     type: 'editor',
     mode: 'json',
     label: 'Settings',
-    showOnDeveloperMode: true,
+    developerModeOnly: true,
     defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
   },
   // #region custom connection

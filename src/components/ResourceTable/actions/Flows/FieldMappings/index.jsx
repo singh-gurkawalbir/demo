@@ -4,7 +4,7 @@ import Icon from '../../../../icons/MapDataIcon';
 // import MappingDialog from '../../../../MappingDialog';
 
 export default {
-  label: 'Field Mapping',
+  label: 'Field mapping',
   component: function FieldMapping() {
     // { resource }
     const [showFieldMapping, setSowFieldMapping] = useState(false);
@@ -21,7 +21,7 @@ export default {
         {/* {showFieldMapping && (
           <MappingDialog
             resource={resource}
-            title="Field Mappings"
+            title="Field mappings"
             onClose={handleClose}
           />
         )} */}

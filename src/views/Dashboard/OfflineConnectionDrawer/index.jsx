@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch, NavLink } from 'react-router-dom';
@@ -8,6 +8,7 @@ import * as selectors from '../../../reducers';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   subNavOpen: {
@@ -57,18 +58,14 @@ function OfflineConnectionDrawer() {
   const history = useHistory();
   const match = useRouteMatch();
   const { integrationId, connectionId } = match.params;
-  const tile = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'tiles',
-        filter: { _integrationId: integrationId },
-      }).resources[0],
-    (left, right) =>
-      left._integrationId === right._integrationId &&
-      left.offlineConnections &&
-      right.offlineConnections &&
-      left.offlineConnections.length === right.offlineConnections.length
+  const offlineFilterConfig = useMemo(
+    () => ({
+      type: 'tiles',
+      filter: { _integrationId: integrationId },
+    }),
+    [integrationId]
   );
+  const tile = useResourceList(offlineFilterConfig).resources[0];
   const showSubNav =
     tile && tile.offlineConnections && tile.offlineConnections.length > 1;
   const integrationConnections = useSelector(

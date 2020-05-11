@@ -9,11 +9,10 @@ import openExternalUrl from '../../../utils/window';
 
 const useStyles = makeStyles(() => ({
   textField: {
-    minWidth: 200,
+    width: '100%',
   },
-  exitButton: {
+  actionBtnSearchInternalID: {
     float: 'right',
-    marginLeft: 5,
   },
 }));
 
@@ -66,7 +65,7 @@ export default function DynaNSSavedSearchInternalID(props) {
         <ActionButton
           data-test={id}
           onClick={handleOpenNetSuiteSavedSearch}
-          className={classes.exitButton}>
+          className={classes.actionBtnSearchInternalID}>
           <ExitIcon />
         </ActionButton>
       )}

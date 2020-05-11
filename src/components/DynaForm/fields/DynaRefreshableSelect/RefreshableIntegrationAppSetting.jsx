@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
+import useResourceList from '../../../../hooks/useResourceList';
 
 export default function RefreshableIntegrationAppSetting(props) {
   const {
@@ -17,7 +18,7 @@ export default function RefreshableIntegrationAppSetting(props) {
   const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
   const dispatch = useDispatch();
   const [autofill, setAutofill] = useState(false);
-  const handleRefreshResource = useCallback(() => {
+  const onRefresh = useCallback(() => {
     dispatch(
       actions.connectors.refreshMetadata(null, fieldName, _integrationId)
     );
@@ -31,21 +32,23 @@ export default function RefreshableIntegrationAppSetting(props) {
       defaultFieldOptions
     )
   );
-  const netSuiteSystemDomain = useSelector(state => {
-    if (fieldName.includes('_listSavedSearches')) {
-      const connection = selectors.resourceList(state, {
-        type: 'connections',
-        filter: { type: 'netsuite', _integrationId },
-      }).resources[0];
-
-      return (
-        connection &&
-        connection.netsuite &&
-        connection.netsuite.dataCenterURLs &&
-        connection.netsuite.dataCenterURLs.systemDomain
-      );
-    }
-  });
+  const netsuiteFilterConfig = useMemo(
+    () => ({
+      type: 'connections',
+      filter: { type: 'netsuite', _integrationId },
+    }),
+    [_integrationId]
+  );
+  const connection = useResourceList(netsuiteFilterConfig).resources[0];
+  const netSuiteSystemDomain = useMemo(
+    () =>
+      fieldName.includes('_listSavedSearches') &&
+      connection &&
+      connection.netsuite &&
+      connection.netsuite.dataCenterURLs &&
+      connection.netsuite.dataCenterURLs.systemDomain,
+    [connection, fieldName]
+  );
   const valueAndLabel = properties && properties.yieldValueAndLabel;
 
   useEffect(() => {
@@ -81,8 +84,8 @@ export default function RefreshableIntegrationAppSetting(props) {
       {...props}
       resourceToFetch={null}
       resetValue={null}
-      handleFetchResource={null}
-      handleRefreshResource={handleRefreshResource}
+      onFetch={null}
+      onRefresh={onRefresh}
       fieldStatus={!isLoading}
       fieldData={options || []}
       fieldError={null}

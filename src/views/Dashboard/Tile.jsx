@@ -58,13 +58,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     false
   );
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', tile && tile._integrationId)
+  );
   const templateName = useSelector(state => {
-    const integration = selectors.resource(
-      state,
-      'integrations',
-      tile && tile._integrationId
-    );
-
     if (integration && integration._templateId) {
       const template = selectors.resource(
         state,
@@ -98,8 +95,18 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+    // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
+    if (
+      integration &&
+      integration.installSteps &&
+      integration.installSteps.length
+    ) {
+      urlToIntegrationSettings = `/integrations/${integration._id}`;
+      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
+    } else {
+      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+    }
   }
 
   let app1;
@@ -176,12 +183,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           )
         );
       } else {
-        if (status.variant === 'error') {
-          /**
-           * TODO Check if there is a better way to set the status filter on the Job Dashboard.
-           */
-          dispatch(actions.patchFilter('jobs', { status: 'error' }));
-        }
+        dispatch(
+          actions.patchFilter('jobs', {
+            status: status.variant === 'error' ? 'error' : 'all',
+          })
+        );
 
         if (tile._connectorId) {
           history.push(

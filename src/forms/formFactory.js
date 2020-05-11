@@ -1,4 +1,5 @@
-import { get, cloneDeep } from 'lodash';
+import { get } from 'lodash';
+import produce from 'immer';
 import masterFieldHash from '../forms/fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
@@ -59,104 +60,89 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
+const settingsContainer = {
+  collapsed: true,
+  label: 'Custom settings',
+  fields: ['settings'],
+};
 const applyCustomSettings = ({
   fieldMap,
   layout,
   preSave,
-  isNew,
   validationHandler,
 }) => {
-  const fieldMapCopy = cloneDeep(fieldMap);
-  const layoutCopy = cloneDeep(layout);
-  let preSaveCopy = preSave;
-  let validationHandlerCopy;
+  const newLayout = produce(layout, draft => {
+    if (draft && draft.containers && draft.containers.length > 0) {
+      if (draft.type === 'column') {
+        const firstContainer = draft.containers[0];
 
-  if (!isNew) {
-    if (
-      layoutCopy &&
-      layoutCopy.containers &&
-      layoutCopy.containers.length > 0
-    ) {
-      if (layoutCopy.type === 'column') {
-        if (
-          layoutCopy.containers[0].containers &&
-          layoutCopy.containers[0].containers.length
-        )
-          layoutCopy.containers[0].containers.push({
-            collapsed: true,
-            label: 'Custom settings',
-            fields: ['settings'],
-          });
+        if (firstContainer.containers && firstContainer.containers.length)
+          firstContainer.containers.push(settingsContainer);
         else {
-          layoutCopy.containers[0].type = 'collapse';
+          firstContainer.type = 'collapse';
 
-          layoutCopy.containers[0].containers = [
-            {
-              collapsed: true,
-              label: 'Custom settings',
-              fields: ['settings'],
-            },
-          ];
+          firstContainer.containers = [settingsContainer];
         }
-      } else
-        layoutCopy.containers.push({
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        });
-    } else {
-      layoutCopy.type = 'collapse';
-      layoutCopy.containers = [
-        {
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        },
-      ];
-    }
-
-    if (fieldMap) fieldMapCopy.settings = { fieldId: 'settings' };
-    preSaveCopy = (args, resource) => {
-      let retValues;
-
-      if (preSave) {
-        retValues = preSave(args, resource);
       } else {
-        retValues = args;
+        draft.containers.push(settingsContainer);
       }
+    } else {
+      draft.type = 'collapse';
+      draft.containers = [settingsContainer];
+    }
+  });
+  const newFieldMap = produce(fieldMap, draft => {
+    if (draft) {
+      draft.settings = { fieldId: 'settings' };
+    }
+  });
+  const preSaveProxy = (values, resource) => {
+    const newValues = preSave ? preSave(values, resource) : values;
 
-      if (Object.hasOwnProperty.call(retValues, '/settings')) {
-        let settings = retValues['/settings'];
+    return produce(newValues, draft => {
+      if (Object.hasOwnProperty.call(draft, '/settings')) {
+        let settings = draft['/settings'];
 
         if (isJsonString(settings)) {
           settings = JSON.parse(settings);
-        } else {
+        } else if (typeof settings !== 'object') {
           settings = {};
         }
 
-        retValues['/settings'] = settings;
+        draft['/settings'] = settings;
       }
+    });
+  };
 
-      return retValues;
-    };
+  // TODO: this level of input specific validation should not be within the
+  // formFactory.. this needs to be within the form meta (validWhen rules) or
+  // just JS within the Dyna[Input] component mapped to manage the value.
+  // This will be easiest after refactor of react-forms-processor to use redux.
+  const validationHandlerProxy = field => {
+    // Handles validity for settings field (when in string form)
+    // Incase of other fields call the existing validationHandler
+    if (field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Settings must be a valid JSON';
 
-    validationHandlerCopy = field => {
-      // Handles validity for settings field
-      // Incase of other fields call the existing validationHandler
-      if (field.id === 'settings') {
-        if (
-          field.value &&
-          typeof field.value === 'string' &&
-          !isJsonString(field.value)
-        )
-          return 'Settings must be a valid JSON';
+      if (field.value && field.value.__invalid) {
+        return 'Some of your settings are not valid.';
       }
+    }
 
-      if (validationHandler) return validationHandler(field);
-    };
-  }
+    if (validationHandler) return validationHandler(field);
+  };
 
-  return { fieldMapCopy, layoutCopy, preSaveCopy, validationHandlerCopy };
+  return {
+    fieldMap: newFieldMap,
+    layout: newLayout,
+    preSave: preSaveProxy,
+    validationHandler: validationHandlerProxy,
+  };
 };
 
 const getResourceFormAssets = ({
@@ -176,6 +162,8 @@ const getResourceFormAssets = ({
   let validationHandler;
   const { type } = getResourceSubType(resource);
 
+  // FormMeta generic pattern: fromMeta[resourceType][sub-type]
+  // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
   if (ssLinkedConnectionId) {
     meta = formMeta.suiteScript[resourceType];
 
@@ -207,8 +195,6 @@ const getResourceFormAssets = ({
       ({ fieldMap, layout, preSave, init, actions } = meta);
     }
   } else {
-    // FormMeta generic pattern: fromMeta[resourceType][sub-type]
-    // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
     switch (resourceType) {
       case 'connections':
         if (isNew) {
@@ -303,8 +289,16 @@ const getResourceFormAssets = ({
         if (meta) {
           if (isNew) {
             meta = meta.new;
-          } else if (RDBMS_TYPES.indexOf(type) !== -1) {
-            meta = meta.rdbms;
+          } else if (type === 'rdbms') {
+            const rdbmsSubType =
+              connection && connection.rdbms && connection.rdbms.type;
+
+            // when editing rdms connection we lookup for the resource subtype
+            if (rdbmsSubType === 'snowflake') {
+              meta = meta.rdbms.snowflake;
+            } else {
+              meta = meta.rdbms.sql;
+            }
           } else if (
             type === 'salesforce' &&
             resource.assistant === 'financialforce'
@@ -373,29 +367,25 @@ const getResourceFormAssets = ({
 
   // Need to be revisited @Surya
   validationHandler = meta && meta.validationHandler;
+  const resourceTypesWithSettings = [
+    'integrations',
+    'exports',
+    'imports',
+    'pageProcessor',
+    'pageGenerator',
+    'connections',
+  ];
 
   if (
-    !ssLinkedConnectionId &&
-    [
-      'integrations',
-      'exports',
-      'imports',
-      'pageProcessor',
-      'pageGenerator',
-      'connections',
-    ].includes(resourceType)
+    !isNew &&
+    resourceTypesWithSettings.includes(resourceType) &&
+    !ssLinkedConnectionId
   ) {
-    ({
-      fieldMapCopy: fieldMap,
-      layoutCopy: layout,
-      preSaveCopy: preSave,
-      validationHandlerCopy: validationHandler,
-    } = applyCustomSettings({
+    ({ fieldMap, layout, preSave, validationHandler } = applyCustomSettings({
       fieldMap,
       validationHandler,
       layout,
       preSave,
-      isNew,
     }));
   }
 
@@ -448,16 +438,16 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = cloneDeep(field);
+      const fieldCopy = produce(field, draft => {
+        if (f.visibleWhen) {
+          draft.visibleWhen = draft.visibleWhen || [];
+          draft.visibleWhen.push(...f.visibleWhen);
+        } else if (f.visibleWhenAll) {
+          draft.visibleWhenAll = draft.visibleWhenAll || [];
 
-      if (f.visibleWhen) {
-        fieldCopy.visibleWhen = fieldCopy.visibleWhen || [];
-        fieldCopy.visibleWhen.push(...f.visibleWhen);
-      } else if (f.visibleWhenAll) {
-        fieldCopy.visibleWhenAll = fieldCopy.visibleWhenAll || [];
-
-        fieldCopy.visibleWhenAll.push(...f.visibleWhenAll);
-      }
+          draft.visibleWhenAll.push(...f.visibleWhenAll);
+        }
+      });
 
       return { field: fieldCopy, key };
     })
@@ -582,13 +572,7 @@ const flattenedFieldMap = (
         ignoreFunctionTransformations
       );
 
-      if (!developerMode) {
-        if (!merged.showOnDeveloperMode) {
-          resFields.push(fieldReferenceName);
-          // eslint-disable-next-line no-param-reassign
-          resObjectRefs[fieldReferenceName] = value;
-        }
-      } else {
+      if (developerMode || !merged.developerModeOnly) {
         resFields.push(fieldReferenceName);
         // eslint-disable-next-line no-param-reassign
         resObjectRefs[fieldReferenceName] = value;

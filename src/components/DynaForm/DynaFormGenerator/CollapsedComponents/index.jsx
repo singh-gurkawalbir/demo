@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row-reverse',
     paddingLeft: 0,
     minHeight: 'unset',
-    height: 48,
+    height: 38,
     display: 'inline-flex',
     '& > .MuiExpansionPanelSummary-expandIcon': {
       padding: 0,
@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
         margin: 0,
       },
     },
+  },
+  label: {
+    fontSize: 18,
   },
   expansionPanel: {
     boxShadow: 'none',
@@ -128,7 +131,7 @@ const ExpansionPannelExpandOnInValidState = props => {
           className={classes.expPanelSummary}
           onClick={() => setShouldExpand(expand => !expand)}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography>{header}</Typography>
+          <Typography className={classes.label}>{header}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.expDetails}>
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />

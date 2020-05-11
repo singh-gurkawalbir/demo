@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
       padding: 4,
     },
   },
+  lookupHandler: {
+    width: '100%',
+  },
 }));
 const LOOKUP_ACTION = {
   LOOKUP_EDIT: 'LOOKUP_EDIT',
@@ -91,6 +94,7 @@ export function Suggestions(props) {
 }
 
 export default function InputWithLookupHandlebars(props) {
+  const classes = useStyles();
   const {
     id,
     name,
@@ -275,6 +279,7 @@ export default function InputWithLookupHandlebars(props) {
         disabled={disabled}
         multiline={multiline}
         onClick={handleSuggestions}
+        className={classes.lookupHandler}
         error={!isValid}
         onChange={handleFieldChange}
         required={required}

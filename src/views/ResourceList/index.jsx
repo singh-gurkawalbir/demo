@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
@@ -18,6 +18,7 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
+import useResourceList from '../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,21 +30,25 @@ const useStyles = makeStyles(theme => ({
 }));
 const defaultFilter = { take: 10 };
 
-function ResourceList(props) {
-  const { match, location } = props;
+export default function ResourceList(props) {
+  const location = useLocation();
+  const match = useRouteMatch();
   const { resourceType } = match.params;
   const dispatch = useDispatch();
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, resourceType)) ||
     defaultFilter;
-  const list = useSelector(state =>
-    selectors.resourceList(state, {
+  const filterConfig = useMemo(
+    () => ({
       type: resourceType,
       filter: connectorFilter(resourceType),
-      ...{ ...defaultFilter, ...filter },
-    })
+      ...defaultFilter,
+      ...filter,
+    }),
+    [filter, resourceType]
   );
+  const list = useResourceList(filterConfig);
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   useEffect(() => {
@@ -121,5 +126,3 @@ function ResourceList(props) {
     </CheckPermissions>
   );
 }
-
-export default withRouter(ResourceList);

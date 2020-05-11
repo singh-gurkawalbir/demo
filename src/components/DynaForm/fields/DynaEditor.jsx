@@ -1,18 +1,15 @@
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../components/CodeEditor';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    overflowY: 'off',
-  },
   label: {
     fontSize: '12px',
     marginTop: theme.spacing(1),
@@ -22,8 +19,6 @@ const useStyles = makeStyles(theme => ({
   },
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
     height: theme.spacing(10),
   },
   editorContainer: {
@@ -31,22 +26,35 @@ const useStyles = makeStyles(theme => ({
     height: '50vh',
     width: '65vh',
   },
+  wrapper: {
+    flexDirection: `row !important`,
+  },
+  dynaEditorWrapper: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  CodeEditorWrapper: {
+    width: '100%',
+  },
 }));
 
-export default function DynaEditor(props) {
+export default function DynaEditor({
+  id,
+  mode,
+  options,
+  onFieldChange,
+  value,
+  label,
+  editorClassName,
+  disabled,
+  saveMode,
+  description,
+  errorMessages,
+  isValid,
+}) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
-  const {
-    id,
-    mode,
-    options,
-    onFieldChange,
-    value,
-    label,
-    editorClassName,
-    disabled,
-    saveMode,
-  } = props;
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
@@ -104,7 +112,7 @@ export default function DynaEditor(props) {
           value={value}
           mode={resultantMode}
           readOnly={disabled}
-          onChange={value => handleUpdate(value)}
+          onChange={handleUpdate}
         />
       </div>
       <div>
@@ -120,16 +128,13 @@ export default function DynaEditor(props) {
   );
 
   return (
-    <Fragment>
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.editorButton}>
-        <ExitIcon />
-      </ActionButton>
-      <div className={classes.container}>
+    <div className={classes.wrapper}>
+      <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
-        <FormLabel className={classes.label}>{label}</FormLabel>
+        <div>
+          <FormLabel>{label}</FormLabel>
+        </div>
+
         <div
           className={classNames(
             classes.inlineEditorContainer,
@@ -140,11 +145,22 @@ export default function DynaEditor(props) {
             name={`${id}-inline`}
             value={value}
             mode={mode}
-            onChange={value => handleUpdate(value)}
+            className={classes.CodeEditorWrapper}
+            onChange={handleUpdate}
           />
         </div>
-        <ErroredMessageComponent {...props} />
+        <ErroredMessageComponent
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
+        />
       </div>
-    </Fragment>
+      <ActionButton
+        data-test={id}
+        onClick={handleEditorClick}
+        className={classes.editorButton}>
+        <ExpandWindowIcon />
+      </ActionButton>
+    </div>
   );
 }

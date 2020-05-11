@@ -489,6 +489,7 @@ export function getImportOperationDetails({
               !(
                 qp.readOnly &&
                 qp.defaultValue &&
+                qp.defaultValue.includes &&
                 qp.defaultValue.includes('{{export.')
               )
           );
@@ -1304,7 +1305,7 @@ export function updateFormValues({
 export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
-  const { dontConvert } = importDoc.assistantMetadata || {};
+  const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
 
@@ -1326,6 +1327,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
     pathParams: {},
     queryParams: {},
     bodyParams: {},
+    lookups,
   };
   const importURLs = [];
 

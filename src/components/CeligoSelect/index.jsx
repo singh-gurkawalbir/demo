@@ -14,35 +14,26 @@ const useStyles = makeStyles(theme => ({
     transitionDuration: theme.transitions.duration.short,
     transitionTimingFunction: theme.transitions.easing.easeInOut,
     overflow: 'hidden',
-    height: 42,
+    padding: '0px 12px',
+    height: 38,
     justifyContent: 'flex-end',
     borderRadius: theme.spacing(0.5),
-    '& > Label': {
-      marginTop: theme.spacing(-1),
-      '&.MuiInputLabel-shrink': {
-        paddingTop: theme.spacing(2),
-      },
-    },
-    '& >.MuiSelect-selectMenu': {
-      paddingLeft: theme.spacing(1),
-      paddingRight: theme.spacing(4),
-      height: '100%',
-      lineHeight: `${theme.spacing(3)}px`,
-      boxSizing: 'border-box',
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-disabled': {
+    '& > .MuiInput-formControl': {
+      height: 38,
+      padding: '0px 15px',
+      border: '1px solid',
+      borderColor: theme.palette.secondary.lightest,
       '&:hover': {
+        borderColor: theme.palette.primary.main,
+      },
+      '&.Mui-disabled': {
         borderColor: theme.palette.secondary.lightest,
       },
     },
-    '& > *': {
-      background: 'none',
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
+    '& >.MuiSelect-selectMenu': {
+      padding: [[0, 32, 0, 12]],
+      lineHeight: '38px',
+      margin: [[0, -15]],
     },
     '& svg': {
       right: theme.spacing(1),

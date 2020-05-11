@@ -9,6 +9,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
+import useResourceList from '../../../hooks/useResourceList';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -20,16 +21,14 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
 }));
+const integrationsFilterConfig = {
+  type: 'integrations',
+  ignoreEnvironmentFilter: true,
+};
 
 export default function UserForm({ id, onSaveClick, onCancelClick }) {
   const classes = useStyles();
-  const integrations = useSelector(
-    state =>
-      selectors.resourceList(state, {
-        type: 'integrations',
-        ignoreEnvironmentFilter: true,
-      }).resources
-  );
+  const integrations = useResourceList(integrationsFilterConfig).resources;
   const users = useSelector(state => selectors.orgUsers(state));
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
@@ -69,7 +68,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'accessLevel',
         name: 'accessLevel',
         type: 'select',
-        label: 'Access Level',
+        label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
         options: [
@@ -96,7 +95,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'integrationsToManage',
         name: 'integrationsToManage',
         type: 'multiselect',
-        label: 'Integrations to Manage',
+        label: 'Integrations to manage',
         defaultValue: integrationsToManage,
         visibleWhen: [
           {
@@ -125,7 +124,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         id: 'integrationsToMonitor',
         name: 'integrationsToMonitor',
         type: 'multiselect',
-        label: 'Integrations to Monitor',
+        label: 'Integrations to monitor',
         defaultValue: integrationsToMonitor,
         visibleWhen: [
           {

@@ -83,7 +83,7 @@ export default {
         {
           items: [
             { label: 'Records', value: 'records' },
-            { label: 'Blob Keys', value: 'blob' },
+            { label: 'Blob keys', value: 'blob' },
           ],
         },
       ],

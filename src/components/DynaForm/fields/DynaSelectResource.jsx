@@ -1,5 +1,5 @@
 import { Chip } from '@material-ui/core';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,7 +18,9 @@ import {
   getMissingPatchSet,
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
+import useResourceList from '../../../hooks/useResourceList';
 
+const emptyArray = [];
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -90,28 +92,24 @@ const handleAddNewResource = args => {
   history.push(`${location.pathname}/edit/${resourceType}/${newResourceId}`);
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
-    '& > div:first-child': {
-      width: '100%',
-      marginRight: 6,
-      overflow: 'auto',
-    },
   },
-  actions: {
+  dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
+    marginTop: theme.spacing(5),
   },
   menuItem: {
     maxWidth: '95%',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
   },
-});
+}));
 
 function ConnectionLoadingChip(props) {
   const { connectionId } = props;
@@ -159,12 +157,14 @@ function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
-  const { resources = [] } = useSelector(state =>
-    selectors.resourceList(state, {
+  const filterConfig = useMemo(
+    () => ({
       type: resourceType,
       ignoreEnvironmentFilter,
-    })
+    }),
+    [ignoreEnvironmentFilter, resourceType]
   );
+  const { resources = emptyArray } = useResourceList(filterConfig);
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
@@ -301,7 +301,7 @@ function DynaSelectResource(props) {
           />
         )}
       </LoadResources>
-      <div className={classes.actions}>
+      <div className={classes.dynaSelectMultiSelectActions}>
         {allowNew && (
           <ActionButton
             data-test="addNewResource"

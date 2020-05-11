@@ -18,6 +18,7 @@ export default {
       type: 'select',
       label: 'Environment',
       required: true,
+      helpKey: 'shipwire.connection.environment',
       options: [
         {
           items: [
@@ -40,9 +41,11 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      helpKey: 'shipwire.connection.http.auth.basic.username',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
+      helpKey: 'shipwire.connection.http.auth.basic.password',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

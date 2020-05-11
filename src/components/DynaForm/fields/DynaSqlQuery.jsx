@@ -142,9 +142,7 @@ export default function DynaSqlQuery(props) {
             onChange={onChange}
           />
         </div>
-        {!isValid && (
-          <FormHelperText error="true">{errorMessages}</FormHelperText>
-        )}
+        {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
       </div>
     </Fragment>
   );

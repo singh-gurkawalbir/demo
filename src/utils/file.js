@@ -152,10 +152,12 @@ const generateFields = (data, options = {}) => {
 
   const fields = [];
 
+  // Trims the headers incase of any spaces/'/n's or '/r's existing while uploading a file
+  // @BugFix: IO-14393
   each(fieldsList, (field, index) => {
     const column = includeHeader
       ? // eslint-disable-next-line no-useless-escape
-        field.replace(/^\"(.*)\"$/, '$1')
+        field.replace(/^\"(.*)\"$/, '$1').trim()
       : `Column${index}`;
 
     if (column) {

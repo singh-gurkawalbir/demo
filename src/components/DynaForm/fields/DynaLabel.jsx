@@ -14,10 +14,12 @@ const useStyles = makeStyles(theme => ({
   },
 
   textField: {
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-    display: 'inline-block',
-    fontSize: theme.typography.fontSize * 1.5,
+    width: 'fit-content',
+    fontSize: 18,
+    padding: theme.spacing(2, 1, 2, 0),
+  },
+  label: {
+    fontSize: 14,
   },
 }));
 
@@ -42,7 +44,7 @@ function DynaLabel(props) {
           id="helpBubble"
           open={!!anchorEl}
           anchorEl={anchorEl}>
-          <Typography variant="caption">
+          <Typography className={classes.label}>
             {helpText || helpTextMap[helpKey]}
           </Typography>
         </ArrowPopper>

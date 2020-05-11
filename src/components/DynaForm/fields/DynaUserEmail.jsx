@@ -1,32 +1,27 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { FormControl, FormLabel, TextField } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import classNames from 'classnames';
-import { Button, TextField } from '@material-ui/core';
 import ChangeEmail from '../../../views/MyAccount/ChangeEmail';
 import actions from '../../../actions';
+import ActionButton from '../../ActionButton';
+import EditIcon from '../../icons/EditIcon';
+import FieldHelp from '../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
-  textField: {
-    flex: 1,
-    width: '70%',
-  },
-  editRowElement: {
-    margin: `0 !important`,
+const useStyles = makeStyles({
+  editUserEmailWrapper: {
     display: 'flex',
-    flexDirection: `row !important`,
-    justifyContent: 'flex-start' /* center horizontally */,
-    alignItems: 'center' /* center vertically */,
-    height: '50%',
-    width: '70%',
+    width: '100%',
+    alignItems: 'center',
   },
-  emailField: {
-    flexGrow: 4,
+  editUserEmailLabelWrapper: {
+    alignItems: 'flex-start',
+    display: 'flex',
   },
-  editEmailButton: {
-    marginLeft: theme.spacing(1),
+  editUserEmailField: {
+    width: '100%',
   },
-}));
+});
 
 function DynaUserEmail(props) {
   const classes = useStyles();
@@ -47,34 +42,33 @@ function DynaUserEmail(props) {
   const { id, value, label } = props;
 
   return (
-    <Fragment>
-      <div className={classes.editRowElement}>
+    <FormControl>
+      <div className={classes.editUserEmailLabelWrapper}>
+        <FormLabel htmlFor={id}>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div className={classes.editUserEmailWrapper}>
         <TextField
           id={id}
-          label={label}
           type="email"
-          margin="normal"
           value={value}
-          className={classNames(classes.textField, classes.emailField)}
           disabled
+          className={classes.editUserEmailField}
           variant="filled"
         />
-        <div>
-          <Button
-            data-test="editEmail"
-            color="primary"
-            variant="contained"
-            className={classes.editEmailButton}
-            onClick={() => handleOpenModal('openEmailModal')}>
-            Edit Email
-          </Button>
-        </div>
+        <ActionButton
+          data-test="editEmail"
+          color="primary"
+          variant="contained"
+          onClick={() => handleOpenModal('openEmailModal')}>
+          <EditIcon />
+        </ActionButton>
       </div>
       <ChangeEmail
         show={state.openEmailModal}
         onhandleClose={() => handleCloseModal('openEmailModal')}
       />
-    </Fragment>
+    </FormControl>
   );
 }
 

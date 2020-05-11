@@ -1,25 +1,31 @@
 import { useRef, Fragment, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import FieldHelp from '../../FieldHelp';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
     display: 'none',
   },
   fileName: {
-    marginLeft: theme.spacing(1),
-    marginTop: '5px',
+    marginRight: theme.spacing(1),
   },
   uploadContainer: {
-    marginTop: 5,
-    display: 'flex',
     flexDirection: `row !important`,
     width: '100%',
+    alignItems: 'center',
   },
   invalid: {
     color: theme.palette.error.main,
+  },
+  errorMessage: {
+    display: 'flex',
+    alignItems: 'center',
+    '& svg': {
+      fontSize: 12,
+      marginRight: theme.spacing(0.5),
+    },
   },
 }));
 
@@ -45,15 +51,16 @@ function FileUploader(props) {
 
   return (
     <Fragment>
-      <span
+      {/* <span
         className={clsx({
           [classes.invalid]: !isValid,
         })}>
         {label}
-      </span>
+      </span> */}
       <div className={classes.uploadContainer}>
+        <span className={classes.fileName}>{fileName}</span>
         <Button
-          variant="contained"
+          variant="outlined"
           color="secondary"
           onClick={handleClick}
           name={name}
@@ -70,14 +77,11 @@ function FileUploader(props) {
           className={classes.fileInput}
           onChange={handleFileChosen}
         />
-        <span className={classes.fileName}>{fileName}</span>
+        {/* TODO: surya we need to add the helptext for the upload file */}
+        <FieldHelp {...props} helpText={label} />
       </div>
-      {!isValid && (
-        <FormHelperText error="true">{errorMessages}</FormHelperText>
-      )}
-      {uploadError && (
-        <FormHelperText error="true">{uploadError}</FormHelperText>
-      )}
+      {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
+      {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}
     </Fragment>
   );
 }

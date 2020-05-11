@@ -15,6 +15,7 @@ export default {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
+      helpKey: 'zoom.connection.http.encrypted.apiKey',
       label: 'API key',
       inputType: 'password',
       description:
@@ -25,6 +26,7 @@ export default {
       required: true,
       type: 'text',
       label: 'API secret',
+      helpKey: 'zoom.connection.http.encrypted.apiSecret',
       inputType: 'password',
       description:
         'Note: for security reasons this field must always be re-entered.',
