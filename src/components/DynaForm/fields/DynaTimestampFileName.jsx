@@ -1,11 +1,13 @@
-import { useState, Fragment, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const useStyles = makeStyles(theme => ({
@@ -198,25 +200,32 @@ export default function DynaTimestampFileName(props) {
   }
 
   return (
-    <Fragment>
+    <FormControl>
+      <div className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <TextField
         autoComplete="off"
         key={id}
         data-test={id}
         name={name}
-        label={label}
         placeholder={placeholder}
         disabled={disabled}
         onClick={handleSuggestions}
         onChange={handleFieldChange}
-        required={required}
         onKeyUp={handleSuggestions}
         value={value}
         variant="filled"
-        helperText={isValid ? description : errorMessages}
-        error={!isValid}
+      />
+      <ErroredMessageComponent
+        isValid={isValid}
+        description={description}
+        errorMessages={errorMessages}
       />
       {suggestionsListComponent}
-    </Fragment>
+    </FormControl>
   );
 }

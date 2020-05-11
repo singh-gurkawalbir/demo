@@ -1,5 +1,4 @@
 import { useEffect, useState, cloneElement, useCallback } from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,62 +11,16 @@ import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
-  inlineElements: {
+  refreshGenericResourceWrapper: {
     display: 'flex',
     flexDirection: `row !important`,
   },
-  label: {
-    '& + div': {
-      width: '100%',
-    },
+  refreshGenericActionBtn: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(5),
   },
-  refreshButton: {
-    marginLeft: 5,
-    marginRight: 0,
-  },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-    },
-    '& svg': {
-      right: 8,
-    },
-  },
-  selectElement: {
-    width: '80%',
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: theme.spacing(0.25),
+  refreshRoot: {
+    width: '100%',
   },
 }));
 
@@ -86,15 +39,14 @@ export default function RefreshGenericResource(props) {
     disabled,
     disableOptionsLoad,
     id,
-    label,
     resourceToFetch,
     resetValue,
     multiselect,
     onFieldChange,
     fieldData,
     fieldStatus,
-    handleFetchResource,
-    handleRefreshResource,
+    onFetch,
+    onRefresh,
     fieldError,
     children,
     removeRefresh = false,
@@ -132,10 +84,10 @@ export default function RefreshGenericResource(props) {
     setIsDefaultValueChanged,
   ]);
   useEffect(() => {
-    if (!fieldData && !disableOptionsLoad && handleFetchResource) {
-      handleFetchResource();
+    if (!fieldData && !disableOptionsLoad && onFetch) {
+      onFetch();
     }
-  }, [disableOptionsLoad, fieldData, handleFetchResource]);
+  }, [disableOptionsLoad, fieldData, onFetch]);
 
   useEffect(() => {
     // Reset selected values on change of resourceToFetch
@@ -150,42 +102,35 @@ export default function RefreshGenericResource(props) {
 
   if (!fieldData && !disableOptionsLoad) return <Spinner />;
 
-  const options = (fieldData || []).map(options => {
-    const { label, value } = options;
-
-    return { label, value };
-  });
-
   return (
     <div>
       <FormControl
         key={id}
         disabled={disabled}
-        className={classes.inlineElements}>
-        <InputLabel shrink htmlFor={id} className={classes.label}>
-          {label}
-        </InputLabel>
-        {cloneElement(children, {
-          ...props,
-          options: [{ items: options || [] }],
-        })}
+        className={classes.refreshGenericResourceWrapper}>
+        <div className={classes.refreshRoot}>
+          {cloneElement(children, {
+            ...props,
+            options: [{ items: fieldData || [] }],
+          })}
+        </div>
         {!isLoading && !removeRefresh && (
           <ActionButton
-            onClick={handleRefreshResource}
-            className={classes.refreshButton}
+            onClick={onRefresh}
+            className={classes.refreshGenericActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>
         )}
         {fieldData && isLoading && (
-          <span className={classes.spinner}>
-            <Spinner size={48} color="primary" />
+          <span className={classes.refreshGenericActionBtn}>
+            <Spinner size={24} color="primary" />
           </span>
         )}
         {urlToOpen && (
           <ActionButton
             onClick={handleOpenResource}
-            className={classes.refreshButton}
+            className={classes.refreshGenericActionBtn}
             data-test="openResource">
             <ExitIcon />
           </ActionButton>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Button from '@material-ui/core/Button';
+import { Button, FormControl, FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -11,8 +12,29 @@ import {
 import actions from '../../../actions';
 import getFormattedSampleData from '../../../utils/sampleData';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
+
+const useStyles = makeStyles(theme => ({
+  dynaHttpReqWrapper: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  dynaHttpFormControl: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  dynaHttpLabel: {
+    marginRight: 12,
+    marginBottom: 0,
+  },
+  httpReqbtn: {
+    marginRight: theme.spacing(0.5),
+  },
+}));
 
 export default function DynaHttpRequestBody(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -164,14 +186,27 @@ export default function DynaHttpRequestBody(props) {
           resultTitle={resultTitle}
         />
       )}
-      <Button
-        data-test={id}
-        variant="outlined"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
-      <ErroredMessageComponent {...props} />
+      <FormControl className={classes.dynaHttpFormControl}>
+        <div className={classes.dynaHttpReqWrapper}>
+          <FormLabel htmlFor={id} className={classes.dynaHttpLabel}>
+            HTTP body:
+          </FormLabel>
+
+          {/* Todo: Aditya 
+           HTTP body If HTTP body not clicked, show "Configure body" as label of the button. If clicked, show AFE. If no changes on save, show Configure body. If saves changes, show "Edit body" as the label of the button. */}
+
+          <Button
+            data-test={id}
+            variant="outlined"
+            color="secondary"
+            className={classes.httpReqbtn}
+            onClick={handleEditorClick}>
+            {label}
+          </Button>
+          <FieldHelp {...props} />
+        </div>
+        <ErroredMessageComponent {...props} />
+      </FormControl>
     </Fragment>
   );
 }

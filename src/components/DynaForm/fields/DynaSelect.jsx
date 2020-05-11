@@ -1,55 +1,22 @@
 import React from 'react';
-import { ListSubheader } from '@material-ui/core';
-import clsx from 'clsx';
+import { ListSubheader, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
+import CeligoSelect from '../../CeligoSelect';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      marginTop: theme.spacing(-3),
-      whiteSpace: 'nowrap',
-      fontSize: 12,
-      padding: [[5, 0, 5, 12]],
-      width: '100%',
-      '&.Mui-disabled': {
-        background: theme.palette.secondary.lightest,
-      },
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > div ': {
-      paddingBottom: 5,
-      textAlign: 'left',
-    },
-    '& svg': {
-      right: theme.spacing(1),
-      top: theme.spacing(-1),
-    },
+const useStyles = makeStyles({
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
-}));
+  dynaSelectWrapper: {
+    width: '100%',
+  },
+});
 
 export default function DynaSelect(props) {
   const {
@@ -64,7 +31,6 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     label,
-    className,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -121,20 +87,21 @@ export default function DynaSelect(props) {
   items = [defaultItem, ...items];
 
   return (
-    <div>
+    <div className={classes.dynaSelectWrapper}>
+      <div className={classes.fieldWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <FormControl
         key={id}
         disabled={disabled}
-        className={clsx(classes.root, className)}
-        error={!isValid}
-        required={required}>
-        <InputLabel htmlFor={id} disableAnimation shrink={false}>
-          {label}
-        </InputLabel>
-        <Select
+        required={required}
+        className={classes.dynaSelectWrapper}>
+        <CeligoSelect
           data-test={id}
           value={finalTextValue}
-          IconComponent={ArrowDownIcon}
           disableUnderline
           displayEmpty
           disabled={disabled}
@@ -144,7 +111,7 @@ export default function DynaSelect(props) {
           }}
           input={<Input name={name} id={id} />}>
           {items}
-        </Select>
+        </CeligoSelect>
       </FormControl>
 
       {!removeHelperText && <ErroredMessageComponent {...props} />}

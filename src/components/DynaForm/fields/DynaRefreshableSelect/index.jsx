@@ -26,7 +26,7 @@ export default function DynaSelectOptionsGenerator(props) {
       filterKey: options.filterKey || filterKey,
     })
   );
-  const handleFetchResource = useCallback(() => {
+  const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request(
@@ -43,7 +43,7 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch,
     options.commMetaPath,
   ]);
-  const handleRefreshResource = () => {
+  const onRefresh = () => {
     dispatch(
       actions.metadata.refresh(
         connectionId,
@@ -59,8 +59,8 @@ export default function DynaSelectOptionsGenerator(props) {
     <DynaGenericSelect
       resourceToFetch={options.commMetaPath || commMetaPath}
       resetValue={options.resetValue}
-      handleFetchResource={handleFetchResource}
-      handleRefreshResource={handleRefreshResource}
+      onFetch={onFetch}
+      onRefresh={onRefresh}
       fieldStatus={status}
       fieldData={data}
       fieldError={errorMessage}

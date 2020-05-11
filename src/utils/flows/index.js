@@ -403,16 +403,22 @@ export function isDeltaFlow(flow, exports) {
   if (!flow) return false;
   let isDeltaFlow = false;
 
+  if (flow && flow._exportId) {
+    const exp = exports && exports.find(e => e._id === flow._exportId);
+
+    if (exp && exp.type === 'delta') {
+      isDeltaFlow = true;
+    }
+
+    return isDeltaFlow;
+  }
+
   flow &&
     flow.pageGenerators &&
     flow.pageGenerators.forEach(pg => {
       const flowExp = exports && exports.find(e => e._id === pg._exportId);
 
-      if (
-        flowExp &&
-        flowExp.type === 'delta' &&
-        !(flowExp.delta && flowExp.delta.lagOffset)
-      ) {
+      if (flowExp && flowExp.type === 'delta') {
         isDeltaFlow = true;
       }
     });

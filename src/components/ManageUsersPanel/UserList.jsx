@@ -19,6 +19,7 @@ import {
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
 import CloseIcon from '../icons/CloseIcon';
+import Help from '../Help';
 
 const mapStateToProps = (state, { integrationId }) => {
   const permissions = selectors.userPermissions(state);
@@ -63,6 +64,8 @@ const mapDispatchToProps = dispatch => ({
     );
   },
 });
+// TODO (Azhar) : to work on styling
+// helpcontent is showing as bold text
 
 @withStyles({
   root: {
@@ -124,13 +127,50 @@ class UserList extends Component {
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
-                <TableCell>User</TableCell>
-                <TableCell>Access level</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>
+                  User
+                  <Help
+                    title="User"
+                    helpKey="users.user"
+                    caption="users.user"
+                  />
+                </TableCell>
+                <TableCell>
+                  Access Level
+                  <Help
+                    title="Access Level"
+                    helpKey="users.accesslevel"
+                    caption="users.accesslevel"
+                  />
+                </TableCell>
+                <TableCell>
+                  Status
+                  <Help
+                    title="Status"
+                    helpKey="users.status"
+                    caption="users.status"
+                  />
+                </TableCell>
                 {isAccountOwner && (
                   <Fragment>
-                    {!integrationId && <TableCell>Off/On</TableCell>}
-                    <TableCell>Actions</TableCell>
+                    {!integrationId && (
+                      <TableCell>
+                        Off/On
+                        <Help
+                          title="Off/On"
+                          helpKey="users.offOn"
+                          caption="users.offOn"
+                        />
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      Actions
+                      <Help
+                        title="Actions"
+                        helpKey="users.actions"
+                        caption="users.actions"
+                      />
+                    </TableCell>
                   </Fragment>
                 )}
               </TableRow>
