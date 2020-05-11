@@ -451,6 +451,13 @@ export default {
         padding: 0,
         marginRight: 4,
         marginTop: -4,
+        '& svg': {
+          fontSize: 18,
+        },
+        '&:hover': {
+          background: 'none',
+          color: colors.celigoAccent2,
+        },
       },
     },
     MuiInputBase: {
@@ -532,6 +539,7 @@ export default {
         },
       },
     },
+
     MuiTabs: {
       root: {
         minHeight: 36,
