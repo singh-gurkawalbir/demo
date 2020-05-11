@@ -535,6 +535,19 @@ export default {
     'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'inspectorio.connection.enviornment':
     'Please select the environment of your Inspectorio account.',
+  'orderful.connection.http.auth.token.token':
+    'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API Token.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'gorgias.connection.gorgiasSubdomain': `Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com 'temp-portal' is the subdomain.`,
+  'gorgias.connection.http.auth.basic.username':
+    'Please enter the Username of your Gorgias account',
+  'gorgias.connection.http.auth.basic.password':
+    'Please enter the Password of your Gorgias account',
+  'walmart.connection.environment':
+    'Please select the enviornment of your Walmart account here.',
+  'walmart.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Walmart Account.',
+  'walmart.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
