@@ -309,9 +309,6 @@ export default {
   'hubspot.connection.http.auth.type': 'Please select Authentication Type',
   'hubspot.connection.http.auth.token.token':
     'Please enter API Key of your Hubspot Account.',
-  'hubspot.connection.http.auth.oauth.scope': `A space-separated set of scopes that your app will need access to. Scopes listed in this parameter will be treated as required for your app, and the user will see an error if they select an account that does not have access to the scope you've included.`,
-  'hubspot.connection.http.unencrypted.scope':
-    'A space separated set of scopes that are optional for your app. Optional scopes will be automatically dropped from the authorization request if the user selects a HubSpot account that does not have access to that tool (such as requesting the social scope on a CRM only portal).',
   'insightly.connection.http.auth.basic.username':
     'The API key of your Insightly account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'connection.http.freshdeskSubdomain':
