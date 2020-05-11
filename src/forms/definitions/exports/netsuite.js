@@ -1,6 +1,31 @@
 import { isNewId } from '../../../utils/resource';
+import { isPGExport } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const outputModeField = fieldMeta.fieldMap.outputMode;
+    const executionTypeField = fieldMeta.fieldMap['netsuite.execution.type'];
+
+    // if (isLookupResource(flow, resource)) {
+    //   exportPanelField.visible = false;
+    // }
+
+    if (isPGExport(flow, resource) || (resource && resource.resourceType)) {
+      outputModeField.visible = false;
+      executionTypeField.visible = false;
+    }
+
+    // if (
+    //   isPGExport(flow, resource) ||
+    //   (resource &&
+    //     resource.resourceType &&
+    //     resource.resourceType === 'relatime')
+    // ) {
+    //   outputModeField.visible = false;
+    // }
+
+    return fieldMeta;
+  },
   preSave: ({ executionType, apiType, ...rest }) => {
     const newValues = rest;
     const netsuiteType =
@@ -145,17 +170,17 @@ export default {
       type: 'radiogroup',
       label: 'Execution type',
       required: true,
-      visible: r => !(r && r.isLookup),
-      visibleWhen: r => {
-        if (r && r.isLookup) return [];
+      visible: false,
+      // visibleWhen: r => {
+      //   if (r && r.isLookup) return [];
 
-        return [
-          {
-            field: 'outputMode',
-            is: ['records'],
-          },
-        ];
-      },
+      //   return [
+      //     {
+      //       field: 'outputMode',
+      //       is: ['records'],
+      //     },
+      //   ];
+      // },
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -167,6 +192,10 @@ export default {
         const netsuiteType = r && r.netsuite && r.netsuite.type;
 
         if (r && r.isLookup) return 'scheduled';
+
+        if (r && r.resourceType === 'realtime') return 'distributed';
+
+        if (r && r.resourceType === 'exportRecords') return 'scheduled';
 
         if (netsuiteType) {
           return netsuiteType === 'distributed' ? 'distributed' : 'scheduled';
@@ -185,6 +214,7 @@ export default {
       id: 'outputMode',
       type: 'mode',
       label: 'Output mode',
+      visible: false,
       options: [
         {
           items: [
@@ -202,6 +232,11 @@ export default {
       },
       defaultValue: r => {
         const isNew = isNewId(r._id);
+
+        if (['exportRecords', 'lookupRecords'].indexOf(r.resourceType) >= 0)
+          return 'records';
+
+        if (r.resourceType === 'lookupFiles') return 'blob';
 
         // if its create
         if (isNew) return 'records';

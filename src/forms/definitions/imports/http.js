@@ -373,6 +373,7 @@ export default {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -388,7 +389,13 @@ export default {
 
         return false;
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+      defaultValue: r => {
+        if (r.resourceType === 'importRecords') return 'records';
+
+        if (r.resourceType === 'transferRecords') return 'blob';
+
+        return r && r.blobKeyPath ? 'blob' : 'records';
+      },
     },
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },

@@ -77,6 +77,10 @@ export default {
         return 'scheduled';
       }
 
+      if (r && r.resourceType === 'realtime') return 'distributed';
+
+      if (r && r.resourceType === 'exportRecords') return 'scheduled';
+
       if (isNew)
         // if its create
         return '';
@@ -93,17 +97,17 @@ export default {
         ],
       },
     ],
-    visible: r => !(r && r.isLookup),
-    visibleWhen: r => {
-      if (r && r.isLookup) return [];
+    visible: false,
+    // visibleWhen: r => {
+    //   if (r && r.isLookup) return [];
 
-      return [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ];
-    },
+    //   return [
+    //     {
+    //       field: 'outputMode',
+    //       is: ['records'],
+    //     },
+    //   ];
+    // },
   },
   'salesforce.soql.query': {
     type: 'editor',

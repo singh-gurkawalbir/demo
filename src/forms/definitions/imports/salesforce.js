@@ -79,6 +79,7 @@ export default {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -88,13 +89,22 @@ export default {
         },
       ],
       defaultDisabled: r => {
+        if (r.resourceType === 'importRecords') return 'records';
+
+        if (r.resourceType === 'transferRecords') return 'blob';
         const isNew = isNewId(r._id);
 
         if (!isNew) return true;
 
         return false;
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+      defaultValue: r => {
+        if (r.resourceType === 'importRecords') return 'records';
+
+        if (r.resourceType === 'transferRecords') return 'blob';
+
+        return r && r.blobKeyPath ? 'blob' : 'records';
+      },
     },
     'salesforce.api': { fieldId: 'salesforce.api' },
     'salesforce.document.id': { fieldId: 'salesforce.document.id' },

@@ -232,6 +232,7 @@ export default {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -247,7 +248,13 @@ export default {
 
         return false;
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
+      defaultValue: r => {
+        if (r.resourceType === 'importRecords') return 'records';
+
+        if (r.resourceType === 'transferRecords') return 'blob';
+
+        return r && r.blobKeyPath ? 'blob' : 'records';
+      },
     },
     'rest.method': { fieldId: 'rest.method' },
     'rest.blobMethod': { fieldId: 'rest.blobMethod' },

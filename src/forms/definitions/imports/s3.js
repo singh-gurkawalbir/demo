@@ -91,7 +91,10 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: r =>
+        `How would you like the data ${
+          r && r.resourceType === 'transferRecords' ? 'transfered' : 'imported'
+        }?`,
     },
     inputMode: {
       id: 'inputMode',

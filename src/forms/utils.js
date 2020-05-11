@@ -873,13 +873,13 @@ export const importFileProviderOptions = {
   ftp: [
     {
       label: 'Transfer records into destination application',
-      value: 'importRecords',
+      value: 'transferRecords',
     },
   ],
   s3: [
     {
       label: 'Transfer records into destination application',
-      value: 'importRecords',
+      value: 'transferRecords',
     },
   ],
   http: [

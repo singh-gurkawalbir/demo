@@ -10,12 +10,7 @@ export default {
       exportPanelField.visible = false;
     }
 
-    if (
-      isPGExport(flow, resource) ||
-      (resource &&
-        resource.resourceType &&
-        resource.resourceType === 'exportRecords')
-    ) {
+    if (isPGExport(flow, resource) || (resource && resource.resourceType)) {
       outputModeField.visible = false;
     }
 
@@ -255,10 +250,14 @@ export default {
       },
       defaultValue: r => {
         const isNew = isNewId(r._id);
-
-        // if its create
-        if (isNew || r.type === 'exportRecords') return 'records';
         const output = r && r.type;
+
+        if (['exportRecords', 'lookupRecords'].indexOf(r.resourceType) >= 0)
+          return 'records';
+
+        if (r.resourceType === 'lookupFiles') return 'blob';
+
+        if (isNew) return 'records';
 
         if (output === 'blob') return 'blob';
 

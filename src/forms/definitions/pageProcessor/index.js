@@ -51,8 +51,6 @@ export default {
       newValues['/isLookup'] = true;
     }
 
-    console.log('presave values123', newValues);
-
     return newValues;
   },
   fieldMap: {
@@ -102,7 +100,7 @@ export default {
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['importRecords', 'transferRecord'] },
+        { field: 'resourceType', is: ['importRecords', 'transferRecords'] },
       ],
     },
 
@@ -155,18 +153,9 @@ export default {
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
+    const resourceTypeField = fields.find(field => field.id === 'resourceType');
 
-    // if (fieldId === 'resourceType' && ['s3', 'ftp'].includes(app.type)) {
-    //   return [
-    //     {
-    //       items: importOptions[app.type] || [],
-    //     },
-    //   ];
-    // }
     if (fieldId === 'resourceType') {
-      const resourceTypeField = fields.find(
-        field => field.id === 'resourceType'
-      );
       const options =
         importFileProviderOptions[app.assistant || app.type] || [];
 
@@ -180,6 +169,25 @@ export default {
         },
       ];
     }
+
+    // if (fieldId === 'importId') {
+    //   console.log('adssad', resourceTypeField.value === 'transferRecords');
+    //   // const importLabel =
+    //   //   resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import';
+
+    //   const importLabel = `Would you like to use an existing ${
+    //     resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import'
+    //   }`;
+
+    //   console.log('importLabel', importLabel);
+
+    //   return {
+    //     filter,
+    //     appType: app.type,
+    //     visible,
+    //     label,
+    //   };
+    // }
 
     if (fieldId === 'connection') {
       const expression = [];
@@ -229,8 +237,15 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
+      let importLabel = `Would you like to use an existing ${
+        resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import'
+      }`;
 
-      return { filter, appType: app.type };
+      if (fieldId === 'exportId') {
+        importLabel = 'Would you like to use an existing lookup';
+      }
+
+      return { filter, appType: app.type, label: importLabel };
     }
 
     // if (fieldId === 'application') {
