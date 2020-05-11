@@ -46,7 +46,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     errors: resolvedErrors = [],
     nextPageURL,
     outdated,
-    inProgressErrorMap = {},
+    actionInProgress,
   } = useSelector(state =>
     resourceErrors(state, {
       flowId,
@@ -61,9 +61,10 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       resourceId,
       flowId,
       isResolved: true,
-      inProgressErrorMap,
+
+      actionInProgress,
     }),
-    [defaultFilter, filterKey, flowId, inProgressErrorMap, resourceId]
+    [actionInProgress, defaultFilter, filterKey, flowId, resourceId]
   );
   const fetchResolvedData = useCallback(
     loadMore => {

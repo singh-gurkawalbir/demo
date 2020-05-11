@@ -1496,14 +1496,14 @@ const errorManager = {
         checked,
         options,
       }),
-    retry: ({ flowId, resourceId, retryIds = [], options = {} }) =>
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
         {
           flowId,
           resourceId,
           retryIds,
-          options,
+          isResolved,
         }
       ),
     resolve: ({ flowId, resourceId, errorIds = [] }) =>

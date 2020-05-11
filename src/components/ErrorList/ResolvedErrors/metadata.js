@@ -31,7 +31,9 @@ export default {
       value: r => r.resolvedBy,
     },
   ],
-  rowActions: ({ retryDataKey }) => {
+  rowActions: ({ retryDataKey }, { actionInProgress }) => {
+    if (actionInProgress) return [];
+
     if (retryDataKey) return [Retry];
 
     return [];

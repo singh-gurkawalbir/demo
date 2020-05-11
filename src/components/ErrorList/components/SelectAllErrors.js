@@ -11,6 +11,7 @@ export default function SelectAllErrors({
   isResolved,
   filterKey,
   defaultFilter,
+  actionInProgress,
 }) {
   const dispatch = useDispatch();
   const isAllSelected = useSelector(state =>
@@ -53,6 +54,7 @@ export default function SelectAllErrors({
       }
       onChange={event => handleChange(event)}
       checked={isAllSelected}
+      disabled={!!actionInProgress}
       color="primary"
     />
   );

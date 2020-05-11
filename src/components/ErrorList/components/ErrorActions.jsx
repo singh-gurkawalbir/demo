@@ -72,7 +72,7 @@ export default function ErrorActions(props) {
       actions.errorManager.flowErrorDetails.retry({
         flowId,
         resourceId,
-        options: { isResolved },
+        isResolved,
       })
     );
   }, [dispatch, flowId, isResolved, resourceId]);

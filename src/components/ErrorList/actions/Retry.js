@@ -14,7 +14,7 @@ export default {
           flowId,
           resourceId,
           retryIds: [resource.retryDataKey],
-          options: { isResolved },
+          isResolved,
         })
       );
     }, [dispatch, flowId, isResolved, resource.retryDataKey, resourceId]);

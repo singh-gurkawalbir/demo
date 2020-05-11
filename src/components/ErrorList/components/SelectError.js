@@ -9,7 +9,7 @@ export default function SelectError({
   resourceId,
   error,
   isResolved,
-  inProgressErrorMap = {},
+  actionInProgress,
 }) {
   const dispatch = useDispatch();
   const handleChange = event => {
@@ -26,7 +26,7 @@ export default function SelectError({
     );
   };
 
-  const isDisabled = !!inProgressErrorMap[error.errorId];
+  const isDisabled = !!actionInProgress;
 
   return (
     <Checkbox

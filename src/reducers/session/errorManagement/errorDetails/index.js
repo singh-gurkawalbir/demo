@@ -85,6 +85,7 @@ export default (state = {}, action) => {
         }
 
         draft[flowId][resourceId].actions.retry.status = 'requested';
+        draft[flowId][resourceId][errorType].actionInProgress = true;
 
         break;
 
@@ -100,7 +101,7 @@ export default (state = {}, action) => {
         }
 
         draft[flowId][resourceId].actions.resolve.status = 'requested';
-
+        draft[flowId][resourceId][errorType].actionInProgress = true;
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE
@@ -109,6 +110,7 @@ export default (state = {}, action) => {
         const count = draft[flowId][resourceId].actions.resolve.count || 0;
 
         draft[flowId][resourceId].actions.resolve.count = count + resolveCount;
+        draft[flowId][resourceId][errorType].actionInProgress = false;
         break;
       }
 
@@ -118,6 +120,7 @@ export default (state = {}, action) => {
         const count = draft[flowId][resourceId].actions.retry.count || 0;
 
         draft[flowId][resourceId].actions.retry.count = count + retryCount;
+        draft[flowId][resourceId][errorType].actionInProgress = false;
         break;
       }
 
