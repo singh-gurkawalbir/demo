@@ -7,16 +7,13 @@ import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles({
-  dynaFieldWrapper: {
-    width: '100%',
-  },
   formField: {
     width: '100%',
   },
-  dynaTextFormControl: {
+  dynasoqlFormControl: {
     width: '100%',
   },
-  dynaTextLabelWrapper: {
+  dynasoqlLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
@@ -90,8 +87,8 @@ export default function DynaSoqlQuery(props) {
   ]);
 
   return (
-    <FormControl className={classes.dynaTextFormControl}>
-      <div className={classes.dynaTextLabelWrapper}>
+    <FormControl className={classes.dynasoqlFormControl}>
+      <div className={classes.dynasoqlLabelWrapper}>
         <FormLabel htmlFor={id} required={required}>
           {label}
         </FormLabel>
