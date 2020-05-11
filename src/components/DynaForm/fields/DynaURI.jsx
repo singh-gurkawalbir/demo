@@ -7,7 +7,7 @@ import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
-import DynaTextWithLookup from './DynaTextWithLookup';
+import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 // import sampleTemplateUtil from '../../../utils/sampleTemplate';
 
 const useStyles = makeStyles(theme => ({
@@ -110,6 +110,7 @@ const DynaURI = props => {
     loadEditorSampleData,
     resourceId,
     resourceType,
+    showEditor,
   ]);
 
   return (
@@ -135,7 +136,7 @@ const DynaURI = props => {
         <ExitIcon />
       </ActionButton>
 
-      <DynaTextWithLookup
+      <DynaTextWithFlowSuggestion
         description={description}
         key={`text-${id}`}
         id={id}

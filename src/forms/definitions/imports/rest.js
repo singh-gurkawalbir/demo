@@ -297,8 +297,7 @@ export default {
     },
     'rest.relativeURICreate': {
       id: 'rest.relativeURICreate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
@@ -588,8 +587,7 @@ export default {
     },
     'rest.relativeURIUpdate': {
       id: 'rest.relativeURIUpdate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
@@ -828,8 +826,8 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
+      type: 'textwithflowSuggestion',
+      showSuggestionsWithoutHandlebar: true,
       connectionId: r => r && r._connectionId,
       label: 'Existing data id',
       required: true,

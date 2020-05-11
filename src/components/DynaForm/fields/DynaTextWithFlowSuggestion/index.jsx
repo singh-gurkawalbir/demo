@@ -1,9 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { TextField } from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Suggestions from './Suggestions';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
 
-const DynaTextWithLookup = props => {
+const DynaTextWithFlowSuggestion = props => {
   const {
     id,
     name,
@@ -23,13 +26,30 @@ const DynaTextWithLookup = props => {
     formContext,
     showLookup = true,
     showExtract = true,
+    showSuggestionsWithoutHandlebar = false,
+    skipExtractWrapOnSpecialChar = false,
     connectionId,
   } = props;
   const ref = useRef(null);
+  const dispatch = useDispatch();
   const [cursorPosition, setCursorPosition] = useState(0);
+  const [suggestionEnabled, setSuggestionEnabled] = useState(false);
+  const isPageGenerator = useSelector(state =>
+    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
+  );
+  const sampleData = useSelector(
+    state =>
+      selectors.getSampleDataContext(state, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'flowInput',
+      }).data
+  );
   const handleUpdate = useCallback(
     newValue => {
       setCursorPosition(0);
+      setSuggestionEnabled(false);
       onFieldChange(id, newValue);
     },
     [id, onFieldChange]
@@ -38,6 +58,7 @@ const DynaTextWithLookup = props => {
     const cursorIndex = e.target.selectionStart;
 
     setCursorPosition(cursorIndex);
+    setSuggestionEnabled(true);
   }, []);
   const handleFieldChange = e => {
     const inpValue = e.target.value;
@@ -49,8 +70,22 @@ const DynaTextWithLookup = props => {
   const handleClickOutside = event => {
     if (ref.current && !ref.current.contains(event.target)) {
       setCursorPosition(0);
+      setSuggestionEnabled(false);
     }
   };
+
+  useEffect(() => {
+    if (flowId && !sampleData && !isPageGenerator) {
+      dispatch(
+        actions.flowData.requestSampleData(
+          flowId,
+          resourceId,
+          resourceType,
+          'flowInput'
+        )
+      );
+    }
+  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside, true);
@@ -81,7 +116,7 @@ const DynaTextWithLookup = props => {
         onKeyUp={handleCursorChange}
         variant="filled"
       />
-      {(showExtract || showLookup) && (
+      {suggestionEnabled && (showExtract || showLookup) && (
         <Suggestions
           id={`suggestions-${id}`}
           onFieldChange={onFieldChange}
@@ -95,16 +130,18 @@ const DynaTextWithLookup = props => {
           showExtract={showExtract}
           cursorPosition={cursorPosition}
           onValueUpdate={handleUpdate}
+          showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
+          skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
         />
       )}
     </div>
   );
 };
 
-export default function DynaTextWithLookupWrapped(props) {
+export default function DynaTextWithFlowSuggestionWrapper(props) {
   return (
     <FormContext.Consumer>
-      {form => <DynaTextWithLookup {...props} formContext={form} />}
+      {form => <DynaTextWithFlowSuggestion {...props} formContext={form} />}
     </FormContext.Consumer>
   );
 }

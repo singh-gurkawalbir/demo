@@ -1,7 +1,8 @@
 export default {
   'as2.fileNameTemplate': {
-    type: 'textwithlookupextract',
-    fieldType: 'templateeditor',
+    type: 'uri',
+    showLookup: false,
+    showExtract: false,
     label: 'File name',
     required: true,
     showAllSuggestions: true,
@@ -13,8 +14,9 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'as2.messageIdTemplate': {
-    type: 'textwithlookupextract',
-    fieldType: 'templateeditor',
+    type: 'uri',
+    showLookup: false,
+    showExtract: false,
     label: 'Message ID',
     editorTitle:
       'Use this editor if your Message ID should be dynamically generated',

@@ -62,16 +62,19 @@ export default function Suggestions(props) {
     cursorPosition,
     onValueUpdate,
     onFieldChange,
+    showSuggestionsWithoutHandlebar = false,
+    skipExtractWrapOnSpecialChar = false,
     options,
   } = props;
   const classes = useStyles();
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    })
+  const sampleData = useSelector(
+    state =>
+      selectors.getSampleDataContext(state, {
+        flowId,
+        resourceId,
+        resourceType,
+        stage: 'flowInput',
+      }).data
   );
   const adaptorType = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
@@ -108,37 +111,52 @@ export default function Suggestions(props) {
       extracts
         .map(field => ({
           label: field.name,
-          value: field.id.indexOf(' ') > -1 ? `[${field.id}]` : field.id,
+          value:
+            !skipExtractWrapOnSpecialChar && field.id.indexOf(' ') > -1
+              ? `[${field.id}]`
+              : field.id,
         }))
         .filter(
           e => e.label.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
         ),
-    [extracts, matchingText]
+    [extracts, matchingText, skipExtractWrapOnSpecialChar]
   );
   const handleExtractSelect = useCallback(
     _val => {
-      const newValue = getValueAfterInsert(value, cursorPosition, _val);
+      const newValue = showSuggestionsWithoutHandlebar
+        ? _val
+        : getValueAfterInsert(value, cursorPosition, _val);
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate, value]
+    [cursorPosition, onValueUpdate, showSuggestionsWithoutHandlebar, value]
   );
   const handleLookupSelect = useCallback(
     lookup => {
-      const valueToInsert =
-        adaptorType === 'HTTPImport'
-          ? `lookup "${lookup.name}" this`
-          : lookup.name;
-      // update text field with selected lookup
-      const newValue = getValueAfterInsert(
-        value,
-        cursorPosition,
-        valueToInsert
-      );
+      if (showSuggestionsWithoutHandlebar) {
+        onValueUpdate(lookup.name);
+      } else {
+        const valueToInsert =
+          adaptorType === 'HTTPImport'
+            ? `lookup "${lookup.name}" this`
+            : lookup.name;
+        // update text field with selected lookup
+        const newValue = getValueAfterInsert(
+          value,
+          cursorPosition,
+          valueToInsert
+        );
 
-      onValueUpdate(newValue);
+        onValueUpdate(newValue);
+      }
     },
-    [adaptorType, cursorPosition, onValueUpdate, value]
+    [
+      adaptorType,
+      cursorPosition,
+      onValueUpdate,
+      showSuggestionsWithoutHandlebar,
+      value,
+    ]
   );
   const handleLookupAdd = useCallback(
     lookup => {
@@ -171,9 +189,10 @@ export default function Suggestions(props) {
     },
     [adaptorType, lookups, onFieldChange]
   );
-  const showSuggestion = !!value
-    .substring(0, cursorPosition)
-    .match(prefixRegexp);
+  const showSuggestion =
+    showSuggestionsWithoutHandlebar ||
+    (!showSuggestionsWithoutHandlebar &&
+      !!value.substring(0, cursorPosition).match(prefixRegexp));
 
   if (!showSuggestion) return null;
 

@@ -105,28 +105,6 @@ export default {
       };
     }
 
-    if (
-      fieldId === 'rdbms.ignoreExtract' ||
-      fieldId === 'rdbms.updateExtract'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rdbms.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
-      return {
-        resourceName: nameField && nameField.value,
-        lookups: {
-          fieldId: 'rdbms.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
-      };
-    }
-
     return null;
   },
 
@@ -184,19 +162,15 @@ export default {
     },
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
-      adaptorType: r => r && r.adaptorType,
+      type: 'textwithflowSuggestion',
+      showSuggestionsWithoutHandlebar: true,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
-      adaptorType: r => r && r.adaptorType,
+      type: 'textwithflowSuggestion',
+      showSuggestionsWithoutHandlebar: true,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rdbms.lookups', 'name'],
     },
     dataMappings: { formId: 'dataMappings' },
   },

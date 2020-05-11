@@ -1331,8 +1331,8 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
+      type: 'textwithflowSuggestion',
+      showSuggestionsWithoutHandlebar: true,
       label: 'Existing data ID',
       connectionId: r => r && r._connectionId,
       visibleWhenAll: [

@@ -204,8 +204,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     required: true,
     label: 'Relative URI',
     validWhen: {
@@ -304,8 +303,7 @@ export default {
   // #endregion transform
 
   'rest.once.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     visibleWhen: [

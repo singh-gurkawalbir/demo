@@ -175,9 +175,8 @@ export function howToFindIdentifierFieldsMeta({
       const identifierField = {
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
-        type: 'textwithlookupextract',
-        fieldType: 'ignoreExistingData',
-        hideLookups: true,
+        type: 'textwithflowSuggestion',
+        showLookup: false,
         connectionId: resource._connectionId,
         required: true,
         value: pathParameterValues[identifierPathParam.id],

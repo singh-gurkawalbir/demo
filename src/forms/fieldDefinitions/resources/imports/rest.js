@@ -125,8 +125,7 @@ export default {
     },
   },
   'rest.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     label: 'Relative URI',
     required: true,
     arrayIndex: 0,
