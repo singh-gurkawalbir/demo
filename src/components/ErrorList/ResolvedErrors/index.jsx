@@ -38,16 +38,6 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     []
   );
   const filterKey = `resolvedErrors-${flowId}-${resourceId}`;
-  const actionProps = useMemo(
-    () => ({
-      filterKey,
-      defaultFilter,
-      resourceId,
-      flowId,
-      isResolved: true,
-    }),
-    [defaultFilter, filterKey, flowId, resourceId]
-  );
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
   );
@@ -56,12 +46,24 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     errors: resolvedErrors = [],
     nextPageURL,
     outdated,
+    inProgressErrorMap = {},
   } = useSelector(state =>
     resourceErrors(state, {
       flowId,
       resourceId,
       options: { ...errorFilter, isResolved: true },
     })
+  );
+  const actionProps = useMemo(
+    () => ({
+      filterKey,
+      defaultFilter,
+      resourceId,
+      flowId,
+      isResolved: true,
+      inProgressErrorMap,
+    }),
+    [defaultFilter, filterKey, flowId, inProgressErrorMap, resourceId]
   );
   const fetchResolvedData = useCallback(
     loadMore => {

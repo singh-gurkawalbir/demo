@@ -90,6 +90,24 @@ function* retryErrors({ flowId, resourceId, retryIds = [], options = {} }) {
     retryDataKeys = retryIdList;
   }
 
+  const { errors } = yield select(resourceErrors, {
+    flowId,
+    resourceId,
+    options,
+  });
+  const errorIds = errors
+    .filter(error => retryDataKeys.includes(error.retryDataKey))
+    .map(error => error.errorId);
+
+  yield put(
+    actions.errorManager.flowErrorDetails.addInProgressErrors({
+      flowId,
+      resourceId,
+      isResolved: !!options.isResolved,
+      errorIds,
+    })
+  );
+
   try {
     const response = yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/retry`,
@@ -110,15 +128,14 @@ function* retryErrors({ flowId, resourceId, retryIds = [], options = {} }) {
         retryCount: retryDataKeys.length,
       })
     );
-    const { errors } = yield select(resourceErrors, {
-      flowId,
-      resourceId,
-      options,
-    });
-    const errorIds = errors
-      .filter(error => retryDataKeys.includes(error.retryDataKey))
-      .map(error => error.errorId);
-
+    yield put(
+      actions.errorManager.flowErrorDetails.removeInProgressErrors({
+        flowId,
+        resourceId,
+        isResolved: !!options.isResolved,
+        errorIds,
+      })
+    );
     yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
@@ -147,6 +164,14 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
     errors = errorIdList;
   }
 
+  yield put(
+    actions.errorManager.flowErrorDetails.addInProgressErrors({
+      flowId,
+      resourceId,
+      errorIds: errors,
+    })
+  );
+
   try {
     yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/resolved`,
@@ -165,6 +190,13 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       })
     );
     yield put(
+      actions.errorManager.flowErrorDetails.removeInProgressErrors({
+        flowId,
+        resourceId,
+        errorIds: errors,
+      })
+    );
+    yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
         resourceId,
@@ -175,7 +207,14 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
     );
   } catch (e) {
-    // console.log('error');
+    // Incase of resolve error, we need to remove in progress errors
+    yield put(
+      actions.errorManager.flowErrorDetails.removeInProgressErrors({
+        flowId,
+        resourceId,
+        errorIds: errors,
+      })
+    );
   }
 }
 

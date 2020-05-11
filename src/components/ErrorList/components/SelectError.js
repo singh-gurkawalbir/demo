@@ -4,7 +4,13 @@ import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
 import actions from '../../../actions';
 
-export default function SelectError({ flowId, resourceId, error, isResolved }) {
+export default function SelectError({
+  flowId,
+  resourceId,
+  error,
+  isResolved,
+  inProgressErrorMap = {},
+}) {
   const dispatch = useDispatch();
   const handleChange = event => {
     const { checked } = event.target;
@@ -20,6 +26,8 @@ export default function SelectError({ flowId, resourceId, error, isResolved }) {
     );
   };
 
+  const isDisabled = !!inProgressErrorMap[error.errorId];
+
   return (
     <Checkbox
       icon={
@@ -34,6 +42,7 @@ export default function SelectError({ flowId, resourceId, error, isResolved }) {
       }
       onChange={event => handleChange(event)}
       checked={error.selected || false}
+      disabled={isDisabled}
       color="primary"
     />
   );

@@ -44,11 +44,11 @@ export default function OpenErrors({ flowId, resourceId, show }) {
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
   );
-  const actionProps = { filterKey, defaultFilter, resourceId, flowId };
   const {
     status,
     errors: openErrors = [],
     nextPageURL,
+    inProgress: inProgressErrorMap = {},
     outdated = false,
   } = useSelector(state =>
     resourceErrors(state, {
@@ -56,6 +56,16 @@ export default function OpenErrors({ flowId, resourceId, show }) {
       resourceId,
       options: { ...errorFilter },
     })
+  );
+  const actionProps = useMemo(
+    () => ({
+      filterKey,
+      defaultFilter,
+      resourceId,
+      flowId,
+      inProgressErrorMap,
+    }),
+    [defaultFilter, filterKey, flowId, inProgressErrorMap, resourceId]
   );
   const requestOpenErrors = useCallback(
     loadMore =>

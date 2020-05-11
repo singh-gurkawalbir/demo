@@ -1553,6 +1553,36 @@ const errorManager = {
         resourceId,
         isResolved,
       }),
+    addInProgressErrors: ({
+      flowId,
+      resourceId,
+      isResolved = false,
+      errorIds = [],
+    }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ADD_ERRORS_IN_PROGRESS,
+        {
+          flowId,
+          resourceId,
+          isResolved,
+          errorIds,
+        }
+      ),
+    removeInProgressErrors: ({
+      flowId,
+      resourceId,
+      isResolved = false,
+      errorIds = [],
+    }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE_ERRORS_IN_PROGRESS,
+        {
+          flowId,
+          resourceId,
+          isResolved,
+          errorIds,
+        }
+      ),
   },
 };
 const flow = {

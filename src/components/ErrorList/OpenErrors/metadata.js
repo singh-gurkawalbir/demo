@@ -30,7 +30,10 @@ export default {
       value: r => r.occurredAt,
     },
   ],
-  rowActions: ({ retryDataKey }) => {
+  rowActions: (error, { inProgressErrorMap }) => {
+    const { retryDataKey, errorId } = error;
+
+    if (inProgressErrorMap[errorId]) return [];
     const actions = [
       ...(retryDataKey ? [EditRetryData] : []),
       Resolve,
