@@ -114,7 +114,7 @@ export default {
           { label: 'Amazonaws', value: 'amazonaws' },
           { label: 'Amazonmws', value: 'amazonmws' },
           { label: 'Anaplan', value: 'anaplan' },
-          { label: 'Ariba', value: 'ariba' },
+          { label: 'SAP Ariba', value: 'ariba' },
           { label: 'Asana', value: 'asana' },
           { label: 'Atera', value: 'atera' },
           { label: 'Authorize.net', value: 'authorize.net' },

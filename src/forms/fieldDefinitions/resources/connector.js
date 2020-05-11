@@ -121,7 +121,7 @@ export default {
           // { label: 'Desk', value: 'desk' },
           { label: 'Other', value: 'other' },
           { label: 'Braintree', value: 'braintree' },
-          { label: 'Ariba', value: 'ariba' },
+          { label: 'SAP Ariba', value: 'ariba' },
           { label: 'Oracle Supplier Network', value: 'osn' },
           { label: 'SkuVault', value: 'skuvault' },
           { label: 'NexTag', value: 'nextag' },
