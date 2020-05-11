@@ -48,8 +48,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     status,
     errors: openErrors = [],
     nextPageURL,
-    inProgress: inProgressErrorMap = {},
-    actionInProgress,
+    actionInProgress = false,
     outdated = false,
   } = useSelector(state =>
     resourceErrors(state, {
@@ -64,17 +63,9 @@ export default function OpenErrors({ flowId, resourceId, show }) {
       defaultFilter,
       resourceId,
       flowId,
-      inProgressErrorMap,
       actionInProgress,
     }),
-    [
-      actionInProgress,
-      defaultFilter,
-      filterKey,
-      flowId,
-      inProgressErrorMap,
-      resourceId,
-    ]
+    [actionInProgress, defaultFilter, filterKey, flowId, resourceId]
   );
   const requestOpenErrors = useCallback(
     loadMore =>

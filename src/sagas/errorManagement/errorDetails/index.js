@@ -99,15 +99,6 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
     .filter(error => retryDataKeys.includes(error.retryDataKey))
     .map(error => error.errorId);
 
-  yield put(
-    actions.errorManager.flowErrorDetails.addInProgressErrors({
-      flowId,
-      resourceId,
-      isResolved,
-      errorIds,
-    })
-  );
-
   try {
     const response = yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/retry`,
@@ -128,14 +119,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
         retryCount: retryDataKeys.length,
       })
     );
-    yield put(
-      actions.errorManager.flowErrorDetails.removeInProgressErrors({
-        flowId,
-        resourceId,
-        isResolved,
-        errorIds,
-      })
-    );
+
     yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
@@ -164,14 +148,6 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
     errors = errorIdList;
   }
 
-  yield put(
-    actions.errorManager.flowErrorDetails.addInProgressErrors({
-      flowId,
-      resourceId,
-      errorIds: errors,
-    })
-  );
-
   try {
     yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/resolved`,
@@ -190,13 +166,6 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       })
     );
     yield put(
-      actions.errorManager.flowErrorDetails.removeInProgressErrors({
-        flowId,
-        resourceId,
-        errorIds: errors,
-      })
-    );
-    yield put(
       actions.errorManager.flowErrorDetails.remove({
         flowId,
         resourceId,
@@ -207,14 +176,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
       actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
     );
   } catch (e) {
-    // Incase of resolve error, we need to remove in progress errors
-    yield put(
-      actions.errorManager.flowErrorDetails.removeInProgressErrors({
-        flowId,
-        resourceId,
-        errorIds: errors,
-      })
-    );
+    // console.log(e)
   }
 }
 

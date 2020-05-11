@@ -46,7 +46,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     errors: resolvedErrors = [],
     nextPageURL,
     outdated,
-    actionInProgress,
+    actionInProgress = false,
   } = useSelector(state =>
     resourceErrors(state, {
       flowId,
@@ -61,7 +61,6 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       resourceId,
       flowId,
       isResolved: true,
-
       actionInProgress,
     }),
     [actionInProgress, defaultFilter, filterKey, flowId, resourceId]

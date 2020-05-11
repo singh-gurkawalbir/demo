@@ -124,33 +124,6 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS
-        .ADD_ERRORS_IN_PROGRESS: {
-        if (!draft[flowId][resourceId][errorType].inProgress) {
-          draft[flowId][resourceId][errorType].inProgress = {};
-        }
-
-        if (errorIds.length) {
-          errorIds.forEach(
-            errorId =>
-              (draft[flowId][resourceId][errorType].inProgress[errorId] = true)
-          );
-        }
-
-        break;
-      }
-
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS
-        .REMOVE_ERRORS_IN_PROGRESS:
-        if (errorIds.length) {
-          errorIds.forEach(
-            errorId =>
-              (draft[flowId][resourceId][errorType].inProgress[errorId] = false)
-          );
-        }
-
-        break;
-
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OUTDATED:
         draft[flowId][resourceId].open.outdated = true;
         draft[flowId][resourceId].resolved.outdated = true;
