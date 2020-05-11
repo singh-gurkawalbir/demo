@@ -485,8 +485,13 @@ export function getSampleDataContext(
   });
 }
 
-export function lineGraphData(state, flowId) {
-  return flowId ? null : undefined;
+export function flowMetricsData(state, flowId, measurement, filters) {
+  return fromSession.flowMetricsData(
+    state && state.session,
+    flowId,
+    measurement,
+    filters
+  );
 }
 
 export function getFlowDataState(state, flowId, resourceId) {

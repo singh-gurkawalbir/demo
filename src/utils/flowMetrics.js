@@ -43,6 +43,10 @@ function convertToFullText(text) {
   }
 }
 
+export const getFlowMetrics = (metrics, measurement) => {
+  if (metrics.data) return metrics.data[measurement];
+};
+
 export const parseFlowMetricsJson = response => {
   if (!response || !response.data || !response.data.length) {
     return [];

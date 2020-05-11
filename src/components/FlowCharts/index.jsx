@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import {
@@ -11,32 +11,17 @@ import {
   ReferenceLine,
   Line,
 } from 'recharts';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import PanelHeader from '../PanelHeader';
+import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(2),
   },
 }));
-const getRandomData = count => {
-  const data = [];
-
-  for (let i = 0; i < count; i += 1) {
-    data.push({
-      time: moment()
-        .add(-i, 'h')
-        .toISOString(),
-      success: Math.floor((Math.random() * 1000000) % 4000),
-      errors: Math.floor((Math.random() * 1000000) % 4000),
-      ignored: Math.floor((Math.random() * 1000000) % 4000),
-    });
-  }
-
-  return data;
-};
 
 export function CustomizedDot(props) {
   const { cx, cy, value } = props;
@@ -71,14 +56,25 @@ export function CustomizedDot(props) {
 export default function Recharts({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const flowData = useSelector(state => selectors.lineGraphData(state, flowId));
+  const filters = useState({});
+  const flowData = useSelector(state =>
+    selectors.flowMetricsData(state, flowId, 'success', filters)
+  );
 
   useEffect(() => {
     if (!flowData) {
       dispatch(actions.flowMetrics.request(flowId, {}));
     }
   }, [dispatch, flowData, flowId]);
-  const data = flowData || getRandomData(25);
+
+  if (!flowData) {
+    return (
+      <Typography>
+        Loding data...
+        <Spinner />
+      </Typography>
+    );
+  }
 
   return (
     <div className={classes.root}>
@@ -86,7 +82,7 @@ export default function Recharts({ flowId }) {
       <LineChart
         width={930}
         height={350}
-        data={data}
+        data={flowData}
         margin={{
           top: 5,
           right: 30,
@@ -106,7 +102,7 @@ export default function Recharts({ flowId }) {
         <Legend />
         <ReferenceLine y={2500} label="Threshold" stroke="orange" />
         <Line
-          dataKey="success"
+          dataKey="value"
           legendType="wye"
           stroke="green"
           dot={<CustomizedDot />}

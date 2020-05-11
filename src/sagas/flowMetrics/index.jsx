@@ -25,27 +25,29 @@ export function* requestFlowMetrics({ flowId, filters }) {
       },
       message: 'Fetching Graph Data.',
     });
-  } catch (e) {
-    return undefined;
-  }
 
-  if (csvResponse) {
-    const json = yield call(invokeProcessor, {
-      processor: 'csvParser',
-      body: {
-        rules: {
-          columnDelimiter: ',',
-          hasHeaderRow: true,
-          trimSpaces: true,
-          rowsToSkip: 0,
+    if (csvResponse) {
+      const json = yield call(invokeProcessor, {
+        processor: 'csvParser',
+        body: {
+          rules: {
+            columnDelimiter: ',',
+            hasHeaderRow: true,
+            trimSpaces: true,
+            rowsToSkip: 0,
+          },
+          data: csvResponse,
+          options: { includeEmptyValues: true },
         },
-        data: csvResponse,
-        options: { includeEmptyValues: true },
-      },
-    });
-    const parsedJson = parseFlowMetricsJson(json);
+      });
+      const parsedJson = parseFlowMetricsJson(json);
 
-    yield put(actions.flowMetrics.received(parsedJson));
+      yield put(actions.flowMetrics.received(flowId, parsedJson));
+    }
+  } catch (e) {
+    yield put(actions.flowMetrics.failed(e));
+
+    return undefined;
   }
 }
 

@@ -73,7 +73,9 @@ export function CustomizedDot(props) {
 export default function Recharts() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const flowData = useSelector(state => selectors.lineGraphData(state, flowId));
+  const flowData = useSelector(state =>
+    selectors.flowMetricsData(state, flowId)
+  );
 
   useEffect(() => {
     if (!flowData) {
