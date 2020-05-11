@@ -273,7 +273,7 @@ function FlowBuilder() {
   const { status: openFlowErrorsStatus, data: flowErrorsMap } = useSelector(
     state => selectors.flowErrorMap(state, flowId)
   );
-  const totalOpenErrors = useMemo(() => {
+  const totalErrors = useMemo(() => {
     if (!flowErrorsMap || isNewFlow) return 0;
     const { pageProcessors = [], pageGenerators = [] } = flow;
     let totalErrors = 0;
@@ -531,10 +531,10 @@ function FlowBuilder() {
           </Fragment>
         }
         infoText={flow.description}>
-        {totalOpenErrors ? (
+        {totalErrors ? (
           <span className={classes.errorStatus}>
             <StatusCircle variant="error" size="small" />
-            {totalOpenErrors} open errors
+            {totalErrors} errors
           </span>
         ) : null}
         <div className={classes.actions}>
