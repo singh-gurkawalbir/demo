@@ -31,10 +31,13 @@ export default {
 
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
+      newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
+      newValues['/resourceType'] = type;
+
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
       if (application === 'webhook') {
@@ -69,11 +72,17 @@ export default {
       defaultValue: r => (r && r.type) || 'api',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [''],
+        },
+      ],
       options: [
         {
           items: [
             {
-              label: 'Export records from source applicationaa',
+              label: 'Export records from source application',
               value: 'Export records from source application',
             },
             {
@@ -141,9 +150,17 @@ export default {
     const app = applications.find(a => a.id === appField.value) || {};
 
     if (fieldId === 'type') {
+      const typeField = fields.find(field => field.id === 'type');
+      const options =
+        exportFileProviderOptions[app.assistant || app.type] || [];
+
+      typeField.value = options && options[0] && options[0].value;
+      typeField.disabled = options && options.length === 1;
+      typeField.defaultDisabled = options && options.length === 1;
+
       return [
         {
-          items: exportFileProviderOptions[app.assistant || app.type] || [],
+          items: options,
         },
       ];
     }
@@ -215,14 +232,19 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
+      let label = isWebhook
+        ? 'Would you like to use an existing listener?'
+        : exportField.label;
+
+      if (type === 'transferFiles') {
+        label = 'Would you like to use an existing transfer?';
+      }
 
       return {
         filter,
         appType: app.type,
         visible,
-        label: isWebhook
-          ? 'Would you like to use an existing listener?'
-          : exportField.label,
+        label,
       };
     }
 

@@ -102,7 +102,7 @@ export default {
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['imports'] },
+        { field: 'resourceType', is: ['importRecords', 'transferRecord'] },
       ],
     },
 
@@ -120,7 +120,7 @@ export default {
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['exports'] },
+        { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
       ],
     },
 
@@ -164,11 +164,19 @@ export default {
     //   ];
     // }
     if (fieldId === 'resourceType') {
-      // const appField = fields.find(field => field.id === 'application');
+      const resourceTypeField = fields.find(
+        field => field.id === 'resourceType'
+      );
+      const options =
+        importFileProviderOptions[app.assistant || app.type] || [];
+
+      resourceTypeField.value = options && options[0] && options[0].value;
+      resourceTypeField.disabled = options && options.length === 1;
+      resourceTypeField.defaultDisabled = options && options.length === 1;
 
       return [
         {
-          items: importFileProviderOptions[app.assistant || app.type] || [],
+          items: options,
         },
       ];
     }

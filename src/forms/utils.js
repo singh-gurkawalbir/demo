@@ -875,21 +875,11 @@ export const importFileProviderOptions = {
       label: 'Transfer records into destination application',
       value: 'importRecords',
     },
-
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
-    },
   ],
   s3: [
     {
       label: 'Transfer records into destination application',
       value: 'importRecords',
-    },
-
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   http: [
