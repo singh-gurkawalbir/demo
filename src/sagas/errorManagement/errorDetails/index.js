@@ -1,4 +1,4 @@
-import { put, takeLatest, select } from 'redux-saga/effects';
+import { put, takeLatest, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import {
   resourceErrors,
@@ -114,7 +114,6 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
       actions.errorManager.flowErrorDetails.retryReceived({
         flowId,
         resourceId,
-        isResolved,
         response,
         retryCount: retryDataKeys.length,
       })
@@ -129,7 +128,11 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
       })
     );
     yield put(
-      actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
+      actions.errorManager.flowErrorDetails.invalidate({
+        flowId,
+        resourceId,
+        isResolved,
+      })
     );
   } catch (e) {
     // console.log('error');
@@ -181,7 +184,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
 }
 
 export default [
-  takeLatest(
+  takeEvery(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
     requestErrorDetails
   ),

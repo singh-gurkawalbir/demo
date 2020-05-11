@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
-import { resourceErrors, filter } from '../../../reducers';
+import {
+  resourceErrors,
+  filter,
+  isAnyErrorActionInProgress,
+} from '../../../reducers';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
@@ -48,7 +52,6 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     status,
     errors: openErrors = [],
     nextPageURL,
-    actionInProgress = false,
     outdated = false,
   } = useSelector(state =>
     resourceErrors(state, {
@@ -57,15 +60,22 @@ export default function OpenErrors({ flowId, resourceId, show }) {
       options: { ...errorFilter },
     })
   );
+  const isAnyActionInProgress = useSelector(state =>
+    isAnyErrorActionInProgress(state, {
+      flowId,
+      resourceId,
+    })
+  );
+  const isFreshDataLoad = (!status || status === 'requested') && !nextPageURL;
   const actionProps = useMemo(
     () => ({
       filterKey,
       defaultFilter,
       resourceId,
       flowId,
-      actionInProgress,
+      actionInProgress: isAnyActionInProgress,
     }),
-    [actionInProgress, defaultFilter, filterKey, flowId, resourceId]
+    [defaultFilter, filterKey, flowId, isAnyActionInProgress, resourceId]
   );
   const requestOpenErrors = useCallback(
     loadMore =>
@@ -132,14 +142,14 @@ export default function OpenErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      <RefreshCard onRefresh={requestOpenErrors} />
+      {!isFreshDataLoad ? <RefreshCard onRefresh={requestOpenErrors} /> : null}
       {openErrors.length ? (
         <ErrorActions flowId={flowId} resourceId={resourceId} />
       ) : null}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      {(!status || status === 'requested') && !nextPageURL ? (
+      {isFreshDataLoad ? (
         <div className={classes.loading}>
           Loading Errors <Spinner size={20} />
         </div>

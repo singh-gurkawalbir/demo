@@ -4053,6 +4053,17 @@ export function errorActionsContext(
   });
 }
 
+export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
+  const isRetryInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      .status === 'requested';
+  const isResolveInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      .status === 'requested';
+
+  return isRetryInProgress || isResolveInProgress;
+}
+
 export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
 }

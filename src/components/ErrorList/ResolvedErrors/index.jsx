@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
-import { resourceErrors, filter } from '../../../reducers';
+import {
+  resourceErrors,
+  filter,
+  isAnyErrorActionInProgress,
+} from '../../../reducers';
 import metadata from './metadata';
 import KeywordSearch from '../../../components/KeywordSearch';
 import ErrorTable from '../ErrorTable';
@@ -46,7 +50,6 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     errors: resolvedErrors = [],
     nextPageURL,
     outdated,
-    actionInProgress = false,
   } = useSelector(state =>
     resourceErrors(state, {
       flowId,
@@ -54,6 +57,13 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       options: { ...errorFilter, isResolved: true },
     })
   );
+  const isAnyActionInProgress = useSelector(state =>
+    isAnyErrorActionInProgress(state, {
+      flowId,
+      resourceId,
+    })
+  );
+  const isFreshDataLoad = (!status || status === 'requested') && !nextPageURL;
   const actionProps = useMemo(
     () => ({
       filterKey,
@@ -61,9 +71,9 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       resourceId,
       flowId,
       isResolved: true,
-      actionInProgress,
+      actionInProgress: isAnyActionInProgress,
     }),
-    [actionInProgress, defaultFilter, filterKey, flowId, resourceId]
+    [defaultFilter, filterKey, flowId, isAnyActionInProgress, resourceId]
   );
   const fetchResolvedData = useCallback(
     loadMore => {
@@ -128,14 +138,14 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      <RefreshCard onRefresh={fetchResolvedData} />
+      {!isFreshDataLoad ? <RefreshCard onRefresh={fetchResolvedData} /> : null}
       {resolvedErrors.length ? (
         <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
       ) : null}
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
-      {(!status || status === 'requested') && !nextPageURL ? (
+      {isFreshDataLoad ? (
         <div className={classes.loading}>
           Loading Errors <Spinner size={20} />
         </div>
