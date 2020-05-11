@@ -1,11 +1,12 @@
-import { GetResourceReferenceLink } from '../CeligoTable/util';
+import { ConnectorNameComp } from '../ResourceTable/metadata';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      // eslint-disable-next-line react/display-name
-      value: r => <GetResourceReferenceLink r={r} />,
+      value: function ConnectorName(r) {
+        return <ConnectorNameComp r={r} />;
+      },
     },
     {
       heading: 'Type',
