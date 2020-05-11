@@ -92,6 +92,7 @@ import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import DynaExportSelect from './DynaExportSelect';
+import DynaAssistantParam from './DynaAssistantParam';
 
 export default {
   mode: DynaMode,
@@ -197,4 +198,5 @@ export default {
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
   exportSelect: DynaExportSelect,
+  assistantparam: DynaAssistantParam,
 };

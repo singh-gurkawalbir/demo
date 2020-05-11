@@ -1169,7 +1169,7 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'assistantparam',
             required: true,
             readOnly: false,
           },
@@ -1180,7 +1180,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
         },
       },
@@ -1196,7 +1196,7 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'assistantparam',
             required: false,
             readOnly: false,
             defaultValue: 'abc',
@@ -1208,7 +1208,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
         },
       },
@@ -1222,14 +1222,14 @@ describe('convertToReactFormFields', () => {
           f2: {
             id: 'f2',
             name: 'f2',
-            type: 'text',
+            type: 'assistantparam',
             required: true,
             readOnly: false,
           },
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'assistantparam',
             required: false,
             readOnly: false,
           },
@@ -1248,11 +1248,11 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           f2: {
             id: 'f2',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
         },
       },
@@ -1269,7 +1269,7 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'text',
+            type: 'assistantparam',
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1313,7 +1313,7 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'text',
+            type: 'assistantparam',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
@@ -1321,7 +1321,7 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'text',
+            type: 'assistantparam',
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1382,7 +1382,7 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'text',
+            type: 'assistantparam',
             // defaultValue: 'something else',
           },
         },
@@ -1418,11 +1418,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_select: {
             id: 'id_select',
@@ -1430,7 +1430,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1444,7 +1444,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
         },
       },
@@ -1482,7 +1482,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'text',
+              fieldType: 'assistantparam',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',
@@ -1522,7 +1522,7 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'text',
+            type: 'assistantparam',
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1566,7 +1566,7 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'text',
+            type: 'assistantparam',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
@@ -1574,7 +1574,7 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'text',
+            type: 'assistantparam',
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1635,7 +1635,7 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'text',
+            type: 'assistantparam',
             defaultValue: 'something else',
           },
         },
@@ -1671,11 +1671,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_select: {
             id: 'id_select',
@@ -1683,7 +1683,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1697,7 +1697,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'text',
+            inputType: 'assistantparam',
           },
         },
       },
@@ -1735,7 +1735,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'text',
+              fieldType: 'assistantparam',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',

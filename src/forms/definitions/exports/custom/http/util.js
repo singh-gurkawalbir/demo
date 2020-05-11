@@ -56,7 +56,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
       label: pathParam.name,
-      type: 'text',
+      type: 'assistantparam',
       value: values[pathParam.id],
       required: !!pathParam.required,
     };

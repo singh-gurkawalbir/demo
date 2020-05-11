@@ -1026,7 +1026,12 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\]/g, '*__*');
 }
 
-export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
+export function convertToReactFormFields({
+  paramMeta = {},
+  value = {},
+  flowId,
+  resourceContext = {},
+}) {
   const fields = [];
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
@@ -1083,6 +1088,10 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         fieldType = 'text';
       }
 
+      if (fieldType === 'text' && fieldDetailsMap[fieldId].type !== 'integer') {
+        fieldType = 'assistantparam';
+      }
+
       fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
@@ -1130,6 +1139,20 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         type: inputType,
         readOnly: !!field.readOnly,
       };
+
+      if (flowId) {
+        fieldDef.flowId = flowId;
+      }
+
+      if (resourceContext) {
+        if (resourceContext.resourceId) {
+          fieldDef.resourceId = resourceContext.resourceId;
+        }
+
+        if (resourceContext.resourceType) {
+          fieldDef.resourceType = resourceContext.resourceType;
+        }
+      }
 
       if (['multiselect', 'select'].includes(fieldDef.type)) {
         fieldDef.options = [
