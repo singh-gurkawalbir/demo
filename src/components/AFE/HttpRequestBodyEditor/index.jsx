@@ -3,7 +3,6 @@ import HandlebarsEditor from '../HandlebarsEditor';
 export default function HttpRequestBodyEditor(props) {
   const {
     editorId,
-    defaultRule,
     disabled,
     contentType,
     layout = 'compact',
@@ -26,7 +25,6 @@ export default function HttpRequestBodyEditor(props) {
       dataMode="json"
       layout={layout}
       resultMode={mode}
-      defaultRule={defaultRule}
       enableAutocomplete
       isSampleDataLoading={isSampleDataLoading}
     />

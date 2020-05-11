@@ -70,7 +70,7 @@ export default function HandlebarsEditor(props) {
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluateDelay: 500,
-        template: props.rule ? props.rule : props.defaultRule,
+        template: props.rule,
         initTemplate: props.rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
@@ -82,7 +82,6 @@ export default function HandlebarsEditor(props) {
     dispatch,
     editorId,
     props.data,
-    props.defaultRule,
     props.isSampleDataLoading,
     props.rule,
     props.strict,

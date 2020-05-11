@@ -9,7 +9,6 @@ export default function HttpRequestBodyDialog(props) {
     contentType,
     lookups = [],
     disabled,
-    defaultRule,
     isSampleDataLoading,
     editorVersion,
     ...rest
@@ -34,7 +33,6 @@ export default function HttpRequestBodyDialog(props) {
         lookups={lookups}
         rule={rule}
         data={data}
-        defaultRule={defaultRule}
         isSampleDataLoading={isSampleDataLoading}
         editorVersion={editorVersion}
         disabled={disabled}
