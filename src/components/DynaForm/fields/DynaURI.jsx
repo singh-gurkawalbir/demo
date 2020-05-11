@@ -1,4 +1,3 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useState, useCallback, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ActionButton from '../../ActionButton';
@@ -15,7 +14,8 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
 }));
-const DynaURI = props => {
+
+export default function DynaURI(props) {
   const {
     id,
     onFieldChange,
@@ -74,13 +74,5 @@ const DynaURI = props => {
         {...props}
       />
     </Fragment>
-  );
-};
-
-export default function DynaURIWrapper(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaURI {...props} formContext={form} />}
-    </FormContext.Consumer>
   );
 }
