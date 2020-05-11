@@ -331,7 +331,7 @@ export default {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[11, 16]],
+        padding: [[10, 16]],
         borderBottomColor: colors.celigoNeutral3,
       },
       head: {
