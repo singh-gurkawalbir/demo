@@ -64,7 +64,7 @@ export default function Pagination(props) {
       const shouldLoadMore = hasMore && endOfNextPage > count;
 
       if (shouldLoadMore && typeof loadMoreHandler === 'function') {
-        loadMoreHandler();
+        return loadMoreHandler();
       }
 
       if (typeof onChangePage === 'function') {

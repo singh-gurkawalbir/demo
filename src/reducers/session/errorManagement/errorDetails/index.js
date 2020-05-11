@@ -28,9 +28,9 @@ export default (state = {}, action) => {
         if (!draft[flowId][resourceId])
           draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
         draft[flowId][resourceId][errorType].status = 'requested';
+        delete draft[flowId][resourceId][errorType].outdated;
 
         if (!loadMore) {
-          delete draft[flowId][resourceId][errorType].outdated;
           delete draft[flowId][resourceId][errorType].nextPageURL;
         }
 
