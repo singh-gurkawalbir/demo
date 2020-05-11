@@ -85,9 +85,7 @@ export default {
       return {
         includeHeader: hasHeaderRowField.value,
       };
-    }
-
-    if (fieldId === 'uploadFile') {
+    } else if (fieldId === 'uploadFile') {
       const fileType = fields.find(field => field.id === 'file.type');
 
       return fileType.value;
