@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useCallback } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core';
 
@@ -47,21 +47,22 @@ export default function DynaTextFtpPort(props) {
     disabled,
   } = props;
   const classes = useStyle();
-  let result;
 
-  if ([21, 22, 990].includes(value) && options) {
-    result = options;
-  } else {
-    result = value;
-  }
+  useEffect(() => {
+    if ((!value || [21, 22, 990].includes(value)) && options)
+      onFieldChange(id, options);
+  }, [id, onFieldChange, options, value]);
 
-  const handleFieldChange = event => {
-    const { value, name } = event.target;
+  const handleFieldChange = useCallback(
+    event => {
+      const { value, name } = event.target;
 
-    if (!name || name !== props.name) return;
+      if (!name || name !== props.name) return;
 
-    return onFieldChange(id, value);
-  };
+      return onFieldChange(id, value);
+    },
+    [id, onFieldChange, props.name]
+  );
 
   return (
     <TextField
@@ -75,7 +76,7 @@ export default function DynaTextFtpPort(props) {
       helperText={isValid ? description : errorMessages}
       disabled={disabled}
       error={!isValid}
-      value={result}
+      value={value}
       onChange={handleFieldChange}
       className={classes.root}
     />
