@@ -200,5 +200,5 @@ export default {
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,
   concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
-  textwithflowSuggestion: DynaTextWithFlowSuggestion,
+  textwithflowsuggestion: DynaTextWithFlowSuggestion,
 };

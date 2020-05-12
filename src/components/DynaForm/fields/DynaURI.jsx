@@ -25,7 +25,7 @@ export default function DynaURI(props) {
     resourceType,
     flowId,
     description,
-    enableEditorV2 = true,
+    disableEditorV2 = false,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -54,7 +54,7 @@ export default function DynaURI(props) {
             flowId={flowId}
             resourceId={resourceId}
             resourceType={resourceType}
-            enableEditorV2={enableEditorV2}
+            disableEditorV2={disableEditorV2}
             rule={value}
           />
         </div>

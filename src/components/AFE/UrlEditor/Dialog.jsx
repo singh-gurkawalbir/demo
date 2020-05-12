@@ -2,7 +2,15 @@ import UrlEditor from './';
 import HanldebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function UrlEditorDialog(props) {
-  const { id, rule, lookups = [], data, disabled, ...rest } = props;
+  const {
+    id,
+    isSampleDataLoading,
+    rule,
+    lookups = [],
+    data,
+    disabled,
+    ...rest
+  } = props;
   const defaults = {
     layout: 'column',
     width: '70vw',
@@ -23,6 +31,7 @@ export default function UrlEditorDialog(props) {
         editorId={id}
         rule={rule}
         data={data}
+        isSampleDataLoading={isSampleDataLoading}
       />
     </HanldebarEditorDialog>
   );

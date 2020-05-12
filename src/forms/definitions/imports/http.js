@@ -1331,10 +1331,9 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'textwithflowSuggestion',
+      type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
       label: 'Existing data ID',
-      connectionId: r => r && r._connectionId,
       visibleWhenAll: [
         {
           field: 'http.compositeType',

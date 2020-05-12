@@ -28,7 +28,6 @@ const DynaTextWithFlowSuggestion = props => {
     showExtract = true,
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
-    connectionId,
   } = props;
   const ref = useRef(null);
   const dispatch = useDispatch();
@@ -122,7 +121,6 @@ const DynaTextWithFlowSuggestion = props => {
           onFieldChange={onFieldChange}
           resourceId={resourceId}
           flowId={flowId}
-          connectionId={connectionId}
           formContext={formContext}
           resourceType={resourceType}
           value={value}

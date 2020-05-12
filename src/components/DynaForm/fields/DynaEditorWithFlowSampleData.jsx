@@ -17,7 +17,7 @@ const DynaEditorWithFlowSampleData = ({
   flowId,
   resourceId,
   resourceType,
-  enableEditorV2,
+  disableEditorV2,
   rule,
   ...props
 }) => {
@@ -26,11 +26,11 @@ const DynaEditorWithFlowSampleData = ({
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
   const isEditorV2Supported = useSelector(state => {
-    if (enableEditorV2) {
-      return selectors.isEditorV2Supported(state, resourceId, resourceType);
+    if (disableEditorV2) {
+      return false;
     }
 
-    return false;
+    return selectors.isEditorV2Supported(state, resourceId, resourceType);
   });
   const {
     data: sampleData,
@@ -53,14 +53,14 @@ const DynaEditorWithFlowSampleData = ({
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: fieldId,
-          isV2NotSupported: !enableEditorV2,
+          isV2NotSupported: disableEditorV2,
           requestedTemplateVersion: version,
         })
       );
     },
     [
+      disableEditorV2,
       dispatch,
-      enableEditorV2,
       fieldId,
       flowId,
       formContext.value,

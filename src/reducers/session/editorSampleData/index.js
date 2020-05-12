@@ -27,12 +27,7 @@ export default function reducer(state = {}, action) {
           draft[resourceId][flowId] = {};
         }
 
-        if (!draft[resourceId][flowId][fieldType]) {
-          draft[resourceId][flowId][fieldType] = { status: 'requested' };
-        } else {
-          draft[resourceId][flowId][fieldType].status = 'requested';
-        }
-
+        draft[resourceId][flowId][fieldType] = { status: 'requested' };
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.RECEIVED:
         draft[resourceId][flowId][fieldType] = {

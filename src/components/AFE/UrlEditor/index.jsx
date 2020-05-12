@@ -8,6 +8,7 @@ export default function UrlEditor(props) {
     rule,
     data,
     disabled,
+    isSampleDataLoading = false,
   } = props;
 
   return (
@@ -23,6 +24,7 @@ export default function UrlEditor(props) {
       dataMode="json"
       resultMode="text"
       enableAutocomplete
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }

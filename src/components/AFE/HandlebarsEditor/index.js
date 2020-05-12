@@ -40,13 +40,6 @@ export default function HandlebarsEditor(props) {
   useEffect(() => {
     completers.handleBarsCompleters.setJsonCompleter(data);
   }, [data]);
-  useEffect(() => {
-    dispatch(
-      actions.editor.patch(editorId, {
-        sampleRule: props.sampleRule,
-      })
-    );
-  }, [dispatch, editorId, props.sampleRule]);
 
   useEffect(() => {
     if (props.isSampleDataLoading !== isSampleDataLoading) {

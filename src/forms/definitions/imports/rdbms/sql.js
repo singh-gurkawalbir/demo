@@ -162,15 +162,13 @@ export default {
     },
     'rdbms.ignoreExtract': {
       fieldId: 'rdbms.ignoreExtract',
-      type: 'textwithflowSuggestion',
+      type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
-      connectionId: r => r && r._connectionId,
     },
     'rdbms.updateExtract': {
       fieldId: 'rdbms.updateExtract',
-      type: 'textwithflowSuggestion',
+      type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
-      connectionId: r => r && r._connectionId,
     },
     dataMappings: { formId: 'dataMappings' },
   },

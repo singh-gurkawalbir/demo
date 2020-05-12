@@ -826,9 +826,8 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'textwithflowSuggestion',
+      type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
-      connectionId: r => r && r._connectionId,
       label: 'Existing data id',
       required: true,
       visibleWhenAll: [

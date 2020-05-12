@@ -51,17 +51,11 @@ export default function HanldebarEditorDialog({
         <EditorToggleAction
           editorVersion={editorVersion}
           disabled={props.disabled}
-          onVersionToggle={onVersionToggle}
+          onVersionToggle={handleVersionToggle}
         />
       );
     }
-  }, [editorVersion, onVersionToggle, props.disabled, showVersionToggle]);
+  }, [editorVersion, handleVersionToggle, props.disabled, showVersionToggle]);
 
-  return (
-    <EditorDialog
-      toggleAction={editorToggleAction}
-      onVersionToggle={handleVersionToggle}
-      {...props}
-    />
-  );
+  return <EditorDialog toggleAction={editorToggleAction} {...props} />;
 }

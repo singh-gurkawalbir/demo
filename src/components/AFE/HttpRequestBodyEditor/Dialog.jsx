@@ -34,7 +34,6 @@ export default function HttpRequestBodyDialog(props) {
         rule={rule}
         data={data}
         isSampleDataLoading={isSampleDataLoading}
-        editorVersion={editorVersion}
         disabled={disabled}
       />
     </HanldebarEditorDialog>

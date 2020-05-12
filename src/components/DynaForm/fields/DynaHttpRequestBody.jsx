@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
@@ -42,24 +42,24 @@ const DynaHttpRequestBody = props => {
     label,
     title,
     resourceId,
-    connectionId,
     resourceType,
     flowId,
     arrayIndex,
     supportLookup = true,
-    enableEditorV2 = true,
+    disableEditorV2 = false,
   } = props;
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  const adaptorType = useSelector(state => {
+  const { adaptorType, connectionId } = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
       state,
       'imports',
       resourceId
     );
+    const { adaptorType, _connectionId: connectionId } = resourceData;
 
-    return resourceData && resourceData.adaptorType;
-  });
+    return { adaptorType, connectionId };
+  }, shallowEqual);
   const formattedRule = useMemo(
     () => (Array.isArray(value) ? value[arrayIndex] : value),
     [arrayIndex, value]
@@ -134,7 +134,7 @@ const DynaHttpRequestBody = props => {
           flowId={flowId}
           resourceId={resourceId}
           resourceType={resourceType}
-          enableEditorV2={enableEditorV2}
+          disableEditorV2={disableEditorV2}
           rule={formattedRule}
         />
       )}
