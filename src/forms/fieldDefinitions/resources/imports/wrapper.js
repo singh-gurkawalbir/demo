@@ -10,6 +10,6 @@ export default {
   },
   'wrapper.sampleData': {
     type: 'textarea',
-    label: 'If so,please paste it here',
+    label: 'Paste your sample data here',
   },
 };
