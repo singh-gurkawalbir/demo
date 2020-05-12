@@ -162,6 +162,7 @@ export default {
       ],
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    fileApiIdentifier: { formId: 'fileApiIdentifier' },
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
@@ -178,7 +179,11 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['fileAdvancedSettings', 'fileApiIdentifier'],
+      },
     ],
   },
   actions: [

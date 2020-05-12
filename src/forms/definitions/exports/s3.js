@@ -158,6 +158,7 @@ export default {
       ],
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    fileApiIdentifier: { formId: 'fileApiIdentifier' },
   },
   layout: {
     fields: [
@@ -173,7 +174,11 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced', fields: ['fileAdvancedSettings'] },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['fileAdvancedSettings', 'fileApiIdentifier'],
+      },
     ],
   },
   actions: [

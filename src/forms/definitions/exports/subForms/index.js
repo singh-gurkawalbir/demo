@@ -5,6 +5,7 @@ import advancedSettings from './advancedSettings';
 import fileAdvancedSettings from './fileAdvancedSettings';
 import exportOneToMany from './exportOneToMany';
 import netsuite from './netsuite';
+import fileApiIdentifier from './fileApiIdentifier';
 
 export default {
   common,
@@ -13,5 +14,6 @@ export default {
   advancedSettings,
   fileAdvancedSettings,
   exportOneToMany,
+  fileApiIdentifier,
   ...netsuite,
 };

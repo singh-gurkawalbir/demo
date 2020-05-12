@@ -252,6 +252,9 @@ export default {
         },
       ],
     },
+    fileApiIdentifier: {
+      formId: 'fileApiIdentifier',
+    },
   },
   layout: {
     fields: [
@@ -280,6 +283,7 @@ export default {
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'fileApiIdentifier',
         ],
       },
     ],

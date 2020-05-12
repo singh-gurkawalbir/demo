@@ -194,6 +194,9 @@ export default {
         },
       ],
     },
+    fileApiIdentifier: {
+      formId: 'fileApiIdentifier',
+    },
   },
   layout: {
     fields: [
@@ -215,7 +218,11 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['fileAdvancedSettings', 'deleteAfterImport'],
+        fields: [
+          'fileAdvancedSettings',
+          'deleteAfterImport',
+          'fileApiIdentifier',
+        ],
       },
     ],
   },
