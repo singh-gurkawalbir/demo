@@ -185,7 +185,7 @@ describe('global selectors', () => {
       expect(result).toBe(cachedResult);
     });
 
-    test('should return the same cached data even when after a different resource has been received', () => {
+    test('should return the same cached data even after a different resource has been received', () => {
       const exports = [{ _id: 1, name: 'test X' }];
       const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
       let state;
