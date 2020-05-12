@@ -535,6 +535,19 @@ export default {
     'Please enter your API key here.Log into your Inspectorio Account-> Configuration > API keys, you can generate an API key or use an existing one.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'inspectorio.connection.enviornment':
     'Please select the environment of your Inspectorio account.',
+  'orderful.connection.http.auth.token.token':
+    'Please enter your API key here.Log into your Orderful Account->Settings > API Credentials, you can view your API Token.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
+  'gorgias.connection.gorgiasSubdomain': `Please enter your Gorgias subdomain. For example, in https://temp-portal.gorgias.com 'temp-portal' is the subdomain.`,
+  'gorgias.connection.http.auth.basic.username':
+    'Please enter the Username of your Gorgias account',
+  'gorgias.connection.http.auth.basic.password':
+    'Please enter the Password of your Gorgias account',
+  'walmart.connection.environment':
+    'Please select the enviornment of your Walmart account here.',
+  'walmart.connection.http.unencrypted.clientId':
+    'Please enter Client ID of your Walmart Account.',
+  'walmart.connection.http.encrypted.clientSecret':
+    'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1276,7 +1289,7 @@ export default {
     'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these imports in the data flows that you build yourself, nor can the same Integration App reference imports across different integration tiles.',
   'import._connectorId':
     'If this import was installed as part of an Integration App (i.e. from the integrator.io marketplace), then this value will hold the _id value of the Integration App that owns the import.  Please note that for security reasons imports owned by an Integration App cannot be referenced outside the context of the Integration App, meaning that you cannot use any of these imports in the data flows that you build yourself.',
-  'import.sampleData': 'Used in UI, which helps in populating data for mapping',
+  'import.sampleData': `Enter JSON-formatted fields and values that are representative of the fields expected by the destination API. The sample data will be useful later when mapping exported source fields to the fields you provide here for the destination app. The sample data does not have to be thorough, but it should at least contain all of the fields that you want to work with, in the same format that the import will encounter when running in a production capacity.`,
   'import.distributed':
     'Boolean value, if set the resulting import would be NS Distributed Import and dependent fields to be set accordingly',
   'import.maxAttempts':

@@ -345,6 +345,12 @@ const connectors = [
     assistant: 'github',
     webhook: true,
   },
+  {
+    id: 'gorgias',
+    name: 'Gorgias',
+    type: 'http',
+    assistant: 'gorgias',
+  },
   // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
   // { id: 'google', name: 'Google', type: 'http', assistant: 'google' },
   {
@@ -553,6 +559,7 @@ const connectors = [
   { id: 'okta', name: 'Okta', type: 'http', assistant: 'okta' },
   { id: 'onelogin', name: 'OneLogin', type: 'http', assistant: 'onelogin' },
   { id: 'openair', name: 'OpenAir', type: 'http', assistant: 'openair' },
+  { id: 'orderful', name: 'Orderful', type: 'http', assistant: 'orderful' },
   { id: 'osn', name: 'Osn', type: 'http', assistant: 'osn' },
   { id: 'other', name: 'Other', type: 'http', assistant: 'other' },
   { id: 'outreach', name: 'Outreach', type: 'http', assistant: 'outreach' },
