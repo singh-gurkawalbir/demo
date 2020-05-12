@@ -1,4 +1,3 @@
-import { Chip } from '@material-ui/core';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,6 +18,7 @@ import {
 } from '../../../forms/utils';
 import ActionButton from '../../../components/ActionButton';
 import useResourceList from '../../../hooks/useResourceList';
+import StatusCircle from '../../StatusCircle';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -98,6 +98,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  connectionStatusWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -112,6 +116,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ConnectionLoadingChip(props) {
+  const classes = useStyles();
   const { connectionId } = props;
   const dispatch = useDispatch();
 
@@ -128,9 +133,15 @@ function ConnectionLoadingChip(props) {
   }
 
   return isConnectionOffline ? (
-    <Chip color="secondary" label="Offline" />
+    <div className={classes.connectionStatusWrapper}>
+      <StatusCircle size="small" variant="error" />
+      offline
+    </div>
   ) : (
-    <Chip color="primary" label="Online" />
+    <div className={classes.connectionStatusWrapper}>
+      <StatusCircle size="small" variant="info" />
+      online
+    </div>
   );
 }
 

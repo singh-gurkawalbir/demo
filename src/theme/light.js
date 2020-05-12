@@ -390,6 +390,7 @@ export default {
     },
     MuiFilledInput: {
       root: {
+        background: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent2,
@@ -448,6 +449,31 @@ export default {
       inputMultiline: {
         border: 'none',
       },
+      adornedStart: {
+        paddingLeft: 0,
+        background: 'none',
+      },
+      adornedEnd: {
+        paddingRight: 0,
+        background: 'none',
+      },
+      inputAdornedStart: {
+        paddingLeft: 15,
+      },
+      inputAdornedEnd: {
+        paddingRight: 15,
+      },
+    },
+    MuiInputAdornment: {
+      root: {
+        height: '100%',
+      },
+      positionEnd: {
+        whiteSpace: 'nowrap',
+      },
+      positionStart: {
+        whiteSpace: 'nowrap',
+      },
     },
     MuiRadio: {
       root: {
@@ -464,6 +490,7 @@ export default {
         },
       },
     },
+
     MuiInputBase: {
       root: {
         fontFamily: 'source sans pro',
