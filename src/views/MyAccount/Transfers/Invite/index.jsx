@@ -9,7 +9,7 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import IconTextButton from '../../../../components/IconTextButton';
 import metadata from './metadata';
 import ArrowLeftIcon from '../../../../components/icons/ArrowLeftIcon';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -20,7 +20,10 @@ export default function Invite(props) {
   const { setShowInviteView } = props;
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const clearPreview = useCallback(() => {
     dispatch(actions.transfer.clearPreview());
   }, [dispatch]);

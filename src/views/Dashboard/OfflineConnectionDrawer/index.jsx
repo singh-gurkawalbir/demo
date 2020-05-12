@@ -8,7 +8,7 @@ import * as selectors from '../../../reducers';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';
-import useResourceList from '../../../hooks/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   subNavOpen: {
@@ -65,7 +65,10 @@ function OfflineConnectionDrawer() {
     }),
     [integrationId]
   );
-  const tile = useResourceList(offlineFilterConfig).resources[0];
+  const tile = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    offlineFilterConfig
+  ).resources[0];
   const showSubNav =
     tile && tile.offlineConnections && tile.offlineConnections.length > 1;
   const integrationConnections = useSelector(
