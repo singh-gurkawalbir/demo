@@ -17,6 +17,7 @@ import CodeEditor from '../../../../CodeEditor';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const getRelationShipName = (options, parentField, childSObject) => {
   const { label: relationshipName } =
@@ -127,10 +128,17 @@ function EditListItemModal(props) {
       ],
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    optionsHandler,
+  });
 
   return (
-    <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
+    <Fragment>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+
       <DynaSubmit
+        formKey={formKey}
         onClick={values => {
           const { childRelationship, ...rest } = values;
           const updatedValue = {
@@ -148,7 +156,7 @@ function EditListItemModal(props) {
         Add Selected
       </DynaSubmit>
       <Button onClick={handleClose}>Cancel</Button>
-    </DynaForm>
+    </Fragment>
   );
 }
 

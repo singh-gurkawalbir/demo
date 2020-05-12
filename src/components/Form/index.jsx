@@ -35,7 +35,12 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
-export default function useForm({ formKey, metaValue, ...formSpecificProps }) {
+export default function useForm({
+  formKey,
+  metaValue,
+  remount,
+  ...formSpecificProps
+}) {
   const [formKeyUsed, setFormKeyUsed] = useState();
   const {
     disabled,
@@ -74,7 +79,7 @@ export default function useForm({ formKey, metaValue, ...formSpecificProps }) {
 
     return () => dispatch(actions.form.formClear(formKeyUsedInUseEff));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, fieldsMeta, formKey]);
+  }, [dispatch, remount, formKey]);
 
   // this hook is sensitive to meta value changes...ideally this is where default value should go
 

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import Button from '@material-ui/core/Button';
 import DynaForm from '../../DynaForm';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 export default function LookupListing(props) {
   const { lookups, onUpdate, disabled, onDelete, onCancel } = props;
@@ -31,12 +32,18 @@ export default function LookupListing(props) {
       fields: ['lookup_list'],
     },
   };
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldsMeta: lookuplistingFieldMeta,
+    remount: key,
+  });
 
   return (
-    <DynaForm key={key} disabled={disabled} fieldMeta={lookuplistingFieldMeta}>
+    <Fragment>
+      <DynaForm formKey={formKey} fieldMeta={lookuplistingFieldMeta} />
       <Button data-test="closeLookupListing" onClick={onCancel}>
         Close
       </Button>
-    </DynaForm>
+    </Fragment>
   );
 }

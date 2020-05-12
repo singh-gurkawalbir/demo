@@ -1,17 +1,18 @@
-import { useEffect, useCallback, useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { hashCode } from '../../../utils/string';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import * as selectors from '../../../reducers';
+import { hashCode } from '../../../utils/string';
 import DynaForm from '../../DynaForm';
+import ConsoleGridItem from '../ConsoleGridItem';
+import ErrorGridItem from '../ErrorGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';
-import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
-import ErrorGridItem from '../ErrorGridItem';
-import ConsoleGridItem from '../ConsoleGridItem';
+import PanelTitle from '../PanelTitle';
 
 /* sample form meta.
   {
@@ -66,14 +67,12 @@ export default function SettingsFormEditor({
   const { form, init = {} } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [settingsPreview, setSettingsPreview] = useState();
-  const [settingsValid, setSettingsValid] = useState(true);
   // console.log(editorId, 'settingsForm:', settingsForm);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const settings = useSelector(
     state => selectors.resource(state, resourceType, resourceId).settings
   );
-  const { data, result, error, lastChange } = editor;
+  const { data, result, error } = editor;
   // console.log('editor', editor);
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -84,10 +83,6 @@ export default function SettingsFormEditor({
     },
     [dispatch, editorId]
   );
-  const handleFormPreviewChange = useCallback((values, isValid) => {
-    setSettingsPreview(values);
-    setSettingsValid(isValid);
-  }, []);
 
   useEffect(() => {
     const data = getData(form);
@@ -120,14 +115,20 @@ export default function SettingsFormEditor({
   ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
-  useEffect(() => {
-    setSettingsPreview();
-    setSettingsValid(true);
-  }, [lastChange]);
 
   // console.log(finalMeta);
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: result,
+    remount: key,
+    resourceId,
+    resourceType,
+  });
+  // TODO:verify this behaviour
+  const { value: settingsPreview, isValid: settingsValid } = useSelector(
+    state => selectors.getFormState(state, formKey)
+  );
 
   return (
     <PanelGrid
@@ -156,13 +157,7 @@ export default function SettingsFormEditor({
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form Preview" />
         {result ? (
-          <DynaForm
-            key={key}
-            fieldMeta={result}
-            onChange={handleFormPreviewChange}
-            resourceId={resourceId}
-            resourceType={resourceType}
-          />
+          <DynaForm formKey={formKey} fieldMeta={result} />
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid

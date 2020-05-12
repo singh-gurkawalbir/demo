@@ -4,6 +4,7 @@ import { Button, Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 export default function FormView({
   resourceId,
@@ -36,6 +37,16 @@ export default function FormView({
     [dispatch, resourceId]
   );
 
+  // TODO:verify this behaviour
+  const formKey = useFormInitWithPermissions({
+    remount: formState.key,
+    onChange: onFormChange,
+    disabled,
+    fieldMeta: formState.meta,
+    resourceId,
+    resourceType,
+  });
+
   if (formState && formState.error) {
     return (
       <Fragment>
@@ -60,14 +71,7 @@ export default function FormView({
           Toggle form editor
         </Button>
       )}
-      <DynaForm
-        key={formState.key}
-        onChange={onFormChange}
-        disabled={disabled}
-        fieldMeta={formState.meta}
-        resourceId={resourceId}
-        resourceType={resourceType}
-      />
+      <DynaForm formKey={formKey} fieldMeta={formState.meta} />
     </Fragment>
   );
 }

@@ -7,6 +7,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../drawer/TitleBar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -137,6 +138,12 @@ export default function ImportMappingSettings(props) {
       showValidationBeforeTouched: true,
     });
   }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldsMeta: fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+    showValidationBeforeTouched: formState.showValidationBeforeTouched,
+  });
 
   return (
     <Drawer
@@ -147,28 +154,24 @@ export default function ImportMappingSettings(props) {
       }}>
       <DrawerTitleBar onClose={() => onClose(false)} title={title} />
       <div className={classes.content}>
-        <DynaForm
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}
-          formState={formState}>
-          <DynaSubmit
-            disabled={disableSave}
-            id="fieldMappingSettingsSave"
-            showCustomFormValidations={showCustomFormValidations}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test={`fieldMappingSettingsCancel-${index}`}
-            onClick={() => {
-              onClose(false);
-            }}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          id="fieldMappingSettingsSave"
+          showCustomFormValidations={showCustomFormValidations}
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button
+          data-test={`fieldMappingSettingsCancel-${index}`}
+          onClick={() => {
+            onClose(false);
+          }}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
       </div>
     </Drawer>
   );

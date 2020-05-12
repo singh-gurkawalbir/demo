@@ -4,6 +4,7 @@ import { Typography, IconButton } from '@material-ui/core';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   titleContainer: {
@@ -51,6 +52,7 @@ export default function WizardDrawer({
       fields: ['sourceApps', 'destinationApps'],
     },
   };
+  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
 
   return (
     <Fragment>
@@ -63,11 +65,17 @@ export default function WizardDrawer({
           <CloseIcon />
         </IconButton>
       </div>
-      <DynaForm className={classes.formRoot} fieldMeta={fieldMeta}>
-        <DynaSubmit data-test="submitFbWizard" onClick={onSubmit}>
-          Set up your connections
-        </DynaSubmit>
-      </DynaForm>
+      <DynaForm
+        formKey={formKey}
+        className={classes.formRoot}
+        fieldMeta={fieldMeta}
+      />
+      <DynaSubmit
+        formKey={formKey}
+        data-test="submitFbWizard"
+        onClick={onSubmit}>
+        Set up your connections
+      </DynaSubmit>
     </Fragment>
   );
 }

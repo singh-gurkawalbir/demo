@@ -11,6 +11,7 @@ import DynaSubmit from '../../DynaSubmit';
 import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles({
   fieldWrapper: {
@@ -75,27 +76,31 @@ const FirstLevelModal = props => {
       fields: ['parentSObjectType', 'referencedFields'],
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    optionsHandler,
+  });
 
   return (
     <ModalDialog show onClose={handleClose}>
       <div>Referenced Fields</div>
 
-      <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
-        <DynaSubmit
-          onClick={values => {
-            onFieldChange(id, values['/referencedFields']);
-            handleClose();
-          }}>
-          Save
-        </DynaSubmit>
-        <Button
-          data-test="closeReferencedFields"
-          onClick={handleClose}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+      <DynaForm fieldMeta={fieldMeta} />
+      <DynaSubmit
+        formKey={formKey}
+        onClick={values => {
+          onFieldChange(id, values['/referencedFields']);
+          handleClose();
+        }}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="closeReferencedFields"
+        onClick={handleClose}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
     </ModalDialog>
   );
 };

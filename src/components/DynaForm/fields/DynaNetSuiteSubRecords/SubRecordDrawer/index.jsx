@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Fragment } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -11,6 +11,7 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
 import getFormFieldMetadata from './util';
 import { SCOPES } from '../../../../../sagas/resourceForm';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -146,6 +147,10 @@ function SubRecordDrawer(props) {
       subrecords,
     ]
   );
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: fieldMeta,
+    showFormValidationsBeforeTouch: formState.showFormValidationsBeforeTouch,
+  });
 
   return (
     <Drawer
@@ -162,20 +167,19 @@ function SubRecordDrawer(props) {
       <div className={classes.container}>
         <div className={classes.content}>
           {fieldMeta && (
-            <DynaForm
-              // disabled={disabled}
-              fieldMeta={fieldMeta}
-              formState={formState}>
+            <Fragment>
+              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
               <Button data-test="cancel-subrecord" onClick={handleClose}>
                 Cancel
               </Button>
               <DynaSubmit
+                formKey={formKey}
                 data-test="save-subrecord"
                 showCustomFormValidations={showCustomFormValidations}
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
-            </DynaForm>
+            </Fragment>
           )}
         </div>
       </div>

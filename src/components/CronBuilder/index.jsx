@@ -1,5 +1,6 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;
@@ -358,13 +359,19 @@ export default function CronBuilder(props) {
     if (reset) setCount(count => count + 1);
   }, [reset, setCount]);
 
+  // TODO:Verify changes
+  const formKey = useFormInitWithPermissions({
+    fieldsMeta: meta,
+    remount: count,
+    onChange: onFormChange,
+  });
+
   return (
     <DynaForm
-      key={count}
+      formKey={formKey}
       fieldMeta={meta}
       externalTabState={externalTabState}
       setExternalTabState={setExternalTabState}
-      onChange={onFormChange}
     />
   );
 }

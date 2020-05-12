@@ -119,6 +119,7 @@ export default function GeneralSection({ integrationId }) {
   const formKey = useFormInitWithPermissions({
     fieldsMeta: fieldMeta,
     disabled: !canEditIntegration,
+    remount: count,
   });
 
   return (
@@ -126,7 +127,7 @@ export default function GeneralSection({ integrationId }) {
       <PanelHeader title="General" />
 
       <div className={classes.form}>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} key={count} />
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
         <DynaSubmit
           formKey={formKey}
           disabled={!canEditIntegration}

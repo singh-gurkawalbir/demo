@@ -10,6 +10,7 @@ import {
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
 import useResourceList from '../../../hooks/selectors/useResourceList';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -159,27 +160,26 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
       ],
     },
   };
+  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
 
   return (
     <LoadResources required resources="integrations">
-      <DynaForm fieldMeta={fieldMeta}>
-        <div className={classes.actions}>
-          <DynaSubmit
-            data-test="submitUserForm"
-            className={classes.actionButton}
-            onClick={onSaveClick}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test="cancelUserForm"
-            onClick={onCancelClick}
-            className={classes.actionButton}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </div>
-      </DynaForm>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DynaSubmit
+        formKey={formKey}
+        data-test="submitUserForm"
+        className={classes.actionButton}
+        onClick={onSaveClick}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="cancelUserForm"
+        onClick={onCancelClick}
+        className={classes.actionButton}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
     </LoadResources>
   );
 }

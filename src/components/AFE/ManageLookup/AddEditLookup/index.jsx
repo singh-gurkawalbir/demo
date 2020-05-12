@@ -7,6 +7,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import lookupMetadata from './metadata';
 import netsuiteMetadata from './DynamicLookup/netsuiteMetadata';
 import salesforceMetadata from './DynamicLookup/salesforceMetadata';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 export default function AddEditLookup(props) {
   const {
@@ -163,33 +164,36 @@ export default function AddEditLookup(props) {
     });
   }
 
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldsMeta: fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
+
   return (
     <div data-test="lookup-form">
-      <DynaForm
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      {error && (
+        <div>
+          <Typography color="error" variant="h5">
+            {error}
+          </Typography>
+        </div>
+      )}
+      <DynaSubmit
+        formKey={formKey}
         disabled={disabled}
-        fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}>
-        {error && (
-          <div>
-            <Typography color="error" variant="h5">
-              {error}
-            </Typography>
-          </div>
-        )}
-        <DynaSubmit
-          disabled={disabled}
-          data-test="saveLookupForm"
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
-        <Button
-          data-test="cancelLookupForm"
-          onClick={onCancel}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+        data-test="saveLookupForm"
+        onClick={handleSubmit}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="cancelLookupForm"
+        onClick={onCancel}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
     </div>
   );
 }
