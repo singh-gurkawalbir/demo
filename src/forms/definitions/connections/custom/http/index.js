@@ -172,6 +172,9 @@ import zendesksell from './zendesksell';
 import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
 import inspectorio from './inspectorio';
+import orderful from './orderful';
+import gorgias from './gorgias';
+import walmart from './walmart';
 
 export default {
   bigquery,
@@ -347,4 +350,7 @@ export default {
   loopreturns,
   zendesksell,
   inspectorio,
+  orderful,
+  gorgias,
+  walmart,
 };
