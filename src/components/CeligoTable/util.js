@@ -38,21 +38,24 @@ export const GetResourceReferenceLink = ({ r }) => {
   );
 };
 
-export const getConnectorName = resource => {
+export const useGetConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
-  let app;
+  const { _connectionId } = resource;
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', _connectionId)
+  );
 
-  if (type === 'rdbms') {
-    if (resourceType === 'connections') {
-      app = getApp(resource.rdbms.type);
-    } else {
-      return 'RDBMS';
-    }
-  } else {
-    app = getApp(type, assistant);
+  if (type !== 'rdbms') {
+    return getApp(type, assistant).name;
   }
 
-  return app.name;
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    return getApp(connection && connection.rdbms && connection.rdbms.type).name;
+  } else if (resource && resource.rdbms && resource.rdbms.type) {
+    return getApp(resource.rdbms.type).name;
+  }
+
+  return 'RDBMS';
 };
 
 export const formatLastModified = lastModified => (
@@ -68,7 +71,7 @@ export const onlineStatus = r => (
 
 export default {
   formatLastModified,
-  getConnectorName,
+  useGetConnectorName,
   getResourceLink,
   onlineStatus,
 };

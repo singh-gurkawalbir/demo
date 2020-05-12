@@ -5,7 +5,7 @@ export const templateList = [
   { label: 'AS2', value: 'as2' },
   { label: 'Amazon AWS', value: 'amazonaws' },
   { label: 'Amazon MWS', value: 'amazonmws' },
-  { label: 'Ariba', value: 'ariba' },
+  { label: 'SAP Ariba', value: 'ariba' },
   { label: 'Asana', value: 'asana' },
   { label: 'Banking', value: 'banking' },
   { label: 'BigCommerce', value: 'bigcommerce' },
@@ -57,7 +57,7 @@ export const templateList = [
   { label: 'Wiser', value: 'wiser' },
   { label: 'WooCommerce', value: 'woocommerce' },
   { label: 'X-Cart', value: 'xcart' },
-  { label: 'Zendesk', value: 'zendesk' },
+  { label: 'Zendesk Support', value: 'zendesk' },
   { label: 'Zuora', value: 'zuora' },
 ];
 templateList.sort((a, b) => {

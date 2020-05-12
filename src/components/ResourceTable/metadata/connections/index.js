@@ -1,19 +1,16 @@
-import Delete from '../../actions/Delete';
-import Revoke from '../../actions/Connections/Revoke';
-import References from '../../actions/References';
+import { ConnectorNameComp } from '..';
+import { formatLastModified, onlineStatus } from '../../../CeligoTable/util';
+import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
+import AuditLogs from '../../actions/AuditLogs';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+import Deregister from '../../actions/Connections/Deregister';
 // eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
 import OpenDebugger from '../../actions/Connections/OpenDebugger';
-import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
-import {
-  onlineStatus,
-  formatLastModified,
-  getConnectorName,
-} from '../../../CeligoTable/util';
-import Deregister from '../../actions/Connections/Deregister';
-import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
+import Revoke from '../../actions/Connections/Revoke';
+import Delete from '../../actions/Delete';
+import References from '../../actions/References';
 
 export default {
   columns: (r, actionProps) => {
@@ -31,7 +28,12 @@ export default {
         orderBy: 'name',
       },
       { heading: 'Status', value: r => onlineStatus(r) },
-      { heading: 'Type', value: r => getConnectorName(r) },
+      {
+        heading: 'Type',
+        value: function ConnectorName(r) {
+          return <ConnectorNameComp r={r} />;
+        },
+      },
       {
         heading: 'API',
         value: r => {
