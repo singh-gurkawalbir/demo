@@ -68,9 +68,26 @@ export default {
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
-    const fileType = fields.find(field => field.id === 'file.type');
+    if (fieldId === 'file.xlsx.keyColumns') {
+      const keyColoumnField = fields.find(
+        field => field.id === 'file.xlsx.keyColumns'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.xlsx.hasHeaderRow'
+      );
 
-    if (fieldId === 'uploadFile') {
+      // resetting key coloums when hasHeaderRow changes
+      if (keyColoumnField.hasHeaderRow !== hasHeaderRowField.value) {
+        keyColoumnField.value = [];
+        keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
+      }
+
+      return {
+        includeHeader: hasHeaderRowField.value,
+      };
+    } else if (fieldId === 'uploadFile') {
+      const fileType = fields.find(field => field.id === 'file.type');
+
       return fileType.value;
     }
   },
