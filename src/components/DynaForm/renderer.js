@@ -1,72 +1,21 @@
-import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import Help from '../Help';
 import fields from './fields';
-import * as selectors from '../../reducers';
 
-const useStyles = makeStyles(theme => ({
-  iconButton: {
-    marginLeft: 5,
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    height: 50,
-    width: 50,
-    borderRadius: 2,
-    color: theme.palette.text.hint,
-    '&:hover': {
-      background: theme.palette.background.paper,
-      '& > span': {
-        color: theme.palette.primary.main,
-      },
-    },
-  },
-  root: { display: 'inline-block' },
-}));
 const wrapper = {
   display: 'flex',
   alignItems: 'flex-start',
-  marginBottom: 6,
+  marginBottom: 16,
 };
 const fieldStyle = {
   flexGrow: '1',
   textAlign: 'left',
   width: '100%',
 };
-const fieldsToSkipHelpPopper = ['labeltitle'];
-const FieldActions = props => {
-  const { field, helpKey, helpText, resourceContext } = props;
-  const classes = useStyles();
-  const { type: fieldType, hideFromUI } = field;
-  const { developer } = useSelector(state => selectors.userProfile(state));
-
-  // TODO Surya - to add visible property on the dynaiclient control and render help control based on this instead of a new property on the help renderer
-  if (hideFromUI) return null; // we don't want to showup help icon if 'hideFromUI' is true.
-
-  return (
-    <div className={classes.root}>
-      {(helpKey || helpText) && !fieldsToSkipHelpPopper.includes(fieldType) && (
-        <Help
-          key={`help-${field.id}`}
-          data-test={`help-${field.id}`}
-          title={field.label || 'Field Help'}
-          className={classes.iconButton}
-          caption={developer && helpKey}
-          helpKey={helpKey}
-          helpText={helpText}
-          fieldId={field.id}
-          resourceType={resourceContext && resourceContext.resourceType}
-        />
-      )}
-    </div>
-  );
-};
 
 function getRenderer(formKey, resourceId, resourceType) {
   return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
     const { fieldState: field, ...rest } = props;
-    const { id, fieldId, type, helpKey, helpText } = field;
+    const { id, fieldId, type } = field;
     const DynaField = fields[type];
     const fid = id || fieldId;
     const context = { resourceId, resourceType };
@@ -84,13 +33,6 @@ function getRenderer(formKey, resourceId, resourceType) {
         <div style={fieldStyle}>
           <DynaField {...rest} {...field} resourceContext={context} />
         </div>
-        <FieldActions
-          key={fid}
-          field={field}
-          helpKey={helpKey}
-          resourceContext={context}
-          helpText={helpText}
-        />
       </div>
     );
   };

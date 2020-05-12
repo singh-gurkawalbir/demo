@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
   },
   fixConnectionBtn: {
     color: theme.palette.primary.main,
+    fontSize: 15,
+    lineHeight: '17px',
+    padding: 6,
   },
 }));
 const getStatusVariantAndMessage = ({
@@ -122,15 +125,14 @@ export default function ConnectionStatusPanel(props) {
         ) : (
           <Typography component="div" variant="h6">
             The connection associated with this export is currently offline and
-            configuration is limited,
+            configuration is limited.
             <Button
               data-test="fixConnection"
-              size="small"
               className={classes.fixConnectionBtn}
               onClick={handleConnectionFixClick}>
               Fix your connection
             </Button>
-            to bring it back online
+            to bring it back online.
           </Typography>
         )}
       </NotificationToaster>

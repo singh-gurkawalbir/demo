@@ -29,6 +29,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const defaultFilter = { take: 10 };
+const resourcesToLoad = resourceType => {
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    // add connections
+    return `${resourceType},connections`;
+  }
+
+  return resourceType;
+};
 
 export default function ResourceList(props) {
   const location = useLocation();
@@ -103,7 +111,7 @@ export default function ResourceList(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources={resourceType}>
+        <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <Typography>
               {list.total === 0

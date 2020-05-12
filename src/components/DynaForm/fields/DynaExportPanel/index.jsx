@@ -29,6 +29,10 @@ const useStyles = makeStyles(theme => ({
       width: 880,
     },
   },
+  previewDataHeading: {
+    fontSize: 18,
+    paddingBottom: 20,
+  },
   drawerShift: {
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -120,7 +124,9 @@ function DynaExportPanel(props) {
       className={clsx(classes.container, {
         [classes.drawerShift]: isDrawerOpened,
       })}>
-      <Typography> Preview data </Typography>
+      <Typography className={classes.previewDataHeading}>
+        Preview data
+      </Typography>
       <Panels.PreviewInfo
         fetchExportPreviewData={fetchExportPreviewData}
         resourceSampleData={resourceSampleData}

@@ -12,7 +12,7 @@ export default function CronBuilder(props) {
         everyNMinutes: {
           name: 'everyNMinutes',
           id: 'everyNMinutes',
-          label: 'Every n Minutes',
+          label: 'Every n minutes',
           type: 'slider',
           min: 5,
           max: 55,
@@ -55,7 +55,7 @@ export default function CronBuilder(props) {
         everyNHours: {
           id: 'everyNHours',
           name: 'everyNHours',
-          label: 'Every n Hours',
+          label: 'Every n hours',
           type: 'slider',
           setReset,
 
@@ -119,7 +119,7 @@ export default function CronBuilder(props) {
           id: 'eachDay',
           clearFields: ['everyDay'],
           name: 'eachDay',
-          label: 'Each Selected Day',
+          label: 'Each selected day',
           setReset,
 
           type: 'groupedButton',
@@ -218,7 +218,7 @@ export default function CronBuilder(props) {
           id: 'eachWeek',
           clearFields: ['everyWeek'],
           name: 'eachWeek',
-          label: 'Each selected Day',
+          label: 'Each selected day',
           type: 'groupedButton',
           setReset,
 
@@ -245,7 +245,7 @@ export default function CronBuilder(props) {
             label: 'Minute',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every n Minutes', fields: ['everyNMinutes'] },
+              { label: 'Every n minutes', fields: ['everyNMinutes'] },
               {
                 label: 'Each selected minute',
                 fields: ['everySelectedMinute'],
@@ -256,33 +256,33 @@ export default function CronBuilder(props) {
             label: 'Hour',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every Hour', fields: ['everyHour'] },
-              { label: 'Every n Hours', fields: ['everyNHours'] },
-              { label: 'Each Selected Hour', fields: ['eachSelectedHour'] },
+              { label: 'Every hour', fields: ['everyHour'] },
+              { label: 'Every n hours', fields: ['everyNHours'] },
+              { label: 'Each selected hour', fields: ['eachSelectedHour'] },
             ],
           },
           {
-            label: 'Day of Month',
+            label: 'Day of month',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every Day', fields: ['everyDay'] },
-              { label: 'Each Day', fields: ['eachDay'] },
+              { label: 'Every day', fields: ['everyDay'] },
+              { label: 'Each day', fields: ['eachDay'] },
             ],
           },
           {
             label: 'Month',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every Month', fields: ['everyMonth'] },
-              { label: 'Each Month', fields: ['eachMonth'] },
+              { label: 'Every month', fields: ['everyMonth'] },
+              { label: 'Each month', fields: ['eachMonth'] },
             ],
           },
           {
-            label: 'Day of Week',
+            label: 'Day of week',
             type: 'tabWithoutSave',
             containers: [
-              { label: 'Every Week', fields: ['everyWeek'] },
-              { label: 'Each Week', fields: ['eachWeek'] },
+              { label: 'Every week', fields: ['everyWeek'] },
+              { label: 'Each week', fields: ['eachWeek'] },
             ],
           },
         ],

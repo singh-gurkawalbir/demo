@@ -1,57 +1,31 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import { FormLabel } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import CeligoSelect from '../../CeligoSelect';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    minHeight: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      marginTop: theme.spacing(-1),
-      '&.MuiInputLabel-shrink': {
-        marginTop: 5,
-      },
-      '& + div': {
-        marginTop: 0,
-        top: 0,
-      },
+  wrapper: {
+    minHeight: 38,
+    height: 'auto',
+    '& >.MuiSelect-selectMenu': {
+      height: 'auto',
     },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-
-    '& > *': {
-      padding: [[0, 12]],
-      background: 'none',
-    },
-    '& > div > div ': {
-      paddingTop: theme.spacing(3),
-    },
-    '& svg': {
-      right: theme.spacing(1),
-    },
+  },
+  labelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
+    padding: [[12, 0]],
   },
   chip: {
     margin: theme.spacing(0.25),
@@ -62,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     '&:before': {
       display: 'none',
     },
+  },
+  multislectWrapper: {
+    width: '100%',
   },
 }));
 
@@ -91,7 +68,7 @@ export default function DynaMultiSelect(props) {
     processedValue = [processedValue];
   }
 
-  const items = options.reduce(
+  let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -126,6 +103,13 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
+  const defaultItem = (
+    <MenuItem key="__placeholder" value="">
+      {placeholder || 'Please select'}
+    </MenuItem>
+  );
+
+  items = [defaultItem, ...items];
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 
@@ -139,30 +123,33 @@ export default function DynaMultiSelect(props) {
   };
 
   return (
-    <div>
+    <div className={classes.multislectWrapper}>
+      <div className={classes.labelWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <FormControl
         key={id}
         disabled={disabled}
-        error={!isValid}
         required={required}
-        className={classes.root}>
-        <InputLabel shrink htmlFor={id}>
-          {label}
-        </InputLabel>
-        <Select
+        className={classes.multislectWrapper}>
+        <CeligoSelect
           multiple
           data-test={id}
           disabled={disabled}
           value={processedValue}
+          placeholder={placeholder}
           displayEmpty={displayEmpty}
-          IconComponent={ArrowDownIcon}
+          className={classes.wrapper}
           onChange={evt => {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}
           renderValue={selected =>
             !selected || !selected.length ? (
-              <div>{placeholder}</div>
+              <span>{placeholder}</span>
             ) : (
               <div className={classes.chips}>
                 {selected &&
@@ -172,7 +159,7 @@ export default function DynaMultiSelect(props) {
             )
           }>
           {items}
-        </Select>
+        </CeligoSelect>
       </FormControl>
 
       <ErroredMessageComponent {...props} />

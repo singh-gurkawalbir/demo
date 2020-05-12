@@ -18,9 +18,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     marginTop: -1,
     padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
   },
 }));
 const integrationsFilterConfig = { type: 'integrations' };
@@ -181,7 +178,11 @@ export default function SettingsDrawer({
   });
 
   return (
-    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
+    <RightDrawer
+      path="settings"
+      title="Settings"
+      infoText={infoTextSettings}
+      width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
         <DynaSubmit

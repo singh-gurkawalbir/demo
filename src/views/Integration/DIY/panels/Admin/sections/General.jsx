@@ -70,7 +70,7 @@ export default function GeneralSection({ integrationId }) {
       containers: [
         {
           collapsed: true,
-          label: 'Custom Settings',
+          label: 'Custom settings',
           fields: ['settings'],
         },
       ],

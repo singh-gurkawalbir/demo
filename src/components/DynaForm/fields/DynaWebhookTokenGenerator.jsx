@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
@@ -12,10 +12,16 @@ import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 
-// TODO Azhar
-const useStyles = makeStyles(() => ({
-  children: {
+const useStyles = makeStyles(theme => ({
+  dynaWebhookTokenWrapper: {
+    flexDirection: `row !important`,
+  },
+  dynaWebhookTokenField: {
     flex: 1,
+  },
+  dynaWebhookTokenbtn: {
+    marginTop: 36,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -97,39 +103,44 @@ function DynaWebhookTokenGenerator(props) {
   }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
+    <Fragment>
+      <div className={classes.dynaWebhookTokenWrapper}>
         <DynaTextForSetFields
           {...props}
           required
-          className={classes.children}
-          style={{ width: '100%' }}
+          className={classes.dynaWebhookTokenField}
           value={value}
           setFieldIds={setFieldIds}
         />
-      </div>
-      <div>
-        {value.match(/^[A-Za-z0-9]/) ? (
-          <CopyToClipboard
-            text={value}
-            onCopy={() =>
-              enqueueSnackbar({
-                message: 'Token copied to clipboard.',
-                variant: 'success',
-              })
-            }>
+        <div className={classes.dynaWebhookTokenbtn}>
+          {value.match(/^[A-Za-z0-9]/) ? (
+            <CopyToClipboard
+              text={value}
+              onCopy={() =>
+                enqueueSnackbar({
+                  message: 'Token copied to clipboard.',
+                  variant: 'success',
+                })
+              }>
+              <Button
+                data-test="copyToClipboard"
+                title="Copy to clipboard"
+                variant="outlined"
+                color="secondary">
+                Copy token
+              </Button>
+            </CopyToClipboard>
+          ) : (
             <Button
-              data-test="copyToClipboard"
-              title="Copy to clipboard"
-              size="small">
-              Copy Token
+              variant="outlined"
+              color="secondary"
+              onClick={handleGenerateClick}>
+              {buttonLabel}
             </Button>
-          </CopyToClipboard>
-        ) : (
-          <Button onClick={handleGenerateClick}>{buttonLabel}</Button>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </Fragment>
   );
 }
 

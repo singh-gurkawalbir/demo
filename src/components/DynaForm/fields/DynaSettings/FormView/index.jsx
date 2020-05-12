@@ -15,7 +15,7 @@ export default function FormView({
 }) {
   const dispatch = useDispatch();
   const formState = useSelector(state =>
-    selectors.customSettingsStatus(state, resourceId)
+    selectors.customSettingsForm(state, resourceId)
   );
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
@@ -50,7 +50,7 @@ export default function FormView({
   if (formState && formState.error) {
     return (
       <Fragment>
-        <Typography>{formState.error.message}</Typography>
+        <Typography>{formState.error}</Typography>
         {isDeveloper && (
           <Button variant="contained" onClick={onToggleClick}>
             Toggle form editor
