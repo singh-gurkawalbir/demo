@@ -10,13 +10,11 @@ import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
 import Spinner from '../../Spinner';
 
-// TODO: Azhar to review
 const useStyles = makeStyles({
   spinnerWrapper: {
     display: 'flex',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

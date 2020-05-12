@@ -1,19 +1,26 @@
-import { Button, FormControl, MenuItem } from '@material-ui/core';
+import { Button, FormControl, FormLabel, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import CeligoSelect from '../../components/CeligoSelect';
 import useResourceList from '../../hooks/useResourceList';
+// import FieldHelp from '../DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   selectIntegration: {
-    width: theme.spacing(50),
+    width: '100%',
   },
   submit: {
-    marginLeft: theme.spacing(10),
     marginTop: theme.spacing(2),
     marginRight: 'auto',
+  },
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  dynaSelectWrapper: {
+    width: '100%',
   },
 }));
 const integrationFilterConfig = { type: 'integrations' };
@@ -40,33 +47,37 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
   };
 
   return (
-    <FormControl>
-      <CeligoSelect
-        id="integration"
-        className={classes.selectIntegration}
-        value={selectedIntegrationId}
-        onChange={e => setSelectedIntegrationId(e.target.value)}
-        margin="dense">
-        <MenuItem key={invalid} value={invalid}>
-          Select integration
-        </MenuItem>
-        {filteredIntegrations &&
-          filteredIntegrations.map(integration => (
-            <MenuItem key={integration._id} value={integration._id}>
-              {integration.name}
-            </MenuItem>
-          ))}
-      </CeligoSelect>
-      <br />
-      <Button
-        data-test="generateTemplateZip"
-        variant="contained"
-        color="primary"
-        type="submit"
-        onClick={handleGenerateZipClick}
-        className={classes.submit}>
-        Generate template zip
-      </Button>
-    </FormControl>
+    <div className={classes.dynaSelectWrapper}>
+      <div className={classes.fieldWrapper}>
+        <FormLabel>Select integration</FormLabel>
+      </div>
+      <FormControl className={classes.selectIntegration}>
+        <CeligoSelect
+          id="integration"
+          className={classes.selectIntegration}
+          value={selectedIntegrationId}
+          onChange={e => setSelectedIntegrationId(e.target.value)}
+          margin="dense">
+          <MenuItem key={invalid} value={invalid}>
+            Please select
+          </MenuItem>
+          {filteredIntegrations &&
+            filteredIntegrations.map(integration => (
+              <MenuItem key={integration._id} value={integration._id}>
+                {integration.name}
+              </MenuItem>
+            ))}
+        </CeligoSelect>
+        <Button
+          data-test="generateTemplateZip"
+          variant="outlined"
+          color="secondary"
+          type="submit"
+          onClick={handleGenerateZipClick}
+          className={classes.submit}>
+          Generate template zip
+        </Button>
+      </FormControl>
+    </div>
   );
 }

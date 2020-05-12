@@ -21,10 +21,6 @@ const useStyles = makeStyles(theme => ({
   formField: {
     width: '100%',
   },
-  startAdornmentText: {
-    whiteSpace: 'nowrap',
-    minWidth: theme.spacing(10),
-  },
   subSection: {
     maxWidth: '95%',
     marginLeft: '5%',
@@ -46,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   dynaTextLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
+  },
+  startAdornmentWrapper: {
+    marginTop: `0px !important`,
   },
 }));
 

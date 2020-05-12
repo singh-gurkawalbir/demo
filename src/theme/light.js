@@ -331,7 +331,7 @@ export default {
     MuiTableCell: {
       root: {
         position: 'relative',
-        padding: [[11, 16]],
+        padding: [[10, 16]],
         borderBottomColor: colors.celigoNeutral3,
       },
       head: {
@@ -390,6 +390,7 @@ export default {
     },
     MuiFilledInput: {
       root: {
+        background: colors.celigoWhite,
         '&:hover': {
           backgroundColor: colors.celigoWhite,
           borderColor: colors.celigoAccent2,
@@ -434,6 +435,10 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
         borderRadius: 2,
+        padding: [[6, 15]],
+        minHeight: 38,
+        // Todo(Azhar): until final mock forms-design
+        lineHeight: '24px',
         '&:hover': {
           borderColor: colors.celigoAccent2,
         },
@@ -444,6 +449,31 @@ export default {
       inputMultiline: {
         border: 'none',
       },
+      adornedStart: {
+        paddingLeft: 0,
+        background: 'none',
+      },
+      adornedEnd: {
+        paddingRight: 0,
+        background: 'none',
+      },
+      inputAdornedStart: {
+        paddingLeft: 15,
+      },
+      inputAdornedEnd: {
+        paddingRight: 15,
+      },
+    },
+    MuiInputAdornment: {
+      root: {
+        height: '100%',
+      },
+      positionEnd: {
+        whiteSpace: 'nowrap',
+      },
+      positionStart: {
+        whiteSpace: 'nowrap',
+      },
     },
     MuiRadio: {
       root: {
@@ -451,8 +481,16 @@ export default {
         padding: 0,
         marginRight: 4,
         marginTop: -4,
+        '& svg': {
+          fontSize: 18,
+        },
+        '&:hover': {
+          background: 'none',
+          color: colors.celigoAccent2,
+        },
       },
     },
+
     MuiInputBase: {
       root: {
         fontFamily: 'source sans pro',
@@ -498,8 +536,10 @@ export default {
     },
     MuiChip: {
       root: {
-        backgroundColor: colors.celigoNeutral3,
-        color: colors.celigoNeutral8,
+        backgroundColor: colors.celigoWhite,
+        color: colors.celigoNeutral6,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
       },
     },
     MuiBackdrop: {
@@ -522,7 +562,6 @@ export default {
         color: colors.celigoNeutral5,
         padding: 0,
         borderRadius: 0,
-        marginTop: -4,
         '& svg': {
           fontSize: 20,
         },
@@ -532,6 +571,7 @@ export default {
         },
       },
     },
+
     MuiTabs: {
       root: {
         minHeight: 36,
@@ -572,6 +612,10 @@ export default {
       root: {
         marginLeft: 0,
         marginRight: 24,
+      },
+      label: {
+        fontSize: 14,
+        lineHeight: '18px',
       },
     },
   },

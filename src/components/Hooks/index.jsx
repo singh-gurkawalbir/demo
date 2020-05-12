@@ -19,8 +19,7 @@ const useStyles = makeStyles(theme => ({
   fbContDrawer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(2),
+    paddingTop: theme.spacing(2),
   },
 }));
 
