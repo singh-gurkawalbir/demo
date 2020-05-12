@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import IgnoreExistingData from './IgnoreExistingData';
 import TemplateEditor from './TemplateEditor';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 // fieldType values = ['relativeUri','templateeditor','ignoreExistingData']
 export default function DynaTextWithLookupExtract(props) {
@@ -29,8 +30,10 @@ export default function DynaTextWithLookupExtract(props) {
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
-  const resourceObj = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  const resourceObj = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const { name: resourceName, adaptorType } = resourceObj.merged || {};
   const connection = useSelector(state =>

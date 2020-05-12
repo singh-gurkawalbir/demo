@@ -9,6 +9,7 @@ import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,16 +62,13 @@ export default function ConnectionStatusPanel(props) {
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const connectionId = useSelector(state => {
-    if (resourceType === 'connections') return resourceId;
-    const { merged: resource } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
-
-    return resource._connectionId;
-  });
+  const { merged: resource } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
+  const connectionId =
+    resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );

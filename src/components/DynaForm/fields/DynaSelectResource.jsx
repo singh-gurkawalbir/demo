@@ -187,13 +187,6 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  let filteredResources = resources;
-
-  if ((options && options.filter) || filter) {
-    filteredResources = filteredResources.filter(
-      sift(options && options.filter ? options.filter : filter)
-    );
-  }
 
   // When adding a new resource and subsequently editing it disable selecting a new connection
   const isAddingANewResource =
@@ -201,23 +194,33 @@ function DynaSelectResource(props) {
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
-  const resourceItems = filteredResources.map(conn => ({
-    label: conn.name || conn._id,
-    value: conn._id,
-  }));
-  const { expConnId, assistant } = useSelector(state => {
-    const { merged } =
-      selectors.resourceData(
-        state,
-        resourceContext.resourceType,
-        resourceContext.resourceId
-      ) || {};
+  const resourceItems = useMemo(() => {
+    let filteredResources = resources;
 
-    return {
+    if ((options && options.filter) || filter) {
+      filteredResources = filteredResources.filter(
+        sift(options && options.filter ? options.filter : filter)
+      );
+    }
+
+    return filteredResources.map(conn => ({
+      label: conn.name || conn._id,
+      value: conn._id,
+    }));
+  }, [filter, options, resources]);
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
+  const { expConnId, assistant } = useMemo(
+    () => ({
       expConnId: merged && merged._connectionId,
       assistant: merged.assistant,
-    };
-  });
+    }),
+    [merged]
+  );
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({

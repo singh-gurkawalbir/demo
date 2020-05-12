@@ -52,11 +52,12 @@ export default function JavaScriptPanel(props) {
     entryFunction = '',
     scriptId = '',
   } = editor;
-  const scriptContent = useSelector(state => {
-    const data = selectors.resourceData(state, 'scripts', scriptId);
-
-    return data && data.merged && data.merged.content;
-  });
+  const data = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'scripts',
+    scriptId
+  );
+  const scriptContent = data && data.merged && data.merged.content;
   const allScripts = useSelectorMemo(
     selectors.makeResourceListSelector,
     scriptFilterConfig

@@ -13,6 +13,7 @@ import actions from '../../../actions';
 import getFormattedSampleData from '../../../utils/sampleData';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   dynaHttpReqWrapper: {
@@ -68,8 +69,10 @@ export default function DynaHttpRequestBody(props) {
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', connectionId)
   );
-  const resource = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const { adaptorType } = resource.merged || {};
   const isPageGenerator = useSelector(state =>

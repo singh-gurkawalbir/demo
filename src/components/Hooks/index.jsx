@@ -1,19 +1,19 @@
-import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useCallback, useMemo } from 'react';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../reducers';
+import {
+  importHooksList,
+  importSuiteScriptHooksList,
+  isValidHook,
+  isValidSuiteScriptHook,
+} from '../../utils/hooks';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
 import getHooksMetadata from './hooksMetadata';
-import { resourceData } from '../../reducers';
-import {
-  isValidHook,
-  isValidSuiteScriptHook,
-  importHooksList,
-  importSuiteScriptHooksList,
-} from '../../utils/hooks';
 
 const useStyles = makeStyles(theme => ({
   fbContDrawer: {
@@ -36,8 +36,11 @@ export default function Hooks(props) {
   } = props;
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles();
-  const { merged: resource } = useSelector(state =>
-    resourceData(state, resourceType, resourceId, 'value')
+  const { merged: resource } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId,
+    'value'
   );
   const fieldMeta = useMemo(
     () =>
