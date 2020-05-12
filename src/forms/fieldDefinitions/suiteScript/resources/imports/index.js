@@ -1,7 +1,9 @@
 import netsuite from './netsuite';
+import salesforce from './salesforce';
 
 const allFieldDefinitions = {
   ...netsuite,
+  ...salesforce,
   importData: {
     fieldId: 'importData',
     type: 'labeltitle',
