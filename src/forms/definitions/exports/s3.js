@@ -106,10 +106,7 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: r =>
-        `What would you like to ${
-          r && r.resourceType === 'transferFiles' ? 'transfer' : 'export'
-        }?`,
+      label: `What would you like to transfer?`,
     },
     outputMode: {
       id: 'outputMode',

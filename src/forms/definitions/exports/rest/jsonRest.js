@@ -161,6 +161,7 @@ export default {
       type: 'radiogroup',
       label: 'Output mode',
       required: true,
+      visible: false,
       options: [
         {
           items: [

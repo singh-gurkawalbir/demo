@@ -151,8 +151,11 @@ export default {
 
     if (fieldId === 'type') {
       const typeField = fields.find(field => field.id === 'type');
-      const options =
-        exportFileProviderOptions[app.assistant || app.type] || [];
+      let options = exportFileProviderOptions[app.assistant || app.type];
+
+      if (!options) {
+        options = exportFileProviderOptions.default || [];
+      }
 
       typeField.value = options && options[0] && options[0].value;
       typeField.disabled = options && options.length === 1;
@@ -226,6 +229,12 @@ export default {
             _connectionId: connectionField.value,
           });
         }
+      }
+
+      if (['http', 'rest'].indexOf(app.type) >= 0) {
+        expression.push({
+          type: { $ne: 'blob' },
+        });
       }
 
       expression.push({ _connectorId: { $exists: false } });

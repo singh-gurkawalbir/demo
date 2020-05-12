@@ -233,6 +233,7 @@ export default {
       type: 'mode',
       label: 'Output mode',
       required: true,
+      visible: false,
       options: [
         {
           items: [

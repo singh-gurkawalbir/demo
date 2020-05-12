@@ -137,10 +137,7 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: r =>
-        `How would you like the data ${
-          r && r.resourceType === 'transferRecords' ? 'transfered' : 'imported'
-        }?`,
+      label: `How would you like the data  transfered?`,
     },
     'ftp.directoryPath': {
       fieldId: 'ftp.directoryPath',

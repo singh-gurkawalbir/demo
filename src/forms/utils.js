@@ -857,15 +857,7 @@ export const exportFileProviderOptions = {
   default: [
     {
       label: 'Export records from source application',
-      value: 'Export records from source application',
-    },
-    {
-      label: 'Transfer files out of source application',
-      value: 'api',
-    },
-    {
-      label: 'Listen for real-time data from source applications',
-      value: 'webhook',
+      value: 'exportRecords',
     },
   ],
 };
@@ -1019,16 +1011,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   dropbox: [
@@ -1037,16 +1021,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   as2: [
@@ -1061,16 +1037,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   zendesk: [
@@ -1079,16 +1047,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   asana: [
@@ -1097,16 +1057,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
   default: [
@@ -1115,16 +1067,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
-    },
-    {
       label: 'Lookup addition records (per record)',
       value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
     },
   ],
 };

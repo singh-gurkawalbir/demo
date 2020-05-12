@@ -47,7 +47,7 @@ export default {
     }
 
     // On creation of a new page processor lookup,  isLookup is set true
-    if (resourceType === 'exports') {
+    if (['lookupRecords', 'lookupFiles'].indexOf(resourceType) >= 0) {
       newValues['/isLookup'] = true;
     }
 
@@ -156,8 +156,11 @@ export default {
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
 
     if (fieldId === 'resourceType') {
-      const options =
-        importFileProviderOptions[app.assistant || app.type] || [];
+      let options = importFileProviderOptions[app.assistant || app.type];
+
+      if (!options) {
+        options = importFileProviderOptions.default || [];
+      }
 
       resourceTypeField.value = options && options[0] && options[0].value;
       resourceTypeField.disabled = options && options.length === 1;
@@ -235,14 +238,31 @@ export default {
         expression.push({ assistant: app.assistant });
       }
 
+      if (['rest', 'http'].indexOf(app.type) >= 0) {
+        // expression.push({ blobKeyPath: { $nin: ['', null] } });
+        if (resourceTypeField.value === 'importRecords') {
+          expression.push({ blobKeyPath: { $exists: false, $ne: null } });
+        } else if (resourceTypeField.value === 'transferRecords') {
+          expression.push({ blobKeyPath: { $exists: true, $ne: null } });
+        } else if (resourceTypeField.value === 'lookupRecords') {
+          expression.push({ type: { $nin: ['blob'] } });
+        } else if (resourceTypeField.value === 'lookupFiles') {
+          expression.push({ type: 'blob' });
+        }
+
+        // Need to add filter logic here
+      } else if (['netsuite', 'salesforce'].indexOf(app.Type) >= 0) {
+        // Need to add salesforce logic here
+      }
+
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
       let importLabel = `Would you like to use an existing ${
         resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import'
-      }`;
+      }?`;
 
       if (fieldId === 'exportId') {
-        importLabel = 'Would you like to use an existing lookup';
+        importLabel = 'Would you like to use an existing lookup?';
       }
 
       return { filter, appType: app.type, label: importLabel };

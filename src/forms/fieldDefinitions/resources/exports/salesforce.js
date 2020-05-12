@@ -79,7 +79,11 @@ export default {
 
       if (r && r.resourceType === 'realtime') return 'distributed';
 
-      if (r && r.resourceType === 'exportRecords') return 'scheduled';
+      if (
+        (r && r.resourceType === 'exportRecords') ||
+        r.resourceType === 'lookupRecords'
+      )
+        return 'scheduled';
 
       if (isNew)
         // if its create
