@@ -12,14 +12,19 @@ import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 
-const useStyles = makeStyles({
-  fieldWrapper: {
+const useStyles = makeStyles(theme => ({
+  refrencedFieldWrapper: {
     flexDirection: `row !important`,
+    alignItems: 'flex-start',
   },
-  actionButton: {
-    marginLeft: 5,
+  editIconRefrencedField: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(5),
   },
-});
+  refrencedFieldDynaText: {
+    marginBottom: 0,
+  },
+}));
 const FirstLevelModal = props => {
   const {
     options: selectedSObject,
@@ -109,11 +114,15 @@ export default function DynaReferencedFields(props) {
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
-    <div className={classes.fieldWrapper}>
+    <div className={classes.refrencedFieldWrapper}>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggle} />
       ) : null}
-      <DynaText {...props} options={null} />
+      <DynaText
+        {...props}
+        options={null}
+        className={classes.refrencedFieldDynaText}
+      />
       {status === 'refreshed' ? (
         <Spinner />
       ) : (
@@ -121,7 +130,7 @@ export default function DynaReferencedFields(props) {
           data-test="editReferencedFields"
           onClick={toggle}
           disabled={disabled}
-          className={classes.actionButton}>
+          className={classes.editIconRefrencedField}>
           <EditIcon />
         </ActionButton>
       )}
