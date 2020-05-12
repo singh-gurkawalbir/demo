@@ -157,6 +157,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5e8d6f912387e356b6769bc5', // Amazon EU
       '5e8d6ca02387e356b6769bb8', // Shopify EU
       '5e7d921e2387e356b67669ce', // SFNSIO EU
+      '581cebf290a63a26daea6081', // Jet - NetSuite
+      '57dbed962eca42c50e6e22be', // Walmart - NetSuite
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
