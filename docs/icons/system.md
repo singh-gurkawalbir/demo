@@ -64,6 +64,7 @@ const LayoutTriVerticalIcon = require('../../src/components/icons/LayoutTriVerti
 const LayoutLgLeftSmrightIcon = require('../../src/components/icons/LayoutLgLeftSmrightIcon').default;
 const LayoutLgTopSmBottomIcon = require('../../src/components/icons/LayoutLgTopSmBottomIcon').default;
 const ListenerIcon = require('../../src/components/icons/ListenerIcon').default;
+const LicensesIcon = require('../../src/components/icons/LicensesIcon').default;
 const LookUpIcon = require('../../src/components/icons/LookUpIcon').default;
 const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
@@ -377,6 +378,11 @@ const icon = {
       <ListenerIcon style={icon} />
       <p>Listner (FB)</p>
     </div>
+    <div style={wrapper}>
+      <LicensesIcon style={icon} />
+      <p> Licenses</p>
+    </div>
+   
     <div style={wrapper}>
       <LayoutTriVerticalIcon style={icon} />
       <p>LayoutTriVertical</p>

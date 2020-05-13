@@ -1,9 +1,24 @@
 import { useState, Fragment } from 'react';
-import Button from '@material-ui/core/Button';
+import { FormControl, Button, FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
+const useStyles = makeStyles(theme => ({
+  dynaTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  scopesLabel: {
+    marginBottom: 0,
+    marginRight: theme.spacing(1),
+  },
+  scopesBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+}));
 const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
 const TransferListModal = props => {
@@ -47,6 +62,7 @@ const TransferListModal = props => {
 };
 
 export default function DynaSelectScopesDialog(props) {
+  const classes = useStyles();
   const { label, scopes, value: selectedScopes, onFieldChange, id } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
   const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
@@ -64,14 +80,24 @@ export default function DynaSelectScopesDialog(props) {
           }}
         />
       )}
-      <Button
-        data-test={id}
-        variant="contained"
-        color="primary"
-        onClick={() => setShowScopesModal(true)}>
-        {label}
-      </Button>
-      <ErroredMessageComponent {...props} />
+      <FormControl className={classes.dynaTextFormControl}>
+        <div className={classes.dynaTextLabelWrapper}>
+          <FormLabel htmlFor={id} className={classes.scopesLabel}>
+            {label ? `${label}:` : ''}
+          </FormLabel>
+          <Button
+            data-test={id}
+            variant="outlined"
+            className={classes.scopesBtn}
+            color="secondary"
+            onClick={() => setShowScopesModal(true)}>
+            {label}
+          </Button>
+          <FieldHelp {...props} />
+        </div>
+
+        <ErroredMessageComponent {...props} />
+      </FormControl>
     </Fragment>
   );
 }

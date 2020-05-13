@@ -34,7 +34,6 @@ export default function FilterEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'filter', {
         data: props.data,
-        autoEvaluate: false,
         rule: props.rule,
         optionalSaveParams,
       })

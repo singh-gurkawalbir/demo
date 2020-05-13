@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import EditorField from './DynaEditor';
@@ -7,6 +7,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import scriptHookStubs from '../../../utils/scriptHookStubs';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles({
   editor: {
@@ -17,9 +18,12 @@ const useStyles = makeStyles({
 export default function DynaScriptContent(props) {
   const { id, onFieldChange, resourceId, value, options = {} } = props;
   const classes = useStyles();
-  const scriptContent = useSelector(state => {
-    const data = selectors.resourceData(state, 'scripts', resourceId);
-
+  const data = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'scripts',
+    resourceId
+  );
+  const scriptContent = useMemo(() => {
     if (data && data.merged && data.merged.content !== undefined) {
       return data.merged && data.merged.content;
     } else if (isNewId(resourceId)) {
@@ -27,7 +31,7 @@ export default function DynaScriptContent(props) {
     }
 
     return undefined;
-  });
+  }, [data, resourceId]);
   const dispatch = useDispatch();
 
   useEffect(() => {
