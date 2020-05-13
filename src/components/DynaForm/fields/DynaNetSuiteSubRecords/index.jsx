@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback } from 'react';
+import { Fragment, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,6 +16,7 @@ import {
   getNetSuiteSubrecordImports,
 } from '../../../../utils/resource';
 import AddIcon from '../../../../components/icons/AddIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   subrecords: {
@@ -87,37 +88,27 @@ export default function DynaNetSuiteSubRecords(props) {
       return rec && rec.hasSubRecord;
     }
   });
-  const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useSelector(
-    state => {
-      const { merged: importDoc } = selectors.resourceData(
-        state,
-        'imports',
-        resourceId
-      );
-      let subrecords;
-      let subrecordsFromMappings = [];
-      let hasNetsuiteDa = false;
-
-      if (importDoc && importDoc.netsuite_da) {
-        hasNetsuiteDa = true;
-        ({ subrecords } = importDoc.netsuite_da);
-
-        if (!subrecords && importDoc.netsuite_da.mapping) {
-          subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
-        }
-      }
-
-      return { hasNetsuiteDa, subrecords, subrecordsFromMappings };
-    },
-    (left, right) => {
-      left &&
-        right &&
-        (left.subrecords === right.subrecords ||
-          (left.subrecords &&
-            right.subrecords &&
-            left.subrecords.length === right.subrecords.length));
-    }
+  const { merged: importDoc } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'imports',
+    resourceId
   );
+  const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useMemo(() => {
+    let subrecords;
+    let subrecordsFromMappings = [];
+    let hasNetsuiteDa = false;
+
+    if (importDoc && importDoc.netsuite_da) {
+      hasNetsuiteDa = true;
+      ({ subrecords } = importDoc.netsuite_da);
+
+      if (!subrecords && importDoc.netsuite_da.mapping) {
+        subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
+      }
+    }
+
+    return { hasNetsuiteDa, subrecords, subrecordsFromMappings };
+  }, [importDoc]);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
 

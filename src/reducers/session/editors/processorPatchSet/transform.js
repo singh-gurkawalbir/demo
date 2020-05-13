@@ -1,7 +1,7 @@
 export default {
   patchSet: editor => {
     const patches = {
-      foregroundPatch: undefined,
+      foregroundPatches: undefined,
       backgroundPatches: [],
     };
     const {
@@ -27,7 +27,7 @@ export default {
       },
     };
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches = {
       patch: [{ op: 'replace', path, value }],
       resourceType,
       resourceId,

@@ -45,12 +45,13 @@ export default {
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
-    type: 'relativeuri',
+    type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
   },
   dataURITemplate: {
-    type: 'relativeuri',
+    type: 'datauritemplate',
     label: 'Override data URI template',
+    editorTitle: 'Build override data URI template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },
@@ -814,7 +815,6 @@ export default {
   },
   settings: {
     type: 'settings',
-    showOnDeveloperMode: true,
     defaultValue: r => r && r.settings,
   },
 };

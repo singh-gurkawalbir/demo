@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 400,
     overflow: 'auto',
     maxWidth: 680,
-    color: theme.palette.text.hint,
+    color: theme.palette.text.primary,
   },
 }));
 

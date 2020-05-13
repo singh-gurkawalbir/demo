@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     '& >.MuiSelect-selectMenu': {
       padding: [[0, 32, 0, 12]],
       lineHeight: '38px',
-      margin: [[0, -15]],
+      margin: [[0, -12]],
     },
     '& svg': {
       right: theme.spacing(1),

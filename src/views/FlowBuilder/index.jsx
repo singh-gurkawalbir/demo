@@ -29,6 +29,7 @@ import { generateNewId, isNewId } from '../../utils/resource';
 import { isConnector, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -242,10 +243,11 @@ function FlowBuilder() {
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
-  const flow = useSelector(
-    state => selectors.resourceData(state, 'flows', flowId).merged,
-    shallowEqual
-  );
+  const flow = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
+  ).merged;
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),

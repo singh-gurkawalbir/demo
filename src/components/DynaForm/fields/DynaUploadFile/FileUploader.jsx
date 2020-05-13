@@ -16,16 +16,8 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     alignItems: 'center',
   },
-  invalid: {
-    color: theme.palette.error.main,
-  },
-  errorMessage: {
-    display: 'flex',
-    alignItems: 'center',
-    '& svg': {
-      fontSize: 12,
-      marginRight: theme.spacing(0.5),
-    },
+  uploadBtn: {
+    marginRight: theme.spacing(0.5),
   },
 }));
 
@@ -51,12 +43,6 @@ function FileUploader(props) {
 
   return (
     <Fragment>
-      {/* <span
-        className={clsx({
-          [classes.invalid]: !isValid,
-        })}>
-        {label}
-      </span> */}
       <div className={classes.uploadContainer}>
         <span className={classes.fileName}>{fileName}</span>
         <Button
@@ -66,6 +52,7 @@ function FileUploader(props) {
           name={name}
           disabled={disabled}
           required={required}
+          className={classes.uploadBtn}
           data-test={id}>
           Choose File
         </Button>

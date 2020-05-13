@@ -40,7 +40,6 @@ export default function DynaSalesforceLookupFilters(props) {
     dispatch(
       actions.editor.init(editorId, 'salesforceLookupFilter', {
         modifiedData,
-        autoEvaluate: false,
         rule: value,
       })
     );

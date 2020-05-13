@@ -65,4 +65,18 @@ export default {
       default:
     }
   },
+  getLookupFieldId(adaptorType) {
+    const lookupPath = this.getLookupPath(adaptorTypeMap[adaptorType]);
+    const lookupFieldId = lookupPath && lookupPath.substr(1).replace('/', '.');
+
+    return lookupFieldId;
+  },
+  getLookupFromFormContext(formContext, adaptorType) {
+    const lookupFieldId = this.getLookupFieldId(adaptorType);
+    const lookupField = formContext.fields.find(
+      field => field.key === lookupFieldId
+    );
+
+    return (lookupField && lookupField.value) || [];
+  },
 };
