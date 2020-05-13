@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles({
-  dynaFieldWrapper: {
-    width: '100%',
-  },
   formField: {
     width: '100%',
+  },
+  dynasoqlFormControl: {
+    width: '100%',
+  },
+  dynasoqlLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 });
 
@@ -82,22 +87,27 @@ export default function DynaSoqlQuery(props) {
   ]);
 
   return (
-    <div className={classes.dynaFieldWrapper}>
+    <FormControl className={classes.dynasoqlFormControl}>
+      <div className={classes.dynasoqlLabelWrapper}>
+        <FormLabel htmlFor={id} required={required}>
+          {label}
+        </FormLabel>
+        {/* Todo (surya): fieldhelp needs helptext */}
+        <FieldHelp {...props} helpText={label} />
+      </div>
       <TextField
         autoComplete="off"
         key={id}
         data-test={id}
         name={name}
-        label={label}
         placeholder={placeholder}
         multiline={multiline}
-        required={required}
         value={value.query}
         variant="filled"
         onBlur={handleFieldOnBlur}
         className={classes.formField}
         onChange={handleFieldChange}
       />
-    </div>
+    </FormControl>
   );
 }

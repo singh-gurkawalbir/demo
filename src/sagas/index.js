@@ -21,6 +21,7 @@ import { jobSagas } from './jobs';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
+import editorSampleData from './editorSampleData';
 import {
   onRequestSaga,
   onSuccessSaga,
@@ -151,5 +152,6 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
+    ...editorSampleData,
   ]);
 }

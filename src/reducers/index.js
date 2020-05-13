@@ -423,6 +423,14 @@ export function editorPatchStatus(state, id) {
   return fromSession.editorPatchStatus(state && state.session, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromSession.getEditorSampleData(state && state.session, {
+    flowId,
+    resourceId,
+    fieldType,
+  });
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
@@ -528,6 +536,7 @@ export const userOwnPreferences = createSelector(
 //   return fromUser.userOwnPreferences(state && state.user);
 // }
 
+// TODO: make this selector a lot more granular...its dependency is user
 export function userProfilePreferencesProps(state) {
   const profile = userProfile(state);
   const preferences = userPreferences(state);
@@ -837,7 +846,7 @@ export function flowDetails(state, id) {
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows = resourceList(state, options).resources || [];
+  const flows = resourceList(state, options).resources || emptySet;
   const exports = resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1291,7 +1300,7 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    ) || emptyObject;
   const categoryMappingMetadata = {};
   const { response } = categoryMappingData;
 
@@ -2870,6 +2879,106 @@ export function resourceData(state, resourceType, id, scope) {
 
   return data;
 }
+
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(resource.adaptorType);
+}
+
+export function resourceDataModified(
+  resourceIdState,
+  stagedIdState,
+  resourceType,
+  id
+) {
+  if (!resourceType || !id) return emptyObject;
+
+  const master = resourceIdState;
+  const { patch, conflict } = stagedIdState || {};
+
+  if (!master && !patch) return { merged: emptyObject };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+}
+
+// fromResources.resourceIdState
+// nothing but state && state.data && state.data.resources && state.data.resources.type
+export const makeResourceDataSelector = () => {
+  const cachedStageSelector = fromSession.makeTransformStagedResource();
+  const cachedResourceSelector = fromData.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, id) => {
+      if (!resourceType || !id) return null;
+      let type = resourceType;
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        type = 'connectorLicenses';
+      }
+
+      // For accesstokens and connections within an integration
+      if (resourceType.indexOf('integrations/') >= 0) {
+        type = resourceType.split('/').pop();
+      }
+
+      return cachedResourceSelector(
+        fromData.resourceState(state && state.data),
+        type,
+        id
+      );
+    },
+    (state, resourceType, id, scope) =>
+      cachedStageSelector(
+        fromSession.stagedState(state && state.session),
+        id,
+        scope
+      ),
+    (_1, resourceType) => resourceType,
+    (_1, _2, id) => id,
+
+    (resourceIdState, stagedIdState, resourceType, id) =>
+      resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+  );
+};
 
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);

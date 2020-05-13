@@ -151,6 +151,14 @@ export default (state = {}, action) => {
   });
 };
 
+export function stagedIdState(state, id) {
+  if (!state || !id || !state[id]) {
+    return null;
+  }
+
+  return state[id];
+}
+
 // #region PUBLIC SELECTORS
 export function stagedResource(state, id, scope) {
   if (!state || !id || !state[id]) {
@@ -168,6 +176,28 @@ export function stagedResource(state, id, scope) {
 
   return { ...state[id], patch: updatedPatches };
 }
+
+function transformStagedResource(stagedIdState, scope) {
+  if (!stagedIdState) return null;
+
+  let updatedPatches;
+
+  if (scope)
+    updatedPatches =
+      stagedIdState &&
+      stagedIdState.patch &&
+      stagedIdState.patch.filter(patch => patch.scope === scope);
+  else updatedPatches = stagedIdState && stagedIdState.patch;
+
+  return { ...stagedIdState, patch: updatedPatches };
+}
+
+export const makeTransformStagedResource = () =>
+  createSelector(
+    stagedIdState,
+    (_1, _2, scope) => scope,
+    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
+  );
 
 export const getAllResourceConflicts = createSelector(
   state => state,

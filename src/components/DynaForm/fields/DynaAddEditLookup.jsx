@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import AddEditLookupDialog from '../../AFE/ManageLookup/AddEditLookup/Dialog';
+import ManageLookupDialog from '../../Lookup/Manage/Dialog';
 
 const useStyles = makeStyles({
   container: {
@@ -26,6 +26,10 @@ const useStyles = makeStyles({
   },
 });
 
+/** 
+lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
+pass showDynamicLookupOnly = true
+*/
 export default function DynaAddEditLookup(props) {
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
@@ -41,7 +45,7 @@ export default function DynaAddEditLookup(props) {
     onClick,
   } = props;
   const handleEditorClick = () => {
-    onClick(!showLookup);
+    if (onClick) onClick(!showLookup);
     setShowLookup(!showLookup);
   };
 
@@ -53,7 +57,7 @@ export default function DynaAddEditLookup(props) {
   return (
     <Fragment>
       {showLookup && (
-        <AddEditLookupDialog
+        <ManageLookupDialog
           lookup={value}
           showDynamicLookupOnly={showDynamicLookupOnly}
           id={id}

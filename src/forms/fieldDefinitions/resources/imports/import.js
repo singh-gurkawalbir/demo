@@ -45,12 +45,13 @@ export default {
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
-    type: 'relativeuri',
+    type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
   },
   dataURITemplate: {
-    type: 'relativeuri',
+    type: 'datauritemplate',
     label: 'Override data URI template',
+    editorTitle: 'Build override data URI template',
     placeholder: 'Optional',
     connectionId: r => r && r._connectionId,
   },
@@ -114,7 +115,7 @@ export default {
           { label: 'Amazonaws', value: 'amazonaws' },
           { label: 'Amazonmws', value: 'amazonmws' },
           { label: 'Anaplan', value: 'anaplan' },
-          { label: 'Ariba', value: 'ariba' },
+          { label: 'SAP Ariba', value: 'ariba' },
           { label: 'Asana', value: 'asana' },
           { label: 'Atera', value: 'atera' },
           { label: 'Authorize.net', value: 'authorize.net' },
@@ -148,6 +149,7 @@ export default {
           { label: 'Freshdesk', value: 'freshdesk' },
           { label: 'Ftp', value: 'ftp' },
           { label: 'Github', value: 'github' },
+          { label: 'Gorgias', value: 'gorgias' },
           { label: 'Gooddata', value: 'gooddata' },
           { label: 'Google', value: 'google' },
           { label: 'Googleanalytics', value: 'googleanalytics' },
@@ -308,6 +310,7 @@ export default {
           { label: 'Solidcommerce', value: 'solidcommerce' },
           { label: 'Intercom', value: 'intercom' },
           { label: 'Bamboohr', value: 'bamboohr' },
+          { label: 'Orderful', value: 'orderful' },
         ],
       },
     ],
@@ -812,7 +815,6 @@ export default {
   },
   settings: {
     type: 'settings',
-    showOnDeveloperMode: true,
     defaultValue: r => r && r.settings,
   },
 };

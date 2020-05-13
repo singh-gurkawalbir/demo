@@ -20,10 +20,10 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   radioGroup: {
-    marginTop: 6,
     '& label': {
       marginLeft: 0,
       marginRight: theme.spacing(3),
+      fontSize: 14,
     },
   },
   radioGroupLabel: {
@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     '&:last-child': {
       marginRight: theme.spacing(0.5),
+    },
+    '&:empty': {
+      display: 'none',
     },
   },
 }));
@@ -88,7 +91,7 @@ export default function DynaRadio(props) {
             required={required}
             error={!isValid}
             className={classes.radioGroupLabel}>
-            {label}:
+            {label ? `${label}:` : ''}
           </FormLabel>
           <div className={classes.radioGroupWrapper}>
             <RadioGroup
@@ -106,7 +109,8 @@ export default function DynaRadio(props) {
               }}>
               {items}
             </RadioGroup>
-            <FieldHelp {...props} />
+            {/* Todo (surya): needs to pass the helptext */}
+            <FieldHelp {...props} helpText={label} />
           </div>
         </div>
       </FormControl>

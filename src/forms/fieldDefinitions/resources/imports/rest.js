@@ -125,15 +125,13 @@ export default {
     },
   },
   'rest.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     label: 'Relative URI',
     required: true,
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
     defaultValue: r =>
       r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
-    refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -192,7 +190,6 @@ export default {
     label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
-    refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -258,7 +255,7 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    label: 'If so,please paste it here',
+    label: 'Paste your sample data here',
     visibleWhenAll: [
       {
         field: 'inputMode',

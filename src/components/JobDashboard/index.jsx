@@ -32,6 +32,7 @@ export default function JobDashboard({
   );
   const filters = useSelector(state => selectors.filter(state, filterKey));
   const jobs = useSelector(state => selectors.flowJobs(state));
+  const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
   const [disableActions, setDisableActions] = useState(true);
@@ -87,8 +88,8 @@ export default function JobDashboard({
   }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setDisableActions(isBulkRetryInProgress || jobs.length === 0);
-  }, [isBulkRetryInProgress, jobs.length]);
+    setDisableActions(isBulkRetryInProgress || numJobsWithErrors === 0);
+  }, [isBulkRetryInProgress, numJobsWithErrors]);
 
   useEffect(() => {
     let jobsSelected = 0;

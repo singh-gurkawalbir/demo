@@ -19,7 +19,7 @@ export default {
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
-      { id: 'dynamodb.ignoreExtract', type: 'textwithlookupextract' },
+      { id: 'dynamodb.ignoreExtract' },
     ],
     options: [
       {
@@ -42,10 +42,9 @@ export default {
     required: true,
   },
   'dynamodb.partitionKey': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
     showLookup: false,
-    connectionId: r => r && r._connectionId,
     label: 'Partition key',
     requiredWhen: [
       {
@@ -55,10 +54,9 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
     showLookup: false,
-    connectionId: r => r && r._connectionId,
     label: 'Sort key',
   },
   'dynamodb.itemDocument': {
@@ -129,11 +127,9 @@ export default {
     ],
   },
   'dynamodb.ignoreExtract': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
     showLookup: false,
-    adaptorType: r => r && r.adaptorType,
-    connectionId: r => r && r._connectionId,
+    showSuggestionsWithoutHandlebar: true,
     label: 'Ignore extract',
     required: true,
   },
