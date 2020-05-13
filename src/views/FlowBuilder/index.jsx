@@ -270,6 +270,9 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
   const { status: openFlowErrorsStatus, data: flowErrorsMap } = useSelector(
     state => selectors.flowErrorMap(state, flowId)
   );
@@ -437,10 +440,16 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
-    if (!openFlowErrorsStatus && !isNewFlow) {
+    if (!openFlowErrorsStatus && !isNewFlow && isUserInErrMgtTwoDotZero) {
       dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
     }
-  }, [dispatch, flowId, isNewFlow, openFlowErrorsStatus]);
+  }, [
+    dispatch,
+    flowId,
+    isNewFlow,
+    isUserInErrMgtTwoDotZero,
+    openFlowErrorsStatus,
+  ]);
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
@@ -570,19 +579,23 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
-          <div className={classes.divider} />
-          <IconButton
-            disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('connections')}
-            data-test="flowConnections">
-            <ConnectionsIcon />
-          </IconButton>
-          <IconButton
-            disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('auditlog')}
-            data-test="flowAuditLog">
-            <AuditLogIcon />
-          </IconButton>
+          {isUserInErrMgtTwoDotZero ? (
+            <Fragment>
+              <div className={classes.divider} />
+              <IconButton
+                disabled={isNewFlow}
+                onClick={() => handleDrawerOpen('connections')}
+                data-test="flowConnections">
+                <ConnectionsIcon />
+              </IconButton>
+              <IconButton
+                disabled={isNewFlow}
+                onClick={() => handleDrawerOpen('auditlog')}
+                data-test="flowAuditLog">
+                <AuditLogIcon />
+              </IconButton>
+            </Fragment>
+          ) : null}
         </div>
       </CeligoPageBar>
       <div

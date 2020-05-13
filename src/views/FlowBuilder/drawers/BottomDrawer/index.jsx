@@ -118,6 +118,9 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useResourceList(connectionsFilterConfig).resources;
   const connectionIdNameMap = useMemo(() => {
@@ -203,20 +206,28 @@ export default function BottomDrawer({
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example">
-          <Tab
-            {...tabProps(0)}
-            icon={
-              isAnyFlowConnectionOffline ? (
-                <WarningIcon className={classes.connectionWarning} />
-              ) : (
-                <ConnectionsIcon />
-              )
-            }
-            label="Connections"
-          />
-          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+          {isUserInErrMgtTwoDotZero ? (
+            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+          ) : (
+            <Fragment>
+              <Tab
+                {...tabProps(0)}
+                icon={
+                  isAnyFlowConnectionOffline ? (
+                    <WarningIcon className={classes.connectionWarning} />
+                  ) : (
+                    <ConnectionsIcon />
+                  )
+                }
+                label="Connections"
+              />
+              <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+              <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+            </Fragment>
+          )}
+
           {connectionDebugLogs &&
+            !isUserInErrMgtTwoDotZero &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (

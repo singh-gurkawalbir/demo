@@ -497,6 +497,10 @@ export function avatarUrl(state) {
   return fromUser.avatarUrl(state.user);
 }
 
+export function isUserInErrMgtTwoDotZero(state) {
+  return fromUser.isUserInErrMgtTwoDotZero(state && state.user);
+}
+
 export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
