@@ -8,12 +8,12 @@ export default {
   'ftp.fileNameStartsWith': {
     type: 'namewitheditor',
     label: 'File name starts with',
-    editorTitle: 'Build file name',
+    editorTitle: 'Build file name starts with',
   },
   'ftp.fileNameEndsWith': {
     type: 'namewitheditor',
     label: 'File name ends with',
-    editorTitle: 'Build file name',
+    editorTitle: 'Build file name ends with',
   },
   // #region transform
   'transform.expression.rules': {
