@@ -173,25 +173,6 @@ export default {
       ];
     }
 
-    // if (fieldId === 'importId') {
-    //   console.log('adssad', resourceTypeField.value === 'transferFiles');
-    //   // const importLabel =
-    //   //   resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import';
-
-    //   const importLabel = `Would you like to use an existing ${
-    //     resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
-    //   }`;
-
-    //   console.log('importLabel', importLabel);
-
-    //   return {
-    //     filter,
-    //     appType: app.type,
-    //     visible,
-    //     label,
-    //   };
-    // }
-
     if (fieldId === 'connection') {
       const expression = [];
 
@@ -221,14 +202,31 @@ export default {
 
       if (!adaptorTypePrefix) return;
       const expression = [];
-
-      expression.push({
-        adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
-      });
+      let adaptorType = `${adaptorTypePrefix}${adaptorTypeSuffix}`;
 
       if (fieldId === 'exportId') {
         expression.push({ isLookup: true });
       }
+
+      if (['rest', 'http', 'salesforce', 'netsuite'].indexOf(app.type) >= 0) {
+        if (resourceTypeField.value === 'importRecords') {
+          expression.push({ blobKeyPath: { $exists: false } });
+
+          if (adaptorType === 'NetSuiteImport') {
+            adaptorType = 'NetSuiteDistributedImport';
+          }
+        } else if (resourceTypeField.value === 'transferFiles') {
+          expression.push({ blobKeyPath: { $exists: true } });
+        } else if (resourceTypeField.value === 'lookupRecords') {
+          expression.push({ type: { $ne: 'blob' } });
+        } else if (resourceTypeField.value === 'lookupFiles') {
+          expression.push({ type: 'blob' });
+        }
+      }
+
+      expression.push({
+        adaptorType,
+      });
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });
@@ -236,23 +234,6 @@ export default {
 
       if (app.assistant) {
         expression.push({ assistant: app.assistant });
-      }
-
-      if (['rest', 'http'].indexOf(app.type) >= 0) {
-        // expression.push({ blobKeyPath: { $nin: ['', null] } });
-        if (resourceTypeField.value === 'importRecords') {
-          expression.push({ blobKeyPath: { $exists: false, $ne: null } });
-        } else if (resourceTypeField.value === 'transferFiles') {
-          expression.push({ blobKeyPath: { $exists: true, $ne: null } });
-        } else if (resourceTypeField.value === 'lookupRecords') {
-          expression.push({ type: { $nin: ['blob'] } });
-        } else if (resourceTypeField.value === 'lookupFiles') {
-          expression.push({ type: 'blob' });
-        }
-
-        // Need to add filter logic here
-      } else if (['netsuite', 'salesforce'].indexOf(app.Type) >= 0) {
-        // Need to add salesforce logic here
       }
 
       expression.push({ _connectorId: { $exists: false } });

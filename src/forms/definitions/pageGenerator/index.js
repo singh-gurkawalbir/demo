@@ -231,13 +231,15 @@ export default {
         }
       }
 
-      if (['http', 'rest'].indexOf(app.type) >= 0) {
-        expression.push({
-          type: { $ne: 'blob' },
-        });
-      }
-
       expression.push({ _connectorId: { $exists: false } });
+
+      if (['netsuite', 'salesforce'].indexOf(app.type) >= 0) {
+        if (type === 'realtime') {
+          expression.push({ type: 'distributed' });
+        } else {
+          expression.push({ type: { $ne: 'distributed' } });
+        }
+      }
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
