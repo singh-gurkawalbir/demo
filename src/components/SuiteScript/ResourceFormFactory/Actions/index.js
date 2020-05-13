@@ -4,6 +4,7 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import CancelButton from './CancelButton';
 import SaveButton from './SaveButton';
 import TestButton from './TestButton';
+import TestAndSaveButton from './TestAndSaveButton';
 
 export const useLoadingSnackbarOnSave = props => {
   const { saveTerminated, onSave, resourceType } = props;
@@ -39,5 +40,6 @@ export const useLoadingSnackbarOnSave = props => {
 export default {
   cancel: CancelButton,
   save: SaveButton,
+  testandsave: TestAndSaveButton,
   test: TestButton,
 };

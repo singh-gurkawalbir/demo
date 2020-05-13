@@ -6,7 +6,6 @@ import * as selectors from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import consolidatedActions from './Actions';
-import { getResourceSubType } from '../../../utils/resource';
 
 const mapStateToProps = (
   state,
@@ -87,18 +86,10 @@ const mapDispatchToProps = dispatch => ({
     );
   },
 });
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
-  const { resource, resourceType, isNew } = props;
+  const { resource, resourceType } = props;
   const { actions } = props.fieldMeta;
-  const connectionType = getConnectionType(resource);
 
   // console.log('render: <ActionsFactory>');
 
@@ -119,12 +110,14 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     return <DynaForm {...props}>{ActionButtons}</DynaForm>;
   }
 
-  let actionButtons = ['test', 'save', 'cancel'];
+  let actionButtons = ['save', 'cancel'];
 
   if (resourceType === 'integrations') {
     actionButtons = ['save'];
-  } else if (['exports', 'imports'].includes(resourceType)) {
-    actionButtons = ['save', 'cancel'];
+  } else if (resourceType === 'connections') {
+    if (resource.type !== 'other') {
+      actionButtons = ['test', 'testandsave', 'cancel'];
+    }
   }
 
   return (

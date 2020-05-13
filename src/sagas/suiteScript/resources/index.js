@@ -1,11 +1,8 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
-import { isEqual } from 'lodash';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import * as selectors from '../../../reducers';
-import { isNewId } from '../../../utils/resource';
-import { isConnector } from '../../../utils/flows';
 
 export function* commitStagedChanges({
   resourceType,
@@ -24,7 +21,6 @@ export function* commitStagedChanges({
   });
   const { patch, master } = data;
   const { merged } = data;
-  const isNew = isNewId(id);
 
   // console.log('commitStaged saga', resourceType, id, patch, merged, master);
 
@@ -44,11 +40,18 @@ export function* commitStagedChanges({
 
   let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
 
-  if (!['connections', 'integrations'].includes(resourceTypeToUse)) {
+  if (
+    !['connections', 'integrations', 'refreshlegacycontrolpanel'].includes(
+      resourceTypeToUse
+    )
+  ) {
     path += `integrations/${integrationId}/`;
   }
 
-  path += isNew ? `${resourceTypeToUse}` : `${resourceTypeToUse}/${resourceId}`;
+  path +=
+    resourceTypeToUse === 'refreshlegacycontrolpanel'
+      ? `${resourceTypeToUse}`
+      : `${resourceTypeToUse}/${resourceId}`;
 
   // only updates need to check for conflicts.
   //   if (!isNew) {
@@ -64,12 +67,13 @@ export function* commitStagedChanges({
   //     // eslint-disable-next-line prefer-destructuring
   //     merged = resp.merged;
   //   }
+  let updated;
 
   try {
     updated = yield call(apiCallWithRetry, {
       path,
       opts: {
-        method: isNew ? 'post' : 'put',
+        method: 'put',
         body: merged,
       },
     });
@@ -88,18 +92,16 @@ export function* commitStagedChanges({
     )
   );
 
-  if (!isNew) {
-    yield put(
-      actions.suiteScript.resource.updated(
-        resourceType,
-        updated._id,
-        master,
-        patch,
-        ssLinkedConnectionId,
-        integrationId
-      )
-    );
-  }
+  yield put(
+    actions.suiteScript.resource.updated(
+      resourceType,
+      updated._id,
+      master,
+      patch,
+      ssLinkedConnectionId,
+      integrationId
+    )
+  );
 
   if (options && options.action === 'flowEnableDisable') {
     yield put(actions.flow.isOnOffActionInprogress(false, id));
@@ -114,10 +116,6 @@ export function* commitStagedChanges({
       resourceType
     )
   );
-
-  if (isNew) {
-    yield put(actions.resource.created(updated._id, id, resourceType));
-  }
 }
 
 export const resourceSagas = [

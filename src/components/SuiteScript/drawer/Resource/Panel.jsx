@@ -1,15 +1,12 @@
-import { Fragment, useCallback, useState, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Fragment, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
-import { Route, useLocation, generatePath } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadSuiteScriptResources from '../../LoadResources';
 import ResourceForm from '../../ResourceFormFactory';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Close from '../../../../components/icons/CloseIcon';
-import ApplicationImg from '../../../icons/ApplicationImg';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
@@ -86,23 +83,13 @@ export default function Panel(props) {
   console.log(`ss Panel props ${JSON.stringify(props)}`);
 
   const isNew = operation === 'add';
-  const location = useLocation();
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
   const classes = useStyles({
     ...props,
     occupyFullWidth,
     notificationPanelHeight,
   });
-  const formState = useSelector(state =>
-    selectors.suiteScriptResourceFormState(state, {
-      resourceType,
-      resourceId: id,
-      ssLinkedConnectionId,
-      integrationId,
-    })
-  );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();

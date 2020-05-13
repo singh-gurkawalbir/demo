@@ -3,12 +3,11 @@ import actionTypes from '../../../actions/types';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
 const emptyList = [];
-const emptySet = [];
 
 export default (state = {}, action) => {
   const { type, resourceType } = action;
 
-  if (!type || !resourceType) {
+  if (!type || !resourceType || resourceType === 'refreshlegacycontrolpanel') {
     return state;
   }
 
@@ -77,6 +76,15 @@ export default (state = {}, action) => {
 
                 return integration;
               });
+              draft[ssLinkedConnectionId].refreshlegacycontrolpanel = [
+                {
+                  ssLinkedConnectionId,
+                  _id: 'something',
+                  clearCache: false,
+                  refreshMappings: false,
+                  object: null,
+                },
+              ];
             } else if (resourceType.endsWith('/connections')) {
               draft[ssLinkedConnectionId].connections = collection;
             } else if (resourceType.endsWith('/flows')) {

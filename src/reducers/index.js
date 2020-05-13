@@ -4120,9 +4120,10 @@ export function suiteScriptIntegrationConnectionList(
     });
   }
 
-  return connections.filter(
-    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
-  );
+  return connections;
+  // return connections.filter(
+  //   c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+  // );
 }
 
 export function suiteScriptResourceFormState(

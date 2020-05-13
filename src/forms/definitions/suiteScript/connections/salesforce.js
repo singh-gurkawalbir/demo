@@ -1,13 +1,4 @@
 export default {
-  preSave1: formValues => {
-    const newValues = Object.assign({}, formValues);
-
-    if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
-      newValues['/salesforce/username'] = undefined;
-    }
-
-    return newValues;
-  },
   fieldMap: {
     name: { fieldId: 'name' },
     'salesforce.username': { fieldId: 'salesforce.username' },

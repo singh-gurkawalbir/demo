@@ -7,7 +7,11 @@ import {
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import GeneralSection from './sections/General';
+import LegacySection from './sections/Legacy';
+import * as selectors from '../../../../../../reducers';
+import trim from '../../../../../../utils/trim';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,12 +50,32 @@ const allSections = [
     Section: GeneralSection,
     id: 'general',
   },
+  {
+    path: 'legacy',
+    label: 'Legacy',
+    Section: LegacySection,
+    id: 'legacy',
+  },
 ];
 
 export default function AdminPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const sectionsToHide = [];
+  const hasJavaFlows = useSelector(state =>
+    selectors
+      .suiteScriptResourceList(state, {
+        resourceType: 'flows',
+        integrationId,
+        ssLinkedConnectionId,
+      })
+      .filter(
+        f =>
+          (f.locationQualifier && trim(f.locationQualifier).length > 0) ||
+          (['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(f.type) &&
+            !f.hasConfiguration)
+      )
+  );
+  const sectionsToHide = [!hasJavaFlows ? 'legacy' : ''];
   const availableSections = allSections.filter(
     sec => !sectionsToHide.includes(sec.id)
   );
