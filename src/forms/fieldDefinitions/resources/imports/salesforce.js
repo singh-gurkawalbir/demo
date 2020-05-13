@@ -541,9 +541,10 @@ export default {
     ],
   },
   'salesforce.idLookup.extract': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
-    connectionId: r => r && r._connectionId,
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
+    skipExtractWrapOnSpecialChar: true,
+    showLookup: false,
     label: 'Which export data field should map to external ID?',
     visibleWhenAll: [
       {

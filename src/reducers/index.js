@@ -423,6 +423,14 @@ export function editorPatchStatus(state, id) {
   return fromSession.editorPatchStatus(state && state.session, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromSession.getEditorSampleData(state && state.session, {
+    flowId,
+    resourceId,
+    fieldType,
+  });
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
@@ -2870,6 +2878,25 @@ export function resourceData(state, resourceType, id, scope) {
   if (conflict) data.conflict = conflict;
 
   return data;
+}
+
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(resource.adaptorType);
 }
 
 export function resourceDataModified(

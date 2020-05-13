@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import editorSampleData, * as fromEditorSampleData from './editorSampleData';
 import connectors, * as fromConnectors from './connectors';
 import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
@@ -55,6 +56,7 @@ export default combineReducers({
   jobErrorsPreview,
   customSettings,
   exportData: exportDataReducer,
+  editorSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -110,6 +112,17 @@ export function editorPatchSet(state, id) {
 
 export function editorPatchStatus(state, id) {
   return fromEditors.editorPatchStatus(state && state.editors, id);
+}
+
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromEditorSampleData.getEditorSampleData(
+    state && state.editorSampleData,
+    {
+      flowId,
+      resourceId,
+      fieldType,
+    }
+  );
 }
 
 export function mapping(state, id) {

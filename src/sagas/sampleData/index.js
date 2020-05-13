@@ -27,7 +27,7 @@ const PARSERS = {
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
-function* constructResourceFromFormValues({
+export function* constructResourceFromFormValues({
   formValues = {},
   resourceId,
   resourceType,

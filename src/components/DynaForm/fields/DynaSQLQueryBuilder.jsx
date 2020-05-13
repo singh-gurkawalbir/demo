@@ -207,20 +207,17 @@ export default function DynaSQLQueryBuilder(props) {
   };
 
   let lookupField;
-  const lookupOptions = {
-    isSQLLookup: true,
-    sampleData: formattedSampleData,
-  };
 
   if (lookupFieldId) {
     lookupField = (
       <DynaLookupEditor
         id={lookupFieldId}
-        isSQLLookup
-        label="Manage Lookups"
+        label="Manage lookups"
         value={lookups}
-        options={lookupOptions}
         onFieldChange={onFieldChange}
+        flowId={flowId}
+        resourceType={resourceType}
+        resourceId={resourceId}
       />
     );
   }

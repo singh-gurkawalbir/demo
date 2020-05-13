@@ -313,48 +313,8 @@ export default {
         }
       });
 
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
       return {
-        resourceName: nameField && nameField.value,
         contentType: requestMediaTypeField.value,
-        lookups: {
-          // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'Build Http request Body Editor'
-          fieldId: 'http.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
-      };
-    }
-
-    if (
-      fieldId === 'http.relativeURI' ||
-      fieldId === 'http.relativeURIUpdate' ||
-      fieldId === 'http.relativeURICreate' ||
-      fieldId === 'http.existingDataId'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'http.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
-      return {
-        resourceName: nameField && nameField.value,
-        lookups: {
-          fieldId: 'http.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
       };
     }
 
@@ -529,11 +489,9 @@ export default {
     },
     'http.relativeURICreate': {
       id: 'http.relativeURICreate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -618,11 +576,7 @@ export default {
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: [
-        'http.lookups',
-        'http.requestMediaType',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1078,11 +1032,9 @@ export default {
     },
     'http.relativeURIUpdate': {
       id: 'http.relativeURIUpdate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       label: 'Relative URI',
       placeholder: 'Optional',
       visibleWhenAll: [
@@ -1159,11 +1111,7 @@ export default {
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
-      refreshOptionsOnChangesTo: [
-        'http.lookups',
-        'http.requestMediaType',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1383,11 +1331,9 @@ export default {
     },
     'http.existingDataId': {
       id: 'http.existingDataId',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
       label: 'Existing data ID',
-      connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['http.lookups', 'name'],
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1473,11 +1419,7 @@ export default {
     },
     'http.body': {
       fieldId: 'http.body',
-      refreshOptionsOnChangesTo: [
-        'http.requestMediaType',
-        'http.lookups',
-        'name',
-      ],
+      refreshOptionsOnChangesTo: ['http.requestMediaType'],
     },
 
     'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
