@@ -6,6 +6,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import Spinner from '../../../../Spinner';
+import DebugOnly from '../../../../DebugOnly';
 
 const useStyles = makeStyles({
   spinnerWrapper: {
@@ -71,9 +72,11 @@ export default function FormView({
   return (
     <Fragment>
       {isDeveloper && (
-        <Button variant="contained" onClick={onToggleClick}>
-          Toggle form editor
-        </Button>
+        <DebugOnly>
+          <Button variant="contained" onClick={onToggleClick}>
+            Toggle form editor
+          </Button>
+        </DebugOnly>
       )}
       <DynaForm
         key={formState.key}
