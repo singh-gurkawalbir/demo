@@ -3675,9 +3675,6 @@ export function getCustomResourceLabel(
   );
   let resourceLabel;
 
-  console.log('resourceType ***', resourceType);
-  console.log('resource ***', resource);
-
   // Default resource labels based on resourceTypes handled here
   if (isLookup) {
     resourceLabel = 'Lookup';
