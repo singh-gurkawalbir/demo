@@ -49,7 +49,7 @@ export default {
       defaultDisabled: r => {
         if (r.resourceType === 'importRecords') return 'records';
 
-        if (r.resourceType === 'transferRecords') return 'blob';
+        if (r.resourceType === 'transferFiles') return 'blob';
         const isNew = isNewId(r._id);
 
         if (!isNew) return true;
@@ -59,7 +59,7 @@ export default {
       defaultValue: r => {
         if (r.resourceType === 'importRecords') return 'records';
 
-        if (r.resourceType === 'transferRecords') return 'blob';
+        if (r.resourceType === 'transferFiles') return 'blob';
 
         return r && r.blobKeyPath ? 'blob' : 'records';
       },

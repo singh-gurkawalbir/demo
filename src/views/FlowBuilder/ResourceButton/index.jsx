@@ -16,6 +16,8 @@ const blockMap = {
   lookup: { label: 'Lookup', Icon: LookupIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
   dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
+  exportTransfer: { label: 'Transfer', Icon: DataLoaderIcon },
+  importTransfer: { label: 'Transfer', Icon: DataLoaderIcon },
 };
 const useStyles = makeStyles(theme => ({
   root: {

@@ -864,14 +864,14 @@ export const exportFileProviderOptions = {
 export const importFileProviderOptions = {
   ftp: [
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
   ],
   s3: [
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
   ],
   http: [
@@ -880,8 +880,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
     {
       label: 'Lookup addition records (per record)',
@@ -898,8 +898,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
     {
       label: 'Lookup addition records (per record)',
@@ -957,8 +957,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
     {
       label: 'Lookup addition records (per record)',
@@ -975,8 +975,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
     {
       label: 'Lookup addition records (per record)',
@@ -993,8 +993,8 @@ export const importFileProviderOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
     {
       label: 'Lookup addition records (per record)',
@@ -1027,8 +1027,8 @@ export const importFileProviderOptions = {
   ],
   as2: [
     {
-      label: 'Transfer records into destination application',
-      value: 'transferRecords',
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
     },
   ],
   shopify: [

@@ -30,7 +30,7 @@ export default {
     const newValues = {
       ...rest,
       '/adaptorType': `${appTypeToAdaptorType[app.type]}${
-        ['importRecords', 'transferRecords'].indexOf(resourceType) >= 0
+        ['importRecords', 'transferFiles'].indexOf(resourceType) >= 0
           ? 'Import'
           : 'Export'
       }`,
@@ -100,7 +100,7 @@ export default {
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['importRecords', 'transferRecords'] },
+        { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
       ],
     },
 
@@ -174,12 +174,12 @@ export default {
     }
 
     // if (fieldId === 'importId') {
-    //   console.log('adssad', resourceTypeField.value === 'transferRecords');
+    //   console.log('adssad', resourceTypeField.value === 'transferFiles');
     //   // const importLabel =
-    //   //   resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import';
+    //   //   resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import';
 
     //   const importLabel = `Would you like to use an existing ${
-    //     resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import'
+    //     resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
     //   }`;
 
     //   console.log('importLabel', importLabel);
@@ -242,7 +242,7 @@ export default {
         // expression.push({ blobKeyPath: { $nin: ['', null] } });
         if (resourceTypeField.value === 'importRecords') {
           expression.push({ blobKeyPath: { $exists: false, $ne: null } });
-        } else if (resourceTypeField.value === 'transferRecords') {
+        } else if (resourceTypeField.value === 'transferFiles') {
           expression.push({ blobKeyPath: { $exists: true, $ne: null } });
         } else if (resourceTypeField.value === 'lookupRecords') {
           expression.push({ type: { $nin: ['blob'] } });
@@ -258,7 +258,7 @@ export default {
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
       let importLabel = `Would you like to use an existing ${
-        resourceTypeField.value === 'transferRecords' ? 'transfer' : 'import'
+        resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
       }?`;
 
       if (fieldId === 'exportId') {

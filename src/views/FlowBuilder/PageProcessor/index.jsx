@@ -69,6 +69,30 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  let blockType = pp.type === 'export' ? 'lookup' : 'import';
+
+  if (
+    (['RESTExport', 'HTTPExport'].indexOf(resource.adaptorType) >= 0 &&
+      resource.type === 'blob') ||
+    (['NetSuiteExport'].indexOf(resource.adaptorType) >= 0 &&
+      resource.netsuite &&
+      resource.netsuite.internalId) ||
+    (['SalesforceExport'].indexOf(resource.adaptorType) >= 0 &&
+      resource.salesforce &&
+      resource.salesforce.id) ||
+    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'exportTransfer';
+  } else if (
+    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.blobKeyPath) ||
+    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'importTransfer';
+  }
+
   // Returns map of all possible actions with true/false whether actions performed on the resource
   const usedActions =
     useSelector(
@@ -296,7 +320,7 @@ const PageProcessor = ({
           assistant={resource.assistant}
           ref={ref}
           opacity={opacity} /* used for drag n drop */
-          blockType={pp.type === 'export' ? 'lookup' : 'import'}
+          blockType={blockType}
           flowId={flowId}
           index={index}
           resource={resource}
