@@ -199,6 +199,9 @@ export default {
       delete retValues['/http/paging/maxPagePath'];
       delete retValues['/http/paging/maxCountPath'];
       delete retValues['/http/paging/body'];
+      delete retValues['/http/paging/lastPageStatusCode'];
+      delete retValues['/http/paging/lastPagePath'];
+      delete retValues['/http/paging/lastPageValues'];
     }
 
     retValues['/statusExport'] = undefined;

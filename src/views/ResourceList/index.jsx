@@ -18,7 +18,7 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,6 +29,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const defaultFilter = { take: 10 };
+const resourcesToLoad = resourceType => {
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    // add connections
+    return `${resourceType},connections`;
+  }
+
+  return resourceType;
+};
 
 export default function ResourceList(props) {
   const location = useLocation();
@@ -48,7 +56,10 @@ export default function ResourceList(props) {
     }),
     [filter, resourceType]
   );
-  const list = useResourceList(filterConfig);
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    filterConfig
+  );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
 
   useEffect(() => {
@@ -103,7 +114,7 @@ export default function ResourceList(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources={resourceType}>
+        <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <Typography>
               {list.total === 0

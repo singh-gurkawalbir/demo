@@ -110,3 +110,10 @@ a{
 .ace_invisible_space{
   color: transparent !important;
 }
+.ace-tomorrow .ace_gutter{
+  background-color: #f8faff !important;
+}
+.ace-tomorrow .ace_gutter-active-line,
+.ace-tomorrow .ace_marker-layer .ace_active-line{
+  background-color: #D6E4ED !important;
+}

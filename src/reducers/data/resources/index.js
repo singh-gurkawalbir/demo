@@ -1,6 +1,7 @@
 import produce from 'immer';
 import { get } from 'lodash';
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
@@ -325,10 +326,7 @@ export default (state = {}, action) => {
   }
 };
 
-// #region PUBLIC SELECTORS
-export function resource(state, resourceType, id) {
-  // console.log('fetch', resourceType, id);
-
+export function resourceIdState(state, resourceType, id) {
   if (!state || !id || !resourceType) {
     return null;
   }
@@ -337,7 +335,15 @@ export function resource(state, resourceType, id) {
 
   if (!resources) return null;
 
-  const match = resources.find(r => r._id === id);
+  return resources.find(r => r._id === id);
+}
+
+// #region PUBLIC SELECTORS
+// TODO:Deprecate this selector and use makeResourceSelector
+export function resource(state, resourceType, id) {
+  // console.log('fetch', resourceType, id);
+
+  const match = resourceIdState(state, resourceType, id);
 
   if (!match) return null;
 
@@ -349,12 +355,41 @@ export function resource(state, resourceType, id) {
   // Could you find the best solution for this? I favour the latter if that approach is easy.
   if (['exports', 'imports'].includes(resourceType)) {
     if (match.assistant && !match.assistantMetadata) {
+      // TODO:mutating a reference of the redux state..we have to fix this
+      // if this reducer was implemented in immer ...it would have pointed this error
       match.assistantMetadata = {};
     }
   }
 
   return match;
 }
+
+// transformed from above selector
+function resourceTransformed(resourceIdState, resourceType) {
+  if (!resourceIdState) return null;
+
+  // TODO: Santosh. This is an example of a bad practice where the selector, which should
+  // only return some part of the state, is actually mutating the state prior to returning
+  // the value.  Instead, the reducer should do the work of normalizing the data if needed.
+  // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
+  // the components) using this property should be smart enough to work with an undefined prop.
+  // Could you find the best solution for this? I favour the latter if that approach is easy.
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (resourceIdState.assistant && !resourceIdState.assistantMetadata) {
+      return { ...resourceIdState, assistantMetadata: {} };
+    }
+  }
+
+  return resourceIdState;
+}
+
+export const makeResourceSelector = () =>
+  createSelector(
+    (state, resourceType, id) => resourceIdState(state, resourceType, id),
+    (_, resourceType) => resourceType,
+    (resourceIdState, resourceType) =>
+      resourceTransformed(resourceIdState, resourceType)
+  );
 
 export function exportNeedsRouting(state, id) {
   if (!state) return false;

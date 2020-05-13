@@ -10,6 +10,7 @@ import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function DynaSQLQueryBuilder(props) {
   const {
@@ -43,8 +44,10 @@ export default function DynaSQLQueryBuilder(props) {
     extractFieldsLoaded: false,
     changeIdentifier: 0,
   });
-  const { merged: resourceData } = useSelector(state =>
-    selectors.resourceData(state, 'imports', resourceId)
+  const { merged: resourceData } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'imports',
+    resourceId
   );
   const { adaptorType: resourceAdapterType } = resourceData;
   const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;

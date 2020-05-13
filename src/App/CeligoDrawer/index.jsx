@@ -19,8 +19,7 @@ import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
-import useResourceList from '../../hooks/useResourceList';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -197,14 +196,21 @@ export default function CeligoDrawer() {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
   const [expand, setExpand] = React.useState(null);
   const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useMarketPlaceConnectors(undefined, isSandbox);
+  const marketplaceConnectors = useSelectorMemo(
+    selectors.makeMarketPlaceConnectorsSelector,
+    undefined,
+    isSandbox
+  );
   const handleDrawerToggle = useCallback(() => {
     dispatch(actions.toggleDrawer());
   }, [dispatch]);

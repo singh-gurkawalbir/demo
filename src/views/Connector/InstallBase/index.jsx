@@ -12,7 +12,7 @@ import KeywordSearch from '../../../components/KeywordSearch';
 import LoadResources from '../../../components/LoadResources';
 import actions from '../../../actions';
 import metadata from './metadata';
-import useResourceList from '../../../hooks/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -46,8 +46,14 @@ export default function InstallBase(props) {
     }),
     [defaultFilter, filter]
   );
-  const list = useResourceList(connectorInstallBaseConfig).resources;
-  const licenses = useResourceList(connectorLicenseFilterConfig).resources;
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    connectorInstallBaseConfig
+  ).resources;
+  const licenses = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    connectorLicenseFilterConfig
+  ).resources;
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
