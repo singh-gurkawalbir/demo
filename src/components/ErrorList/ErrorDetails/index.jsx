@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
@@ -93,21 +93,22 @@ export default function ErrorDetails({
     <div className={classes.wrapper}>
       <div className={classes.actionButtonsContainer}>
         {retryId && (
-          <Fragment>
-            <Button
-              variant="outlined"
-              disabled={!retryData}
-              onClick={updateRetry}>
-              Update Retry
-            </Button>
-            <Button variant="outlined" onClick={retry}>
-              Retry
-            </Button>
-          </Fragment>
+          <Button variant="outlined" onClick={retry}>
+            Retry
+          </Button>
         )}
         <Button variant="outlined" onClick={resolve}>
           Resolve
         </Button>
+        {retryId ? (
+          <Button variant="outlined" disabled onClick={updateRetry}>
+            Save &amp; close
+          </Button>
+        ) : (
+          <Button variant="outlined" onClick={onClose}>
+            Close
+          </Button>
+        )}
       </div>
       <div className={classes.detailsContainer}>
         <Tabs

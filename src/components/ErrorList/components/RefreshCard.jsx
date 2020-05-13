@@ -29,7 +29,7 @@ export default function RefreshCard(props) {
       <IconTextButton onClick={handleClick} className={classes.refresh}>
         <Icon /> Refresh
       </IconTextButton>
-      to view new errors
+      errors
     </div>
   );
 }

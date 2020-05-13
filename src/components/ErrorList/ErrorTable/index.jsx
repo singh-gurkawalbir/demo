@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, Fragment } from 'react';
+import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
@@ -26,7 +26,6 @@ export default function ErrorTable(props) {
   const { filterKey, defaultFilter } = actionProps;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [errorsInCurrentPage, setErrorsInCurrentPage] = useState([]);
   const handleChangeRowsPerPage = useCallback(event => {
     setRowsPerPage(parseInt(event.target.value, 10));
   }, []);
@@ -37,15 +36,10 @@ export default function ErrorTable(props) {
   const dataFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
   );
-
-  useEffect(() => {
-    const currentErrorList = data.slice(
-      page * rowsPerPage,
-      (page + 1) * rowsPerPage
-    );
-
-    setErrorsInCurrentPage(currentErrorList);
-  }, [data, page, rowsPerPage]);
+  const errorsInCurrentPage = useMemo(
+    () => data.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [data, page, rowsPerPage]
+  );
 
   useEffect(() => {
     setPage(0);
@@ -57,7 +51,7 @@ export default function ErrorTable(props) {
         <Fragment>
           <CeligPagination
             {...paginationOptions}
-            rowsPerPageOptions={[10, 25, 50, 100]}
+            rowsPerPageOptions={[10, 25, 50]}
             className={classes.tablePaginationRoot}
             count={data.length}
             page={page}
@@ -67,7 +61,7 @@ export default function ErrorTable(props) {
           />
           <CeligoTable
             data={errorsInCurrentPage}
-            filterKey="openErrors"
+            filterKey={filterKey}
             {...metadata}
             actionProps={actionProps}
           />
