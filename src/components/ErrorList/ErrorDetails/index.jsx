@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import { useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
@@ -40,17 +40,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorDetails({
-  flowId,
-  resourceId,
-  errorId,
-  mode,
-  onClose,
-}) {
-  // const match = useRouteMatch();
+export default function ErrorDetails({ flowId, resourceId, onClose }) {
+  const match = useRouteMatch();
   const classes = useStyles();
   const dispatch = useDispatch();
-  // const { mode, errorId } = match.params;
+  const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
   const [recordMode, setRecordMode] = useState(mode);
   const errorDoc = useSelector(state =>

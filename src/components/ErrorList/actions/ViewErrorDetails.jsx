@@ -1,29 +1,23 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
-import ErrorDetailsDrawer from '../drawers/ErrorDetailsDrawer';
 import Icon from '../../icons/RevokeTokenIcon';
 
 export default {
   label: 'View Error Details',
-  component: function ViewErrorDetails({ resource, flowId, resourceId }) {
+  component: function ViewErrorDetails({ resource }) {
     const { errorId } = resource;
-    const [showDrawer, setShowDrawer] = useState(false);
-    const handleClick = useCallback(() => setShowDrawer(true), []);
-    const handleClose = useCallback(() => setShowDrawer(false), []);
+    const history = useHistory();
+    const match = useRouteMatch();
+    const handleClick = useCallback(() => {
+      history.push(`${match.url}/details/${errorId}/view`);
+    }, [errorId, history, match.url]);
 
     return (
       <Fragment>
         <IconButton data-test="viewDetails" size="small" onClick={handleClick}>
           <Icon />
         </IconButton>
-        <ErrorDetailsDrawer
-          flowId={flowId}
-          open={showDrawer}
-          resourceId={resourceId}
-          errorId={errorId}
-          mode="view"
-          onClose={handleClose}
-        />
       </Fragment>
     );
   },
