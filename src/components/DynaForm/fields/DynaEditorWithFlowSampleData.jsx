@@ -99,6 +99,7 @@ const DynaEditorWithFlowSampleData = ({
         <UrlEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
+          rule={formattedRule}
           data={JSON.stringify(sampleData, null, 2)}
           showVersionToggle={isEditorV2Supported}
           isSampleDataLoading={sampleDataRequestStatus === 'requested'}
