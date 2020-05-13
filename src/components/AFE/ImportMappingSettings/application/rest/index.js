@@ -464,9 +464,9 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name:',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          connectionId,
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [

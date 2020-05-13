@@ -95,6 +95,7 @@ import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaDataURITemplate from './DynaDataURITemplate';
 import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
+import DynaSelectLookup from './DynaSelectLookup';
 
 export default {
   mode: DynaMode,
@@ -203,4 +204,5 @@ export default {
   concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
+  selectlookup: DynaSelectLookup,
 };
