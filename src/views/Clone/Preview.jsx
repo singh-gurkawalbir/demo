@@ -16,7 +16,7 @@ import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -100,7 +100,10 @@ export default function ClonePreview(props) {
   );
   const integrationAppName =
     isIAIntegration && getIntegrationAppUrlName(resource && resource.name);
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const selectedAccountHasSandbox = useSelector(state => {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);

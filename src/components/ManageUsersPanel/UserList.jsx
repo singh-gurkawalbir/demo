@@ -64,17 +64,19 @@ const mapDispatchToProps = dispatch => ({
     );
   },
 });
-// TODO (Azhar) : to work on styling
-// helpcontent is showing as bold text
 
-@withStyles({
+@withStyles(theme => ({
   root: {
     overflowX: 'auto',
   },
   table: {
     minWidth: 700,
   },
-})
+  helpIcon: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
+  },
+}))
 class UserList extends Component {
   componentDidMount() {
     const { integrationId, requestIntegrationAShares, users } = this.props;
@@ -133,6 +135,7 @@ class UserList extends Component {
                     title="User"
                     helpKey="users.user"
                     caption="users.user"
+                    className={classes.helpIcon}
                   />
                 </TableCell>
                 <TableCell>
@@ -141,6 +144,7 @@ class UserList extends Component {
                     title="Access Level"
                     helpKey="users.accesslevel"
                     caption="users.accesslevel"
+                    className={classes.helpIcon}
                   />
                 </TableCell>
                 <TableCell>
@@ -149,6 +153,7 @@ class UserList extends Component {
                     title="Status"
                     helpKey="users.status"
                     caption="users.status"
+                    className={classes.helpIcon}
                   />
                 </TableCell>
                 {isAccountOwner && (
@@ -160,6 +165,7 @@ class UserList extends Component {
                           title="Off/On"
                           helpKey="users.offOn"
                           caption="users.offOn"
+                          className={classes.helpIcon}
                         />
                       </TableCell>
                     )}
@@ -169,6 +175,7 @@ class UserList extends Component {
                         title="Actions"
                         helpKey="users.actions"
                         caption="users.actions"
+                        className={classes.helpIcon}
                       />
                     </TableCell>
                   </Fragment>

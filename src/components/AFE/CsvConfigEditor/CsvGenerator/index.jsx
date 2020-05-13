@@ -34,7 +34,6 @@ export default function CsvGenerateEditor(props) {
     const options = {
       data: props.data,
       rule: props.rule,
-      autoEvaluate: true,
     };
 
     dispatch(actions.editor.init(editorId, 'csvDataGenerator', options));

@@ -1,11 +1,11 @@
 export default {
   patchSet: editor => {
     const patches = {
-      foregroundPatch: undefined,
+      foregroundPatches: undefined,
     };
     const { code, scriptId } = editor;
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches = {
       patch: [
         {
           op: 'replace',

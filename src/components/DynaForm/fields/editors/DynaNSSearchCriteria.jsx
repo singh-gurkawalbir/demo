@@ -66,7 +66,7 @@ export default function DynaNSSearchCriteria(props) {
       )}
       <Button
         data-test={id}
-        variant="contained"
+        variant="outlined"
         color="secondary"
         onClick={handleEditorClick}>
         {label}

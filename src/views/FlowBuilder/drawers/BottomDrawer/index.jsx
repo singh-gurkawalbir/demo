@@ -19,7 +19,7 @@ import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -119,7 +119,10 @@ export default function BottomDrawer({
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
-  const connections = useResourceList(connectionsFilterConfig).resources;
+  const connections = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    connectionsFilterConfig
+  ).resources;
   const connectionIdNameMap = useMemo(() => {
     const resourceIdNameMap = {};
 

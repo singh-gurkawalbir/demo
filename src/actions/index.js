@@ -1547,7 +1547,6 @@ const exportData = {
       error: err,
     }),
 };
-// #endregion
 const suiteScript = {
   resourceForm: {
     init: (
@@ -1799,6 +1798,47 @@ const suiteScript = {
       }),
   },
 };
+const editorSampleData = {
+  request: ({
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    formValues,
+    fieldType,
+    requestedTemplateVersion,
+    isV2NotSupported,
+  }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      formValues,
+      fieldType,
+      requestedTemplateVersion,
+      isV2NotSupported,
+    }),
+  received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
+      flowId,
+      resourceId,
+      fieldType,
+      sampleData,
+      templateVersion,
+    }),
+  receivedError: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR, {
+      resourceId,
+      flowId,
+      fieldType,
+    }),
+  clear: ({ resourceId, flowId }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
+      resourceId,
+      flowId,
+    }),
+};
 
 export default {
   postFeedback,
@@ -1845,4 +1885,5 @@ export default {
   suiteScript,
   customSettings,
   exportData,
+  editorSampleData,
 };

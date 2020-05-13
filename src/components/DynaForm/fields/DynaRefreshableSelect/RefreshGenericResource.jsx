@@ -1,5 +1,6 @@
 import { useEffect, useState, cloneElement, useCallback } from 'react';
 import FormControl from '@material-ui/core/FormControl';
+import clsx from 'clsx';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
@@ -18,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   refreshGenericActionBtn: {
     alignSelf: 'flex-start',
     marginTop: theme.spacing(5),
+  },
+  refreshLoader: {
+    marginLeft: theme.spacing(1),
   },
   refreshRoot: {
     width: '100%',
@@ -123,7 +127,11 @@ export default function RefreshGenericResource(props) {
           </ActionButton>
         )}
         {fieldData && isLoading && (
-          <span className={classes.refreshGenericActionBtn}>
+          <span
+            className={clsx(
+              classes.refreshGenericActionBtn,
+              classes.refreshLoader
+            )}>
             <Spinner size={24} color="primary" />
           </span>
         )}

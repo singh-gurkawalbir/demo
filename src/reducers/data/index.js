@@ -26,6 +26,18 @@ export function resource(state, resourceType, id) {
   return fromResources.resource(state && state.resources, resourceType, id);
 }
 
+export function resourceIdState(state, resourceType, id) {
+  return fromResources.resourceIdState(
+    state && state.resources,
+    resourceType,
+    id
+  );
+}
+
+export function makeResourceSelector() {
+  return fromResources.makeResourceSelector();
+}
+
 export function resourceList(state, options) {
   return fromResources.resourceList(state && state.resources, options);
 }
