@@ -14,8 +14,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: '12px',
     marginTop: theme.spacing(1),
   },
-  editorButton: {
+  DynaEditorButton: {
     float: 'right',
+    marginTop: theme.spacing(4),
   },
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
   wrapper: {
     flexDirection: `row !important`,
+    alignItems: 'flex-start',
   },
   dynaEditorWrapper: {
     width: '100%',
@@ -158,7 +160,7 @@ export default function DynaEditor({
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.editorButton}>
+        className={classes.DynaEditorButton}>
         <ExpandWindowIcon />
       </ActionButton>
     </div>

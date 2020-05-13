@@ -55,10 +55,7 @@ export default function DynaCheckbox(props) {
         }
         className={classes.dynaCheckControlLabel}
         label={
-          <Typography
-            variant="subtitle2"
-            component="span"
-            className={classes.dynaCheckLabel}>
+          <Typography variant="subtitle2" component="span">
             {label}
           </Typography>
         }

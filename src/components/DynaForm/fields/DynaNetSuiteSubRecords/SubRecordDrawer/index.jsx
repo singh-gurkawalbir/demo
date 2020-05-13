@@ -11,6 +11,7 @@ import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
 import getFormFieldMetadata from './util';
 import { SCOPES } from '../../../../../sagas/resourceForm';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -68,12 +69,11 @@ function SubRecordDrawer(props) {
       subRecordJsonPathLabel:
         f.subRecordJsonPathLabel || 'Path to node that contains items data',
     }));
-  const subrecords = useSelector(
-    state =>
-      selectors.resourceData(state, 'imports', resourceContext.resourceId)
-        .merged.netsuite_da.subrecords,
-    (left, right) => left && right && left.length === right.length
-  );
+  const { subrecords } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'imports',
+    resourceContext.resourceId
+  ).merged.netsuite_da;
   const fieldMeta = getFormFieldMetadata(
     recordTypeLabel,
     subrecords,

@@ -27,7 +27,7 @@ const PARSERS = {
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
-function* constructResourceFromFormValues({
+export function* constructResourceFromFormValues({
   formValues = {},
   resourceId,
   resourceType,
@@ -201,7 +201,7 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     );
   }
 
-  const processorData = values.editorValues || {};
+  const processorData = deepClone(values.editorValues || {});
 
   processorData.data = file;
   processorData.processor = processorData.processor || PARSERS[type];
@@ -228,21 +228,18 @@ function* requestSampleData({
   stage,
   runOffline,
 }) {
-  // deepcloning the value to avoid mutation of object being passed from the component
-  const valuesCopy = deepClone(values);
-
   if (stage) {
     yield call(processRawData, {
       resourceId,
       resourceType,
-      values: valuesCopy,
+      values,
       stage,
     });
   } else {
     yield call(getPreviewData, {
       resourceId,
       resourceType,
-      values: valuesCopy,
+      values,
       runOffline,
     });
   }

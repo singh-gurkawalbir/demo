@@ -17,7 +17,7 @@ import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -41,7 +41,10 @@ export default function TemplateList(props) {
     }),
     [filter]
   );
-  const list = useResourceList(templatesFilterConfig);
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    templatesFilterConfig
+  );
 
   return (
     <Fragment>

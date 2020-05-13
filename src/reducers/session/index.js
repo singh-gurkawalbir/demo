@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import editorSampleData, * as fromEditorSampleData from './editorSampleData';
 import connectors, * as fromConnectors from './connectors';
 import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
@@ -57,6 +58,7 @@ export default combineReducers({
   errorManagement,
   customSettings,
   exportData: exportDataReducer,
+  editorSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -114,6 +116,17 @@ export function editorPatchStatus(state, id) {
   return fromEditors.editorPatchStatus(state && state.editors, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromEditorSampleData.getEditorSampleData(
+    state && state.editorSampleData,
+    {
+      flowId,
+      resourceId,
+      fieldType,
+    }
+  );
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -149,6 +162,18 @@ export function getSearchCriteria(state, id) {
 
 export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
+}
+
+export function stagedState(state) {
+  return state && state.stage;
+}
+
+export function stagedIdState(state, id) {
+  return fromStage.stagedIdState(state && state.stage, id);
+}
+
+export function makeTransformStagedResource() {
+  return fromStage.makeTransformStagedResource();
 }
 
 export function stagedResource(state, id, scope) {

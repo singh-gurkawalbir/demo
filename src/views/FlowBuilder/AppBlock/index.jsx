@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
@@ -226,15 +232,19 @@ function AppBlock({
   );
   const handleActionClose = useCallback(() => setActiveAction(null), []);
   const hasActions = actions && Array.isArray(actions) && actions.length;
-  let leftActions = [];
-  let middleActions = [];
-  let rightActions = [];
+  const { leftActions, middleActions, rightActions } = useMemo(() => {
+    let leftActions = [];
+    let middleActions = [];
+    let rightActions = [];
 
-  if (hasActions) {
-    leftActions = actions.filter(a => a.position === 'left');
-    middleActions = actions.filter(a => a.position === 'middle');
-    rightActions = actions.filter(a => a.position === 'right');
-  }
+    if (hasActions) {
+      leftActions = actions.filter(a => a.position === 'left');
+      middleActions = actions.filter(a => a.position === 'middle');
+      rightActions = actions.filter(a => a.position === 'right');
+    }
+
+    return { leftActions, middleActions, rightActions };
+  }, [actions, hasActions]);
 
   function renderActions(actions) {
     if (!actions || !actions.length) return null;

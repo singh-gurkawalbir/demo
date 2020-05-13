@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '8px',
     maxHeight: '300px',
     overflowY: 'auto',
+    fontFamily: 'Roboto400',
     color: theme.palette.text.primary,
     fontSize: '14px',
     lineHeight: '22px',

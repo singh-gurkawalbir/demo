@@ -1,10 +1,10 @@
 import { makeStyles, MenuItem } from '@material-ui/core';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import useResourceList from '../../hooks/useResourceList';
 import * as selectors from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import CeligoSelect from '../CeligoSelect';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   flow: {
@@ -51,7 +51,10 @@ export default function FlowSelector({
     }),
     [integrationId, storeFlows, storeId]
   );
-  const filteredFlows = useResourceList(flowsFilterConfig).resources;
+  const filteredFlows = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsFilterConfig
+  ).resources;
 
   return (
     <CeligoSelect

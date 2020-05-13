@@ -193,34 +193,6 @@ export default {
         return 'Sample Data must be a valid JSON';
     }
   },
-  optionsHandler: (fieldId, fields) => {
-    if (
-      fieldId === 'rest.body' ||
-      fieldId === 'rest.relativeURI' ||
-      fieldId === 'rest.relativeURICreate' ||
-      fieldId === 'rest.relativeURIUpdate' ||
-      fieldId === 'rest.existingDataId'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rest.lookups'
-      );
-      const nameField = fields.find(field => field.fieldId === 'name');
-
-      return {
-        resourceName: nameField && nameField.value,
-        lookups: {
-          fieldId: 'rest.lookups',
-          data:
-            (lookupField &&
-              Array.isArray(lookupField.value) &&
-              lookupField.value) ||
-            [],
-        },
-      };
-    }
-
-    return null;
-  },
   fieldMap: {
     common: { formId: 'common' },
     importData: {
@@ -325,11 +297,9 @@ export default {
     },
     'rest.relativeURICreate': {
       id: 'rest.relativeURICreate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
       visibleWhenAll: [
@@ -617,11 +587,9 @@ export default {
     },
     'rest.relativeURIUpdate': {
       id: 'rest.relativeURIUpdate',
-      type: 'textwithlookupextract',
-      fieldType: 'relativeUri',
+      type: 'relativeuri',
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
       label: 'Relative URI',
       required: true,
       visibleWhenAll: [
@@ -858,10 +826,8 @@ export default {
     },
     'rest.existingDataId': {
       id: 'rest.existingDataId',
-      type: 'textwithlookupextract',
-      fieldType: 'ignoreExistingData',
-      connectionId: r => r && r._connectionId,
-      refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
       label: 'Existing data id',
       required: true,
       visibleWhenAll: [

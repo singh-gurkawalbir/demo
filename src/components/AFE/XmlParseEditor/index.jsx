@@ -36,7 +36,6 @@ export default function XmlParseEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'xmlParser', {
         data: props.data,
-        autoEvaluate: true,
         advanced: true,
         trimSpaces: false,
         rule: props.rule,

@@ -72,6 +72,7 @@ export default function EditorDrawer({ editorId, onClose, ...rest }) {
   );
   const disableSave =
     !editor ||
+    editor.error ||
     editorViolations ||
     (isEditorDirty !== undefined && !isEditorDirty);
   // if the editor is not yet initialized, then the autoevealuate flag is undefined
