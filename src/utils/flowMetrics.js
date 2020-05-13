@@ -22,6 +22,19 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
             |> drop(columns: ["_start", "_stop"])`;
 };
 
+export const getLabel = key => {
+  switch (key) {
+    case 'success':
+      return 'Flow: Success';
+    case 'error':
+      return 'Flow: Errors';
+    case 'ignored':
+      return 'Flow: Ignored';
+    default:
+      return 'Flow: Average time taken';
+  }
+};
+
 function convertToFullText(text) {
   switch (text) {
     case 's':

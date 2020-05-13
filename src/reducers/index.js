@@ -485,12 +485,11 @@ export function getSampleDataContext(
   });
 }
 
-export function flowMetricsData(state, flowId, measurement, filters) {
+export function flowMetricsData(state, flowId, measurement) {
   return fromSession.flowMetricsData(
     state && state.session,
     flowId,
-    measurement,
-    filters
+    measurement
   );
 }
 

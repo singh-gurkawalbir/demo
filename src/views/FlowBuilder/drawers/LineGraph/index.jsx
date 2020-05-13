@@ -1,11 +1,21 @@
+import { Drawer, makeStyles } from '@material-ui/core';
 import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import RightDrawer from '../../../../components/drawer/Right';
-import FlowCharts from '../../../../components/FlowCharts';
-import titleBar from '../../../../components/FlowCharts/TitleBar';
+import { useRouteMatch, useHistory, Route } from 'react-router-dom';
+import FlowCharts from './FlowCharts';
+import DrawerTitleBar from './TitleBar';
 
-const useStyle = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
+  drawerPaper: {
+    width: '1300px',
+    border: 'solid 1px',
+    borderColor: theme.palette.secondary.lightest,
+    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  form: {
+    maxHeight: `calc(100vh - 180px)`,
+    padding: theme.spacing(2, 3),
+  },
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
@@ -17,25 +27,39 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
-export default function FlowChartsDrawer({ flowId }) {
+function LineGraphDrawer({ parentUrl, flowId }) {
+  const match = useRouteMatch();
+  const classes = useStyles();
   const history = useHistory();
-  const handleClose = useCallback(() => history.goBack(), [history]);
-  const classes = useStyle();
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+  }, [history, parentUrl]);
 
   return (
-    <RightDrawer
-      TitleBar={titleBar}
-      path="charts"
-      width="xl"
-      onClose={handleClose}
-      flowId={flowId}
-      height="tall"
-      title="Dashboard">
-      <FlowCharts
+    <Drawer
+      anchor="right"
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      BackdropProps={{ invisible: true }}
+      open={!!match}>
+      <DrawerTitleBar
+        title="Dashboard"
         flowId={flowId}
         onClose={handleClose}
-        className={classes.scheduleContainer}
+        backToParent
       />
-    </RightDrawer>
+      <FlowCharts flowId={flowId} className={classes.scheduleContainer} />
+    </Drawer>
+  );
+}
+
+export default function LineGraphDrawerRoute({ flowId }) {
+  const match = useRouteMatch();
+
+  return (
+    <Route exact path={`${match.url}/charts`}>
+      <LineGraphDrawer flowId={flowId} parentUrl={match.url} />
+    </Route>
   );
 }

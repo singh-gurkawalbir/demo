@@ -544,12 +544,11 @@ export function customSettingsStatus(state, resourceId) {
   );
 }
 
-export function flowMetricsData(state, flowId, measurement, filters) {
+export function flowMetricsData(state, flowId, measurement) {
   return fromFlowMetrics.flowMetricsData(
     state && state.flowMetrics,
     flowId,
-    measurement,
-    filters
+    measurement
   );
 }
 

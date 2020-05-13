@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import {
@@ -8,14 +8,13 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ReferenceLine,
   Line,
 } from 'recharts';
-import { makeStyles, Typography } from '@material-ui/core';
-import * as selectors from '../../reducers';
-import actions from '../../actions';
-import PanelHeader from '../PanelHeader';
-import Spinner from '../Spinner';
+import { makeStyles } from '@material-ui/core';
+import PanelHeader from '../../../../components/PanelHeader';
+import * as selectors from '../../../../reducers';
+import { getLabel } from '../../../../utils/flowMetrics';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,32 +52,13 @@ export function CustomizedDot(props) {
   );
 }
 
-export default function Recharts({ flowId }) {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const filters = useState({});
-  const flowData = useSelector(state =>
-    selectors.flowMetricsData(state, flowId, 'success', filters)
-  );
-
-  useEffect(() => {
-    if (!flowData) {
-      dispatch(actions.flowMetrics.request(flowId, {}));
-    }
-  }, [dispatch, flowData, flowId]);
-
-  if (!flowData) {
-    return (
-      <Typography>
-        Loding data...
-        <Spinner />
-      </Typography>
-    );
-  }
+const Chart = ({ id, flowId }) => {
+  const { data: flowData } =
+    useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
 
   return (
-    <div className={classes.root}>
-      <PanelHeader title="Recharts Time Demo" />
+    <Fragment>
+      <PanelHeader title={getLabel(id)} />
       <LineChart
         width={930}
         height={350}
@@ -100,16 +80,36 @@ export default function Recharts({ flowId }) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <ReferenceLine y={2500} label="Threshold" stroke="orange" />
         <Line
           dataKey="value"
           legendType="wye"
-          stroke="green"
-          dot={<CustomizedDot />}
+          stroke="#24448E"
+          //   dot={<CustomizedDot />}
         />
-        <Line dataKey="errors" legendType="diamond" stroke="red" />
-        <Line dataKey="ignored" stroke="purple" />
       </LineChart>
+    </Fragment>
+  );
+};
+
+export default function FlowCharts({ flowId }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const {
+    attributes = ['success', 'error', 'ignored', 'averageTimeTaken'],
+    data: flowData,
+  } = useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
+
+  useEffect(() => {
+    if (!flowData) {
+      dispatch(actions.flowMetrics.request(flowId, {}));
+    }
+  }, [dispatch, flowData, flowId]);
+
+  return (
+    <div className={classes.root}>
+      {attributes.map(m => (
+        <Chart key={m} id={m} flowId={flowId} />
+      ))}
     </div>
   );
 }
