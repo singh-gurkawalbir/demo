@@ -17,7 +17,7 @@ function extractForm(data) {
 export default {
   patchSet: editor => {
     const patches = {
-      backgroundPatches: [],
+      foregroundPatches: [],
     };
     const {
       code,
@@ -68,7 +68,7 @@ export default {
       };
     }
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches.push({
       patch: [
         {
           op: 'replace',
@@ -78,9 +78,9 @@ export default {
       ],
       resourceType,
       resourceId,
-    };
+    });
 
-    patches.backgroundPatches.push({
+    patches.foregroundPatches.push({
       patch: [
         {
           op: 'replace',

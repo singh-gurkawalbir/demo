@@ -1169,7 +1169,8 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: true,
             readOnly: false,
           },
@@ -1180,7 +1181,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1196,7 +1197,8 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: false,
             readOnly: false,
             defaultValue: 'abc',
@@ -1208,7 +1210,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1222,14 +1224,16 @@ describe('convertToReactFormFields', () => {
           f2: {
             id: 'f2',
             name: 'f2',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: true,
             readOnly: false,
           },
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: false,
             readOnly: false,
           },
@@ -1248,11 +1252,11 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           f2: {
             id: 'f2',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1269,7 +1273,8 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1313,7 +1318,8 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_readOnly2: {
             id: 'id_readOnly2',
@@ -1321,7 +1327,8 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1382,7 +1389,8 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             // defaultValue: 'something else',
           },
         },
@@ -1418,11 +1426,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_select: {
             id: 'id_select',
@@ -1430,7 +1438,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1444,7 +1452,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1482,7 +1490,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'assistantparam',
+              fieldType: 'textwithflowsuggestion',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',
@@ -1522,7 +1530,8 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1566,7 +1575,8 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_readOnly2: {
             id: 'id_readOnly2',
@@ -1574,7 +1584,8 @@ describe('convertToReactFormFields', () => {
             readOnly: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1635,7 +1646,8 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'assistantparam',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             defaultValue: 'something else',
           },
         },
@@ -1671,11 +1683,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_select: {
             id: 'id_select',
@@ -1683,7 +1695,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1697,7 +1709,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'assistantparam',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1735,7 +1747,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'assistantparam',
+              fieldType: 'textwithflowsuggestion',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',

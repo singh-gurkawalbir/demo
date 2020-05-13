@@ -4,7 +4,8 @@ import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 
 const ssharesFilterConfig = { type: 'sshares' };
 
@@ -13,7 +14,10 @@ export default {
   component: function StackShares({ resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
-    const resourceList = useResourceList(ssharesFilterConfig);
+    const resourceList = useSelectorMemo(
+      selectors.makeResourceListSelector,
+      ssharesFilterConfig
+    );
     const stackShareCollection = resourceList.resources;
 
     useEffect(() => {

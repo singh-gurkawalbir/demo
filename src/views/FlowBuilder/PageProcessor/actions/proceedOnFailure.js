@@ -1,18 +1,23 @@
-import { Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import { Fragment } from 'react';
+import { useDispatch } from 'react-redux';
+import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
+
+const emptyObject = {};
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
   const { open, onClose, flowId, resourceIndex, isViewMode } = props;
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.resourceData(state, 'flows', flowId)
+  const { merged: flow = emptyObject } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
   );
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(

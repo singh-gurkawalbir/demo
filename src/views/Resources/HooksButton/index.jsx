@@ -1,18 +1,21 @@
-import { Fragment, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import * as selectors from '../../../reducers';
+import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
+import { Fragment, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 
 export default function EditFieldButton(props) {
   const { resourceType, resourceId, className } = props;
-  const resourceData = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  const resourceData = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const resource = resourceData ? resourceData.merged : undefined;
   const getScriptMeta = hookName => {

@@ -18,7 +18,7 @@ import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -115,7 +115,11 @@ export default function MarketplaceList() {
     selectors.userPreferences(state)
   );
   const sandbox = userPreferences.environment === 'sandbox';
-  const connectors = useMarketPlaceConnectors(application, sandbox);
+  const connectors = useSelectorMemo(
+    selectors.makeMarketPlaceConnectorsSelector,
+    application,
+    sandbox
+  );
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );

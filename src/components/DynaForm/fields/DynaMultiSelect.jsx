@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     padding: [[12, 0]],
   },
   chip: {
-    margin: theme.spacing(0.25),
+    margin: 4,
   },
   menuItems: {
     paddingRight: theme.spacing(1),

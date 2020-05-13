@@ -1,12 +1,30 @@
 import { useState, Fragment } from 'react';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 import csvOptions from '../../../AFE/CsvConfigEditor/options';
+import FieldHelp from '../../FieldHelp';
+
+const useStyles = makeStyles(theme => ({
+  csvContainer: {
+    flexDirection: `row !important`,
+    width: '100%',
+    alignItems: 'center',
+  },
+  csvBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  csvLabel: {
+    marginBottom: 0,
+    marginRight: theme.spacing(1),
+  },
+}));
 
 export default function DynaCsvParse(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -89,27 +107,33 @@ export default function DynaCsvParse(props) {
 
   return (
     <Fragment>
-      {showEditor && (
-        <CsvConfigEditorDialog
-          title="CSV Parse Options"
-          id={id + resourceId}
-          mode="csv"
-          data={csvData}
-          resourceType={resourceType}
-          csvEditorType="parse"
-          /** rule to be passed as json */
-          rule={value}
-          onClose={handleClose}
-          disabled={disabled}
-        />
-      )}
-      <Button
-        data-test={id}
-        variant="contained"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
+      <div className={classes.csvContainer}>
+        {showEditor && (
+          <CsvConfigEditorDialog
+            title="CSV Parse Options"
+            id={id + resourceId}
+            mode="csv"
+            data={csvData}
+            resourceType={resourceType}
+            csvEditorType="parse"
+            /** rule to be passed as json */
+            rule={value}
+            onClose={handleClose}
+            disabled={disabled}
+          />
+        )}
+        <FormLabel className={classes.csvLabel}>CSV parsing:</FormLabel>
+        <Button
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          className={classes.csvBtn}
+          onClick={handleEditorClick}>
+          {label}
+        </Button>
+        {/* TODO: surya we need to add the helptext for the upload file */}
+        <FieldHelp {...props} helpText={label} />
+      </div>
     </Fragment>
   );
 }

@@ -1089,7 +1089,7 @@ export function convertToReactFormFields({
       }
 
       if (fieldType === 'text' && fieldDetailsMap[fieldId].type !== 'integer') {
-        fieldType = 'assistantparam';
+        fieldType = 'textwithflowsuggestion';
       }
 
       fieldDetailsMap[fieldId].inputType = fieldType;
@@ -1139,6 +1139,10 @@ export function convertToReactFormFields({
         type: inputType,
         readOnly: !!field.readOnly,
       };
+
+      if (fieldDef.type === 'textwithflowsuggestion') {
+        fieldDef.showLookup = false;
+      }
 
       if (flowId) {
         fieldDef.flowId = flowId;

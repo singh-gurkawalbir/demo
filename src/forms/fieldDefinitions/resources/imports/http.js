@@ -173,13 +173,12 @@ export default {
       r && r.http && r.http.requestType && r.http.requestType[0],
   },
   'http.relativeURI': {
-    type: 'textwithlookupextract',
+    type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
     placeholder: 'Optional',
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['http.lookups', 'name'],
     visibleWhen: [
       {
         field: 'http.method',
@@ -203,7 +202,6 @@ export default {
     required: true,
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
-    refreshOptionsOnChangesTo: ['http.lookups'],
     visibleWhen: [
       {
         field: 'http.method',

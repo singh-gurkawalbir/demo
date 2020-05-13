@@ -113,6 +113,7 @@ export default {
   'ftp.leaveFile': {
     type: 'checkbox',
     label: 'Leave file on server',
+    defaultValue: r => r && r.file && r.file.skipDelete,
     visibleWhen: [
       {
         field: 'outputMode',

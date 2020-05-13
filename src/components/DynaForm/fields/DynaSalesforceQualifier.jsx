@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExpandWindowIcon';
+import ExitIcon from '../../icons/FilterIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 

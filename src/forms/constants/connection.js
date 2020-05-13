@@ -98,6 +98,7 @@ export default {
     'onelogin',
     'dynamodb',
     'loopreturns',
+    'orderful',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
