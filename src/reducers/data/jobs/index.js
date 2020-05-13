@@ -1,5 +1,6 @@
 import shortid from 'shortid';
 import { groupBy } from 'lodash';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -583,217 +584,231 @@ export default (state = DEFAULT_STATE, action) => {
 
 // #region PUBLIC SELECTORS
 
-export function flowJobsPagingDetails(state) {
-  const { paging, flowJobs } = state || DEFAULT_STATE;
+export const flowJobsPagingDetails = createSelector(
+  state => state,
+  state => {
+    const { paging, flowJobs } = state || DEFAULT_STATE;
 
-  return {
-    paging,
-    totalJobs: flowJobs ? flowJobs.length : 0,
-  };
-}
-
-export function flowJobs(state) {
-  if (!state) {
-    return DEFAULT_STATE.flowJobs;
+    return {
+      paging,
+      totalJobs: flowJobs ? flowJobs.length : 0,
+    };
   }
+);
 
-  const { paging, flowJobs, bulkRetryJobs } = state;
-  const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
-    flowJobs,
-    bulkRetryJobs
-  );
+export const flowJobs = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return DEFAULT_STATE.flowJobs;
+    }
 
-  return flowJobs
-    .slice(
-      paging.currentPage * paging.rowsPerPage,
-      (paging.currentPage + 1) * paging.rowsPerPage
-    )
-    .map(job => {
-      const additionalProps = {
-        uiStatus: job.status,
-        duration: getJobDuration(job),
-        doneExporting: !!job.doneExporting,
-        numPagesProcessed: 0,
-      };
+    const { paging, flowJobs, bulkRetryJobs } = state;
+    const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
+      flowJobs,
+      bulkRetryJobs
+    );
 
-      if (!additionalProps.doneExporting) {
-        if (
-          [
-            JOB_STATUS.COMPLETED,
-            JOB_STATUS.CANCELED,
-            JOB_STATUS.FAILED,
-          ].includes(job.status)
-        ) {
-          additionalProps.doneExporting = true;
+    return flowJobs
+      .slice(
+        paging.currentPage * paging.rowsPerPage,
+        (paging.currentPage + 1) * paging.rowsPerPage
+      )
+      .map(job => {
+        const additionalProps = {
+          uiStatus: job.status,
+          duration: getJobDuration(job),
+          doneExporting: !!job.doneExporting,
+          numPagesProcessed: 0,
+        };
+
+        if (!additionalProps.doneExporting) {
+          if (
+            [
+              JOB_STATUS.COMPLETED,
+              JOB_STATUS.CANCELED,
+              JOB_STATUS.FAILED,
+            ].includes(job.status)
+          ) {
+            additionalProps.doneExporting = true;
+          }
         }
-      }
 
-      if (flowJobIdsThatArePartOfBulkRetryJobs.includes(job._id)) {
-        additionalProps.uiStatus = JOB_STATUS.RETRYING;
-      }
+        if (flowJobIdsThatArePartOfBulkRetryJobs.includes(job._id)) {
+          additionalProps.uiStatus = JOB_STATUS.RETRYING;
+        }
 
-      if (job.children && job.children.length > 0) {
-        // eslint-disable-next-line no-param-reassign
-        job.children = job.children.map(cJob => {
-          const additionalChildProps = {
-            uiStatus: cJob.status,
-            duration: getJobDuration(cJob),
-          };
+        if (job.children && job.children.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          job.children = job.children.map(cJob => {
+            const additionalChildProps = {
+              uiStatus: cJob.status,
+              duration: getJobDuration(cJob),
+            };
 
-          if (cJob.type === 'import') {
-            if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
-              additionalChildProps.percentComplete = Math.floor(
-                (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+            if (cJob.type === 'import') {
+              if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
+                additionalChildProps.percentComplete = Math.floor(
+                  (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+                );
+              } else {
+                additionalChildProps.percentComplete = 0;
+              }
+
+              additionalProps.numPagesProcessed += parseInt(
+                cJob.numPagesProcessed,
+                10
               );
-            } else {
-              additionalChildProps.percentComplete = 0;
-            }
 
-            additionalProps.numPagesProcessed += parseInt(
-              cJob.numPagesProcessed,
-              10
-            );
-
-            if (
-              cJob.retries &&
-              cJob.retries.filter(
-                r =>
-                  !r.status ||
-                  [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
-              ).length > 0
-            ) {
-              additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
-              additionalProps.uiStatus = JOB_STATUS.RETRYING;
-            }
-
-            if (cJob.retriable) {
-              additionalProps.retriable = true;
-
-              if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+              if (
+                cJob.retries &&
+                cJob.retries.filter(
+                  r =>
+                    !r.status ||
+                    [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
+                ).length > 0
+              ) {
                 additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+                additionalProps.uiStatus = JOB_STATUS.RETRYING;
+              }
+
+              if (cJob.retriable) {
+                additionalProps.retriable = true;
+
+                if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+                  additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+                }
               }
             }
-          }
 
-          if (cJob.retries && cJob.retries.length > 0) {
-            // eslint-disable-next-line no-param-reassign
-            cJob.retries = cJob.retries.map(r => ({
-              ...r,
-              duration: getJobDuration(r),
-            }));
-          }
+            if (cJob.retries && cJob.retries.length > 0) {
+              // eslint-disable-next-line no-param-reassign
+              cJob.retries = cJob.retries.map(r => ({
+                ...r,
+                duration: getJobDuration(r),
+              }));
+            }
 
-          return { ...cJob, ...additionalChildProps };
-        });
-      }
+            return { ...cJob, ...additionalChildProps };
+          });
+        }
 
-      return { ...job, ...additionalProps };
-    });
-}
-
-export function inProgressJobIds(state) {
-  const jobIds = { flowJobs: [], bulkRetryJobs: [] };
-
-  if (!state) {
-    return jobIds;
+        return { ...job, ...additionalProps };
+      });
   }
+);
 
-  const { paging, bulkRetryJobs } = state;
-  let { flowJobs } = state;
+export const inProgressJobIds = createSelector(
+  state => state,
+  state => {
+    const jobIds = { flowJobs: [], bulkRetryJobs: [] };
 
-  flowJobs = flowJobs.slice(
-    paging.currentPage * paging.rowsPerPage,
-    (paging.currentPage + 1) * paging.rowsPerPage
-  );
-  const runningBulkRetryJobs = {};
-
-  // eslint-disable-next-line max-len
-  /** Build a map of running bulk retry jobs with _integrationId & _flowId as the key and _id as value */
-  bulkRetryJobs.forEach(job => {
-    if (
-      job._id &&
-      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
-    ) {
-      jobIds.bulkRetryJobs.push(job._id);
+    if (!state) {
+      return jobIds;
     }
 
-    if (job.status === JOB_STATUS.RUNNING) {
-      runningBulkRetryJobs[
-        [
-          job._integrationId || STANDALONE_INTEGRATION.id,
-          job._flowId || '',
-        ].join('')
-      ] = job._id;
-    }
-  });
+    const { paging, bulkRetryJobs } = state;
+    let { flowJobs } = state;
 
-  let hasJobsInRetryingState = false;
+    flowJobs = flowJobs.slice(
+      paging.currentPage * paging.rowsPerPage,
+      (paging.currentPage + 1) * paging.rowsPerPage
+    );
+    const runningBulkRetryJobs = {};
 
-  flowJobs.forEach(job => {
-    if (
-      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
-        job.status
-      )
-    ) {
-      jobIds.flowJobs.push(job._id);
-
-      if (job.status === JOB_STATUS.RETRYING) {
-        hasJobsInRetryingState = true;
+    // eslint-disable-next-line max-len
+    /** Build a map of running bulk retry jobs with _integrationId & _flowId as the key and _id as value */
+    bulkRetryJobs.forEach(job => {
+      if (
+        job._id &&
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
+      ) {
+        jobIds.bulkRetryJobs.push(job._id);
       }
-    } else if (job.children) {
-      const inProgressChildren = job.children.filter(cJob =>
-        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
-          cJob.status
-        )
-      );
 
-      if (inProgressChildren.length > 0) {
-        jobIds.flowJobs.push(job._id);
+      if (job.status === JOB_STATUS.RUNNING) {
+        runningBulkRetryJobs[
+          [
+            job._integrationId || STANDALONE_INTEGRATION.id,
+            job._flowId || '',
+          ].join('')
+        ] = job._id;
       }
-    }
-  });
+    });
 
-  // eslint-disable-next-line max-len
-  /** Find jobs that are part of a running bulk retry but the status is not 'retrying' */
-  if (Object.keys(runningBulkRetryJobs).length > 0 && !hasJobsInRetryingState) {
+    let hasJobsInRetryingState = false;
+
     flowJobs.forEach(job => {
       if (
-        [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
           job.status
         )
       ) {
-        if (!job.children || job.children.length === 0) {
-          if (
-            runningBulkRetryJobs[
-              job._integrationId || STANDALONE_INTEGRATION.id
-            ] ||
-            runningBulkRetryJobs[
-              [
-                job._integrationId || STANDALONE_INTEGRATION.id,
-                job._flowId,
-              ].join('')
-            ]
-          ) {
-            jobIds.flowJobs.push(job._id);
-          }
-        } else {
-          const hasJobsOfBulkRetry = job.children.filter(
-            cJob =>
-              cJob.retries &&
-              cJob.retries.filter(r => !!runningBulkRetryJobs[r._bulkJobId])
-                .length > 0
-          );
+        jobIds.flowJobs.push(job._id);
 
-          if (!hasJobsOfBulkRetry) {
-            jobIds.flowJobs.push(job._id);
-          }
+        if (job.status === JOB_STATUS.RETRYING) {
+          hasJobsInRetryingState = true;
+        }
+      } else if (job.children) {
+        const inProgressChildren = job.children.filter(cJob =>
+          [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
+            cJob.status
+          )
+        );
+
+        if (inProgressChildren.length > 0) {
+          jobIds.flowJobs.push(job._id);
         }
       }
     });
-  }
 
-  return jobIds;
-}
+    // eslint-disable-next-line max-len
+    /** Find jobs that are part of a running bulk retry but the status is not 'retrying' */
+    if (
+      Object.keys(runningBulkRetryJobs).length > 0 &&
+      !hasJobsInRetryingState
+    ) {
+      flowJobs.forEach(job => {
+        if (
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.FAILED,
+            JOB_STATUS.CANCELED,
+          ].includes(job.status)
+        ) {
+          if (!job.children || job.children.length === 0) {
+            if (
+              runningBulkRetryJobs[
+                job._integrationId || STANDALONE_INTEGRATION.id
+              ] ||
+              runningBulkRetryJobs[
+                [
+                  job._integrationId || STANDALONE_INTEGRATION.id,
+                  job._flowId,
+                ].join('')
+              ]
+            ) {
+              jobIds.flowJobs.push(job._id);
+            }
+          } else {
+            const hasJobsOfBulkRetry = job.children.filter(
+              cJob =>
+                cJob.retries &&
+                cJob.retries.filter(r => !!runningBulkRetryJobs[r._bulkJobId])
+                  .length > 0
+            );
+
+            if (!hasJobsOfBulkRetry) {
+              jobIds.flowJobs.push(job._id);
+            }
+          }
+        }
+      });
+    }
+
+    return jobIds;
+  }
+);
 
 export function job(state, { type, jobId, parentJobId }) {
   if (!state) {
@@ -820,17 +835,20 @@ export function job(state, { type, jobId, parentJobId }) {
   return parentJob.children.find(j => j._id === jobId);
 }
 
-export function isBulkRetryInProgress(state) {
-  if (!state) {
-    return false;
-  }
+export const isBulkRetryInProgress = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return false;
+    }
 
-  return (
-    state.bulkRetryJobs.filter(job =>
-      [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
-    ).length > 0
-  );
-}
+    return (
+      state.bulkRetryJobs.filter(job =>
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
+      ).length > 0
+    );
+  }
+);
 
 export function jobErrors(state, jobId) {
   if (!state || !state.errors) {

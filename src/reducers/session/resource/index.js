@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
@@ -56,26 +57,29 @@ export function createdResourceId(state, tempId) {
   return state[tempId];
 }
 
-export function resourceReferences(state) {
-  if (!state || !state.references) {
-    return null;
+export const resourceReferences = createSelector(
+  state => state,
+  state => {
+    if (!state || !state.references) {
+      return null;
+    }
+
+    const { references } = state;
+    const referencesArray = [];
+
+    Object.keys(references).forEach(type =>
+      references[type].forEach(refObj => {
+        referencesArray.push({
+          resourceType: type,
+          id: refObj.id,
+          name: refObj.name,
+        });
+      })
+    );
+
+    return referencesArray;
   }
-
-  const { references } = state;
-  const referencesArray = [];
-
-  Object.keys(references).forEach(type =>
-    references[type].forEach(refObj => {
-      referencesArray.push({
-        resourceType: type,
-        id: refObj.id,
-        name: refObj.name,
-      });
-    })
-  );
-
-  return referencesArray;
-}
+);
 
 export function integratorLicenseActionMessage(state) {
   if (!state) {
@@ -85,15 +89,18 @@ export function integratorLicenseActionMessage(state) {
   return state.integratorLicenseActionMessage;
 }
 
-export function getNumEnabledFlows(state) {
-  if (!state || !state.numEnabledFlows) {
-    return defaultObject;
-  }
+export const getNumEnabledFlows = createSelector(
+  state => state,
+  state => {
+    if (!state || !state.numEnabledFlows) {
+      return defaultObject;
+    }
 
-  return {
-    numEnabledPaidFlows: state.numEnabledFlows.numEnabledPaidFlows || 0,
-    numEnabledSandboxFlows: state.numEnabledFlows.numEnabledSandboxFlows || 0,
-    numEnabledFreeFlows: state.numEnabledFlows.numEnabledFreeFlows || 0,
-  };
-}
+    return {
+      numEnabledPaidFlows: state.numEnabledFlows.numEnabledPaidFlows || 0,
+      numEnabledSandboxFlows: state.numEnabledFlows.numEnabledSandboxFlows || 0,
+      numEnabledFreeFlows: state.numEnabledFlows.numEnabledFreeFlows || 0,
+    };
+  }
+);
 // #endregion

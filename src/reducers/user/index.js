@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { createSelector } from 'reselect';
 import users, * as fromUsers from './org/users';
 import accounts, * as fromAccounts from './org/accounts';
 import preferences, * as fromPreferences from './preferences';
@@ -152,31 +153,34 @@ export function accessLevel(state) {
 
 // #endregion ACCESS LEVEL
 // #region ACCOUNT
-export function accountSummary(state) {
-  const userAccessLevel = accessLevel(state);
+export const accountSummary = createSelector(
+  state => state,
+  state => {
+    const userAccessLevel = accessLevel(state);
 
-  if (!userAccessLevel) {
-    return [];
-  }
+    if (!userAccessLevel) {
+      return [];
+    }
 
-  const summary = fromAccounts.accountSummary(
-    state && state.org && state.org.accounts
-  );
+    const summary = fromAccounts.accountSummary(
+      state && state.org && state.org.accounts
+    );
 
-  if (!summary || summary.length === 0) {
+    if (!summary || summary.length === 0) {
+      return summary;
+    }
+
+    const prefs = fromPreferences.userPreferences(state && state.preferences);
+    const id = prefs.defaultAShareId || summary[0].id;
+    const filteredAccount = summary.find(a => a.id === id);
+
+    if (filteredAccount) {
+      filteredAccount.selected = true;
+    }
+
     return summary;
   }
-
-  const prefs = fromPreferences.userPreferences(state && state.preferences);
-  const id = prefs.defaultAShareId || summary[0].id;
-  const filteredAccount = summary.find(a => a.id === id);
-
-  if (filteredAccount) {
-    filteredAccount.selected = true;
-  }
-
-  return summary;
-}
+);
 // #endregion ACCOUNT
 
 export function permissions(state) {

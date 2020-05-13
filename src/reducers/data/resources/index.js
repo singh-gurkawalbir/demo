@@ -2,6 +2,7 @@ import produce from 'immer';
 import { get } from 'lodash';
 import moment from 'moment';
 import sift from 'sift';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
 
@@ -583,47 +584,50 @@ export function hasData(state, resourceType) {
   return !!(state && state[resourceType]);
 }
 
-export function resourceDetailsMap(state) {
-  const allResources = {};
+export const resourceDetailsMap = createSelector(
+  state => state,
+  state => {
+    const allResources = {};
 
-  if (!state) {
+    if (!state) {
+      return allResources;
+    }
+
+    Object.keys(state).forEach(resourceType => {
+      if (!['published', 'tiles'].includes(resourceType)) {
+        allResources[resourceType] = {};
+
+        if (state[resourceType] && state[resourceType].length) {
+          state[resourceType].forEach(resource => {
+            allResources[resourceType][resource._id] = {
+              name: resource.name,
+            };
+
+            if (resource._integrationId) {
+              allResources[resourceType][resource._id]._integrationId =
+                resource._integrationId;
+            }
+
+            if (resource._connectorId) {
+              allResources[resourceType][resource._id]._connectorId =
+                resource._connectorId;
+            }
+
+            if (resourceType === 'flows') {
+              allResources[resourceType][
+                resource._id
+              ].numImports = resource.pageProcessors
+                ? resource.pageProcessors.length
+                : 1;
+            }
+          });
+        }
+      }
+    });
+
     return allResources;
   }
-
-  Object.keys(state).forEach(resourceType => {
-    if (!['published', 'tiles'].includes(resourceType)) {
-      allResources[resourceType] = {};
-
-      if (state[resourceType] && state[resourceType].length) {
-        state[resourceType].forEach(resource => {
-          allResources[resourceType][resource._id] = {
-            name: resource.name,
-          };
-
-          if (resource._integrationId) {
-            allResources[resourceType][resource._id]._integrationId =
-              resource._integrationId;
-          }
-
-          if (resource._connectorId) {
-            allResources[resourceType][resource._id]._connectorId =
-              resource._connectorId;
-          }
-
-          if (resourceType === 'flows') {
-            allResources[resourceType][
-              resource._id
-            ].numImports = resource.pageProcessors
-              ? resource.pageProcessors.length
-              : 1;
-          }
-        });
-      }
-    }
-  });
-
-  return allResources;
-}
+);
 
 // TODO: Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {

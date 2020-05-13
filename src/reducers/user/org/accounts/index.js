@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
   ACCOUNT_IDS,
@@ -7,6 +8,8 @@ import {
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
 } from '../../../../utils/constants';
+
+const emptyList = [];
 
 export default (state = [], action) => {
   const { type, resourceType } = action;
@@ -266,10 +269,10 @@ export function diyLicense(state, accountId) {
 
 export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
   if (!state) {
-    return [];
+    return emptyList;
   }
 
-  const licenses = [];
+  const licenses = emptyList;
   const account = state.find(acc => acc._id === accountId);
 
   return account ? account.ownerUser.licenses : licenses;
@@ -305,65 +308,71 @@ export function sharedAccounts(state) {
   return shared;
 }
 
-export function accountSummary(state) {
-  const shared = sharedAccounts(state);
-  const accounts = [];
+export const accountSummary = createSelector(
+  state => state,
+  state => {
+    const shared = sharedAccounts(state);
+    const accounts = [];
 
-  if (!shared || shared.length === 0) {
-    const ownLicense = integratorLicense(state, ACCOUNT_IDS.OWN);
+    if (!shared || shared.length === 0) {
+      const ownLicense = integratorLicense(state, ACCOUNT_IDS.OWN);
 
-    if (ownLicense) {
-      accounts.push({
-        id: ACCOUNT_IDS.OWN,
-        hasSandbox: !!ownLicense.hasSandbox,
-        hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
-      });
+      if (ownLicense) {
+        accounts.push({
+          id: ACCOUNT_IDS.OWN,
+          hasSandbox: !!ownLicense.hasSandbox,
+          hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
+        });
+      }
+
+      return accounts;
     }
 
+    shared.forEach(a => {
+      accounts.push({
+        id: a.id,
+        company: a.company,
+        canLeave: shared.length > 1,
+        hasSandbox: !!a.hasSandbox,
+        hasConnectorSandbox: !!a.hasConnectorSandbox,
+      });
+    });
+
     return accounts;
   }
+);
 
-  shared.forEach(a => {
-    accounts.push({
-      id: a.id,
-      company: a.company,
-      canLeave: shared.length > 1,
-      hasSandbox: !!a.hasSandbox,
-      hasConnectorSandbox: !!a.hasConnectorSandbox,
+export const notifications = createSelector(
+  state => state,
+  state => {
+    const accounts = emptyList;
+
+    if (!state || !state.length) {
+      return accounts;
+    }
+
+    const pending = state.filter(
+      a =>
+        a.ownerUser &&
+        !a.accepted &&
+        !a.dismissed &&
+        !a.disabled &&
+        a._id !== ACCOUNT_IDS.OWN
+    );
+
+    pending.forEach(a => {
+      const { name, email, company } = a.ownerUser;
+
+      accounts.push({
+        id: a._id,
+        accessLevel: a.accessLevel,
+        ownerUser: { name, email, company },
+      });
     });
-  });
 
-  return accounts;
-}
-
-export function notifications(state) {
-  const accounts = [];
-
-  if (!state || !state.length) {
     return accounts;
   }
-
-  const pending = state.filter(
-    a =>
-      a.ownerUser &&
-      !a.accepted &&
-      !a.dismissed &&
-      !a.disabled &&
-      a._id !== ACCOUNT_IDS.OWN
-  );
-
-  pending.forEach(a => {
-    const { name, email, company } = a.ownerUser;
-
-    accounts.push({
-      id: a._id,
-      accessLevel: a.accessLevel,
-      ownerUser: { name, email, company },
-    });
-  });
-
-  return accounts;
-}
+);
 
 export function accessLevel(state, accountId) {
   if (!state) {

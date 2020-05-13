@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { INSTALL_STEP_TYPES } from '../../../utils/constants';
 
@@ -148,23 +149,26 @@ export function previewTemplate(state, templateId) {
   return state[templateId].preview || emptyObject;
 }
 
-export function isFileUploaded(state) {
-  if (!state) {
-    return emptyObject;
-  }
-
-  let uploadedZipFound;
-  let id;
-
-  Object.keys(state).forEach(key => {
-    if (state[key].isInstallIntegration) {
-      uploadedZipFound = true;
-      id = key;
+export const isFileUploaded = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return emptyObject;
     }
-  });
 
-  return { templateId: id, isFileUploaded: uploadedZipFound };
-}
+    let uploadedZipFound;
+    let id;
+
+    Object.keys(state).forEach(key => {
+      if (state[key].isInstallIntegration) {
+        uploadedZipFound = true;
+        id = key;
+      }
+    });
+
+    return { templateId: id, isFileUploaded: uploadedZipFound };
+  }
+);
 
 export function templateInstallSteps(state, templateId) {
   if (!state || !state[templateId]) {
