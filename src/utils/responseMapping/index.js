@@ -12,6 +12,7 @@ export const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'errors',
   'ignored',
   'statusCode',
+  'headers',
 ];
 
 export default {
