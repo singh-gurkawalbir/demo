@@ -814,7 +814,6 @@ export default {
   },
   settings: {
     type: 'settings',
-    showOnDeveloperMode: true,
     defaultValue: r => r && r.settings,
   },
 };

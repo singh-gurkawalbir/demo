@@ -1,7 +1,9 @@
-/* global describe, test, expect,jest */
+/* global describe, test, expect,jest, beforeEach */
 
 import { advanceTo, clear } from 'jest-date-mock';
 import { call, put, select, delay } from 'redux-saga/effects';
+import { expectSaga, testSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import {
@@ -9,10 +11,11 @@ import {
   invokeProcessor,
   evaluateProcessor,
   refreshHelperFunctions,
+  saveProcessor,
 } from './';
+import { commitStagedChanges, getResource } from '../../sagas/resources';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
-import { getResource } from '../resources';
 
 describe('invokeProcessor saga', () => {
   test('should make api call with passed arguments', () => {
@@ -333,5 +336,200 @@ describe('refreshHelperFunctions saga', () => {
     );
 
     expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('saveProcessor saga', () => {
+  const id = 123;
+  let patches;
+
+  beforeEach(() => {
+    patches = {
+      foregroundPatches: [
+        {
+          patch: [{ op: 'replace', path: '/somepath', value: 'some value' }],
+          resourceType: 'imports',
+          resourceId: '999',
+        },
+        {
+          patch: [{ op: 'replace', path: '/otherpath', value: 'other value' }],
+          resourceType: 'scripts',
+          resourceId: '777',
+        },
+        {
+          patch: [{ op: 'replace', path: '/path', value: 'value' }],
+          resourceType: 'exports',
+          resourceId: '444',
+        },
+      ],
+      backgroundPatches: [
+        {
+          patch: [{ op: 'replace', path: '/connection', value: 'some value' }],
+          resourceType: 'connections',
+          resourceId: '111',
+        },
+      ],
+    };
+  });
+
+  test('should do nothing if no editor exists with given id', () => {
+    const saga = testSaga(saveProcessor, { id });
+
+    saga
+      .next()
+      .select(selectors.editorPatchSet, id)
+      .next()
+      .select(selectors.editor, id)
+      .next()
+      .isDone();
+  });
+
+  test('should not save the editor if no patch sets are given', () =>
+    expectSaga(saveProcessor, { id })
+      .provide([[select(selectors.editorPatchSet, id), '']])
+      .put(actions.editor.saveFailed(id))
+      .run());
+
+  test('should save the editor if no foreground patch', async () => {
+    delete patches.foregroundPatches;
+
+    const { effects } = await expectSaga(saveProcessor, { id })
+      .provide([[select(selectors.editorPatchSet, id), patches]])
+      .not.call.fn(commitStagedChanges)
+      .put(actions.editor.saveComplete(id))
+      .run();
+
+    expect(effects.call).toBeUndefined();
+  });
+
+  test('should be backward compatible if foreground patch is an object', async () => {
+    patches.foregroundPatches = {
+      patch: [{ op: 'replace', path: '/somepath', value: 'some value' }],
+      resourceType: 'imports',
+      resourceId: '999',
+    };
+
+    const { effects } = await expectSaga(saveProcessor, { id })
+      .provide([
+        [select(selectors.editorPatchSet, id), patches],
+        [matchers.call.fn(commitStagedChanges), undefined],
+      ])
+      .not.put(actions.editor.saveFailed(id))
+      .put(actions.editor.saveComplete(id))
+      .run();
+
+    expect(effects.call).toHaveLength(1);
+  });
+
+  test('should not close the editor if ANY foregound patch fails', async () => {
+    const { effects } = await expectSaga(saveProcessor, { id })
+      .provide([
+        [select(selectors.editorPatchSet, id), patches],
+        [
+          matchers.call(commitStagedChanges, {
+            resourceType: 'imports',
+            id: '999',
+            scope: 'value',
+          }),
+          undefined,
+        ],
+        [
+          call(commitStagedChanges, {
+            resourceType: 'scripts',
+            id: '777',
+            scope: 'value',
+          }),
+          { error: 'some error' },
+        ],
+      ])
+      .put(actions.editor.saveFailed(id))
+      .not.put(actions.editor.saveComplete(id))
+      .run();
+
+    // 2nd call for 'scripts' patch will fail, hence the 3rd commit call should not happen
+    expect(effects.call).toHaveLength(2);
+  });
+
+  test('should save the editor only if ALL foregound patches succeed', async () => {
+    const { effects } = await expectSaga(saveProcessor, { id })
+      .provide([
+        [select(selectors.editorPatchSet, id), patches],
+        [matchers.call.fn(commitStagedChanges), undefined],
+      ])
+      .not.put(actions.editor.saveFailed(id))
+      .run();
+
+    // since there are 3 foreground patches, total call to commitStagedChanges would be 3
+    expect(effects.call).toHaveLength(3);
+    expect(effects.put).toHaveLength(6);
+    // 4th action would be editor savecomplete, after first 3 for foreground patchStaged
+    expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(id)));
+  });
+
+  test('should close the editor without failing, if any background patch fails', async () => {
+    const { effects } = await expectSaga(saveProcessor, { id })
+      .provide([
+        [select(selectors.editorPatchSet, id), patches],
+        [matchers.call.fn(commitStagedChanges), undefined],
+        [
+          call(commitStagedChanges, {
+            resourceType: 'connections',
+            id: '111',
+            scope: 'value',
+          }),
+          { error: 'some error' },
+        ],
+      ])
+      .not.put(actions.editor.saveFailed(id))
+      .run();
+
+    // since there are 3 foreground patches, total call to commitStagedChanges would be 3
+    expect(effects.call).toHaveLength(3);
+
+    // Note: if any effects' assertion(non-negated) is done while calling expectSaga API, then the returned Promise
+    // contains that many less count of the effects
+    // for eg, if we also add assertion in expectSaga like .put(actions.editor.saveComplete(id)), then effects.put
+    // will have a length of 5, not 6 as we have already asserted one action
+    expect(effects.put).toHaveLength(6);
+    expect(effects.put[5]).toEqual(
+      put(actions.resource.commitStaged('connections', '111', 'value'))
+    );
+  });
+
+  describe('previewOnSave true', () => {
+    const editor = { previewOnSave: true };
+
+    test('should call evaluate processor and fail in case preview fails', () =>
+      expectSaga(saveProcessor, { id })
+        .provide([
+          [select(selectors.editor, id), editor],
+          [select(selectors.editorPatchSet, id), {}],
+          [matchers.call.fn(evaluateProcessor), { error: 'some error' }],
+        ])
+        .call.fn(evaluateProcessor)
+        .put(actions.editor.saveFailed(id))
+        .run());
+
+    test('should call evaluate processor and not fail the preview when no error', () =>
+      expectSaga(saveProcessor, { id })
+        .provide([
+          [select(selectors.editor, id), editor],
+          [select(selectors.editorPatchSet, id), {}],
+          [matchers.call.fn(evaluateProcessor), {}],
+        ])
+        .call.fn(evaluateProcessor)
+        .not.put(actions.editor.saveFailed(id))
+        .run());
+  });
+
+  describe('previewOnSave false', () => {
+    test('should not call evaluate processor for preview', () =>
+      expectSaga(saveProcessor, { id })
+        .provide([
+          [select(selectors.editor, id), {}],
+          [select(selectors.editorPatchSet, id), {}],
+        ])
+        .not.call.fn(evaluateProcessor)
+        .run());
   });
 });
