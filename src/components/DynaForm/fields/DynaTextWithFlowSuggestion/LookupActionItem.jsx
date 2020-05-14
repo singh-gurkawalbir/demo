@@ -53,11 +53,15 @@ export default function LookupActionItem({
     handleEditorClick();
   };
 
+  const handleLookupSelect = () => {
+    onSelect(value);
+  };
+
   return (
     <Fragment>
       {showLookup && (
         <ManageLookupDialog
-          lookup={value}
+          value={value}
           showDynamicLookupOnly={showDynamicLookupOnly}
           id={id}
           onCancel={handleEditorClick}
@@ -66,7 +70,7 @@ export default function LookupActionItem({
         />
       )}
       {isEdit && (
-        <Typography onClick={onSelect} className={classes.label}>
+        <Typography onClick={handleLookupSelect} className={classes.label}>
           {value.name}
         </Typography>
       )}
