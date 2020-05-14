@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   dynaTextLabelWrapper: {
-    display: 'flex',
+    display: props => (props.label ? 'flex' : 'none'),
     alignItems: 'flex-start',
   },
   startAdornmentWrapper: {
@@ -110,7 +110,7 @@ function DynaText(props) {
     onFieldChange(id, value ? value.split(delimiter) : value);
   };
 
-  const classes = useStyles();
+  const classes = useStyles(props);
   const inpValue = value === '' && inputType === 'number' ? 0 : value;
   const InputProps = useMemo(() => {
     const props = {
