@@ -4,7 +4,7 @@ import { IconButton } from '@material-ui/core';
 import Icon from '../../icons/RevokeTokenIcon';
 
 export default {
-  label: 'View Error Details',
+  label: 'View error details',
   component: function ViewErrorDetails({ resource }) {
     const { errorId } = resource;
     const history = useHistory();
