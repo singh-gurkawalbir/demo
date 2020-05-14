@@ -48,10 +48,6 @@ const ExtractItem = props => {
   return <Button onClick={handleItemSelect}>{label}</Button>;
 };
 
-// `${value.substring(0, textInsertPosition)}${insertedVal}}}${value.substring(
-//   textInsertPosition
-// )}`;
-
 export default function Suggestions(props) {
   const {
     id,
