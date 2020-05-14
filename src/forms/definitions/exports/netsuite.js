@@ -147,7 +147,7 @@ export default {
       required: true,
       visible: false,
       defaultValue: r => {
-        if ((r && r.resourceType === 'realtime') || r.type === 'distributed')
+        if (r.resourceType === 'realtime' || r.type === 'distributed')
           return 'distributed';
 
         return 'scheduled';

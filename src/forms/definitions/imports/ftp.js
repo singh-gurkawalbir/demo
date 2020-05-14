@@ -135,7 +135,7 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: `How would you like the data  transfered?`,
+      label: `How would you like the files transfered?`,
     },
     'ftp.directoryPath': {
       fieldId: 'ftp.directoryPath',

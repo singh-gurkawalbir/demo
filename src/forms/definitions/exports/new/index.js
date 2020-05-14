@@ -1,4 +1,5 @@
 import applications, {
+  getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../../utils/resource';
@@ -48,18 +49,24 @@ export default {
     type: {
       id: 'type',
       name: 'type',
-      type: 'select',
-      label: 'What would you like to do?',
+      type: 'radiogroup',
+      label: 'This application supports two options for exporting data',
       defaultValue: r => (r && r.type) || 'api',
       required: true,
       options: [
         {
           items: [
-            { label: 'You can only transfer files using FTP', value: 'api' },
+            { label: 'API', value: 'api' },
+            { label: 'Webhook', value: 'webhook' },
           ],
         },
       ],
-      defaultDisabled: true,
+      visibleWhen: [
+        {
+          field: 'application',
+          is: getWebhookConnectors().map(connector => connector.id),
+        },
+      ],
     },
     connection: {
       id: 'connection',
