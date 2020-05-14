@@ -4,11 +4,10 @@ import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import EditRetryData from './components/EditRetryData';
 import ViewErrorDetails from './components/ViewErrorDetails';
 import { resourceError } from '../../../reducers';
-import actions from '../../../actions';
+import ErrorActions from './components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -43,7 +42,6 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const match = useRouteMatch();
   const classes = useStyles();
-  const dispatch = useDispatch();
   const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
   const [recordMode, setRecordMode] = useState(mode);
@@ -57,52 +55,17 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const onRetryDataChange = useCallback(data => {
     setRetryData(data);
   }, []);
-  const updateRetry = useCallback(() => {
-    dispatch(actions.job.updateRetryData({ retryData, retryId }));
-  }, [dispatch, retryData, retryId]);
-  const resolve = useCallback(() => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.resolve({
-        flowId,
-        resourceId,
-        errorIds: [details.errorId],
-      })
-    );
-
-    if (onClose) onClose();
-  }, [details.errorId, dispatch, flowId, onClose, resourceId]);
-  const retry = useCallback(() => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.retry({
-        flowId,
-        resourceId,
-        retryIds: [retryId],
-      })
-    );
-
-    if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId]);
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.actionButtonsContainer}>
-        {retryId && (
-          <Button variant="outlined" onClick={retry}>
-            Retry
-          </Button>
-        )}
-        <Button variant="outlined" onClick={resolve}>
-          Resolve
-        </Button>
-        {retryId ? (
-          <Button variant="outlined" disabled onClick={updateRetry}>
-            Save &amp; close
-          </Button>
-        ) : (
-          <Button variant="outlined" onClick={onClose}>
-            Close
-          </Button>
-        )}
+        <ErrorActions
+          retryData={retryData}
+          flowId={flowId}
+          resourceId={resourceId}
+          errorId={errorId}
+          onClose={onClose}
+        />
       </div>
       <div className={classes.detailsContainer}>
         <Tabs
