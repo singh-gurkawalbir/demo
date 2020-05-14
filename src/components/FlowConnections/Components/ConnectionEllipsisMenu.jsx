@@ -48,9 +48,7 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
           break;
 
         case 'references':
-          break;
-
-        case 'delete':
+          history.push(`${match.url}/${connectionId}/references`);
           break;
 
         default:
@@ -71,7 +69,7 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
     const actions = [];
 
     if (['netsuite', 'salesforce'].includes(connection.type)) {
-      actions.push(allActions.references);
+      actions.push(allActions.refresh);
     }
 
     actions.push(allActions.auditLog, allActions.references, allActions.delete);
