@@ -1,17 +1,12 @@
 import { isNewId } from '../../../../utils/resource';
-import { isLookupResource, isPGExport } from '../../../../utils/flows';
+import { isLookupResource } from '../../../../utils/flows';
 
 export default {
   init: (fieldMeta, resource = {}, flow) => {
     const exportPanelField = fieldMeta.fieldMap.exportPanel;
-    const outputModeField = fieldMeta.fieldMap.outputMode;
 
     if (isLookupResource(flow, resource)) {
       exportPanelField.visible = false;
-    }
-
-    if (isPGExport(flow, resource) || (resource && resource.resourceType)) {
-      outputModeField.visible = false;
     }
 
     return fieldMeta;
@@ -175,29 +170,9 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const isNew = isNewId(r._id);
-
-        // if its create
-        if (['exportRecords', 'lookupRecords'].indexOf(r.resourceType) >= 0)
-          return 'records';
-
-        if (r.resourceType === 'lookupFiles') return 'blob';
-
-        if (isNew) {
-          return 'records';
-        }
-
-        const output = r && r.type;
-
-        if (output === 'blob') return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
         return 'records';
       },

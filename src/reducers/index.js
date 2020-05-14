@@ -3839,15 +3839,6 @@ export function getCustomResourceLabel(
     resourceLabel = 'Listener';
   }
 
-  // if (
-  //   resource &&
-  //   ['FTPImport', 'S3Import', 'FTPExport', 'S3Export'].indexOf(
-  //     resource.adaptorType
-  //   ) >= 0
-  // ) {
-  //   resourceLabel = 'Transfer';
-  // }
-
   return resourceLabel;
 }
 

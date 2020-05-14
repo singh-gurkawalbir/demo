@@ -226,12 +226,6 @@ export const isLookupResource = (flow = {}, resource = {}) => {
   return !!pageProcessors.find(pp => pp._exportId === resource._id);
 };
 
-export const isPGExport = (flow = {}, resource = {}) => {
-  const { pageGenerators = [] } = flow;
-
-  return !!pageGenerators.find(pg => pg._exportId === resource._id);
-};
-
 /*
  * Returns true/false, whether passed flow follows an old schema
  */

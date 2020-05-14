@@ -1,31 +1,6 @@
 import { isNewId } from '../../../utils/resource';
-import { isPGExport } from '../../../utils/flows';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const outputModeField = fieldMeta.fieldMap.outputMode;
-    const executionTypeField = fieldMeta.fieldMap['salesforce.executionType'];
-
-    // if (isLookupResource(flow, resource)) {
-    //   exportPanelField.visible = false;
-    // }
-
-    if (isPGExport(flow, resource) || (resource && resource.resourceType)) {
-      outputModeField.visible = false;
-      executionTypeField.visible = false;
-    }
-
-    // if (
-    //   isPGExport(flow, resource) ||
-    //   (resource &&
-    //     resource.resourceType &&
-    //     resource.resourceType === 'relatime')
-    // ) {
-    //   outputModeField.visible = false;
-    // }
-
-    return fieldMeta;
-  },
   optionsHandler: (fieldId, fields) => {
     if (
       [
@@ -165,27 +140,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const isNew = isNewId(r._id);
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
-        // if its create
-        if (['exportRecords', 'lookupRecords'].indexOf(r.resourceType) >= 0)
-          return 'records';
-
-        if (r.resourceType === 'lookupFiles') return 'blob';
-
-        if (isNew) return 'records';
-
-        const output = r && r.salesforce && r.salesforce.id;
-
-        return output ? 'blob' : 'records';
+        return 'records';
       },
     },
     'salesforce.soql': {

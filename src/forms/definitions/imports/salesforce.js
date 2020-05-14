@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -94,22 +92,10 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        if (r.resourceType === 'importRecords') return 'records';
-
-        if (r.resourceType === 'transferFiles') return 'blob';
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        if (r.resourceType === 'importRecords') return 'records';
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (r.resourceType === 'transferFiles') return 'blob';
-
-        return r && r.blobKeyPath ? 'blob' : 'records';
+        return 'records';
       },
     },
     'salesforce.api': { fieldId: 'salesforce.api' },

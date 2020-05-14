@@ -1,31 +1,6 @@
 import { isNewId } from '../../../utils/resource';
-import { isPGExport } from '../../../utils/flows';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const outputModeField = fieldMeta.fieldMap.outputMode;
-    const executionTypeField = fieldMeta.fieldMap['netsuite.execution.type'];
-
-    // if (isLookupResource(flow, resource)) {
-    //   exportPanelField.visible = false;
-    // }
-
-    if (isPGExport(flow, resource) || (resource && resource.resourceType)) {
-      outputModeField.visible = false;
-      executionTypeField.visible = false;
-    }
-
-    // if (
-    //   isPGExport(flow, resource) ||
-    //   (resource &&
-    //     resource.resourceType &&
-    //     resource.resourceType === 'relatime')
-    // ) {
-    //   outputModeField.visible = false;
-    // }
-
-    return fieldMeta;
-  },
   preSave: ({ executionType, apiType, ...rest }) => {
     const newValues = rest;
     const netsuiteType =
@@ -171,39 +146,11 @@ export default {
       label: 'Execution type',
       required: true,
       visible: false,
-      // visibleWhen: r => {
-      //   if (r && r.isLookup) return [];
-
-      //   return [
-      //     {
-      //       field: 'outputMode',
-      //       is: ['records'],
-      //     },
-      //   ];
-      // },
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const netsuiteType = r && r.netsuite && r.netsuite.type;
+        if ((r && r.resourceType === 'realtime') || r.type === 'distributed')
+          return 'distributed';
 
-        if (r && r.isLookup) return 'scheduled';
-
-        if (r && r.resourceType === 'realtime') return 'distributed';
-
-        if (
-          (r && r.resourceType === 'exportRecords') ||
-          r.resourceType === 'lookupRecords'
-        )
-          return 'scheduled';
-
-        if (netsuiteType) {
-          return netsuiteType === 'distributed' ? 'distributed' : 'scheduled';
-        }
+        return 'scheduled';
       },
       options: [
         {
@@ -227,27 +174,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const isNew = isNewId(r._id);
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
-        if (['exportRecords', 'lookupRecords'].indexOf(r.resourceType) >= 0)
-          return 'records';
-
-        if (r.resourceType === 'lookupFiles') return 'blob';
-
-        // if its create
-        if (isNew) return 'records';
-
-        const outputMode = r && r.netsuite && r.netsuite.internalId;
-
-        return outputMode ? 'blob' : 'records';
+        return 'records';
       },
     },
     'netsuite.api.type': {

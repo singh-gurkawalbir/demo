@@ -1,7 +1,6 @@
 import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-// import { importOptions } from '../../utils';
 import { importFileProviderOptions } from '../../utils';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
@@ -61,7 +60,6 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      defaultValue: r => (r && r.resourceType) || 'importRecords',
       options: [
         {
           items: [
@@ -250,16 +248,6 @@ export default {
 
       return { filter, appType: app.type, label: importLabel };
     }
-
-    // if (fieldId === 'application') {
-    //   const resourceTypeField = fields.find(
-    //     field => field.id === 'resourceType'
-    //   );
-
-    //   return {
-    //     appType: resourceTypeField.value === 'exports' ? 'export' : 'import',
-    //   };
-    // }
 
     return null;
   },

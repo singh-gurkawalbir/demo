@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -348,19 +346,10 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        if (r.resourceType === 'importRecords') return 'records';
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (r.resourceType === 'transferFiles') return 'blob';
-
-        return r && r.blobKeyPath ? 'blob' : 'records';
+        return 'records';
       },
     },
     'http.method': { fieldId: 'http.method' },
