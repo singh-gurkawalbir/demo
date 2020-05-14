@@ -1,5 +1,5 @@
 import { Drawer, makeStyles } from '@material-ui/core';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouteMatch, useHistory, Route } from 'react-router-dom';
 import FlowCharts from './FlowCharts';
 import DrawerTitleBar from './TitleBar';
@@ -7,6 +7,7 @@ import DrawerTitleBar from './TitleBar';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: '1300px',
+    marginTop: theme.appBarHeight + theme.pageBarHeight,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
@@ -31,9 +32,13 @@ function LineGraphDrawer({ parentUrl, flowId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
+  const [selectedMeasurements, setSelectedMeasurements] = useState(['success']);
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
+  const handleMeasurementsChange = useCallback(val => {
+    setSelectedMeasurements(val);
+  }, []);
 
   return (
     <Drawer
@@ -46,10 +51,15 @@ function LineGraphDrawer({ parentUrl, flowId }) {
       <DrawerTitleBar
         title="Dashboard"
         flowId={flowId}
+        onMeasurementsChange={handleMeasurementsChange}
         onClose={handleClose}
         backToParent
       />
-      <FlowCharts flowId={flowId} className={classes.scheduleContainer} />
+      <FlowCharts
+        flowId={flowId}
+        selectedMeasurements={selectedMeasurements}
+        className={classes.scheduleContainer}
+      />
     </Drawer>
   );
 }

@@ -32,6 +32,7 @@ import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 import HelpIcon from '../../components/icons/HelpIcon';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { isProduction } from '../../forms/utils';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -483,6 +484,14 @@ function FlowBuilder() {
         }
         infoText={flow.description}>
         <div className={classes.actions}>
+          {!isProduction() && flowDetails && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={() => handleDrawerOpen('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {!isDataLoaderFlow && (
             <SwitchOnOff.component
               resource={flowDetails}
@@ -494,14 +503,6 @@ function FlowBuilder() {
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
 
-          {flowDetails && (
-            <IconButton
-              disabled={isNewFlow}
-              data-test="charts"
-              onClick={() => handleDrawerOpen('charts')}>
-              <HelpIcon />
-            </IconButton>
-          )}
           {flowDetails && flowDetails.showScheduleIcon && (
             <IconButton
               disabled={isNewFlow}

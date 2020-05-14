@@ -4,14 +4,15 @@ import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import LoadResources from '../../../../components/LoadResources';
-import DynaMultiSelect from '../../../../components/DynaForm/fields/DynaMultiSelect';
+import DynaMultiSelect from './MultiSelect';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 24px',
+    padding: '10px 14px',
+    borderBottom: theme.palette.divider,
   },
   title: {
     flexGrow: 1,
@@ -26,7 +27,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerTitleBar({ onClose, title, parentUrl }) {
+export default function DrawerTitleBar({
+  onClose,
+  title,
+  onMeasurementsChange,
+  parentUrl,
+}) {
   const classes = useStyles();
   const history = useHistory();
   const [measurements, setMeasurements] = useState(['success']);
@@ -37,9 +43,13 @@ export default function DrawerTitleBar({ onClose, title, parentUrl }) {
       history.push(parentUrl);
     }
   }, [history, onClose, parentUrl]);
-  const handleMeasurementChange = useCallback((id, val) => {
-    setMeasurements(val);
-  }, []);
+  const handleMeasurementChange = useCallback(
+    (id, val) => {
+      setMeasurements(val);
+      onMeasurementsChange(val);
+    },
+    [onMeasurementsChange]
+  );
 
   return (
     <div className={classes.titleBar}>
@@ -51,12 +61,12 @@ export default function DrawerTitleBar({ onClose, title, parentUrl }) {
         <DynaMultiSelect
           name="attributes"
           value={measurements}
-          hideLabel
+          placeholder="Please select flow attributes"
           options={[
             {
               items: [
                 { value: 'success', label: 'Flow: Success' },
-                { value: 'errors', label: 'Flow: Errors' },
+                { value: 'error', label: 'Flow: Errors' },
                 { value: 'ignored', label: 'Flow: Ignored' },
                 { value: 'averageTimeTaken', label: 'Average time taken' },
               ],
