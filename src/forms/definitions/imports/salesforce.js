@@ -67,7 +67,13 @@ export default {
     apiType: {
       id: 'apiType',
       type: 'labeltitle',
-      label: 'Where would you like to import the data?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'Where would you like to transfer the files?';
+        }
+
+        return 'Where would you like to import the records?';
+      },
       visibleWhen: [
         {
           field: 'inputMode',

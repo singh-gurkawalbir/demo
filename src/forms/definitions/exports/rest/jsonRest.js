@@ -154,7 +154,12 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export?',
+      label: r => {
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'What would you like to transfer?';
+
+        return 'What would you like to export?';
+      },
     },
     outputMode: {
       id: 'outputMode',

@@ -145,7 +145,12 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export from Salesforce?',
+      label: r => {
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'What would you like to transfer from Salesforce??';
+
+        return 'What would you like to export from Salesforce?';
+      },
     },
     outputMode: {
       id: 'outputMode',

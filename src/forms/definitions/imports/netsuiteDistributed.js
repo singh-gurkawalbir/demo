@@ -31,7 +31,13 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'How would you like the files transfered?';
+        }
+
+        return 'How would you like the records imported?';
+      },
     },
     inputMode: {
       id: 'inputMode',
