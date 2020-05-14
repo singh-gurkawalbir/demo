@@ -2535,11 +2535,8 @@ export default {
   },
   // #endregion dynamodb
   settings: {
-    type: 'editor',
-    mode: 'json',
-    label: 'Settings',
-    developerModeOnly: true,
-    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+    type: 'settings',
+    defaultValue: r => r && r.settings,
   },
   // #region custom connection
 };

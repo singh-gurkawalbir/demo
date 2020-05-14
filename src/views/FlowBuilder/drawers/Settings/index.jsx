@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import { isObject } from 'lodash';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
@@ -30,7 +31,6 @@ export default function SettingsDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const developerModeOn = useSelector(state => selectors.developerMode(state));
   const { resources: integrations } = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
@@ -105,23 +105,17 @@ export default function SettingsDrawer({
       settings: {
         id: 'settings',
         name: 'settings',
-        type: 'editor',
-        mode: 'json',
-        label: 'Settings',
-        developerModeOnly: true,
-        defaultValue:
-          (flow && flow.settings && JSON.stringify(flow.settings)) || '{}',
+        type: 'settings',
+        defaultValue: flow && flow.settings,
       },
     },
     layout: {
-      fields: ['name', 'description', '_integrationId', '_runNextFlowIds'],
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'Custom settings',
-          fields: [developerModeOn && 'settings'],
-        },
+      fields: [
+        'name',
+        'description',
+        '_integrationId',
+        '_runNextFlowIds',
+        'settings',
       ],
     },
   };
@@ -150,12 +144,12 @@ export default function SettingsDrawer({
     ];
 
     if (Object.hasOwnProperty.call(formVal, 'settings')) {
-      let { settings } = formVal;
+      let settings;
 
-      if (isJsonString(settings)) {
-        settings = JSON.parse(settings);
-      } else {
-        settings = {};
+      if (isObject(formVal.settings)) {
+        ({ settings } = formVal);
+      } else if (isJsonString(formVal.settings)) {
+        settings = JSON.parse(formVal.settings);
       }
 
       patchSet.push({
