@@ -145,8 +145,8 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Launch XML builder',
-      title: 'XML Document Editor',
+      label: 'XML document builder',
+      title: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [
