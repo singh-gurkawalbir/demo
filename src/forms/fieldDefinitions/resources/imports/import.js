@@ -50,10 +50,9 @@ export default {
   },
   dataURITemplate: {
     type: 'datauritemplate',
-    label: 'Override data URI template',
-    editorTitle: 'Build override data URI template',
+    label: 'Data URI template',
+    editorTitle: 'Build data URI template',
     placeholder: 'Optional',
-    connectionId: r => r && r._connectionId,
   },
   oneToMany: {
     type: 'radiogroup',
