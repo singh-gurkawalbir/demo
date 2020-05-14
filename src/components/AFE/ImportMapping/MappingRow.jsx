@@ -47,7 +47,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
     width: '40%',
-    overflow: 'hidden',
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -73,7 +72,7 @@ const useStyles = makeStyles(theme => ({
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,
-    fontSize: theme.spacing(6),
+    fontSize: 38,
   },
   topHeading: {
     fontFamily: 'Roboto500',
