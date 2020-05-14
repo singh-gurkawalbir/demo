@@ -187,12 +187,7 @@ export default function TextFieldWithClipboardSupport(props) {
   if (copyToClipboard) {
     return (
       <div className={classes.dynaFieldCopyClipboard}>
-        <div className={classes.dynaTextLabelWrapper}>
-          <DynaText {...props} />
-
-          <FieldHelp {...props} />
-        </div>
-
+        <DynaText {...props} />
         <CopyToClipboard text={value}>
           <ActionButton
             data-test="copyToClipboard"

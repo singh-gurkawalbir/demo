@@ -14,11 +14,11 @@ const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
   },
-  dynaWebhookTokenWrapper: {
+  dynaGenerateUrlWrapper: {
     flexDirection: `row !important`,
   },
 
-  dynaWebhookTokenbtn: {
+  dynaGenerateTokenbtn: {
     marginTop: 26,
     marginLeft: theme.spacing(1),
   },
@@ -70,7 +70,7 @@ function GenerateUrl(props) {
 
   return (
     <Fragment>
-      <div className={classes.dynaWebhookTokenWrapper}>
+      <div className={classes.dynaGenerateUrlWrapper}>
         <DynaText
           {...props}
           disabled
@@ -78,7 +78,7 @@ function GenerateUrl(props) {
           className={classes.children}
           value={value}
         />
-        <div className={classes.dynaWebhookTokenbtn}>
+        <div className={classes.dynaGenerateTokenbtn}>
           {value && (
             <CopyToClipboard
               text={value}

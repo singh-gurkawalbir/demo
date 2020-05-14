@@ -9,21 +9,15 @@ import csvOptions from '../../../AFE/CsvConfigEditor/options';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  fileInput: {
-    display: 'none',
-  },
-  fileName: {
-    marginRight: theme.spacing(1),
-  },
-  nsSearchWrapper: {
+  dynaCsvGenerateWrapper: {
     flexDirection: `row !important`,
     width: '100%',
     alignItems: 'center',
   },
-  uploadBtn: {
+  dynaCsvBtn: {
     marginRight: theme.spacing(0.5),
   },
-  formLabel: {
+  dynaCsvLabel: {
     marginBottom: 0,
     marginRight: 12,
   },
@@ -130,13 +124,13 @@ export default function DynaCsvGenerate(props) {
           disabled={disabled}
         />
       )}
-      <div className={classes.nsSearchWrapper}>
-        <FormLabel className={classes.formLabel}>CSV generate:</FormLabel>
+      <div className={classes.dynaCsvGenerateWrapper}>
+        <FormLabel className={classes.dynaCsvLabel}>CSV generate:</FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.uploadBtn}
+          className={classes.dynaCsvBtn}
           onClick={handleEditorClick}>
           {label}
         </Button>

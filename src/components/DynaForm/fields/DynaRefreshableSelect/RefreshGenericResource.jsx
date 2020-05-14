@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: `row !important`,
   },
-  refreshGenericActionBtn: {
+  refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
     marginTop: theme.spacing(4),
   },
@@ -138,7 +138,7 @@ export default function RefreshGenericResource(props) {
         {urlToOpen && (
           <ActionButton
             onClick={handleOpenResource}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="openResource">
             <ExitIcon />
           </ActionButton>

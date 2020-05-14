@@ -6,16 +6,13 @@ import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
-  },
-  exitButton: {
+  dynaURIActionButton: {
     float: 'right',
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
     marginTop: theme.spacing(4),
   },
-  wrapper: {
+  dynaURIWrapper: {
     flexDirection: `row !important`,
   },
 }));
@@ -64,7 +61,7 @@ export default function DynaURI(props) {
           />
         </div>
       )}
-      <div className={classes.wrapper}>
+      <div className={classes.dynaURIWrapper}>
         <DynaTextWithFlowSuggestion
           description={description}
           key={`text-${id}`}
@@ -75,7 +72,7 @@ export default function DynaURI(props) {
         <ActionButton
           data-test={id}
           onClick={handleEditorClick}
-          className={classes.exitButton}>
+          className={classes.dynaURIActionButton}>
           <ScriptsIcon />
         </ActionButton>
       </div>

@@ -9,21 +9,15 @@ import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  fileInput: {
-    display: 'none',
-  },
-  fileName: {
-    marginRight: theme.spacing(1),
-  },
-  nsSearchWrapper: {
+  dynaNSSearchCriteriaWrapper: {
     flexDirection: `row !important`,
     width: '100%',
     alignItems: 'center',
   },
-  uploadBtn: {
+  dynaNSbtn: {
     marginRight: theme.spacing(0.5),
   },
-  formLabel: {
+  dynaFormLabel: {
     marginBottom: 0,
     marginRight: 12,
   },
@@ -90,13 +84,15 @@ export default function DynaNSSearchCriteria(props) {
           disabled={disabled}
         />
       )}
-      <div className={classes.nsSearchWrapper}>
-        <FormLabel className={classes.formLabel}>Define criteria:</FormLabel>
+      <div className={classes.dynaNSSearchCriteriaWrapper}>
+        <FormLabel className={classes.dynaFormLabel}>
+          Define criteria:
+        </FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.uploadBtn}
+          className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
           {label}
         </Button>

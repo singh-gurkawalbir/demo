@@ -8,19 +8,15 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
-  dynaFieldWrapper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  dynaTextFormControl: {
+const useStyles = makeStyles({
+  dynaTextWithFlowFormControl: {
     width: '100%',
   },
-  dynaTextLabelWrapper: {
+  dynaTextWithFlowLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
-}));
+});
 const DynaTextWithFlowSuggestion = props => {
   const classes = useStyles();
   const {
@@ -111,8 +107,8 @@ const DynaTextWithFlowSuggestion = props => {
   });
 
   return (
-    <FormControl className={classes.dynaTextFormControl}>
-      <div className={classes.dynaTextLabelWrapper}>
+    <FormControl className={classes.dynaTextWithFlowFormControl}>
+      <div className={classes.dynaTextWithFlowLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
         </FormLabel>
@@ -126,7 +122,7 @@ const DynaTextWithFlowSuggestion = props => {
           data-test={id}
           name={name}
           // label={label}
-          className={classes.dynaTextFormControl}
+          className={classes.dynaTextWithFlowFormControl}
           placeholder={placeholder}
           helperText={isValid ? description : errorMessages}
           disabled={disabled}

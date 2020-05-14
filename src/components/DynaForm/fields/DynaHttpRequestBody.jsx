@@ -11,19 +11,16 @@ import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  fileInput: {
-    display: 'none',
-  },
-  fileName: {
-    marginRight: theme.spacing(1),
-  },
-  DynaHttpRequestBodyWrapper: {
+  dynaHttpRequestBodyWrapper: {
     flexDirection: `row !important`,
     width: '100%',
     alignItems: 'center',
   },
-  uploadBtn: {
+  dynaReqBodyBtn: {
     marginRight: theme.spacing(0.5),
+  },
+  dynaHttpReqLabel: {
+    marginRight: 12,
   },
 }));
 const ManageLookup = props => {
@@ -157,13 +154,15 @@ const DynaHttpRequestBody = props => {
           rule={formattedRule}
         />
       )}
-      <div className={classes.DynaHttpRequestBodyWrapper}>
-        <FormLabel>{label}</FormLabel>
+      <div className={classes.dynaHttpRequestBodyWrapper}>
+        <FormLabel className={classes.dynaHttpReqLabel}>
+          {label ? `${label}:` : ''}
+        </FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.uploadBtn}
+          className={classes.dynaReqBodyBtn}
           onClick={handleEditorClick}>
           {label}
         </Button>
