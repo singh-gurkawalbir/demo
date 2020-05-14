@@ -1,5 +1,5 @@
 import UrlEditor from './';
-import HanldebarEditorDialog from '../HandlebarEditorDialog';
+import HandlebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function UrlEditorDialog(props) {
   const {
@@ -19,7 +19,7 @@ export default function UrlEditorDialog(props) {
   };
 
   return (
-    <HanldebarEditorDialog
+    <HandlebarEditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -33,6 +33,6 @@ export default function UrlEditorDialog(props) {
         data={data}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </HanldebarEditorDialog>
+    </HandlebarEditorDialog>
   );
 }

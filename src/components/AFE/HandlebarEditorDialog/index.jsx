@@ -30,7 +30,7 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
   );
 };
 
-export default function HanldebarEditorDialog({
+export default function HandlebarEditorDialog({
   showVersionToggle,
   onVersionToggle,
   editorVersion,
