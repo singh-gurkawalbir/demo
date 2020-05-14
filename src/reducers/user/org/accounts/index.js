@@ -353,7 +353,7 @@ export const accountSummary = createSelector(
 export const notifications = createSelector(
   state => state,
   state => {
-    const accounts = emptyList;
+    const accounts = [];
 
     if (!state || !state.length) {
       return accounts;
