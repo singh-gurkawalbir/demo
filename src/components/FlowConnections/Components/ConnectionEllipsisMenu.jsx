@@ -1,4 +1,5 @@
-import { useCallback, Fragment, useState } from 'react';
+import { useCallback, Fragment, useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +8,7 @@ import AuditLogIcon from '../../icons/AuditLogIcon';
 import ViewReferencesIcon from '../../icons/ViewReferencesIcon';
 import TrashIcon from '../../icons/TrashIcon';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
+import { resource } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -15,16 +17,20 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-const allActions = [
-  { action: 'refresh', label: 'Refresh', Icon: RefreshIcon },
-  { action: 'auditLog', label: 'View Audit Dialog', Icon: AuditLogIcon },
-  {
+const allActions = {
+  refresh: { action: 'refresh', label: 'Refresh', Icon: RefreshIcon },
+  auditLog: {
+    action: 'auditLog',
+    label: 'View Audit Dialog',
+    Icon: AuditLogIcon,
+  },
+  references: {
     action: 'references',
     label: 'View References',
     Icon: ViewReferencesIcon,
   },
-  { action: 'delete', label: 'Delete', Icon: TrashIcon },
-];
+  delete: { action: 'delete', label: 'Delete', Icon: TrashIcon },
+};
 
 export default function ConnectionEllipsisMenu({ connectionId }) {
   const classes = useStyles();
@@ -58,6 +64,20 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'row-actions' : undefined;
+  const connection = useSelector(state =>
+    resource(state, 'connections', connectionId)
+  );
+  const availableActions = useMemo(() => {
+    const actions = [];
+
+    if (['netsuite', 'salesforce'].includes(connection.type)) {
+      actions.push(allActions.references);
+    }
+
+    actions.push(allActions.auditLog, allActions.references, allActions.delete);
+
+    return actions;
+  }, [connection.type]);
 
   return (
     <Fragment>
@@ -79,7 +99,7 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
         className={classes.wrapper}
         open={open}
         onClose={handleMenuClose}>
-        {allActions.map(({ action, label, Icon }) => (
+        {availableActions.map(({ action, label, Icon }) => (
           <MenuItem
             key={label}
             data-test={`${action}Connection`}

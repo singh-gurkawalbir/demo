@@ -1,6 +1,7 @@
 import { useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../../components/drawer/Right';
 import FlowConnections from '../../../../components/FlowConnections';
+import LoadResources from '../../../../components/LoadResources';
 
 export default function ConnectionsDrawer() {
   const match = useRouteMatch();
@@ -11,7 +12,9 @@ export default function ConnectionsDrawer() {
       path="connections"
       width="medium"
       title="Connections used by this flow ">
-      <FlowConnections flowId={flowId} />
+      <LoadResources resources="connections">
+        <FlowConnections flowId={flowId} />
+      </LoadResources>
     </RightDrawer>
   );
 }

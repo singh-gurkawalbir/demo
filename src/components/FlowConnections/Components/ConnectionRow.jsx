@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +10,7 @@ import EditIcon from '../../icons/EditIcon';
 import EllipsisMenu from './ConnectionEllipsisMenu';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceDrawer from '../../../components/drawer/Resource';
+import { resourcePermissions } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   cardContent: {
@@ -58,6 +60,9 @@ export default function ConnectionRow({ connection }) {
     queueSize = 0,
     lastModified,
   } = connection;
+  const hasEditAccess = useSelector(state =>
+    resourcePermissions(state, 'connections', _id)
+  );
   const api = useMemo(() => {
     if (type === 'rest') return rest.baseURI;
 
@@ -102,18 +107,21 @@ export default function ConnectionRow({ connection }) {
                   <EditIcon />
                 </IconButton>
               </Grid>
-              <Grid item xs={2}>
-                <IconButton
-                  data-test="openDebugger"
-                  size="small"
-                  onClick={handleDebugger}>
-                  <DebugIcon />
-                </IconButton>
-              </Grid>
+              {hasEditAccess ? (
+                <Grid item xs={2}>
+                  <IconButton
+                    data-test="openDebugger"
+                    size="small"
+                    onClick={handleDebugger}>
+                    <DebugIcon />
+                  </IconButton>
+                </Grid>
+              ) : null}
+
               <Grid item xs={2}>
                 <EllipsisMenu connectionId={_id} />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs>
                 <ApplicationImg size="small" type={type} />
               </Grid>
             </Grid>
