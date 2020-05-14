@@ -142,7 +142,7 @@ export default function FlowsPanel({ integrationId }) {
             key={f._id}
             flowId={f._id}
             excludeActions={['schedule']}
-            errorCount={integrationErrorsMap[f._id] || 50}
+            errorCount={integrationErrorsMap[f._id] || 0}
           />
         ))}
       </LoadResources>
