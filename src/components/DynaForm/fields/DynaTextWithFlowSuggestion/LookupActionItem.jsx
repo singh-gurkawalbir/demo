@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ManageLookupDialog from '../../Lookup/Manage/Dialog';
+import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
 
 const useStyles = makeStyles({
   container: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
-export default function DynaManageLookup({
+export default function LookupActionItem({
   id,
   isEdit = false,
   onSelect,

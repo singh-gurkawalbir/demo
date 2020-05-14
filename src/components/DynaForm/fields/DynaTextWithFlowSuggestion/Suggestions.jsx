@@ -5,8 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import * as selectors from '../../../../reducers';
-import DynaManageLookup from '../DynaManageLookup';
 import lookupUtil from '../../../../utils/lookup';
+import LookupActionItem from './LookupActionItem';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value, cursorPosition) => {
@@ -198,7 +198,7 @@ export default function Suggestions(props) {
   return (
     <ul className={classes.suggestions}>
       {showLookup && (
-        <DynaManageLookup
+        <LookupActionItem
           id="add-lookup"
           label="New lookup"
           resourceId={resourceId}
@@ -214,7 +214,7 @@ export default function Suggestions(props) {
       {showLookup &&
         filteredLookup.map(lookup => (
           <li key={lookup.name}>
-            <DynaManageLookup
+            <LookupActionItem
               id={lookup.name}
               label="Edit"
               resourceId={resourceId}

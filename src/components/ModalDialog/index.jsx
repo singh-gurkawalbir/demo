@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ModalDialog({
+  id,
   show,
   onClose,
   actionLabel,
@@ -52,6 +53,7 @@ export default function ModalDialog({
 
   return (
     <Dialog
+      id={id}
       open={show}
       maxWidth={maxWidth}
       fullScreen={fullScreen}

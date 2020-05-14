@@ -67,6 +67,11 @@ const DynaTextWithFlowSuggestion = props => {
 
   // close suggestions when clicked outside
   const handleClickOutside = event => {
+    // TODO: check for better soln.
+    if (document.getElementById('manageLookup')) {
+      return;
+    }
+
     if (ref.current && !ref.current.contains(event.target)) {
       setCursorPosition(0);
       setSuggestionEnabled(false);
