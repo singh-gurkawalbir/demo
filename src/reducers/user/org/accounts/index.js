@@ -278,45 +278,53 @@ export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
   return account ? account.ownerUser.licenses : licenses;
 }
 
-export function sharedAccounts(state) {
-  if (!state) {
-    return [];
-  }
-
-  const accepted = state.filter(
-    a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
-  );
-  const shared = [];
-
-  accepted.forEach(a => {
-    if (!a.ownerUser || !a.ownerUser.licenses) return;
-
-    const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-
-    shared.push({
-      id: a._id,
-      company: a.ownerUser.company,
-      email: a.ownerUser.email,
-      hasSandbox:
-        ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
-      hasConnectorSandbox:
-        a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
-          .length > 0,
-    });
-  });
-
-  return shared;
-}
-
-export const accountSummary = createSelector(
+export const sharedAccounts = createSelector(
   state => state,
   state => {
-    const shared = sharedAccounts(state);
+    if (!state) {
+      return emptyList;
+    }
+
+    const accepted = state.filter(
+      a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
+    );
+    const shared = [];
+
+    accepted.forEach(a => {
+      if (!a.ownerUser || !a.ownerUser.licenses) return;
+
+      const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+
+      shared.push({
+        id: a._id,
+        company: a.ownerUser.company,
+        email: a.ownerUser.email,
+        hasSandbox:
+          ioLicense &&
+          (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
+        hasConnectorSandbox:
+          a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
+            .length > 0,
+      });
+    });
+
+    return shared;
+  }
+);
+// TODO: Santosh integratorLicense selector implementation should be lazily created
+// can remove this selector after implementation
+const ownLicense = createSelector(
+  state => state,
+  state => integratorLicense(state, ACCOUNT_IDS.OWN)
+);
+
+export const accountSummary = createSelector(
+  sharedAccounts,
+  ownLicense,
+  (shared, ownLicense) => {
     const accounts = [];
 
     if (!shared || shared.length === 0) {
-      const ownLicense = integratorLicense(state, ACCOUNT_IDS.OWN);
-
       if (ownLicense) {
         accounts.push({
           id: ACCOUNT_IDS.OWN,
