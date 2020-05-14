@@ -484,7 +484,7 @@ function FlowBuilder() {
         }
         infoText={flow.description}>
         <div className={classes.actions}>
-          {!isProduction() && flowDetails && (
+          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
             <IconButton
               disabled={isNewFlow}
               data-test="charts"
