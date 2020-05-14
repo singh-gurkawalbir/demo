@@ -1,12 +1,36 @@
 import { useState, Fragment, useEffect, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
+import { FormLabel, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 import csvOptions from '../../../AFE/CsvConfigEditor/options';
+import FieldHelp from '../../FieldHelp';
+
+const useStyles = makeStyles(theme => ({
+  fileInput: {
+    display: 'none',
+  },
+  fileName: {
+    marginRight: theme.spacing(1),
+  },
+  nsSearchWrapper: {
+    flexDirection: `row !important`,
+    width: '100%',
+    alignItems: 'center',
+  },
+  uploadBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  formLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+  },
+}));
 
 export default function DynaCsvGenerate(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -106,13 +130,20 @@ export default function DynaCsvGenerate(props) {
           disabled={disabled}
         />
       )}
-      <Button
-        data-test={id}
-        variant="contained"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
+      <div className={classes.nsSearchWrapper}>
+        <FormLabel className={classes.formLabel}>CSV generate:</FormLabel>
+        <Button
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          className={classes.uploadBtn}
+          onClick={handleEditorClick}>
+          {label}
+        </Button>
+        {/* TODO (Aditya): we need to add the helptext for the upload file */}
+
+        <FieldHelp {...props} helpText={label} />
+      </div>
     </Fragment>
   );
 }

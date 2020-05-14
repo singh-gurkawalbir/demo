@@ -72,7 +72,7 @@ export default function DynaManageLookup({
       )}
       <Button
         data-test={id}
-        variant="contained"
+        variant="outlined"
         className={clsx({ [classes.button]: isEdit })}
         color="secondary"
         onClick={handleEditorClick}>

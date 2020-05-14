@@ -1,12 +1,28 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, FormLabel, FormControl } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Suggestions from './Suggestions';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
+import FieldHelp from '../../FieldHelp';
 
+const useStyles = makeStyles(theme => ({
+  dynaFieldWrapper: {
+    width: '100%',
+    marginBottom: theme.spacing(2),
+  },
+  dynaTextFormControl: {
+    width: '100%',
+  },
+  dynaTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+}));
 const DynaTextWithFlowSuggestion = props => {
+  const classes = useStyles();
   const {
     id,
     name,
@@ -95,44 +111,53 @@ const DynaTextWithFlowSuggestion = props => {
   });
 
   return (
-    <div ref={ref}>
-      <TextField
-        autoComplete="off"
-        id={`text-${id}`}
-        key={id}
-        data-test={id}
-        name={name}
-        label={label}
-        placeholder={placeholder}
-        helperText={isValid ? description : errorMessages}
-        disabled={disabled}
-        multiline={multiline}
-        error={!isValid}
-        onChange={handleFieldChange}
-        required={required}
-        value={value}
-        onClick={handleCursorChange}
-        onKeyUp={handleCursorChange}
-        variant="filled"
-      />
-      {suggestionEnabled && (showExtract || showLookup) && (
-        <Suggestions
-          id={`suggestions-${id}`}
-          onFieldChange={onFieldChange}
-          resourceId={resourceId}
-          flowId={flowId}
-          formContext={formContext}
-          resourceType={resourceType}
+    <FormControl className={classes.dynaTextFormControl}>
+      <div className={classes.dynaTextLabelWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div ref={ref}>
+        <TextField
+          autoComplete="off"
+          id={`text-${id}`}
+          key={id}
+          data-test={id}
+          name={name}
+          // label={label}
+          className={classes.dynaTextFormControl}
+          placeholder={placeholder}
+          helperText={isValid ? description : errorMessages}
+          disabled={disabled}
+          multiline={multiline}
+          error={!isValid}
+          onChange={handleFieldChange}
+          required={required}
           value={value}
-          showLookup={showLookup}
-          showExtract={showExtract}
-          cursorPosition={cursorPosition}
-          onValueUpdate={handleUpdate}
-          showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
-          skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
+          onClick={handleCursorChange}
+          onKeyUp={handleCursorChange}
+          variant="filled"
         />
-      )}
-    </div>
+        {suggestionEnabled && (showExtract || showLookup) && (
+          <Suggestions
+            id={`suggestions-${id}`}
+            onFieldChange={onFieldChange}
+            resourceId={resourceId}
+            flowId={flowId}
+            formContext={formContext}
+            resourceType={resourceType}
+            value={value}
+            showLookup={showLookup}
+            showExtract={showExtract}
+            cursorPosition={cursorPosition}
+            onValueUpdate={handleUpdate}
+            showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
+            skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
+          />
+        )}
+      </div>
+    </FormControl>
   );
 };
 

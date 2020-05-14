@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   dynaTextLabelWrapper: {
     display: props => (props.label ? 'flex' : 'none'),
     alignItems: 'flex-start',
+    '&:empty': {
+      display: 'none',
+    },
   },
   startAdornmentWrapper: {
     marginTop: `0px !important`,
@@ -184,7 +187,12 @@ export default function TextFieldWithClipboardSupport(props) {
   if (copyToClipboard) {
     return (
       <div className={classes.dynaFieldCopyClipboard}>
-        <DynaText {...props} />
+        <div className={classes.dynaTextLabelWrapper}>
+          <DynaText {...props} />
+
+          <FieldHelp {...props} />
+        </div>
+
         <CopyToClipboard text={value}>
           <ActionButton
             data-test="copyToClipboard"

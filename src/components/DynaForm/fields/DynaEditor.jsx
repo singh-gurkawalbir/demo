@@ -8,6 +8,7 @@ import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -38,6 +39,10 @@ const useStyles = makeStyles(theme => ({
   },
   CodeEditorWrapper: {
     width: '100%',
+  },
+  dynaTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -133,8 +138,9 @@ export default function DynaEditor({
     <div className={classes.wrapper}>
       <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
-        <div>
+        <div className={classes.dynaTextLabelWrapper}>
           <FormLabel>{label}</FormLabel>
+          <FieldHelp helpText={label} />
         </div>
 
         <div

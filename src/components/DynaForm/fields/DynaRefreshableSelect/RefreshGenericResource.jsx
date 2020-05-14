@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   refreshGenericActionBtn: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   refreshLoader: {
     marginLeft: theme.spacing(1),

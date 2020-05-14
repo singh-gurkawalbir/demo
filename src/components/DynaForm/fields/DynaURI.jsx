@@ -1,7 +1,7 @@
 import { useState, useCallback, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ScriptsIcon from '../../icons/ScriptsIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 
@@ -12,6 +12,11 @@ const useStyles = makeStyles(theme => ({
   exitButton: {
     float: 'right',
     marginLeft: theme.spacing(1),
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+  },
+  wrapper: {
+    flexDirection: `row !important`,
   },
 }));
 
@@ -59,20 +64,21 @@ export default function DynaURI(props) {
           />
         </div>
       )}
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
-      </ActionButton>
-
-      <DynaTextWithFlowSuggestion
-        description={description}
-        key={`text-${id}`}
-        id={id}
-        value={value}
-        {...props}
-      />
+      <div className={classes.wrapper}>
+        <DynaTextWithFlowSuggestion
+          description={description}
+          key={`text-${id}`}
+          id={id}
+          value={value}
+          {...props}
+        />
+        <ActionButton
+          data-test={id}
+          onClick={handleEditorClick}
+          className={classes.exitButton}>
+          <ScriptsIcon />
+        </ActionButton>
+      </div>
     </Fragment>
   );
 }

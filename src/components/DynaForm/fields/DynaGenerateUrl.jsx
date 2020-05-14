@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   dynaWebhookTokenbtn: {
-    marginTop: 36,
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
 }));
