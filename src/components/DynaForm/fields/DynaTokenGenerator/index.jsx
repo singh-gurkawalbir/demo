@@ -19,9 +19,16 @@ const mapDispatchToProps = dispatch => ({
   handleClearToken: resourceId =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });
-const useStyles = makeStyles(() => ({
-  children: {
+const useStyles = makeStyles(theme => ({
+  dynaWebhookTokenWrapper: {
+    flexDirection: `row !important`,
+  },
+  dynaWebhookTokenField: {
     flex: 1,
+  },
+  dynaWebhookTokenbtn: {
+    marginTop: 36,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -71,17 +78,11 @@ function TokenGenerator(props) {
   }, [enquesnackbar, handleClearToken, message, resourceId]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
-        <MaterialUiTextField
-          {...props}
-          disabled={false}
-          required
-          className={classes.children}
-          style={{ width: '100%' }}
-        />
+    <div className={classes.dynaWebhookTokenWrapper}>
+      <div className={classes.dynaWebhookTokenField}>
+        <MaterialUiTextField {...props} disabled={false} required />
       </div>
-      <div>
+      <div className={classes.dynaWebhookTokenbtn}>
         <GenerateTokenButton {...props} className={classes.children} />
       </div>
     </div>

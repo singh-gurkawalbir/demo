@@ -55,7 +55,6 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
-import DynaTextWithLookupExtract from './DynaTextWithLookupExtract';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -92,6 +91,11 @@ import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import DynaExportSelect from './DynaExportSelect';
+import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
+import DynaDataURITemplate from './DynaDataURITemplate';
+import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
+import DynaNameWithEditor from './DynaNameWithEditor';
+import DynaSelectLookup from './DynaSelectLookup';
 
 export default {
   mode: DynaMode,
@@ -157,7 +161,6 @@ export default {
   datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
-  textwithlookupextract: DynaTextWithLookupExtract,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
@@ -197,4 +200,9 @@ export default {
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
   exportSelect: DynaExportSelect,
+  datauritemplate: DynaDataURITemplate,
+  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
+  textwithflowsuggestion: DynaTextWithFlowSuggestion,
+  namewitheditor: DynaNameWithEditor,
+  selectlookup: DynaSelectLookup,
 };

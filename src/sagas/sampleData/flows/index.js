@@ -147,7 +147,7 @@ export function* requestSampleData({
       });
     }
 
-    if (!isInitialized) onSagaEnd();
+    if (!isInitialized && onSagaEnd) onSagaEnd();
   } catch (e) {
     yield call(handleFlowDataStageErrors, {
       flowId,
@@ -156,7 +156,7 @@ export function* requestSampleData({
       error: e,
     });
 
-    if (!isInitialized) onSagaEnd(true);
+    if (!isInitialized && onSagaEnd) onSagaEnd(true);
 
     // using isInitialized to handle base case not to throw error
     // Error is thrown from the root stage to the main stage for which sample data is requested

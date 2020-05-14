@@ -54,7 +54,6 @@ export default function HandlebarsWithDefaults(props) {
     dispatch(
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
-        autoEvaluate: true,
         autoEvaluateDelay: 300,
         template: props.rule,
         initTemplate: props.rule,

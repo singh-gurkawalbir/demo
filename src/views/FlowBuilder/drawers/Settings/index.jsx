@@ -5,11 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import { nextDataFlowsForFlow, developerMode } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import { isJsonString } from '../../../../utils/string';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -17,9 +17,6 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     marginTop: -1,
     padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
   },
 }));
 const integrationsFilterConfig = { type: 'integrations' };
@@ -33,9 +30,14 @@ export default function SettingsDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const developerModeOn = useSelector(state => developerMode(state));
-  const { resources: integrations } = useResourceList(integrationsFilterConfig);
-  const nextDataFlows = useSelector(state => nextDataFlowsForFlow(state, flow));
+  const developerModeOn = useSelector(state => selectors.developerMode(state));
+  const { resources: integrations } = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  );
+  const nextDataFlows = useSelector(state =>
+    selectors.nextDataFlowsForFlow(state, flow)
+  );
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = {
     fieldMap: {
@@ -174,7 +176,11 @@ export default function SettingsDrawer({
     the integration-level setting.`;
 
   return (
-    <RightDrawer path="settings" title="Settings" infoText={infoTextSettings}>
+    <RightDrawer
+      path="settings"
+      title="Settings"
+      infoText={infoTextSettings}
+      width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm
           integrationId={integrationId}

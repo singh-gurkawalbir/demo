@@ -1,14 +1,19 @@
-import { FormControl, makeStyles } from '@material-ui/core';
+import { FormControl, makeStyles, Typography } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
-  label: {
-    display: `inline-flex !important`,
-    marginTop: theme.spacing(0.5),
+const useStyles = makeStyles({
+  dynaLabelWrapper: {
+    flexDirection: `row !important`,
   },
-}));
+  dynaCheckControlLabel: {
+    margin: 0,
+    marginRight: 4,
+  },
+  dynaCheckbox: { marginRight: 12 },
+});
 
 export default function DynaCheckbox(props) {
   const classes = useStyles();
@@ -29,13 +34,13 @@ export default function DynaCheckbox(props) {
       error={!isValid}
       required={required}
       disabled={disabled}
-      className={classes.label}>
+      className={classes.dynaLabelWrapper}>
       <FormControlLabel
         control={
           <Checkbox
             key={id}
             name={name}
-            color="primary"
+            className={classes.dynaCheckbox}
             // isInvalid={!isValid}
             data-test={id}
             value={typeof value === 'string' ? value : value.toString()}
@@ -48,8 +53,14 @@ export default function DynaCheckbox(props) {
             }
           />
         }
-        label={label}
+        className={classes.dynaCheckControlLabel}
+        label={
+          <Typography variant="subtitle2" component="span">
+            {label}
+          </Typography>
+        }
       />
+      <FieldHelp {...props} />
       <ErroredMessageComponent {...props} />
     </FormControl>
   );

@@ -1,17 +1,31 @@
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import ExitIcon from '../../icons/FilterIcon';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  dynaslsforceFormControl: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    width: '100%',
   },
-  exitButton: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
+  exitButtonsalsForceQualifier: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(5),
+  },
+  dynaSalesforceQualifierWrapper: {
+    flexDirection: `row !important`,
+  },
+  textField: {
+    width: '100%',
+  },
+  dynaSalesforceQualifierlabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -48,7 +62,7 @@ export default function DynaSalesforceQualifier(props) {
   };
 
   return (
-    <Fragment>
+    <div className={classes.dynaSalesforceQualifierWrapper}>
       {showEditor && (
         <SalesforceEditorDialog
           title="Qualification Criteria"
@@ -61,25 +75,38 @@ export default function DynaSalesforceQualifier(props) {
           options={options}
         />
       )}
+      <div className={classes.textField}>
+        <div className={classes.dynaSalesforceQualifierlabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+          {/* TODO (Sravan) :Field Help is not rendering */}
+        </div>
+        <FormControl className={classes.dynaslsforceFormControl}>
+          <TextField
+            key={id}
+            name={name}
+            className={classes.textField}
+            placeholder={placeholder}
+            disabled
+            required={required}
+            error={!isValid}
+            value={value || ''}
+            variant="filled"
+          />
+          <ErroredMessageComponent
+            isValid={isValid}
+            errorMessages={errorMessages}
+          />
+        </FormControl>
+      </div>
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.exitButton}>
+        className={classes.exitButtonsalsForceQualifier}>
         <ExitIcon />
       </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? '' : errorMessages}
-        disabled
-        required={required}
-        error={!isValid}
-        value={value || ''}
-        variant="filled"
-      />
-    </Fragment>
+    </div>
   );
 }

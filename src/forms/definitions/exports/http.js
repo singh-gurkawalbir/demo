@@ -199,6 +199,9 @@ export default {
       delete retValues['/http/paging/maxPagePath'];
       delete retValues['/http/paging/maxCountPath'];
       delete retValues['/http/paging/body'];
+      delete retValues['/http/paging/lastPageStatusCode'];
+      delete retValues['/http/paging/lastPagePath'];
+      delete retValues['/http/paging/lastPageValues'];
     }
 
     retValues['/statusExport'] = undefined;
@@ -207,15 +210,7 @@ export default {
       ...retValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'http.relativeURI' || fieldId === 'http.body') {
-      const nameField = fields.find(field => field.fieldId === 'name');
 
-      return {
-        resourceName: nameField && nameField.value,
-      };
-    }
-  },
   fieldMap: {
     common: { formId: 'common' },
     exportData: {

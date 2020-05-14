@@ -9,6 +9,7 @@ import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -16,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
   fixConnectionBtn: {
     color: theme.palette.primary.main,
+    fontSize: 15,
+    lineHeight: '17px',
+    padding: 6,
   },
 }));
 const getStatusVariantAndMessage = ({
@@ -58,16 +62,13 @@ export default function ConnectionStatusPanel(props) {
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const connectionId = useSelector(state => {
-    if (resourceType === 'connections') return resourceId;
-    const { merged: resource } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
-
-    return resource._connectionId;
-  });
+  const { merged: resource } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
+  const connectionId =
+    resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
@@ -122,15 +123,14 @@ export default function ConnectionStatusPanel(props) {
         ) : (
           <Typography component="div" variant="h6">
             The connection associated with this export is currently offline and
-            configuration is limited,
+            configuration is limited.
             <Button
               data-test="fixConnection"
-              size="small"
               className={classes.fixConnectionBtn}
               onClick={handleConnectionFixClick}>
               Fix your connection
             </Button>
-            to bring it back online
+            to bring it back online.
           </Typography>
         )}
       </NotificationToaster>

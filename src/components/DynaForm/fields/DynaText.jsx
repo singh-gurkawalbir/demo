@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { InputAdornment, Typography } from '@material-ui/core';
+import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
@@ -7,17 +7,19 @@ import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import ActionButton from '../../ActionButton';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
     width: '100%',
+    marginBottom: theme.spacing(2),
+  },
+  dynaTextFormControl: {
+    width: '100%',
   },
   formField: {
     width: '100%',
-  },
-  startAdornmentText: {
-    whiteSpace: 'nowrap',
-    minWidth: theme.spacing(10),
   },
   subSection: {
     maxWidth: '95%',
@@ -36,6 +38,13 @@ const useStyles = makeStyles(theme => ({
   },
   textFieldWithClipBoard: {
     width: '100%',
+  },
+  dynaTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  startAdornmentWrapper: {
+    marginTop: `0px !important`,
   },
 }));
 
@@ -106,10 +115,10 @@ function DynaText(props) {
   const InputProps = useMemo(() => {
     const props = {
       startAdornment: startAdornment ? (
-        <InputAdornment position="start">
-          <Typography variant="body2" className={classes.startAdornmentText}>
-            {startAdornment}
-          </Typography>
+        <InputAdornment
+          position="start"
+          className={classes.startAdornmentWrapper}>
+          {startAdornment}
         </InputAdornment>
       ) : null,
       endAdornment: endAdornment ? (
@@ -127,7 +136,7 @@ function DynaText(props) {
 
     return props;
   }, [
-    classes.startAdornmentText,
+    classes.startAdornmentWrapper,
     endAdornment,
     inputType,
     readOnly,
@@ -135,31 +144,41 @@ function DynaText(props) {
   ]);
 
   return (
-    <TextField
-      autoComplete="off"
-      key={id}
-      data-test={id}
-      name={name}
-      label={label}
-      InputProps={InputProps}
-      type={inputType}
-      placeholder={placeholder}
-      helperText={isValid ? description : errorMessages}
-      disabled={disabled || disableText}
-      multiline={multiline}
-      rowsMax={rowsMax}
-      required={required}
-      error={!isValid}
-      value={inpValue}
-      variant="filled"
-      onChange={handleFieldChange}
-      className={(classes.formField, className)}
-    />
+    <FormControl className={classes.dynaTextFormControl}>
+      <div className={classes.dynaTextLabelWrapper}>
+        <FormLabel htmlFor={id} required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <TextField
+        autoComplete="off"
+        key={id}
+        data-test={id}
+        name={name}
+        InputProps={InputProps}
+        type={inputType}
+        placeholder={placeholder}
+        disabled={disabled || disableText}
+        multiline={multiline}
+        rowsMax={rowsMax}
+        required={required}
+        value={inpValue}
+        variant="filled"
+        onChange={handleFieldChange}
+        className={clsx(classes.formField, className)}
+      />
+      <ErroredMessageComponent
+        isValid={isValid}
+        description={description}
+        errorMessages={errorMessages}
+      />
+    </FormControl>
   );
 }
 
 export default function TextFieldWithClipboardSupport(props) {
-  const { copyToClipboard, value, subSectionField } = props;
+  const { copyToClipboard, value, subSectionField, className } = props;
   const classes = useStyles();
 
   if (copyToClipboard) {
@@ -182,7 +201,7 @@ export default function TextFieldWithClipboardSupport(props) {
   // subsectionfield used to add the padding to the field.
   return (
     <div
-      className={clsx(classes.dynaFieldWrapper, {
+      className={clsx(classes.dynaFieldWrapper, className, {
         [classes.subSection]: subSectionField,
       })}>
       <DynaText {...props} className={classes.textFieldWithClipBoard} />

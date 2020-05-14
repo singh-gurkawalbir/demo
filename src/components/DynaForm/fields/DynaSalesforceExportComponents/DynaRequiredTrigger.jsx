@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
-import { useSelector } from 'react-redux';
-import DynaText from '../DynaText';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
+import DynaText from '../DynaText';
 
 const getTriggerCode = sObjectType => {
   const triggerCodeText = `trigger <name> on ${sObjectType} (after insert, after update) 
@@ -32,12 +32,16 @@ const getTriggerCodeHelpText = (sObjectType, baseURI) => (
 
 export default function DynaRequiredTrigger(props) {
   const { options: selectedOption, resourceId, resourceType } = props;
-  const { merged } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  const { merged } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const { _connectionId } = merged;
-  const { merged: connRes } = useSelector(state =>
-    selectors.resourceData(state, 'connections', _connectionId)
+  const { merged: connRes } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'connections',
+    _connectionId
   );
   const { salesforce } = connRes || {};
   const helpText = getTriggerCodeHelpText(

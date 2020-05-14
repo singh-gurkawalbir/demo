@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import editorSampleData, * as fromEditorSampleData from './editorSampleData';
 import connectors, * as fromConnectors from './connectors';
 import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
@@ -25,8 +26,8 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
-import customSettings, * as fromCustomSettingsStatus from './customSettings';
 import exportDataReducer, * as fromExportData from './exportData';
+import customSettings, * as fromCustomSettings from './customSettings';
 
 export default combineReducers({
   stage,
@@ -57,6 +58,7 @@ export default combineReducers({
   jobErrorsPreview,
   customSettings,
   exportData: exportDataReducer,
+  editorSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -114,6 +116,17 @@ export function editorPatchStatus(state, id) {
   return fromEditors.editorPatchStatus(state && state.editors, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromEditorSampleData.getEditorSampleData(
+    state && state.editorSampleData,
+    {
+      flowId,
+      resourceId,
+      fieldType,
+    }
+  );
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -149,6 +162,18 @@ export function getSearchCriteria(state, id) {
 
 export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
+}
+
+export function stagedState(state) {
+  return state && state.stage;
+}
+
+export function stagedIdState(state, id) {
+  return fromStage.stagedIdState(state && state.stage, id);
+}
+
+export function makeTransformStagedResource() {
+  return fromStage.makeTransformStagedResource();
 }
 
 export function stagedResource(state, id, scope) {
@@ -537,8 +562,11 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
-export function customSettingsStatus(state, resourceId) {
-  return fromCustomSettingsStatus.customSettingsStatus(
+export const exportData = (state, identifier) =>
+  fromExportData.exportData(state && state.exportData, identifier);
+
+export function customSettingsForm(state, resourceId) {
+  return fromCustomSettings.customSettingsForm(
     state && state.customSettings,
     resourceId
   );
@@ -552,6 +580,4 @@ export function flowMetricsData(state, flowId, measurement) {
   );
 }
 
-export const exportData = (state, identifier) =>
-  fromExportData.exportData(state && state.exportData, identifier);
 // #endregion

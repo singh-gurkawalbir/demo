@@ -56,7 +56,8 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
       label: pathParam.name,
-      type: 'text',
+      type: 'textwithflowsuggestion',
+      showLookup: false,
       value: values[pathParam.id],
       required: !!pathParam.required,
     };
@@ -129,6 +130,13 @@ export function searchParameterFieldsMeta({
   deltaDefaults = {},
 }) {
   let searchParamsField;
+  const defaultValue = {};
+
+  parameters.forEach(p => {
+    if (Object.prototype.hasOwnProperty.call(p, 'defaultValue')) {
+      defaultValue[p.id] = p.defaultValue;
+    }
+  });
 
   if (parameters.length > 0) {
     searchParamsField = {
@@ -138,7 +146,7 @@ export function searchParameterFieldsMeta({
           ? 'assistantMetadata.queryParams'
           : 'assistantMetadata.bodyParams',
       label,
-      value: !isEmpty(value) ? value : undefined,
+      value: !isEmpty(value) ? value : defaultValue,
       paramMeta: {
         paramLocation,
         fields: parameters,

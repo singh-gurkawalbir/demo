@@ -106,6 +106,7 @@ export default function SettingsFormEditor({
         resourceId,
         resourceType,
         settings,
+        previewOnSave: true,
       })
     );
   }, [

@@ -11,10 +11,11 @@ import {
   getAvailableResourcePreviewStages,
   isPageGenerator,
   drawerOpened,
-  resourceData,
+  makeResourceDataSelector,
 } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import Panels from './Panels';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -28,6 +29,10 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('xxl')]: {
       width: 880,
     },
+  },
+  previewDataHeading: {
+    fontSize: 18,
+    paddingBottom: 20,
   },
   drawerShift: {
     transition: theme.transitions.create(['width', 'margin'], {
@@ -48,8 +53,10 @@ function DynaExportPanel(props) {
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { merged: resource = {} } = useSelector(state =>
-    resourceData(state, resourceType, resourceId)
+  const { merged: resource = {} } = useSelectorMemo(
+    makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const isPageGeneratorExport = useSelector(state =>
     isPageGenerator(state, flowId, resourceId)
@@ -120,7 +127,9 @@ function DynaExportPanel(props) {
       className={clsx(classes.container, {
         [classes.drawerShift]: isDrawerOpened,
       })}>
-      <Typography> Preview data </Typography>
+      <Typography className={classes.previewDataHeading}>
+        Preview data
+      </Typography>
       <Panels.PreviewInfo
         fetchExportPreviewData={fetchExportPreviewData}
         resourceSampleData={resourceSampleData}
