@@ -4060,6 +4060,21 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RestExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
+
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);
 }

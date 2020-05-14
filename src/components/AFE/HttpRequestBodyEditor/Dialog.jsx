@@ -1,5 +1,5 @@
 import HttpRequestBodyEditor from './';
-import HanldebarEditorDialog from '../HandlebarEditorDialog';
+import HandlebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function HttpRequestBodyDialog(props) {
   const {
@@ -21,7 +21,7 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <HanldebarEditorDialog
+    <HandlebarEditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -36,6 +36,6 @@ export default function HttpRequestBodyDialog(props) {
         isSampleDataLoading={isSampleDataLoading}
         disabled={disabled}
       />
-    </HanldebarEditorDialog>
+    </HandlebarEditorDialog>
   );
 }
