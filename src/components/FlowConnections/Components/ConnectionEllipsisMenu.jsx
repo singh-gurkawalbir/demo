@@ -1,5 +1,6 @@
 import { useCallback, Fragment, useState } from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import RefreshIcon from '../../icons/RefreshIcon';
 import AuditLogIcon from '../../icons/AuditLogIcon';
@@ -25,14 +26,31 @@ const allActions = [
   { action: 'delete', label: 'Delete', Icon: TrashIcon },
 ];
 
-export default function ConnectionEllipsisMenu() {
+export default function ConnectionEllipsisMenu({ connectionId }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleActionClick = useCallback(
-    () => () => {
-      // console.log('clicked', action);
+    action => () => {
+      switch (action) {
+        case 'refresh':
+          break;
+
+        case 'auditLog':
+          history.push(`${match.url}/${connectionId}/auditLog`);
+          break;
+
+        case 'references':
+          break;
+
+        case 'delete':
+          break;
+
+        default:
+      }
     },
-    []
+    [connectionId, history, match.url]
   );
   const handleMenuClick = useCallback(event => {
     setAnchorEl(event.currentTarget);

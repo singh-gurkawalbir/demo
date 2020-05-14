@@ -8,6 +8,7 @@ import DebugIcon from '../../icons/DebugIcon';
 import EditIcon from '../../icons/EditIcon';
 import EllipsisMenu from './ConnectionEllipsisMenu';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
+import ResourceDrawer from '../../../components/drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   cardContent: {
@@ -62,8 +63,8 @@ export default function ConnectionRow({ connection }) {
 
     if (type === 'http') return http.baseURI;
   }, [http.baseURI, rest.baseURI, type]);
-  const handleAuditLog = useCallback(() => {
-    history.push(`${match.url}/${_id}/auditlog`);
+  const handleEditConnection = useCallback(() => {
+    history.push(`${match.url}/edit/connections/${_id}`);
   }, [_id, history, match.url]);
   const handleDebugger = useCallback(() => {
     history.push(`${match.url}/${_id}/debugger`);
@@ -95,9 +96,9 @@ export default function ConnectionRow({ connection }) {
             <Grid container xs={4} spacing={2} direction="row">
               <Grid item xs={2}>
                 <IconButton
-                  data-test="openAuditLog"
+                  data-test="editConnection"
                   size="small"
-                  onClick={handleAuditLog}>
+                  onClick={handleEditConnection}>
                   <EditIcon />
                 </IconButton>
               </Grid>
@@ -110,7 +111,7 @@ export default function ConnectionRow({ connection }) {
                 </IconButton>
               </Grid>
               <Grid item xs={2}>
-                <EllipsisMenu />
+                <EllipsisMenu connectionId={_id} />
               </Grid>
               <Grid item xs={6}>
                 <ApplicationImg size="small" type={type} />
@@ -136,6 +137,7 @@ export default function ConnectionRow({ connection }) {
           </Grid>
         </Grid>
       </div>
+      <ResourceDrawer />
     </div>
   );
 }
