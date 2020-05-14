@@ -3,7 +3,6 @@ import { get } from 'lodash';
 import moment from 'moment';
 import { createSelector } from 'reselect';
 import sift from 'sift';
-import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
 

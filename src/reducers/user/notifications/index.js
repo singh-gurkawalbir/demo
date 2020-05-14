@@ -36,16 +36,17 @@ export default (state = defaultState, action) => {
 };
 
 export const userNotifications = createSelector(
-  state => state,
-  state => {
+  state => state && state.accounts,
+  state => state && state.stacks,
+  (accounts, stacks) => {
     const notifications = emptySet;
 
-    if (!state) {
+    if (!accounts || !stacks) {
       return notifications;
     }
 
-    state.accounts &&
-      state.accounts.forEach(a => {
+    accounts &&
+      accounts.forEach(a => {
         notifications.push({
           id: a._id,
           type: 'account',
@@ -55,8 +56,8 @@ export const userNotifications = createSelector(
         });
       });
 
-    state.stacks &&
-      state.stacks.forEach(s => {
+    stacks &&
+      stacks.forEach(s => {
         notifications.push({
           id: s._id,
           type: 'stack',

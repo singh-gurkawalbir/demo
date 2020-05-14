@@ -58,13 +58,12 @@ export function createdResourceId(state, tempId) {
 }
 
 export const resourceReferences = createSelector(
-  state => state,
-  state => {
-    if (!state || !state.references) {
+  state => state && state.references,
+  references => {
+    if (!references) {
       return null;
     }
 
-    const { references } = state;
     const referencesArray = [];
 
     Object.keys(references).forEach(type =>
@@ -90,16 +89,16 @@ export function integratorLicenseActionMessage(state) {
 }
 
 export const getNumEnabledFlows = createSelector(
-  state => state,
-  state => {
-    if (!state || !state.numEnabledFlows) {
+  state => state && state.numEnabledFlows,
+  numEnabledFlows => {
+    if (!numEnabledFlows) {
       return defaultObject;
     }
 
     return {
-      numEnabledPaidFlows: state.numEnabledFlows.numEnabledPaidFlows || 0,
-      numEnabledSandboxFlows: state.numEnabledFlows.numEnabledSandboxFlows || 0,
-      numEnabledFreeFlows: state.numEnabledFlows.numEnabledFreeFlows || 0,
+      numEnabledPaidFlows: numEnabledFlows.numEnabledPaidFlows || 0,
+      numEnabledSandboxFlows: numEnabledFlows.numEnabledSandboxFlows || 0,
+      numEnabledFreeFlows: numEnabledFlows.numEnabledFreeFlows || 0,
     };
   }
 );

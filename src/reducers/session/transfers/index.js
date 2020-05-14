@@ -49,20 +49,20 @@ function parsePreviewResponse(res) {
 let error;
 
 export const getPreviewData = createSelector(
-  state => state,
-  state => {
-    if (!state || !state.transfer) {
+  state => state && state.transfer,
+  transfer => {
+    if (!transfer) {
       return null;
     }
 
-    if (state.transfer.response) {
+    if (transfer.response) {
       return {
-        response: parsePreviewResponse(state.transfer.response),
+        response: parsePreviewResponse(transfer.response),
       };
     }
 
     try {
-      error = JSON.parse(state.transfer.error.message).errors[0].message;
+      error = JSON.parse(transfer.error.message).errors[0].message;
     } catch (ex) {
       error = 'Preview Failed';
     }
