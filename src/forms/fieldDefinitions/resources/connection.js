@@ -630,6 +630,7 @@ export default {
   'rest.pingRelativeURI': {
     type: 'text',
     label: 'Ping URI',
+    required: true,
   },
   'rest.pingSuccessPath': {
     type: 'text',
