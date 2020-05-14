@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment, useEffect, useMemo } from 'react';
+import { useState, useCallback, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -275,26 +275,11 @@ function FlowBuilder() {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
-  const { status: openFlowErrorsStatus, data: flowErrorsMap } = useSelector(
-    state => selectors.flowErrorMap(state, flowId)
-  );
-  const totalErrors = useMemo(() => {
-    if (!flowErrorsMap || isNewFlow) return 0;
-    const { pageProcessors = [], pageGenerators = [] } = flow;
-    let totalErrors = 0;
-
-    pageProcessors.forEach(pp => {
-      const id = pp._exportId || pp._importId;
-
-      if (flowErrorsMap[id]) totalErrors += flowErrorsMap[id];
-    });
-    pageGenerators.forEach(pg => {
-      if (flowErrorsMap[pg._exportId])
-        totalErrors += flowErrorsMap[pg._exportId];
-    });
-
-    return totalErrors;
-  }, [flow, flowErrorsMap, isNewFlow]);
+  const {
+    status: openFlowErrorsStatus,
+    data: flowErrorsMap,
+    total: totalErrors = 0,
+  } = useSelector(state => selectors.errorMap(state, flowId));
   // There are 2 conditions to identify this flow as a Data loader.
   // if it is an existing flow, then we can use the existence of a simple export,
   // else for staged flows, we can test to see if the pending export

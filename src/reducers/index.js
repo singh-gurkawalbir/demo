@@ -4150,8 +4150,8 @@ export function isAllErrorsSelected(
   });
 }
 
-export function flowErrorMap(state, flowId) {
-  return fromSession.flowErrorMap(state && state.session, flowId);
+export function errorMap(state, resourceId) {
+  return fromSession.errorMap(state && state.session, resourceId);
 }
 
 export function errorActionsContext(

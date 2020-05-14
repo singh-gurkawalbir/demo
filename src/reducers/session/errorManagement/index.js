@@ -39,8 +39,8 @@ export function isAllErrorsSelected(
   );
 }
 
-export function flowErrorMap(state, flowId) {
-  return fromOpenErrors.flowErrorMap(state && state.openErrors, flowId);
+export function errorMap(state, resourceId) {
+  return fromOpenErrors.errorMap(state && state.openErrors, resourceId);
 }
 
 export function errorActionsContext(

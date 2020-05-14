@@ -585,10 +585,10 @@ export function isAllErrorsSelected(
   );
 }
 
-export function flowErrorMap(state, flowId) {
-  return fromErrorManagement.flowErrorMap(
+export function errorMap(state, resourceId) {
+  return fromErrorManagement.errorMap(
     state && state.errorManagement,
-    flowId
+    resourceId
   );
 }
 

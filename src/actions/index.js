@@ -1447,6 +1447,17 @@ const errorManager = {
         openErrors,
       }),
   },
+  integrationErrors: {
+    request: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
+        integrationId,
+      }),
+    received: ({ integrationId, errors }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED, {
+        integrationId,
+        errors,
+      }),
+  },
   flowErrorDetails: {
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
