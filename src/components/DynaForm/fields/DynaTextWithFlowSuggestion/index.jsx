@@ -31,8 +31,11 @@ const DynaTextWithFlowSuggestion = props => {
   } = props;
   const ref = useRef(null);
   const dispatch = useDispatch();
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const [suggestionEnabled, setSuggestionEnabled] = useState(false);
+  const [state, setState] = useState({
+    hideSuggestion: true,
+    textInsertPosition: 0,
+  });
+  const { hideSuggestion, textInsertPosition } = state;
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
   );
@@ -45,19 +48,23 @@ const DynaTextWithFlowSuggestion = props => {
         stage: 'flowInput',
       }).data
   );
-  const handleUpdate = useCallback(
+  const handleUpdateAfterSuggestionInsert = useCallback(
     newValue => {
-      setCursorPosition(0);
-      setSuggestionEnabled(false);
       onFieldChange(id, newValue);
+      setState({
+        textInsertPosition: 0,
+        hideSuggestion: false,
+      });
     },
     [id, onFieldChange]
   );
   const handleCursorChange = useCallback(e => {
     const cursorIndex = e.target.selectionStart;
 
-    setCursorPosition(cursorIndex);
-    setSuggestionEnabled(true);
+    setState({
+      textInsertPosition: cursorIndex,
+      hideSuggestion: false,
+    });
   }, []);
   const handleFieldChange = e => {
     const inpValue = e.target.value;
@@ -68,8 +75,10 @@ const DynaTextWithFlowSuggestion = props => {
   // close suggestions when clicked outside
   const handleClickOutside = event => {
     if (ref.current && !ref.current.contains(event.target)) {
-      setCursorPosition(0);
-      setSuggestionEnabled(false);
+      setState({
+        ...state,
+        hideSuggestion: true,
+      });
     }
   };
 
@@ -115,8 +124,9 @@ const DynaTextWithFlowSuggestion = props => {
         onKeyUp={handleCursorChange}
         variant="filled"
       />
-      {suggestionEnabled && (showExtract || showLookup) && (
+      {(showExtract || showLookup) && (
         <Suggestions
+          hide={hideSuggestion}
           id={`suggestions-${id}`}
           onFieldChange={onFieldChange}
           resourceId={resourceId}
@@ -126,8 +136,8 @@ const DynaTextWithFlowSuggestion = props => {
           value={value}
           showLookup={showLookup}
           showExtract={showExtract}
-          cursorPosition={cursorPosition}
-          onValueUpdate={handleUpdate}
+          textInsertPosition={textInsertPosition}
+          onValueUpdate={handleUpdateAfterSuggestionInsert}
           showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
           skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
         />
