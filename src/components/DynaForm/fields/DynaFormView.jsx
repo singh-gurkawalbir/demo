@@ -12,6 +12,8 @@ import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../utils/constants';
 
 const emptyObj = {};
 const isParent = true;
@@ -19,12 +21,13 @@ const isParent = true;
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();
-  const staggedResource = useSelector(state => {
-    const { merged } =
-      selectors.resourceData(state, resourceType, resourceId) || {};
-
-    return merged || emptyObj;
-  });
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceType,
+      resourceId
+    ) || {};
+  const staggedResource = merged || emptyObject;
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj

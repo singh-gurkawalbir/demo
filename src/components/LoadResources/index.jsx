@@ -1,11 +1,15 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import useAllResourceStatus from '../../hooks/selectors/useAllResourceStatus';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../reducers';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
-  const resourceStatus = useAllResourceStatus(resources);
+  const resourceStatus = useSelectorMemo(
+    selectors.makeAllResourceStatusSelector,
+    resources
+  );
   const isAllDataReady = useMemo(
     () =>
       resourceStatus.reduce((acc, resourceStatus) => {

@@ -15,7 +15,7 @@ import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
-import useResourceList from '../../../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -51,8 +51,14 @@ export default function DynaHook(props) {
   const createdScriptId = useSelector(state =>
     selectors.createdResourceId(state, tempScriptId)
   );
-  const allScripts = useResourceList(scriptsFilterConfig).resources;
-  const allStacks = useResourceList(stacksFilterConfig).resources;
+  const allScripts = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    scriptsFilterConfig
+  ).resources;
+  const allStacks = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    stacksFilterConfig
+  ).resources;
   const {
     id,
     flowId,

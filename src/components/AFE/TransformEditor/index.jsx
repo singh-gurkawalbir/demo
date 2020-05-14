@@ -44,7 +44,6 @@ export default function TransformEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'transform', {
         data: props.data,
-        autoEvaluate: true,
         rule: props.rule,
         resourceId,
         duplicateKeyToValidate: [valueName],

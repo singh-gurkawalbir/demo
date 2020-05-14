@@ -33,7 +33,7 @@ import SettingsIcon from '../../../components/icons/SettingsIcon';
 import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
-import useResourceList from '../../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -133,7 +133,10 @@ export default function Integration({ history, match }) {
     }),
     [integrationId]
   );
-  const flows = useResourceList(flowsFilterConfig).resources;
+  const flows = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsFilterConfig
+  ).resources;
   const cantDelete = flows.length > 0;
   const patchIntegration = useCallback(
     (path, value) => {

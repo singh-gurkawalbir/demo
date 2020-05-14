@@ -9,8 +9,8 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
-import useResourceList from '../../../hooks/selectors/useResourceList';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -29,7 +29,10 @@ const integrationsFilterConfig = {
 
 export default function UserForm({ id, onSaveClick, onCancelClick }) {
   const classes = useStyles();
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const users = useSelector(state => selectors.orgUsers(state));
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;

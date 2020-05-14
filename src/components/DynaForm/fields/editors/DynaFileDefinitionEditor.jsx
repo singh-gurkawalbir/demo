@@ -1,6 +1,8 @@
 import { useEffect, useState, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import { FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -10,6 +12,7 @@ import {
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
 import useFormContext from '../../../Form/FormContext';
+import FieldHelp from '../../FieldHelp';
 
 /*
  * This editor is shown in case of :
@@ -17,8 +20,23 @@ import useFormContext from '../../../Form/FormContext';
  *  2. When editing an export, resource has a userDefinitionId using which we get rules
  *    customized and saved by user while creation
  */
+const useStyles = makeStyles(theme => ({
+  fileDefinationContainer: {
+    flexDirection: `row !important`,
+    width: '100%',
+    alignItems: 'center',
+  },
+  fileDefinationBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  fileDefinationLabel: {
+    marginBottom: 0,
+    marginRight: theme.spacing(1),
+  },
+}));
 
 function DynaFileDefinitionEditor(props) {
+  const classes = useStyles();
   const {
     id,
     label,
@@ -161,30 +179,38 @@ function DynaFileDefinitionEditor(props) {
 
   return (
     <Fragment>
-      <LoadResources resources="filedefinitions">
-        {showEditor && (
-          <FileDefinitionEditorDialog
-            title="File Definition Editor"
-            id={id + resourceId}
-            processor={processor}
-            data={
-              sampleData ||
-              (resourceType === 'exports'
-                ? props.sampleData
-                : JSON.stringify(props.sampleData, null, 2))
-            }
-            rule={value}
-            onClose={handleClose}
-            disabled={disabled}
-          />
-        )}
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleEditorClick}>
-          {label}
-        </Button>
-      </LoadResources>
+      <div className={classes.fileDefinationContainer}>
+        <LoadResources resources="filedefinitions">
+          {showEditor && (
+            <FileDefinitionEditorDialog
+              title="File Definition Editor"
+              id={id + resourceId}
+              processor={processor}
+              data={
+                sampleData ||
+                (resourceType === 'exports'
+                  ? props.sampleData
+                  : JSON.stringify(props.sampleData, null, 2))
+              }
+              rule={value}
+              onClose={handleClose}
+              disabled={disabled}
+            />
+          )}
+          <FormLabel className={classes.fileDefinationLabel}>
+            File defination rules:
+          </FormLabel>
+          <Button
+            variant="outlined"
+            color="secondary"
+            className={classes.fileDefinationBtn}
+            onClick={handleEditorClick}>
+            {label}
+          </Button>
+          {/* TODO: surya we need to add the helptext for the upload file */}
+          <FieldHelp {...props} helpText={label} />
+        </LoadResources>
+      </div>
     </Fragment>
   );
 }

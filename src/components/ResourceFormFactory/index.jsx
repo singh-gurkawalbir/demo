@@ -3,10 +3,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import formFactory from '../../forms/formFactory';
-import useResourceData from '../../hooks/selectors/useStaggedResource';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const Form = props => {
   const { fieldMeta } = props;
@@ -56,7 +56,11 @@ export const ResourceFormFactory = props => {
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
   );
-  const resource = useResourceData(resourceType, resourceId).merged;
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  ).merged;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
   );

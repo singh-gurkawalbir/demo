@@ -13,10 +13,20 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 
 const SearchParamsModal = props => {
-  const { paramMeta, onClose, id, onFieldChange, value } = props;
+  const {
+    paramMeta,
+    onClose,
+    id,
+    onFieldChange,
+    value,
+    flowId,
+    resourceContext,
+  } = props;
   const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
     paramMeta,
     value,
+    flowId,
+    resourceContext,
   });
 
   function onSaveClick(formValues) {
@@ -84,6 +94,7 @@ export default function DynaAssistantSearchParams(props) {
     <Fragment>
       {showSearchParamsModal && (
         <SearchParamsModal
+          {...props}
           id={id}
           paramMeta={paramMeta}
           value={value}
@@ -95,8 +106,8 @@ export default function DynaAssistantSearchParams(props) {
       )}
       <Button
         data-test={id}
-        variant="contained"
-        color="primary"
+        variant="outlined"
+        color="secondary"
         onClick={() => setShowSearchParamsModal(true)}>
         {label} {required && !isValid ? '*' : ''}
       </Button>

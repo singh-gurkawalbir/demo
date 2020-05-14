@@ -5,7 +5,7 @@ export default {
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
-      { id: 'rdbms.ignoreExtract', type: 'textwithlookupextract' },
+      { id: 'rdbms.ignoreExtract' },
     ],
     required: true,
     options: [

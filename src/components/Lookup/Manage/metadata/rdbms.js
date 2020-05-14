@@ -1,53 +1,12 @@
-import dynamicMetadata from './DynamicLookup/metadata';
-
-const getFailedRecordDefault = lookup => {
-  if (!lookup || !lookup.allowFailures) {
-    return 'disallowFailure';
-  }
-
-  switch (lookup.default) {
-    case '':
-      return 'useEmptyString';
-    case null:
-      return 'useNull';
-    default:
-      return 'default';
-  }
-};
+import getFailedRecordDefault from './util';
 
 export default {
-  getLookupMetadata: ({
-    lookup,
-    showDynamicLookupOnly,
-    isSQLLookup,
-    sampleData,
-    connectionId,
-    resourceId,
-    resourceType,
-    flowId,
-    resourceName,
-  }) => {
-    const dynamicLookupMetadata = dynamicMetadata.getLookupMetadata({
-      lookup,
-      showDynamicLookupOnly,
-      isSQLLookup,
-      sampleData,
-      connectionId,
-      resourceId,
-      resourceType,
-      flowId,
-      resourceName,
-    });
-    const {
-      fieldMap: dynamicFieldMap,
-      layout: dynamicLayout,
-    } = dynamicLookupMetadata;
-    const { fields: dynamicLayoutFields } = dynamicLayout;
+  getLookupMetadata: ({ lookup, showDynamicLookupOnly, sampleData }) => {
     const fieldMeta = {
       fieldMap: {
-        mode: {
-          id: 'mode',
-          name: 'mode',
+        _mode: {
+          id: '_mode',
+          name: '_mode',
           type: 'radiogroup',
           label: '',
           defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
@@ -60,27 +19,56 @@ export default {
             },
           ],
         },
-        ...dynamicFieldMap,
-        mapList: {
-          id: 'mapList',
-          name: 'mapList',
+        _query: {
+          id: '_query',
+          name: '_query',
+          type: 'query',
+          label: 'Query',
+          helpText: 'The query that fetches records to be exported.',
+          sampleData,
+          defaultValue: lookup.query,
+          visibleWhen: [
+            {
+              field: '_mode',
+              is: ['dynamic'],
+            },
+          ],
+        },
+        _extract: {
+          id: '_extract',
+          name: '_extract',
+          type: 'text',
+          label: 'Column',
+          helpText:
+            'When integrator.io runs this lookup it will read the column named in this field from the SQL result set and return that single value as the result of the lookup. Please make sure this field contains a valid column name from your database table.',
+          defaultValue: lookup.extract,
+          visibleWhen: [
+            {
+              field: '_mode',
+              is: ['dynamic'],
+            },
+          ],
+        },
+        _mapList: {
+          id: '_mapList',
+          name: '_mapList',
           type: 'staticMap',
           label: '',
           keyName: 'export',
           keyLabel: 'Export field',
           valueName: 'import',
-          valueLabel: 'Import field (HTTP)',
+          valueLabel: 'Import field',
           map: lookup && lookup.map,
           visibleWhen: [
             {
-              field: 'mode',
+              field: '_mode',
               is: ['static'],
             },
           ],
         },
-        name: {
-          id: 'name',
-          name: 'name',
+        _name: {
+          id: '_name',
+          name: '_name',
           type: 'text',
           label: 'Name',
           defaultValue: lookup.name,
@@ -88,9 +76,9 @@ export default {
           helpText:
             'Name of the lookups that will be exposed to the mapping to refer.',
         },
-        failRecord: {
-          id: 'failRecord',
-          name: 'failRecord',
+        _failRecord: {
+          id: '_failRecord',
+          name: '_failRecord',
           type: 'radiogroup',
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
@@ -118,8 +106,8 @@ export default {
             },
           ],
         },
-        default: {
-          id: 'default',
+        _default: {
+          id: '_default',
           name: 'default',
           type: 'text',
           label: 'Enter default value',
@@ -127,7 +115,7 @@ export default {
           placeholder: 'Enter default value',
           visibleWhen: [
             {
-              field: 'failRecord',
+              field: '_failRecord',
               is: ['default'],
             },
           ],
@@ -135,22 +123,29 @@ export default {
       },
       layout: {
         fields: [
-          'mode',
-          ...dynamicLayoutFields,
-          'mapList',
-          'name',
-          'failRecord',
-          'default',
+          '_mode',
+          '_query',
+          '_extract',
+          '_mapList',
+          '_name',
+          '_failRecord',
+          '_default',
         ],
       },
     };
 
     if (showDynamicLookupOnly) {
-      delete fieldMeta.fieldMap.mode;
-      delete fieldMeta.fieldMap.mapList;
-      fieldMeta.layout.fields = fieldMeta.layout.fields.filter(
-        el => el !== 'mode' && el !== 'mapList'
-      );
+      const { query, extract } = fieldMeta.fieldMap;
+
+      delete query.visibleWhenAll;
+      delete extract.visibleWhen;
+
+      // body.visibleWhen = [
+      //   {
+      //     field: 'method',
+      //     is: ['POST'],
+      //   },
+      // ];
     }
 
     return fieldMeta;

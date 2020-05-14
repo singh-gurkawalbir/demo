@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import useResourceList from '../../../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export default function RefreshableIntegrationAppSetting(props) {
   const {
@@ -39,7 +39,10 @@ export default function RefreshableIntegrationAppSetting(props) {
     }),
     [_integrationId]
   );
-  const connection = useResourceList(netsuiteFilterConfig).resources[0];
+  const connection = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    netsuiteFilterConfig
+  ).resources[0];
   const netSuiteSystemDomain = useMemo(
     () =>
       fieldName.includes('_listSavedSearches') &&

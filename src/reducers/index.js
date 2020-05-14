@@ -10,7 +10,6 @@ import data, * as fromData from './data';
 import * as fromResources from './data/resources';
 import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
-import * as fromStage from './session/stage';
 import comms, * as fromComms from './comms';
 import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
@@ -472,6 +471,14 @@ export function editorPatchStatus(state, id) {
   return fromSession.editorPatchStatus(state && state.session, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromSession.getEditorSampleData(state && state.session, {
+    flowId,
+    resourceId,
+    fieldType,
+  });
+}
+
 export function mapping(state, id) {
   return fromSession.mapping(state && state.session, id);
 }
@@ -578,10 +585,41 @@ export const userOwnPreferences = createSelector(
 // }
 
 // TODO: make this selector a lot more granular...its dependency is user
-export const userProfilePreferencesProps = createSelector(
-  userState,
-  fromUser.userProfilePreferencesProps
-);
+export function userProfilePreferencesProps(state) {
+  const profile = userProfile(state);
+  const preferences = userPreferences(state);
+  const {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    // eslint-disable-next-line camelcase
+    auth_type_google,
+  } = { ...profile, ...preferences };
+
+  return {
+    _id,
+    name,
+    email,
+    company,
+    role,
+    developer,
+    phone,
+    dateFormat,
+    timezone,
+    timeFormat,
+    scheduleShiftForFlowsCreatedAfter,
+    auth_type_google,
+  };
+}
+
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
 }
@@ -856,7 +894,7 @@ export function flowDetails(state, id) {
 }
 
 export function flowListWithMetadata(state, options) {
-  const flows = resourceList(state, options).resources || [];
+  const flows = resourceList(state, options).resources || emptySet;
   const exports = resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1310,7 +1348,7 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
       state && state.session,
       integrationId,
       flowId
-    ) || {};
+    ) || emptyObject;
   const categoryMappingMetadata = {};
   const { response } = categoryMappingData;
 
@@ -2890,28 +2928,35 @@ export function resourceData(state, resourceType, id, scope) {
   return data;
 }
 
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(resource.adaptorType);
+}
+
 export function resourceDataModified(
-  resourcesState,
-  stageState,
+  resourceIdState,
+  stagedIdState,
   resourceType,
-  id,
-  scope
+  id
 ) {
-  if ((!resourcesState && !stageState) || !resourceType || !id)
-    return emptyObject;
-  let type = resourceType;
+  if (!resourceType || !id) return emptyObject;
 
-  if (resourceType.indexOf('/licenses') >= 0) {
-    type = 'connectorLicenses';
-  }
-
-  // For accesstokens and connections within an integration
-  if (resourceType.indexOf('integrations/') >= 0) {
-    type = resourceType.split('/').pop();
-  }
-
-  const master = fromResources.resource(resourcesState, type, id);
-  const { patch, conflict } = fromStage.stagedResource(stageState, id, scope);
+  const master = resourceIdState;
+  const { patch, conflict } = stagedIdState || {};
 
   if (!master && !patch) return { merged: emptyObject };
 
@@ -2943,16 +2988,45 @@ export function resourceDataModified(
   return data;
 }
 
-export const makeResourceDataSelector = () =>
-  createSelector(
-    resourcesState,
-    stageState,
+// fromResources.resourceIdState
+// nothing but state && state.data && state.data.resources && state.data.resources.type
+export const makeResourceDataSelector = () => {
+  const cachedStageSelector = fromSession.makeTransformStagedResource();
+  const cachedResourceSelector = fromData.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, id) => {
+      if (!resourceType || !id) return null;
+      let type = resourceType;
+
+      if (resourceType.indexOf('/licenses') >= 0) {
+        type = 'connectorLicenses';
+      }
+
+      // For accesstokens and connections within an integration
+      if (resourceType.indexOf('integrations/') >= 0) {
+        type = resourceType.split('/').pop();
+      }
+
+      return cachedResourceSelector(
+        fromData.resourceState(state && state.data),
+        type,
+        id
+      );
+    },
+    (state, resourceType, id, scope) =>
+      cachedStageSelector(
+        fromSession.stagedState(state && state.session),
+        id,
+        scope
+      ),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
-    (_1, _2, _3, scope) => scope,
-    (resourcesState, stageState, resourceType, id, scope) =>
-      resourceDataModified(resourcesState, stageState, resourceType, id, scope)
+
+    (resourceIdState, stagedIdState, resourceType, id) =>
+      resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
+};
 
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);
@@ -4023,6 +4097,21 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
+
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RestExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
 
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);

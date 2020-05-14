@@ -14,7 +14,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
-import useResourceList from '../../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,12 +52,16 @@ export default function JavaScriptPanel(props) {
     entryFunction = '',
     scriptId = '',
   } = editor;
-  const scriptContent = useSelector(state => {
-    const data = selectors.resourceData(state, 'scripts', scriptId);
-
-    return data && data.merged && data.merged.content;
-  });
-  const allScripts = useResourceList(scriptFilterConfig).resources;
+  const data = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'scripts',
+    scriptId
+  );
+  const scriptContent = data && data.merged && data.merged.content;
+  const allScripts = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    scriptFilterConfig
+  ).resources;
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     val => {

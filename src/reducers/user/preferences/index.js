@@ -4,6 +4,8 @@ import {
   PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER,
 } from '../../../utils/constants';
 
+const emptyObj = {};
+
 export const GLOBAL_PREFERENCES = [
   'hideGettingStarted',
   'defaultAShareId',
@@ -59,13 +61,13 @@ export default (state = { environment: 'production' }, action) => {
 
 // #region PUBLIC SELECTORS
 export function userPreferences(state) {
-  if (!state) return {};
+  if (!state) return emptyObj;
 
   return state;
 }
 
 export function accountShareHeader(preferences, path) {
-  const headers = {};
+  const headers = emptyObj;
 
   if (
     !preferences ||

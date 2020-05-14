@@ -12,7 +12,7 @@ import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FlowCard from '../../../common/FlowCard';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
-import useResourceList from '../../../../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,7 +27,10 @@ export default function FlowsPanel({ integrationId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
-  const allFlows = useResourceList(flowsFilterConfig).resources;
+  const allFlows = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsFilterConfig
+  ).resources;
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
   );

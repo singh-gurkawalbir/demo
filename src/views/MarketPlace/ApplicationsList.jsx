@@ -9,7 +9,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 import connectorsMetadata from '../../constants/applications';
-import useMarketPlaceConnectors from '../../hooks/selectors/useMarketPlaceConnectors';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,7 +54,11 @@ export default function ApplicationsList({ filter }) {
     selectors.userPreferences(state)
   );
   const sandbox = userPreferences.environment === 'sandbox';
-  const connectors = useMarketPlaceConnectors(undefined, sandbox);
+  const connectors = useSelectorMemo(
+    selectors.makeMarketPlaceConnectorsSelector,
+    undefined,
+    sandbox
+  );
   const templates = useSelector(state => selectors.marketplaceTemplates(state));
   let applications = [];
 

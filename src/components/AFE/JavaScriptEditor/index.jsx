@@ -59,7 +59,6 @@ export default function JavaScriptEditor(props) {
         data: props.data,
         context,
         initData: props.data,
-        autoEvaluate: true,
         autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
         optionalSaveParams,

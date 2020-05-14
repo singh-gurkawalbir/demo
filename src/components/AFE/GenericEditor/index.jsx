@@ -1,17 +1,26 @@
 import { useEffect } from 'react';
 import { func, string } from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from './CodePanel';
 import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
+import Spinner from '../../Spinner';
 
-const styles = layouts;
+const useStyles = makeStyles(() => ({
+  ...layouts,
+  spinnerWrapper: {
+    display: 'flex',
+    height: '100%',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
+  },
+}));
 const Editor = props => {
   const {
-    classes,
     layout = 'compact',
     templateClassName,
     rule,
@@ -30,7 +39,9 @@ const Editor = props => {
     handleInit,
     enableAutocomplete,
     disabled,
+    isSampleDataLoading,
   } = props;
+  const classes = useStyles();
 
   useEffect(() => {
     handleInit();
@@ -51,15 +62,21 @@ const Editor = props => {
           readOnly={disabled}
         />
       </PanelGridItem>
-      <PanelGridItem gridArea="data">
+      <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
-        <CodePanel
-          name="data"
-          value={data}
-          mode={dataMode}
-          onChange={handleDataChange}
-          readOnly={disabled}
-        />
+        {isSampleDataLoading ? (
+          <div className={classes.spinnerWrapper}>
+            <Spinner size={50} color="primary" />
+          </div>
+        ) : (
+          <CodePanel
+            name="data"
+            value={data}
+            mode={dataMode}
+            onChange={handleDataChange}
+            readOnly={disabled}
+          />
+        )}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title={resultTitle} />
@@ -81,4 +98,4 @@ Editor.propTypes = {
   handleDataChange: func.isRequired,
 };
 
-export default withStyles(styles)(Editor);
+export default Editor;

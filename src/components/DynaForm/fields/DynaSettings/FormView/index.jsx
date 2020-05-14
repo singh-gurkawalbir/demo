@@ -1,10 +1,20 @@
 import { useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import Spinner from '../../../../Spinner';
+
+const useStyles = makeStyles({
+  spinnerWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default function FormView({
   resourceId,
@@ -13,6 +23,7 @@ export default function FormView({
   onToggleClick,
   disabled,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const formState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
@@ -61,7 +72,11 @@ export default function FormView({
   }
 
   if (!formState || formState.status === 'request') {
-    return <Typography>Initializing form...</Typography>;
+    return (
+      <div className={classes.spinnerWrapper}>
+        <Spinner />
+      </div>
+    );
   }
 
   return (

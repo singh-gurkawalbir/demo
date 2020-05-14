@@ -4,11 +4,16 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connections, * as fromConnections from './connections';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import connectors, * as fromConnectors from './connectors';
+import customSettings, * as fromCustomSettings from './customSettings';
 import editors, * as fromEditors from './editors';
+import editorSampleData, * as fromEditorSampleData from './editorSampleData';
+import exportDataReducer, * as fromExportData from './exportData';
+import fileUpload, * as fromFileUpload from './fileUpload';
 import filters, * as fromFilters from './filters';
 import flows, * as fromFlows from './flows';
 import formReducer, * as fromForm from './form';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
+import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import mappings, * as fromMappings from './mappings';
 import metadata, * as fromMetadata from './metadata';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
@@ -23,10 +28,6 @@ import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import stage, * as fromStage from './stage';
 import templates, * as fromTemplates from './templates';
 import transfers, * as fromTransfers from './transfers';
-import fileUpload, * as fromFileUpload from './fileUpload';
-import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
-import exportDataReducer, * as fromExportData from './exportData';
-import customSettings, * as fromCustomSettings from './customSettings';
 
 export default combineReducers({
   form: formReducer,
@@ -57,6 +58,7 @@ export default combineReducers({
   jobErrorsPreview,
   customSettings,
   exportData: exportDataReducer,
+  editorSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -132,6 +134,17 @@ export function editorPatchStatus(state, id) {
   return fromEditors.editorPatchStatus(state && state.editors, id);
 }
 
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromEditorSampleData.getEditorSampleData(
+    state && state.editorSampleData,
+    {
+      flowId,
+      resourceId,
+      fieldType,
+    }
+  );
+}
+
 export function mapping(state, id) {
   return fromMappings.mapping(state && state.mappings, id);
 }
@@ -167,6 +180,18 @@ export function getSearchCriteria(state, id) {
 
 export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
+}
+
+export function stagedState(state) {
+  return state && state.stage;
+}
+
+export function stagedIdState(state, id) {
+  return fromStage.stagedIdState(state && state.stage, id);
+}
+
+export function makeTransformStagedResource() {
+  return fromStage.makeTransformStagedResource();
 }
 
 export function stagedResource(state, id, scope) {

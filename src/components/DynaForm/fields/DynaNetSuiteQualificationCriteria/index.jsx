@@ -38,7 +38,6 @@ export default function DynaNetSuiteQualificationCriteria(props) {
     dispatch(
       actions.editor.init(editorId, 'netsuiteQualificationCriteria', {
         data,
-        autoEvaluate: false,
         rule: value,
       })
     );

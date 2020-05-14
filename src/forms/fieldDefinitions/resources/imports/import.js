@@ -45,14 +45,14 @@ export default {
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
-    type: 'relativeuri',
+    type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
   },
   dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Override data URI template',
+    type: 'datauritemplate',
+    label: 'Data URI template',
+    editorTitle: 'Build data URI template',
     placeholder: 'Optional',
-    connectionId: r => r && r._connectionId,
   },
   oneToMany: {
     type: 'radiogroup',
@@ -814,7 +814,6 @@ export default {
   },
   settings: {
     type: 'settings',
-    showOnDeveloperMode: true,
     defaultValue: r => r && r.settings,
   },
 };

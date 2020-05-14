@@ -7,12 +7,15 @@ import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
-import useResourceList from '../../hooks/selectors/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const flowsFilterConfig = { type: 'flows' };
 
 export default function AttachFlows({ onClose, integrationId }) {
-  const allFlows = useResourceList(flowsFilterConfig).resources;
+  const allFlows = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsFilterConfig
+  ).resources;
   const flows = useMemo(() => allFlows.filter(f => !f._integrationId), [
     allFlows,
   ]);

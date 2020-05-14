@@ -121,9 +121,8 @@ export default {
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
           name: '_relativeURI',
-          type: 'textwithlookupextract',
-          fieldType: 'relativeUri',
-          hideLookups: true,
+          type: 'relativeuri',
+          showLookup: false,
           connectionId,
           resourceId,
           flowId,
@@ -163,7 +162,6 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
-          label: 'Build HTTP request body',
           defaultValue: lookup.body || '',
           // helpText not present
           visibleWhenAll: [
@@ -466,9 +464,9 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name:',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          connectionId,
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
