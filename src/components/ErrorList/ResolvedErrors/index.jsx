@@ -31,16 +31,13 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
 }));
+const defaultFilter = {
+  searchBy: ['message', 'source', 'code', 'occurredAt', 'resolvedBy'],
+};
 
 export default function ResolvedErrors({ flowId, resourceId, show }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const defaultFilter = useMemo(
-    () => ({
-      searchBy: ['message', 'source', 'code', 'occurredAt', 'resolvedBy'],
-    }),
-    []
-  );
   const filterKey = `resolvedErrors-${flowId}-${resourceId}`;
   const errorFilter = useSelector(
     state => filter(state, filterKey) || defaultFilter
@@ -73,7 +70,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
       isResolved: true,
       actionInProgress: isAnyActionInProgress,
     }),
-    [defaultFilter, filterKey, flowId, isAnyActionInProgress, resourceId]
+    [filterKey, flowId, isAnyActionInProgress, resourceId]
   );
   const fetchResolvedData = useCallback(
     loadMore => {
