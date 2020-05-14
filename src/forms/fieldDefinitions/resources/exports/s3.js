@@ -12,16 +12,19 @@ export default {
     ],
   },
   's3.bucket': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'Bucket name',
+    editorTitle: 'Build bucket name',
     required: true,
   },
   's3.keyStartsWith': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'Key starts with',
+    editorTitle: 'Build Key starts with',
   },
   's3.keyEndsWith': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'Key ends with',
+    editorTitle: 'Build Key ends with',
   },
 };

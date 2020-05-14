@@ -1,16 +1,19 @@
 export default {
   'ftp.directoryPath': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'Directory path',
+    editorTitle: 'Build directory path',
     required: true,
   },
   'ftp.fileNameStartsWith': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'File name starts with',
+    editorTitle: 'Build file name starts with',
   },
   'ftp.fileNameEndsWith': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'File name ends with',
+    editorTitle: 'Build file name ends with',
   },
   // #region transform
   'transform.expression.rules': {

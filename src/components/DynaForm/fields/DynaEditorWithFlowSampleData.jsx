@@ -22,9 +22,6 @@ const DynaEditorWithFlowSampleData = ({
   ...props
 }) => {
   const dispatch = useDispatch();
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
   const isEditorV2Supported = useSelector(state => {
     if (disableEditorV2) {
       return false;
@@ -58,15 +55,8 @@ const DynaEditorWithFlowSampleData = ({
         })
       );
     },
-    [
-      disableEditorV2,
-      dispatch,
-      fieldId,
-      flowId,
-      formContext.value,
-      resourceId,
-      resourceType,
-    ]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [disableEditorV2, dispatch, fieldId, flowId, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
@@ -87,18 +77,10 @@ const DynaEditorWithFlowSampleData = ({
   }, [editorType, props.contentType, rule, sampleData, templateVersion]);
 
   useEffect(() => {
-    if (flowId && !isPageGenerator) {
+    if (flowId) {
       loadEditorSampleData();
     }
-  }, [
-    dispatch,
-    flowId,
-    formContext.value,
-    isPageGenerator,
-    loadEditorSampleData,
-    resourceId,
-    resourceType,
-  ]);
+  }, [flowId, loadEditorSampleData]);
 
   return (
     <Fragment>
@@ -117,6 +99,7 @@ const DynaEditorWithFlowSampleData = ({
         <UrlEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
+          rule={formattedRule}
           data={JSON.stringify(sampleData, null, 2)}
           showVersionToggle={isEditorV2Supported}
           isSampleDataLoading={sampleDataRequestStatus === 'requested'}
