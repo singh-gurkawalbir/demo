@@ -86,7 +86,7 @@ export default {
               value: 'Export records from source application',
             },
             {
-              label: 'Transfer files out of source applicationaa',
+              label: 'Transfer files out of source application',
               value: 'api',
             },
             {
@@ -96,7 +96,8 @@ export default {
           ],
         },
       ],
-      defaultDisabled: true,
+      helpText:
+        'These are the options available for the selected application.  If the application only supports one option, then the value will be pre-selected and read-only.',
     },
 
     existingExport: {

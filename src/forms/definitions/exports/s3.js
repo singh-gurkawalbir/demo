@@ -121,13 +121,8 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
+      helpText:
+        'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
 
       defaultValue: r => {
         const isNew = isNewId(r._id);

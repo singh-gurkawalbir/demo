@@ -6,6 +6,8 @@ import DataLoaderIcon from '../../../components/icons/DataLoaderIcon';
 import LookupIcon from '../../../components/icons/LookUpIcon';
 import ListenerIcon from '../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../components/icons/ImportsIcon';
+import ExportsTransfer from '../../../components/icons/ExportsTransfer';
+import ImportsTransfer from '../../../components/icons/ImportsTransfer';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
@@ -16,8 +18,8 @@ const blockMap = {
   lookup: { label: 'Lookup', Icon: LookupIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
   dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
-  exportTransfer: { label: 'Transfer', Icon: DataLoaderIcon },
-  importTransfer: { label: 'Transfer', Icon: DataLoaderIcon },
+  exportTransfer: { label: 'Transfer', Icon: ExportsTransfer },
+  importTransfer: { label: 'Transfer', Icon: ImportsTransfer },
 };
 const useStyles = makeStyles(theme => ({
   root: {

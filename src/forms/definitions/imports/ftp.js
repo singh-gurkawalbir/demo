@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = {
@@ -204,13 +202,9 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      helpText:
+        'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
 
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'ftp.useTempFile': {

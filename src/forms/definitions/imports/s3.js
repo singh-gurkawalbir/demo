@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = {
@@ -96,7 +94,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Do you need to parse files?',
+      label: 'Generate file from records?',
       options: [
         {
           items: [
@@ -105,13 +103,9 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
 
-        if (!isNew) return true;
-
-        return false;
-      },
+      helpText:
+        'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     's3.region': {

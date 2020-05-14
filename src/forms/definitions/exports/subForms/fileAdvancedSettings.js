@@ -11,6 +11,8 @@ export default {
         },
       ],
       defaultValue: r => r && r.file && r.file.output === 'metadata',
+      helpText:
+        'Select this checkbox if you ONLY need to transfer metadata about the files, but not the files themselves.',
     },
     'file.decompressFiles': {
       id: 'file.decompressFiles',

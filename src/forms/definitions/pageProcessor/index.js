@@ -73,6 +73,8 @@ export default {
           ],
         },
       ],
+      helpText:
+        'These are the options available for the selected application.  If the application only supports one option, then the value will be pre-selected and read-only.',
     },
     application: {
       id: 'application',
