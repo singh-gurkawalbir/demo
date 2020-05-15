@@ -1,4 +1,3 @@
-import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import {
   ACCOUNT_IDS,
@@ -61,14 +60,11 @@ export default (state = { environment: 'production' }, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export const userPreferences = createSelector(
-  state => state,
-  state => {
-    if (!state) return emptyObj;
+export function userPreferences(state) {
+  if (!state) return emptyObj;
 
-    return state;
-  }
-);
+  return state;
+}
 
 export function accountShareHeader(preferences, path) {
   const headers = emptyObj;

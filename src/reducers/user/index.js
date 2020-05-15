@@ -10,6 +10,7 @@ import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 const emptyList = [];
+const emptyObj = {};
 
 export default combineReducers({
   preferences,
@@ -54,79 +55,78 @@ export function userNotifications(state) {
 // #endregion NOTIFICATIONS
 
 // #region PREFERENCES
-export function userPreferences(state) {
-  const preferences = fromPreferences.userPreferences(
-    state && state.preferences
-  );
-  const { defaultAShareId, accounts = {} } = preferences;
+export const userPreferences = createSelector(
+  state => fromPreferences.userPreferences(state && state.preferences),
+  state => state && state.org,
+  (preferences, org) => {
+    const { defaultAShareId, accounts = {} } = preferences;
 
-  if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-    return preferences;
-  }
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      return preferences;
+    }
 
-  if (
-    !state ||
-    !state.org ||
-    !state.org.accounts ||
-    !state.org.accounts.length
-  ) {
-    return preferences;
-  }
+    if (!org || !org.accounts || !org.accounts.length) {
+      return preferences;
+    }
 
-  // eslint-disable-next-line max-len
-  /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
-  const { accounts: orgAccounts = {} } = state.org;
-  const currentAccount = orgAccounts.find(
-    a => a._id === preferences.defaultAShareId
-  );
-  let mergedPreferences = {
-    ...preferences,
-    ...accounts[defaultAShareId],
-  };
-
-  if (currentAccount && currentAccount.ownerUser) {
-    mergedPreferences = {
-      ...mergedPreferences,
-      ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
+    // eslint-disable-next-line max-len
+    /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
+    const { accounts: orgAccounts = {} } = org;
+    const currentAccount = orgAccounts.find(
+      a => a._id === preferences.defaultAShareId
+    );
+    let mergedPreferences = {
+      ...preferences,
+      ...accounts[defaultAShareId],
     };
-  }
 
-  return mergedPreferences;
-}
+    if (currentAccount && currentAccount.ownerUser) {
+      mergedPreferences = {
+        ...mergedPreferences,
+        ssConnectionIds: currentAccount.ownerUser.ssConnectionIds,
+      };
+    }
+
+    return mergedPreferences;
+  }
+);
 
 export function userOwnPreferences(state) {
   return fromPreferences.userPreferences(state && state.preferences);
 }
 
-export function appTheme(state) {
-  const preferences = fromPreferences.userPreferences(
-    state && state.preferences
-  );
-  const currentAccount = preferences.defaultAShareId;
+export const appTheme = createSelector(
+  userPreferences,
+  preferences => {
+    const currentAccount = preferences.defaultAShareId;
 
-  if (currentAccount) {
-    const accountPrefs =
-      preferences.accounts && preferences.accounts[currentAccount];
+    if (currentAccount) {
+      const accountPrefs =
+        preferences.accounts && preferences.accounts[currentAccount];
 
-    if (accountPrefs) {
-      return accountPrefs.themeName;
+      if (accountPrefs) {
+        return accountPrefs.themeName;
+      }
     }
+
+    return preferences.themeName;
   }
+);
 
-  return preferences.themeName;
-}
+export const editorTheme = createSelector(
+  state => state,
+  state => {
+    if (!state) return DEFAULT_EDITOR_THEME;
 
-export function editorTheme(state) {
-  if (!state) return DEFAULT_EDITOR_THEME;
+    // props = ui theme, values = editor theme.
+    const themeMap = {
+      light: 'tomorrow',
+      dark: 'monokai',
+    };
 
-  // props = ui theme, values = editor theme.
-  const themeMap = {
-    light: 'tomorrow',
-    dark: 'monokai',
-  };
-
-  return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
-}
+    return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
+  }
+);
 
 export function accountShareHeader(state, path) {
   return fromPreferences.accountShareHeader(state && state.preferences, path);
@@ -140,17 +140,21 @@ export function avatarUrl(state) {
 // #endregion PROFILE
 
 // #region ACCESS LEVEL
-export function accessLevel(state) {
-  let accessLevel;
+export const accessLevel = createSelector(
+  userPreferences,
+  state => state && state.org && state.org.accounts,
+  (preferences, accounts) => {
+    let accessLevel;
 
-  if (state && state.preferences) {
-    const { defaultAShareId } = userPreferences(state);
+    if (preferences) {
+      const { defaultAShareId } = preferences;
 
-    accessLevel = fromAccounts.accessLevel(state.org.accounts, defaultAShareId);
+      accessLevel = fromAccounts.accessLevel(accounts, defaultAShareId);
+    }
+
+    return accessLevel;
   }
-
-  return accessLevel;
-}
+);
 
 // #endregion ACCESS LEVEL
 // #region ACCOUNT
@@ -204,33 +208,38 @@ export function integrationUsers(state, integrationId) {
   );
 }
 
-export function accountOwner(state) {
-  const userAccessLevel = accessLevel(state);
+export const accountOwner = createSelector(
+  accessLevel,
+  userPreferences,
+  state => state && state.profile,
+  state => state && state.org,
+  (userAccessLevel, preferences, profile, org) => {
+    if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+      const { name, email } = profile;
 
-  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-    const { name, email } = state && state.profile;
+      return { name, email };
+    }
 
-    return { name, email };
-  }
+    if (preferences) {
+      const { defaultAShareId } = preferences;
 
-  if (state && state.preferences) {
-    const { defaultAShareId } = userPreferences(state);
+      if (defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
+        const ownerUser = fromAccounts.owner(org.accounts, defaultAShareId);
 
-    if (defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
-      const ownerUser = fromAccounts.owner(state.org.accounts, defaultAShareId);
-
-      return ownerUser || {};
+        return ownerUser || emptyObj;
+      }
     }
   }
-}
+);
 
-export function licenses(state) {
-  const { defaultAShareId } = userPreferences(state);
+export const licenses = createSelector(
+  userPreferences,
+  state => state && state.org && state.org.accounts,
+  (preferences, accounts) => {
+    const { defaultAShareId } = preferences;
 
-  return fromAccounts.licenses(
-    state && state.org && state.org.accounts,
-    defaultAShareId
-  );
-}
+    return fromAccounts.licenses(accounts, defaultAShareId);
+  }
+);
 
 // #endregion PUBLIC USER SELECTORS

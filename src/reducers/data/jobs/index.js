@@ -594,13 +594,14 @@ export const flowJobsPagingDetails = createSelector(
 );
 
 export const flowJobs = createSelector(
-  state => state,
-  state => {
-    if (!state) {
+  state => state && state.paging,
+  state => state && state.flowJobs,
+  state => state && state.bulkRetryJobs,
+  (paging, flowJobs, bulkRetryJobs) => {
+    if (!paging || !flowJobs || !bulkRetryJobs) {
       return DEFAULT_STATE.flowJobs;
     }
 
-    const { paging, flowJobs, bulkRetryJobs } = state;
     const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
       flowJobs,
       bulkRetryJobs
@@ -696,18 +697,17 @@ export const flowJobs = createSelector(
 );
 
 export const inProgressJobIds = createSelector(
-  state => state,
-  state => {
+  state => state && state.paging,
+  state => state && state.flowJobs,
+  state => state && state.bulkRetryJobs,
+  (paging, origFlowJobs, bulkRetryJobs) => {
     const jobIds = { flowJobs: [], bulkRetryJobs: [] };
 
-    if (!state) {
+    if (!paging || !origFlowJobs || !bulkRetryJobs) {
       return jobIds;
     }
 
-    const { paging, bulkRetryJobs } = state;
-    let { flowJobs } = state;
-
-    flowJobs = flowJobs.slice(
+    const flowJobs = origFlowJobs.slice(
       paging.currentPage * paging.rowsPerPage,
       (paging.currentPage + 1) * paging.rowsPerPage
     );
@@ -833,14 +833,14 @@ export function job(state, { type, jobId, parentJobId }) {
 }
 
 export const isBulkRetryInProgress = createSelector(
-  state => state,
-  state => {
-    if (!state) {
+  state => state && state.bulkRetryJobs,
+  bulkRetryJobs => {
+    if (!bulkRetryJobs) {
       return false;
     }
 
     return (
-      state.bulkRetryJobs.filter(job =>
+      bulkRetryJobs.filter(job =>
         [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(job.status)
       ).length > 0
     );
