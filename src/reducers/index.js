@@ -863,24 +863,31 @@ export function nextDataFlowsForFlow(state, flow) {
   return getNextDataFlows(flows, flow);
 }
 
-export function isConnectionOffline(state, id) {
-  const connection = resource(state, 'connections', id);
+export function isIAConnectionSetupPending(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
 
-  //  check if integration install step is completed. If install step is not yet complete, connection offline panel shouldn't be shown to user
-  if (connection && connection._connectorId) {
-    const { _integrationId } = connection;
-    const integration = resource(state, 'integrations', _integrationId);
+  if (!connection._connectorId) {
+    return;
+  }
 
-    if (integration && integration.install) {
-      const installStep = integration.install.find(
-        step => step._connectionId === id
-      );
+  const { _integrationId } = connection;
+  const integration = resource(state, 'integrations', _integrationId);
 
-      if (!installStep.completed) {
-        return undefined;
-      }
+  if (integration && integration.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep.completed) {
+      return true;
     }
   }
+
+  return false;
+}
+
+export function isConnectionOffline(state, id) {
+  const connection = resource(state, 'connections', id);
 
   return connection && connection.offline;
 }
