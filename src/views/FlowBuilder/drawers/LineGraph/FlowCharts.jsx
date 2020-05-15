@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const Chart = ({ id, flowId }) => {
+const Chart = ({ id, flowId, selectedResources }) => {
   const { data: flowData } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
 
@@ -47,16 +47,27 @@ const Chart = ({ id, flowId }) => {
           tickFormatter={unixTime => moment(unixTime).format('DD/MMM hh:mm')}
           type="category"
         />
-        <YAxis />
+        <YAxis type="number" domain={[0, 300]} />
         <Tooltip />
         <Legend />
-        <Line dataKey="value" legendType="wye" stroke="#24448E" />
+        {selectedResources.map(r => (
+          <Line
+            key={r}
+            dataKey={`${r}-value`}
+            legendType="wye"
+            stroke="#24448E"
+          />
+        ))}
       </LineChart>
     </Fragment>
   );
 };
 
-export default function FlowCharts({ flowId, selectedMeasurements }) {
+export default function FlowCharts({
+  flowId,
+  selectedMeasurements,
+  selectedResources,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { data: flowData } =
@@ -71,7 +82,12 @@ export default function FlowCharts({ flowId, selectedMeasurements }) {
   return (
     <div className={classes.root}>
       {selectedMeasurements.map(m => (
-        <Chart key={m} id={m} flowId={flowId} />
+        <Chart
+          key={m}
+          id={m}
+          flowId={flowId}
+          selectedResources={selectedResources}
+        />
       ))}
     </div>
   );

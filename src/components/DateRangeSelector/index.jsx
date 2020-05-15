@@ -2,6 +2,7 @@ import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import {
   addDays,
+  addHours,
   addMonths,
   endOfDay,
   endOfMonth,
@@ -49,6 +50,13 @@ const rangeList = [
     }),
   },
   {
+    label: 'Last 24 hours',
+    range: () => ({
+      startDate: addHours(new Date(), -24),
+      endDate: new Date(),
+    }),
+  },
+  {
     label: 'Last 7 Days',
     range: () => ({
       startDate: defineds.startOfLastWeek,
@@ -67,6 +75,27 @@ const rangeList = [
     range: () => ({
       startDate: defineds.endOfLastThirtyDays,
       endDate: defineds.endOfToday,
+    }),
+  },
+  {
+    label: 'Last 3 months',
+    range: () => ({
+      startDate: addMonths(new Date(), -3),
+      endDate: new Date(),
+    }),
+  },
+  {
+    label: 'Last 6 months',
+    range: () => ({
+      startDate: addMonths(new Date(), -6),
+      endDate: new Date(),
+    }),
+  },
+  {
+    label: 'Last 9 months',
+    range: () => ({
+      startDate: addMonths(new Date(), -9),
+      endDate: new Date(),
     }),
   },
 ];
@@ -91,11 +120,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function DateRangeComponent({ value }) {
+export default function DateRangeSelector({ value, onSave }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
-      startDate: (value && value.gte) || '',
-      endDate: (value && value.lte) || '',
+      startDate:
+        value && value.startDate
+          ? new Date(value.startDate)
+          : addHours(new Date(), -24),
+      endDate: value && value.endDate ? new Date(value.endDate) : new Date(),
       key: 'selection',
     },
   ]);
@@ -103,6 +135,13 @@ export default function DateRangeComponent({ value }) {
   const classes = useStyles();
   const toggleClick = useCallback(event => {
     setAnchorEl(state => (state ? null : event.currentTarget));
+  }, []);
+  const handleSave = useCallback(() => {
+    onSave && onSave(selectedRanges);
+    setAnchorEl(null);
+  }, [onSave, selectedRanges]);
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
   }, []);
   const result = useMemo(
     () =>
@@ -115,25 +154,30 @@ export default function DateRangeComponent({ value }) {
 
   return (
     <Fragment>
-      <Button onClick={toggleClick}>Open Date Range</Button>
+      <Button onClick={toggleClick} variant="outlined" color="secondary">
+        Open Date Range
+      </Button>
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
         placement="bottom-end"
         onClose={toggleClick}>
         {anchorEl && (
-          <DateRangePicker
-            staticRanges={result}
-            showSelectionPreview
-            onChange={item => setSelectedRanges([item.selection])}
-            moveRangeOnFirstSelection={false}
-            months={2}
-            className={classes.child}
-            ranges={selectedRanges}
-            direction="horizontal"
-          />
+          <Fragment>
+            <DateRangePicker
+              staticRanges={result}
+              showSelectionPreview
+              onChange={item => setSelectedRanges([item.selection])}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              className={classes.child}
+              ranges={selectedRanges}
+              direction="horizontal"
+            />
+            <Button onClick={handleSave}>Apply</Button>
+            <Button onClick={handleClose}>Cancel</Button>
+          </Fragment>
         )}
-        <Button onClick={toggleClick}>Clear</Button>
       </ArrowPopper>
     </Fragment>
   );

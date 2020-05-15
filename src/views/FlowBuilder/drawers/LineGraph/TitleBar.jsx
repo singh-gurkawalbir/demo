@@ -1,10 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import * as selectors from '../../../../reducers';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DynaMultiSelect from './MultiSelect';
+import DateRangeSelector from '../../../../components/DateRangeSelector';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -30,12 +33,18 @@ const useStyles = makeStyles(theme => ({
 export default function DrawerTitleBar({
   onClose,
   title,
+  flowId,
+  measurements,
+  selectedResources,
   onMeasurementsChange,
+  onResourcesChange,
   parentUrl,
 }) {
   const classes = useStyles();
   const history = useHistory();
-  const [measurements, setMeasurements] = useState(['success']);
+  const flowResources = useSelector(state =>
+    selectors.flowResources(state, flowId)
+  );
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       onClose();
@@ -45,11 +54,17 @@ export default function DrawerTitleBar({
   }, [history, onClose, parentUrl]);
   const handleMeasurementChange = useCallback(
     (id, val) => {
-      setMeasurements(val);
       onMeasurementsChange(val);
     },
     [onMeasurementsChange]
   );
+  const handleResourcesChange = useCallback(
+    (id, val) => {
+      onResourcesChange(val);
+    },
+    [onResourcesChange]
+  );
+  const handleDateRangeChange = useCallback(() => {}, []);
 
   return (
     <div className={classes.titleBar}>
@@ -73,6 +88,21 @@ export default function DrawerTitleBar({
             },
           ]}
           onFieldChange={handleMeasurementChange}
+        />
+        <DateRangeSelector onSave={handleDateRangeChange} />
+        <DynaMultiSelect
+          name="flowResources"
+          value={selectedResources}
+          placeholder="Please select resources"
+          options={[
+            {
+              items: flowResources.map(r => ({
+                value: r._id,
+                label: r.name || r.id,
+              })),
+            },
+          ]}
+          onFieldChange={handleResourcesChange}
         />
 
         <Divider orientation="veritical" className={classes.divider} />

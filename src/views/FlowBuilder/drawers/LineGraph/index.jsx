@@ -33,11 +33,15 @@ function LineGraphDrawer({ parentUrl, flowId }) {
   const classes = useStyles();
   const history = useHistory();
   const [selectedMeasurements, setSelectedMeasurements] = useState(['success']);
+  const [selectedResources, setSelectedResources] = useState([flowId]);
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
   const handleMeasurementsChange = useCallback(val => {
     setSelectedMeasurements(val);
+  }, []);
+  const handleResourceChange = useCallback(val => {
+    setSelectedResources(val);
   }, []);
 
   return (
@@ -52,12 +56,16 @@ function LineGraphDrawer({ parentUrl, flowId }) {
         title="Dashboard"
         flowId={flowId}
         onMeasurementsChange={handleMeasurementsChange}
+        onResourcesChange={handleResourceChange}
+        measurements={selectedMeasurements}
+        selectedResources={selectedResources}
         onClose={handleClose}
         backToParent
       />
       <FlowCharts
         flowId={flowId}
         selectedMeasurements={selectedMeasurements}
+        selectedResources={selectedResources}
         className={classes.scheduleContainer}
       />
     </Drawer>
