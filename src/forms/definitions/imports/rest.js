@@ -1,4 +1,3 @@
-import { isNewId } from '../../../utils/resource';
 import { isJsonString } from '../../../utils/string';
 
 export default {
@@ -198,12 +197,19 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'How would you like the files transferred?';
+        }
+
+        return 'How would you like the records imported?';
+      },
     },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -212,14 +218,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (!isNew) return true;
-
-        return false;
+        return 'records';
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'rest.method': { fieldId: 'rest.method' },
     'rest.blobMethod': { fieldId: 'rest.blobMethod' },
@@ -903,7 +906,6 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       'rest.method',
       'rest.blobMethod',
       'rest.headers',
@@ -937,6 +939,7 @@ export default {
       'sampleDataTitle',
       'sampleData',
       'dataMappings',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

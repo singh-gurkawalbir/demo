@@ -8,6 +8,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
     padding: 0,
     color: theme.palette.text.hint,
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
