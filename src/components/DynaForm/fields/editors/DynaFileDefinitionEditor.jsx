@@ -49,7 +49,7 @@ function DynaFileDefinitionEditor(props) {
     disabled,
     formKey,
   } = props;
-  const formContext = useFormContext(formKey);
+  const formContext = useFormContext({ formKey });
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
   const dispatch = useDispatch();
