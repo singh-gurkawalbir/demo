@@ -740,8 +740,8 @@ export const sourceOptions = {
   ],
   webhook: [
     {
-      label: 'Listen for real-time data from source applications',
-      value: 'realtime',
+      label: 'Listen for real-time data from source application',
+      value: 'webhook',
     },
   ],
   netsuite: [
@@ -750,7 +750,7 @@ export const sourceOptions = {
       value: 'exportRecords',
     },
     {
-      label: 'Listen for real-time data from source applications',
+      label: 'Listen for real-time data from source application',
       value: 'realtime',
     },
   ],
@@ -760,7 +760,7 @@ export const sourceOptions = {
       value: 'exportRecords',
     },
     {
-      label: 'Listen for real-time data from source applications',
+      label: 'Listen for real-time data from source application',
       value: 'realtime',
     },
   ],

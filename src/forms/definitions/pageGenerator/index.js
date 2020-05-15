@@ -78,26 +78,6 @@ export default {
         },
       ],
     },
-
-    existingExport: {
-      id: 'exportId',
-      name: 'exportId',
-      type: 'selectflowresource',
-      flowResourceType: 'pg',
-      resourceType: 'exports',
-      label: 'Would you like to use an existing export?',
-      defaultValue: '',
-      required: false,
-      allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
-      visibleWhenAll: [
-        {
-          field: 'application',
-          isNot: [''],
-        },
-      ],
-    },
-
     connection: {
       id: 'connection',
       name: '/_connectionId',
@@ -120,6 +100,29 @@ export default {
       allowNew: true,
       allowEdit: true,
     },
+
+    existingExport: {
+      id: 'exportId',
+      name: 'exportId',
+      type: 'selectflowresource',
+      flowResourceType: 'pg',
+      resourceType: 'exports',
+      label: 'Would you like to use an existing export?',
+      defaultValue: '',
+      required: false,
+      allowEdit: true,
+      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [''],
+        },
+        {
+          field: 'connection',
+          isNot: [''],
+        },
+      ],
+    },
   },
   layout: {
     fields: ['application', 'type', 'connection', 'existingExport'],
@@ -141,7 +144,7 @@ export default {
               value: 'exportRecords',
             },
             {
-              label: 'Listen for real-time data from source applications',
+              label: 'Listen for real-time data from source application',
               value: 'webhook',
             },
           ];
