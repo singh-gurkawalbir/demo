@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   formContent: {
     padding: theme.spacing(0, 2),
   },
+  formGeneralPanel: {
+    minHeight: 250,
+  },
 }));
 
 export default function GeneralPanel({ integrationId, storeId }) {
@@ -57,6 +60,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
             fieldMeta={translatedMeta}
             integrationId={integrationId}
             isIAForm
+            className={classes.formGeneralPanel}
             storeId={storeId}
             formState={formState}
           />

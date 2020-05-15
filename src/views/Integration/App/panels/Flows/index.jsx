@@ -47,6 +47,9 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
   },
+  configureSectionBtn: {
+    padding: 0,
+  },
 }));
 
 export const IAFormStateManager = props => {
@@ -78,6 +81,7 @@ export const IAFormStateManager = props => {
 };
 
 function FlowList({ integrationId, storeId }) {
+  const classes = useStyles();
   const match = useRouteMatch();
   const { sectionId } = match.params;
   const { flows, fields, sections } = useSelector(state =>
@@ -135,8 +139,11 @@ function FlowList({ integrationId, storeId }) {
       <PanelHeader title={`${section.title} flows`}>
         {hasAdvancedSettings && (
           <IconTextButton
+            variant="text"
+            color="primary"
             data-test={`configure${section.title}`}
             component={Link}
+            className={classes.configureSectionBtn}
             to={`${sectionId}/configure`}>
             <SettingsIcon /> Configure {section.title}
           </IconTextButton>

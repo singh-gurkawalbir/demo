@@ -39,13 +39,16 @@ const useStyles = makeStyles(theme => ({
   action: {
     borderTop: '1px solid',
     borderColor: theme.palette.divider,
-    paddingTop: '8px',
     width: '100%',
     overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   actionTitle: {
     float: 'left',
     width: '60%',
+    paddingTop: 10,
   },
   caption: {
     wordBreak: 'break-word',
@@ -53,6 +56,7 @@ const useStyles = makeStyles(theme => ({
   actionButtons: {
     float: 'right',
     textAlign: 'right',
+    paddingTop: '8px',
     '& Button': {
       borderColor: theme.palette.divider,
       padding: '3px 5px',

@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   title: {
     flexGrow: 1,

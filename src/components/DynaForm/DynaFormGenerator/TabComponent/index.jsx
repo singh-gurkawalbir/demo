@@ -16,6 +16,7 @@ const useStyle = makeStyles(theme => ({
   },
   panelContainer: {
     flexGrow: 1,
+    overflowY: 'auto',
   },
   tabsContainer: {
     minWidth: 150,
