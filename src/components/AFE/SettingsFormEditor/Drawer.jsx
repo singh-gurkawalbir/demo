@@ -82,9 +82,11 @@ export default function EditorDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const settings = useSelector(
-    state => selectors.resource(state, resourceType, resourceId).settings
-  );
+  const settings = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return resource && resource.settings;
+  });
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, editorId).saveInProgress

@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -326,13 +324,20 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'How would you like the files transferred?';
+        }
+
+        return 'How would you like the records imported?';
+      },
     },
     dataMappings: { formId: 'dataMappings' },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -341,14 +346,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (!isNew) return true;
-
-        return false;
+        return 'records';
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
@@ -1450,7 +1452,6 @@ export default {
       'inputMode',
       'importData',
       'dataMappings',
-      'blobKeyPath',
       'http.method',
       'http.blobMethod',
       'http.headers',
@@ -1498,6 +1499,7 @@ export default {
       'uploadFile',
       'file.csv',
       'file.csv.customHeaderRows',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

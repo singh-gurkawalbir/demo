@@ -56,7 +56,7 @@ import {
   isAS2Resource,
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
-import { isConnector } from '../../../utils/flows';
+import { isIntegrationApp } from '../../../utils/flows';
 
 function* initFlowData({ flowId, resourceId, resourceType }) {
   const { merged: flow } = yield select(resourceData, 'flows', flowId);
@@ -240,7 +240,7 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     } else if (isRealTimeOrDistributedResource(resource)) {
       // fetch data from real time sample data
       previewData = yield call(requestRealTimeMetadata, { resource });
-    } else if (isConnector(flow) && resource.sampleData) {
+    } else if (isIntegrationApp(flow) && resource.sampleData) {
       // Incase of an existing connector flow with sampleData on export, we show the same when requested for preview data
       previewData = resource.sampleData;
     } else {

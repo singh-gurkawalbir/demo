@@ -137,7 +137,7 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: `How would you like the files transferred?`,
     },
     'ftp.directoryPath': {
       fieldId: 'ftp.directoryPath',
@@ -161,8 +161,8 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Launch XML builder',
-      title: 'XML Document Editor',
+      label: 'XML document builder',
+      title: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [
@@ -195,18 +195,13 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input mode',
+      label: 'Generate file from records?',
+      helpKey: 'import.inputMode',
       options: [
         {
           items: [
-            {
-              label: 'Records',
-              value: 'records',
-            },
-            {
-              label: 'Blob keys',
-              value: 'blob',
-            },
+            { label: 'Yes', value: 'records' },
+            { label: 'No', value: 'blob' },
           ],
         },
       ],
@@ -217,6 +212,7 @@ export default {
 
         return false;
       },
+
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'ftp.useTempFile': {
@@ -252,13 +248,15 @@ export default {
         },
       ],
     },
+    fileApiIdentifier: {
+      formId: 'fileApiIdentifier',
+    },
   },
   layout: {
     fields: [
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       'ftp.directoryPath',
       'fileType',
       'ftp.fileName',
@@ -269,6 +267,7 @@ export default {
       'ftp.blobInProgressFileName',
       'dataMappings',
       'file.lookups',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [
@@ -280,6 +279,7 @@ export default {
           'ftp.inProgressFileName',
           'fileAdvancedSettings',
           'deleteAfterImport',
+          'fileApiIdentifier',
         ],
       },
     ],

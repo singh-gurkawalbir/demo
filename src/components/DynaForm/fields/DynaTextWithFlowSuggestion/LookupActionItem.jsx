@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ManageLookupDialog from '../../Lookup/Manage/Dialog';
+import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
 
 const useStyles = makeStyles({
   container: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
-export default function DynaManageLookup({
+export default function LookupActionItem({
   id,
   isEdit = false,
   onSelect,
@@ -53,11 +53,15 @@ export default function DynaManageLookup({
     handleEditorClick();
   };
 
+  const handleLookupSelect = () => {
+    onSelect(value);
+  };
+
   return (
     <Fragment>
       {showLookup && (
         <ManageLookupDialog
-          lookup={value}
+          value={value}
           showDynamicLookupOnly={showDynamicLookupOnly}
           id={id}
           onCancel={handleEditorClick}
@@ -66,13 +70,13 @@ export default function DynaManageLookup({
         />
       )}
       {isEdit && (
-        <Typography onClick={onSelect} className={classes.label}>
+        <Typography onClick={handleLookupSelect} className={classes.label}>
           {value.name}
         </Typography>
       )}
       <Button
         data-test={id}
-        variant="contained"
+        variant="outlined"
         className={clsx({ [classes.button]: isEdit })}
         color="secondary"
         onClick={handleEditorClick}>

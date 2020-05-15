@@ -118,7 +118,6 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   label: {
     display: 'flex',
-    marginBottom: theme.spacing(1),
   },
 }))
 class SignIn extends Component {

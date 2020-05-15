@@ -1,4 +1,4 @@
-import { useEffect, Fragment } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
@@ -7,12 +7,19 @@ import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import Spinner from '../../../../Spinner';
 import DebugOnly from '../../../../DebugOnly';
+import useIntegration from '../../../../../hooks/useIntegration';
 
 const useStyles = makeStyles({
   spinnerWrapper: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    margin: 'auto',
   },
 });
 
@@ -30,6 +37,10 @@ export default function FormView({
   );
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
+  );
+  const integrationId = useIntegration(resourceType, resourceId);
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
   useEffect(() => {
@@ -50,14 +61,17 @@ export default function FormView({
 
   if (formState && formState.error) {
     return (
-      <Fragment>
+      <div>
         <Typography>{formState.error}</Typography>
-        {isDeveloper && (
-          <Button variant="contained" onClick={onToggleClick}>
+        {isDeveloper && !isViewMode && (
+          <Button
+            data-test="toggleEditor"
+            variant="contained"
+            onClick={onToggleClick}>
             Toggle form editor
           </Button>
         )}
-      </Fragment>
+      </div>
     );
   }
 
@@ -70,10 +84,14 @@ export default function FormView({
   }
 
   return (
-    <Fragment>
-      {isDeveloper && (
+    <div>
+      {isDeveloper && !isViewMode && (
         <DebugOnly>
-          <Button variant="contained" onClick={onToggleClick}>
+          <Button
+            data-test="toggleEditor"
+            variant="outlined"
+            color="secondary"
+            onClick={onToggleClick}>
             Toggle form editor
           </Button>
         </DebugOnly>
@@ -86,6 +104,6 @@ export default function FormView({
         resourceId={resourceId}
         resourceType={resourceType}
       />
-    </Fragment>
+    </div>
   );
 }

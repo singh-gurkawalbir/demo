@@ -35,9 +35,12 @@ function DynaLabel(props) {
     setAnchorEl(null);
   };
 
+  const showArrowPopper =
+    !disablePopover && (helpText || (helpKey && helpTextMap[helpKey]));
+
   return (
     <Fragment>
-      {!disablePopover && (
+      {showArrowPopper && (
         <ArrowPopper
           placement="left"
           className={classes.helpPopper}

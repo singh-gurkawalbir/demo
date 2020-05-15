@@ -1,5 +1,3 @@
-import { isNewId } from '../../../../utils/resource';
-
 const batchSizePattern = /^([4-9]|[1-8][0-9]|9[0-9]|1[0-9]{2}|200)$/; // Regular Expression from regexnumericrangegenerator.
 
 export default {
@@ -71,19 +69,10 @@ export default {
     required: true,
     label: 'Execution type',
     defaultValue: r => {
-      const isNew = isNewId(r._id);
+      if (r.resourceType === 'realtime' || r.type === 'distributed')
+        return 'realtime';
 
-      if (r && r.isLookup) {
-        return 'scheduled';
-      }
-
-      if (isNew)
-        // if its create
-        return '';
-      const output =
-        r && r.salesforce && r.salesforce.soql && r.salesforce.soql.query;
-
-      return output ? 'scheduled' : 'realtime';
+      return 'scheduled';
     },
     options: [
       {
@@ -93,17 +82,7 @@ export default {
         ],
       },
     ],
-    visible: r => !(r && r.isLookup),
-    visibleWhen: r => {
-      if (r && r.isLookup) return [];
-
-      return [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ];
-    },
+    visible: false,
   },
   'salesforce.soql.query': {
     type: 'editor',

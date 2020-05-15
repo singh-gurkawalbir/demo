@@ -32,6 +32,8 @@ export default {
       isCategoryMapping,
     } = params;
     const {
+      resourceId,
+      flowId,
       connectionId,
       recordType,
       isComposite,
@@ -554,14 +556,9 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          importType: 'netsuite',
-          connectionId,
-          extractFields,
-          fieldMetadata,
-          fieldId,
-          recordType,
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
@@ -803,8 +800,7 @@ export default {
 
     if (
       fieldMetadata &&
-      fieldMetadata.type !== 'date' &&
-      fieldMetadata.type !== 'datetime'
+      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
     ) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;

@@ -71,6 +71,17 @@ export default {
         function: entryFunction,
         _scriptId: scriptId,
       };
+      patches.foregroundPatches.push({
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      });
     }
 
     patches.foregroundPatches.push({
@@ -83,18 +94,6 @@ export default {
       ],
       resourceType,
       resourceId,
-    });
-
-    patches.foregroundPatches.push({
-      patch: [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ],
-      resourceType: 'scripts',
-      resourceId: scriptId,
     });
 
     // console.log(patches);

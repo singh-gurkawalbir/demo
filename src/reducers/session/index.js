@@ -25,6 +25,7 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
+import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import customSettings, * as fromCustomSettings from './customSettings';
 
@@ -54,6 +55,7 @@ export default combineReducers({
   responseMapping,
   fileUpload,
   jobErrorsPreview,
+  errorManagement,
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
@@ -557,6 +559,51 @@ export function getJobErrorsPreview(state, jobId) {
   return fromJobErrorsPreview.getJobErrorsPreview(
     state && state.jobErrorsPreview,
     jobId
+  );
+}
+
+export function resourceErrors(state, { flowId, resourceId, options }) {
+  return fromErrorManagement.resourceErrors(state && state.errorManagement, {
+    flowId,
+    resourceId,
+    options,
+  });
+}
+
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, isResolved, errorIds }
+) {
+  return fromErrorManagement.isAllErrorsSelected(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      isResolved,
+      errorIds,
+    }
+  );
+}
+
+export function errorMap(state, resourceId) {
+  return fromErrorManagement.errorMap(
+    state && state.errorManagement,
+    resourceId
+  );
+}
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromErrorManagement.errorActionsContext(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      actionType,
+      errorType,
+    }
   );
 }
 

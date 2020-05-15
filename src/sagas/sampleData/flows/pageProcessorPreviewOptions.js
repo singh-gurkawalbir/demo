@@ -17,7 +17,7 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
-import { isConnector } from '../../../utils/flows';
+import { isIntegrationApp } from '../../../utils/flows';
 
 function* getUIDataForResource({ resource, connection, flow }) {
   const { adaptorType, type, sampleData } = resource;
@@ -50,7 +50,7 @@ function* getUIDataForResource({ resource, connection, flow }) {
     }
   }
 
-  if (isConnector(flow) && sampleData) return sampleData;
+  if (isIntegrationApp(flow) && sampleData) return sampleData;
 }
 
 export default function* getPreviewOptionsForResource({ resource, flow }) {

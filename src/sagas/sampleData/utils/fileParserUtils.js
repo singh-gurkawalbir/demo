@@ -3,6 +3,7 @@ import { invert } from 'lodash';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { apiCallWithRetry } from '../../index';
 import csvOptions from '../../../components/AFE/CsvConfigEditor/options';
+import { processJsonSampleData } from '../../../utils/sampleData';
 
 /*
  * Below sagas are Parser sagas for resource sample data
@@ -67,10 +68,11 @@ export function* parseFileData({ sampleData, resource }) {
 
 /*
  * Given Sample data and fileDefinitionId , parses based on saved rules and returns JSON
+ * @output: { data: parsedSampleData}
  */
 export function* parseFileDefinition({ sampleData, resource }) {
   const { file = {} } = resource;
-  const { _fileDefinitionId } = file.fileDefinition || {};
+  const { _fileDefinitionId, resourcePath } = file.fileDefinition || {};
 
   if (!_fileDefinitionId || !sampleData) return {};
 
@@ -88,6 +90,23 @@ export function* parseFileDefinition({ sampleData, resource }) {
       hidden: true,
     });
 
+    // Incase of resourcePath provided by user for a file definition
+    // this util extracts passed path's data from the fileDefinitionSampleData
+    // @Bug fix IO-15029
+    if (
+      resourcePath &&
+      parsedFileDefinitionData &&
+      parsedFileDefinitionData.data
+    ) {
+      const { data: sampleData } = parsedFileDefinitionData || {};
+      const parsedSampleData = processJsonSampleData(sampleData, {
+        resourcePath,
+      });
+
+      return { data: parsedSampleData };
+    }
+
+    // If there is no resourcePath, returns the resulting parsedFileDefinitionData
     return parsedFileDefinitionData;
   } catch (e) {
     // Handle errors

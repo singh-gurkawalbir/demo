@@ -216,13 +216,19 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export?',
+      label: r => {
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'What would you like to transfer?';
+
+        return 'What would you like to export?';
+      },
     },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
       label: 'Output mode',
       required: true,
+      visible: false,
       options: [
         {
           items: [
@@ -231,21 +237,9 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const isNew = isNewId(r._id);
-
-        // if its create
-        if (isNew) return 'records';
-        const output = r && r.type;
-
-        if (output === 'blob') return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
         return 'records';
       },

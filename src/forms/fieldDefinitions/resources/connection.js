@@ -112,6 +112,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'LogiSense', value: 'logisense' },
           { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
@@ -632,6 +633,7 @@ export default {
   'rest.pingRelativeURI': {
     type: 'text',
     label: 'Ping URI',
+    required: true,
   },
   'rest.pingSuccessPath': {
     type: 'text',
@@ -2535,11 +2537,8 @@ export default {
   },
   // #endregion dynamodb
   settings: {
-    type: 'editor',
-    mode: 'json',
-    label: 'Settings',
-    developerModeOnly: true,
-    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+    type: 'settings',
+    defaultValue: r => r && r.settings,
   },
   // #region custom connection
 };

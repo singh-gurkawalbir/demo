@@ -14,7 +14,7 @@ export default {
     disabled,
     storeId,
   }) {
-    // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isConnector
+    // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isIntegrationApp
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();
     const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
