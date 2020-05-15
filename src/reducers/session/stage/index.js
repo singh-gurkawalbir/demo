@@ -2,6 +2,9 @@ import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
+const emptyList = [];
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const {
     type,
@@ -199,13 +202,16 @@ export const makeTransformStagedResource = () =>
     (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
   );
 
-export function getAllResourceConflicts(state) {
-  if (!state) {
-    return emptyList;
-  }
+export const getAllResourceConflicts = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return emptyList;
+    }
 
-  return Object.keys(state)
-    .filter(rId => state[rId] && state[rId].conflict)
-    .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
-}
+    return Object.keys(state)
+      .filter(rId => state[rId] && state[rId].conflict)
+      .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
+  }
+);
 // #endregion

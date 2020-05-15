@@ -380,7 +380,6 @@ export default {
       root: {
         fontFamily: 'source sans pro',
         fontSize: 14,
-        marginBottom: 8,
         lineHeight: '24px',
         color: colors.celigoNeutral6,
         '&.Mui-required': {
@@ -408,7 +407,7 @@ export default {
         border: '1px solid',
         borderColor: colors.celigoNeutral3,
         height: 38,
-        fontSize: 16,
+        fontSize: 15,
         padding: '0px 12px',
         boxSizing: 'border-box',
         borderRadius: 2,

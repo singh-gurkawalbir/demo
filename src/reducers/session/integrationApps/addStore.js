@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const { id, type, update, steps, installerFunction, message } = action;
   let step;
@@ -70,7 +72,7 @@ export default (state = {}, action) => {
 
 export function addNewStoreSteps(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   return state[id];

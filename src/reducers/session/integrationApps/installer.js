@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const { id, type, update } = action;
 
@@ -37,7 +39,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function integrationAppsInstaller(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   return state[id];

@@ -911,6 +911,29 @@ export function nextDataFlowsForFlow(state, flow) {
   return getNextDataFlows(flows, flow);
 }
 
+export function isIAConnectionSetupPending(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!connection._connectorId) {
+    return;
+  }
+
+  const { _integrationId } = connection;
+  const integration = resource(state, 'integrations', _integrationId);
+
+  if (integration && integration.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep.completed) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function isConnectionOffline(state, id) {
   const connection = resource(state, 'connections', id);
 
@@ -3225,11 +3248,11 @@ export function optionsMapFromMetadata(
   );
 }
 
-export const getPreBuiltFileDefinitions = (state, format) =>
-  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+export const preBuiltFileDefinitions = (state, format) =>
+  fromData.preBuiltFileDefinitions(state && state.data, format);
 
-export const getFileDefinition = (state, definitionId, options) =>
-  fromData.getFileDefinition(state && state.data, definitionId, options);
+export const fileDefinition = (state, definitionId, options) =>
+  fromData.fileDefinition(state && state.data, definitionId, options);
 
 export function metadataOptionsAndResources({
   state,
@@ -3841,11 +3864,40 @@ export function getCustomResourceLabel(
 
   // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
   // The Below resource labels override the default labels above
-  if (flowId) {
-    if (isNewResource && resourceType === 'exports') {
-      resourceLabel = isLookup ? 'Lookup' : 'Source';
-    } else if (isNewResource && resourceType === 'imports') {
+  if (flowId && isNewResource) {
+    if (resource.resourceType === 'exportRecords') {
+      resourceLabel = 'Export';
+    } else if (
+      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
+    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+      resourceLabel = 'Listener';
+    } else if (resource.resourceType === 'importRecords') {
       resourceLabel = 'Import';
+    } else if (resource.resourceType === 'lookupRecords') {
+      resourceLabel = 'Lookup';
+    }
+  } else if (flowId) {
+    if (
+      ([
+        'RESTExport',
+        'HTTPExport',
+        'NetSuiteExport',
+        'SalesforceExport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.type === 'blob') ||
+      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ([
+        'RESTImport',
+        'HTTPImport',
+        'NetSuiteImport',
+        'SalesforceImport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.blobKeyPath) ||
+      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
     }
   }
 

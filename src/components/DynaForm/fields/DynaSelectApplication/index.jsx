@@ -101,7 +101,7 @@ export default function SelectApplication(props) {
     }),
     control: () => ({
       minWidth: 365,
-      height: '48px',
+      height: '38px',
       border: '1px solid',
       borderColor: theme.palette.divider,
       borderRadius: '2px',
@@ -134,6 +134,7 @@ export default function SelectApplication(props) {
     placeholder: () => ({
       color: theme.palette.secondary.light,
       position: 'absolute',
+      height: '100%',
     }),
     indicatorSeparator: () => ({
       display: 'none',
@@ -157,7 +158,7 @@ export default function SelectApplication(props) {
     }),
     dropdownIndicator: () => ({
       color: theme.palette.secondary.light,
-      padding: '8px',
+      padding: theme.spacing(0.5, 1, 0, 1),
       cursor: 'pointer',
       '&:hover': {
         color: fade(theme.palette.secondary.light, 0.8),

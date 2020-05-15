@@ -99,6 +99,7 @@ export default {
     'dynamodb',
     'loopreturns',
     'orderful',
+    'logisense',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

@@ -101,7 +101,7 @@ function DynaFileDefinitionEditor(props) {
     let template;
 
     if (definitionId && format) {
-      template = selectors.getFileDefinition(state, definitionId, {
+      template = selectors.fileDefinition(state, definitionId, {
         format,
         resourceType,
       });

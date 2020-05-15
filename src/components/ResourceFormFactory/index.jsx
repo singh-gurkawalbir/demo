@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import Spinner from '../Spinner';
 
 const Form = props => {
   const { fieldMeta } = props;
@@ -18,8 +19,17 @@ const Form = props => {
   return <DynaForm {...props} formKey={formKey} />;
 };
 
+const useStyles = makeStyles({
+  spinnerWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
 export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const { fieldMeta } = props;
+  const classes = useStyles();
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
 
@@ -43,7 +53,11 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   }, [fieldMeta, remountForm]);
 
   if (!formState.initComplete) {
-    return <Typography>Initializing Form</Typography>;
+    return (
+      <div className={classes.spinnerWrapper}>
+        <Spinner />
+      </div>
+    );
   }
 
   console.log('rerender FormStateManager');
