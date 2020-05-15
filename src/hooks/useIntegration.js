@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { isConnector } from '../utils/flows';
+import { isIntegrationApp } from '../utils/flows';
 import * as selectors from '../reducers';
 
 // returns integrationId of the resource
@@ -14,21 +14,24 @@ const useIntegration = (resourceType, resourceId) => {
     return resourceId;
   }
 
-  const isConnectorResource = isConnector(resource);
+  const isIAResource = isIntegrationApp(resource);
 
-  if (isConnectorResource || resourceType === 'flows') {
+  if (isIAResource || resourceType === 'flows') {
     return resource._integrationId;
   }
 
   const url = history.location.pathname;
   const urlExtractFields = url.split('/');
-
   // TODO: find a better way, prone to errors
-  if (urlExtractFields[2] !== 'integrations') {
+  const index = urlExtractFields.findIndex(
+    element => element === 'integrations'
+  );
+
+  if (index === -1) {
     return undefined;
   }
 
-  return urlExtractFields[3];
+  return urlExtractFields[index + 1];
 };
 
 export default useIntegration;

@@ -4,7 +4,10 @@ import EditorField from '../../DynaEditor';
 const useStyles = makeStyles({
   editor: {
     height: 200,
-    width: 300,
+  },
+  // TODO: @Azhar, editor should be displayed as an enclosed box
+  wrapper: {
+    width: '100%',
   },
 });
 
@@ -14,8 +17,8 @@ export default function RawView({ onToggleClick, ...rest }) {
   // Only developers would ever see this raw settings view, so we can safely
   // render the toggle editor button with no other conditions.
   return (
-    <div>
-      <Button variant="contained" onClick={onToggleClick}>
+    <div className={classes.wrapper}>
+      <Button variant="outlined" color="secondary" onClick={onToggleClick}>
         Toggle form editor
       </Button>
       <EditorField

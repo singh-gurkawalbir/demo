@@ -90,6 +90,9 @@ export default function DynaSettings(props) {
     },
     [id, onFieldChange]
   );
+  const handleExpandClick = useCallback(() => setShouldExpand(!shouldExpand), [
+    shouldExpand,
+  ]);
   const handleEditClose = useCallback(() => history.goBack(), [history]);
   const hasSettingsForm =
     settingsForm && (settingsForm.form || settingsForm.init);
@@ -109,10 +112,9 @@ export default function DynaSettings(props) {
         // eslint-disable-next-line react/no-array-index-key
         expanded={shouldExpand}>
         <ExpansionPanelSummary
-          // REVIEW: what is data-test used for??
-          // data-test={settingsContainer.label}
+          data-test={settingsContainer.label}
           className={classes.expPanelSummary}
-          onClick={() => setShouldExpand(expand => !expand)}
+          onClick={handleExpandClick}
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.label}>
             {settingsContainer.label}

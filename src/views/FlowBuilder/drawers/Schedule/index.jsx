@@ -28,7 +28,7 @@ export default function ScheduleDrawer({
   const handleClose = useCallback(() => history.goBack(), [history]);
   const classes = useStyle();
 
-  // TODO: Connector specific things to be added for schedule drawer incase of !isViewMode && isConnector
+  // TODO: Connector specific things to be added for schedule drawer incase of !isViewMode && isIntegrationApp
   return (
     <RightDrawer path="schedule" width="medium" title="Flow schedule">
       <FlowSchedule
