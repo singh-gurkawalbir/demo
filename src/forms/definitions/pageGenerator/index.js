@@ -4,6 +4,7 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
+import { sourceOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -30,10 +31,13 @@ export default {
 
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
+      newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
       newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
+      newValues['/resourceType'] = type;
+
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
       if (application === 'webhook') {
@@ -63,24 +67,38 @@ export default {
     type: {
       id: 'type',
       name: 'type',
-      type: 'radiogroup',
-      label: 'This application supports two options for exporting data',
-      defaultValue: r => (r && r.type) || 'api',
+      type: 'select',
+      label: 'What would you like to do?',
       required: true,
-      options: [
-        {
-          items: [
-            { label: 'API', value: 'api' },
-            { label: 'Webhook', value: 'webhook' },
-          ],
-        },
-      ],
-      visibleWhen: [
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
         {
           field: 'application',
-          is: getWebhookConnectors().map(connector => connector.id),
+          isNot: [''],
         },
       ],
+    },
+    connection: {
+      id: 'connection',
+      name: '/_connectionId',
+      type: 'selectresource',
+      resourceType: 'connections',
+      label: 'Connection',
+      defaultValue: r => (r && r._connectionId) || '',
+      required: true,
+      refreshOptionsOnChangesTo: ['application'],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [
+            '',
+            ...getWebhookOnlyConnectors().map(connector => connector.id),
+          ],
+        },
+        { field: 'type', isNot: ['webhook'] },
+      ],
+      allowNew: true,
+      allowEdit: true,
     },
 
     existingExport: {
@@ -99,30 +117,11 @@ export default {
           field: 'application',
           isNot: [''],
         },
-      ],
-    },
-
-    connection: {
-      id: 'connection',
-      name: '/_connectionId',
-      type: 'selectresource',
-      resourceType: 'connections',
-      label: 'Connection',
-      defaultValue: r => (r && r._connectionId) || '',
-      required: true,
-      refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [
         {
-          field: 'application',
-          isNot: [
-            '',
-            ...getWebhookOnlyConnectors().map(connector => connector.id),
-          ],
+          field: 'connection',
+          isNot: [''],
         },
-        { field: 'type', is: ['api'] },
       ],
-      allowNew: true,
-      allowEdit: true,
     },
   },
   layout: {
@@ -132,6 +131,35 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
+
+    if (fieldId === 'type') {
+      const typeField = fields.find(field => field.id === 'type');
+      let options = sourceOptions[app.assistant || app.type];
+
+      if (!options) {
+        if (app.assistant && app.webhook) {
+          options = [
+            {
+              label: 'Export records from source application',
+              value: 'exportRecords',
+            },
+            {
+              label: 'Listen for real-time data from source application',
+              value: 'webhook',
+            },
+          ];
+        } else options = sourceOptions.common || [];
+      }
+
+      typeField.value = options && options[0] && options[0].value;
+      typeField.disabled = options && options.length === 1;
+
+      return [
+        {
+          items: options,
+        },
+      ];
+    }
 
     if (fieldId === 'connection') {
       const expression = [];
@@ -198,16 +226,29 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
+      if (['netsuite', 'salesforce'].indexOf(app.type) >= 0) {
+        if (type === 'realtime') {
+          expression.push({ type: 'distributed' });
+        } else {
+          expression.push({ type: { $ne: 'distributed' } });
+        }
+      }
+
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
+      let label = isWebhook
+        ? 'Would you like to use an existing listener?'
+        : exportField.label;
+
+      if (type === 'transferFiles') {
+        label = 'Would you like to use an existing transfer?';
+      }
 
       return {
         filter,
         appType: app.type,
         visible,
-        label: isWebhook
-          ? 'Would you like to use an existing listener?'
-          : exportField.label,
+        label,
       };
     }
 
