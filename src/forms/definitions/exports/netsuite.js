@@ -145,32 +145,12 @@ export default {
       type: 'radiogroup',
       label: 'Execution type',
       required: true,
-      visible: r => !(r && r.isLookup),
-      visibleWhen: r => {
-        if (r && r.isLookup) return [];
-
-        return [
-          {
-            field: 'outputMode',
-            is: ['records'],
-          },
-        ];
-      },
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
+      visible: false,
       defaultValue: r => {
-        const netsuiteType = r && r.netsuite && r.netsuite.type;
+        if (r.resourceType === 'realtime' || r.type === 'distributed')
+          return 'distributed';
 
-        if (r && r.isLookup) return 'scheduled';
-
-        if (netsuiteType) {
-          return netsuiteType === 'distributed' ? 'distributed' : 'scheduled';
-        }
+        return 'scheduled';
       },
       options: [
         {
@@ -185,6 +165,7 @@ export default {
       id: 'outputMode',
       type: 'mode',
       label: 'Output mode',
+      visible: false,
       options: [
         {
           items: [
@@ -193,22 +174,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
       defaultValue: r => {
-        const isNew = isNewId(r._id);
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
-        // if its create
-        if (isNew) return 'records';
-
-        const outputMode = r && r.netsuite && r.netsuite.internalId;
-
-        return outputMode ? 'blob' : 'records';
+        return 'records';
       },
     },
     'netsuite.api.type': {
