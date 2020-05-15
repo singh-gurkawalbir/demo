@@ -906,7 +906,6 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       'rest.method',
       'rest.blobMethod',
       'rest.headers',
@@ -940,6 +939,7 @@ export default {
       'sampleDataTitle',
       'sampleData',
       'dataMappings',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

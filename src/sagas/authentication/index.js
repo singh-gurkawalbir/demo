@@ -69,7 +69,7 @@ export function* retrievingAssistantDetails() {
     'intercom',
     'segment',
     'shipwire',
-    'shoplify',
+    'shopify',
     'slack',
     'stripe',
     'travis',

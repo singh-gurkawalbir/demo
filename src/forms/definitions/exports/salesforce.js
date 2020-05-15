@@ -140,6 +140,7 @@ export default {
           ],
         },
       ],
+      visible: false,
       defaultValue: r => {
         if (r.resourceType === 'lookupFiles' || r.type === 'blob')
           return 'blob';

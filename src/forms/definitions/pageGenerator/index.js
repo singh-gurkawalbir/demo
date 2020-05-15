@@ -4,7 +4,7 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { exportFileProviderOptions } from '../../utils';
+import { sourceOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -131,7 +131,7 @@ export default {
 
     if (fieldId === 'type') {
       const typeField = fields.find(field => field.id === 'type');
-      let options = exportFileProviderOptions[app.assistant || app.type];
+      let options = sourceOptions[app.assistant || app.type];
 
       if (!options) {
         if (app.assistant && app.webhook) {
@@ -145,7 +145,7 @@ export default {
               value: 'webhook',
             },
           ];
-        } else options = exportFileProviderOptions.default || [];
+        } else options = sourceOptions.common || [];
       }
 
       typeField.value = options && options[0] && options[0].value;

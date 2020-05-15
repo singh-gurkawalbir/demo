@@ -725,7 +725,7 @@ export const conditionalLookupOptionsforRestProduction = [
     value: 'extract_not_empty',
   },
 ];
-export const exportFileProviderOptions = {
+export const sourceOptions = {
   ftp: [
     {
       label: 'You can only transfer files using FTP',
@@ -738,46 +738,10 @@ export const exportFileProviderOptions = {
       value: 'transferFiles',
     },
   ],
-  http: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  rest: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
   webhook: [
     {
       label: 'Listen for real-time data from source applications',
       value: 'realtime',
-    },
-  ],
-  mysql: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  mssql: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  postgresql: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  mongodb: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
     },
   ],
   netsuite: [
@@ -800,68 +764,14 @@ export const exportFileProviderOptions = {
       value: 'realtime',
     },
   ],
-  slack: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-    {
-      label: 'Listen for real-time data from source applications',
-      value: 'webhook',
-    },
-  ],
-  box: [
-    {
-      label: 'Listen for real-time data from source applications',
-      value: 'webhook',
-    },
-  ],
-  dropbox: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-    {
-      label: 'Listen for real-time data from source applications',
-      value: 'webhook',
-    },
-  ],
-  as2: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  shopify: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-    {
-      label: 'Listen for real-time data from source applications',
-      value: 'webhook',
-    },
-  ],
-  zendesk: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  asana: [
-    {
-      label: 'Export records from source application',
-      value: 'exportRecords',
-    },
-  ],
-  default: [
+  common: [
     {
       label: 'Export records from source application',
       value: 'exportRecords',
     },
   ],
 };
-export const importFileProviderOptions = {
+export const destinationOptions = {
   ftp: [
     {
       label: 'Transfer files into destination application',
@@ -910,47 +820,6 @@ export const importFileProviderOptions = {
       value: 'lookupFiles',
     },
   ],
-  webhook: [],
-  mysql: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  mssql: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  postgresql: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  mongodb: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
   netsuite: [
     {
       label: 'Import records into destination application',
@@ -987,81 +856,14 @@ export const importFileProviderOptions = {
       value: 'lookupFiles',
     },
   ],
-  slack: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Transfer files into destination application',
-      value: 'transferFiles',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-    {
-      label: 'Lookup addition files (per record)',
-      value: 'lookupFiles',
-    },
-  ],
-  box: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  dropbox: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
+
   as2: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
     },
   ],
-  shopify: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  zendesk: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  asana: [
-    {
-      label: 'Import records into destination application',
-      value: 'importRecords',
-    },
-    {
-      label: 'Lookup addition records (per record)',
-      value: 'lookupRecords',
-    },
-  ],
-  default: [
+  common: [
     {
       label: 'Import records into destination application',
       value: 'importRecords',

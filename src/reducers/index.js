@@ -3809,14 +3809,13 @@ export function getCustomResourceLabel(
     }
   } else if (flowId) {
     if (
-      (['RESTExport', 'HTTPExport'].indexOf(resource.adaptorType) >= 0 &&
+      ([
+        'RESTExport',
+        'HTTPExport',
+        'NetSuiteExport',
+        'SalesforceExport',
+      ].indexOf(resource.adaptorType) >= 0 &&
         resource.type === 'blob') ||
-      (['NetSuiteExport'].indexOf(resource.adaptorType) >= 0 &&
-        resource.netsuite &&
-        resource.netsuite.internalId) ||
-      (['SalesforceExport'].indexOf(resource.adaptorType) >= 0 &&
-        resource.salesforce &&
-        resource.salesforce.id) ||
       ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
       ([
         'RESTImport',

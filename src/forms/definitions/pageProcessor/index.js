@@ -1,7 +1,7 @@
 import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { importFileProviderOptions } from '../../utils';
+import { destinationOptions } from '../../utils';
 
 const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
@@ -143,10 +143,10 @@ export default {
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
 
     if (fieldId === 'resourceType') {
-      let options = importFileProviderOptions[app.assistant || app.type];
+      let options = destinationOptions[app.assistant || app.type];
 
       if (!options) {
-        options = importFileProviderOptions.default || [];
+        options = destinationOptions.common || [];
       }
 
       resourceTypeField.value = options && options[0] && options[0].value;

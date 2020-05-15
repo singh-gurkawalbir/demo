@@ -1452,7 +1452,6 @@ export default {
       'inputMode',
       'importData',
       'dataMappings',
-      'blobKeyPath',
       'http.method',
       'http.blobMethod',
       'http.headers',
@@ -1500,6 +1499,7 @@ export default {
       'uploadFile',
       'file.csv',
       'file.csv.customHeaderRows',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

@@ -70,7 +70,7 @@ export default {
     label: 'Execution type',
     defaultValue: r => {
       if (r.resourceType === 'realtime' || r.type === 'distributed')
-        return 'distributed';
+        return 'realtime';
 
       return 'scheduled';
     },

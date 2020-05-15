@@ -226,7 +226,6 @@ export default {
       'apiType',
       'salesforce.api',
       'importData',
-      'blobKeyPath',
       'salesforce.lookups',
       'salesforce.sObjectType',
       'salesforce.operation',
@@ -257,6 +256,7 @@ export default {
       'salesforce.upsert.externalIdField',
       'salesforce.idLookup.extract',
       'dataMappings',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

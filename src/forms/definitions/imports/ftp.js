@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = {
@@ -203,6 +205,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
 
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
@@ -248,7 +257,6 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       'ftp.directoryPath',
       'fileType',
       'ftp.fileName',
@@ -259,6 +267,7 @@ export default {
       'ftp.blobInProgressFileName',
       'dataMappings',
       'file.lookups',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

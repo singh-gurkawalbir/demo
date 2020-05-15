@@ -119,7 +119,6 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       'distributed',
       'netsuite_da.recordType',
       'netsuite_da.mapping',
@@ -134,6 +133,7 @@ export default {
       'netsuite.file.fileType',
       'netsuite.file.folder',
       'dataMappings',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

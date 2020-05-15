@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   preSave: formValues => {
     const newValues = {
@@ -104,6 +106,13 @@ export default {
           ],
         },
       ],
+      defaultDisabled: r => {
+        const isNew = isNewId(r._id);
+
+        if (!isNew) return true;
+
+        return false;
+      },
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     's3.region': {
@@ -189,7 +198,6 @@ export default {
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       's3.region',
       's3.bucket',
       'fileType',
@@ -198,6 +206,7 @@ export default {
       'file',
       'dataMappings',
       'file.lookups',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [
