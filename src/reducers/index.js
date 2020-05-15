@@ -863,6 +863,29 @@ export function nextDataFlowsForFlow(state, flow) {
   return getNextDataFlows(flows, flow);
 }
 
+export function isIAConnectionSetupPending(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!connection._connectorId) {
+    return;
+  }
+
+  const { _integrationId } = connection;
+  const integration = resource(state, 'integrations', _integrationId);
+
+  if (integration && integration.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep.completed) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function isConnectionOffline(state, id) {
   const connection = resource(state, 'connections', id);
 
