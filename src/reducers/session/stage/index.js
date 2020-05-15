@@ -151,9 +151,6 @@ export default (state = {}, action) => {
   });
 };
 
-const emptyObj = {};
-const emptyList = [];
-
 export function stagedIdState(state, id) {
   if (!state || !id || !state[id]) {
     return null;
