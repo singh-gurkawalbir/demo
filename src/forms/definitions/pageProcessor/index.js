@@ -60,11 +60,6 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      options: [
-        {
-          items: [],
-        },
-      ],
     },
     application: {
       id: 'application',

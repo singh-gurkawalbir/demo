@@ -77,11 +77,6 @@ export default {
           isNot: [''],
         },
       ],
-      options: [
-        {
-          items: [],
-        },
-      ],
     },
 
     existingExport: {

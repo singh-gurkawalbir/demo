@@ -55,6 +55,7 @@ export default {
     skipRetries: {
       fieldId: 'skipRetries',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   },
   layout: {
     fields: [
@@ -66,6 +67,7 @@ export default {
       'pageSize',
       'dataURITemplate',
       'skipRetries',
+      'apiIdentifier',
     ],
   },
 };
