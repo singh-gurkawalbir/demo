@@ -866,6 +866,22 @@ export function nextDataFlowsForFlow(state, flow) {
 export function isConnectionOffline(state, id) {
   const connection = resource(state, 'connections', id);
 
+  //  check if integration install step is completed. If install step is not yet complete, connection offline panel shouldn't be shown to user
+  if (connection && connection._connectorId) {
+    const { _integrationId } = connection;
+    const integration = resource(state, 'integrations', _integrationId);
+
+    if (integration && integration.install) {
+      const installStep = integration.install.find(
+        step => step._connectionId === id
+      );
+
+      if (!installStep.completed) {
+        return undefined;
+      }
+    }
+  }
+
   return connection && connection.offline;
 }
 
