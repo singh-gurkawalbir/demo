@@ -3177,11 +3177,11 @@ export function optionsMapFromMetadata(
   );
 }
 
-export const getPreBuiltFileDefinitions = (state, format) =>
-  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+export const preBuiltFileDefinitions = (state, format) =>
+  fromData.preBuiltFileDefinitions(state && state.data, format);
 
-export const getFileDefinition = (state, definitionId, options) =>
-  fromData.getFileDefinition(state && state.data, definitionId, options);
+export const fileDefinition = (state, definitionId, options) =>
+  fromData.fileDefinition(state && state.data, definitionId, options);
 
 export function metadataOptionsAndResources({
   state,
