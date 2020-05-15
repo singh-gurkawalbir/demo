@@ -38,4 +38,5 @@ export default [
   { name: 'MMDDYYYY hh-mm-ss', value: 'MMDDYYYY hh-mm-ss' },
   { name: 'YYYY-MM-DD hh:mm:ss', value: 'YYYY-MM-DD hh:mm:ss' },
   { name: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
+  { name: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
 ];

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const defaultState = {
@@ -34,36 +35,40 @@ export default (state = defaultState, action) => {
   }
 };
 
-export function userNotifications(state) {
-  const notifications = emptySet;
+export const userNotifications = createSelector(
+  state => state && state.accounts,
+  state => state && state.stacks,
+  (accounts, stacks) => {
+    const notifications = emptySet;
 
-  if (!state) {
+    if (!accounts || !stacks) {
+      return notifications;
+    }
+
+    accounts &&
+      accounts.forEach(a => {
+        notifications.push({
+          id: a._id,
+          type: 'account',
+          nameOrCompany: a.ownerUser.name || a.ownerUser.company,
+          email: a.ownerUser.email,
+          // secondaryMessage: `${a.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
+        });
+      });
+
+    stacks &&
+      stacks.forEach(s => {
+        notifications.push({
+          id: s._id,
+          type: 'stack',
+          nameOrCompany: s.ownerUser.name || s.ownerUser.company,
+          email: s.ownerUser.email,
+          stackName: s.stack.name || s.stack._id,
+          // secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
+          //   .name || s.stack._id}" with you. Please accept or decline this.`,
+        });
+      });
+
     return notifications;
   }
-
-  state.accounts &&
-    state.accounts.forEach(a => {
-      notifications.push({
-        id: a._id,
-        type: 'account',
-        nameOrCompany: a.ownerUser.name || a.ownerUser.company,
-        email: a.ownerUser.email,
-        // secondaryMessage: `${a.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
-      });
-    });
-
-  state.stacks &&
-    state.stacks.forEach(s => {
-      notifications.push({
-        id: s._id,
-        type: 'stack',
-        nameOrCompany: s.ownerUser.name || s.ownerUser.company,
-        email: s.ownerUser.email,
-        stackName: s.stack.name || s.stack._id,
-        // secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
-        //   .name || s.stack._id}" with you. Please accept or decline this.`,
-      });
-    });
-
-  return notifications;
-}
+);

@@ -800,8 +800,7 @@ export default {
 
     if (
       fieldMetadata &&
-      fieldMetadata.type !== 'date' &&
-      fieldMetadata.type !== 'datetime'
+      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
     ) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;
