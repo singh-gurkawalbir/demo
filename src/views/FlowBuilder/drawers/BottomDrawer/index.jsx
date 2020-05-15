@@ -118,9 +118,9 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
-  );
+  // Hard coded to false as we need to show bottom drawer
+  // till the new drawers are fully functional
+  const isUserInErrMgtTwoDotZero = false;
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,

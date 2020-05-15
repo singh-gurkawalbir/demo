@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     left: 500,
     width: 300,
-    background: '#D6E4ED',
+    background: theme.palette.secondary.lightest,
   },
   refresh: {
     color: theme.palette.primary.main,

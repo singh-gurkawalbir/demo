@@ -240,7 +240,7 @@ const useStyles = makeStyles(theme => ({
   divider: {
     width: 1,
     height: 30,
-    border: `1px solid #677A89`,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
   },
 }));
