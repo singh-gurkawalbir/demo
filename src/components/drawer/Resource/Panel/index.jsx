@@ -11,6 +11,7 @@ import { generateNewId, isNewId } from '../../../../utils/resource';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ActionsFactory from './ActionsFactory';
+import useDrawerEditUrl from './useDrawerEditUrl';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -181,9 +182,7 @@ export default function Panel(props) {
     'pageProcessor',
   ].includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
-  const editUrl = useSelector(state =>
-    selectors.drawerEditUrl(state, resourceType, id, location.pathname)
-  );
+  const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
   const handleSubmitComplete = useCallback(() => {
     if (isNew) {
       // The following block of logic is used specifically for pageProcessor

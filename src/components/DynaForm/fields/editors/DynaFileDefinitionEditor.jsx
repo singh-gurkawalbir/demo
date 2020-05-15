@@ -43,12 +43,13 @@ function DynaFileDefinitionEditor(props) {
     resourceId,
     resourceType,
     onFieldChange,
-    formContext,
     userDefinitionId,
     options = {},
     value,
     disabled,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
   const dispatch = useDispatch();
@@ -215,10 +216,4 @@ function DynaFileDefinitionEditor(props) {
   );
 }
 
-const DynaFileDefinitionEditorWithFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaFileDefinitionEditor {...props} formContext={form} />;
-};
-
-export default DynaFileDefinitionEditorWithFormContext;
+export default DynaFileDefinitionEditor;

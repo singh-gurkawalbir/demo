@@ -25,11 +25,7 @@ export default function useFormInitWithPermissions(props) {
       fieldIDsExceptClockedFields(fieldsMeta, resourceType).forEach(fieldId => {
         fieldId &&
           dispatch(
-            actions.form.field.forceFieldState(formKey)(
-              fieldId,
-              undefined,
-              true
-            )
+            actions.form.forceFieldState(formKey)(fieldId, undefined, true)
           );
       });
     }

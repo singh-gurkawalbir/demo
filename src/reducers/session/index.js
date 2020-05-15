@@ -64,14 +64,14 @@ export default combineReducers({
 // #region PUBLIC SELECTORS
 
 export const stageState = state => state && state.stage;
-export const getFormState = (state, formKey) =>
-  fromForm.getFormState(state && state.form, formKey);
+export const formState = (state, formKey) =>
+  fromForm.formState(state && state.form, formKey);
 
-export const getFormParentContext = (state, formKey) =>
-  fromForm.getFormParentContext(state && state.form, formKey);
+export const formParentContext = (state, formKey) =>
+  fromForm.formParentContext(state && state.form, formKey);
 
-export const getFieldState = (state, formKey, fieldId) =>
-  fromForm.getFieldState(state && state.form, formKey, fieldId);
+export const fieldState = (state, formKey, fieldId) =>
+  fromForm.fieldState(state && state.form, formKey, fieldId);
 
 export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
   fromForm.isActionButtonVisible(

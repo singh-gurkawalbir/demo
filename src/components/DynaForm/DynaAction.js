@@ -54,7 +54,8 @@ function DynaAction(props) {
 
 // field props are getting merged first
 const DynaActionWrapped = props => {
-  const form = useFormContext(props);
+  const { formKey } = props;
+  const form = useFormContext({ formKey });
 
   if (!form) return null;
 

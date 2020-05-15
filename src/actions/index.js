@@ -27,54 +27,52 @@ function action(type, payload = {}) {
 
 // #region this form specific source code, please be careful when making changes to the interface
 const form = {
-  formInit: (formKey, formSpecificProps) =>
+  init: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
-  formClear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
+  clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   formUpdate: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
-  field: {
-    registerField: formKey => fieldProps =>
-      action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
-    onFieldChange: formKey => (id, value, skipFieldTouched) =>
-      action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
-        formKey,
-        fieldProps: { id, value, skipFieldTouched },
-      }),
-    onFieldBlur: formKey => id =>
-      action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
-        formKey,
-        fieldProps: { id },
-      }),
-    onFieldFocus: formKey => id =>
-      action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, {
-        formKey,
-        fieldProps: { id },
-      }),
-    forceFieldState: formKey => (
-      id,
-      visible,
-      disabled,
-      required,
-      isValid,
-      errorMessages
-    ) =>
-      action(actionTypes.FORM.FIELD.FORCE_STATE, {
-        formKey,
-        fieldProps: {
-          id,
-          visible,
-          disabled,
-          required,
-          isValid,
-          errorMessages,
-        },
-      }),
-    clearForceFieldState: formKey => id =>
-      action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
-        formKey,
-        fieldProps: { id },
-      }),
-  },
+  registerField: formKey => fieldProps =>
+    action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
+  fieldChange: formKey => (id, value, skipFieldTouched) =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
+      formKey,
+      fieldProps: { id, value, skipFieldTouched },
+    }),
+  fieldBlur: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
+      formKey,
+      fieldProps: { id },
+    }),
+  fieldFocus: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, {
+      formKey,
+      fieldProps: { id },
+    }),
+  forceFieldState: formKey => (
+    id,
+    visible,
+    disabled,
+    required,
+    isValid,
+    errorMessages
+  ) =>
+    action(actionTypes.FORM.FIELD.FORCE_STATE, {
+      formKey,
+      fieldProps: {
+        id,
+        visible,
+        disabled,
+        required,
+        isValid,
+        errorMessages,
+      },
+    }),
+  clearForceFieldState: formKey => id =>
+    action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
+      formKey,
+      fieldProps: { id },
+    }),
 };
 // #endregion
 const auth = {

@@ -45,7 +45,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.formInit(formKey, {
+          actions.form.init(formKey, {
             fieldsMeta,
             showValidationBeforeTouched: true,
           })
@@ -63,7 +63,7 @@ describe('reducer expression test cases', () => {
       test('should show no warnings for FIELD1 and FIELD2 when we fullfil both of their validWhen criteria', () => {
         const nextFormState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', '456')
+          actions.form.fieldChange(formKey)('FIELD1', '456')
         );
 
         // verify FIELD2 maintains the same instance since FIELD2 was unaffected from FIELD1 on change
@@ -73,7 +73,7 @@ describe('reducer expression test cases', () => {
 
         formState = forms(
           nextFormState,
-          actions.form.field.onFieldChange(formKey)('FIELD2', '236')
+          actions.form.fieldChange(formKey)('FIELD2', '236')
         );
         const { FIELD1, FIELD2 } = formState[formKey].fields;
 
@@ -85,7 +85,7 @@ describe('reducer expression test cases', () => {
       test('should show again FIELD1 is errored when its validWhen criteria is not met and the form state should be errored ', () => {
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', 'some text value')
+          actions.form.fieldChange(formKey)('FIELD1', 'some text value')
         );
         const { FIELD1, FIELD2 } = formState[formKey].fields;
 
@@ -133,7 +133,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.formInit(formKey, {
+          actions.form.init(formKey, {
             fieldsMeta,
           })
         );
@@ -151,7 +151,7 @@ describe('reducer expression test cases', () => {
         // touching the field with a text
         const nextFormState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', 'some value')
+          actions.form.fieldChange(formKey)('FIELD1', 'some value')
         );
 
         // verify FIELD2 maintains the same instance since FIELD2 was unaffected from FIELD1 on change
@@ -170,7 +170,7 @@ describe('reducer expression test cases', () => {
       test('should show no warnings when we fullfil again FIELD1 validWhen criteria', () => {
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', '123')
+          actions.form.fieldChange(formKey)('FIELD1', '123')
         );
         const { FIELD1, FIELD2 } = formState[formKey].fields;
 
@@ -209,7 +209,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.formInit(formKey, {
+        actions.form.init(formKey, {
           fieldsMeta,
         })
       );
@@ -224,7 +224,7 @@ describe('reducer expression test cases', () => {
     test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
       formState = forms(
         formState,
-        actions.form.field.onFieldChange(formKey)('FIELD2', 'standard')
+        actions.form.fieldChange(formKey)('FIELD2', 'standard')
       );
 
       const { FIELD1, FIELD2 } = formState[formKey].fields;
@@ -238,7 +238,7 @@ describe('reducer expression test cases', () => {
       // find a field with that default value
       formState = forms(
         formState,
-        actions.form.field.onFieldChange(formKey)('FIELD2', 'some other value')
+        actions.form.fieldChange(formKey)('FIELD2', 'some other value')
       );
 
       const { FIELD1, FIELD2 } = formState[formKey].fields;
@@ -277,7 +277,7 @@ describe('reducer expression test cases', () => {
     beforeAll(() => {
       formState = forms(
         undefined,
-        actions.form.formInit(formKey, {
+        actions.form.init(formKey, {
           fieldsMeta,
         })
       );
@@ -292,7 +292,7 @@ describe('reducer expression test cases', () => {
     test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
       formState = forms(
         formState,
-        actions.form.field.onFieldChange(formKey)('FIELD2', 'standard')
+        actions.form.fieldChange(formKey)('FIELD2', 'standard')
       );
 
       const { FIELD1, FIELD2 } = formState[formKey].fields;
@@ -306,7 +306,7 @@ describe('reducer expression test cases', () => {
       // find a field with that default value
       formState = forms(
         formState,
-        actions.form.field.onFieldChange(formKey)('FIELD2', 'some other value')
+        actions.form.fieldChange(formKey)('FIELD2', 'some other value')
       );
 
       const { FIELD1, FIELD2 } = formState[formKey].fields;
@@ -344,7 +344,7 @@ describe('reducer expression test cases', () => {
 
         const formState = forms(
           undefined,
-          actions.form.formInit(formKey, {
+          actions.form.init(formKey, {
             fieldsMeta,
           })
         );
@@ -384,7 +384,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.formInit(formKey, {
+          actions.form.init(formKey, {
             fieldsMeta,
           })
         );
@@ -397,7 +397,7 @@ describe('reducer expression test cases', () => {
       test('FIELD1 should be visible since we force it to take a field state', () => {
         formState = forms(
           formState,
-          actions.form.field.forceFieldState(formKey)('FIELD1', true)
+          actions.form.forceFieldState(formKey)('FIELD1', true)
         );
         const { FIELD1 } = formState[formKey].fields;
 
@@ -407,10 +407,7 @@ describe('reducer expression test cases', () => {
         // this should make field1 be invisible but it will state its previous state since we have forced it
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)(
-            'FIELD2',
-            'some other value'
-          )
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value')
         );
         const { FIELD1 } = formState[formKey].fields;
 
@@ -420,14 +417,11 @@ describe('reducer expression test cases', () => {
         // this should make field1 be invisible but it will state its previous state since we have forced it
         formState = forms(
           formState,
-          actions.form.field.clearForceFieldState(formKey)('FIELD1')
+          actions.form.clearForceFieldState(formKey)('FIELD1')
         );
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)(
-            'FIELD2',
-            'some other value1'
-          )
+          actions.form.fieldChange(formKey)('FIELD2', 'some other value1')
         );
         const { FIELD1 } = formState[formKey].fields;
 
@@ -460,7 +454,7 @@ describe('reducer expression test cases', () => {
       beforeAll(() => {
         formState = forms(
           undefined,
-          actions.form.formInit(formKey, {
+          actions.form.init(formKey, {
             fieldsMeta,
             showValidationBeforeTouched: true,
           })
@@ -476,7 +470,7 @@ describe('reducer expression test cases', () => {
       test('FIELD1 should be invalid because the field state has been forced', () => {
         formState = forms(
           formState,
-          actions.form.field.forceFieldState(formKey)(
+          actions.form.forceFieldState(formKey)(
             'FIELD1',
             null,
             null,
@@ -495,7 +489,7 @@ describe('reducer expression test cases', () => {
       test('FIELD1 should be invalid even after its validWhen criteria has been met', () => {
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', '123')
+          actions.form.fieldChange(formKey)('FIELD1', '123')
         );
         const { FIELD1 } = formState[formKey].fields;
 
@@ -507,11 +501,11 @@ describe('reducer expression test cases', () => {
       test('FIELD1 validWhen should kick start again after we clear the force computaion', () => {
         formState = forms(
           formState,
-          actions.form.field.clearForceFieldState(formKey)('FIELD1')
+          actions.form.clearForceFieldState(formKey)('FIELD1')
         );
         formState = forms(
           formState,
-          actions.form.field.onFieldChange(formKey)('FIELD1', '235')
+          actions.form.fieldChange(formKey)('FIELD1', '235')
         );
         const { FIELD1 } = formState[formKey].fields;
 

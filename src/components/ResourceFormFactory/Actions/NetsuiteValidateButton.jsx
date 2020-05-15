@@ -28,11 +28,11 @@ const NetsuiteValidateButton = props => {
     formKey,
   } = props;
   const onFieldChange = useCallback(
-    field => dispatch(actions.form.field.onFieldChange(formKey)(field)),
+    field => dispatch(actions.form.fieldChange(formKey)(field)),
     [dispatch, formKey]
   );
   const registerField = useCallback(
-    field => dispatch(actions.form.field.registerField(formKey)(field)),
+    field => dispatch(actions.form.registerField(formKey)(field)),
     [dispatch, formKey]
   );
   const handleValidate = values => {

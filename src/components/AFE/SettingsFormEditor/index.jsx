@@ -128,7 +128,7 @@ export default function SettingsFormEditor({
   });
   // TODO:verify this behaviour
   const { value: settingsPreview, isValid: settingsValid } = useSelector(
-    state => selectors.getFormState(state, formKey)
+    state => selectors.formState(state, formKey)
   );
 
   return (

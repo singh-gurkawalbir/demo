@@ -60,24 +60,20 @@ export default function useForm({
   // this controls form behaviour
   useEffect(() => {
     // generate a new formKey when none is provided
-    let formKeyUsedInUseEff = formKey;
 
-    if (!formKey) {
-      formKeyUsedInUseEff = generateNewId();
-      setFormKeyUsed(formKeyUsedInUseEff);
-    } else {
-      setFormKeyUsed(formKeyUsedInUseEff);
-    }
+    const finalFormKey = formKey || generateNewId();
 
-    if (formKeyUsedInUseEff && fieldsMeta) {
+    setFormKeyUsed(finalFormKey);
+
+    if (fieldsMeta) {
       dispatch(
-        actions.form.formInit(formKeyUsedInUseEff, {
+        actions.form.init(finalFormKey, {
           ...normalizeAllPropsToFormApi(formSpecificProps),
         })
       );
     }
 
-    return () => dispatch(actions.form.formClear(formKeyUsedInUseEff));
+    return () => dispatch(actions.form.clear(finalFormKey));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, remount, formKey]);
 
@@ -88,7 +84,7 @@ export default function useForm({
       Object.keys(metaValue).forEach(fieldId => {
         fieldId &&
           dispatch(
-            actions.form.field.onFieldChange(formKeyUsed)(
+            actions.form.fieldChange(formKeyUsed)(
               fieldId,
               metaValue[fieldId],
               true

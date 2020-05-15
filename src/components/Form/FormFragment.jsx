@@ -7,7 +7,7 @@ import getRenderer from '../DynaForm/renderer';
 export const FieldComponent = props => {
   const { formKey, id, renderer } = props;
   const fieldState = useSelector(
-    state => selectors.getFieldState(state, formKey, id),
+    state => selectors.fieldState(state, formKey, id),
     shallowEqual
   );
 
@@ -19,24 +19,24 @@ export const FieldComponent = props => {
 export default function FormFragment({ defaultFields, formKey }) {
   const dispatch = useDispatch();
   const formParentContext = useSelector(
-    state => selectors.getFormParentContext(state, formKey),
+    state => selectors.formParentContext(state, formKey),
     shallowEqual
   );
   const onFieldChange = useCallback(
     (fieldId, value) =>
-      dispatch(actions.form.field.onFieldChange(formKey)(fieldId, value)),
+      dispatch(actions.form.fieldChange(formKey)(fieldId, value)),
     [dispatch, formKey]
   );
   const onFieldBlur = useCallback(
-    fieldId => dispatch(actions.form.field.onFieldBlur(formKey)(fieldId)),
+    fieldId => dispatch(actions.form.fieldBlur(formKey)(fieldId)),
     [dispatch, formKey]
   );
   const onFieldFocus = useCallback(
-    fieldId => dispatch(actions.form.field.onFieldFocus(formKey)(fieldId)),
+    fieldId => dispatch(actions.form.fieldFocus(formKey)(fieldId)),
     [dispatch, formKey]
   );
   const registerField = useCallback(
-    field => dispatch(actions.form.field.registerField(formKey)(field)),
+    field => dispatch(actions.form.registerField(formKey)(field)),
     [dispatch, formKey]
   );
   const renderer = useCallback(

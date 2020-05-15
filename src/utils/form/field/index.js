@@ -25,15 +25,13 @@ export const getFirstDefinedValue = (...values) => {
 };
 
 export const splitDelimitedValue = (value, valueDelimiter) => {
-  if (valueDelimiter) {
-    if (typeof value === 'string') {
-      value = value.split(valueDelimiter);
-    } else if (!Array.isArray(value)) {
-      value = [];
-    }
+  if (!valueDelimiter || Array.isArray(value)) return value;
+
+  if (typeof value === 'string') {
+    return value.split(valueDelimiter);
   }
 
-  return value;
+  return [value];
 };
 
 export const shouldOptionsBeRefreshed = ({ lastFieldUpdated, field }) => {

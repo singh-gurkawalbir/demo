@@ -185,17 +185,17 @@ export function commStatusPerPath(state, path, method) {
 
 // #region PUBLIC SESSION SELECTORS
 
-export const getFormState = (state, formKey) =>
-  fromSession.getFormState(state && state.session, formKey);
+export const formState = (state, formKey) =>
+  fromSession.formState(state && state.session, formKey);
 
-export const getFormParentContext = (state, formKey) =>
-  fromSession.getFormParentContext(state && state.session, formKey);
+export const formParentContext = (state, formKey) =>
+  fromSession.formParentContext(state && state.session, formKey);
 
-export const getFieldState = (state, formKey, fieldId) =>
-  fromSession.getFieldState(state && state.session, formKey, fieldId);
+export const fieldState = (state, formKey, fieldId) =>
+  fromSession.fieldState(state && state.session, formKey, fieldId);
 
 export const isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
-  const { fields } = getFormState(state, formKey) || {};
+  const { fields } = formState(state, formKey) || {};
 
   return isAnyFieldVisibleForMeta(fieldMeta, fields);
 };
@@ -205,13 +205,13 @@ export const isExpansionPanelErroredForMetaForm = (
   formKey,
   fieldMeta
 ) => {
-  const { fields } = getFormState(state, formKey) || {};
+  const { fields } = formState(state, formKey) || {};
 
   return isExpansionPanelErrored(fieldMeta, fields || []);
 };
 
 export const isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
-  const { fields } = getFormState(state, formKey) || {};
+  const { fields } = formState(state, formKey) || {};
 
   return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
 };
@@ -4200,55 +4200,6 @@ export function getJobErrorsPreview(state, jobId) {
 
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
-}
-
-const lookupProcessorResourceType = (state, id) => {
-  const stagedProcessor = stagedResource(state, id);
-
-  if (!stagedProcessor || !stagedProcessor.patch) {
-    // TODO: we need a better pattern for logging warnings. We need a common util method
-    // which logs these warning only if the build is dev... if build is prod, these
-    // console.warn/logs should not even be bundled by webpack...
-    // eslint-disable-next-line
-    return console.warn(
-      'No patch-set available to determine new Page Processor resourceType.'
-    );
-  }
-
-  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = stagedProcessor.patch.find(
-    p => p.op === 'replace' && p.path === '/adaptorType'
-  );
-
-  // console.log(`adaptorType-${id}`, adaptorType);
-
-  if (!adaptorType || !adaptorType.value) {
-    // eslint-disable-next-line
-    console.warn(
-      'No replace operation against /adaptorType found in the patch-set.'
-    );
-  }
-
-  return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-};
-
-export function drawerEditUrl(state, resourceType, id, pathname) {
-  // console.log(location);
-  const segments = pathname.split('/');
-  const { length } = segments;
-
-  segments[length - 1] = id;
-  segments[length - 3] = 'edit';
-
-  if (resourceType === 'pageGenerator') {
-    segments[length - 2] = 'exports';
-  } else if (resourceType === 'pageProcessor') {
-    segments[length - 2] = lookupProcessorResourceType(state, id);
-  }
-
-  const url = segments.join('/');
-
-  return url;
 }
 
 export function customSettingsForm(state, resourceId) {

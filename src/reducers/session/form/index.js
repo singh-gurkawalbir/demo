@@ -60,32 +60,35 @@ function form(state = {}, action) {
 
 export default reduceReducers(form, fields);
 
-export const getFormState = (state, formKey) => {
+// #region Selectors
+
+export const formState = (state, formKey) => {
   if (!state || !state[formKey]) return null;
 
   return state[formKey];
 };
 
-export const getFormParentContext = (state, formKey) => {
-  const formState = getFormState(state, formKey);
+export const formParentContext = (state, formKey) => {
+  const form = formState(state, formKey);
 
-  if (!formState) return null;
+  if (!form) return null;
 
-  return formState.parentContext;
+  return form.parentContext;
 };
 
-export const getFieldState = (state, formKey, fieldId) => {
-  const formState = getFormState(state, formKey);
+export const fieldState = (state, formKey, fieldId) => {
+  const form = formState(state, formKey);
 
-  if (!formState) return null;
+  if (!form) return null;
 
-  return formState.fields && formState.fields[fieldId];
+  return form.fields && form.fields[fieldId];
 };
 
 export const isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
-  const formState = getFormState(state, formKey);
+  const form = formState(state, formKey);
 
-  if (!formState) return false;
+  if (!form) return false;
 
-  return isVisible(fieldVisibleRules, formState.fields);
+  return isVisible(fieldVisibleRules, form.fields);
 };
+// #endregion

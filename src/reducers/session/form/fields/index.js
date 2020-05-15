@@ -7,7 +7,7 @@ import {
 } from '../../../../utils/form';
 import { getFirstDefinedValue } from '../../../../utils/form/field';
 
-const isValueBoolean = value => typeof value === 'boolean';
+const isBoolean = value => typeof value === 'boolean';
 
 export default function fields(state = {}, action) {
   const { type, formKey, fieldProps = {} } = action;
@@ -77,7 +77,7 @@ export default function fields(state = {}, action) {
 
       case actionTypes.FORM.FIELD.FORCE_STATE:
         Object.keys(fieldStateProps)
-          .filter(key => isValueBoolean(fieldStateProps[key]))
+          .filter(key => isBoolean(fieldStateProps[key]))
           .forEach(key => {
             // set values are defined and a boolean
 
@@ -97,8 +97,6 @@ export default function fields(state = {}, action) {
 
       case actionTypes.FORM.FIELD.CLEAR_FORCE_STATE:
         delete fieldsRef[id].forceComputation;
-        // no need to generate next state...
-        // TODO: check if generating next state is neccessary
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         fieldsRef[id].touched = true;

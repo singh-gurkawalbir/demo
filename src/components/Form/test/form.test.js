@@ -118,7 +118,7 @@ describe('validation warnings', () => {
         })
       );
 
-      const formState = selectors.getFormState(store.getState(), 123);
+      const formState = selectors.formState(store.getState(), 123);
       const { FIELD1, FIELD2 } = formState.fields;
 
       expect(FIELD1.isValid).toBe(false);
@@ -150,7 +150,7 @@ describe('validation warnings', () => {
       expect(errorMsg.length).toBe(0);
     });
     test('should show that the field FIELD1 and FIELD2 state is valid initially,after a touch is simulated should we show that field error', () => {
-      const formState = selectors.getFormState(store.getState(), formKey);
+      const formState = selectors.formState(store.getState(), formKey);
       const { FIELD1, FIELD2 } = formState.fields;
 
       expect(FIELD1.isValid).toBe(true);
@@ -233,7 +233,7 @@ describe('visible behavior', () => {
   });
   test('visibleField should be initially invisible since it does not meet its visible expression criteria', () => {
     // find a field with that default value
-    const formState = selectors.getFormState(store.getState(), '123');
+    const formState = selectors.formState(store.getState(), '123');
 
     expect(formState.fields.FIELD1.visible).toBe(false);
     expect(queryByDisplayValue('test')).not.toBeTruthy();
@@ -321,7 +321,7 @@ describe('required behavior', () => {
 
   test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
     // find a field with that default value
-    const formState = selectors.getFormState(store.getState(), '123');
+    const formState = selectors.formState(store.getState(), '123');
 
     expect(formState.fields.FIELD1.required).toBe(false);
     expect(queryByDisplayValue('A value must be provided')).not.toBeTruthy();
@@ -338,7 +338,7 @@ describe('required behavior', () => {
       },
     });
 
-    const formState = selectors.getFormState(store.getState(), '123');
+    const formState = selectors.formState(store.getState(), '123');
 
     expect(formState.fields.FIELD1.required).toBe(true);
 
@@ -402,7 +402,7 @@ describe('changing form value prop', () => {
       cleanup();
     });
     test('field has not been touched', () => {
-      const formState = selectors.getFormState(store.getState(), 123);
+      const formState = selectors.formState(store.getState(), 123);
 
       expect(formState.fields.FIELD1.touched).toBe(false);
     });
@@ -411,8 +411,8 @@ describe('changing form value prop', () => {
       // they are no components implementing this function
       // have to verify through a state update...can be pushed to a reducer
 
-      store.dispatch(actions.form.field.onFieldFocus(formKey)('FIELD1'));
-      const formState = selectors.getFormState(store.getState(), formKey);
+      store.dispatch(actions.form.fieldFocus(formKey)('FIELD1'));
+      const formState = selectors.formState(store.getState(), formKey);
 
       expect(formState.fields.FIELD1.touched).toBe(false);
     });
@@ -420,8 +420,8 @@ describe('changing form value prop', () => {
     test('field should be touched after blur', () => {
       // they are no components implementing this function
       // have to verify through a state update...can be pushed to a reducer test
-      store.dispatch(actions.form.field.onFieldBlur(formKey)('FIELD1'));
-      const formState = selectors.getFormState(store.getState(), formKey);
+      store.dispatch(actions.form.fieldBlur(formKey)('FIELD1'));
+      const formState = selectors.formState(store.getState(), formKey);
 
       expect(formState.fields.FIELD1.touched).toBe(true);
     });

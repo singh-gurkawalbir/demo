@@ -1,9 +1,10 @@
 import { ButtonGroup, makeStyles } from '@material-ui/core';
-import { shallowEqual, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import resourceConstants from '../../../../forms/constants/connection';
 import { getResourceSubType } from '../../../../utils/resource';
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
 import * as selectors from '../../../../reducers';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const getConnectionType = resource => {
   const { assistant, type } = getResourceSubType(resource);
@@ -22,10 +23,11 @@ const useStylesButtons = makeStyles(theme => ({
 export default function ActionsFactory(props) {
   const classes = useStylesButtons();
   const { resourceType, resourceId, isNew } = props;
-  const resource = useSelector(
-    state => selectors.resourceData(state, resourceType, resourceId).merged,
-    shallowEqual
-  );
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  ).merged;
   const connectionType = getConnectionType(resource);
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
