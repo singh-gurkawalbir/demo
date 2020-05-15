@@ -548,6 +548,14 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
+  'logisense.connection.storeURL':
+    'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
+  'logisense.connection.http.unencrypted.username':
+    'Please enter the Username of your LogiSense account.',
+  'logisense.connection.http.encrypted.password':
+    'Please enter the Password of your LogiSense account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+  'logisense.connection.http.encrypted.clientId':
+    'Please enter the client_id provided by LogiSense team and perform any needed whitelisting with the destination/source systems.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client id safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1596,6 +1604,10 @@ export default {
     'Click this button to specify any custom HTTP header name and value pairs which will be added to all HTTP requests. Note that in most cases our platform will auto-populate common headers such as "content-type" (based of the media type of the request), or the "Authorize" header (used if your application authenticates using tokens in the header). Unless your HTTP request fails or does not return expected results, there is no need to use this feature. In some rare cases, it may be necessary to add other application specific headers that the integrator.io platform does not manage. An example of this would be adding an "x-clientId" or any other application specific header. These would be documented in the API guide of the Application you are integrating with.',
   'export.fixedWidthFormat':
     'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
+  'export.outputMode':
+    'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
+  'export.fileMetadata':
+    'Check this box if you ONLY need to transfer metadata about the files, but not the files themselves.',
   'export.ediFormat':
     'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'export.filedefinitionRules':
@@ -1649,6 +1661,8 @@ export default {
     'Select an existing Async Helper configuration or create a new one to be used for async response processing.',
   'export.batchSize':
     "NetSuite's search APIs will by default return up to 1000 records every time you request a new page of results. This is problematic if you need to execute a SuiteScript based hook on the records before they are exported (in which case you will likely run out of SuiteScript points or hit NetSuite instruction count limits), or if the individual records you are exporting are very large such that the sum of all 1000 records exceeds 5 MB (which is also not allowed). For either situation, this field can easily be used to tell integrator.io to break down the default 1000 record batches into smaller batches where you define the ideal size.",
+  'import.inputMode':
+    'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
   'import._applicationId':
     "This field lists all applications and technology adaptors that integrator.io supports for exporting or importing the data. For less technical users, application adaptors, such as NetSuite or Salesforce are the easiest to use, whereas technology adaptors, such as the REST API adaptor requires a more technical understanding of the applications being integrated. However, once you learn how to use a specific technology adaptor, you will be able to integrate a multitude of different applications without having to wait for integrator.io to expose specific application adaptors.\nIf you are unable to find a matching application or a technology adaptor, the only other connectivity option is to use the integrator.io extension framework to develop a custom Wrapper. For more information on Wrappers and to learn more about integrator.io's developer extension framework, contact Celigo Support.",
   'import.overrideDataURITemplate':
@@ -1987,6 +2001,8 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
+  'fb.resourceTypeOptions':
+    'These are the options available for the selected application. If the application only supports one option, then the value will be pre-selected and read-only.',
   'mapping.dataType':
     'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
   'mapping.discardIfEmpty':

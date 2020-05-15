@@ -120,7 +120,12 @@ export default {
     exportData: {
       id: 'exportData',
       type: 'labeltitle',
-      label: 'What would you like to export from Salesforce?',
+      label: r => {
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'What would you like to transfer from Salesforce??';
+
+        return 'What would you like to export from Salesforce?';
+      },
     },
     outputMode: {
       id: 'outputMode',
@@ -135,21 +140,12 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
-
-        if (!isNew) return true;
-
-        return false;
-      },
+      visible: false,
       defaultValue: r => {
-        const isNew = isNewId(r._id);
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+          return 'blob';
 
-        // if its create
-        if (isNew) return 'records';
-        const output = r && r.salesforce && r.salesforce.id;
-
-        return output ? 'blob' : 'records';
+        return 'records';
       },
     },
     'salesforce.soql': {
