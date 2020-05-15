@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     // maxHeight: `calc(100vh - 150px)`,
     // maxHeight: 'unset',
     minHeight: '100%',
-    // Todo (Azhar): Gave 100% height minimum to support cam settings but still has to check other forms
+    // Todo (Azhar): nested styling for the CAM settings
     padding: theme.spacing(2, 3),
     '& + div': {
       padding: theme.spacing(0, 3),
