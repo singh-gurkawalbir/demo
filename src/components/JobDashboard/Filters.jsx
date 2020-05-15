@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   filterButton: {
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
+    '&:first-child': {
+      marginLeft: 0,
+    },
   },
   retry: {
     minWidth: 90,

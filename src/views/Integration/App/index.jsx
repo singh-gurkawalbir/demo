@@ -11,7 +11,7 @@ import FlowsIcon from '../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
-import GeneralIcon from '../../../components/icons/SettingsIcon';
+import GeneralIcon from '../../../components/icons/GeneralIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
@@ -33,6 +33,7 @@ import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import integrationAppUtil from '../../../utils/integrationApps';
+import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -71,7 +72,7 @@ const allTabs = [
   {
     path: 'settings',
     label: 'Settings',
-    Icon: GeneralIcon,
+    Icon: SettingsIcon,
     Panel: AdminPanel,
   },
 ];

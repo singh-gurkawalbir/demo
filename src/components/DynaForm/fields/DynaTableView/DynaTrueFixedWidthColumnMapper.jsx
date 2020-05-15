@@ -1,6 +1,14 @@
 import produce from 'immer';
+import { makeStyles } from '@material-ui/core/styles';
 import DynaTableView from './DynaTable';
 
+const useStyles = makeStyles(theme => ({
+  camSettingFileParsingWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(2, 3),
+  },
+}));
 const optionsMap = [
   {
     id: 'fieldName',
@@ -11,14 +19,14 @@ const optionsMap = [
   },
   {
     id: 'startPosition',
-    label: 'Start Position',
+    label: 'Start',
     required: true,
     type: 'number',
     space: 1,
   },
   {
     id: 'endPosition',
-    label: 'End Position',
+    label: 'End',
     required: true,
     type: 'number',
     space: 1,
@@ -48,6 +56,7 @@ export default function DynaTrueFixedWidthColmnMapper({
   title,
 }) {
   let newValue;
+  const classes = useStyles();
 
   if (value) {
     newValue = value.map(el => {
@@ -92,7 +101,9 @@ export default function DynaTrueFixedWidthColmnMapper({
   return (
     <DynaTableView
       id={id}
+      hideLabel
       label={label}
+      className={classes.camSettingFileParsingWrapper}
       title={title}
       optionsMap={optionsMap}
       value={newValue}

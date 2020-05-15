@@ -129,7 +129,7 @@ export default function RefreshGenericResource(props) {
         {fieldData && isLoading && (
           <span
             className={clsx(
-              classes.refreshGenericActionBtn,
+              classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
             <Spinner size={24} color="primary" />
