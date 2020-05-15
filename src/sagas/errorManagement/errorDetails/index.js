@@ -127,13 +127,6 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
         errorIds,
       })
     );
-    yield put(
-      actions.errorManager.flowErrorDetails.invalidate({
-        flowId,
-        resourceId,
-        isResolved,
-      })
-    );
   } catch (e) {
     // console.log('error');
   }
@@ -174,9 +167,6 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
         resourceId,
         errorIds: errors,
       })
-    );
-    yield put(
-      actions.errorManager.flowErrorDetails.invalidate({ flowId, resourceId })
     );
   } catch (e) {
     // console.log(e)

@@ -70,6 +70,7 @@ export default (state = {}, action) => {
         draft[flowId][resourceId][errorType].errors = errors.filter(
           error => !errorIds.includes(error.errorId)
         );
+        draft[flowId][resourceId][errorType].outdated = true;
         break;
       }
 
@@ -118,10 +119,6 @@ export default (state = {}, action) => {
         draft[flowId][resourceId].actions.retry.count = count + retryCount;
         break;
       }
-
-      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.OUTDATED:
-        draft[flowId][resourceId][errorType].outdated = true;
-        break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         draft[flowId][resourceId][errorType] = {};
