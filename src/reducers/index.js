@@ -505,6 +505,10 @@ export function avatarUrl(state) {
   return fromUser.avatarUrl(state.user);
 }
 
+export function isUserInErrMgtTwoDotZero(state) {
+  return fromUser.isUserInErrMgtTwoDotZero(state && state.user);
+}
+
 export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
@@ -3603,6 +3607,12 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
+export function flowConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  return flowConnectionList(state, flow);
+}
+
 export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
   const exports = resourceList(state, {
@@ -4152,6 +4162,86 @@ export function getJobErrorsPreview(state, jobId) {
 
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
+}
+
+export function resourceErrors(state, { flowId, resourceId, options = {} }) {
+  return fromSession.resourceErrors(state && state.session, {
+    flowId,
+    resourceId,
+    options,
+  });
+}
+
+// Given an errorId, gives back error doc
+export function resourceError(state, { flowId, resourceId, options, errorId }) {
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options,
+  });
+
+  return errors.find(error => error.errorId === errorId);
+}
+
+export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors
+    .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
+    .map(error => error.retryDataKey);
+}
+
+export function selectedErrorIds(state, { flowId, resourceId, options = {} }) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors.filter(({ selected }) => selected).map(error => error.errorId);
+}
+
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, filterKey, defaultFilter, isResolved }
+) {
+  const errorFilter = filter(state, filterKey) || defaultFilter;
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options: { ...errorFilter, isResolved },
+  });
+  const errorIds = errors.map(error => error.errorId);
+
+  return fromSession.isAllErrorsSelected(state && state.session, {
+    flowId,
+    resourceId,
+    isResolved,
+    errorIds,
+  });
+}
+
+export function errorMap(state, resourceId) {
+  return fromSession.errorMap(state && state.session, resourceId);
+}
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromSession.errorActionsContext(state && state.session, {
+    flowId,
+    resourceId,
+    actionType,
+    errorType,
+  });
+}
+
+export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
+  const isRetryInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      .status === 'requested';
+  const isResolveInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      .status === 'requested';
+
+  return isRetryInProgress || isResolveInProgress;
 }
 
 export function customSettingsForm(state, resourceId) {
