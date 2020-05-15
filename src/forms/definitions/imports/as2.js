@@ -167,7 +167,7 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the files transfered?',
+      label: 'How would you like the files transferred?',
     },
     distributed: { fieldId: 'distributed', defaultValue: false },
 

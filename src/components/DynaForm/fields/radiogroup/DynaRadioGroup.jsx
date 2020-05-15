@@ -10,6 +10,7 @@ import {
 import clsx from 'clsx';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
+import helpTextMap from '../../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   columnFlexWrapper: {
@@ -52,7 +53,7 @@ export default function DynaRadio(props) {
     showOptionsVertically,
     label,
     isValid,
-    helpText,
+    helpKey,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -111,7 +112,10 @@ export default function DynaRadio(props) {
               {items}
             </RadioGroup>
             {/* Todo (surya): needs to pass the helptext */}
-            <FieldHelp {...props} helpText={helpText || label} />
+            <FieldHelp
+              {...props}
+              helpText={(helpKey && helpTextMap[helpKey]) || label}
+            />
           </div>
         </div>
       </FormControl>

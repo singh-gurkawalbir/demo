@@ -110,15 +110,14 @@ export default {
     exportData: {
       fieldId: 'exportData',
       type: 'labeltitle',
-      label: `What would you like to transfer?`,
+      label: 'What would you like to transfer?',
     },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
       label: 'Do you need to parse files?',
       required: true,
-      helpText:
-        'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
+      helpKey: 'export.outputMode',
       options: [
         {
           items: [

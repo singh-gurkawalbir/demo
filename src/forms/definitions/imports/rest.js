@@ -199,7 +199,7 @@ export default {
       type: 'labeltitle',
       label: r => {
         if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-          return 'How would you like the files transfered?';
+          return 'How would you like the files transferred?';
         }
 
         return 'How would you like the records imported?';

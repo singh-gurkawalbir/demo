@@ -89,12 +89,13 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: `How would you like the files transfered?`,
+      label: `How would you like the files transferred?`,
     },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
       label: 'Generate file from records?',
+      helpKey: 'import.inputMode',
       options: [
         {
           items: [
@@ -103,9 +104,6 @@ export default {
           ],
         },
       ],
-
-      helpText:
-        'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
       defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     's3.region': {

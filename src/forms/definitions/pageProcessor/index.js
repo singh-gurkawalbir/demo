@@ -62,17 +62,9 @@ export default {
       required: true,
       options: [
         {
-          items: [
-            { label: 'Import data into destination app', value: 'imports' },
-            {
-              label: 'Lookup additional data (per record)',
-              value: 'exports',
-            },
-          ],
+          items: [],
         },
       ],
-      helpText:
-        'These are the options available for the selected application.  If the application only supports one option, then the value will be pre-selected and read-only.',
     },
     application: {
       id: 'application',
@@ -164,7 +156,6 @@ export default {
 
       resourceTypeField.value = options && options[0] && options[0].value;
       resourceTypeField.disabled = options && options.length === 1;
-      resourceTypeField.defaultDisabled = options && options.length === 1;
 
       return [
         {

@@ -23,7 +23,7 @@ try {
   localStorageAssistants = [];
 }
 
-const assistants = localStorageAssistants || [];
+const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -659,13 +659,13 @@ const connectors = [
     assistant: 'shipwire',
     webhook: true,
   },
-  // {
-  //   id: 'shopify',
-  //   name: 'Shopify',
-  //   type: 'rest',
-  //   assistant: 'shopify',
-  //   webhook: true,
-  // },
+  {
+    id: 'shopify',
+    name: 'Shopify',
+    type: 'rest',
+    assistant: 'shopify',
+    webhook: true,
+  },
   { id: 'signnow', name: 'SignNow', type: 'http', assistant: 'signnow' },
   { id: 'skubana', name: 'Skubana', type: 'rest', assistant: 'skubana' },
   { id: 'skuvault', name: 'SkuVault', type: 'http', assistant: 'skuvault' },
@@ -786,7 +786,7 @@ export const groupApplications = (
   { appType, isSimpleImport }
 ) => {
   // Here i need to update Connectors
-  const assistantConnectors = connectors.filter(c => !c.assistant || c.webhook);
+  const assistantConnectors = connectors.filter(c => !c.assistant);
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -808,6 +808,7 @@ export const groupApplications = (
           assistant: asst.id,
           export: asst.export,
           import: asst.import,
+          webhook: asst.webhook,
         });
       }
     });
@@ -921,6 +922,7 @@ assistants.forEach(asst => {
     assistant: asst.id,
     export: asst.export,
     import: asst.import,
+    webhook: asst.webhook,
   });
 });
 

@@ -69,7 +69,6 @@ export default {
       name: 'type',
       type: 'select',
       label: 'What would you like to do?',
-      defaultValue: r => (r && r.type) || 'api',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
@@ -80,24 +79,9 @@ export default {
       ],
       options: [
         {
-          items: [
-            {
-              label: 'Export records from source application',
-              value: 'Export records from source application',
-            },
-            {
-              label: 'Transfer files out of source application',
-              value: 'api',
-            },
-            {
-              label: 'Listen for real-time data from source applicationsaa',
-              value: 'Listen for real-time data from source applications',
-            },
-          ],
+          items: [],
         },
       ],
-      helpText:
-        'These are the options available for the selected application.  If the application only supports one option, then the value will be pre-selected and read-only.',
     },
 
     existingExport: {
@@ -155,12 +139,22 @@ export default {
       let options = exportFileProviderOptions[app.assistant || app.type];
 
       if (!options) {
-        options = exportFileProviderOptions.default || [];
+        if (app.assistant && app.webhook) {
+          options = [
+            {
+              label: 'Export records from source application',
+              value: 'exportRecords',
+            },
+            {
+              label: 'Listen for real-time data from source applications',
+              value: 'webhook',
+            },
+          ];
+        } else options = exportFileProviderOptions.default || [];
       }
 
       typeField.value = options && options[0] && options[0].value;
       typeField.disabled = options && options.length === 1;
-      typeField.defaultDisabled = options && options.length === 1;
 
       return [
         {
