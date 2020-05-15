@@ -585,15 +585,12 @@ export default (state = DEFAULT_STATE, action) => {
 // #region PUBLIC SELECTORS
 
 export const flowJobsPagingDetails = createSelector(
-  state => state,
-  state => {
-    const { paging, flowJobs } = state || DEFAULT_STATE;
-
-    return {
-      paging,
-      totalJobs: flowJobs ? flowJobs.length : 0,
-    };
-  }
+  state => state && state.paging,
+  state => state && state.flowJobs,
+  (paging = DEFAULT_STATE.paging, flowJobs = DEFAULT_STATE.flowJobs) => ({
+    paging,
+    totalJobs: flowJobs ? flowJobs.length : 0,
+  })
 );
 
 export const flowJobs = createSelector(
