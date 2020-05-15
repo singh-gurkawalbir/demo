@@ -24,7 +24,10 @@ const useStyles = makeStyles(theme => ({
   settingsForm: {
     maxHeight: `calc(100vh - 150px)`,
     // maxHeight: 'unset',
-    // padding: theme.spacing(2, 3),
+    padding: theme.spacing(2, 3),
+    '& + div': {
+      padding: theme.spacing(0, 3),
+    },
   },
 }));
 

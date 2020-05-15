@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '8px',
     width: '100%',
     overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   actionTitle: {
     float: 'left',

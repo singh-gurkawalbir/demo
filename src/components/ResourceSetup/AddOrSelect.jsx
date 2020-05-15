@@ -15,10 +15,12 @@ import {
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    paddingTop: 0,
     borderColor: 'rgb(0,0,0,0.1)',
     borderStyle: 'solid',
     borderWidth: '1px 0 0 0',
+  },
+  resourceFormRadioGroupWrapper: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -99,6 +101,7 @@ export default function AddOrSelect(props) {
         <RadioGroup
           {...props}
           id="selectType"
+          className={classes.resourceFormRadioGroupWrapper}
           label="What would you like to do?"
           defaultValue={useNew ? 'new' : 'existing'}
           fullWidth

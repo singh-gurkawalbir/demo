@@ -121,7 +121,7 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={onRefresh}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>

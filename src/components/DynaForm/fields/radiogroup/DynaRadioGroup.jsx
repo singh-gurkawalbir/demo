@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   FormControlLabel,
@@ -7,7 +8,6 @@ import {
   RadioGroup,
   Radio,
 } from '@material-ui/core';
-import clsx from 'clsx';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
 
@@ -48,6 +48,7 @@ export default function DynaRadio(props) {
     required,
     value,
     disabled,
+    className,
     // use showOptionsVertically to render vertically
     showOptionsVertically,
     label,
@@ -86,7 +87,7 @@ export default function DynaRadio(props) {
   return (
     <div>
       <FormControl component="fieldset" disabled={disabled}>
-        <div className={classes.radioGroupWrapper}>
+        <div className={clsx(classes.radioGroupWrapper, className)}>
           <FormLabel
             required={required}
             error={!isValid}
