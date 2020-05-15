@@ -77,6 +77,7 @@ export default {
           isNot: [''],
         },
       ],
+      helpKey: 'fb.resourceTypeOptions',
     },
     connection: {
       id: 'connection',

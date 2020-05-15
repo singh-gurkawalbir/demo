@@ -60,6 +60,7 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
+      helpKey: 'fb.resourceTypeOptions',
     },
     application: {
       id: 'application',
