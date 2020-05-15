@@ -450,6 +450,12 @@ const connectors = [
     assistant: 'liquidplanner',
   },
   {
+    id: 'logisense',
+    name: 'LogiSense',
+    type: 'http',
+    assistant: 'logisense',
+  },
+  {
     id: 'loopreturns',
     name: 'Loop Returns',
     type: 'http',

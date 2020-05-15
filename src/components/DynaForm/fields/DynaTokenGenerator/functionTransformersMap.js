@@ -179,4 +179,18 @@ export default {
       baseURI: `https://${form[`/http/procurifySubdomain`]}.procurify.com/api`,
     }),
   },
+  logisense: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+
+    payloadTransformer: form => ({
+      baseURI: `https://${form['/storeURL']}`,
+      body: `{"username":"${form['/http/unencrypted/username']}","password":"${
+        form['/http/encrypted/password']
+      }","grant_type":"password","client_id":"${
+        form['/http/encrypted/clientId']
+      }"}`,
+    }),
+  },
 };
