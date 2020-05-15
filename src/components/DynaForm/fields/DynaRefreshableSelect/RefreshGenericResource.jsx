@@ -121,7 +121,7 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={onRefresh}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>
@@ -129,7 +129,7 @@ export default function RefreshGenericResource(props) {
         {fieldData && isLoading && (
           <span
             className={clsx(
-              classes.refreshGenericActionBtn,
+              classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
             <Spinner size={24} color="primary" />

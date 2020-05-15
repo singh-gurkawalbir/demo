@@ -49,6 +49,7 @@ const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseI
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').default;
 const GripperIcon = require('../../src/components/icons/GripperIcon').default;
+const GeneralIcon = require('../../src/components/icons/GeneralIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
@@ -106,6 +107,8 @@ const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon'
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').default;
 const TransferIcon = require('../../src/components/icons/TransferIcon').default;
+const TransferDownIcon = require('../../src/components/icons/TransferDownIcon').default;
+const TransferUpIcon = require('../../src/components/icons/TransferUpIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
 const TransfersIcon = require('../../src/components/icons/TransfersIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
@@ -328,6 +331,10 @@ const icon = {
      <div style={wrapper}>
       <GripperIcon style={icon} />
       <p>Gripper</p>
+    </div>
+    <div style={wrapper}>
+      <GeneralIcon style={icon} />
+      <p>General</p>
     </div>
      <div style={wrapper}>
       <HelpIcon style={icon} />
@@ -558,6 +565,14 @@ const icon = {
     <div style={wrapper}>
       <TransferIcon style={icon} />
       <p>Transfer</p>
+    </div>
+    <div style={wrapper}>
+      <TransferDownIcon style={icon} />
+      <p>TransferDown</p>
+    </div>
+    <div style={wrapper}>
+      <TransferUpIcon style={icon} />
+      <p>TransferUp</p>
     </div>
      <div style={wrapper}>
       <TransformIcon style={icon} />

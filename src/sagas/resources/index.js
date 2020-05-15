@@ -12,7 +12,7 @@ import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
-import { isConnector } from '../../utils/flows';
+import { isIntegrationApp } from '../../utils/flows';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -104,7 +104,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
     if (
       resourceIsDataLoaderFlow ||
-      (merged.flowConvertedToNewSchema && isConnector(merged))
+      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
     ) {
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;

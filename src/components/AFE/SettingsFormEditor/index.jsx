@@ -69,10 +69,12 @@ export default function SettingsFormEditor({
   const dispatch = useDispatch();
   // console.log(editorId, 'settingsForm:', settingsForm);
   const editor = useSelector(state => selectors.editor(state, editorId));
-  const settings = useSelector(
-    state => selectors.resource(state, resourceType, resourceId).settings
-  );
-  const { data, result, error } = editor;
+  const settings = useSelector(state => {
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return resource && resource.settings;
+  });
+  const { data, result, error, lastChange } = editor;
   // console.log('editor', editor);
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)

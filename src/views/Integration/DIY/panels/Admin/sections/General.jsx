@@ -8,7 +8,6 @@ import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { isJsonString } from '../../../../../../utils/string';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
@@ -32,7 +31,6 @@ export default function GeneralSection({ integrationId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const developerModeOn = useSelector(state => selectors.developerMode(state));
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -58,22 +56,13 @@ export default function GeneralSection({ integrationId }) {
         id: 'settings',
         helpKey: 'integration.settings',
         name: 'settings',
-        disabled: !developerModeOn,
         type: 'settings',
         label: 'Settings',
         defaultValue: settings,
       },
     },
     layout: {
-      fields: ['name', 'description'],
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'Custom settings',
-          fields: ['settings'],
-        },
-      ],
+      fields: ['name', 'description', 'settings'],
     },
   };
 
@@ -85,8 +74,6 @@ export default function GeneralSection({ integrationId }) {
 
     if (isObject(formVal.settings)) {
       ({ settings } = formVal);
-    } else if (isJsonString(formVal.settings)) {
-      settings = JSON.parse(formVal.settings);
     }
 
     const patchSet = [
@@ -120,6 +107,8 @@ export default function GeneralSection({ integrationId }) {
     fieldsMeta: fieldMeta,
     disabled: !canEditIntegration,
     remount: count,
+    resourceType: 'integrations',
+    resourceId: integrationId,
   });
 
   return (

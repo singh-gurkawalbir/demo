@@ -207,9 +207,9 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
 };
 
 /*
- * Based on _connectorId on flow Doc, we determine whether this flow is a connector
+ * Based on _connectorId on resource doc, we determine whether this is an Integration App resource
  */
-export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
+export const isIntegrationApp = (doc = {}) => !!(doc && doc._connectorId);
 
 /*
  * Based on free property on flow Doc, we determine whether this flow is a free flow
