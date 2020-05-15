@@ -6,6 +6,7 @@ import { hashCode } from '../../../utils/string';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import DynaForm from '../../DynaForm';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';
@@ -33,7 +34,7 @@ import ConsoleGridItem from '../ConsoleGridItem';
     "layout": {"fields": ["A", "B"]}
   }
 */
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   gridContainer: {
     gridTemplateColumns: '2fr 2fr',
     gridTemplateRows: '1fr 1fr 0fr',
@@ -44,7 +45,10 @@ const useStyles = makeStyles({
   scriptGridAreas: {
     gridTemplateAreas: '"meta form" "hook settings" "error error"',
   },
-});
+  submitButton: {
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 export default function SettingsFormEditor({
   editorId,
@@ -55,7 +59,6 @@ export default function SettingsFormEditor({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [settingsPreview, setSettingsPreview] = useState();
-  const [settingsValid, setSettingsValid] = useState(true);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const { data, result, error, lastChange, mode } = editor;
   const violations = useSelector(state =>
@@ -67,21 +70,21 @@ export default function SettingsFormEditor({
     },
     [dispatch, editorId]
   );
-  const handleFormPreviewChange = useCallback((values, isValid) => {
+  const handleFormPreviewChange = useCallback(values => {
     setSettingsPreview(values);
-    setSettingsValid(isValid);
   }, []);
 
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
   useEffect(() => {
     setSettingsPreview();
-    setSettingsValid(true);
   }, [lastChange]);
 
   // console.log(finalMeta);
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
+
+  console.log(data);
 
   return (
     <PanelGrid
@@ -90,7 +93,9 @@ export default function SettingsFormEditor({
       height="calc(100vh - 170px)"
       width="100%">
       <PanelGridItem gridArea="meta">
-        <PanelTitle title="Form metadata" />
+        <PanelTitle
+          title={mode === 'json' ? 'Form Definition' : 'Script Input'}
+        />
         <CodePanel
           id="data"
           name="data"
@@ -115,10 +120,15 @@ export default function SettingsFormEditor({
           <DynaForm
             key={key}
             fieldMeta={result}
-            onChange={handleFormPreviewChange}
+            // onChange={handleFormPreviewChange}
             resourceId={resourceId}
-            resourceType={resourceType}
-          />
+            resourceType={resourceType}>
+            <DynaSubmit
+              className={classes.submitButton}
+              onClick={handleFormPreviewChange}>
+              Test Form Submission
+            </DynaSubmit>
+          </DynaForm>
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid
@@ -127,13 +137,7 @@ export default function SettingsFormEditor({
         )}
       </PanelGridItem>
       <PanelGridItem gridArea="settings">
-        <PanelTitle
-          title={
-            settingsValid
-              ? 'Settings preview'
-              : 'Settings preview (currently invalid)'
-          }
-        />
+        <PanelTitle title="Form Output" />
         {settingsPreview ? (
           <CodePanel
             id="result"
@@ -145,7 +149,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           <Typography>
-            Use the form above to preview the raw settings.
+            Use the form above to preview the form output.
           </Typography>
         )}
       </PanelGridItem>

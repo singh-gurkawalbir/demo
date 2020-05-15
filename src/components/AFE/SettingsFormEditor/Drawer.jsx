@@ -29,6 +29,8 @@ function toggleData(data, mode) {
   );
   let finalData = parsedData;
 
+  console.log(mode, hasWrapper);
+
   if (mode === 'json') {
     // try and find only the form meta...
     // since the user can type anything, we are not guaranteed of a
@@ -37,6 +39,7 @@ function toggleData(data, mode) {
     if (hasWrapper) {
       finalData = parsedData.resource.settingsForm.form;
     }
+    // script
   } else if (!hasWrapper) {
     finalData = {
       resource: {
@@ -96,6 +99,7 @@ export default function EditorDrawer({
     mode => {
       const data = toggleData(editor.data, mode);
 
+      console.log(mode, data);
       dispatch(actions.editor.patch(editorId, { mode, data }));
     },
     [dispatch, editor.data, editorId]
