@@ -8,7 +8,6 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
-import { isJsonString } from '../../../../utils/string';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 
@@ -148,8 +147,6 @@ export default function SettingsDrawer({
 
       if (isObject(formVal.settings)) {
         ({ settings } = formVal);
-      } else if (isJsonString(formVal.settings)) {
-        settings = JSON.parse(formVal.settings);
       }
 
       patchSet.push({

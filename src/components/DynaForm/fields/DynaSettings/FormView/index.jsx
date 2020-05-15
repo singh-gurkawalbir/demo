@@ -53,13 +53,14 @@ export default function FormView({
   );
 
   if (formState && formState.error) {
-    if (!isDeveloper) return null;
-
     return (
       <div>
         <Typography>{formState.error}</Typography>
         {isDeveloper && !isViewMode && (
-          <Button variant="contained" onClick={onToggleClick}>
+          <Button
+            data-test="toggleEditor"
+            variant="contained"
+            onClick={onToggleClick}>
             Toggle form editor
           </Button>
         )}
@@ -78,7 +79,11 @@ export default function FormView({
   return (
     <div>
       {isDeveloper && !isViewMode && (
-        <Button variant="outlined" color="secondary" onClick={onToggleClick}>
+        <Button
+          data-test="toggleEditor"
+          variant="outlined"
+          color="secondary"
+          onClick={onToggleClick}>
           Toggle form editor
         </Button>
       )}

@@ -18,7 +18,11 @@ export default function RawView({ onToggleClick, ...rest }) {
   // render the toggle editor button with no other conditions.
   return (
     <div className={classes.wrapper}>
-      <Button variant="outlined" color="secondary" onClick={onToggleClick}>
+      <Button
+        data-test="toggleEditor"
+        variant="outlined"
+        color="secondary"
+        onClick={onToggleClick}>
         Toggle form editor
       </Button>
       <EditorField
