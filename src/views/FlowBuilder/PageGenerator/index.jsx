@@ -171,6 +171,8 @@ const PageGenerator = ({
       };
     }
 
+    let blockType;
+
     if (!pending || resourceId) {
       // even if we have a pending PG, as ling as we have a
       // resource, then the below logic still applies.
@@ -186,12 +188,18 @@ const PageGenerator = ({
         }
       }
 
+      blockType = isRealTimeOrDistributedResource(resource)
+        ? 'listener'
+        : 'export';
+
+      if (['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0) {
+        blockType = 'exportTransfer';
+      }
+
       return {
         connectorType,
         assistant: resource.assistant,
-        blockType: isRealTimeOrDistributedResource(resource)
-          ? 'listener'
-          : 'export',
+        blockType,
       };
     }
 
@@ -226,7 +234,7 @@ const PageGenerator = ({
     let generatorActions = [];
 
     if (!pending) {
-      if (blockType === 'export') {
+      if (['export', 'exportTransfer'].indexOf(blockType) >= 0) {
         generatorActions.push({
           ...scheduleAction,
           isUsed: usedActions[actionsMap.schedule],

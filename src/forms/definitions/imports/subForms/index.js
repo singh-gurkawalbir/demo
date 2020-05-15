@@ -5,6 +5,7 @@ import fileType from './fileType';
 import dataMappings from './dataMappings';
 import compressFiles from './compressFiles';
 import advancedSettings from './advancedSettings';
+import fileApiIdentifier from './fileApiIdentifier';
 
 export default {
   common,
@@ -14,4 +15,5 @@ export default {
   dataMappings,
   compressFiles,
   advancedSettings,
+  fileApiIdentifier,
 };

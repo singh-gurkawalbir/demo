@@ -808,6 +808,7 @@ export const groupApplications = (
           assistant: asst.id,
           export: asst.export,
           import: asst.import,
+          webhook: asst.webhook,
         });
       }
     });
@@ -921,6 +922,7 @@ assistants.forEach(asst => {
     assistant: asst.id,
     export: asst.export,
     import: asst.import,
+    webhook: asst.webhook,
   });
 });
 

@@ -76,7 +76,7 @@ export default function LookupActionItem({
       )}
       <Button
         data-test={id}
-        variant="contained"
+        variant="outlined"
         className={clsx({ [classes.button]: isEdit })}
         color="secondary"
         onClick={handleEditorClick}>
