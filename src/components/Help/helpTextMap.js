@@ -1599,7 +1599,7 @@ export default {
   'export.outputMode':
     'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
   'export.fileMetadata':
-    'Select this checkbox if you ONLY need to transfer metadata about the files, but not the files themselves.',
+    'Check this box if you ONLY need to transfer metadata about the files, but not the files themselves.',
   'export.ediFormat':
     'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'export.filedefinitionRules':
