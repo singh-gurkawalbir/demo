@@ -21,6 +21,7 @@ const dateTimeOptions = [
   { label: 'M/D/YY', value: 'M/D/YY' },
   { label: 'D/M/YYYY', value: 'D/M/YYYY' },
   { label: 'D/M/YY', value: 'D/M/YY' },
+  { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
   { label: 'MM/DD/YYYY', value: 'M/D/YYYY' },
   { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
   { label: 'MM/DD/YYYY HH:mm', value: 'MM/DD/YYYY HH:mm' },
