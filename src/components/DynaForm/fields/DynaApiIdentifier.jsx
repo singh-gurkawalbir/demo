@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaAPIWrapper: {
     flexDirection: `row !important`,
+    alignItems: 'center',
   },
 }));
 

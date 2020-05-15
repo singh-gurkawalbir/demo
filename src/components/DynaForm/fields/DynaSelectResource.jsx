@@ -106,7 +106,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   menuItem: {
     maxWidth: '95%',

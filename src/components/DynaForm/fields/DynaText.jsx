@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
   dynaTextLabelWrapper: {
     display: props => (props.label ? 'flex' : 'none'),
     alignItems: 'flex-start',
+    '&:empty': {
+      display: 'none',
+    },
   },
   startAdornmentWrapper: {
     marginTop: `0px !important`,

@@ -1,13 +1,21 @@
 import { useState, Fragment, useCallback } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { makeStyles } from '@material-ui/core/styles';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
 import HelpIcon from '../../components/icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
+const useStyles = makeStyles({
+  helpIcon: {
+    fontSize: 18,
+  },
+});
+
 function Help(props) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
     event => {
@@ -34,7 +42,7 @@ function Help(props) {
     <Fragment>
       <ClickAwayListener onClickAway={handleClose}>
         <IconButton className={className} onClick={handleMenu}>
-          <HelpIcon fontSize="small" />
+          <HelpIcon className={classes.helpIcon} />
         </IconButton>
       </ClickAwayListener>
       <ArrowPopper
