@@ -26,7 +26,7 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 import { generateNewId, isNewId } from '../../utils/resource';
-import { isConnector, isFreeFlowResource } from '../../utils/flows';
+import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -265,12 +265,12 @@ function FlowBuilder() {
     (pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
-  const isConnectorType = isConnector(flow);
+  const isIAType = isIntegrationApp(flow);
   const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const isViewMode = isMonitorLevelAccess || isConnectorType;
+  const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -484,7 +484,7 @@ function FlowBuilder() {
             <SwitchOnOff.component
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
-              isConnector={isConnectorType}
+              isConnector={isIAType}
               data-test="switchFlowOnOff"
             />
           )}
@@ -506,7 +506,7 @@ function FlowBuilder() {
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
-          {!isConnectorType && (
+          {!isIAType && (
             <FlowEllipsisMenu
               flowId={flowId}
               exclude={['mapping', 'detach', 'audit', 'schedule']}
