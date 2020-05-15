@@ -1,4 +1,4 @@
-function extractForm(data) {
+function extractForm(data, mode) {
   let parsedData = data;
 
   if (typeof data === 'string') {
@@ -7,6 +7,10 @@ function extractForm(data) {
     } catch (e) {
       return;
     }
+  }
+
+  if (mode === 'json') {
+    return parsedData;
   }
 
   if (parsedData && parsedData.resource && parsedData.resource.settingsForm) {
@@ -26,11 +30,12 @@ export default {
       data,
       resourceId,
       resourceType,
+      mode,
     } = editor;
     const value = {};
 
     if (data) {
-      const form = extractForm(data);
+      const form = extractForm(data, mode);
 
       value.form = form;
       // {

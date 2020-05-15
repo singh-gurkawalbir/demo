@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
@@ -36,45 +37,27 @@ const useStyles = makeStyles({
   gridContainer: {
     gridTemplateColumns: '2fr 2fr',
     gridTemplateRows: '1fr 1fr 0fr',
+  },
+  jsonGridAreas: {
+    gridTemplateAreas: '"meta form" "meta settings" "error error"',
+  },
+  scriptGridAreas: {
     gridTemplateAreas: '"meta form" "hook settings" "error error"',
   },
 });
 
-function getData(form) {
-  return JSON.stringify(
-    {
-      resource: {
-        settingsForm: { form },
-      },
-      parentResource: {},
-      license: {},
-      parentLicense: {},
-      sandbox: false,
-    },
-    null,
-    2
-  );
-}
-
 export default function SettingsFormEditor({
   editorId,
-  settingsForm = {},
   disabled,
   resourceId,
   resourceType,
 }) {
-  const { form, init = {} } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [settingsPreview, setSettingsPreview] = useState();
   const [settingsValid, setSettingsValid] = useState(true);
-  // console.log(editorId, 'settingsForm:', settingsForm);
   const editor = useSelector(state => selectors.editor(state, editorId));
-  const settings = useSelector(
-    state => selectors.resource(state, resourceType, resourceId).settings
-  );
-  const { data, result, error, lastChange } = editor;
-  // console.log('editor', editor);
+  const { data, result, error, lastChange, mode } = editor;
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -89,36 +72,6 @@ export default function SettingsFormEditor({
     setSettingsValid(isValid);
   }, []);
 
-  useEffect(() => {
-    const data = getData(form);
-
-    dispatch(
-      actions.editor.init(editorId, 'settingsForm', {
-        scriptId: init._scriptId,
-        initScriptId: init._scriptId,
-        entryFunction: init.function || 'main',
-        initEntryFunction: init.function || 'main',
-        data,
-        initData: data,
-        fetchScriptContent: true, // @Adi: what is this?
-        autoEvaluate: true,
-        autoEvaluateDelay: 200,
-        resourceId,
-        resourceType,
-        settings,
-        previewOnSave: true,
-      })
-    );
-  }, [
-    dispatch,
-    editorId,
-    form,
-    init._scriptId,
-    init.function,
-    resourceId,
-    resourceType,
-    settings,
-  ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
   useEffect(() => {
@@ -133,7 +86,7 @@ export default function SettingsFormEditor({
   return (
     <PanelGrid
       key={editorId}
-      className={classes.gridContainer}
+      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}
       height="calc(100vh - 170px)"
       width="100%">
       <PanelGridItem gridArea="meta">
@@ -147,13 +100,15 @@ export default function SettingsFormEditor({
           onChange={handleDataChange}
         />
       </PanelGridItem>
-      <PanelGridItem gridArea="hook">
-        <JavaScriptPanel
-          disabled={disabled}
-          editorId={editorId}
-          insertStubKey="formInit"
-        />
-      </PanelGridItem>
+      {mode === 'script' && (
+        <PanelGridItem gridArea="hook">
+          <JavaScriptPanel
+            disabled={disabled}
+            editorId={editorId}
+            insertStubKey="formInit"
+          />
+        </PanelGridItem>
+      )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form Preview" />
         {result ? (
