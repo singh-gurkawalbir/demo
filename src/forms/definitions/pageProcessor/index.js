@@ -61,6 +61,10 @@ export default {
       refreshOptionsOnChangesTo: ['application'],
       required: true,
       helpKey: 'fb.resourceTypeOptions',
+      visibleWhenAll: {
+        field: 'application',
+        isNot: [''],
+      },
     },
     application: {
       id: 'application',
@@ -145,6 +149,24 @@ export default {
 
     if (fieldId === 'resourceType') {
       let options = destinationOptions[app.assistant || app.type];
+
+      if (app.assistant) {
+        if (!app.export && app.import) {
+          options = [
+            {
+              label: 'Lookup addition records (per record)',
+              value: 'lookupRecords',
+            },
+          ];
+        } else if (!app.import && app.export) {
+          options = [
+            {
+              label: 'Lookup addition records (per record)',
+              value: 'lookupRecords',
+            },
+          ];
+        }
+      }
 
       if (!options) {
         options = destinationOptions.common || [];
