@@ -598,7 +598,7 @@ export const flowJobs = createSelector(
   state => state && state.flowJobs,
   state => state && state.bulkRetryJobs,
   (paging, flowJobs, bulkRetryJobs) => {
-    if (!paging || !flowJobs || !bulkRetryJobs) {
+    if (!paging && !flowJobs && !bulkRetryJobs) {
       return DEFAULT_STATE.flowJobs;
     }
 
@@ -703,7 +703,7 @@ export const inProgressJobIds = createSelector(
   (paging, origFlowJobs, bulkRetryJobs) => {
     const jobIds = { flowJobs: [], bulkRetryJobs: [] };
 
-    if (!paging || !origFlowJobs || !bulkRetryJobs) {
+    if (!paging && !origFlowJobs && !bulkRetryJobs) {
       return jobIds;
     }
 

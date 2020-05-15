@@ -115,7 +115,8 @@ export const appTheme = createSelector(
 
 export const editorTheme = createSelector(
   state => state,
-  state => {
+  appTheme,
+  (state, appTheme) => {
     if (!state) return DEFAULT_EDITOR_THEME;
 
     // props = ui theme, values = editor theme.
@@ -124,7 +125,7 @@ export const editorTheme = createSelector(
       dark: 'monokai',
     };
 
-    return themeMap[appTheme(state)] || DEFAULT_EDITOR_THEME;
+    return themeMap[appTheme] || DEFAULT_EDITOR_THEME;
   }
 );
 
@@ -212,8 +213,8 @@ export const accountOwner = createSelector(
   accessLevel,
   userPreferences,
   state => state && state.profile,
-  state => state && state.org,
-  (userAccessLevel, preferences, profile, org) => {
+  state => state && state.org && state.org.accounts,
+  (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
       const { name, email } = profile;
 
@@ -224,7 +225,7 @@ export const accountOwner = createSelector(
       const { defaultAShareId } = preferences;
 
       if (defaultAShareId && defaultAShareId !== ACCOUNT_IDS.OWN) {
-        const ownerUser = fromAccounts.owner(org.accounts, defaultAShareId);
+        const ownerUser = fromAccounts.owner(accounts, defaultAShareId);
 
         return ownerUser || emptyObj;
       }
