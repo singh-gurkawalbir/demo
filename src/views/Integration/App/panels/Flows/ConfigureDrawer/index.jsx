@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
   form: {
     maxHeight: `calc(100vh - 180px)`,
     padding: theme.spacing(2, 3),
-    // TODO (Azhar): 'gave the padding to the action row of the dynaForm through adjacent way, find the better solution'
     '& + div': {
       padding: theme.spacing(0, 3),
     },
