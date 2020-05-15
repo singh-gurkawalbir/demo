@@ -43,15 +43,16 @@ const useStyles = makeStyles(theme => ({
   multilineText: {
     width: '100%',
     '& div:first-child': {
-      minHeight: 50,
+      minHeight: 38,
       padding: '8px 35px 8px 8px',
     },
   },
   dynaTextContainer: {
     padding: 0,
     display: 'flex',
+    marginBottom: 0,
     '& > .MuiFilledInput-multiline': {
-      minHeight: '38px',
+      minHeight: 38,
       padding: theme.spacing(1),
       '& >:nth-child(1)': {
         margin: 0,
@@ -176,8 +177,7 @@ export default function DynaTypeableSelect(props) {
           ? theme.palette.background.paper2
           : theme.palette.background.paper,
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-      padding: '10px',
-      minHeight: '48px',
+      minHeight: 38,
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,
@@ -185,8 +185,9 @@ export default function DynaTypeableSelect(props) {
     }),
     control: () => ({
       width: '100%',
-      height: 50,
+      height: 38,
       border: '1px solid',
+      padding: '4px 7px',
       borderColor: theme.palette.secondary.lightest,
       borderRadius: '2px',
       backgroundColor: theme.palette.background.paper,
