@@ -60,14 +60,16 @@ export default function Pagination(props) {
   const handleNextPage = useCallback(
     event => {
       const nextPage = page + 1;
+      const startOfNextPage = nextPage * rowsPerPage + 1;
       const endOfNextPage = (nextPage + 1) * rowsPerPage;
       const shouldLoadMore = hasMore && endOfNextPage > count;
+      const canNavigateToNextPage = startOfNextPage < count;
 
       if (shouldLoadMore && typeof loadMoreHandler === 'function') {
-        return loadMoreHandler();
+        loadMoreHandler();
       }
 
-      if (typeof onChangePage === 'function') {
+      if (canNavigateToNextPage && typeof onChangePage === 'function') {
         onChangePage(event, nextPage);
       }
     },
