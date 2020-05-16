@@ -14,14 +14,19 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import ConnectionsDrawer from './drawers/Connections';
+import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
+import ErrorDetailsDrawer from './drawers/ErrorsDetails';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
+import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
+import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
@@ -29,6 +34,7 @@ import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
+import StatusCircle from '../../components/StatusCircle';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
@@ -224,6 +230,19 @@ const useStyles = makeStyles(theme => ({
   editableTextInputShift: {
     width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
   },
+  errorStatus: {
+    justifyContent: 'center',
+    height: 'unset',
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    fontSize: '12px',
+  },
+  divider: {
+    width: 1,
+    height: 30,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: 5,
+  },
 }));
 
 function FlowBuilder() {
@@ -253,6 +272,14 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
+  const {
+    status: openFlowErrorsStatus,
+    data: flowErrorsMap,
+    total: totalErrors = 0,
+  } = useSelector(state => selectors.errorMap(state, flowId));
   // There are 2 conditions to identify this flow as a Data loader.
   // if it is an existing flow, then we can use the existence of a simple export,
   // else for staged flows, we can test to see if the pending export
@@ -350,6 +377,12 @@ function FlowBuilder() {
     },
     [patchFlow]
   );
+  const handleErrors = useCallback(
+    resourceId => () => {
+      handleDrawerOpen(`errors/${resourceId}`);
+    },
+    [handleDrawerOpen]
+  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
@@ -393,6 +426,17 @@ function FlowBuilder() {
     [dispatch, integrationId]
   );
 
+  useEffect(() => {
+    if (!openFlowErrorsStatus && !isNewFlow && isUserInErrMgtTwoDotZero) {
+      dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
+    }
+  }, [
+    dispatch,
+    flowId,
+    isNewFlow,
+    isUserInErrMgtTwoDotZero,
+    openFlowErrorsStatus,
+  ]);
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
@@ -451,7 +495,11 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ConnectionsDrawer flowId={flowId} integrationId={integrationId} />
+      <AuditLogDrawer flowId={flowId} integrationId={integrationId} />
       <QueuedJobsDrawer />
+
+      <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
         title={
@@ -479,6 +527,12 @@ function FlowBuilder() {
           </Fragment>
         }
         infoText={flow.description}>
+        {totalErrors ? (
+          <span className={classes.errorStatus}>
+            <StatusCircle variant="error" size="small" />
+            {totalErrors} errors
+          </span>
+        ) : null}
         <div className={classes.actions}>
           {!isDataLoaderFlow && (
             <SwitchOnOff.component
@@ -512,6 +566,23 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
+          {isUserInErrMgtTwoDotZero ? (
+            <Fragment>
+              <div className={classes.divider} />
+              <IconButton
+                disabled={isNewFlow}
+                onClick={() => handleDrawerOpen('connections')}
+                data-test="flowConnections">
+                <ConnectionsIcon />
+              </IconButton>
+              <IconButton
+                disabled={isNewFlow}
+                onClick={() => handleDrawerOpen('auditlog')}
+                data-test="flowAuditLog">
+                <AuditLogIcon />
+              </IconButton>
+            </Fragment>
+          ) : null}
         </div>
       </CeligoPageBar>
       <div
@@ -551,8 +622,12 @@ function FlowBuilder() {
                 <PageGenerator
                   {...pg}
                   onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+                  onErrors={handleErrors(pg._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
                   key={
                     pg._exportId ||
                     pg._connectionId ||
@@ -597,8 +672,14 @@ function FlowBuilder() {
                 <PageProcessor
                   {...pp}
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+                  onErrors={handleErrors(pp._importId || pp._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap &&
+                      flowErrorsMap[pp._importId || pp._exportId]) ||
+                    0
+                  }
                   key={
                     pp._importId ||
                     pp._exportId ||

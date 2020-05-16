@@ -177,6 +177,10 @@ export function accountShareHeader(state, path) {
 export function avatarUrl(state) {
   return fromProfile.avatarUrl(state && state.profile);
 }
+
+export function isUserInErrMgtTwoDotZero(state) {
+  return fromProfile.isUserInErrMgtTwoDotZero(state && state.profile);
+}
 // #endregion PROFILE
 
 // #region ACCESS LEVEL

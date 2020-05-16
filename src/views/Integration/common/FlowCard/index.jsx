@@ -18,6 +18,7 @@ import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import Spinner from '../../../../components/Spinner';
+import StatusCircle from '../../../../components/StatusCircle';
 import { getTemplateUrlName } from '../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
@@ -61,6 +62,13 @@ const useStyles = makeStyles(theme => ({
   error: {
     backgroundColor: theme.palette.error.main,
   },
+  errorStatus: {
+    justifyContent: 'center',
+    height: 'unset',
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    fontSize: '12px',
+  },
   warning: {
     backgroundColor: theme.palette.warning.main,
   },
@@ -74,7 +82,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowCard({ flowId, excludeActions, storeId }) {
+export default function FlowCard({
+  flowId,
+  excludeActions,
+  storeId,
+  errorCount,
+}) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -294,6 +307,12 @@ export default function FlowCard({ flowId, excludeActions, storeId }) {
           </div>
           <Typography variant="caption" component="span">
             {getRunLabel()} | Last Modified <TimeAgo date={lastModified} />
+            {errorCount ? (
+              <span className={classes.errorStatus}>
+                <StatusCircle variant="error" size="small" />
+                {errorCount} errors
+              </span>
+            ) : null}
           </Typography>
         </Grid>
         <Grid container item xs={4} justify="flex-end" alignItems="center">

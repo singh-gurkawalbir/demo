@@ -1,6 +1,7 @@
-import { makeStyles, Typography } from '@material-ui/core';
-import { useCallback, useEffect, useMemo } from 'react';
+import clsx from 'clsx';
+import { useEffect, useCallback, useState, useMemo, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import * as selectors from '../../../reducers';
@@ -8,6 +9,7 @@ import { hashCode } from '../../../utils/string';
 import DynaForm from '../../DynaForm';
 import ConsoleGridItem from '../ConsoleGridItem';
 import ErrorGridItem from '../ErrorGridItem';
+import DynaSubmit from '../../DynaForm/DynaSubmit';
 import CodePanel from '../GenericEditor/CodePanel';
 import JavaScriptPanel from '../JavaScriptEditor/JavaScriptPanel';
 import PanelGrid from '../PanelGrid';
@@ -33,49 +35,33 @@ import PanelTitle from '../PanelTitle';
     "layout": {"fields": ["A", "B"]}
   }
 */
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   gridContainer: {
     gridTemplateColumns: '2fr 2fr',
     gridTemplateRows: '1fr 1fr 0fr',
+  },
+  jsonGridAreas: {
+    gridTemplateAreas: '"meta form" "meta settings" "error error"',
+  },
+  scriptGridAreas: {
     gridTemplateAreas: '"meta form" "hook settings" "error error"',
   },
-});
-
-function getData(form) {
-  return JSON.stringify(
-    {
-      resource: {
-        settingsForm: { form },
-      },
-      parentResource: {},
-      license: {},
-      parentLicense: {},
-      sandbox: false,
-    },
-    null,
-    2
-  );
-}
+  submitButton: {
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 export default function SettingsFormEditor({
   editorId,
-  settingsForm = {},
   disabled,
   resourceId,
   resourceType,
 }) {
-  const { form, init = {} } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
-  // console.log(editorId, 'settingsForm:', settingsForm);
+  const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
-  const settings = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
-
-    return resource && resource.settings;
-  });
-  const { data, result, error, lastChange } = editor;
-  // console.log('editor', editor);
+  const { data, result, error, lastChange, mode } = editor;
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -85,39 +71,15 @@ export default function SettingsFormEditor({
     },
     [dispatch, editorId]
   );
+  const handleFormPreviewChange = useCallback(values => {
+    setSettingsPreview(values);
+  }, []);
 
-  useEffect(() => {
-    const data = getData(form);
-
-    dispatch(
-      actions.editor.init(editorId, 'settingsForm', {
-        scriptId: init._scriptId,
-        initScriptId: init._scriptId,
-        entryFunction: init.function || 'main',
-        initEntryFunction: init.function || 'main',
-        data,
-        initData: data,
-        fetchScriptContent: true, // @Adi: what is this?
-        autoEvaluate: true,
-        autoEvaluateDelay: 200,
-        resourceId,
-        resourceType,
-        settings,
-        previewOnSave: true,
-      })
-    );
-  }, [
-    dispatch,
-    editorId,
-    form,
-    init._scriptId,
-    init.function,
-    resourceId,
-    resourceType,
-    settings,
-  ]);
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
+  useEffect(() => {
+    setSettingsPreview();
+  }, [lastChange]);
 
   // console.log(finalMeta);
   const key = useMemo(() => hashCode(result), [result]);
@@ -128,19 +90,17 @@ export default function SettingsFormEditor({
     resourceId,
     resourceType,
   });
-  // TODO:verify this behaviour
-  const { value: settingsPreview, isValid: settingsValid } = useSelector(
-    state => selectors.formState(state, formKey)
-  );
 
   return (
     <PanelGrid
       key={editorId}
-      className={classes.gridContainer}
+      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}
       height="calc(100vh - 170px)"
       width="100%">
       <PanelGridItem gridArea="meta">
-        <PanelTitle title="Form metadata" />
+        <PanelTitle
+          title={mode === 'json' ? 'Form Definition' : 'Script Input'}
+        />
         <CodePanel
           id="data"
           name="data"
@@ -150,17 +110,26 @@ export default function SettingsFormEditor({
           onChange={handleDataChange}
         />
       </PanelGridItem>
-      <PanelGridItem gridArea="hook">
-        <JavaScriptPanel
-          disabled={disabled}
-          editorId={editorId}
-          insertStubKey="formInit"
-        />
-      </PanelGridItem>
+      {mode === 'script' && (
+        <PanelGridItem gridArea="hook">
+          <JavaScriptPanel
+            disabled={disabled}
+            editorId={editorId}
+            insertStubKey="formInit"
+          />
+        </PanelGridItem>
+      )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form Preview" />
         {result ? (
-          <DynaForm formKey={formKey} fieldMeta={result} />
+          <Fragment>
+            <DynaForm formKey={formKey} fieldMeta={result} />
+            <DynaSubmit
+              className={classes.submitButton}
+              onClick={handleFormPreviewChange}>
+              Test Form Submission
+            </DynaSubmit>
+          </Fragment>
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid
@@ -169,13 +138,7 @@ export default function SettingsFormEditor({
         )}
       </PanelGridItem>
       <PanelGridItem gridArea="settings">
-        <PanelTitle
-          title={
-            settingsValid
-              ? 'Settings preview'
-              : 'Settings preview (currently invalid)'
-          }
-        />
+        <PanelTitle title="Form Output" />
         {settingsPreview ? (
           <CodePanel
             id="result"
@@ -187,7 +150,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           <Typography>
-            Use the form above to preview the raw settings.
+            Use the form above to preview the form output.
           </Typography>
         )}
       </PanelGridItem>

@@ -7,6 +7,7 @@ import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
+import DebugOnly from '../../../../DebugOnly';
 import useIntegration from '../../../../../hooks/useIntegration';
 
 const useStyles = makeStyles({
@@ -96,27 +97,17 @@ export default function FormView({
   return (
     <div>
       {isDeveloper && !isViewMode && (
-        <Button
-          data-test="toggleEditor"
-          variant="outlined"
-          color="secondary"
-          onClick={onToggleClick}>
-          Toggle form editor
-        </Button>
+        <DebugOnly>
+          <Button
+            data-test="toggleEditor"
+            variant="outlined"
+            color="secondary"
+            onClick={onToggleClick}>
+            Toggle form editor
+          </Button>
+        </DebugOnly>
       )}
-<<<<<<< HEAD
       <DynaForm formKey={formKey} fieldMeta={formState.meta} />
-    </Fragment>
-=======
-      <DynaForm
-        key={formState.key}
-        onChange={onFormChange}
-        disabled={disabled}
-        fieldMeta={formState.meta}
-        resourceId={resourceId}
-        resourceType={resourceType}
-      />
     </div>
->>>>>>> f57506aa55763abb028d86ba3998e62e56af8e72
   );
 }

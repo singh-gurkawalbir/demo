@@ -34,3 +34,9 @@ export function avatarUrl(state) {
   return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`;
 }
 // #endregion PUBLIC SELECTORS
+
+export function isUserInErrMgtTwoDotZero(state) {
+  // hard coding true for useErrMgtTwoDotZero prop for testing purposes
+  // Need to be removed once BE exposes this prop
+  return true || !!(state && state.useErrMgtTwoDotZero);
+}

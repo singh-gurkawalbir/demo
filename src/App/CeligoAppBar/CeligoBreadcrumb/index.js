@@ -218,7 +218,8 @@ const routes = [
   { path: '/pg/templates', breadcrumb: () => 'Templates' },
   { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
-  { path: '/pg/editors', breadcrumb: () => 'Editor playground' },
+  { path: '/pg/resources', breadcrumb: () => 'Resources' },
+  { path: '/pg/editors', breadcrumb: () => 'Developer playground' },
   { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
   {
     path: '/pg/:resourceType',
