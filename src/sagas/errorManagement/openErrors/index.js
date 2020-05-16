@@ -42,7 +42,7 @@ function* requestIntegrationErrors({ integrationId }) {
     yield put(
       actions.errorManager.integrationErrors.received({
         integrationId,
-        errors: integrationErrors,
+        integrationErrors,
       })
     );
   } catch (error) {

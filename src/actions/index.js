@@ -1452,10 +1452,10 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
       }),
-    received: ({ integrationId, errors }) =>
+    received: ({ integrationId, integrationErrors }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED, {
         integrationId,
-        errors,
+        integrationErrors,
       }),
   },
   flowErrorDetails: {
