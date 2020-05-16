@@ -316,7 +316,7 @@ export default function Panel(props) {
               className={classes.appLogo}
               size="small"
               type={applicationType}
-              alt={{ applicationType } || 'Application-Image'}
+              alt={applicationType || 'Application image'}
             />
           )}
           <IconButton
