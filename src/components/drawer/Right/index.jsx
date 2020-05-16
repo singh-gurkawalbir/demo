@@ -91,7 +91,6 @@ export default function RightDrawer({
   onClose,
   infoText,
   actions,
-  TitleBar,
   variant = 'persistent',
   ...rest
 }) {
@@ -142,33 +141,29 @@ export default function RightDrawer({
             ),
           }}
           onClose={handleClose}>
-          {TitleBar ? (
-            <TitleBar {...rest} title={title} />
-          ) : (
-            <div className={classes.titleBar}>
-              {showBackButton && (
-                <IconButton
-                  size="small"
-                  data-test="backRightDrawer"
-                  aria-label="Close"
-                  onClick={handleBack}>
-                  <BackArrowIcon />
-                </IconButton>
-              )}
-              <Typography variant="h3" className={classes.title}>
-                {title}
-                {infoText && <InfoIconButton info={infoText} />}
-              </Typography>
-              {actions}
+          <div className={classes.titleBar}>
+            {showBackButton && (
               <IconButton
                 size="small"
-                data-test="closeRightDrawer"
+                data-test="backRightDrawer"
                 aria-label="Close"
-                onClick={handleClose}>
-                <CloseIcon />
+                onClick={handleBack}>
+                <BackArrowIcon />
               </IconButton>
-            </div>
-          )}
+            )}
+            <Typography variant="h3" className={classes.title}>
+              {title}
+              {infoText && <InfoIconButton info={infoText} />}
+            </Typography>
+            {actions}
+            <IconButton
+              size="small"
+              data-test="closeRightDrawer"
+              aria-label="Close"
+              onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </div>
           <div
             className={clsx(
               classes.contentContainer,
