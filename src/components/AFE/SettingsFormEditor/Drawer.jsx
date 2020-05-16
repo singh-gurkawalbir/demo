@@ -29,7 +29,7 @@ function toggleData(data, mode) {
   );
   let finalData = parsedData;
 
-  console.log(mode, hasWrapper);
+  // console.log(mode, hasWrapper);
 
   if (mode === 'json') {
     // try and find only the form meta...
@@ -43,7 +43,11 @@ function toggleData(data, mode) {
   } else if (!hasWrapper) {
     finalData = {
       resource: {
-        settingsForm: { form: parsedData },
+        settingsForm: {
+          form: parsedData || {
+            form: { fieldMeta: {}, layout: { fields: [] } },
+          },
+        },
       },
       parentResource: {},
       license: {},
@@ -83,9 +87,11 @@ export default function EditorDrawer({
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const settings = useSelector(state => {
+    if (!resourceType || !resourceId) return {};
+
     const resource = selectors.resource(state, resourceType, resourceId);
 
-    return resource && resource.settings;
+    return (resource && resource.settings) || {};
   });
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
@@ -101,7 +107,6 @@ export default function EditorDrawer({
     mode => {
       const data = toggleData(editor.data, mode);
 
-      console.log(mode, data);
       dispatch(actions.editor.patch(editorId, { mode, data }));
     },
     [dispatch, editor.data, editorId]

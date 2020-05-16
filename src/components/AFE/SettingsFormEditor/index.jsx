@@ -84,8 +84,6 @@ export default function SettingsFormEditor({
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
 
-  console.log(data);
-
   return (
     <PanelGrid
       key={editorId}

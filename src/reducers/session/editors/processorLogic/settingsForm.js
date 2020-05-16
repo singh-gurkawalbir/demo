@@ -1,16 +1,7 @@
 import produce from 'immer';
 import util from '../../../../utils/json';
+import { safeParse } from '../../../../utils/string';
 import javascript from './javascript';
-
-function safeParse(o) {
-  if (typeof o === 'object') return o;
-
-  try {
-    return JSON.parse(o);
-  } catch (e) {
-    return undefined;
-  }
-}
 
 export default {
   processor: 'javascript',
@@ -91,7 +82,7 @@ export default {
         Object.keys(draft.fieldMap).forEach(key => {
           const field = draft.fieldMap[key];
 
-          field.defaultValue = settings[field.name] || 'xx';
+          field.defaultValue = settings[field.name] || '';
         });
       }
     });
