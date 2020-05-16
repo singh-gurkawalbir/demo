@@ -311,12 +311,12 @@ export default function Panel(props) {
           <Typography variant="h3" className={classes.titleText}>
             {title}
           </Typography>
-          {!showApplicationLogo && (
+          {showApplicationLogo && (
             <ApplicationImg
               className={classes.appLogo}
               size="small"
-              type="netsuite"
-              alt={'netsuite' || 'Application-Image'}
+              type={applicationType}
+              alt={{ applicationType } || 'Application-Image'}
             />
           )}
           <IconButton
