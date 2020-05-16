@@ -29,26 +29,36 @@ const useStyles = makeStyles(theme => ({
   },
   resourceFormWrapper: {
     padding: theme.spacing(3),
-    borderColor: 'rgb(0,0,0,0.1)',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0',
   },
   appLogo: {
-    paddingRight: '25px',
+    paddingRight: theme.spacing(6),
   },
   title: {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '14px 24px',
+    padding: '14px 0px',
+    margin: theme.spacing(0, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
     background: theme.palette.background.paper,
   },
+  titleText: {
+    maxWidth: '80%',
+    wordBreak: 'break-word',
+  },
+
   closeButton: {
     position: 'absolute',
     right: theme.spacing(2),
     top: theme.spacing(2),
     padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.secondary.dark,
+    },
+  },
+  closeIcon: {
+    fontSize: 18,
   },
 }));
 const determineRequiredResources = type => {
@@ -298,12 +308,15 @@ export default function Panel(props) {
     <Fragment>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">{title}</Typography>
+          <Typography variant="h3" className={classes.titleText}>
+            {title}
+          </Typography>
           {showApplicationLogo && (
             <ApplicationImg
               className={classes.appLogo}
               size="small"
               type={applicationType}
+              alt={applicationType || 'Application image'}
             />
           )}
           <IconButton
@@ -311,7 +324,7 @@ export default function Panel(props) {
             aria-label="Close"
             className={classes.closeButton}
             onClick={onClose}>
-            <Close />
+            <Close className={classes.closeIcon} />
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>

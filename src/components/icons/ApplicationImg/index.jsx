@@ -53,6 +53,7 @@ export default function ApplicationImg({
   markOnly = false,
   assistant,
   type,
+  alt,
   className,
 }) {
   const classes = useStyles();
@@ -76,7 +77,7 @@ export default function ApplicationImg({
   return (
     <img
       className={clsx(classes[size], className)}
-      alt={assistant}
+      alt={assistant || alt}
       src={path}
     />
   );
