@@ -493,6 +493,14 @@ export function getSampleDataContext(
   });
 }
 
+export function flowMetricsData(state, flowId, measurement) {
+  return fromSession.flowMetricsData(
+    state && state.session,
+    flowId,
+    measurement
+  );
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -4246,6 +4254,69 @@ export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
 
 export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
+}
+
+export function flowResources(state, flowId) {
+  const resources = [];
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (flow._exportId) {
+    const exportDoc = fromData.resource(
+      state && state.data,
+      'exports',
+      flow._exportId
+    );
+
+    resources.push({ _id: flow._exportId, name: exportDoc.name });
+  }
+
+  if (flow._importId) {
+    const importDoc = fromData.resource(
+      state && state.data,
+      'imports',
+      flow._importId
+    );
+
+    resources.push({ _id: flow._exportId, name: importDoc.name });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = fromData.resource(
+        state && state.data,
+        'exports',
+        pg._exportId
+      );
+
+      resources.push({ _id: pg._exportId, name: exportDoc.name });
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = fromData.resource(
+          state && state.data,
+          'imports',
+          pp._importId
+        );
+
+        resources.push({ _id: pp._importId, name: importDoc.name });
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = fromData.resource(
+          state && state.data,
+          'exports',
+          pp._exportId
+        );
+
+        resources.push({ _id: pp._exportId, name: exportDoc.name });
+      }
+    });
+  }
+
+  return resources;
 }
 
 export const exportData = (state, identifier) =>

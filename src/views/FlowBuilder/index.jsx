@@ -18,7 +18,11 @@ import ConnectionsDrawer from './drawers/Connections';
 import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
+<<<<<<< HEAD
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
+=======
+import ChartsDrawer from './drawers/LineGraph';
+>>>>>>> d8289c5e66108c2a69b14e1346c19db967b40516
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
@@ -34,8 +38,13 @@ import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
+<<<<<<< HEAD
 import StatusCircle from '../../components/StatusCircle';
+=======
+import HelpIcon from '../../components/icons/HelpIcon';
+>>>>>>> d8289c5e66108c2a69b14e1346c19db967b40516
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { isProduction } from '../../forms/utils';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -489,6 +498,7 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
         resourceType="flows"
@@ -534,6 +544,14 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
+          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={() => handleDrawerOpen('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {!isDataLoaderFlow && (
             <SwitchOnOff.component
               resource={flowDetails}

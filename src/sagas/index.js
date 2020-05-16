@@ -18,6 +18,7 @@ import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { jobSagas } from './jobs';
+import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
@@ -135,6 +136,7 @@ export default function* rootSaga() {
     ...resourceFormSagas,
     ...integrationAppsSagas,
     ...jobSagas,
+    ...flowMetricSagas,
     ...flowSagas,
     ...agentSagas,
     ...uploadFileSagas,
