@@ -76,8 +76,8 @@ export const parseFlowMetricsJson = response => {
       field: convertToFullText(item._field),
       value: item._value,
       table: item.table,
-      [`${item.ei}-value`]: item._value,
-      [`${item.f}-value`]: item._value,
+      [`${item.ei}-value`]: parseInt(item._value, 10),
+      [`${item.f}-value`]: parseInt(item._value, 10),
     }))
     .reduce((r, a) => {
       const key =

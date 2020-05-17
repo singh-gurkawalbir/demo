@@ -32,7 +32,7 @@ function LineGraphDrawer({ parentUrl, flowId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
-  const [selectedMeasurements, setSelectedMeasurements] = useState(['success']);
+  const [selectedMeasurements, setSelectedMeasurements] = useState(['error']);
   const [selectedResources, setSelectedResources] = useState([flowId]);
   const handleClose = useCallback(() => {
     history.push(parentUrl);
