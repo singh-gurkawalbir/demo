@@ -1559,6 +1559,58 @@ const errorManager = {
         isResolved,
       }),
   },
+  retryData: {
+    request: ({ flowId, resourceId, retryId }) =>
+      action(actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+      }),
+    received: ({ flowId, resourceId, retryId, retryData }) =>
+      action(actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.RECEIVED, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }),
+    receivedError: ({ flowId, resourceId, retryId, error }) =>
+      action(
+        actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.RECEIVED_ERROR,
+        {
+          flowId,
+          resourceId,
+          retryId,
+          error,
+        }
+      ),
+    update: {
+      request: ({ flowId, resourceId, retryId }) =>
+        action(
+          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE.REQUEST,
+          {
+            flowId,
+            resourceId,
+            retryId,
+          }
+        ),
+      received: ({ flowId, resourceId, retryId, retryData }) =>
+        action(
+          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE.RECEIVED,
+          { flowId, resourceId, retryId, retryData }
+        ),
+      receivedError: ({ flowId, resourceId, retryId, error }) =>
+        action(
+          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE
+            .RECEIVED_ERROR,
+          {
+            flowId,
+            resourceId,
+            retryId,
+            error,
+          }
+        ),
+    },
+  },
 };
 const flow = {
   run: ({ flowId, customStartDate, options }) =>

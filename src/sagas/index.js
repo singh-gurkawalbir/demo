@@ -52,6 +52,7 @@ import { transferSagas } from './transfer';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
+import errorMiscSagas from './errorManagement/miscellaneous';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 
@@ -154,6 +155,7 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
+    ...errorMiscSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,

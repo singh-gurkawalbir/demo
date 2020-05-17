@@ -547,6 +547,12 @@ export function getLastExportDateTime(state, flowId) {
   );
 }
 
+export function retryDataContext(state, retryId) {
+  return fromErrorManagement.retryDataContext(state && state.errorManagement, {
+    retryId,
+  });
+}
+
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
 }
