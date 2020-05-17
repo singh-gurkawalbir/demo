@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
@@ -53,6 +53,7 @@ export default function DynaEditor({
   options,
   onFieldChange,
   value,
+  className,
   label,
   editorClassName,
   disabled,
@@ -136,7 +137,7 @@ export default function DynaEditor({
   );
 
   return (
-    <div className={classes.wrapper}>
+    <div className={clsx(classes.wrapper, className)}>
       <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
         <div className={classes.dynaEditorTextLabelWrapper}>
@@ -145,11 +146,7 @@ export default function DynaEditor({
           <FieldHelp helpText={label} />
         </div>
 
-        <div
-          className={classNames(
-            classes.inlineEditorContainer,
-            editorClassName
-          )}>
+        <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
           <CodeEditor
             readOnly={disabled}
             name={`${id}-inline`}
