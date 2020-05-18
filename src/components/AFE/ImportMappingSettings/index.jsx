@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -51,9 +51,6 @@ export default function ImportMappingSettings(props) {
     lookups,
     isCategoryMapping,
   } = props;
-  const [formState, setFormState] = useState({
-    showValidationBeforeTouched: false,
-  });
   const { generate, extract, index } = value;
   const [enquesnackbar] = useEnqueueSnackbar();
   const getLookup = name => lookups.find(lookup => lookup.name === name);
@@ -133,16 +130,10 @@ export default function ImportMappingSettings(props) {
     },
     [enquesnackbar, extract, generate, lookup, onClose, updateLookup]
   );
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showValidationBeforeTouched: true,
-    });
-  }, []);
   const formKey = useFormInitWithPermissions({
     disabled,
     fieldsMeta: fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
-    showValidationBeforeTouched: formState.showValidationBeforeTouched,
   });
 
   return (
@@ -159,7 +150,6 @@ export default function ImportMappingSettings(props) {
           formKey={formKey}
           disabled={disableSave}
           id="fieldMappingSettingsSave"
-          showCustomFormValidations={showCustomFormValidations}
           onClick={handleSubmit}>
           Save
         </DynaSubmit>

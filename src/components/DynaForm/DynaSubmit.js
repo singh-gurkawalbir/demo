@@ -15,7 +15,6 @@ function FormButton({
   color,
   fields,
   resourceType,
-  showCustomFormValidations,
   skipDisableButtonForFormTouched = false,
   resourceId,
 }) {
@@ -26,7 +25,6 @@ function FormButton({
     formIsValid: isValid,
     resourceId,
     resourceType,
-    showCustomFormValidations,
   });
   const buttonDisabled = useMemo(
     () => disabled || (skipDisableButtonForFormTouched ? false : !formTouched),

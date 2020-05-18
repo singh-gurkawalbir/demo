@@ -13,9 +13,9 @@ import fields from './fields';
 function form(state = {}, action) {
   const { type, formKey, formSpecificProps = {} } = action;
   const {
-    showValidationBeforeTouched = false,
-    conditionalUpdate = false,
-    disabled = false,
+    showValidationBeforeTouched,
+    conditionalUpdate,
+    disabled,
   } = formSpecificProps;
   const { fieldsMeta = {} } = formSpecificProps;
 
@@ -25,9 +25,9 @@ function form(state = {}, action) {
       case actionTypes.FORM.INIT:
         draft[formKey] = {
           ...formSpecificProps,
-          showValidationBeforeTouched,
-          conditionalUpdate,
-          formIsDisabled: disabled,
+          showValidationBeforeTouched: !!showValidationBeforeTouched,
+          conditionalUpdate: !!conditionalUpdate,
+          formIsDisabled: !!disabled,
           resetTouchedState: false,
         };
         draft[formKey].fields = registerFields(
@@ -40,10 +40,13 @@ function form(state = {}, action) {
 
       case actionTypes.FORM.UPDATE:
         if (!formKey) break;
-        draft[
-          formKey
-        ].showValidationBeforeTouched = !!showValidationBeforeTouched;
-        draft[formKey].formIsDisabled = !!disabled;
+
+        if (showValidationBeforeTouched !== undefined)
+          draft[
+            formKey
+          ].showValidationBeforeTouched = showValidationBeforeTouched;
+
+        if (disabled !== undefined) draft[formKey].formIsDisabled = disabled;
 
         getNextStateFromFields(draft[formKey]);
 

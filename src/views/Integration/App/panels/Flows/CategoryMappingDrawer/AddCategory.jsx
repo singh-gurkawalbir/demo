@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useState, Fragment } from 'react';
+import { useCallback, Fragment } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -52,14 +52,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
-  const [formState, setFormState] = useState({
-    showValidationBeforeTouched: false,
-  });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showValidationBeforeTouched: true,
-    });
-  }, []);
   const handleSave = useCallback(
     ({ category, childCategory, grandchildCategory }) => {
       dispatch(
@@ -201,7 +193,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   };
   const formKey = useFormInitWithPermissions({
     fieldsMeta: fieldMeta,
-    showValidationBeforeTouched: !!formState.showValidationBeforeTouched,
     optionsHandler: fieldMeta.optionsHandler,
   });
 
@@ -224,7 +215,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
           <DynaSubmit
             formKey={formKey}
-            showCustomFormValidations={showCustomFormValidations}
             data-test="addCategory"
             onClick={handleSave}>
             Add Category

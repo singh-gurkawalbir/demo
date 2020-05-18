@@ -32,6 +32,11 @@ const form = {
   clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
   formUpdate: (formKey, formSpecificProps) =>
     action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
+  showFormValidations: formKey =>
+    action(actionTypes.FORM.UPDATE, {
+      formKey,
+      formSpecificProps: { showValidationBeforeTouched: true },
+    }),
   registerField: formKey => fieldProps =>
     action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
   fieldChange: formKey => (id, value, skipFieldTouched) =>
@@ -649,15 +654,7 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-    showFormValidations: (integrationId, flowId, sectionId) =>
-      action(
-        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
-        {
-          integrationId,
-          flowId,
-          sectionId,
-        }
-      ),
+
     requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integrationId,
@@ -1301,11 +1298,6 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
       resourceId,
       resourceType,
-    }),
-  showFormValidations: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
-      resourceType,
-      resourceId,
     }),
   submit: (
     resourceType,

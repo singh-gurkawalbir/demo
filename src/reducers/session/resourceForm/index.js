@@ -54,24 +54,6 @@ export default function reducer(state = {}, action) {
       stateCopy[key] && delete stateCopy[key].initData;
 
       return stateCopy;
-
-    case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
-      // only after form successfully intializes does it make sense to show validations
-      // if there is no form state it does not make sense to create a state and tie this property
-      if (!state[key] || !state[key].initComplete) return state;
-
-      return {
-        ...state,
-        // Are there any issues with storing fn pointers here?
-        // if the state is not serializable, will we recover properly from
-        // refreshing session? Doing this makes the submit resource saga
-        // easier as we dont need to lookup the preSave handler...
-        [key]: {
-          ...state[key],
-          showValidationBeforeTouched: true,
-        },
-      };
-
     case actionTypes.RESOURCE_FORM.SUBMIT:
       return {
         ...state,

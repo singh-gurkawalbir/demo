@@ -73,7 +73,9 @@ export default {
   },
   getLookupFromFormContext(formContext, adaptorType) {
     const lookupFieldId = this.getLookupFieldId(adaptorType);
-    const lookupField = formContext.fields.find(
+
+    if (!formContext || !formContext.fields) return [];
+    const lookupField = Object.values(formContext.fields).find(
       field => field.key === lookupFieldId
     );
 
