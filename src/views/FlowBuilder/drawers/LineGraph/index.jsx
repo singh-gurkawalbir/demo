@@ -1,8 +1,11 @@
 import { Drawer, makeStyles } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
+import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory, Route } from 'react-router-dom';
 import FlowCharts from './FlowCharts';
 import DrawerTitleBar from './TitleBar';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -32,8 +35,13 @@ function LineGraphDrawer({ parentUrl, flowId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const [selectedMeasurements, setSelectedMeasurements] = useState(['error']);
   const [selectedResources, setSelectedResources] = useState([flowId]);
+  const [range, setRange] = useState({
+    startDate: subHours(new Date(), 24).toISOString(),
+    endDate: new Date().toISOString(),
+  });
   const handleClose = useCallback(() => {
     history.push(parentUrl);
   }, [history, parentUrl]);
@@ -43,6 +51,13 @@ function LineGraphDrawer({ parentUrl, flowId }) {
   const handleResourceChange = useCallback(val => {
     setSelectedResources(val);
   }, []);
+  const handleDateRangeChange = useCallback(
+    range => {
+      dispatch(actions.flowMetrics.clear(flowId));
+      setRange(Array.isArray(range) ? range[0] : range);
+    },
+    [dispatch, flowId]
+  );
 
   return (
     <Drawer
@@ -59,6 +74,7 @@ function LineGraphDrawer({ parentUrl, flowId }) {
         onResourcesChange={handleResourceChange}
         measurements={selectedMeasurements}
         selectedResources={selectedResources}
+        onDateRangeChange={handleDateRangeChange}
         onClose={handleClose}
         backToParent
       />
@@ -66,6 +82,7 @@ function LineGraphDrawer({ parentUrl, flowId }) {
         flowId={flowId}
         selectedMeasurements={selectedMeasurements}
         selectedResources={selectedResources}
+        range={range}
         className={classes.scheduleContainer}
       />
     </Drawer>

@@ -34,9 +34,6 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  //   multislectWrapper: {
-  //     width: '100%',
-  //   },
 }));
 
 export default function DynaMultiSelect(props) {

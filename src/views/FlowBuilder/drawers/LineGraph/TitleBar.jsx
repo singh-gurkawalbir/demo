@@ -38,6 +38,7 @@ export default function DrawerTitleBar({
   selectedResources,
   onMeasurementsChange,
   onResourcesChange,
+  onDateRangeChange,
   parentUrl,
 }) {
   const classes = useStyles();
@@ -64,7 +65,6 @@ export default function DrawerTitleBar({
     },
     [onResourcesChange]
   );
-  const handleDateRangeChange = useCallback(() => {}, []);
 
   return (
     <div className={classes.titleBar}>
@@ -89,7 +89,7 @@ export default function DrawerTitleBar({
           ]}
           onFieldChange={handleMeasurementChange}
         />
-        <DateRangeSelector onSave={handleDateRangeChange} />
+        <DateRangeSelector onSave={onDateRangeChange} />
         <DynaMultiSelect
           name="flowResources"
           value={selectedResources}

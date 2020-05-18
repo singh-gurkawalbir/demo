@@ -1,18 +1,22 @@
-export const getFlowMetricsQuery = (flowId, userId, filters) => {
-  let start;
-  let end = '-1s';
-  const { filterKey = 'lastDay', value = '' } = filters;
+import getUnixTime from 'date-fns/getUnixTime';
 
-  switch (filterKey) {
-    case 'lastDay':
-      start = '-1d';
-      break;
-    case 'custom':
-      ({ start, end } = value);
-      break;
-    default:
-      start = '-1d';
-      break;
+const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
+
+export const getFlowMetricsQuery = (flowId, userId, filters) => {
+  const { range = {} } = filters;
+  let start = '-1d';
+  let end = '-1s';
+
+  if (isDate(range.startDate)) {
+    start = range.startDate.toISOString();
+  } else if (range.startDate) {
+    start = range.startDate;
+  }
+
+  if (isDate(range.endDate)) {
+    end = range.endDate.toISOString();
+  } else if (range.endDate) {
+    end = range.endDate;
   }
 
   return `from(bucket: "flowEvents") 
@@ -70,6 +74,7 @@ export const parseFlowMetricsJson = response => {
   response.data
     .map(item => ({
       time: item._time,
+      timeInMills: getUnixTime(new Date(item._time)),
       flowId: item.f,
       resourceId: item.ei,
       attribute: convertToFullText(item._measurement),

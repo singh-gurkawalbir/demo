@@ -1,6 +1,5 @@
 import React, { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import moment from 'moment';
 import {
   LineChart,
   XAxis,
@@ -11,6 +10,7 @@ import {
   Line,
   ResponsiveContainer,
 } from 'recharts';
+import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import * as selectors from '../../../../reducers';
@@ -44,15 +44,16 @@ const Chart = ({ id, flowId, selectedResources }) => {
           }}>
           <CartesianGrid strokeDasharray="1 1" />
           <XAxis
-            dataKey="time"
+            dataKey="timeInMills"
             name="Time"
-            tickFormatter={unixTime => moment(unixTime).format('DD/MMM hh:mm')}
-            type="category"
+            tickFormatter={unixTime =>
+              `${differenceInHours(fromUnixTime(unixTime), new Date())} h`
+            }
           />
           <YAxis
             yAxisId={id}
             type="number"
-            domain={[() => 0, dataMax => dataMax]}
+            domain={[() => 0, dataMax => dataMax + 10]}
           />
 
           <Tooltip formatter={value => parseValue(value)} />
@@ -75,6 +76,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
 export default function FlowCharts({
   flowId,
   selectedMeasurements,
+  range,
   selectedResources,
 }) {
   const classes = useStyles();
@@ -87,9 +89,9 @@ export default function FlowCharts({
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(flowId, {}));
+      dispatch(actions.flowMetrics.request(flowId, { range }));
     }
-  }, [data, dispatch, flowId]);
+  }, [data, dispatch, flowId, range]);
 
   if (data.status === 'requested') {
     return (
