@@ -184,7 +184,7 @@ class SignIn extends Component {
       location && location.state && location.state.attemptedRoute;
 
     if (error) {
-      error = 'Oops! Something went wrong. Try again.';
+      error = 'Sign in failed. Please try again.';
     } else if (window.signInError) {
       error = window.signInError;
     }
