@@ -79,7 +79,7 @@ export default function Suggestions(props) {
   const adaptorType = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
       state,
-      'imports',
+      resourceType,
       resourceId
     );
 

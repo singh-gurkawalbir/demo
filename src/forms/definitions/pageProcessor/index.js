@@ -154,8 +154,8 @@ export default {
         if (!app.export && app.import) {
           options = [
             {
-              label: 'Lookup addition records (per record)',
-              value: 'lookupRecords',
+              label: 'Import records into destination application',
+              value: 'importRecords',
             },
           ];
         } else if (!app.import && app.export) {
