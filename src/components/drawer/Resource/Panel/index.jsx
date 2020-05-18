@@ -300,6 +300,7 @@ export default function Panel(props) {
             formKey={newId}
             resourceType={resourceType}
             resourceId={id}
+            flowId={flowId}
             // TODO: push this to directly to the button
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
@@ -309,6 +310,7 @@ export default function Panel(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            flowId={flowId}
             // TODO: push this to directly to the button
             submitButtonLabel={submitButtonLabel}
             onCancel={abortAndClose}

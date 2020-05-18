@@ -29,10 +29,11 @@ export default function useFormInitWithPermissions(props) {
           );
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disableAllFieldsExceptClocked,
     dispatch,
-    fieldsMeta,
+    // TODO: it should be sensitive to metadata
     formKey,
     resourceType,
   ]);
