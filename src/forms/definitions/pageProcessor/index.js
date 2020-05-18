@@ -60,7 +60,7 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      helpKey: 'fb.resourceTypeOptions',
+      placeholder: 'Please select',
       visibleWhenAll: {
         field: 'application',
         isNot: [''],
@@ -172,7 +172,8 @@ export default {
         options = destinationOptions.common || [];
       }
 
-      resourceTypeField.value = options && options[0] && options[0].value;
+      resourceTypeField.value =
+        options && options.length === 1 && (options[0] && options[0].value);
       resourceTypeField.disabled = options && options.length === 1;
 
       return [

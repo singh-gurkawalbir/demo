@@ -70,6 +70,7 @@ export default {
       type: 'select',
       label: 'What would you like to do?',
       required: true,
+      placeholder: 'Please select',
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
@@ -77,7 +78,6 @@ export default {
           isNot: [''],
         },
       ],
-      helpKey: 'fb.resourceTypeOptions',
     },
     connection: {
       id: 'connection',
@@ -152,7 +152,8 @@ export default {
         } else options = sourceOptions.common || [];
       }
 
-      typeField.value = options && options[0] && options[0].value;
+      typeField.value =
+        options && options.length === 1 && (options[0] && options[0].value);
       typeField.disabled = options && options.length === 1;
 
       return [
