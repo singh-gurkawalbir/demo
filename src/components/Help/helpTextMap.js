@@ -1291,6 +1291,8 @@ export default {
     'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'import.lastModified':
     'System generated datetime to track the last time this resource was modified.',
+  'import.uploadFile':
+    'Please provide a sample file that this import would need to process. We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step. The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the import will need to generate when running in a production capacity.',
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
@@ -1664,7 +1666,7 @@ export default {
   'export.batchSize':
     "NetSuite's search APIs will by default return up to 1000 records every time you request a new page of results. This is problematic if you need to execute a SuiteScript based hook on the records before they are exported (in which case you will likely run out of SuiteScript points or hit NetSuite instruction count limits), or if the individual records you are exporting are very large such that the sum of all 1000 records exceeds 5 MB (which is also not allowed). For either situation, this field can easily be used to tell integrator.io to break down the default 1000 record batches into smaller batches where you define the ideal size.",
   'import.inputMode':
-    'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
+    'Do you need to build brand new CSV, XML, JSON, etc... files from the records being processed in the flow, or are you simply transferring raw files as-is (i.e. PDFs, JPGs, etc...)?',
   'import._applicationId':
     "This field lists all applications and technology adaptors that integrator.io supports for exporting or importing the data. For less technical users, application adaptors, such as NetSuite or Salesforce are the easiest to use, whereas technology adaptors, such as the REST API adaptor requires a more technical understanding of the applications being integrated. However, once you learn how to use a specific technology adaptor, you will be able to integrate a multitude of different applications without having to wait for integrator.io to expose specific application adaptors.\nIf you are unable to find a matching application or a technology adaptor, the only other connectivity option is to use the integrator.io extension framework to develop a custom Wrapper. For more information on Wrappers and to learn more about integrator.io's developer extension framework, contact Celigo Support.",
   'import.overrideDataURITemplate':

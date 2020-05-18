@@ -99,6 +99,7 @@ export default {
         is: ['blob'],
       },
     ],
+    defaultValue: r => (r && r.blobKeyPath) || 'blobKey',
     required: true,
   },
   assistant: {
