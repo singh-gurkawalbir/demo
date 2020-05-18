@@ -548,6 +548,8 @@ export default {
     'Please enter Client ID of your Walmart Account.',
   'walmart.connection.http.encrypted.clientSecret':
     'Please enter Client Secret of your Walmart Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client secret safe.',
+  'logisense.connection.environment':
+    'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
     'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
   'logisense.connection.http.unencrypted.username':
