@@ -4321,7 +4321,7 @@ export const lookupProcessorResourceType = (state, id) => {
 
   if (!adaptorType || !adaptorType.value) {
     // eslint-disable-next-line
-      console.warn(
+     return console.warn(
       'No replace operation against /adaptorType found in the patch-set.'
     );
   }
