@@ -1596,6 +1596,8 @@ export default {
     'Please select a file from your local computer that you would like to import. The maximum file size allowed is currently 100 MB. If you need to import anything larger than this please log a support ticket, or as a work around you can break your larger files into separate smaller ones.',
   'export.requiredTrigger':
     'When you select an sObject type in the SObject Type field, an Apex trigger code is generated in this field. This code is required per sObject type to facilitate real-time data exports. You have to copy this code using the Copy icon and paste it in the Salesforce page in your account, the link for which appears just below this field.',
+  'export.uploadFile':
+    'Please provide a sample file that this transfer would need to parse when the flow runs.  This sample file will be used to help you configure the file parser options, and it will also be used to help you map data in subsequent steps in your flow.  The sample file does not need to be overly large, but it should contain all possible fields that your flow needs to work with.',
   'export.referencedFields':
     'Use this setting to add additional fields to the export data defined as lookup fields on the sObject on Salesforce. Ex: Account is a lookup field on Opportunity. This setting allows users to pull data from the reference fields (such as Name, AccountNumber) on the Account sObject.',
   'export.relatedLists':
@@ -1605,7 +1607,7 @@ export default {
   'export.fixedWidthFormat':
     'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'export.outputMode':
-    'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
+    'Do you need to parse CSV, XML, JSON, etc... files into records before sending them to other applications, or should the files simply be transferred raw as-is (i.e. PDFs, JPGs, etc...)?',
   'export.fileMetadata':
     'Check this box if you ONLY need to transfer metadata about the files, but not the files themselves.',
   'export.ediFormat':
@@ -2001,8 +2003,6 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
-  'fb.resourceTypeOptions':
-    'These are the options available for the selected application. If the application only supports one option, then the value will be pre-selected and read-only.',
   'mapping.dataType':
     'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
   'mapping.discardIfEmpty':

@@ -14,7 +14,7 @@ function DynaUploadFile(props) {
     formContext,
     onFieldChange,
   } = props;
-  const DEFAULT_PLACEHOLDER = 'Browse to zip file:';
+  const DEFAULT_PLACEHOLDER = 'Sample file (that would be parsed):';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
