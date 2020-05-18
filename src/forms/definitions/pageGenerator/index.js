@@ -70,6 +70,7 @@ export default {
       type: 'select',
       label: 'What would you like to do?',
       required: true,
+      defaultValue: '',
       placeholder: 'Please select',
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
@@ -96,7 +97,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -153,7 +154,7 @@ export default {
       }
 
       typeField.value =
-        options && options.length === 1 && (options[0] && options[0].value);
+        options && options.length === 1 ? options[0] && options[0].value : '';
       typeField.disabled = options && options.length === 1;
 
       return [

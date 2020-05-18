@@ -3,8 +3,6 @@ import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
 import { destinationOptions } from '../../utils';
 
-const visibleWhenHasApp = { field: 'application', isNot: [''] };
-
 export default {
   init: meta => meta,
   preSave: ({
@@ -125,7 +123,10 @@ export default {
       allowNew: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenHasApp],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'resourceType', isNot: [''] },
+      ],
     },
   },
   layout: {
@@ -173,7 +174,7 @@ export default {
       }
 
       resourceTypeField.value =
-        options && options.length === 1 && (options[0] && options[0].value);
+        options && options.length === 1 ? options[0] && options[0].value : '';
       resourceTypeField.disabled = options && options.length === 1;
 
       return [
