@@ -97,7 +97,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook', ''] },
+        { field: 'type', isNot: ['webhook'] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -153,9 +153,12 @@ export default {
         } else options = sourceOptions.common || [];
       }
 
-      typeField.value =
-        options && options.length === 1 ? options[0] && options[0].value : '';
-      typeField.disabled = options && options.length === 1;
+      if (options && options.length === 1) {
+        typeField.value = options[0] && options[0].value;
+        typeField.disabled = true;
+      } else {
+        typeField.value = '';
+      }
 
       return [
         {
