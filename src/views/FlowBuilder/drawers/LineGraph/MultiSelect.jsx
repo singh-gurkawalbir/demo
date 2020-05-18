@@ -64,6 +64,18 @@ export default function MultiSelect(props) {
     processedValue = [processedValue];
   }
 
+  const Value = ({ selected, items }) => {
+    if (!selected || !selected.length) {
+      return <span>{placeholder}</span>;
+    } else if (selected.length === 1 && items) {
+      const selectedItem = items.find(i => i.value === selected[0]).label;
+
+      return <span>{selectedItem}</span>;
+    }
+
+    return <span>Selected({selected.length})</span>;
+  };
+
   let items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -131,13 +143,9 @@ export default function MultiSelect(props) {
             onFieldChange(id, evt.target.value);
           }}
           input={<Input name={name} id={id} />}
-          renderValue={selected =>
-            !selected || !selected.length ? (
-              <span>{placeholder}</span>
-            ) : (
-              <span>Selected({selected.length})</span>
-            )
-          }>
+          renderValue={selected => (
+            <Value items={options[0].items} selected={selected} />
+          )}>
           {items}
         </CeligoSelect>
       </FormControl>
