@@ -36,7 +36,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaMultiSelect(props) {
+// TODO: @Sravan Merge this with existing DynaMulltiSelect
+
+export default function MultiSelect(props) {
   const {
     disabled,
     id,

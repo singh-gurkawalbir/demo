@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Typography, IconButton, Divider } from '@material-ui/core';
+import { Typography, IconButton, Divider, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../reducers';
 import CloseIcon from '../../../../components/icons/CloseIcon';
@@ -72,39 +72,50 @@ export default function DrawerTitleBar({
         <Typography variant="h3" className={classes.title}>
           {title}
         </Typography>
-
-        <DynaMultiSelect
-          name="attributes"
-          value={measurements}
-          placeholder="Please select flow attributes"
-          options={[
-            {
-              items: [
-                { value: 'success', label: 'Flow: Success' },
-                { value: 'error', label: 'Flow: Errors' },
-                { value: 'ignored', label: 'Flow: Ignored' },
-                { value: 'averageTimeTaken', label: 'Average time taken' },
-              ],
-            },
-          ]}
-          onFieldChange={handleMeasurementChange}
-        />
-        <DateRangeSelector onSave={onDateRangeChange} />
-        <DynaMultiSelect
-          name="flowResources"
-          value={selectedResources}
-          placeholder="Please select resources"
-          options={[
-            {
-              items: flowResources.map(r => ({
-                value: r._id,
-                label: r.name || r.id,
-              })),
-            },
-          ]}
-          onFieldChange={handleResourcesChange}
-        />
-
+        <Grid
+          container
+          direction="row"
+          justify="flex-end"
+          alignItems="center"
+          spacing={4}>
+          <Grid item>
+            <DynaMultiSelect
+              name="attributes"
+              value={measurements}
+              placeholder="Please select flow attributes"
+              options={[
+                {
+                  items: [
+                    { value: 'success', label: 'Flow: Success' },
+                    { value: 'error', label: 'Flow: Errors' },
+                    { value: 'ignored', label: 'Flow: Ignored' },
+                    { value: 'averageTimeTaken', label: 'Average time taken' },
+                  ],
+                },
+              ]}
+              onFieldChange={handleMeasurementChange}
+            />
+          </Grid>
+          <Grid item>
+            <DateRangeSelector onSave={onDateRangeChange} />
+          </Grid>
+          <Grid item>
+            <DynaMultiSelect
+              name="flowResources"
+              value={selectedResources}
+              placeholder="Please select resources"
+              options={[
+                {
+                  items: flowResources.map(r => ({
+                    value: r._id,
+                    label: r.name || r.id,
+                  })),
+                },
+              ]}
+              onFieldChange={handleResourcesChange}
+            />
+          </Grid>
+        </Grid>
         <Divider orientation="veritical" className={classes.divider} />
         <IconButton
           data-test="closeCategoryMapping"
