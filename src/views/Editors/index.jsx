@@ -269,7 +269,7 @@ export default function Editors() {
 
   return (
     <Fragment>
-      <CeligoPageBar title="Developer playground" />
+      <CeligoPageBar title="Dev playground" />
 
       <div className={classes.appFrame}>
         <Drawer
