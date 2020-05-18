@@ -336,7 +336,7 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && (
+        {resourceType === 'connections' && !!value && value.length === 1 && (
           <ConnectionLoadingChip connectionId={value} />
         )}
       </div>
