@@ -393,6 +393,12 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
+  const handleDrawerClick = useCallback(
+    path => () => {
+      handleDrawerOpen(path);
+    },
+    [handleDrawerOpen]
+  );
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -542,7 +548,7 @@ function FlowBuilder() {
             <IconButton
               disabled={isNewFlow}
               data-test="charts"
-              onClick={() => handleDrawerOpen('charts')}>
+              onClick={handleDrawerClick('charts')}>
               <HelpIcon />
             </IconButton>
           )}
@@ -561,14 +567,14 @@ function FlowBuilder() {
             <IconButton
               disabled={isNewFlow}
               data-test="scheduleFlow"
-              onClick={() => handleDrawerOpen('schedule')}>
+              onClick={handleDrawerClick('schedule')}>
               <CalendarIcon />
             </IconButton>
           )}
 
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}
+            onClick={handleDrawerClick('settings')}
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
@@ -583,13 +589,13 @@ function FlowBuilder() {
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('connections')}
+                onClick={handleDrawerClick('connections')}
                 data-test="flowConnections">
                 <ConnectionsIcon />
               </IconButton>
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('auditlog')}
+                onClick={handleDrawerClick('auditlog')}
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>

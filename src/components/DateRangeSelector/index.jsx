@@ -17,6 +17,7 @@ import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import ArrowPopper from '../ArrowPopper';
+import { getDurationLabel } from '../../utils/flowMetrics';
 
 const defineds = {
   startOfWeek: startOfWeek(new Date()),
@@ -143,7 +144,7 @@ export default function DateRangeSelector({ value, onSave }) {
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-  const result = useMemo(
+  const dateRangeOptions = useMemo(
     () =>
       rangeList.map(rangeItem => ({
         ...staticRangeHandler,
@@ -155,7 +156,7 @@ export default function DateRangeSelector({ value, onSave }) {
   return (
     <Fragment>
       <Button onClick={toggleClick} variant="outlined" color="secondary">
-        Open Date Range
+        {getDurationLabel(selectedRanges)}
       </Button>
       <ArrowPopper
         open={!!anchorEl}
@@ -165,7 +166,7 @@ export default function DateRangeSelector({ value, onSave }) {
         {anchorEl && (
           <Fragment>
             <DateRangePicker
-              staticRanges={result}
+              staticRanges={dateRangeOptions}
               showSelectionPreview
               onChange={item => setSelectedRanges([item.selection])}
               moveRangeOnFirstSelection={false}

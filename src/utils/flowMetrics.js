@@ -2,6 +2,8 @@ import getUnixTime from 'date-fns/getUnixTime';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
+export const getDurationLabel = () => 'Last 24 hours';
+
 export const getFlowMetricsQuery = (flowId, userId, filters) => {
   const { range = {} } = filters;
   let start = '-1d';

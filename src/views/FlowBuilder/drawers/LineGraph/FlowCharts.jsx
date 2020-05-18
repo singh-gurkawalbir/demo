@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { differenceInHours, fromUnixTime } from 'date-fns';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import * as selectors from '../../../../reducers';
 import { getLabel } from '../../../../utils/flowMetrics';
@@ -96,10 +96,12 @@ export default function FlowCharts({
   if (data.status === 'requested') {
     return (
       <Loader open>
-        Fetching Data
+        Fetching data
         <Spinner />
       </Loader>
     );
+  } else if (data.status === 'error') {
+    return <Typography>Error Occured</Typography>;
   }
 
   return (
