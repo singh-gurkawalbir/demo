@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, Fragment, useState } from 'react';
 import {
   Route,
   Link,
@@ -23,6 +23,8 @@ import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
+import { generateNewId } from '../../../../../utils/resource';
+import { GenerateActions } from '../../../../../components/drawer/Resource/Panel/ActionsFactory';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,7 +56,8 @@ const useStyles = makeStyles(theme => ({
 
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
-  const { integrationId, flowId, sectionId } = props;
+  const [formKey] = useState(generateNewId());
+  const { integrationId, flowId, sectionId, fieldMeta } = props;
   const allProps = {
     ...props,
     resourceType: 'integrations',
@@ -77,7 +80,15 @@ export const IAFormStateManager = props => {
     };
   }, [dispatch, flowId, integrationId, sectionId]);
 
-  return <FormStateManager {...allProps} isIAForm />;
+  return (
+    <Fragment>
+      <FormStateManager {...allProps} formKey={formKey} />
+      <GenerateActions
+        actions={fieldMeta.actions}
+        actionProps={{ ...allProps, isIAForm: true, formKey }}
+      />
+    </Fragment>
+  );
 };
 
 function FlowList({ integrationId, storeId }) {

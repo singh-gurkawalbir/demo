@@ -654,7 +654,15 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-
+    showFormValidations: (integrationId, flowId, sectionId) =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SHOW_FORM_VALIDATION_ERRORS,
+        {
+          integrationId,
+          flowId,
+          sectionId,
+        }
+      ),
     requestUpgrade: (integrationId, options) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.REQUEST_UPGRADE, {
         integrationId,

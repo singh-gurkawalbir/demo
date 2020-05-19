@@ -20,6 +20,24 @@ const useStylesButtons = makeStyles(theme => ({
   },
 }));
 
+export const GenerateActions = ({ actions, actionProps }) => {
+  const classes = useStylesButtons();
+
+  if (!actions) return null;
+
+  const actionButtons =
+    actions.length > 0 &&
+    actions.map(action => {
+      const Action = consolidatedActions[action.id];
+
+      return <Action key={action.id} {...actionProps} {...action} />;
+    });
+
+  return (
+    <ButtonGroup className={classes.actionButtons}>{actionButtons}</ButtonGroup>
+  );
+};
+
 export default function ActionsFactory(props) {
   const classes = useStylesButtons();
   const { resourceType, resourceId, isNew } = props;
@@ -40,19 +58,7 @@ export default function ActionsFactory(props) {
 
   // When action buttons is provided in the metadata then we generate the action buttons for you
   if (actions) {
-    const actionButtons =
-      actions.length > 0 &&
-      actions.map(action => {
-        const Action = consolidatedActions[action.id];
-
-        return <Action key={action.id} {...props} {...action} />;
-      });
-
-    return (
-      <ButtonGroup className={classes.actionButtons}>
-        {actionButtons}
-      </ButtonGroup>
-    );
+    return <GenerateActions actions={actions} actionProps={props} />;
   }
 
   let actionButtons;

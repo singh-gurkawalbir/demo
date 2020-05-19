@@ -10,6 +10,10 @@ const useEnableButtonOnTouchedForm = ({
   isFormTouchedForMeta,
   ignoreFormTouchedCheck,
   formKey,
+  integrationId,
+  flowId,
+  sectionId,
+  isIAForm,
 }) => {
   const dispatch = useDispatch();
   const formTouched = useMemo(() => {
@@ -22,12 +26,29 @@ const useEnableButtonOnTouchedForm = ({
   }, [fields, ignoreFormTouchedCheck, isFormTouchedForMeta]);
   const onClickWhenValid = useCallback(
     value => {
-      dispatch(actions.form.showFormValidations(formKey));
+      if (isIAForm)
+        dispatch(
+          actions.integrationApp.settings.showFormValidations(
+            integrationId,
+            flowId,
+            sectionId
+          )
+        );
+      else dispatch(actions.form.showFormValidations(formKey));
 
       // Util user resolves form validation do we allow the onClick to take place ...
       if (formIsValid) onClick(value);
     },
-    [formIsValid, onClick, dispatch, formKey]
+    [
+      isIAForm,
+      dispatch,
+      integrationId,
+      flowId,
+      sectionId,
+      formKey,
+      formIsValid,
+      onClick,
+    ]
   );
 
   return { formTouched, onClickWhenValid };
