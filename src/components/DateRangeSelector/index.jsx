@@ -175,6 +175,8 @@ export default function DateRangeSelector({ value, onSave }) {
               className={classes.child}
               ranges={selectedRanges}
               direction="horizontal"
+              maxDate={new Date()}
+              inputRanges={[]}
             />
             <Button onClick={handleSave}>Apply</Button>
             <Button onClick={handleClose}>Cancel</Button>
