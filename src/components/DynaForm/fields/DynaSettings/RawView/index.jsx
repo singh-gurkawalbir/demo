@@ -23,7 +23,7 @@ export default function RawView({ onToggleClick, ...rest }) {
         variant="outlined"
         color="secondary"
         onClick={onToggleClick}>
-        Toggle form editor
+        Launch form builder
       </Button>
       <EditorField
         {...rest}
