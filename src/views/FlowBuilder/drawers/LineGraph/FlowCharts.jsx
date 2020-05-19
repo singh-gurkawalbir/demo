@@ -25,6 +25,38 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
+const getLineColor = index => {
+  const colorSpectrum = [
+    '#2B5B36',
+    '#24448E',
+    '#3A6CA1',
+    '#549FC3',
+    '#8FC4C6',
+    '#AFCF8B',
+    '#80B875',
+    '#57A05C',
+  ];
+
+  return colorSpectrum[index % 8];
+};
+
+const getLegend = index => {
+  const legendTypes = [
+    'line',
+    'square',
+    'circle',
+    'cross',
+    'diamond',
+    'star',
+    'triangle',
+    'wye',
+    'rect',
+    'plainline',
+  ];
+
+  return legendTypes[index % 10];
+};
+
 const Chart = ({ id, flowId, selectedResources }) => {
   const { data: flowData } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
@@ -84,13 +116,13 @@ const Chart = ({ id, flowId, selectedResources }) => {
 
           <Tooltip formatter={(value, name) => parseValue(value, name)} />
           <Legend formatter={renderColorfulLegendText} />
-          {selectedResources.map(r => (
+          {selectedResources.map((r, i) => (
             <Line
               key={r}
               dataKey={`${r}-value`}
               yAxisId={id}
-              legendType="wye"
-              stroke="#24448E"
+              legendType={getLegend(i)}
+              stroke={getLineColor(i)}
             />
           ))}
         </LineChart>
