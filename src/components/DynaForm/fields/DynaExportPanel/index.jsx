@@ -49,7 +49,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DynaExportPanel(props) {
-  const { resourceId, formContext, resourceType, flowId } = props;
+  const { resourceId, formKey, resourceType, flowId } = props;
+  const formContext = useFormContext(formKey);
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -148,10 +149,4 @@ function DynaExportPanel(props) {
   );
 }
 
-const DynaExportPanelWithFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaExportPanel {...props} formContext={form} />;
-};
-
-export default DynaExportPanelWithFormContext;
+export default DynaExportPanel;

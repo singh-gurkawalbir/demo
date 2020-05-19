@@ -365,7 +365,7 @@ export default function CronBuilder(props) {
     fieldsMeta: meta,
     remount: count,
   });
-  const form = useFormContext({ formKey });
+  const form = useFormContext(formKey);
 
   useEffect(() => {
     if (form) onFormChange(form.value);

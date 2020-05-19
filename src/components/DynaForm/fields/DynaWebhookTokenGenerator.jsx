@@ -34,9 +34,10 @@ function DynaWebhookTokenGenerator(props) {
     options = {},
     buttonLabel,
     setFieldIds = [],
-    formContext,
     name,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -144,10 +145,4 @@ function DynaWebhookTokenGenerator(props) {
   );
 }
 
-const DynaWebhookTokenGeneratorFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaWebhookTokenGenerator {...props} formContext={form} />;
-};
-
-export default DynaWebhookTokenGeneratorFormContext;
+export default DynaWebhookTokenGenerator;

@@ -11,7 +11,6 @@ function DynaAction(props) {
     disabled,
     children,
     className,
-    value,
     id,
     dataTest,
     visible,
@@ -22,9 +21,13 @@ function DynaAction(props) {
     variant = 'outlined',
     color = 'primary',
   } = props;
+  const { fields, value, disabled: formDisabled, isValid: formIsValidState } =
+    useFormContext(formKey) || {};
+  const formIsValid = isValid === undefined ? formIsValidState : isValid;
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     ...props,
-    formIsValid: isValid,
+    fields,
+    formIsValid,
   });
   const onClick = useCallback(() => {
     onClickWhenValid(trim(value));
@@ -37,6 +40,9 @@ function DynaAction(props) {
     })
   );
 
+  // no state basically
+  if (!fields || !value) return null;
+
   if (!isButtonVisible) return null;
 
   return (
@@ -45,29 +51,11 @@ function DynaAction(props) {
       variant={variant}
       color={color}
       className={className}
-      disabled={disabled || !formTouched}
+      disabled={!!(formDisabled || disabled) || !formTouched}
       onClick={onClick}>
       {children}
     </Button>
   );
 }
 
-// field props are getting merged first
-const DynaActionWrapped = props => {
-  const { formKey } = props;
-  const form = useFormContext({ formKey });
-
-  if (!form) return null;
-
-  return (
-    <DynaAction
-      {...props}
-      value={form.value}
-      fields={form.fields}
-      disabled={!!(form.disabled || props.disabled)}
-      isValid={props.isValid === undefined ? form.isValid : props.isValid}
-    />
-  );
-};
-
-export default DynaActionWrapped;
+export default DynaAction;

@@ -11,9 +11,10 @@ function DynaUploadFile(props) {
     id,
     resourceId,
     resourceType,
-    formContext,
     onFieldChange,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
@@ -78,10 +79,4 @@ function DynaUploadFile(props) {
   );
 }
 
-const DynaUploadFileWithFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaUploadFile {...props} formContext={form} />;
-};
-
-export default DynaUploadFileWithFormContext;
+export default DynaUploadFile;

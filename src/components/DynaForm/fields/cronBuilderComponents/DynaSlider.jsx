@@ -15,7 +15,7 @@ export default function DynaSlider(props) {
     setReset,
     formKey,
   } = props;
-  const form = useFormContext({ formKey });
+  const form = useFormContext(formKey);
   const { fields } = form || {};
   const handleChange = useCallback(
     (evt, slidervalue) => {

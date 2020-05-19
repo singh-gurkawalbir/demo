@@ -19,14 +19,14 @@ const NetsuiteValidateButton = props => {
   const {
     resourceId,
     classes,
-    fields,
     id,
     visibleWhen,
     visibleWhenAll,
     value,
-    disabled,
     formKey,
   } = props;
+  const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
+  const { disabled = formDisabled } = props;
   const onFieldChange = useCallback(
     field => dispatch(actions.form.fieldChange(formKey)(field)),
     [dispatch, formKey]
@@ -48,9 +48,8 @@ const NetsuiteValidateButton = props => {
     selectors.isValidatingNetsuiteUserRoles(state)
   );
   const { message, status } = netsuiteUserRolesState || {};
-  const matchingActionField = Object.values(fields).find(
-    field => field.id === id
-  );
+  const matchingActionField =
+    fields && Object.values(fields).find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
   const [enquesnackbar] = useEnqueueSnackbar();
 
@@ -109,6 +108,8 @@ const NetsuiteValidateButton = props => {
     }
   }, [fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible, registerField]);
 
+  if (!fields) return null;
+
   if (id) {
     if (!fieldsIsVisible) return null;
   }
@@ -128,12 +129,4 @@ const NetsuiteValidateButton = props => {
   );
 };
 
-const FormWrappedNetsuiteValidateButton = props => {
-  const form = useFormContext(props);
-
-  if (!form) return null;
-
-  return <NetsuiteValidateButton {...form} {...props} />;
-};
-
-export default withStyles(styles)(FormWrappedNetsuiteValidateButton);
+export default withStyles(styles)(NetsuiteValidateButton);

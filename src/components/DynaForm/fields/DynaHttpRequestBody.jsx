@@ -51,7 +51,6 @@ const ManageLookup = props => {
 const DynaHttpRequestBody = props => {
   const {
     id,
-    formContext,
     onFieldChange,
     options = {},
     value,
@@ -63,8 +62,10 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     supportLookup = true,
     disableEditorV2 = false,
+    formKey,
   } = props;
   const classes = useStyles();
+  const formContext = useFormContext(formKey);
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
   const { adaptorType, connectionId } = useSelector(state => {
@@ -174,8 +175,4 @@ const DynaHttpRequestBody = props => {
   );
 };
 
-export default function DynaHttpRequestBodyWrapper(props) {
-  const form = useFormContext(props);
-
-  return <DynaHttpRequestBody {...props} formContext={form} />;
-}
+export default DynaHttpRequestBody;

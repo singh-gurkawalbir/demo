@@ -13,7 +13,6 @@ import useFormContext from '../../Form/FormContext';
 const DynaEditorWithFlowSampleData = ({
   fieldId,
   editorType,
-  formContext,
   flowId,
   resourceId,
   resourceType,
@@ -21,6 +20,7 @@ const DynaEditorWithFlowSampleData = ({
   rule,
   ...props
 }) => {
+  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
     if (disableEditorV2) {
@@ -111,8 +111,4 @@ const DynaEditorWithFlowSampleData = ({
   );
 };
 
-export default function DynaEditorWithFlowSampleDataWrapper(props) {
-  const form = useFormContext(props);
-
-  return <DynaEditorWithFlowSampleData {...props} formContext={form} />;
-}
+export default DynaEditorWithFlowSampleData;

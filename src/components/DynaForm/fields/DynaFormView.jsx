@@ -19,7 +19,8 @@ const emptyObj = {};
 const isParent = true;
 
 export function FormView(props) {
-  const { resourceType, flowId, resourceId, formContext, value } = props;
+  const { resourceType, flowId, resourceId, value, formKey } = props;
+  const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
     useSelectorMemo(
@@ -141,8 +142,4 @@ export function FormView(props) {
   ) : null;
 }
 
-export default function DynaFormView(props) {
-  const form = useFormContext(props);
-
-  return <FormView formContext={form} {...props} />;
-}
+export default FormView;

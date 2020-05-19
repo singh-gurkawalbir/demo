@@ -6,7 +6,8 @@ import { salesforceExportSelectOptions } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
-  const { connectionId, filterKey, formContext, fieldName } = props;
+  const { connectionId, filterKey, fieldName, formKey } = props;
+  const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/salesforce/soql'];
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
@@ -35,10 +36,4 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   );
 }
 
-const DynaSalesforceFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaSalesforceSelectOptionsGenerator {...props} formContext={form} />;
-};
-
-export default DynaSalesforceFormContext;
+export default DynaSalesforceSelectOptionsGenerator;

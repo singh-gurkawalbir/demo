@@ -32,8 +32,9 @@ function GenerateUrl(props) {
     value,
     options = {},
     buttonLabel,
-    formContext,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -104,10 +105,4 @@ function GenerateUrl(props) {
   );
 }
 
-const DynaGenerateUrlFormContext = props => {
-  const form = useFormContext(props);
-
-  return <GenerateUrl {...props} formContext={form} />;
-};
-
-export default DynaGenerateUrlFormContext;
+export default GenerateUrl;

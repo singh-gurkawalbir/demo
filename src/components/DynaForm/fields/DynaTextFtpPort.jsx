@@ -50,7 +50,7 @@ export default function DynaTextFtpPort(props) {
 
   useEffect(() => {
     if ((!value || [21, 22, 990].includes(value)) && options)
-      onFieldChange(id, options);
+      onFieldChange(id, options, true);
   }, [id, onFieldChange, options, value]);
 
   const handleFieldChange = useCallback(

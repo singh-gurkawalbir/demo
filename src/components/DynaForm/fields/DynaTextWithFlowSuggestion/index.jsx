@@ -35,12 +35,13 @@ const DynaTextWithFlowSuggestion = props => {
     value,
     onFieldChange,
     flowId,
-    formContext,
     showLookup = true,
     showExtract = true,
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const ref = useRef(null);
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -166,8 +167,4 @@ const DynaTextWithFlowSuggestion = props => {
   );
 };
 
-export default function DynaTextWithFlowSuggestionWrapper(props) {
-  const form = useFormContext(props);
-
-  return <DynaTextWithFlowSuggestion {...props} formContext={form} />;
-}
+export default DynaTextWithFlowSuggestion;

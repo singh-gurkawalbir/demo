@@ -19,7 +19,7 @@ export default function GroupedButton(props) {
     setReset,
     formKey,
   } = props;
-  const form = useFormContext({ formKey });
+  const form = useFormContext(formKey);
   const { fields } = form || {};
   const classes = useStyles();
   const finalValues =

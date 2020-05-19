@@ -25,9 +25,10 @@ function DynaUploadFile(props) {
     placeholder,
     required,
     label,
-    formContext,
     onFieldChange,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   /*
@@ -139,10 +140,4 @@ function DynaUploadFile(props) {
   );
 }
 
-const DynaUploadFileWithFormContext = props => {
-  const form = useFormContext(props);
-
-  return <DynaUploadFile {...props} formContext={form} />;
-};
-
-export default DynaUploadFileWithFormContext;
+export default DynaUploadFile;

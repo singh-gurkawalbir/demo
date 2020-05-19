@@ -5,19 +5,28 @@ import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
 
 function FormButton({
-  disabled,
-  isValid,
   onClick,
   children,
   id,
   className,
-  value = {},
   color,
-  fields,
   resourceType,
   skipDisableButtonForFormTouched = false,
   resourceId,
+  formKey,
+  ...props
 }) {
+  const {
+    fields,
+    isValid: formInValid,
+    disabled: formDisabled,
+    value: formValue,
+  } = useFormContext(formKey) || {};
+  const {
+    isValid = formInValid,
+    disabled = formDisabled,
+    value = formValue,
+  } = props;
   const handleClick = useCallback(() => onClick(trim(value)), [onClick, value]);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
     onClick: handleClick,
@@ -34,6 +43,8 @@ function FormButton({
     if (skipDisableButtonForFormTouched) return onClick(value);
     onClickWhenValid(trim(value));
   }, [onClick, onClickWhenValid, skipDisableButtonForFormTouched, value]);
+
+  if (!fields || !value) return null;
 
   return (
     <Button
