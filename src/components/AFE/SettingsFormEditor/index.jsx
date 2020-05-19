@@ -92,7 +92,7 @@ export default function SettingsFormEditor({
       width="100%">
       <PanelGridItem gridArea="meta">
         <PanelTitle
-          title={mode === 'json' ? 'Form Definition' : 'Script Input'}
+          title={mode === 'json' ? 'Form definition' : 'Script input'}
         />
         <CodePanel
           id="data"
@@ -101,6 +101,7 @@ export default function SettingsFormEditor({
           mode="json"
           readOnly={disabled}
           onChange={handleDataChange}
+          skipDelay
         />
       </PanelGridItem>
       {mode === 'script' && (
@@ -113,7 +114,7 @@ export default function SettingsFormEditor({
         </PanelGridItem>
       )}
       <PanelGridItem gridArea="form">
-        <PanelTitle title="Form Preview" />
+        <PanelTitle title="Form preview" />
         {result ? (
           <DynaForm
             key={key}
@@ -124,7 +125,7 @@ export default function SettingsFormEditor({
             <DynaSubmit
               className={classes.submitButton}
               onClick={handleFormPreviewChange}>
-              Test Form Submission
+              Test form
             </DynaSubmit>
           </DynaForm>
         ) : (
@@ -135,7 +136,7 @@ export default function SettingsFormEditor({
         )}
       </PanelGridItem>
       <PanelGridItem gridArea="settings">
-        <PanelTitle title="Form Output" />
+        <PanelTitle title="Form output" />
         {settingsPreview ? (
           <CodePanel
             id="result"
@@ -147,7 +148,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           <Typography>
-            Use the form above to preview the form output.
+            Click the ‘test form’ button above to preview form output.
           </Typography>
         )}
       </PanelGridItem>

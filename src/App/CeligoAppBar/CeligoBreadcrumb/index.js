@@ -219,7 +219,7 @@ const routes = [
   { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
-  { path: '/pg/editors', breadcrumb: () => 'Developer playground' },
+  { path: '/pg/editors', breadcrumb: () => 'Dev playground' },
   { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
   {
     path: '/pg/:resourceType',
