@@ -131,6 +131,8 @@ const NetsuiteValidateButton = props => {
 const FormWrappedNetsuiteValidateButton = props => {
   const form = useFormContext(props);
 
+  if (!form) return null;
+
   return <NetsuiteValidateButton {...form} {...props} />;
 };
 
