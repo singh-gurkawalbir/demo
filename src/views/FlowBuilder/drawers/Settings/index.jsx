@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { isObject } from 'lodash';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
@@ -143,16 +142,10 @@ export default function SettingsDrawer({
     ];
 
     if (Object.hasOwnProperty.call(formVal, 'settings')) {
-      let settings;
-
-      if (isObject(formVal.settings)) {
-        ({ settings } = formVal);
-      }
-
       patchSet.push({
         op: 'replace',
         path: '/settings',
-        value: settings,
+        value: formVal && formVal.settings,
       });
     }
 

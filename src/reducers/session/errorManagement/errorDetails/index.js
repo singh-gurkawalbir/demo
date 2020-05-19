@@ -122,6 +122,7 @@ export default (state = {}, action) => {
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         draft[flowId][resourceId][errorType] = {};
+        draft[flowId][resourceId].actions = {};
         break;
       default:
     }

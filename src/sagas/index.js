@@ -18,6 +18,7 @@ import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { jobSagas } from './jobs';
+import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
@@ -52,6 +53,7 @@ import { transferSagas } from './transfer';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
+import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 
@@ -135,6 +137,7 @@ export default function* rootSaga() {
     ...resourceFormSagas,
     ...integrationAppsSagas,
     ...jobSagas,
+    ...flowMetricSagas,
     ...flowSagas,
     ...agentSagas,
     ...uploadFileSagas,
@@ -154,6 +157,7 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
+    ...errorRetrySagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,

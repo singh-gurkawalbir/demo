@@ -18,6 +18,7 @@ import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
+import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
@@ -45,6 +46,7 @@ export default combineReducers({
   netsuiteUserRole,
   sampleData,
   flowData,
+  flowMetrics,
   integrationApps,
   templates,
   oAuthAuthorize,
@@ -547,6 +549,13 @@ export function getLastExportDateTime(state, flowId) {
   );
 }
 
+export function retryDataContext(state, retryId) {
+  return fromErrorManagement.retryDataContext(
+    state && state.errorManagement,
+    retryId
+  );
+}
+
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
 }
@@ -616,4 +625,13 @@ export function customSettingsForm(state, resourceId) {
     resourceId
   );
 }
+
+export function flowMetricsData(state, flowId, measurement) {
+  return fromFlowMetrics.flowMetricsData(
+    state && state.flowMetrics,
+    flowId,
+    measurement
+  );
+}
+
 // #endregion

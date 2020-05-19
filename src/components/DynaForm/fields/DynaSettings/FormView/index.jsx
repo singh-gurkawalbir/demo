@@ -21,6 +21,9 @@ const useStyles = makeStyles({
     left: 0,
     margin: 'auto',
   },
+  wrapper: {
+    width: '100%',
+  },
 });
 
 export default function FormView({
@@ -64,12 +67,14 @@ export default function FormView({
       <div>
         <Typography>{formState.error}</Typography>
         {isDeveloper && !isViewMode && (
-          <Button
-            data-test="toggleEditor"
-            variant="contained"
-            onClick={onToggleClick}>
-            Toggle form editor
-          </Button>
+          <DebugOnly>
+            <Button
+              data-test="toggleEditor"
+              variant="contained"
+              onClick={onToggleClick}>
+              Launch form builder
+            </Button>
+          </DebugOnly>
         )}
       </div>
     );
@@ -84,7 +89,7 @@ export default function FormView({
   }
 
   return (
-    <div>
+    <div className={classes.wrapper}>
       {isDeveloper && !isViewMode && (
         <DebugOnly>
           <Button
@@ -92,7 +97,7 @@ export default function FormView({
             variant="outlined"
             color="secondary"
             onClick={onToggleClick}>
-            Toggle form editor
+            Launch form builder
           </Button>
         </DebugOnly>
       )}

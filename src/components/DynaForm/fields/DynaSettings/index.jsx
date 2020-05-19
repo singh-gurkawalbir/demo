@@ -13,6 +13,8 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 
+// TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
+// we move this to a common theme?
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -70,7 +72,7 @@ export default function DynaSettings(props) {
   const settingsForm = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
 
-    return resource && resource.settingsForm;
+    return (resource && resource.settingsForm) || {};
   });
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
@@ -126,7 +128,7 @@ export default function DynaSettings(props) {
               editorId={id}
               resourceId={resourceId}
               resourceType={resourceType}
-              settingsForm={settingsForm || {}}
+              settingsForm={settingsForm}
               onClose={handleEditClose}
             />
           )}
