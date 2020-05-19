@@ -21,44 +21,44 @@ import EditorListItem from './EditorListItem';
 const editors = [
   {
     name: 'UrlEditor',
-    label: 'Url Editor',
+    label: 'Url editor',
     description:
       'This editor lets you create and test url templates against your raw data.',
   },
   {
     name: 'HttpRequestBodyEditor',
-    label: 'Http Request Body',
+    label: 'Http request body',
     description:
       'This editor lets you create and test json or xml templates against your raw data.',
   },
   {
     name: 'MergeEditor',
-    label: 'Merge Editor',
+    label: 'Merge editor',
     description:
       'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
   },
   {
     name: 'CsvParseEditor',
-    label: 'CSV Parser',
+    label: 'CSV parser',
     description: 'This processor converts comma separated values into JSON.',
   },
   {
     name: 'XmlParseEditor',
-    label: 'XML Parser',
+    label: 'XML parser',
     description:
       'This processor wll convert XML to JSON controlled by an set of parse options.',
   },
 
   {
     name: 'TransformEditor',
-    label: 'Transform Editor',
+    label: 'Transform editor',
     description:
       'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
   },
 
   {
     name: 'JavaScriptEditor',
-    label: 'JavaScript Editor',
+    label: 'JavaScript editor',
     description:
       'This processor allows a user to run javascript safely in our secure jsruntime environment.',
   },
@@ -70,24 +70,24 @@ const editors = [
   },
   {
     name: 'SQLQueryBuilderEditor',
-    label: 'SQL Query Builder Editor',
+    label: 'SQL Query Builder editor',
     description:
       'This processor allows user to build Sql Query using handlerbars and json as input to it',
   },
   {
     name: 'JSONEditor',
-    label: 'JSON Editor',
+    label: 'JSON editor',
     description: 'This processor allows user to edit JSON Object',
   },
   {
     name: 'FilterEditor',
-    label: 'Filter Editor',
+    label: 'Filter editor',
     description:
       'This editor allows a user to visually define an expression for filtering records.',
   },
   {
     name: 'SettingsFormEditor',
-    label: 'Settings Form Editor',
+    label: 'Settings form editor',
     description:
       'This editor allows a user to build a custom form by providing a form definition as JSON and/or a javascript init function.',
   },
@@ -161,7 +161,7 @@ export default function Editors() {
       case 'HttpRequestBodyEditor':
         return (
           <HttpRequestBodyEditorDialog
-            title="Create HTTP Request Body"
+            title="Create HTTP request body"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -170,7 +170,7 @@ export default function Editors() {
       case 'MergeEditor':
         return (
           <MergeEditorDialog
-            title="Apply Default Values"
+            title="Apply default values"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -180,7 +180,7 @@ export default function Editors() {
       case 'CsvParseEditor':
         return (
           <CsvConfigEditorDialog
-            title="Delimited File Parser"
+            title="Delimited file parser"
             csvEditorType="parse"
             id={editorName}
             data={rawData}
@@ -191,7 +191,7 @@ export default function Editors() {
       case 'XmlParseEditor':
         return (
           <XmlParseEditorDialog
-            title="XML Parser"
+            title="XML parser"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -201,7 +201,7 @@ export default function Editors() {
       case 'TransformEditor':
         return (
           <TransformEditorDialog
-            title="Transform Editor"
+            title="Transform editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -210,7 +210,7 @@ export default function Editors() {
       case 'JavaScriptEditor':
         return (
           <JavaScriptEditorDialog
-            title="Javascript Editor"
+            title="Javascript editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -228,7 +228,7 @@ export default function Editors() {
       case 'SQLQueryBuilderEditor':
         return (
           <SqlQueryBuilderEditorDialog
-            title="SQL Query Builder"
+            title="SQL query builder"
             id={editorName}
             sampleData={rawData}
             rule="Select * from {{orderId}}"
@@ -241,7 +241,7 @@ export default function Editors() {
         return (
           <JsonEditorDialog
             value={rawData}
-            title="JSON Editor"
+            title="JSON editor"
             id={editorName}
             onClose={() => {
               this.handleEditorChange(null);
@@ -255,7 +255,7 @@ export default function Editors() {
       case 'FilterEditor':
         return (
           <FilterEditorDialog
-            title="Filter Editor"
+            title="Filter editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -269,7 +269,7 @@ export default function Editors() {
 
   return (
     <Fragment>
-      <CeligoPageBar title="Developer playground" />
+      <CeligoPageBar title="Dev playground" />
 
       <div className={classes.appFrame}>
         <Drawer

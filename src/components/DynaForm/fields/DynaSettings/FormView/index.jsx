@@ -68,7 +68,7 @@ export default function FormView({
             data-test="toggleEditor"
             variant="contained"
             onClick={onToggleClick}>
-            Toggle form editor
+            Launch form builder
           </Button>
         )}
       </div>
@@ -92,7 +92,7 @@ export default function FormView({
             variant="outlined"
             color="secondary"
             onClick={onToggleClick}>
-            Toggle form editor
+            Launch form builder
           </Button>
         </DebugOnly>
       )}
