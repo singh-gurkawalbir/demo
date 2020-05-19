@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,10 +20,28 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
   },
-  form: {
-    maxHeight: `calc(100vh - 180px)`,
-    // maxHeight: 'unset',
+  configureDrawerform: {
     padding: theme.spacing(2, 3),
+    '& + div': {
+      padding: theme.spacing(2, 0),
+      margin: theme.spacing(0, 3),
+    },
+    '& > * div.MuiTabs-vertical': {
+      marginTop: theme.spacing(-2),
+      marginLeft: theme.spacing(-3),
+    },
+    '& > div[class*= "fieldsContainer"]': {
+      height: '100%',
+      '& > div[class*= "makeStyles-root"]': {
+        height: '100%',
+        '& > div[class*= "panelContainer"]': {
+          paddingBottom: theme.spacing(5),
+        },
+      },
+    },
+  },
+  configureDrawerCamForm: {
+    minHeight: '100%',
   },
 }));
 
@@ -81,7 +100,9 @@ function ConfigureDrawer({ integrationId, storeId, sectionId, parentUrl }) {
         <IAFormStateManager
           onSubmitComplete={handleClose}
           formState={formState}
-          className={classes.form}
+          className={clsx(classes.configureDrawerform, {
+            [classes.configureDrawerCamForm]: section.sections,
+          })}
           integrationId={integrationId}
           storeId={storeId}
           sectionId={sectionId}

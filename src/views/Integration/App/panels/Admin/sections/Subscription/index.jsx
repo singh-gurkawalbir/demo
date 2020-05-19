@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
   message: {
     paddingBottom: theme.spacing(2),
     textAlign: 'left',
+    paddingLeft: theme.spacing(2),
   },
   heading: {
     paddingBottom: theme.spacing(1),

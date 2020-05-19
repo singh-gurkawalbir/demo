@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
 import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
-import { isConnector } from '../../../../utils/flows';
+import { isIntegrationApp } from '../../../../utils/flows';
 import * as selectors from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
@@ -12,10 +12,10 @@ function ResponseMapping(props) {
     'flows',
     flowId
   ).merged;
-  const isConnectorFlow = isConnector(flow);
+  const isIAFlow = isIntegrationApp(flow);
   // Incase of connectors , responseMapping should be enabled for the users
   // In all other cases it is disabled based on isViewMode prop sent by Flow Builder
-  const disabled = isConnectorFlow ? false : isViewMode;
+  const disabled = isIAFlow ? false : isViewMode;
 
   return (
     <Fragment>

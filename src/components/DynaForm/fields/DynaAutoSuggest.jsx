@@ -5,7 +5,6 @@ import parse from 'autosuggest-highlight/parse';
 import { Paper, MenuItem, TextField, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-// TODO (Azhar) : to work on styling
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',

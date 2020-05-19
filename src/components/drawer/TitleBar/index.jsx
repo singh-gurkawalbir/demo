@@ -10,7 +10,9 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 24px',
+    padding: '14px 0px',
+    margin: theme.spacing(0, 3),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   title: {
     flexGrow: 1,

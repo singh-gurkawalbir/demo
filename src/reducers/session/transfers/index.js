@@ -1,5 +1,6 @@
 import { each } from 'lodash';
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const emptyArray = [];
@@ -47,26 +48,29 @@ function parsePreviewResponse(res) {
 
 let error;
 
-export function getPreviewData(state) {
-  if (!state || !state.transfer) {
-    return null;
-  }
+export const getPreviewData = createSelector(
+  state => state && state.transfer,
+  transfer => {
+    if (!transfer) {
+      return null;
+    }
 
-  if (state.transfer.response) {
+    if (transfer.response) {
+      return {
+        response: parsePreviewResponse(transfer.response),
+      };
+    }
+
+    try {
+      error = JSON.parse(transfer.error.message).errors[0].message;
+    } catch (ex) {
+      error = 'Preview Failed';
+    }
+
     return {
-      response: parsePreviewResponse(state.transfer.response),
+      error,
     };
   }
-
-  try {
-    error = JSON.parse(state.transfer.error.message).errors[0].message;
-  } catch (ex) {
-    error = 'Preview Failed';
-  }
-
-  return {
-    error,
-  };
-}
+);
 
 // #endregion

@@ -493,6 +493,14 @@ export function getSampleDataContext(
   });
 }
 
+export function flowMetricsData(state, flowId, measurement) {
+  return fromSession.flowMetricsData(
+    state && state.session,
+    flowId,
+    measurement
+  );
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -865,6 +873,29 @@ export function nextDataFlowsForFlow(state, flow) {
   const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
 
   return getNextDataFlows(flows, flow);
+}
+
+export function isIAConnectionSetupPending(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!connection || !connection._connectorId) {
+    return;
+  }
+
+  const { _integrationId } = connection;
+  const integration = resource(state, 'integrations', _integrationId);
+
+  if (integration && integration.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep.completed) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function isConnectionOffline(state, id) {
@@ -3181,11 +3212,11 @@ export function optionsMapFromMetadata(
   );
 }
 
-export const getPreBuiltFileDefinitions = (state, format) =>
-  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+export const preBuiltFileDefinitions = (state, format) =>
+  fromData.preBuiltFileDefinitions(state && state.data, format);
 
-export const getFileDefinition = (state, definitionId, options) =>
-  fromData.getFileDefinition(state && state.data, definitionId, options);
+export const fileDefinition = (state, definitionId, options) =>
+  fromData.fileDefinition(state && state.data, definitionId, options);
 
 export function metadataOptionsAndResources({
   state,
@@ -3803,11 +3834,40 @@ export function getCustomResourceLabel(
 
   // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
   // The Below resource labels override the default labels above
-  if (flowId) {
-    if (isNewResource && resourceType === 'exports') {
-      resourceLabel = isLookup ? 'Lookup' : 'Source';
-    } else if (isNewResource && resourceType === 'imports') {
+  if (flowId && isNewResource) {
+    if (resource.resourceType === 'exportRecords') {
+      resourceLabel = 'Export';
+    } else if (
+      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
+    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+      resourceLabel = 'Listener';
+    } else if (resource.resourceType === 'importRecords') {
       resourceLabel = 'Import';
+    } else if (resource.resourceType === 'lookupRecords') {
+      resourceLabel = 'Lookup';
+    }
+  } else if (flowId) {
+    if (
+      ([
+        'RESTExport',
+        'HTTPExport',
+        'NetSuiteExport',
+        'SalesforceExport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.type === 'blob') ||
+      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ([
+        'RESTImport',
+        'HTTPImport',
+        'NetSuiteImport',
+        'SalesforceImport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.blobKeyPath) ||
+      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
     }
   }
 
@@ -4194,6 +4254,69 @@ export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
 
 export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
+}
+
+export function flowResources(state, flowId) {
+  const resources = [];
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (flow._exportId) {
+    const exportDoc = fromData.resource(
+      state && state.data,
+      'exports',
+      flow._exportId
+    );
+
+    resources.push({ _id: flow._exportId, name: exportDoc.name });
+  }
+
+  if (flow._importId) {
+    const importDoc = fromData.resource(
+      state && state.data,
+      'imports',
+      flow._importId
+    );
+
+    resources.push({ _id: flow._exportId, name: importDoc.name });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = fromData.resource(
+        state && state.data,
+        'exports',
+        pg._exportId
+      );
+
+      resources.push({ _id: pg._exportId, name: exportDoc.name });
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = fromData.resource(
+          state && state.data,
+          'imports',
+          pp._importId
+        );
+
+        resources.push({ _id: pp._importId, name: importDoc.name });
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = fromData.resource(
+          state && state.data,
+          'exports',
+          pp._exportId
+        );
+
+        resources.push({ _id: pp._exportId, name: exportDoc.name });
+      }
+    });
+  }
+
+  return resources;
 }
 
 export const exportData = (state, identifier) =>

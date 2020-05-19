@@ -18,7 +18,7 @@ import {
   generateDefaultExtractsObject,
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
-import { isConnector } from '../../../utils/flows';
+import { isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
 
 /*
@@ -127,7 +127,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
           // As existing connector pg's sampledata represent data after these tx, filter, hooks actions are processed, so remove those from doc
           resourceMap[resourceId] = {
             doc: getFormattedResourceForPreview(
-              isConnector(flow) && resource.sampleData ? rest : resource,
+              isIntegrationApp(flow) && resource.sampleData ? rest : resource,
               resourceType,
               type
             ),

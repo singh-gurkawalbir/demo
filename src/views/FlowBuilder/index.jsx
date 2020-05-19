@@ -19,6 +19,7 @@ import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
+import ChartsDrawer from './drawers/LineGraph';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
@@ -31,11 +32,13 @@ import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
 import SwitchOnOff from '../../components/OnOff';
 import { generateNewId, isNewId } from '../../utils/resource';
-import { isConnector, isFreeFlowResource } from '../../utils/flows';
+import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 import StatusCircle from '../../components/StatusCircle';
+import HelpIcon from '../../components/icons/HelpIcon';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { isProduction } from '../../forms/utils';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -292,12 +295,12 @@ function FlowBuilder() {
     (pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
-  const isConnectorType = isConnector(flow);
+  const isIAType = isIntegrationApp(flow);
   const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const isViewMode = isMonitorLevelAccess || isConnectorType;
+  const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -390,6 +393,12 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
+  const handleDrawerClick = useCallback(
+    path => () => {
+      handleDrawerOpen(path);
+    },
+    [handleDrawerOpen]
+  );
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -489,6 +498,7 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
         resourceType="flows"
@@ -534,11 +544,19 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
+          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={handleDrawerClick('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {!isDataLoaderFlow && (
             <SwitchOnOff.component
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
-              isConnector={isConnectorType}
+              isConnector={isIAType}
               data-test="switchFlowOnOff"
             />
           )}
@@ -549,18 +567,18 @@ function FlowBuilder() {
             <IconButton
               disabled={isNewFlow}
               data-test="scheduleFlow"
-              onClick={() => handleDrawerOpen('schedule')}>
+              onClick={handleDrawerClick('schedule')}>
               <CalendarIcon />
             </IconButton>
           )}
 
           <IconButton
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}
+            onClick={handleDrawerClick('settings')}
             data-test="flowSettings">
             <SettingsIcon />
           </IconButton>
-          {!isConnectorType && (
+          {!isIAType && (
             <FlowEllipsisMenu
               flowId={flowId}
               exclude={['mapping', 'detach', 'audit', 'schedule']}
@@ -571,13 +589,13 @@ function FlowBuilder() {
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('connections')}
+                onClick={handleDrawerClick('connections')}
                 data-test="flowConnections">
                 <ConnectionsIcon />
               </IconButton>
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('auditlog')}
+                onClick={handleDrawerClick('auditlog')}
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>

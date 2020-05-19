@@ -195,7 +195,15 @@ export default {
     },
   },
   'netsuite.netsuiteExportlabel': {
-    label: 'What would you like to export from NetSuite?',
+    label: r => {
+      if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+        return 'What would you like to transfer from NetSuite??';
+      } else if (r.resourceType === 'realtime' || r.type === 'distributed') {
+        return 'What would you like to listen from NetSuite?';
+      }
+
+      return 'What would you like to export from NetSuite?';
+    },
     type: 'labeltitle',
   },
   'netsuite.searches': {

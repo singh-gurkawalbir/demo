@@ -3,14 +3,16 @@ import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
+import clsx from 'clsx';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
 import * as selectors from '../../../../reducers';
-import DynaManageLookup from '../DynaManageLookup';
 import lookupUtil from '../../../../utils/lookup';
+import LookupActionItem from './LookupActionItem';
+import getValueAfterInsert from './util';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
-const getMatchingText = (value, cursorPosition) => {
-  const inpValue = value.substring(0, cursorPosition);
+const getMatchingText = (value, textInsertPosition) => {
+  const inpValue = value.substring(0, textInsertPosition);
   const startIndexOfBraces = inpValue.lastIndexOf('{{');
   const matchedString = inpValue.substring(startIndexOfBraces + 2);
 
@@ -33,6 +35,9 @@ const useStyles = makeStyles(theme => ({
       padding: 4,
     },
   },
+  hideSuggesionContainer: {
+    display: 'none',
+  },
 }));
 const ExtractItem = props => {
   const { onSelect, value, label } = props;
@@ -42,11 +47,6 @@ const ExtractItem = props => {
 
   return <Button onClick={handleItemSelect}>{label}</Button>;
 };
-
-const getValueAfterInsert = (value, cursorPosition, insertedVal) =>
-  `${value.substring(0, cursorPosition)}${insertedVal}}}${value.substring(
-    cursorPosition
-  )}`;
 
 export default function Suggestions(props) {
   const {
@@ -58,7 +58,8 @@ export default function Suggestions(props) {
     showLookup,
     value = '',
     showExtract,
-    cursorPosition,
+    textInsertPosition,
+    hide,
     onValueUpdate,
     onFieldChange,
     showSuggestionsWithoutHandlebar = false,
@@ -78,7 +79,7 @@ export default function Suggestions(props) {
   const adaptorType = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
       state,
-      'imports',
+      resourceType,
       resourceId
     );
 
@@ -94,10 +95,10 @@ export default function Suggestions(props) {
       []
     );
   }, [sampleData]);
-  const matchingText = useMemo(() => getMatchingText(value, cursorPosition), [
-    cursorPosition,
-    value,
-  ]);
+  const matchingText = useMemo(
+    () => getMatchingText(value, textInsertPosition),
+    [textInsertPosition, value]
+  );
   const filteredLookup = useMemo(
     () =>
       lookups.filter(
@@ -124,11 +125,11 @@ export default function Suggestions(props) {
     _val => {
       const newValue = showSuggestionsWithoutHandlebar
         ? _val
-        : getValueAfterInsert(value, cursorPosition, _val);
+        : getValueAfterInsert(value, textInsertPosition, _val);
 
       onValueUpdate(newValue);
     },
-    [cursorPosition, onValueUpdate, showSuggestionsWithoutHandlebar, value]
+    [textInsertPosition, onValueUpdate, showSuggestionsWithoutHandlebar, value]
   );
   const handleLookupSelect = useCallback(
     lookup => {
@@ -142,7 +143,7 @@ export default function Suggestions(props) {
         // update text field with selected lookup
         const newValue = getValueAfterInsert(
           value,
-          cursorPosition,
+          textInsertPosition,
           valueToInsert
         );
 
@@ -151,7 +152,7 @@ export default function Suggestions(props) {
     },
     [
       adaptorType,
-      cursorPosition,
+      textInsertPosition,
       onValueUpdate,
       showSuggestionsWithoutHandlebar,
       value,
@@ -189,32 +190,36 @@ export default function Suggestions(props) {
     [adaptorType, lookups, onFieldChange]
   );
   const showSuggestion =
-    showSuggestionsWithoutHandlebar ||
-    (!showSuggestionsWithoutHandlebar &&
-      !!value.substring(0, cursorPosition).match(prefixRegexp));
-
-  if (!showSuggestion) return null;
+    !hide &&
+    (showSuggestionsWithoutHandlebar ||
+      (!showSuggestionsWithoutHandlebar &&
+        !!value.substring(0, textInsertPosition).match(prefixRegexp)));
 
   return (
-    <ul className={classes.suggestions}>
+    <ul
+      className={clsx(classes.suggestions, {
+        [classes.hideSuggesionContainer]: !showSuggestion,
+      })}>
       {showLookup && (
-        <DynaManageLookup
-          id="add-lookup"
-          label="New lookup"
-          resourceId={resourceId}
-          resourceType={resourceType}
-          flowId={flowId}
-          fieldId={id}
-          showDynamicLookupOnly
-          onSave={handleLookupAdd}
-          onSavelabel="Add new lookup"
-          options={options}
-        />
+        <li key="addLookup">
+          <LookupActionItem
+            id="add-lookup"
+            label="New lookup"
+            resourceId={resourceId}
+            resourceType={resourceType}
+            flowId={flowId}
+            fieldId={id}
+            showDynamicLookupOnly
+            onSave={handleLookupAdd}
+            onSavelabel="Add new lookup"
+            options={options}
+          />
+        </li>
       )}
       {showLookup &&
         filteredLookup.map(lookup => (
           <li key={lookup.name}>
-            <DynaManageLookup
+            <LookupActionItem
               id={lookup.name}
               label="Edit"
               resourceId={resourceId}

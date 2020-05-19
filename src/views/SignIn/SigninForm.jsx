@@ -118,7 +118,6 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   label: {
     display: 'flex',
-    marginBottom: theme.spacing(1),
   },
 }))
 class SignIn extends Component {
@@ -185,7 +184,7 @@ class SignIn extends Component {
       location && location.state && location.state.attemptedRoute;
 
     if (error) {
-      error = 'Oops! Something went wrong. Try again.';
+      error = 'Sign in failed. Please try again.';
     } else if (window.signInError) {
       error = window.signInError;
     }

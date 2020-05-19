@@ -3,6 +3,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
+import clsx from 'clsx';
 import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
@@ -20,11 +21,29 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
+    paddingBottom: theme.appBarHeight,
   },
-  settingsForm: {
-    maxHeight: `calc(100vh - 150px)`,
-    // maxHeight: 'unset',
-    // padding: theme.spacing(2, 3),
+  settingsDrawerForm: {
+    padding: theme.spacing(2, 3),
+    '& + div': {
+      margin: theme.spacing(0, 3),
+    },
+    '& > * div.MuiTabs-vertical': {
+      marginTop: theme.spacing(-2),
+      marginLeft: theme.spacing(-3),
+    },
+    '& > div[class*= "fieldsContainer"]': {
+      height: '100%',
+      '& > div[class*= "makeStyles-root"]': {
+        height: '100%',
+        '& > div[class*= "makeStyles-panelContainer"]': {
+          paddingBottom: theme.spacing(5),
+        },
+      },
+    },
+  },
+  settingsDrawerCamForm: {
+    minHeight: '100%',
   },
 }));
 
@@ -79,7 +98,9 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
       <IAFormStateManager
-        className={classes.settingsForm}
+        className={clsx(classes.settingsDrawerForm, {
+          [classes.settingsDrawerCamForm]: sections,
+        })}
         integrationId={integrationId}
         flowId={flowId}
         storeId={storeId}

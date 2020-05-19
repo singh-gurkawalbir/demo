@@ -16,9 +16,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: `row !important`,
   },
-  refreshGenericActionBtn: {
+  refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   refreshLoader: {
     marginLeft: theme.spacing(1),
@@ -121,7 +121,7 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={onRefresh}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>
@@ -129,7 +129,7 @@ export default function RefreshGenericResource(props) {
         {fieldData && isLoading && (
           <span
             className={clsx(
-              classes.refreshGenericActionBtn,
+              classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
             <Spinner size={24} color="primary" />
@@ -138,7 +138,7 @@ export default function RefreshGenericResource(props) {
         {urlToOpen && (
           <ActionButton
             onClick={handleOpenResource}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="openResource">
             <ExitIcon />
           </ActionButton>

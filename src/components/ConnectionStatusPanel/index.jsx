@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const getStatusVariantAndMessage = ({
   resourceType,
   isConnectionFix,
-  isOffline,
+  showOfflineMsg,
   testStatus,
 }) => {
   if (resourceType !== 'connections') {
@@ -43,7 +43,7 @@ const getStatusVariantAndMessage = ({
       variant: 'success',
       message: 'Your connection is working great! Nice Job!',
     };
-  } else if (!testStatus && isOffline) {
+  } else if (!testStatus && showOfflineMsg) {
     return {
       variant: 'error',
       message: isConnectionFix
@@ -72,8 +72,16 @@ export default function ConnectionStatusPanel(props) {
   const testStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
+  const isIAIntegration = useSelector(state => {
+    const connection = selectors.resource(state, 'connections', connectionId);
+
+    return !!(connection && connection._connectorId);
+  });
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
+  );
+  const isIAConnectionSetupPending = useSelector(state =>
+    selectors.isIAConnectionSetupPending(state, connectionId)
   );
   const handleConnectionFixClick = useCallback(() => {
     history.push(
@@ -85,14 +93,24 @@ export default function ConnectionStatusPanel(props) {
   const { variant, message } = useMemo(() => {
     const queryParams = new URLSearchParams(location.search);
     const isConnectionFix = queryParams.get('fixConnnection') === 'true';
+    const showOfflineMsg = isIAIntegration
+      ? !isIAConnectionSetupPending && isOffline
+      : isOffline;
 
     return getStatusVariantAndMessage({
       isConnectionFix,
-      isOffline,
+      showOfflineMsg,
       testStatus,
       resourceType,
     });
-  }, [isOffline, location.search, resourceType, testStatus]);
+  }, [
+    isIAConnectionSetupPending,
+    isIAIntegration,
+    isOffline,
+    location.search,
+    resourceType,
+    testStatus,
+  ]);
 
   useEffect(() => {
     // if i can't find a connection Id it could be a new resource without any connection Id assigned to it

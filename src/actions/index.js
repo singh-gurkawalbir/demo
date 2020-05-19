@@ -138,6 +138,18 @@ const recycleBin = {
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
+const flowMetrics = {
+  request: (flowId, filters) =>
+    action(actionTypes.FLOW_METRICS.REQUEST, {
+      flowId,
+      filters,
+    }),
+
+  received: (flowId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
+  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+};
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -1763,6 +1775,7 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  flowMetrics,
   job,
   errorManager,
   flow,

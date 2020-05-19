@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -67,7 +65,13 @@ export default {
     apiType: {
       id: 'apiType',
       type: 'labeltitle',
-      label: 'Where would you like to import the data?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'Where would you like to transfer the files?';
+        }
+
+        return 'Where would you like to import the records?';
+      },
       visibleWhen: [
         {
           field: 'inputMode',
@@ -79,6 +83,7 @@ export default {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -87,14 +92,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (!isNew) return true;
-
-        return false;
+        return 'records';
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'salesforce.api': { fieldId: 'salesforce.api' },
     'salesforce.document.id': { fieldId: 'salesforce.document.id' },
@@ -224,7 +226,6 @@ export default {
       'apiType',
       'salesforce.api',
       'importData',
-      'blobKeyPath',
       'salesforce.lookups',
       'salesforce.sObjectType',
       'salesforce.operation',
@@ -255,6 +256,7 @@ export default {
       'salesforce.upsert.externalIdField',
       'salesforce.idLookup.extract',
       'dataMappings',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [

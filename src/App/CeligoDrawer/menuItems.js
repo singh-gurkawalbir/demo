@@ -61,6 +61,11 @@ export default function menuItems(
           path: '/integrations/none/dataLoader/new',
           routeProps: '/pg/integrations/:integrationId/dataloader',
         },
+        {
+          label: 'Dev playground',
+          Icon: EditorsPlaygroundIcon,
+          path: '/editors',
+        },
       ],
     },
     {
@@ -130,42 +135,18 @@ export default function menuItems(
         },
       ],
     },
-    {
-      label: 'Editor playground (alpha)',
-      Icon: EditorsPlaygroundIcon,
-      path: '/editors',
-    },
-
-    // {
-    //   label: 'Dev Tools',
-    //   Icon: ToolsIcon,
-    //   children: [
-    // {
-    //   label: 'App builder',
-    //   path: '/resources',
-    //   Icon: AppBuilderIcon,
-    // },
-    // {
-    //   label: 'Editor playground',
-    //   path: '/editors',
-    //   Icon: EditorsPlaygroundIcon,
-    // },
-    // {
-    //   label: 'Permission explorer',
-    //   path: '/permissions',
-    //   Icon: PermissionExplorerIcon,
-    // },
-    //   ],
-    // },
   ];
 
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources', 'Tools'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
+    const toolItems = items.find(i => i.label === 'Tools');
 
     if (!isDeveloper) {
-      items = items.filter(i => !i.label.startsWith('Editor play'));
+      toolItems.children = toolItems.children.filter(
+        i => !i.label.startsWith('Dev play')
+      );
 
       resourceItems.children = resourceItems.children.filter(
         i => !(i.label === 'Scripts' || i.label === 'Stacks')
