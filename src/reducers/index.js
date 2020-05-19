@@ -885,12 +885,16 @@ export function isIAConnectionSetupPending(state, connectionId) {
   const { _integrationId } = connection;
   const integration = resource(state, 'integrations', _integrationId);
 
+  if (integration && integration.mode === 'settings') {
+    return false;
+  }
+
   if (integration && integration.install) {
     const installStep = integration.install.find(
       step => step._connectionId === connectionId
     );
 
-    if (!installStep.completed) {
+    if (installStep && !installStep.completed) {
       return true;
     }
   }
