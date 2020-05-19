@@ -75,7 +75,7 @@ export default function ConnectionStatusPanel(props) {
   const isIAIntegration = useSelector(state => {
     const connection = selectors.resource(state, 'connections', connectionId);
 
-    return !!connection._connectorId;
+    return !!(connection && connection._connectorId);
   });
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)

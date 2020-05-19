@@ -16,6 +16,7 @@ export default {
       '/http/baseURI': `https://${formValues['/storeURL']}`,
       '/http/ping/relativeURI': '/ResourceServer/api/v1/Account',
       '/http/ping/method': 'GET',
+      '/http/disableStrictSSL': `${formValues['/environment']}` === 'sandbox',
       '/http/auth/token/location': 'header',
       '/http/auth/token/scheme': 'Bearer',
       '/http/auth/token/headerName': 'Authorization',
@@ -30,6 +31,31 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    environment: {
+      id: 'environment',
+      type: 'select',
+      label: 'Account type',
+      helpKey: 'logisense.connection.environment',
+      options: [
+        {
+          items: [
+            { label: 'Production', value: 'production' },
+            { label: 'Sandbox', value: 'sandbox' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const disableStrictSSL = r && r.http && r.http.disableStrictSSL;
+
+        if (disableStrictSSL) {
+          if (disableStrictSSL === true) {
+            return 'sandbox';
+          }
+
+          return 'production';
+        }
+      },
+    },
     storeURL: {
       id: 'storeURL',
       startAdornment: 'https://',
@@ -99,6 +125,7 @@ export default {
   layout: {
     fields: [
       'name',
+      'environment',
       'storeURL',
       'http.unencrypted.username',
       'http.encrypted.password',
