@@ -368,13 +368,7 @@ export default function ImportMapping(props) {
       rule: resource.http && resource.http.body && resource.http.body[0],
       data: JSON.stringify(model),
     };
-  }, [
-    importConn,
-    importSampleData,
-    mappingPreviewType,
-    preview,
-    resource.http,
-  ]);
+  }, [importConn, importSampleData, mappingPreviewType, preview, resource]);
   const showPreviewButton = !!(mappingPreviewType === 'netsuite'
     ? isNSAssistantFormLoaded
     : mappingPreviewType);
