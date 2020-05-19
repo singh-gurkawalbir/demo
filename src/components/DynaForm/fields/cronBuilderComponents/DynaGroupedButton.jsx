@@ -9,16 +9,18 @@ const useStyles = makeStyles({
 });
 const wrapIndex = 5;
 
-function GroupedButton(props) {
+export default function GroupedButton(props) {
   const {
     id,
     value,
     onFieldChange,
     clearFields,
-    fields,
     options,
     setReset,
+    formKey,
   } = props;
+  const form = useFormContext({ formKey });
+  const { fields } = form || {};
   const classes = useStyles();
   const finalValues =
     value.includes('/') || value.includes('*') ? [] : value && value.split(',');
@@ -42,7 +44,8 @@ function GroupedButton(props) {
 
   useEffect(() => {
     clearFields.forEach(id => {
-      fields.some(field => field.id === id) && onFieldChange(id, '');
+      Object.values(fields).some(field => field.id === id) &&
+        onFieldChange(id, '');
     });
 
     if (!finalValues.length) {
@@ -86,10 +89,4 @@ function GroupedButton(props) {
         )}
     </Fragment>
   );
-}
-
-export default function DynaGroupedButton(props) {
-  const form = useFormContext(props);
-
-  return <GroupedButton {...props} fields={form.fields} />;
 }

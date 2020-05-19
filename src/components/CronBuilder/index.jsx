@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import useFormContext from '../Form/FormContext';
 
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;
@@ -363,8 +364,12 @@ export default function CronBuilder(props) {
   const formKey = useFormInitWithPermissions({
     fieldsMeta: meta,
     remount: count,
-    onChange: onFormChange,
   });
+  const form = useFormContext({ formKey });
+
+  useEffect(() => {
+    if (form) onFormChange(form.value);
+  }, [onFormChange, form]);
 
   return (
     <DynaForm

@@ -10,13 +10,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function CronLabel(props) {
+export default function CronLabel(props) {
   const classes = useStyles();
-  const { onFieldChange, id, clearFields, fields, unit } = props;
+  const { onFieldChange, id, clearFields, unit, formKey } = props;
+  const form = useFormContext({ formKey });
+  const { fields } = form || {};
 
   useEffect(() => {
     clearFields.forEach(id => {
-      fields.some(field => field.id === id) && onFieldChange(id, '');
+      Object.values(fields).some(field => field.id === id) &&
+        onFieldChange(id, '');
     });
     onFieldChange(id, '*');
 
@@ -26,10 +29,4 @@ function CronLabel(props) {
   return (
     <Typography className={classes.labelTop}>{`Every * ${unit}`} </Typography>
   );
-}
-
-export default function DynaCronLabel(props) {
-  const form = useFormContext(props);
-
-  return <CronLabel {...props} fields={form.fields} />;
 }

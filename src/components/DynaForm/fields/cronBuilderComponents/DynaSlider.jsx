@@ -2,19 +2,21 @@ import { useCallback, Fragment, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 import useFormContext from '../../../Form/FormContext';
 
-function DynaSlider(props) {
+export default function DynaSlider(props) {
   const {
     id,
     value,
     onFieldChange,
     clearFields,
-    fields,
     unit,
     step,
     max,
     min,
     setReset,
+    formKey,
   } = props;
+  const form = useFormContext({ formKey });
+  const { fields } = form || {};
   const handleChange = useCallback(
     (evt, slidervalue) => {
       if (unit === 'minute' && slidervalue > 9) {
@@ -28,7 +30,8 @@ function DynaSlider(props) {
   useEffect(() => {
     !sliderVal && onFieldChange(id, `*/${min.toString()}`);
     clearFields.forEach(id => {
-      fields.some(field => field.id === id) && onFieldChange(id, '');
+      Object.values(fields).some(field => field.id === id) &&
+        onFieldChange(id, '');
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -48,10 +51,4 @@ function DynaSlider(props) {
       />
     </Fragment>
   );
-}
-
-export default function DynaGroupedButton(props) {
-  const form = useFormContext(props);
-
-  return <DynaSlider {...props} fields={form.fields} />;
 }
