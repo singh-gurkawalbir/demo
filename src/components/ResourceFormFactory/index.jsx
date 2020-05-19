@@ -66,8 +66,6 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
     );
   }
 
-  console.log('rerender FormStateManager');
-
   return <Form {...props} {...formState} key={count} />;
 };
 
@@ -129,7 +127,6 @@ export const ResourceFormFactory = props => {
     resourceType,
   ]);
 
-  console.log('rerender ResourceForm factory');
   const { optionsHandler, validationHandler } = useMemo(
     () =>
       formFactory.getResourceFormAssets({
