@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
   },
 }));
+const rowsPerPageOptions = [10, 25, 50];
 
 export default function ErrorTable(props) {
   const classes = useStyles();
@@ -51,7 +52,7 @@ export default function ErrorTable(props) {
         <Fragment>
           <CeligPagination
             {...paginationOptions}
-            rowsPerPageOptions={[10, 25, 50]}
+            rowsPerPageOptions={rowsPerPageOptions}
             className={classes.tablePaginationRoot}
             count={data.length}
             page={page}
