@@ -116,28 +116,26 @@ export default function ImportMapping(props) {
     preview = {},
     lastModifiedKey,
     salesforceMasterRecordTypeId,
-    showSalesforceNetsuiteAssistant,
     importSampleData,
-    httpAssistantPreview,
+    isNSAssistantFormLoaded,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const { data: previewData } = preview;
+  const mappingPreviewType = useSelector(state =>
+    selectors.mappingPreviewType(state, resource._id)
+  );
   const salesforceNetsuitePreviewData = useMemo(() => {
-    if (showSalesforceNetsuiteAssistant) {
-      const { data } = preview;
-
-      if (data && Array.isArray(data) && data.length) {
-        const [_val] = data;
+    if (mappingPreviewType === 'salesforce') {
+      if (previewData && Array.isArray(previewData) && previewData.length) {
+        const [_val] = previewData;
 
         return _val;
       }
 
-      return data;
+      return previewData;
     }
 
     return undefined;
-  }, [preview, showSalesforceNetsuiteAssistant]);
-  const showPreviewPane = !!(
-    showSalesforceNetsuiteAssistant || httpAssistantPreview
-  );
+  }, [mappingPreviewType, previewData]);
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
     application
@@ -347,7 +345,11 @@ export default function ImportMapping(props) {
     );
   }
 
-  const httpAssistantPreviewData = useMemo(() => {
+  const httpAssistantPreviewObj = useMemo(() => {
+    if (mappingPreviewType !== 'http') {
+      return {};
+    }
+
     const model = {
       connection: importConn,
       data: [],
@@ -362,21 +364,33 @@ export default function ImportMapping(props) {
         : [importSampleData];
     }
 
-    return JSON.stringify(model);
-  }, [importConn, importSampleData, preview]);
+    return {
+      rule: resource.http && resource.http.body && resource.http.body[0],
+      data: JSON.stringify(model),
+    };
+  }, [
+    importConn,
+    importSampleData,
+    mappingPreviewType,
+    preview,
+    resource.http,
+  ]);
+  const showPreviewButton = !!(mappingPreviewType === 'netsuite'
+    ? isNSAssistantFormLoaded
+    : mappingPreviewType);
 
   return (
     <div className={classes.root}>
       <div
         className={clsx(classes.mappingContainer, {
-          [classes.mapCont]: showPreviewPane,
+          [classes.mapCont]: mappingPreviewType,
         })}
         key={`mapping-${editorId}`}>
         <div className={classes.header}>
           <Typography
             variant="h5"
             className={clsx(classes.childHeader, classes.topHeading, {
-              [classes.topHeadingCustomWidth]: showPreviewPane,
+              [classes.topHeadingCustomWidth]: mappingPreviewType,
             })}>
             {extractLabel}
             {!isExtractsLoading && (
@@ -455,7 +469,7 @@ export default function ImportMapping(props) {
           />
         </div>
         <ButtonGroup>
-          {showPreviewPane && (
+          {showPreviewButton && (
             <Button
               variant="text"
               data-test="preview"
@@ -490,9 +504,9 @@ export default function ImportMapping(props) {
           </Button>
         </ButtonGroup>
       </div>
-      {showPreviewPane && (
+      {mappingPreviewType && (
         <div className={classes.assistantContainer}>
-          {showSalesforceNetsuiteAssistant && sObjectType && (
+          {mappingPreviewType === 'salesforce' && (
             <SalesforceMappingAssistant
               style={{
                 width: '100%',
@@ -506,23 +520,24 @@ export default function ImportMapping(props) {
               data={salesforceNetsuitePreviewData}
             />
           )}
-          {showSalesforceNetsuiteAssistant && recordType && (
+          {mappingPreviewType === 'netsuite' && (
             <NetSuiteMappingAssistant
               style={{
                 width: '100%',
                 height: '100%',
               }}
+              mappingId={editorId}
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
               onFieldClick={handleNetSuiteAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
-          {httpAssistantPreview && (
+          {mappingPreviewType === 'http' && (
             <HttpMappingAssistant
               editorId={`httpPreview-${editorId}`}
-              rule={httpAssistantPreview.rule}
-              data={httpAssistantPreviewData}
+              rule={httpAssistantPreviewObj.rule}
+              data={httpAssistantPreviewObj.data}
             />
           )}
         </div>

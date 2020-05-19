@@ -4250,3 +4250,53 @@ export function customSettingsForm(state, resourceId) {
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+
+export function showHTTPAssistantMappingPreview(state, resouceId) {
+  const resourceData = resource(state, 'imports', resouceId);
+  const { _integrationId, _connectionId } = resourceData;
+
+  if (_integrationId && resourceData.http) {
+    const connection = resource(state, 'connections', _connectionId);
+
+    return (
+      resourceData.http.requestMediaType === 'xml' ||
+      connection.http.mediaType === 'xml'
+    );
+  }
+
+  return false;
+}
+
+export function mappingPreviewType(state, resourceId) {
+  // TODO After mapping refactor,  pick resourceId from mapping selector.
+  const resourceData = resource(state, 'imports', resourceId);
+
+  if (!resourceData) return;
+  const { adaptorType } = resourceData;
+
+  if (adaptorType === 'NetSuiteDistributedImport') {
+    return 'netsuite';
+  } else if (adaptorType === 'SalesforceImport') {
+    const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
+      state,
+      resourceId
+    );
+
+    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
+      const { searchLayoutable } = masterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        return 'salesforce';
+      }
+    }
+  } else if (resourceData.http) {
+    const showHttpAssistant = showHTTPAssistantMappingPreview(
+      state,
+      resourceId
+    );
+
+    if (showHttpAssistant) {
+      return 'http';
+    }
+  }
+}
