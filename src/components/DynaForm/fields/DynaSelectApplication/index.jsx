@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
   inputLabel: {
     transform: 'unset',
     position: 'static',
-    marginBottom: theme.spacing(1),
   },
   img: {
     maxWidth: '100%',

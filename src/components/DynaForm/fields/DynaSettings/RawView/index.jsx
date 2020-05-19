@@ -1,15 +1,21 @@
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import EditorField from '../../DynaEditor';
+import ActionButton from '../../../../ActionButton';
+import ScriptsIcon from '../../../../icons/ScriptsIcon';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   editor: {
     height: 200,
   },
-  // TODO: @Azhar, editor should be displayed as an enclosed box
-  wrapper: {
+  rawViewWrapper: {
     width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
   },
-});
+  rawSettingsActionButton: {
+    marginTop: theme.spacing(4),
+  },
+}));
 
 export default function RawView({ onToggleClick, ...rest }) {
   const classes = useStyles();
@@ -17,20 +23,22 @@ export default function RawView({ onToggleClick, ...rest }) {
   // Only developers would ever see this raw settings view, so we can safely
   // render the toggle editor button with no other conditions.
   return (
-    <div className={classes.wrapper}>
-      <Button
-        data-test="toggleEditor"
-        variant="outlined"
-        color="secondary"
-        onClick={onToggleClick}>
-        Launch form builder
-      </Button>
+    <div className={classes.rawViewWrapper}>
       <EditorField
         {...rest}
         label="Settings"
+        className={classes.rawViewWrapper}
         editorClassName={classes.editor}
         mode="json"
       />
+      <ActionButton
+        data-test="toggleEditor"
+        variant="outlined"
+        color="secondary"
+        className={classes.rawSettingsActionButton}
+        onClick={onToggleClick}>
+        <ScriptsIcon />
+      </ActionButton>
     </div>
   );
 }
