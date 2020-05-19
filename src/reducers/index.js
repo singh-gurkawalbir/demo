@@ -4268,7 +4268,6 @@ export function showHTTPAssistantMappingPreview(state, resouceId) {
 }
 
 export function mappingPreviewType(state, resourceId) {
-  // TODO After mapping refactor,  pick resourceId from mapping selector.
   const resourceData = resource(state, 'imports', resourceId);
 
   if (!resourceData) return;
