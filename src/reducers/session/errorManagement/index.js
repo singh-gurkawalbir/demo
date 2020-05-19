@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 import openErrors, * as fromOpenErrors from './openErrors';
 import errorDetails, * as fromErrorDetails from './errorDetails';
 import getFilteredErrors from '../../../utils/errorManagement';
-import miscellaneous, * as fromMiscellaneous from './miscellaneous';
+import retryData, * as fromRetryData from './retryData';
 
 export default combineReducers({
   openErrors,
   errorDetails,
-  miscellaneous,
+  retryData,
 });
 
 export function resourceErrors(state, { flowId, resourceId, options }) {
@@ -58,7 +58,7 @@ export function errorActionsContext(
 }
 
 export function retryDataContext(state, retryId) {
-  return fromMiscellaneous.retryDataContext(state && state.miscellaneous, {
+  return fromRetryData.retryDataContext(state && state.retryData, {
     retryId,
   });
 }

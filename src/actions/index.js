@@ -1561,55 +1561,31 @@ const errorManager = {
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
-      action(actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.REQUEST, {
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {
         flowId,
         resourceId,
         retryId,
       }),
     received: ({ flowId, resourceId, retryId, retryData }) =>
-      action(actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.RECEIVED, {
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED, {
         flowId,
         resourceId,
         retryId,
         retryData,
       }),
     receivedError: ({ flowId, resourceId, retryId, error }) =>
-      action(
-        actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.RECEIVED_ERROR,
-        {
-          flowId,
-          resourceId,
-          retryId,
-          error,
-        }
-      ),
-    update: {
-      request: ({ flowId, resourceId, retryId }) =>
-        action(
-          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE.REQUEST,
-          {
-            flowId,
-            resourceId,
-            retryId,
-          }
-        ),
-      received: ({ flowId, resourceId, retryId, retryData }) =>
-        action(
-          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE.RECEIVED,
-          { flowId, resourceId, retryId, retryData }
-        ),
-      receivedError: ({ flowId, resourceId, retryId, error }) =>
-        action(
-          actionTypes.ERROR_MANAGER.MISCELLANEOUS.RETRY_DATA.UPDATE
-            .RECEIVED_ERROR,
-          {
-            flowId,
-            resourceId,
-            retryId,
-            error,
-          }
-        ),
-    },
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR, {
+        flowId,
+        resourceId,
+        retryId,
+        error,
+      }),
+    updateRequest: ({ flowId, resourceId, retryId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+      }),
   },
 };
 const flow = {
