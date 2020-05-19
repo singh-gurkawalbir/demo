@@ -82,9 +82,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip
-            formatter={(value, name, props) => parseValue(value, name, props)}
-          />
+          <Tooltip formatter={(value, name) => parseValue(value, name)} />
           <Legend formatter={renderColorfulLegendText} />
           {selectedResources.map(r => (
             <Line
@@ -101,12 +99,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
   );
 };
 
-export default function FlowCharts({
-  flowId,
-  selectedMeasurements,
-  range,
-  selectedResources,
-}) {
+export default function FlowCharts({ flowId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const data =
@@ -134,7 +127,7 @@ export default function FlowCharts({
 
   return (
     <div className={classes.root}>
-      {selectedMeasurements.map(m => (
+      {['success', 'error', 'ignored', 'averageTimeTaken'].map(m => (
         <Chart
           key={m}
           id={m}
