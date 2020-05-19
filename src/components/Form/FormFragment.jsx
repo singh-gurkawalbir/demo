@@ -23,8 +23,10 @@ export default function FormFragment({ defaultFields, formKey }) {
     shallowEqual
   );
   const onFieldChange = useCallback(
-    (fieldId, value) =>
-      dispatch(actions.form.fieldChange(formKey)(fieldId, value)),
+    (fieldId, value, skipFieldTouched) =>
+      dispatch(
+        actions.form.fieldChange(formKey)(fieldId, value, skipFieldTouched)
+      ),
     [dispatch, formKey]
   );
   const onFieldBlur = useCallback(
