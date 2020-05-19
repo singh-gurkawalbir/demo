@@ -1,16 +1,16 @@
 import React, { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import moment from 'moment';
 import {
   LineChart,
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
   Legend,
   Line,
   ResponsiveContainer,
 } from 'recharts';
-import { differenceInHours, fromUnixTime } from 'date-fns';
+// import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import * as selectors from '../../../../reducers';
@@ -28,7 +28,27 @@ const useStyles = makeStyles(theme => ({
 const Chart = ({ id, flowId, selectedResources }) => {
   const { data: flowData } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
-  const parseValue = value => `${value}`;
+  const flowResources = useSelector(state =>
+    selectors.flowResources(state, flowId)
+  );
+  const getResourceName = name => {
+    const resourceId = name.replace(/-value/, '');
+    let modifiedName = resourceId;
+    const resource = flowResources.find(r => r._id === resourceId);
+
+    if (resource) {
+      modifiedName = resource.name;
+    }
+
+    return modifiedName;
+  };
+
+  const parseValue = (value, name) => [value, getResourceName(name)];
+  const renderColorfulLegendText = (value, entry) => {
+    const { color } = entry;
+
+    return <span style={{ color }}>{getResourceName(value)}</span>;
+  };
 
   return (
     <Fragment>
@@ -42,22 +62,30 @@ const Chart = ({ id, flowId, selectedResources }) => {
             left: 20,
             bottom: 5,
           }}>
-          <CartesianGrid strokeDasharray="1 1" />
           <XAxis
-            dataKey="timeInMills"
+            dataKey="time"
             name="Time"
+            type="category"
             tickFormatter={unixTime =>
-              `${differenceInHours(fromUnixTime(unixTime), new Date())} h`
+              moment(unixTime).format('DD/MMM HH:mm  ')
             }
           />
           <YAxis
             yAxisId={id}
             type="number"
+            label={{
+              value: '# of transmissions',
+              angle: -90,
+              position: 'insideLeft',
+              textAnchor: 'middle',
+            }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip formatter={value => parseValue(value)} />
-          <Legend />
+          <Tooltip
+            formatter={(value, name, props) => parseValue(value, name, props)}
+          />
+          <Legend formatter={renderColorfulLegendText} />
           {selectedResources.map(r => (
             <Line
               key={r}

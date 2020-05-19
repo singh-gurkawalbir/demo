@@ -24,6 +24,7 @@ const defineds = {
   endOfWeek: endOfWeek(new Date()),
   startOfLastWeek: startOfWeek(addDays(new Date(), -7)),
   endOfLastWeek: endOfWeek(addDays(new Date(), -7)),
+  startOfLastSevenDays: startOfDay(addDays(new Date(), -7)),
   startOfLastFifteenDays: startOfDay(addDays(new Date(), -15)),
   endOfLastThirtyDays: startOfDay(addDays(new Date(), -30)),
   startOfToday: startOfDay(new Date()),
