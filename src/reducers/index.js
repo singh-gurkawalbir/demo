@@ -4325,3 +4325,7 @@ export function flowResources(state, flowId) {
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+
+export function retryDataContext(state, retryId) {
+  return fromSession.retryDataContext(state && state.session, retryId);
+}
