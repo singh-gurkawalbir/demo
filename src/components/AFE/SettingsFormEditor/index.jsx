@@ -125,7 +125,7 @@ export default function SettingsFormEditor({
             <DynaSubmit
               className={classes.submitButton}
               onClick={handleFormPreviewChange}>
-              Test form submission
+              Test form
             </DynaSubmit>
           </DynaForm>
         ) : (
@@ -148,7 +148,7 @@ export default function SettingsFormEditor({
           />
         ) : (
           <Typography>
-            Use the form above to preview the form output.
+            Click the ‘test form’ button above to preview form output.
           </Typography>
         )}
       </PanelGridItem>
