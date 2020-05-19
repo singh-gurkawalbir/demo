@@ -4323,7 +4323,5 @@ export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
 
 export function retryDataContext(state, retryId) {
-  return fromSession.retryDataContext(state && state.session, {
-    retryId,
-  });
+  return fromSession.retryDataContext(state && state.session, retryId);
 }

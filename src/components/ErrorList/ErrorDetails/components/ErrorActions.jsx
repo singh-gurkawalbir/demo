@@ -64,7 +64,7 @@ export default function Actions({
         Resolve
       </Button>
       {retryId ? (
-        <Button variant="outlined" onClick={updateRetry}>
+        <Button variant="outlined" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
       ) : (

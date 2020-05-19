@@ -58,7 +58,5 @@ export function errorActionsContext(
 }
 
 export function retryDataContext(state, retryId) {
-  return fromRetryData.retryDataContext(state && state.retryData, {
-    retryId,
-  });
+  return fromRetryData.retryDataContext(state && state.retryData, retryId);
 }

@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './components/EditRetryData';
 import ViewErrorDetails from './components/ViewErrorDetails';
 import { resourceError } from '../../../reducers';
+import { safeParse } from '../../../utils/string';
 import ErrorActions from './components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
@@ -54,9 +55,12 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const handleModeChange = useCallback((event, newMode) => {
     setRecordMode(newMode);
   }, []);
-  const onRetryDataChange = useCallback(data => {
-    setRetryData(data);
-  }, []);
+  const onRetryDataChange = useCallback(
+    data =>
+      // Editor onChange returns string format, so parse it to get updated retryData
+      setRetryData(safeParse(data)),
+    []
+  );
 
   return (
     <div className={classes.wrapper}>

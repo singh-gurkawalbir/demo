@@ -1592,11 +1592,12 @@ const errorManager = {
         retryId,
         error,
       }),
-    updateRequest: ({ flowId, resourceId, retryId }) =>
+    updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
         flowId,
         resourceId,
         retryId,
+        retryData,
       }),
   },
 };
