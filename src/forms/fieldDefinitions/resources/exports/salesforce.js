@@ -53,6 +53,9 @@ export default {
   'salesforce.distributed.sObjectType': {
     label: 'SObject type',
     required: true,
+    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+    bundleUrlHelp:
+      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',

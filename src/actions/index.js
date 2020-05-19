@@ -403,6 +403,12 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
+  validationError: (validationError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.VALIDATION_ERROR, {
+      validationError,
+      connectionId,
+      commMetaPath,
+    }),
   requestAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
       resourceId,
