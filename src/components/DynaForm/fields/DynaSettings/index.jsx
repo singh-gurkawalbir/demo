@@ -13,6 +13,7 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 
+const emptyObj = {};
 // TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
 // we move this to a common theme?
 const useStyles = makeStyles(theme => ({
@@ -51,18 +52,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const settingsContainer = {
-  collapsed: true,
+  // collapsed: true,
   label: 'Custom settings',
   fields: ['settings'],
 };
 
 export default function DynaSettings(props) {
   const classes = useStyles();
-  const { id, resourceContext, disabled, onFieldChange } = props;
+  const {
+    id,
+    resourceContext,
+    disabled,
+    onFieldChange,
+    collapsed = true,
+  } = props;
   const { resourceType, resourceId } = resourceContext;
-  const [shouldExpand, setShouldExpand] = useState(
-    !settingsContainer.collapsed
-  );
+  const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const history = useHistory();
   const match = useRouteMatch();
   const integrationId = useIntegration(resourceType, resourceId);
@@ -72,7 +77,7 @@ export default function DynaSettings(props) {
   const settingsForm = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
 
-    return (resource && resource.settingsForm) || {};
+    return (resource && resource.settingsForm) || emptyObj;
   });
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
