@@ -40,6 +40,9 @@ export default function LookupActionItem({
   value = {},
   options = {},
   onClick,
+  resourceId,
+  resourceType,
+  flowId,
 }) {
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
@@ -67,6 +70,9 @@ export default function LookupActionItem({
           onCancel={handleEditorClick}
           onSave={handleSave}
           options={options}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          flowId={flowId}
         />
       )}
       {isEdit && (

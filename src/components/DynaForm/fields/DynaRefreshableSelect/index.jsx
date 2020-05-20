@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import { DynaGenericSelect } from './RefreshGenericResource';
+import RawHtml from '../../../RawHtml';
 
 /**
  *
@@ -11,6 +12,8 @@ import { DynaGenericSelect } from './RefreshGenericResource';
 export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
+    bundlePath,
+    bundleUrlHelp,
     options = {},
     filterKey,
     commMetaPath,
@@ -18,7 +21,7 @@ export default function DynaSelectOptionsGenerator(props) {
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const dispatch = useDispatch();
-  const { status, data, errorMessage } = useSelector(state =>
+  const { status, data, errorMessage, validationError } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
@@ -31,11 +34,14 @@ export default function DynaSelectOptionsGenerator(props) {
       dispatch(
         actions.metadata.request(
           connectionId,
-          options.commMetaPath || commMetaPath
+          options.commMetaPath || commMetaPath,
+          { bundleUrlHelp, bundlePath }
         )
       );
     }
   }, [
+    bundlePath,
+    bundleUrlHelp,
     commMetaPath,
     connectionId,
     data,
@@ -50,22 +56,27 @@ export default function DynaSelectOptionsGenerator(props) {
         options.commMetaPath || commMetaPath,
         {
           refreshCache: true,
+          bundleUrlHelp,
+          bundlePath,
         }
       )
     );
   };
 
   return (
-    <DynaGenericSelect
-      resourceToFetch={options.commMetaPath || commMetaPath}
-      resetValue={options.resetValue}
-      onFetch={onFetch}
-      onRefresh={onRefresh}
-      fieldStatus={status}
-      fieldData={data}
-      fieldError={errorMessage}
-      disableOptionsLoad={disableOptionsLoad}
-      {...props}
-    />
+    <Fragment>
+      <DynaGenericSelect
+        resourceToFetch={options.commMetaPath || commMetaPath}
+        resetValue={options.resetValue}
+        onFetch={onFetch}
+        onRefresh={onRefresh}
+        fieldStatus={status}
+        fieldData={data}
+        fieldError={errorMessage}
+        disableOptionsLoad={disableOptionsLoad}
+        {...props}
+      />
+      <RawHtml html={validationError} />
+    </Fragment>
   );
 }

@@ -11,6 +11,7 @@ import {
   startOfMonth,
   isSameDay,
   startOfWeek,
+  addYears,
 } from 'date-fns';
 import { Fragment, useCallback, useState, useMemo } from 'react';
 import { DateRangePicker } from 'react-date-range';
@@ -24,6 +25,7 @@ const defineds = {
   endOfWeek: endOfWeek(new Date()),
   startOfLastWeek: startOfWeek(addDays(new Date(), -7)),
   endOfLastWeek: endOfWeek(addDays(new Date(), -7)),
+  startOfLastSevenDays: startOfDay(addDays(new Date(), -7)),
   startOfLastFifteenDays: startOfDay(addDays(new Date(), -15)),
   endOfLastThirtyDays: startOfDay(addDays(new Date(), -30)),
   startOfToday: startOfDay(new Date()),
@@ -96,6 +98,13 @@ const rangeList = [
     label: 'Last 9 months',
     range: () => ({
       startDate: addMonths(new Date(), -9),
+      endDate: new Date(),
+    }),
+  },
+  {
+    label: 'Last year',
+    range: () => ({
+      startDate: addYears(new Date(), -1),
       endDate: new Date(),
     }),
   },
@@ -174,6 +183,10 @@ export default function DateRangeSelector({ value, onSave }) {
               className={classes.child}
               ranges={selectedRanges}
               direction="horizontal"
+              maxDate={new Date()}
+              minDate={addYears(new Date(), -1)}
+              inputRanges={[]}
+              showPreview={false}
             />
             <Button onClick={handleSave}>Apply</Button>
             <Button onClick={handleClose}>Cancel</Button>
