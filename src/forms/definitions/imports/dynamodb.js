@@ -21,11 +21,6 @@ export default {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'dynamodb.region': {
       fieldId: 'dynamodb.region',
     },
@@ -104,24 +99,28 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'importData',
-      'dynamodb.method',
-      'dynamodb.region',
-      'dynamodb.tableName',
-      'dynamodb.expressionAttributeNames',
-      'dynamodb.expressionAttributeValues',
-      'dynamodb.partitionKey',
-      'dynamodb.sortKey',
-      'dynamodb.conditionExpression',
-      'ignoreExisting',
-      'ignoreMissing',
-      'dynamodb.ignoreExtract',
-      'dynamodb.itemDocument',
-      'dynamodb.updateExpression',
-    ],
+    fields: ['common'],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'How would you like the data imported?',
+        fields: [
+          'dynamodb.method',
+          'dynamodb.region',
+          'dynamodb.tableName',
+          'dynamodb.expressionAttributeNames',
+          'dynamodb.expressionAttributeValues',
+          'dynamodb.partitionKey',
+          'dynamodb.sortKey',
+          'dynamodb.conditionExpression',
+          'ignoreExisting',
+          'ignoreMissing',
+          'dynamodb.ignoreExtract',
+          'dynamodb.itemDocument',
+          'dynamodb.updateExpression',
+        ],
+      },
+    ],
   },
 };

@@ -34,6 +34,7 @@ export default function CsvParseEditor(props) {
     const options = {
       data: props.data,
       rule: props.rule,
+      autoEvaluate: true,
     };
 
     dispatch(actions.editor.init(editorId, 'csvParser', options));

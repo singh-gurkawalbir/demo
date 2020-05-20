@@ -31,7 +31,7 @@ export default function FileDefinitionEditor(props) {
     dataMode = 'json';
     resultMode = 'text';
   } else {
-    resultTitle = 'Generated export';
+    resultTitle = 'Parsed output';
     dataMode = 'text';
     resultMode = 'json';
   }
@@ -60,8 +60,8 @@ export default function FileDefinitionEditor(props) {
       ruleMode="json"
       dataMode={dataMode}
       resultMode={resultMode}
-      ruleTitle="File definition rules"
-      dataTitle="Available resources"
+      ruleTitle="Type your file definition rules here"
+      dataTitle="Sample file"
       resultTitle={resultTitle}
       disabled={disabled}
     />

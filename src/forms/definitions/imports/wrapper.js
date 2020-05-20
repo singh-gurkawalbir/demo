@@ -1,11 +1,6 @@
 export default {
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
     'wrapper.lookups': { fieldId: 'wrapper.lookups', visible: false },
@@ -19,18 +14,21 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: [
-      'common',
-      'importData',
-      'wrapper.function',
-      'wrapper.configuration',
-      'sampleData',
-      'wrapper.lookups',
-      'wrapper.sampleData',
-      'dataMappings',
-    ],
+    fields: ['common'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like the data imported?',
+        fields: [
+          'wrapper.function',
+          'wrapper.configuration',
+          'sampleData',
+          'wrapper.lookups',
+          'wrapper.sampleData',
+          'dataMappings',
+        ],
+      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

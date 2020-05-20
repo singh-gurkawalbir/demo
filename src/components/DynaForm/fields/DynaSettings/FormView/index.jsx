@@ -6,7 +6,6 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import Spinner from '../../../../Spinner';
-import DebugOnly from '../../../../DebugOnly';
 import useIntegration from '../../../../../hooks/useIntegration';
 
 const useStyles = makeStyles({
@@ -20,6 +19,9 @@ const useStyles = makeStyles({
     bottom: 0,
     left: 0,
     margin: 'auto',
+  },
+  wrapper: {
+    width: '100%',
   },
 });
 
@@ -84,17 +86,15 @@ export default function FormView({
   }
 
   return (
-    <div>
+    <div className={classes.wrapper}>
       {isDeveloper && !isViewMode && (
-        <DebugOnly>
-          <Button
-            data-test="toggleEditor"
-            variant="outlined"
-            color="secondary"
-            onClick={onToggleClick}>
-            Launch form builder
-          </Button>
-        </DebugOnly>
+        <Button
+          data-test="toggleEditor"
+          variant="outlined"
+          color="secondary"
+          onClick={onToggleClick}>
+          Launch form builder
+        </Button>
       )}
       <DynaForm
         key={formState.key}

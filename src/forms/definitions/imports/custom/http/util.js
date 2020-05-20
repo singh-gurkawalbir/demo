@@ -292,11 +292,6 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     dataMappings: {
       formId: 'dataMappings',
     },
@@ -315,7 +310,15 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common', 'importData', ...fieldIds, 'dataMappings'],
+      fields: ['common'],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'How would you like the data imported?',
+          fields: [...fieldIds, 'dataMappings'],
+        },
+      ],
     },
   };
 }

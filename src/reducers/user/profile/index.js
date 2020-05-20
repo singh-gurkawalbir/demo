@@ -36,7 +36,5 @@ export function avatarUrl(state) {
 // #endregion PUBLIC SELECTORS
 
 export function isUserInErrMgtTwoDotZero(state) {
-  // hard coding true for useErrMgtTwoDotZero prop for testing purposes
-  // Need to be removed once BE exposes this prop
-  return true || !!(state && state.useErrMgtTwoDotZero);
+  return !!(state && state.useErrMgtTwoDotZero);
 }

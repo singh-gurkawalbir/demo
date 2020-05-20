@@ -568,7 +568,7 @@ export default {
     'Please specify whether the record is being created or updated using this field.',
 
   'agent.name':
-    "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
+    'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':
     'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
@@ -962,7 +962,7 @@ export default {
   'editor.xml.simple':
     'Simple parsing means the code is converted to JSON without any user configurations.This typically generates a more complex and difficult to read JSON.\nIf you would like to have more control over what the JSON output looks like, use the Advanced options.',
   'export.name':
-    "Name your export so that you can easily reference it from other parts of the application.  For example: 'Salesforce - Query All Accounts'",
+    'Name your export so that you can easily reference it from other parts of the application.',
   'export._connectionId':
     'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'export.type':
@@ -1184,14 +1184,16 @@ export default {
     'The stack that contains your preSavePage hook code.',
   'export.hooks.preSavePage._scriptId':
     'The script record that contains your preSavePage hook function.',
+  'export.file.filedefinition.rules':
+    'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
   'export.file.encoding':
     'The file encoding indicates how the individual characters in your data are represented on the file system. The default encoding is utf-8. Depending on the source system of the data, the encoding can take on different formats. Current supported formats are: utf-8, win-1254 and utf-16le. If you do not know what encoding your data is, in most cases it will be utf-8.',
   'export.file.output':
-    'This field determines what type of information will be returned by the file export. For most usecases the "Records" option is desired. This option will read and parse your files for you, and return pages of records that can then be imported into other applications. The "Metadata" option will not process your files, but will instead return a record entry for just the filename and last modified date of each file in the specified directory. The "Blob Keys" option will transfer your raw files as-is into integrator.io storage without processing them, and will return a "blobKey" for each file that was successfully transferred; and then you can use the "blobKey" values that were returned in subsequent imports to tell integrator.io to transfer the copied files into other applications. For example, you might build a flow that exports all the files from an FTP directory as-is and then imports those same files into the NetSuite file cabinet.',
+    'This field determines what type of information will be returned by the file transfer. For most usecases the "Records" option is desired. This option will read and parse your files for you, and return pages of records that can then be imported into other applications. The "Metadata" option will not process your files, but will instead return a record entry for just the filename and last modified date of each file in the specified directory. The "Blob Keys" option will transfer your raw files as-is into integrator.io storage without processing them, and will return a "blobKey" for each file that was successfully transferred; and then you can use the "blobKey" values that were returned in subsequent imports to tell integrator.io to transfer the copied files into other applications. For example, you might build a flow that exports all the files from an FTP directory as-is and then imports those same files into the NetSuite file cabinet.',
   'export.file.type':
-    'Please specify the type of files being exported so that integrator.io will know how to parse your data. For example, if you are exporting CSV files (i.e. files containing Comma Separated Value data) then please choose CSV.  Please note that integrator.io does not care how your files are actually named, nor does it matter what file name extensions are being used.  For example, you can select CSV here for files with all sorts of different file name extensions (i.e. csvData.txt, csvData.dat, csvData.random), and integrator.io will parse them all the same with the CSV data parser.',
+    'Please specify the type of files being transferred so that integrator.io will know how to parse your data. For example, if you are transferring CSV files (i.e. files containing Comma Separated Value data) then please choose CSV.  Please note that integrator.io does not care how your files are actually named, nor does it matter what file name extensions are being used.  For example, you can select CSV here for files with all sorts of different file name extensions (i.e. csvData.txt, csvData.dat, csvData.random), and integrator.io will parse them all the same with the CSV data parser.',
   'export.file.skipDelete':
-    "If this field is set to 'true' then integrator.io will NOT delete files from the export application after an export completes.  The files will be left on the export application, and if the export process runs again the same files will be exported again.  For example, if you are exporting files from an FTP folder, and have this field set to true, then integrator.io will export all files on the FTP folder but leave them in the FTP folder, and if the export runs again then integrator.io will export the same files again.",
+    "If this field is set to 'true' then integrator.io will NOT delete files from the transfer application after an transfer completes.  The files will be left on the transfer application, and if the transfer process runs again the same files will be transferred again.  For example, if you are transferring files from an FTP folder, and have this field set to true, then integrator.io will transfer all files on the FTP folder but leave them in the FTP folder, and if the transfer runs again then integrator.io will transfer the same files again.",
   'export.file.compressionFormat':
     "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'export.file.csv.columnDelimiter':
@@ -1199,25 +1201,25 @@ export default {
   'export.file.csv.rowDelimiter':
     "The character, or set of characters used to identify the end of a row. If this field is left blank then integrator.io will attempt to identify the row delimiter itself. Some common row delimiters are: '\n', '\r\n', '\r'",
   'export.file.csv.keyColumns':
-    'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single export record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
+    'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single transfer record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.csv.hasHeaderRow':
-    'Set this field to true if the files you are exporting contain a top level header row.  Saying this another way, if the very first row in the CSV files being exported is reserved for column names (and not actual data) then set this field to true.',
+    'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
   'export.file.csv.trimSpaces':
     'Set this field to true if you would like to remove all leading and trailing whitespaces in your column data. Please note that header row values are not affected by this setting. Leading and trailing whitespaces in the header row (if one is present) are always trimmed. For example:\nHeader1 , Header 2,Header3 \nCol 11 , Col 12 , Col 13\nCol21, Col22, Col23 \n\n Would look like:\n[\n{ "Header1": "Col 11", "Header 2": "Col 12", "Header3": "Col 13" },\n{ "Header1": "Col21", "Header 2": "Col22", "Header3": "Col23" }\n]',
   'export.file.csv.rowsToSkip':
     'In some rare occasions CSV files will contain multiple header rows that do not describe the columns. These header rows could for example contain the filename or date/time the file was created. Use this field if your file has header rows you wish to skip.',
   'export.file.xlsx.keyColumns':
-    'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single export record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
+    'If multiple rows of data represent a single object (sales order line items for example), it is possible to group these rows into a single transfer record. If this behavior is desired, this field should be used to provide 1 or more columns in the source data that should be used to group related records. Typically this would be the id column of the parent object. In our example above, this would be the sales order id.',
   'export.file.xlsx.hasHeaderRow':
-    'Set this field to true if the files you are exporting contain a top level header row.  Saying this another way, if the very first row in the CSV files being exported is reserved for column names (and not actual data) then set this field to true.',
+    'Set this field to true if the files you are transferring contain a top level header row.  Saying this another way, if the very first row in the CSV files being transferred is reserved for column names (and not actual data) then set this field to true.',
   'export.exportData':
     'Over here you can specify how you would like to export data.',
   'export.ftp.directoryPath':
-    "Use this field to specify the directory path of the FTP folder containing the files that you want to export.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then export all files from the child folder 'Orders'.  Please note that by default integrator.io will export all files in the folder, and also delete them from the folder once the export completes.   Copies of the original files will be stored in integrator.io for a maximum of 30 days, and can be exported from the jobs dashboard.  You can also (optionally) configure integrator.io to leave files on the FTP server, or to only export files that match a certain 'starts with' or 'ends with' name pattern.",
+    "Use this field to specify the directory path of the FTP folder containing the files that you want to transfer.  For example, if you set this field to 'MySite/Orders' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Orders', and then transfer all files from the child folder 'Orders'.  Please note that by default integrator.io will transfer all files in the folder, and also delete them from the folder once the transfer completes.   Copies of the original files will be stored in integrator.io for a maximum of 30 days, and can be transferred from the jobs dashboard.  You can also (optionally) configure integrator.io to leave files on the FTP server, or to only transfer files that match a certain 'starts with' or 'ends with' name pattern.",
   'export.ftp.fileNameStartsWith':
-    "Use this field to specify a file name prefix that will be used to filter which files in the FTP folder will be exported (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be exported (like test-myFile.csv).",
+    "Use this field to specify a file name prefix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
   'export.ftp.fileNameEndsWith':
-    "Use this field to specify a file name postfix that will be used to filter which files in the FTP folder will be exported (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be exported (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
+    "Use this field to specify a file name postfix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
   'export.s3.region':
     "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'export.webhook.provider':
@@ -1253,7 +1255,7 @@ export default {
   'flow._id':
     'System generated primary unique identifier for your connection.  For API users, this value should be used for GET and PUT requests.',
   'flow.name':
-    'Name your flow so that other users can understand at a very high level what it is doing. For example, "Send NetSuite Item Updates to Amazon". The name you choose will show up on your job dashboard and also in email notifications.',
+    'Name your flow so that other users can understand at a very high level what it is doing. The name you choose will show up on your job dashboard and also in email notifications.',
   'flow.description':
     'Describe your flow in more detail here so that other users can understand the business problem you are solving, and also how your integration solution works. Be sure to highlight any nuances that a user who will make changes in the future might need to know about.',
   'flow.schedule':
@@ -1288,11 +1290,13 @@ export default {
   'import._id':
     'System generated primary unique identifier for your import.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'import.name':
-    "Name your import so that you can easily reference it from other parts of the application.  For example: 'Shopify - Import Tracking Numbers'",
+    'Name your import so that you can easily reference it from other parts of the application.',
   'import._connectionId':
     'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'import.lastModified':
     'System generated datetime to track the last time this resource was modified.',
+  'import.uploadFile':
+    'Please provide a sample file that this transfer would need to process. We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step. The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the transfer will need to generate when running in a production capacity.',
   'import.apiIdentifier':
     "Every import that you create is assigned a unique handle that you can then use in your own application logic to invoke the import programmatically via the integrator.io API.  For example, your import identifier might be 'i662cb46', and you could invoke this import with a simple HTTP POST (with the data to be imported as a JSON array in the post body) to https://api.integrator.io/i662cb46",
   'import._integrationId':
@@ -1460,7 +1464,7 @@ export default {
   'import.salesforce.contentVersion.contentLocation':
     'Please enter the origin of the document\nValid values are:\n<b>S</b>—Document is located within Salesforce. Label is Salesforce.\n<b>E</b>—Document is located outside of Salesforce. Label is External.\n<b>L</b>—Document is located on a social network and accessed via Social Customer Service. Label is Social Customer Service.',
   'import.salesforce.document.name':
-    "Document name specifies the name or label of the document record getting imported to Salesforce. Please enter the name (e.g. 'temp.text') for your document that you want to import. Or, if the name should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the ID values. For example: myFileField.name.",
+    "Document name specifies the name or label of the document record getting imported to Salesforce. Please enter the name (e.g. 'temp.text') for your document that you want to import. Or, if the name should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the ID values.",
   'import.salesforce.document.folderId':
     'All documents in Salesforce must be imported/uploaded to a specific folder. Please enter the folder id where you want to upload your documents. Or, if the folder should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the folder id values. For example: myFileField.folderID.',
   'import.salesforce.document.contentType':
@@ -1483,9 +1487,9 @@ export default {
   'import.salesforce.attachment.isPrivate':
     " This indicates whether this record is viewable only by the owner and administrators (true) or viewable by all otherwise-allowed users (false). During a create or update call, it is possible to mark an Attachment record as private even if you are not the owner. This can result in a situation in which you can no longer access the record that you just inserted or updated. Label is Private. Attachments on tasks or events can't be marked private.",
   'import.ftp.directoryPath':
-    "Use this field to specify the directory path of the FTP folder where you want files to be imported.  For example, if you set this field to 'MySite/Items' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Items', and then import all files into this child folder 'Items'.",
+    "Use this field to specify the directory path of the FTP folder where you want files to be transferred.  For example, if you set this field to 'MySite/Items' integrator.io will first look for a parent folder 'MySite', and then for a child folder 'Items', and then transfer all files into this child folder 'Items'.",
   'import.ftp.fileExtension':
-    "This field can be used to include a specific file name extension to all files being generated and imported to an FTP site.  For example, if you choose '.csv' then all files being imported to the FTP site will include the extension '.csv' in their file name (i.e. FileXYZ-16-06-30.csv). Please note that this field is only relates to the file's name, and does not dictate the type of data being generated (which is set via a different field).  Saying this another way, although not recommended you could generate json files but use a '.csv' extension for the file names.",
+    "This field can be used to include a specific file name extension to all files being generated and transferred to an FTP site.  For example, if you choose '.csv' then all files being transferred to the FTP site will include the extension '.csv' in their file name (i.e. FileXYZ-16-06-30.csv). Please note that this field is only relates to the file's name, and does not dictate the type of data being generated (which is set via a different field).  Saying this another way, although not recommended you could generate json files but use a '.csv' extension for the file names.",
   'import.ftp.fileName':
     "Use this field to specify how the files being uploaded to the ftp site should be named.  You can type '{{{' to include a predefined timestamp template in your file name.  For example, 'FileXYZ-{{{timestamp(YY-MM-DD)}}}.txt' will upload files with the following pattern: 'FileXYZ-16-06-30.txt'.  Please note also that you can include whatever file name extension you like, and the file name extension will never change the type of data being generated.",
   'import.ftp.inProgressFileName':
@@ -1535,7 +1539,7 @@ export default {
   'integration._id':
     'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
-    "Name your integration so that you can easily reference it from other parts of the application.  For example: 'NetSuite Flows'",
+    'Name your integration so that you can easily reference it from other parts of the application.',
   'integration.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'integration.description':
@@ -1571,7 +1575,7 @@ export default {
     "Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.",
   'script._id': 'System generated unique identifier for this script.',
   'script.name':
-    'Please name your script record so that you can easily reference it from other parts of the application.\n For example: "all-my-hooks.js"',
+    'Please name your script record so that you can easily reference it from other parts of the application.',
   'script.description':
     'Please describe your script so that other integrator.io users can quickly understand what it does and how it works.',
   'stack.type':
@@ -1598,6 +1602,8 @@ export default {
     'Please select a file from your local computer that you would like to import. The maximum file size allowed is currently 100 MB. If you need to import anything larger than this please log a support ticket, or as a work around you can break your larger files into separate smaller ones.',
   'export.requiredTrigger':
     'When you select an sObject type in the SObject Type field, an Apex trigger code is generated in this field. This code is required per sObject type to facilitate real-time data exports. You have to copy this code using the Copy icon and paste it in the Salesforce page in your account, the link for which appears just below this field.',
+  'export.uploadFile':
+    'Please provide a sample file that this transfer would need to parse when the flow runs.  This sample file will be used to help you configure the file parser options, and it will also be used to help you map data in subsequent steps in your flow.  The sample file does not need to be overly large, but it should contain all possible fields that your flow needs to work with.',
   'export.referencedFields':
     'Use this setting to add additional fields to the export data defined as lookup fields on the sObject on Salesforce. Ex: Account is a lookup field on Opportunity. This setting allows users to pull data from the reference fields (such as Name, AccountNumber) on the Account sObject.',
   'export.relatedLists':
@@ -1607,7 +1613,7 @@ export default {
   'export.fixedWidthFormat':
     'Please select the file format that most closely matches your needs. If the exact format is not found, select the closest template. You will have an opportunity to modify the rules within this template by using the “File Definition Editor” below.',
   'export.outputMode':
-    'Do you need to parse the files (i.e. CSV, XML, JSON, etc...) into records, or should the files simply be transferred as-is (i.e. PDFs, JPGs, etc...)?',
+    'Do you need to parse CSV, XML, JSON, etc... files into records before sending them to other applications, or should the files simply be transferred raw as-is (i.e. PDFs, JPGs, etc...)?',
   'export.fileMetadata':
     'Check this box if you ONLY need to transfer metadata about the files, but not the files themselves.',
   'export.ediFormat':
@@ -1664,13 +1670,13 @@ export default {
   'export.batchSize':
     "NetSuite's search APIs will by default return up to 1000 records every time you request a new page of results. This is problematic if you need to execute a SuiteScript based hook on the records before they are exported (in which case you will likely run out of SuiteScript points or hit NetSuite instruction count limits), or if the individual records you are exporting are very large such that the sum of all 1000 records exceeds 5 MB (which is also not allowed). For either situation, this field can easily be used to tell integrator.io to break down the default 1000 record batches into smaller batches where you define the ideal size.",
   'import.inputMode':
-    'Do you need to build brand new files (i.e. CSV, XML, JSON, etc...) from the records in the flow, or are you simply transferring files as-is (i.e. PDFs, JPGs, etc...)?',
+    'Do you need to build brand new CSV, XML, JSON, etc... files from the records being processed in the flow, or are you simply transferring raw files as-is (i.e. PDFs, JPGs, etc...)?',
   'import._applicationId':
     "This field lists all applications and technology adaptors that integrator.io supports for exporting or importing the data. For less technical users, application adaptors, such as NetSuite or Salesforce are the easiest to use, whereas technology adaptors, such as the REST API adaptor requires a more technical understanding of the applications being integrated. However, once you learn how to use a specific technology adaptor, you will be able to integrate a multitude of different applications without having to wait for integrator.io to expose specific application adaptors.\nIf you are unable to find a matching application or a technology adaptor, the only other connectivity option is to use the integrator.io extension framework to develop a custom Wrapper. For more information on Wrappers and to learn more about integrator.io's developer extension framework, contact Celigo Support.",
   'import.overrideDataURITemplate':
     'For applications like NetSuite and Salesforce, integrator.io will by default try to generate links for any records that fail to import and then display those links in your job dashboard.  If you prefer to define your own custom links then please use this handlebars field to override the default functionality.  Please note that the template you provide will run against your data after it has been mapped, and then again after it has been submitted to the import application, to maximize the ability to link to the right place.  For example, if you are importing sales orders but instead want the errors to link to customers, you could use the following.  "https://system.na1.netsuite.com/app/common/entity/custjob?id={{{entity}}}"',
   'import.csvFile':
-    'Please provide a sample file that this import would need to process.  We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step.  The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the import will need to generate when running in a production capacity.',
+    'Please provide a sample file that this transfer would need to process.  We will use the sample file to auto set various fields (where possible), and also to help you map data in a subsequent step.  The sample file that you provide does not need to be overly large, but it should contain all the fields that you want to work with, and also be in the same format that the import will need to generate when running in a production capacity.',
   'import.http-headers':
     'Click this button to specify any custom HTTP header name and value pairs which will be added to all HTTP requests. Note that in most cases our platform will auto-populate common headers such as "content-type" (based of the media type of the request), or the "Authorize" header (used if your application authenticates using tokens in the header). Unless your HTTP request fails or does not return expected results, there is no need to use this feature. In some rare cases, it may be necessary to add other application specific headers that the integrator.io platform does not manage. An example of this would be adding an "x-clientId" or any other application specific header. These would be documented in the API guide of the Application you are integrating with.',
   'import.as2Headers':
@@ -2003,8 +2009,6 @@ export default {
     'If the import fails for a specific record then what should happen to that record?  Should the failed record pause here until someone can analyze and fix the error (i.e. the default behavior), or should the failed record proceed to the next application in the flow regardless?',
   'fb.pp.imports.inputFilter':
     'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
-  'fb.resourceTypeOptions':
-    'These are the options available for the selected application. If the application only supports one option, then the value will be pre-selected and read-only.',
   'mapping.dataType':
     'This field represents the respective datatype of the mapping field. Ex: string, boolean, number.',
   'mapping.discardIfEmpty':

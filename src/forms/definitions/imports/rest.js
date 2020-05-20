@@ -194,17 +194,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-          return 'How would you like the files transferred?';
-        }
-
-        return 'How would you like the records imported?';
-      },
-    },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -902,47 +891,55 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'rest.method',
-      'rest.blobMethod',
-      'rest.headers',
-      'rest.compositeType',
-      'rest.lookups',
-      // 'mapping',
-      'rest.relativeURI',
-      'rest.body',
-      'rest.successPath',
-      'rest.successValues',
-      'rest.responseIdPath',
-      'createNewData',
-      'rest.compositeMethodCreate',
-      'rest.relativeURICreate',
-      'rest.requestTypeCreate',
-      'rest.bodyCreate',
-      'rest.successPathCreate',
-      'rest.successValuesCreate',
-      'rest.responseIdPathCreate',
-      'upateExistingData',
-      'rest.compositeMethodUpdate',
-      'rest.relativeURIUpdate',
-      'rest.requestTypeUpdate',
-      'rest.bodyUpdate',
-      'rest.successPathUpdate',
-      'rest.successValuesUpdate',
-      'rest.responseIdPathUpdate',
-      'ignoreExistingData',
-      'ignoreNewData',
-      'rest.existingDataId',
-      'sampleDataTitle',
-      'sampleData',
-      'dataMappings',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'inputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+            return 'How would you like the files transferred?';
+          }
+
+          return 'How would you like the records imported?';
+        },
+        fields: [
+          'rest.method',
+          'rest.blobMethod',
+          'rest.headers',
+          'rest.compositeType',
+          'rest.lookups',
+          // 'mapping',
+          'rest.relativeURI',
+          'rest.body',
+          'rest.successPath',
+          'rest.successValues',
+          'rest.responseIdPath',
+          'createNewData',
+          'rest.compositeMethodCreate',
+          'rest.relativeURICreate',
+          'rest.requestTypeCreate',
+          'rest.bodyCreate',
+          'rest.successPathCreate',
+          'rest.successValuesCreate',
+          'rest.responseIdPathCreate',
+          'upateExistingData',
+          'rest.compositeMethodUpdate',
+          'rest.relativeURIUpdate',
+          'rest.requestTypeUpdate',
+          'rest.bodyUpdate',
+          'rest.successPathUpdate',
+          'rest.successValuesUpdate',
+          'rest.responseIdPathUpdate',
+          'ignoreExistingData',
+          'ignoreNewData',
+          'rest.existingDataId',
+          'sampleDataTitle',
+          'sampleData',
+          'dataMappings',
+          'blobKeyPath',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',

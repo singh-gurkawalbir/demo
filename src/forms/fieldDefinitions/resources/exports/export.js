@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 const dateTimeOptions = [
   { label: 'YYYY-MM-DDTHH:mm:ss z', value: 'YYYY-MM-DDTHH:mm:ss z' },
   { label: 'YYYY-MM-DDTHH:mm:ss', value: 'YYYY-MM-DDTHH:mm:ss' },
@@ -62,7 +64,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this export [post]',
     type: 'apiidentifier',
-    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
+    visible: r => r && !isNewId(r._id),
   },
   configureAsyncHelper: {
     type: 'checkbox',

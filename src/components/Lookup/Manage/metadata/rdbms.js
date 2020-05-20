@@ -135,17 +135,15 @@ export default {
     };
 
     if (showDynamicLookupOnly) {
-      const { query, extract } = fieldMeta.fieldMap;
+      const { fieldMap, layout } = fieldMeta;
 
-      delete query.visibleWhenAll;
-      delete extract.visibleWhen;
-
-      // body.visibleWhen = [
-      //   {
-      //     field: 'method',
-      //     is: ['POST'],
-      //   },
-      // ];
+      delete fieldMap._mode;
+      delete fieldMap._mapList;
+      delete fieldMap._query.visibleWhen;
+      delete fieldMap._extract.visibleWhen;
+      layout.fields = layout.fields.filter(
+        el => el !== '_mode' && el !== '_mapList'
+      );
     }
 
     return fieldMeta;

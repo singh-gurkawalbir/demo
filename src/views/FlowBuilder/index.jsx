@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton, Tooltip } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -19,6 +19,7 @@ import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
+import ChartsDrawer from './drawers/LineGraph';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
@@ -35,7 +36,9 @@ import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 import StatusCircle from '../../components/StatusCircle';
+import HelpIcon from '../../components/icons/HelpIcon';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { isProduction } from '../../forms/utils';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -390,6 +393,12 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
+  const handleDrawerClick = useCallback(
+    path => () => {
+      handleDrawerOpen(path);
+    },
+    [handleDrawerOpen]
+  );
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -489,6 +498,7 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
+      <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
         resourceType="flows"
@@ -534,6 +544,14 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
+          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={handleDrawerClick('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {!isDataLoaderFlow && (
             <SwitchOnOff.component
               resource={flowDetails}
@@ -546,20 +564,24 @@ function FlowBuilder() {
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
 
           {flowDetails && flowDetails.showScheduleIcon && (
+            <Tooltip title="Schedule" placement="bottom">
+              <IconButton
+                disabled={isNewFlow}
+                data-test="scheduleFlow"
+                onClick={handleDrawerClick('schedule')}>
+                <CalendarIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Settings" placement="bottom">
             <IconButton
               disabled={isNewFlow}
-              data-test="scheduleFlow"
-              onClick={() => handleDrawerOpen('schedule')}>
-              <CalendarIcon />
+              onClick={handleDrawerClick('settings')}
+              data-test="flowSettings">
+              <SettingsIcon />
             </IconButton>
-          )}
+          </Tooltip>
 
-          <IconButton
-            disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}
-            data-test="flowSettings">
-            <SettingsIcon />
-          </IconButton>
           {!isIAType && (
             <FlowEllipsisMenu
               flowId={flowId}
@@ -571,13 +593,13 @@ function FlowBuilder() {
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('connections')}
+                onClick={handleDrawerClick('connections')}
                 data-test="flowConnections">
                 <ConnectionsIcon />
               </IconButton>
               <IconButton
                 disabled={isNewFlow}
-                onClick={() => handleDrawerOpen('auditlog')}
+                onClick={handleDrawerClick('auditlog')}
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>

@@ -303,7 +303,20 @@ export function fieldMeta({ resource, assistantData }) {
       type: 'column',
       containers: [
         {
-          fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+          fields: ['common'],
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              label: 'How should this export be parameterized?',
+              fields: ['exportOneToMany'],
+            },
+            {
+              collapsed: true,
+              label: 'What would you like to export?',
+              fields: [...fieldIds],
+            },
+          ],
         },
         {
           fields: ['exportPanel'],

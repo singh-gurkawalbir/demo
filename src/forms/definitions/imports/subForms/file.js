@@ -28,6 +28,8 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
+      placeholder: 'Sample file (that would be generated):',
+      helpKey: 'import.uploadFile',
     },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },

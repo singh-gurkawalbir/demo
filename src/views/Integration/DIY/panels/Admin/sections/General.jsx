@@ -1,6 +1,5 @@
 import { Fragment, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isObject } from 'lodash';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
@@ -51,17 +50,9 @@ export default function GeneralSection({ integrationId }) {
         label: 'Description',
         defaultValue: description,
       },
-      settings: {
-        id: 'settings',
-        helpKey: 'integration.settings',
-        name: 'settings',
-        type: 'settings',
-        label: 'Settings',
-        defaultValue: settings,
-      },
     },
     layout: {
-      fields: ['name', 'description', 'settings'],
+      fields: ['name', 'description'],
     },
   };
 
@@ -69,12 +60,6 @@ export default function GeneralSection({ integrationId }) {
     setCount(count => count + 1);
   }, [name, description, settings]);
   const handleSubmit = formVal => {
-    let settings;
-
-    if (isObject(formVal.settings)) {
-      ({ settings } = formVal);
-    }
-
     const patchSet = [
       {
         op: 'replace',
@@ -85,11 +70,6 @@ export default function GeneralSection({ integrationId }) {
         op: 'replace',
         path: '/description',
         value: formVal.description,
-      },
-      {
-        op: 'replace',
-        path: '/settings',
-        value: settings,
       },
     ];
 

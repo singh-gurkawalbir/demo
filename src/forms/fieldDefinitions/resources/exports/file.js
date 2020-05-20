@@ -174,7 +174,8 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File definition rules ',
+    label: 'File parser helper',
+    helpkey: 'export.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',

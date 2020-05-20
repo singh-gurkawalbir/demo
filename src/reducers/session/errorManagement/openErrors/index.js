@@ -4,7 +4,13 @@ import actionTypes from '../../../../actions/types';
 const defaultObject = {};
 
 export default (state = {}, action) => {
-  const { type, flowId, openErrors, integrationErrors, integrationId } = action;
+  const {
+    type,
+    flowId,
+    openErrors,
+    integrationErrors = [],
+    integrationId,
+  } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -35,18 +41,16 @@ export default (state = {}, action) => {
         };
         break;
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED: {
-        const errors = integrationErrors || [];
-
         draft[integrationId].status = 'received';
         const errorMap = {};
         let totalCount = 0;
 
-        errors.forEach(({ _flowId, numError }) => {
+        integrationErrors.forEach(({ _flowId, numError }) => {
           errorMap[_flowId] = numError;
           totalCount += numError;
         });
-        draft[flowId].data = errorMap;
-        draft[flowId].count = totalCount;
+        draft[integrationId].data = errorMap;
+        draft[integrationId].total = totalCount;
         break;
       }
 

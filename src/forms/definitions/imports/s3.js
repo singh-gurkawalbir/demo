@@ -48,6 +48,10 @@ export default {
       newValues['/file/compressionFormat'] = undefined;
     }
 
+    if (newValues['/inputMode'] !== 'blob') {
+      delete newValues['/blobKeyPath'];
+    }
+
     delete newValues['/file/compressFiles'];
 
     return {
@@ -88,15 +92,10 @@ export default {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: `How would you like the files transferred?`,
-    },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate file from records?',
+      label: 'Generate files from records',
       helpKey: 'import.inputMode',
       options: [
         {
@@ -166,6 +165,12 @@ export default {
     },
     dataMappings: {
       formId: 'dataMappings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'file.lookups': {
       fieldId: 'file.lookups',
@@ -194,26 +199,30 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      's3.region',
-      's3.bucket',
-      'fileType',
-      's3.fileKey',
-      'file.xml.body',
-      'file',
-      'dataMappings',
-      'file.lookups',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'inputMode'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
+        label: 'How would you like to generate files?',
+        fields: ['fileType', 'file', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like the files transferred?',
+        fields: [
+          's3.region',
+          's3.bucket',
+          's3.fileKey',
+          'file.xml.body',
+          'file.lookups',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
         fields: [
+          'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',
