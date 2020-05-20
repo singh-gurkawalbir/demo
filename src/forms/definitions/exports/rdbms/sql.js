@@ -34,11 +34,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportRdbmsData: {
-      fieldId: 'exportRdbmsData',
-      type: 'labeltitle',
-      label: 'What would you like to export from rdbms?',
-    },
     'rdbms.query': { fieldId: 'rdbms.query' },
     type: {
       id: 'type',
@@ -80,16 +75,19 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'exportOneToMany',
-          'exportRdbmsData',
-          'rdbms.query',
-          'type',
-          'rdbms.once.query',
-        ],
+        fields: ['common'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'How should this export be parameterized?',
+            fields: ['exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: 'What would you like to export from rdbms?',
+            fields: ['rdbms.query', 'type', 'rdbms.once.query'],
+          },
           {
             collapsed: true,
             label: 'Advanced',

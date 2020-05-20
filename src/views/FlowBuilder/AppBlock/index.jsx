@@ -352,7 +352,7 @@ function AppBlock({
                 className={classes.addButton}
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
-                helpText="Add data processor">
+                helpText="Define options">
                 <AddIcon />
               </ActionIconButton>
             ) : null}

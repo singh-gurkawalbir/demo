@@ -53,11 +53,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap } = props;
+  const { containers, fieldMap, resource } = props;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
-      const { label: header, collapsed = true, ...rest } = container;
+      const { label, collapsed = true, ...rest } = container;
+      const header = typeof label === 'function' ? label(resource) : label;
 
       return (
         // eslint-disable-next-line react/no-array-index-key

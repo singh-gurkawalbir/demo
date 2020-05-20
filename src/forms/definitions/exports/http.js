@@ -213,16 +213,6 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'What would you like to transfer?';
-
-        return 'What would you like to export?';
-      },
-    },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -390,32 +380,43 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'exportData',
-          'http.method',
-          'http.blobMethod',
-          'http.headers',
-          'http.relativeURI',
-          'http.body',
-          'http.successMediaType',
-          'http.errorMediaType',
-          'http.response.resourcePath',
-          'http.response.successPath',
-          'http.response.successValues',
-          'http.response.failPath',
-          'http.response.failValues',
-          'http.response.errorPath',
-          'file.csv',
-          'type',
-          'delta.dateFormat',
-          'delta.lagOffset',
-          'http.response.blobFormat',
-        ],
+        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'How should this export be parameterized?',
+            fields: ['exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+                return 'What would you like to transfer?';
+
+              return 'What would you like to export?';
+            },
+            fields: [
+              'http.method',
+              'http.blobMethod',
+              'http.headers',
+              'http.relativeURI',
+              'http.body',
+              'http.successMediaType',
+              'http.errorMediaType',
+              'http.response.resourcePath',
+              'http.response.successPath',
+              'http.response.successValues',
+              'http.response.failPath',
+              'http.response.failValues',
+              'http.response.errorPath',
+              'file.csv',
+              'type',
+              'delta.dateFormat',
+              'delta.lagOffset',
+              'http.response.blobFormat',
+            ],
+          },
           {
             collapsed: true,
             label: 'Configure Once',

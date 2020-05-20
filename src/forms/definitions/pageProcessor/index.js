@@ -60,11 +60,8 @@ export default {
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      helpKey: 'fb.resourceTypeOptions',
-      visibleWhenAll: {
-        field: 'application',
-        isNot: [''],
-      },
+      visibleWhenAll: [visibleWhenHasApp],
+      placeholder: 'Please select',
     },
     application: {
       id: 'application',
@@ -172,8 +169,12 @@ export default {
         options = destinationOptions.common || [];
       }
 
-      resourceTypeField.value = options && options[0] && options[0].value;
-      resourceTypeField.disabled = options && options.length === 1;
+      if (options && options.length === 1) {
+        resourceTypeField.value = options[0] && options[0].value;
+        resourceTypeField.disabled = true;
+      } else {
+        resourceTypeField.value = '';
+      }
 
       return [
         {

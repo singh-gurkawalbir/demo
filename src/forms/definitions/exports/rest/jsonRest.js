@@ -146,16 +146,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'What would you like to transfer?';
-
-        return 'What would you like to export?';
-      },
-    },
     outputMode: {
       id: 'outputMode',
       type: 'radiogroup',
@@ -275,26 +265,37 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'exportData',
-          'rest.method',
-          'rest.blobMethod',
-          'rest.headers',
-          'rest.relativeURI',
-          'rest.postBody',
-          'rest.resourcePath',
-          'rest.successPath',
-          'rest.successValues',
-          'type',
-          'delta.dateFormat',
-          'delta.lagOffset',
-          'rest.blobFormat',
-        ],
+        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'How should this export be parameterized?',
+            fields: ['exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob')
+                return 'What would you like to transfer?';
+
+              return 'What would you like to export?';
+            },
+            fields: [
+              'rest.method',
+              'rest.blobMethod',
+              'rest.headers',
+              'rest.relativeURI',
+              'rest.postBody',
+              'rest.resourcePath',
+              'rest.successPath',
+              'rest.successValues',
+              'type',
+              'delta.dateFormat',
+              'delta.lagOffset',
+              'rest.blobFormat',
+            ],
+          },
           {
             collapsed: true,
             label: 'Configure Once',

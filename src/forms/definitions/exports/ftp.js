@@ -66,6 +66,8 @@ export default {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+    } else {
+      newValues['/file/output'] = 'records';
     }
 
     delete newValues['/outputMode'];
@@ -107,16 +109,11 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to transfer?',
-    },
+
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Do you need to parse files?',
-      required: true,
+      label: 'Parse files being transferred',
       helpKey: 'export.outputMode',
       options: [
         {
@@ -145,6 +142,7 @@ export default {
         return output ? 'records' : 'blob';
       },
     },
+
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
 
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
@@ -164,19 +162,24 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
-    fields: [
-      'common',
-      'outputMode',
-      'exportOneToMany',
-      'exportData',
-      'ftp.directoryPath',
-      'ftp.fileNameStartsWith',
-      'ftp.fileNameEndsWith',
-      'file',
-      'ftp.leaveFile',
-    ],
+    fields: ['common', 'outputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: ['file'],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like to transfer from?',
+        fields: [
+          'ftp.directoryPath',
+          'ftp.fileNameStartsWith',
+          'ftp.fileNameEndsWith',
+          'ftp.leaveFile',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',
