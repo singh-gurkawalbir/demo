@@ -15,6 +15,8 @@ import TextToggle from '../../../components/TextToggle';
 import SettingsFormEditor from './';
 import { isJsonString } from '../../../utils/string';
 
+const emptyObj = {};
+
 function toggleData(data, mode) {
   if (typeof data === 'string' && !isJsonString(data)) {
     return data;
@@ -44,9 +46,7 @@ function toggleData(data, mode) {
     finalData = {
       resource: {
         settingsForm: {
-          form: parsedData || {
-            form: { fieldMeta: {}, layout: { fields: [] } },
-          },
+          form: parsedData || { fieldMap: {}, layout: { fields: [] } },
         },
       },
       parentResource: {},
@@ -82,7 +82,7 @@ export default function EditorDrawer({
   resourceType,
   disabled,
 }) {
-  const { form, init = {} } = settingsForm;
+  const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -153,14 +153,16 @@ export default function EditorDrawer({
     (isEditorDirty !== undefined && !isEditorDirty);
 
   useEffect(() => {
+    const initForm = form || { fieldMap: {}, layout: { fields: [] } };
+
     dispatch(
       actions.editor.init(editorId, 'settingsForm', {
         scriptId: init._scriptId,
         initScriptId: init._scriptId,
         entryFunction: init.function || 'main',
         initEntryFunction: init.function || 'main',
-        data: form,
-        initData: form,
+        data: init._scriptId ? toggleData(form, 'script') : initForm,
+        initData: initForm,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
         autoEvaluateDelay: 200,
@@ -168,7 +170,7 @@ export default function EditorDrawer({
         resourceType,
         settings,
         previewOnSave: true,
-        mode: 'json',
+        mode: init._scriptId ? 'script' : 'json',
       })
     );
     // we only want to init the editor once per render (onMount)
