@@ -21,11 +21,6 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'rdbms.bulkInsert.batchSize': {
       id: 'rdbms.bulkInsert.batchSize',
       type: 'text',
@@ -76,17 +71,19 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: [
-      'common',
-      'modelMetadata',
-      'importData',
-      'rdbms.queryType',
-      'rdbms.bulkInsert.tableName',
-      'rdbms.query',
-      'dataMappings',
-    ],
+    fields: ['common', 'modelMetadata'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like the data imported?',
+        fields: [
+          'rdbms.queryType',
+          'rdbms.bulkInsert.tableName',
+          'rdbms.query',
+          'dataMappings',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',

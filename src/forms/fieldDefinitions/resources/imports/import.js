@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
@@ -12,6 +14,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this import [post]',
     type: 'apiidentifier',
+    visible: r => r && !isNewId(r._id),
   },
   mapping: {
     type: 'mapping',
@@ -99,6 +102,7 @@ export default {
         is: ['blob'],
       },
     ],
+    defaultValue: r => (r && r.blobKeyPath) || 'blobKey',
     required: true,
   },
   assistant: {

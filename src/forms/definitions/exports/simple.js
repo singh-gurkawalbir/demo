@@ -118,6 +118,7 @@ export default {
       mode: r => r && r.file && r.file.type,
       required: r => !r.rawData,
       refreshOptionsOnChangesTo: 'file.type',
+      helpKey: 'export.uploadFile',
     },
     'file.csv': {
       fieldId: 'file.csv',

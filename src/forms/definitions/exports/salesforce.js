@@ -127,19 +127,6 @@ export default {
     common: { formId: 'common' },
     exportOneToMany: { formId: 'exportOneToMany' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-          return 'What would you like to transfer from Salesforce?';
-        } else if (r.resourceType === 'realtime' || r.type === 'distributed') {
-          return 'What would you like to listen from Salesforce?';
-        }
-
-        return 'What would you like to export from Salesforce?';
-      },
-    },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -311,27 +298,43 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'salesforce.executionType',
-          'exportData',
-          'salesforce.sObjectType',
-          'salesforce.objectType',
-          'salesforce.distributed.requiredTrigger',
-          'salesforce.distributed.referencedFields',
-          'salesforce.distributed.relatedLists',
-          'salesforce.distributed.qualifier',
-          'salesforce.soql',
-          'type',
-          'delta.dateField',
-          'delta.lagOffset',
-          'once.booleanField',
-          'salesforce.id',
-        ],
+        fields: ['common', 'outputMode', 'salesforce.executionType'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'How should this export be parameterized?',
+            fields: ['exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+                return 'What would you like to transfer from Salesforce?';
+              } else if (
+                r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+              ) {
+                return 'What would you like to listen from Salesforce?';
+              }
+
+              return 'What would you like to export from Salesforce?';
+            },
+            fields: [
+              'salesforce.sObjectType',
+              'salesforce.objectType',
+              'salesforce.distributed.requiredTrigger',
+              'salesforce.distributed.referencedFields',
+              'salesforce.distributed.relatedLists',
+              'salesforce.distributed.qualifier',
+              'salesforce.soql',
+              'type',
+              'delta.dateField',
+              'delta.lagOffset',
+              'once.booleanField',
+              'salesforce.id',
+            ],
+          },
           {
             collapsed: true,
             label: 'Advanced',

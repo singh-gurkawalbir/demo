@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   // #region resource import
   // #region netsuite
@@ -12,7 +14,7 @@ export default {
   apiIdentifier: {
     label: 'Invoke this import [post]',
     type: 'apiidentifier',
-    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
+    visible: r => r && !isNewId(r._id),
   },
   // #region ftp
   'ftp.importFrom': {

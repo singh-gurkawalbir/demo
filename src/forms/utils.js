@@ -724,13 +724,19 @@ export const conditionalLookupOptionsforRestProduction = [
 export const sourceOptions = {
   ftp: [
     {
-      label: 'You can only transfer files using FTP',
+      label: 'Transfer files out of source application',
       value: 'transferFiles',
+    },
+  ],
+  as2: [
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'realtime',
     },
   ],
   s3: [
     {
-      label: 'You can only transfer files using Amazon S3',
+      label: 'Transfer files out of source application',
       value: 'transferFiles',
     },
   ],

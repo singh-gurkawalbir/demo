@@ -50,11 +50,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap, formKey } = props;
+  const { containers, fieldMap, formKey, resource } = props;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
-      const { label: header, collapsed = true, ...rest } = container;
+      const { label, collapsed = true, ...rest } = container;
+      const header = typeof label === 'function' ? label(resource) : label;
 
       return (
         <ExpansionPannelExpandOnInValidState

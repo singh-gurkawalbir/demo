@@ -25,17 +25,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-          return 'How would you like the files transferred?';
-        }
-
-        return 'How would you like the records imported?';
-      },
-    },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -115,28 +104,36 @@ export default {
     settings: { fieldId: 'settings' },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'distributed',
-      'netsuite_da.recordType',
-      'netsuite_da.mapping',
-      'netsuite_da.subrecords',
-      'netsuite_da.operation',
-      'netsuite.operation',
-      'ignoreExisting',
-      'ignoreMissing',
-      'netsuite_da.internalIdLookup.expression',
-      'netsuite.file.internalId',
-      'netsuite.file.name',
-      'netsuite.file.fileType',
-      'netsuite.file.folder',
-      'dataMappings',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'inputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+            return 'How would you like the files transferred?';
+          }
+
+          return 'How would you like the records imported?';
+        },
+        fields: [
+          'distributed',
+          'netsuite_da.recordType',
+          'netsuite_da.mapping',
+          'netsuite_da.subrecords',
+          'netsuite_da.operation',
+          'netsuite.operation',
+          'ignoreExisting',
+          'ignoreMissing',
+          'netsuite_da.internalIdLookup.expression',
+          'netsuite.file.internalId',
+          'netsuite.file.name',
+          'netsuite.file.fileType',
+          'netsuite.file.folder',
+          'dataMappings',
+          'blobKeyPath',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',
