@@ -1,16 +1,16 @@
 import React, { useEffect, Fragment } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import moment from 'moment';
 import {
   LineChart,
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
   Legend,
   Line,
   ResponsiveContainer,
 } from 'recharts';
-import { differenceInHours, fromUnixTime } from 'date-fns';
+// import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import * as selectors from '../../../../reducers';
@@ -25,10 +25,62 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
+const getLineColor = index => {
+  const colorSpectrum = [
+    '#2B5B36',
+    '#24448E',
+    '#3A6CA1',
+    '#549FC3',
+    '#8FC4C6',
+    '#AFCF8B',
+    '#80B875',
+    '#57A05C',
+  ];
+
+  return colorSpectrum[index % 8];
+};
+
+const getLegend = index => {
+  const legendTypes = [
+    'line',
+    'square',
+    'circle',
+    'cross',
+    'diamond',
+    'star',
+    'triangle',
+    'wye',
+    'rect',
+    'plainline',
+  ];
+
+  return legendTypes[index % 10];
+};
+
 const Chart = ({ id, flowId, selectedResources }) => {
   const { data: flowData } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
-  const parseValue = value => `${value}`;
+  const flowResources = useSelector(state =>
+    selectors.flowResources(state, flowId)
+  );
+  const getResourceName = name => {
+    const resourceId = name.replace(/-value/, '');
+    let modifiedName = resourceId;
+    const resource = flowResources.find(r => r._id === resourceId);
+
+    if (resource) {
+      modifiedName = resource.name;
+    }
+
+    return modifiedName;
+  };
+
+  const parseValue = (value, name) => [value, getResourceName(name)];
+  const renderColorfulLegendText = (value, entry) => {
+    const { color } = entry;
+
+    return <span style={{ color }}>{getResourceName(value)}</span>;
+  };
 
   return (
     <Fragment>
@@ -42,29 +94,35 @@ const Chart = ({ id, flowId, selectedResources }) => {
             left: 20,
             bottom: 5,
           }}>
-          <CartesianGrid strokeDasharray="1 1" />
           <XAxis
-            dataKey="timeInMills"
+            dataKey="time"
             name="Time"
+            type="category"
             tickFormatter={unixTime =>
-              `${differenceInHours(fromUnixTime(unixTime), new Date())} h`
+              moment(unixTime).format('DD/MMM HH:mm  ')
             }
           />
           <YAxis
             yAxisId={id}
             type="number"
+            label={{
+              value: '# of transmissions',
+              angle: -90,
+              position: 'insideLeft',
+              textAnchor: 'middle',
+            }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip formatter={value => parseValue(value)} />
-          <Legend />
-          {selectedResources.map(r => (
+          <Tooltip formatter={(value, name) => parseValue(value, name)} />
+          <Legend formatter={renderColorfulLegendText} />
+          {selectedResources.map((r, i) => (
             <Line
               key={r}
               dataKey={`${r}-value`}
               yAxisId={id}
-              legendType="wye"
-              stroke="#24448E"
+              legendType={getLegend(i)}
+              stroke={getLineColor(i)}
             />
           ))}
         </LineChart>
@@ -73,12 +131,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
   );
 };
 
-export default function FlowCharts({
-  flowId,
-  selectedMeasurements,
-  range,
-  selectedResources,
-}) {
+export default function FlowCharts({ flowId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const data =
@@ -95,9 +148,9 @@ export default function FlowCharts({
 
   if (data.status === 'requested') {
     return (
-      <Loader open>
-        Fetching data
-        <Spinner />
+      <Loader open hideBackDrop>
+        <Typography variant="body2">Fetching data</Typography>
+        <Spinner color="primary" size={24} />
       </Loader>
     );
   } else if (data.status === 'error') {
@@ -106,7 +159,7 @@ export default function FlowCharts({
 
   return (
     <div className={classes.root}>
-      {selectedMeasurements.map(m => (
+      {['success', 'error', 'ignored', 'averageTimeTaken'].map(m => (
         <Chart
           key={m}
           id={m}

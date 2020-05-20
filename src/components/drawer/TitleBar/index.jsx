@@ -4,6 +4,7 @@ import { Typography, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../icons/CloseIcon';
 import Help from '../../Help';
+import BackArrowIcon from '../../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -26,7 +27,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerTitleBar({ title, helpKey, helpTitle, onClose }) {
+export default function DrawerTitleBar({
+  title,
+  helpKey,
+  helpTitle,
+  backToParent,
+  onClose,
+}) {
   const classes = useStyles();
   const history = useHistory();
   const handleClick = useCallback(() => {
@@ -39,6 +46,15 @@ export default function DrawerTitleBar({ title, helpKey, helpTitle, onClose }) {
 
   return (
     <div className={classes.titleBar}>
+      {backToParent && (
+        <IconButton
+          data-test="backToDashboard"
+          aria-label="back"
+          onClick={handleClick}
+          className={classes.arrowLeft}>
+          <BackArrowIcon />
+        </IconButton>
+      )}
       <Typography variant="h3" className={classes.title}>
         {title}
       </Typography>

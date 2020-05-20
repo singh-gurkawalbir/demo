@@ -52,6 +52,8 @@ export default {
       delete newValues['/ftp/blobFileName'];
       delete newValues['/ftp/blobUseTempFile'];
       delete newValues['/ftp/blobInProgressFileName'];
+    } else {
+      delete newValues['/blobKeyPath'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
@@ -134,11 +136,6 @@ export default {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: `How would you like the files transferred?`,
-    },
     'ftp.directoryPath': {
       fieldId: 'ftp.directoryPath',
     },
@@ -187,6 +184,12 @@ export default {
     },
     dataMappings: {
       formId: 'dataMappings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'file.lookups': {
       fieldId: 'file.lookups',
@@ -195,7 +198,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate file from records?',
+      label: 'Generate files from records',
       helpKey: 'import.inputMode',
       options: [
         {
@@ -253,30 +256,34 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'ftp.directoryPath',
-      'fileType',
-      'ftp.fileName',
-      'file.xml.body',
-      'file',
-      'ftp.blobFileName',
-      'ftp.blobUseTempFile',
-      'ftp.blobInProgressFileName',
-      'dataMappings',
-      'file.lookups',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'inputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like to generate files?',
+        fields: ['fileType', 'file', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like the files transferred?',
+        fields: [
+          'ftp.directoryPath',
+          'ftp.fileName',
+          'file.xml.body',
+          'ftp.blobFileName',
+          'file.lookups',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',
         fields: [
           'ftp.useTempFile',
           'ftp.inProgressFileName',
+          'ftp.blobUseTempFile',
+          'ftp.blobInProgressFileName',
+          'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',

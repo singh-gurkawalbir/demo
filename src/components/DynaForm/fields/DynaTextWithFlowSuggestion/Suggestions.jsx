@@ -23,29 +23,91 @@ const useStyles = makeStyles(theme => ({
   suggestions: {
     width: '100%',
     marginLeft: 0,
+    border: '1px solid',
+    background: theme.palette.background.paper,
+    borderColor: theme.palette.secondary.lightest,
+    borderTop: 'none',
+    position: 'absolute',
     listStyleType: 'none',
     paddingLeft: 0,
-    marginTop: theme.spacing(1),
     maxHeight: 200,
+    marginTop: 0,
+    zIndex: 100,
     overflow: 'auto',
+    boxShadow: theme.shadows[3],
+    borderRadius: [[0, 0, 4, 4]],
     paddingInlineStart: theme.spacing(1),
     '& li': {
-      height: 40,
       display: 'flex',
-      padding: 4,
+      lineHeight: '100%',
+      position: 'relative',
+      cursor: 'pointer',
+      wordBreak: 'break-word',
+      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+      padding: '12px 15px',
+      '&:before': {
+        content: '""',
+        width: '3px',
+        top: 0,
+        height: '100%',
+        position: 'absolute',
+        background: 'transparent',
+        left: '0px',
+      },
+      '&:hover': {
+        background: theme.palette.background.paper2,
+        '&:before': {
+          background: theme.palette.primary.main,
+        },
+      },
+      '&:empty': {
+        display: 'none',
+      },
+      '&:last-child': {
+        borderBottom: 'none',
+      },
+    },
+    '&:empty': {
+      display: 'none',
     },
   },
   hideSuggesionContainer: {
     display: 'none',
   },
+  suggestionsItem: {
+    width: '100%',
+  },
+  suggestionsItemBtn: {
+    marginLeft: -15,
+    width: `calc(100% + 30px)`,
+    height: `calc(100% + 20px)`,
+    marginTop: -10,
+    borderRadius: 0,
+    padding: '0px 15px',
+    fontFamily: 'Roboto400',
+    '& >.MuiButton-label': {
+      display: 'block',
+      textAlign: 'left',
+    },
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 const ExtractItem = props => {
+  const classes = useStyles();
   const { onSelect, value, label } = props;
   const handleItemSelect = useCallback(() => {
     onSelect(value);
   }, [onSelect, value]);
 
-  return <Button onClick={handleItemSelect}>{label}</Button>;
+  return (
+    <div className={classes.suggestionsItem}>
+      <Button onClick={handleItemSelect} className={classes.suggestionsItemBtn}>
+        {label}
+      </Button>
+    </div>
+  );
 };
 
 export default function Suggestions(props) {
@@ -55,7 +117,7 @@ export default function Suggestions(props) {
     resourceId,
     formContext,
     resourceType,
-    showLookup,
+    showLookup = true,
     value = '',
     showExtract,
     textInsertPosition,

@@ -124,6 +124,9 @@ export default function Panel(props) {
       flowId,
     })
   );
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, id)
+  );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
@@ -140,31 +143,37 @@ export default function Panel(props) {
   const applicationType = useSelector(state => {
     const stagedResource = selectors.stagedResource(state, id);
 
-    if (!stagedResource || !stagedResource.patch) {
+    if (!resource && (!stagedResource || !stagedResource.patch)) {
       return '';
     }
 
     function getStagedValue(key) {
-      const result = stagedResource.patch.find(
-        p => p.op === 'replace' && p.path === key
-      );
+      const result =
+        stagedResource &&
+        stagedResource.patch &&
+        stagedResource.patch.find(p => p.op === 'replace' && p.path === key);
 
       return result && result.value;
     }
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = getStagedValue('/adaptorType');
-    const assistant = getStagedValue('/assistant');
+    const adaptorType =
+      getStagedValue('/adaptorType') || (resource && resource.adaptorType);
+    const assistant =
+      getStagedValue('/assistant') || (resource && resource.assistant);
 
     if (adaptorType === 'WebhookExport') {
-      return getStagedValue('/webhook/provider');
+      return (
+        getStagedValue('/webhook/provider') ||
+        (resource && resource.webhook && resource.webhook.provider)
+      );
     }
 
     if (adaptorType && adaptorType.startsWith('RDBMS')) {
       const connection = selectors.resource(
         state,
         'connections',
-        getStagedValue('/_connectionId')
+        getStagedValue('/_connectionId') || (resource && resource._connectionId)
       );
 
       return connection && connection.rdbms && connection.rdbms.type;

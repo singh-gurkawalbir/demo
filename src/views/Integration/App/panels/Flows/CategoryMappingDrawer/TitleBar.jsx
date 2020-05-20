@@ -8,7 +8,6 @@ import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
-import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 import Help from '../../../../../../components/Help';
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +57,6 @@ export default function DrawerTitleBar({
   addCategory,
   parentUrl,
   help,
-  backToParent,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -82,15 +80,6 @@ export default function DrawerTitleBar({
   return (
     <div className={classes.titleBar}>
       <LoadResources required resources="flows">
-        {backToParent && (
-          <IconButton
-            data-test="openBasicMapping"
-            aria-label="back"
-            onClick={handleClose}
-            className={classes.arrowLeft}>
-            <BackArrowIcon />
-          </IconButton>
-        )}
         <Typography variant="h3" className={classes.title}>
           {title ||
             `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${

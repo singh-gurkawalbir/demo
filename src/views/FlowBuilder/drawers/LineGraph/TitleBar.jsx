@@ -34,9 +34,7 @@ export default function DrawerTitleBar({
   onClose,
   title,
   flowId,
-  measurements,
   selectedResources,
-  onMeasurementsChange,
   onResourcesChange,
   onDateRangeChange,
   parentUrl,
@@ -53,12 +51,6 @@ export default function DrawerTitleBar({
       history.push(parentUrl);
     }
   }, [history, onClose, parentUrl]);
-  const handleMeasurementChange = useCallback(
-    (id, val) => {
-      onMeasurementsChange(val);
-    },
-    [onMeasurementsChange]
-  );
   const handleResourcesChange = useCallback(
     (id, val) => {
       onResourcesChange(val);
@@ -78,24 +70,6 @@ export default function DrawerTitleBar({
           justify="flex-end"
           alignItems="center"
           spacing={4}>
-          <Grid item>
-            <DynaMultiSelect
-              name="attributes"
-              value={measurements}
-              placeholder="Please select flow attributes"
-              options={[
-                {
-                  items: [
-                    { value: 'success', label: 'Flow: Success' },
-                    { value: 'error', label: 'Flow: Errors' },
-                    { value: 'ignored', label: 'Flow: Ignored' },
-                    { value: 'averageTimeTaken', label: 'Average time taken' },
-                  ],
-                },
-              ]}
-              onFieldChange={handleMeasurementChange}
-            />
-          </Grid>
           <Grid item>
             <DateRangeSelector onSave={onDateRangeChange} />
           </Grid>

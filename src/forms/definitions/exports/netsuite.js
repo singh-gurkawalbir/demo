@@ -1,6 +1,16 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   preSave: ({ executionType, apiType, ...rest }) => {
     const newValues = rest;
     const netsuiteType =
@@ -135,10 +145,6 @@ export default {
     return null;
   },
   fieldMap: {
-    'netsuite.netsuiteExportlabel': {
-      fieldId: 'netsuite.netsuiteExportlabel',
-      visibleWhenAll: [{ field: 'netsuite.api.type', isNot: [''] }],
-    },
     'netsuite.execution.type': {
       id: 'netsuite.execution.type',
       name: 'executionType',
@@ -326,18 +332,38 @@ export default {
           'outputMode',
           'netsuite.execution.type',
           'netsuite.api.type',
-          'exportOneToMany',
-          'netsuite.netsuiteExportlabel',
-          'distributed',
-          'restlet',
-          'search',
-          'netsuite.skipGrouping',
-          'blob',
-          'netsuite.restlet.criteria',
-          'netsuite.webservices.criteria',
         ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'How should this export be parameterized?',
+            fields: ['exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+                return 'What would you like to transfer from NetSuite??';
+              } else if (
+                r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+              ) {
+                return 'What would you like to listen from NetSuite?';
+              }
+
+              return 'What would you like to export from NetSuite?';
+            },
+            fields: [
+              'distributed',
+              'restlet',
+              'search',
+              'netsuite.skipGrouping',
+              'blob',
+              'netsuite.restlet.criteria',
+              'netsuite.webservices.criteria',
+            ],
+          },
           {
             collapsed: true,
             label: 'Advanced',

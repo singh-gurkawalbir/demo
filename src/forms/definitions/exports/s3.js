@@ -61,8 +61,13 @@ export default {
 
     if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-      newValues['/file/output'] = 'blobKeys';
+
+      if (newValues['/fileMetadata']) {
+        newValues['/file/output'] = 'metadata';
+      } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+    } else {
+      newValues['/file/output'] = 'records';
     }
 
     delete newValues['/outputMode'];
@@ -103,16 +108,11 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to transfer?',
-    },
+
     outputMode: {
       id: 'outputMode',
       type: 'mode',
-      label: 'Do you need to parse files?',
-      required: true,
+      label: 'Parse files being transferred',
       helpKey: 'export.outputMode',
       options: [
         {
@@ -158,19 +158,25 @@ export default {
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
   },
   layout: {
-    fields: [
-      'common',
-      'outputMode',
-      'exportData',
-      's3.region',
-      's3.bucket',
-      's3.keyStartsWith',
-      's3.keyEndsWith',
-      'file',
-      'ftp.leaveFile',
-    ],
+    fields: ['common', 'outputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: ['file'],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like to transfer from?',
+        fields: [
+          's3.region',
+          's3.bucket',
+          's3.keyStartsWith',
+          's3.keyEndsWith',
+          'ftp.leaveFile',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',

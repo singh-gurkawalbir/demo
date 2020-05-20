@@ -11,6 +11,7 @@ import {
   startOfMonth,
   isSameDay,
   startOfWeek,
+  addYears,
 } from 'date-fns';
 import { Fragment, useCallback, useState, useMemo } from 'react';
 import { DateRangePicker } from 'react-date-range';
@@ -24,6 +25,7 @@ const defineds = {
   endOfWeek: endOfWeek(new Date()),
   startOfLastWeek: startOfWeek(addDays(new Date(), -7)),
   endOfLastWeek: endOfWeek(addDays(new Date(), -7)),
+  startOfLastSevenDays: startOfDay(addDays(new Date(), -7)),
   startOfLastFifteenDays: startOfDay(addDays(new Date(), -15)),
   endOfLastThirtyDays: startOfDay(addDays(new Date(), -30)),
   startOfToday: startOfDay(new Date()),
@@ -99,6 +101,13 @@ const rangeList = [
       endDate: new Date(),
     }),
   },
+  {
+    label: 'Last year',
+    range: () => ({
+      startDate: addYears(new Date(), -1),
+      endDate: new Date(),
+    }),
+  },
 ];
 const staticRangeHandler = {
   range: {},
@@ -111,13 +120,26 @@ const staticRangeHandler = {
     );
   },
 };
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
   },
   child: {
     flexBasis: '100%',
+  },
+  dateRangePickerWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  dateRangePopperBtn: {
+    borderColor: theme.palette.secondary.lightest,
+    minHeight: 38,
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    },
   },
 }));
 
@@ -155,7 +177,11 @@ export default function DateRangeSelector({ value, onSave }) {
 
   return (
     <Fragment>
-      <Button onClick={toggleClick} variant="outlined" color="secondary">
+      <Button
+        onClick={toggleClick}
+        variant="outlined"
+        color="secondary"
+        className={classes.dateRangePopperBtn}>
         {getDurationLabel(selectedRanges)}
       </Button>
       <ArrowPopper
@@ -164,7 +190,7 @@ export default function DateRangeSelector({ value, onSave }) {
         placement="bottom-end"
         onClose={toggleClick}>
         {anchorEl && (
-          <Fragment>
+          <div className={classes.dateRangePickerWrapper}>
             <DateRangePicker
               staticRanges={dateRangeOptions}
               showSelectionPreview
@@ -174,10 +200,20 @@ export default function DateRangeSelector({ value, onSave }) {
               className={classes.child}
               ranges={selectedRanges}
               direction="horizontal"
+              maxDate={new Date()}
+              minDate={addYears(new Date(), -1)}
+              inputRanges={[]}
+              showPreview={false}
             />
-            <Button onClick={handleSave}>Apply</Button>
-            <Button onClick={handleClose}>Cancel</Button>
-          </Fragment>
+            <div>
+              <Button variant="outlined" color="primary" onClick={handleSave}>
+                Apply
+              </Button>
+              <Button variant="text" color="primary" onClick={handleClose}>
+                Cancel
+              </Button>
+            </div>
+          </div>
         )}
       </ArrowPopper>
     </Fragment>
