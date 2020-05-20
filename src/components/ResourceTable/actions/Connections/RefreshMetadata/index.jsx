@@ -4,8 +4,7 @@ import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Refresh metadata',
-  component: function RefreshMetadata({ tooltipLabel, resource }) {
+  component: function RefreshMetadata({ resource }) {
     const dispatch = useDispatch();
     const handleClick = () => {
       if (resource.type === 'netsuite') {
@@ -53,7 +52,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Refresh metadata',
         }}
         data-test="refreshConnectionMetadata"
         size="small"

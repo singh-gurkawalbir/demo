@@ -4,18 +4,13 @@ import Icon from '../../../icons/DownloadIcon';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Download',
-  component: function DownloadResources({
-    tooltipLabel,
-    resourceType,
-    resource,
-  }) {
+  component: function DownloadResources({ resourceType, resource }) {
     const dispatch = useDispatch();
 
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Download',
         }}
         data-test="downloadResourceFile"
         size="small"

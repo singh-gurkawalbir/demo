@@ -5,8 +5,7 @@ import actions from '../../../../actions';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: r => (r.published ? 'Unpublish' : 'Publish'),
-  component: function TogglePublish({ tooltipLabel, resourceType, resource }) {
+  component: function TogglePublish({ resourceType, resource }) {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
       const patchSet = [
@@ -24,7 +23,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: resource.published ? 'Unpublish' : 'Publish',
         }}
         data-test="togglePublish"
         size="small"

@@ -4,13 +4,12 @@ import getRoutePath from '../../../../../utils/routePaths';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Licenses',
-  component: function Licenses({ tooltipLabel, resource }) {
+  component: function Licenses({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/connectorLicenses`)}>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Licenses',
           }}
           size="small">
           <Icon />

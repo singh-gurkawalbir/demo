@@ -5,8 +5,7 @@ import ModalDialog from '../../../../ModalDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Schedule',
-  component: function Schedule({ tooltipLabel, resource }) {
+  component: function Schedule({ resource }) {
     const [showSchedule, setShowSchedule] = useState(false);
     const onScheduleClick = () => {
       setShowSchedule(!showSchedule);
@@ -28,7 +27,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Schedule',
           }}
           data-test="showFlowSchedule"
           size="small"

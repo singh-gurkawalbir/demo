@@ -5,8 +5,7 @@ import openExternalUrl from '../../../../../utils/window';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Download debug logs',
-  component: function DownloadDebugLogs({ tooltipLabel, resource }) {
+  component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
     let url = `/connections/${connectionId}/debug`;
     const additionalHeaders = useSelector(state =>
@@ -26,7 +25,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Download debug logs',
         }}
         data-test="downloadDebugLog"
         size="small"

@@ -6,8 +6,7 @@ import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Open debugger',
-  component: function OpenDebugger({ tooltipLabel, resource }) {
+  component: function OpenDebugger({ resource }) {
     const { _id: connectionId } = resource;
     const dispatch = useDispatch();
     // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api
@@ -36,7 +35,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Open debugger',
         }}
         data-test="openDebugger"
         size="small"

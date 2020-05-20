@@ -4,8 +4,7 @@ import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Audit log',
-  component: function AuditLogs({ tooltipLabel, resourceType, resource }) {
+  component: function AuditLogs({ resourceType, resource }) {
     const [show, setShow] = useState(false);
 
     return (
@@ -19,7 +18,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Audit log',
           }}
           data-test="showAuditLog"
           size="small"

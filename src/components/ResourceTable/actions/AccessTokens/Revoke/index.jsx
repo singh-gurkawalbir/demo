@@ -5,8 +5,7 @@ import Icon from '../../../../../components/icons/RevokeTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Revoke token',
-  component: function AccessTokens({ tooltipLabel, resourceType, resource }) {
+  component: function AccessTokens({ resourceType, resource }) {
     const dispatch = useDispatch();
 
     function handleRevokeClick() {
@@ -28,7 +27,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Revoke token',
           }}
           data-test="revokeAccessToken"
           size="small"

@@ -9,8 +9,7 @@ import ResourceReferences from '../../../ResourceReferences';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Delete',
-  component: function Delete({ tooltipLabel, resourceType, resource }) {
+  component: function Delete({ resourceType, resource }) {
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(false);
     const resourceReferences = useSelector(state =>
@@ -44,7 +43,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Delete',
           }}
           data-test="deleteResource"
           size="small"

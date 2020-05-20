@@ -4,8 +4,7 @@ import Icon from '../../../../../components/icons/ReactivateTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Reactivate token',
-  component: function AccessTokens({ tooltipLabel, resourceType, resource }) {
+  component: function AccessTokens({ resourceType, resource }) {
     const dispatch = useDispatch();
 
     function handleReactivateClick() {
@@ -26,7 +25,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Reactivate token',
         }}
         data-test="reactivateAccessToken"
         size="small"

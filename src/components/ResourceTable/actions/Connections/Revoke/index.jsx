@@ -5,8 +5,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Revoke',
-  component: function Revoke({ tooltipLabel, resource: connection }) {
+  component: function Revoke({ resource: connection }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
@@ -36,7 +35,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Revoke',
         }}
         data-test="revoke"
         size="small"

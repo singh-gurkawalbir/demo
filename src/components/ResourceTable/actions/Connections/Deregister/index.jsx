@@ -6,12 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Deregister',
-  component: function Deregister({
-    tooltipLabel,
-    resource: connection,
-    integrationId,
-  }) {
+  component: function Deregister({ resource: connection, integrationId }) {
     const isStandalone = integrationId === 'none';
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
@@ -63,7 +58,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Deregister',
         }}
         data-test="closeDeregisterModal"
         size="small"

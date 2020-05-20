@@ -6,8 +6,7 @@ import ConfigureDebugger from '../../../../ConfigureDebugger';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Configure debugger',
-  component: function ConfigDebugger({ tooltipLabel, resource }) {
+  component: function ConfigDebugger({ resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;
     const [show, setShow] = useState(false);
     const canAccess = useSelector(
@@ -31,7 +30,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Configure debugger',
           }}
           data-test="showConfigureDebugger"
           size="small"

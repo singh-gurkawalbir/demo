@@ -5,8 +5,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Detach Flow',
-  component: function DetachFlow({ tooltipLabel, resource }) {
+  component: function DetachFlow({ resource }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const handleDetachFlow = () => {
@@ -46,7 +45,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: tooltipLabel,
+          label: 'Detach Flow',
         }}
         data-test="detachFlow"
         size="small"
