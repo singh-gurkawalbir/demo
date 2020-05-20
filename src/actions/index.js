@@ -1797,6 +1797,97 @@ const suiteScript = {
         resourceId,
       }),
   },
+  job: {
+    clear: () => action(actionTypes.SUITESCRIPT.JOB.CLEAR),
+    requestCollection: ({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      filters,
+    }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        filters,
+      }),
+    receivedCollection: ({ collection }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION, {
+        collection,
+      }),
+    request: ({ jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST, { jobId }),
+    received: ({ job }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RECEIVED, { job }),
+    requestInProgressJobStatus: () =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
+    noInProgressJobs: () =>
+      action(actionTypes.SUITESCRIPT.JOB.NO_IN_PROGRESS_JOBS),
+    requestErrors: ({ ssLinkedConnectionId, integrationId, jobType, jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.REQUEST_COLLECTION, {
+        ssLinkedConnectionId,
+        integrationId,
+        jobType,
+        jobId,
+      }),
+    receivedErrors: ({ collection, jobId, jobType }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION, {
+        collection,
+        jobId,
+        jobType,
+      }),
+    resolveAllPending: () =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_PENDING),
+    resolve: ({ jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE, { jobId }),
+    resolveSelected: ({ jobs }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_SELECTED, { jobs }),
+    resolveAll: ({ flowId, integrationId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL, {
+        flowId,
+        integrationId,
+      }),
+    resolveInit: ({ parentJobId, childJobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, {
+        parentJobId,
+        childJobId,
+      }),
+    resolveAllInit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT),
+    resolveUndo: ({ parentJobId, childJobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, {
+        parentJobId,
+        childJobId,
+      }),
+    resolveAllUndo: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO),
+    resolveCommit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_COMMIT),
+    resolveAllCommit: () =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_COMMIT),
+    resolveSelectedErrorsInit: ({ selectedErrorIds }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT, {
+        selectedErrorIds,
+      }),
+    resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED, {
+        jobId,
+        flowJobId,
+        selectedErrorIds,
+      }),
+    error: {
+      clear: () => action(actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR),
+    },
+  },
+  paging: {
+    job: {
+      setRowsPerPage: rowsPerPage =>
+        action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_ROWS_PER_PAGE, {
+          rowsPerPage,
+        }),
+      setCurrentPage: currentPage =>
+        action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE, {
+          currentPage,
+        }),
+    },
+  },
 };
 const editorSampleData = {
   request: ({

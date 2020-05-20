@@ -1,18 +1,86 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, emptyObject } from '../../../utils/constants';
+import { parseJobs } from './util';
 
 const emptyList = [];
 
-export default (state = {}, action) => {
+export default (
+  state = { paging: { jobs: { rowsPerPage: 10, currentPage: 0 } } },
+  action
+) => {
   const { type, resourceType } = action;
 
-  if (!type || !resourceType || resourceType === 'refreshlegacycontrolpanel') {
+  if (!type || resourceType === 'refreshlegacycontrolpanel') {
+    return state;
+  }
+
+  if (
+    ![
+      actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION,
+      actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE,
+      actionTypes.SUITESCRIPT.JOB.CLEAR,
+      actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR,
+      actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION,
+    ].includes(type) &&
+    !resourceType
+  ) {
     return state;
   }
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE:
+        {
+          const { currentPage } = action;
+
+          // eslint-disable-next-line no-restricted-globals
+          if (!isNaN(currentPage) && parseInt(currentPage, 10) >= 0) {
+            draft.paging.jobs.currentPage = parseInt(currentPage, 10);
+          }
+        }
+
+        break;
+      case actionTypes.SUITESCRIPT.PAGING.JOB.SET_ROWS_PER_PAGE:
+        {
+          const { rowsPerPage } = action;
+
+          // eslint-disable-next-line no-restricted-globals
+          if (!isNaN(rowsPerPage) && parseInt(rowsPerPage, 10) > 0) {
+            draft.paging.jobs.rowsPerPage = parseInt(rowsPerPage, 10);
+          }
+        }
+
+        break;
+      case actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION:
+        {
+          const { collection = emptyList } = action;
+
+          draft.jobs = parseJobs(collection);
+          draft.paging.jobs.currentPage = 0;
+          draft.paging.jobs.totalJobs = draft.jobs.length;
+        }
+
+        break;
+      case actionTypes.SUITESCRIPT.JOB.CLEAR:
+        draft.jobs = emptyList;
+        draft.paging.jobs.currentPage = 0;
+
+        break;
+
+      case actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR:
+        draft.jobErrors = emptyList;
+        break;
+
+      case actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION:
+        {
+          const { collection = emptyList } = action;
+
+          draft.jobErrors = collection.filter(je => !je.resolved);
+        }
+
+        break;
+
       case actionTypes.RESOURCE.RECEIVED_COLLECTION:
         {
           const { collection = [] } = action;
@@ -153,6 +221,67 @@ export default (state = {}, action) => {
         }
 
         break;
+
+      case actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT:
+        {
+          const newCollection = state.jobs.map(job => {
+            if (job.status === 'running' || job.numError === 0) {
+              return job;
+            }
+
+            return {
+              ...job,
+              numError: 0,
+              __original: {
+                numError: job.numError,
+              },
+            };
+          });
+
+          draft.jobs = newCollection;
+        }
+
+        break;
+      case actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO:
+        {
+          const newCollection = state.jobs.map(job => {
+            if (!job.__original || !job.__original.numError) {
+              return job;
+            }
+
+            const { __original, ...rest } = job;
+
+            rest.numError = __original.numError;
+
+            return rest;
+          });
+
+          draft.jobs = newCollection;
+        }
+
+        break;
+      case actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT:
+        {
+          const { jobId, jobType } = action;
+          const jobIndex = state.jobs.findIndex(
+            j => j._id === jobId && j.type === jobType
+          );
+
+          if (jobIndex > -1) {
+            let job = { ...state.jobs[jobIndex] };
+
+            job = {
+              ...job,
+              numError: 0,
+              __original: {
+                numError: job.numError,
+              },
+            };
+            draft.jobs[jobIndex] = job;
+          }
+        }
+
+        break;
       default:
     }
   });
@@ -278,10 +407,54 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
   // };
 }
 
+export function jobsPagingDetails(state) {
+  if (!state || !state.paging || !state.paging.jobs) {
+    return emptyObject;
+  }
+
+  return state.paging.jobs;
+}
+
+export function jobs(state, { ssLinkedConnectionId, integrationId }) {
+  if (!state || !state.jobs) {
+    return emptyList;
+  }
+
+  const { paging = {} } = state;
+  const { jobs: jobsPaging } = paging;
+  const { currentPage = 0, rowsPerPage = 10 } = jobsPaging || {};
+  const filteredJobs = state.jobs.slice(
+    currentPage * rowsPerPage,
+    (currentPage + 1) * rowsPerPage
+  );
+  // eslint-disable-next-line no-use-before-define
+  const flows = resourceList(state, {
+    resourceType: 'flows',
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+  return filteredJobs.map(j => {
+    if (j._flowId) {
+      const flow = flows.find(f => f._flowId === j._flowId);
+
+      if (flow) {
+        return { ...j, name: flow.ioFlowName || flow.name };
+      }
+    }
+
+    return j;
+  });
+}
+
 export function resourceList(
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
 ) {
+  if (resourceType === 'jobs') {
+    return jobs(state, { ssLinkedConnectionId, integrationId });
+  }
+
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -319,6 +492,21 @@ export function hasData(
   }
 
   return resources.length > 0;
+}
+
+export function jobErrors(state, { jobId, jobType }) {
+  if (!state || !state.jobErrors || !state.jobErrors.length) {
+    return emptyList;
+  }
+
+  if (
+    state.jobErrors[0]._jobId === jobId &&
+    state.jobErrors[0].type === jobType
+  ) {
+    return state.jobErrors;
+  }
+
+  return emptyList;
 }
 
 // #endregion

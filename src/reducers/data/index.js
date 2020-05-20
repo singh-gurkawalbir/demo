@@ -299,3 +299,14 @@ export const suiteScriptResourceList = (
     ssLinkedConnectionId,
     integrationId,
   });
+
+export function suiteScriptJobsPagingDetails(state) {
+  return fromSuiteScript.jobsPagingDetails(state && state.suiteScript);
+}
+
+export function suiteScriptJobErrors(state, { jobId, jobType }) {
+  return fromSuiteScript.jobErrors(state && state.suiteScript, {
+    jobId,
+    jobType,
+  });
+}

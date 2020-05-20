@@ -4323,6 +4323,27 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
+export function suiteScriptJobsPagingDetails(state) {
+  return fromData.suiteScriptJobsPagingDetails(state.data);
+}
+
+export function suiteScriptJob(
+  state,
+  { ssLinkedConnectionId, integrationId, jobId, jobType }
+) {
+  const jobList = suiteScriptResourceList(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType: 'jobs',
+  });
+
+  return jobList.find(j => j._id === jobId && j.type === jobType);
+}
+
+export function suiteScriptJobErrors(state, { jobId, jobType }) {
+  return fromData.suiteScriptJobErrors(state.data, { jobId, jobType });
+}
+
 export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);
 }
