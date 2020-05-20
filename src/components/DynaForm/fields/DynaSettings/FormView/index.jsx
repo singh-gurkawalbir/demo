@@ -6,7 +6,6 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import Spinner from '../../../../Spinner';
-import DebugOnly from '../../../../DebugOnly';
 import useIntegration from '../../../../../hooks/useIntegration';
 
 const useStyles = makeStyles({
@@ -67,14 +66,12 @@ export default function FormView({
       <div>
         <Typography>{formState.error}</Typography>
         {isDeveloper && !isViewMode && (
-          <DebugOnly>
-            <Button
-              data-test="toggleEditor"
-              variant="contained"
-              onClick={onToggleClick}>
-              Launch form builder
-            </Button>
-          </DebugOnly>
+          <Button
+            data-test="toggleEditor"
+            variant="contained"
+            onClick={onToggleClick}>
+            Launch form builder
+          </Button>
         )}
       </div>
     );
@@ -91,15 +88,13 @@ export default function FormView({
   return (
     <div className={classes.wrapper}>
       {isDeveloper && !isViewMode && (
-        <DebugOnly>
-          <Button
-            data-test="toggleEditor"
-            variant="outlined"
-            color="secondary"
-            onClick={onToggleClick}>
-            Launch form builder
-          </Button>
-        </DebugOnly>
+        <Button
+          data-test="toggleEditor"
+          variant="outlined"
+          color="secondary"
+          onClick={onToggleClick}>
+          Launch form builder
+        </Button>
       )}
       <DynaForm
         key={formState.key}
