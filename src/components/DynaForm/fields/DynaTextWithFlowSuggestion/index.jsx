@@ -7,6 +7,7 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -133,12 +134,9 @@ const DynaTextWithFlowSuggestion = props => {
           name={name}
           className={classes.dynaTextWithFlowFormControl}
           placeholder={placeholder}
-          helperText={isValid ? description : errorMessages}
           disabled={disabled}
           multiline={multiline}
-          error={!isValid}
           onChange={handleFieldChange}
-          required={required}
           value={value}
           onClick={handleCursorChange}
           onKeyUp={handleCursorChange}
@@ -162,6 +160,11 @@ const DynaTextWithFlowSuggestion = props => {
             skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
           />
         )}
+        <ErroredMessageComponent
+          isValid={isValid}
+          description={description}
+          errorMessages={errorMessages}
+        />
       </div>
     </FormControl>
   );

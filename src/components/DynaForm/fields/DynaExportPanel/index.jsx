@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
   },
   previewDataHeading: {
     fontSize: 18,
-    paddingBottom: 20,
   },
   drawerShift: {
     transition: theme.transitions.create(['width', 'margin'], {

@@ -1,7 +1,6 @@
 import { useEffect, useState, cloneElement, useCallback } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import clsx from 'clsx';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -10,6 +9,7 @@ import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
@@ -143,9 +143,9 @@ export default function RefreshGenericResource(props) {
             <ExitIcon />
           </ActionButton>
         )}
-        {description && <FormHelperText>{description}</FormHelperText>}
-        {fieldError && <FormHelperText error>{fieldError}</FormHelperText>}
       </FormControl>
+      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
+      {description && <ErroredMessageComponent description={description} />}
     </div>
   );
 }

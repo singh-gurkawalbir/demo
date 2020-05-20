@@ -59,9 +59,10 @@ export default {
         return '/http/lookups';
       case adaptorTypeMap.SalesforceImport:
         return '/salesforce/lookups';
+      case adaptorTypeMap.RDBMSImport:
+        return '/rdbms/lookups';
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.RDBMSImport:
       default:
     }
   },

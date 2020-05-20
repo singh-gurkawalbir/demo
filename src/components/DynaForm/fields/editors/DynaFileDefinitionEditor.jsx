@@ -31,7 +31,9 @@ const useStyles = makeStyles(theme => ({
   },
   fileDefinationLabel: {
     marginBottom: 0,
-    marginRight: theme.spacing(1),
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 

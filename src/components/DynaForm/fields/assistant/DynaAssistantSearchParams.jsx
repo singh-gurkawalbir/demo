@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
   dynaAssistantFormLabel: {
     marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 const SearchParamsModal = props => {

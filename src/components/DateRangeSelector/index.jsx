@@ -120,13 +120,26 @@ const staticRangeHandler = {
     );
   },
 };
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
   },
   child: {
     flexBasis: '100%',
+  },
+  dateRangePickerWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  dateRangePopperBtn: {
+    borderColor: theme.palette.secondary.lightest,
+    minHeight: 38,
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    },
   },
 }));
 
@@ -164,7 +177,11 @@ export default function DateRangeSelector({ value, onSave }) {
 
   return (
     <Fragment>
-      <Button onClick={toggleClick} variant="outlined" color="secondary">
+      <Button
+        onClick={toggleClick}
+        variant="outlined"
+        color="secondary"
+        className={classes.dateRangePopperBtn}>
         {getDurationLabel(selectedRanges)}
       </Button>
       <ArrowPopper
@@ -173,7 +190,7 @@ export default function DateRangeSelector({ value, onSave }) {
         placement="bottom-end"
         onClose={toggleClick}>
         {anchorEl && (
-          <Fragment>
+          <div className={classes.dateRangePickerWrapper}>
             <DateRangePicker
               staticRanges={dateRangeOptions}
               showSelectionPreview
@@ -188,9 +205,15 @@ export default function DateRangeSelector({ value, onSave }) {
               inputRanges={[]}
               showPreview={false}
             />
-            <Button onClick={handleSave}>Apply</Button>
-            <Button onClick={handleClose}>Cancel</Button>
-          </Fragment>
+            <div>
+              <Button variant="outlined" color="primary" onClick={handleSave}>
+                Apply
+              </Button>
+              <Button variant="text" color="primary" onClick={handleClose}>
+                Cancel
+              </Button>
+            </div>
+          </div>
         )}
       </ArrowPopper>
     </Fragment>

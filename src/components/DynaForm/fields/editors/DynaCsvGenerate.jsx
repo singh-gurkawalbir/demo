@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
   dynaCsvLabel: {
     marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 
