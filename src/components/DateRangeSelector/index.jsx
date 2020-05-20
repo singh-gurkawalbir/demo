@@ -136,6 +136,10 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     minHeight: 38,
     color: theme.palette.secondary.light,
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    },
   },
 }));
 
