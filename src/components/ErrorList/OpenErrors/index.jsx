@@ -28,11 +28,16 @@ const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
-  loading: {
-    textAlign: 'center',
-    position: 'relative',
-    top: 100,
-    width: '100%',
+  spinnerWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    margin: 'auto',
   },
 }));
 const defaultFilter = {
@@ -148,8 +153,8 @@ export default function OpenErrors({ flowId, resourceId, show }) {
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       {isFreshDataLoad ? (
-        <div className={classes.loading}>
-          Loading Errors <Spinner size={20} />
+        <div className={classes.spinnerWrapper}>
+          <Spinner />
         </div>
       ) : (
         <ErrorTable

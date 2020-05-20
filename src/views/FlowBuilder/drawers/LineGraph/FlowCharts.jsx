@@ -148,9 +148,9 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   if (data.status === 'requested') {
     return (
-      <Loader open>
-        Fetching data
-        <Spinner />
+      <Loader open hideBackDrop>
+        <Typography variant="body2">Fetching data</Typography>
+        <Spinner color="primary" size={24} />
       </Loader>
     );
   } else if (data.status === 'error') {

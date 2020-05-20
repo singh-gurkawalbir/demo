@@ -12,6 +12,7 @@ import {
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
 import FieldHelp from '../../FieldHelp';
+import helpTextMap from '../../../Help/helpTextMap';
 
 /*
  * This editor is shown in case of :
@@ -20,17 +21,19 @@ import FieldHelp from '../../FieldHelp';
  *    customized and saved by user while creation
  */
 const useStyles = makeStyles(theme => ({
-  fileDefinationContainer: {
+  fileDefinitionContainer: {
     flexDirection: `row !important`,
     width: '100%',
     alignItems: 'center',
   },
-  fileDefinationBtn: {
+  fileDefinitionBtn: {
     marginRight: theme.spacing(0.5),
   },
-  fileDefinationLabel: {
+  fileDefinitionLabel: {
     marginBottom: 0,
-    marginRight: theme.spacing(1),
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 
@@ -47,6 +50,7 @@ function DynaFileDefinitionEditor(props) {
     options = {},
     value,
     disabled,
+    helpKey,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
@@ -178,11 +182,11 @@ function DynaFileDefinitionEditor(props) {
 
   return (
     <Fragment>
-      <div className={classes.fileDefinationContainer}>
+      <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
             <FileDefinitionEditorDialog
-              title="File Definition Editor"
+              title={label || 'File definition editor'}
               id={id + resourceId}
               processor={processor}
               data={
@@ -196,18 +200,18 @@ function DynaFileDefinitionEditor(props) {
               disabled={disabled}
             />
           )}
-          <FormLabel className={classes.fileDefinationLabel}>
-            File defination rules:
+          <FormLabel className={classes.fileDefinitionLabel}>
+            {label}:
           </FormLabel>
           <Button
             variant="outlined"
             color="secondary"
-            className={classes.fileDefinationBtn}
+            className={classes.fileDefinitionBtn}
             onClick={handleEditorClick}>
-            {label}
+            Launch
           </Button>
           {/* TODO: surya we need to add the helptext for the upload file */}
-          <FieldHelp {...props} helpText={label} />
+          <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
         </LoadResources>
       </div>
     </Fragment>

@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing(2),
   },
   link: {
     display: 'flex',
@@ -54,6 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: theme.spacing(2),
   },
   actionBtns: {
     display: 'flex',

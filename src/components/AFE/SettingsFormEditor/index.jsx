@@ -60,7 +60,7 @@ export default function SettingsFormEditor({
   const dispatch = useDispatch();
   const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
-  const { data, result, error, lastChange, mode } = editor;
+  const { data, result, error, lastChange, mode, status } = editor;
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -115,7 +115,7 @@ export default function SettingsFormEditor({
       )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
-        {result ? (
+        {result && status !== 'error' ? (
           <DynaForm
             key={key}
             fieldMeta={result}

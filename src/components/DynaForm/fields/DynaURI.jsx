@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
     marginTop: theme.spacing(4),
+    background: 'transparent',
   },
   dynaURIWrapper: {
     flexDirection: `row !important`,

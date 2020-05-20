@@ -32,13 +32,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Loader({ className, children, ...props }) {
+function Loader({ className, children, hideBackDrop, ...props }) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Modal
         aria-labelledby="loader"
+        hideBackdrop={hideBackDrop}
         className={clsx(classes.modal, className)}
         {...props}>
         <Paper className={classes.paper} elevation={4}>

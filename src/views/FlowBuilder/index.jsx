@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton, Tooltip } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -564,20 +564,24 @@ function FlowBuilder() {
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
 
           {flowDetails && flowDetails.showScheduleIcon && (
+            <Tooltip title="Schedule" placement="bottom">
+              <IconButton
+                disabled={isNewFlow}
+                data-test="scheduleFlow"
+                onClick={handleDrawerClick('schedule')}>
+                <CalendarIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Settings" placement="bottom">
             <IconButton
               disabled={isNewFlow}
-              data-test="scheduleFlow"
-              onClick={handleDrawerClick('schedule')}>
-              <CalendarIcon />
+              onClick={handleDrawerClick('settings')}
+              data-test="flowSettings">
+              <SettingsIcon />
             </IconButton>
-          )}
+          </Tooltip>
 
-          <IconButton
-            disabled={isNewFlow}
-            onClick={handleDrawerClick('settings')}
-            data-test="flowSettings">
-            <SettingsIcon />
-          </IconButton>
           {!isIAType && (
             <FlowEllipsisMenu
               flowId={flowId}

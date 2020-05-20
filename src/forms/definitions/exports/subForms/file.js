@@ -79,6 +79,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
+      placeholder: 'Sample file (that would be parsed):',
     },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
@@ -137,7 +138,6 @@ export default {
       'fixed.format',
       'edifact.format',
       'file.filedefinition.rules',
-      'file.fileDefinition.resourcePath',
     ],
   },
 };
