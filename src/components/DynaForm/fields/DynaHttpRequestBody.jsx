@@ -20,7 +20,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   dynaHttpReqLabel: {
+    marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 const ManageLookup = props => {

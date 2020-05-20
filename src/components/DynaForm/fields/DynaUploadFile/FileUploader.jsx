@@ -10,6 +10,8 @@ const useStyles = makeStyles(theme => ({
   },
   fileName: {
     marginRight: theme.spacing(1),
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
   uploadContainer: {
     flexDirection: `row !important`,
