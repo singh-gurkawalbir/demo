@@ -138,7 +138,6 @@ export default {
       'fixed.format',
       'edifact.format',
       'file.filedefinition.rules',
-      'file.fileDefinition.resourcePath',
     ],
   },
 };
