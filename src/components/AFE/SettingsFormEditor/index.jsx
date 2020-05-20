@@ -126,6 +126,7 @@ export default function SettingsFormEditor({
           <Fragment>
             <DynaForm formKey={formKey} fieldMeta={result} />
             <DynaSubmit
+              formKey={formKey}
               className={classes.submitButton}
               onClick={handleFormPreviewChange}>
               Test form
