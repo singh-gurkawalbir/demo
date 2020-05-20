@@ -120,6 +120,8 @@ function JobErrorDialog({
           errorCount={numError}
           job={job}
           onCloseClick={onCloseClick}
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
         />
       </div>
     </ModalDialog>

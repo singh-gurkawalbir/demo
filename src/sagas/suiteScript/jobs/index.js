@@ -1,10 +1,42 @@
-import { call, cancel, fork, put, take, takeEvery } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  cancel,
+  delay,
+  fork,
+  put,
+  select,
+  take,
+  takeEvery,
+} from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import getRequestOptions from '../../../utils/requestOptions';
 import { apiCallWithRetry } from '../../index';
+import * as selectors from '../../../reducers';
 
-export function getJob() {}
+export function* getJob({
+  ssLinkedConnectionId,
+  integrationId,
+  jobId,
+  jobType,
+}) {
+  const requestOptions = {
+    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${jobId}?type=${jobType}`,
+    opts: {
+      method: 'GET',
+    },
+  };
+  let job;
+
+  try {
+    job = yield call(apiCallWithRetry, requestOptions);
+  } catch (error) {
+    return true;
+  }
+
+  yield put(actions.suiteScript.job.received({ job }));
+}
 
 export function* requestJobCollection({
   ssLinkedConnectionId,
@@ -50,7 +82,12 @@ export function* requestJobCollection({
   }
 
   yield put(actions.suiteScript.job.receivedCollection({ collection }));
-  yield put(actions.suiteScript.job.requestInProgressJobStatus());
+  yield put(
+    actions.suiteScript.job.requestInProgressJobStatus({
+      ssLinkedConnectionId,
+      integrationId,
+    })
+  );
 }
 
 export function* getJobCollection({
@@ -116,8 +153,112 @@ export function* getJobErrors({
   yield cancel(watcher);
 }
 
+export function* getInProgressJobsStatus({
+  ssLinkedConnectionId,
+  integrationId,
+}) {
+  const jobs = yield select(selectors.suiteScriptResourceList, {
+    resourceType: 'jobs',
+  });
+  const inProgressJobs =
+    jobs && jobs.filter(j => ['queued', 'running'].includes(j.status));
+
+  if (!inProgressJobs || inProgressJobs.length === 0) {
+    yield put(actions.suiteScript.job.noInProgressJobs());
+
+    return true;
+  }
+
+  if (inProgressJobs && inProgressJobs.length > 0) {
+    yield all(
+      inProgressJobs.map(job =>
+        call(getJob, {
+          ssLinkedConnectionId,
+          integrationId,
+          jobId: job._id,
+          jobType: job.type,
+        })
+      )
+    );
+  }
+}
+
+export function* pollForInProgressJobs({
+  ssLinkedConnectionId,
+  integrationId,
+}) {
+  while (true) {
+    yield delay(5 * 1000);
+
+    yield call(getInProgressJobsStatus, {
+      ssLinkedConnectionId,
+      integrationId,
+    });
+  }
+}
+
+export function* startPollingForInProgressJobs({
+  ssLinkedConnectionId,
+  integrationId,
+}) {
+  const watcher = yield fork(pollForInProgressJobs, {
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+  yield take([
+    actionTypes.SUITESCRIPT.JOB.CLEAR,
+    actionTypes.SUITESCRIPT.JOB.NO_IN_PROGRESS_JOBS,
+    actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
+  ]);
+  yield cancel(watcher);
+}
+
+export function* resolveSelectedErrors({
+  ssLinkedConnectionId,
+  integrationId,
+  jobId,
+  jobType,
+  selectedErrorIds,
+}) {
+  const requestOptions = {
+    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${jobId}/resolve`,
+    opts: {
+      method: 'PUT',
+    },
+  };
+
+  yield put(
+    actions.suiteScript.job.resolveSelectedErrorsInit({
+      selectedErrorIds,
+    })
+  );
+
+  requestOptions.opts.body = {
+    celigo_method: 'resolveJobErrors',
+    type: jobType,
+    errorIdsToResolve: selectedErrorIds,
+  };
+
+  try {
+    yield call(apiCallWithRetry, requestOptions);
+  } catch (e) {
+    return true;
+  }
+
+  yield call(getJob, { ssLinkedConnectionId, integrationId, jobId, jobType });
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.SUITESCRIPT.JOB.REQUEST, getJob),
+  takeEvery(
+    actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
+    startPollingForInProgressJobs
+  ),
   takeEvery(actionTypes.SUITESCRIPT.JOB.ERROR.REQUEST_COLLECTION, getJobErrors),
+  takeEvery(
+    actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED,
+    resolveSelectedErrors
+  ),
 ];

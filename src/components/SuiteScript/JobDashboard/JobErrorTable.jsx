@@ -3,10 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import EditIcon from '../../icons/EditIcon';
-import ChevronRight from '../../icons/ArrowRightIcon';
-import ExpandMore from '../../icons/ArrowDownIcon';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
@@ -80,6 +76,8 @@ function JobErrorTable({
   errorCount,
   job,
   onCloseClick,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -100,7 +98,6 @@ function JobErrorTable({
   const numSelectedResolvableErrors = jobErrors.filter(
     je => selectedErrorIds.includes(je._id) && !je.resolved
   ).length;
-  const [expanded, setExpanded] = useState({});
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
@@ -143,16 +140,15 @@ function JobErrorTable({
     } else {
       dispatch(
         actions.suiteScript.job.resolveSelectedErrors({
+          ssLinkedConnectionId,
+          integrationId,
           jobId: job._id,
+          jobType: job.type,
           selectedErrorIds,
         })
       );
     }
   }
-
-  const handleExpandCollapseClick = errorId => {
-    setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
-  };
 
   const handleJobErrorSelectChange = selected => {
     setSelectedErrors(selected);
@@ -223,24 +219,6 @@ function JobErrorTable({
               isSelectableRow={r => !r.resolved}
               onSelectChange={handleJobErrorSelectChange}
               columns={[
-                {
-                  heading: '',
-                  value: r =>
-                    r.similarErrors &&
-                    r.similarErrors.length > 0 && (
-                      <IconButton
-                        data-test="expandJobsErrors"
-                        onClick={() => {
-                          handleExpandCollapseClick(r._id);
-                        }}>
-                        {r.metadata && r.metadata.expanded ? (
-                          <ExpandMore />
-                        ) : (
-                          <ChevronRight />
-                        )}
-                      </IconButton>
-                    ),
-                },
                 {
                   heading: 'Message',
                   // eslint-disable-next-line react/display-name

@@ -80,8 +80,13 @@ export default function JobDashboard({
    * request for in-progress jobs (in current page) status */
   useEffect(() => {
     dispatch(actions.suiteScript.paging.job.setCurrentPage(currentPage));
-    dispatch(actions.suiteScript.job.requestInProgressJobStatus());
-  }, [dispatch, currentPage]);
+    dispatch(
+      actions.suiteScript.job.requestInProgressJobStatus({
+        ssLinkedConnectionId,
+        integrationId,
+      })
+    );
+  }, [dispatch, currentPage, ssLinkedConnectionId, integrationId]);
 
   useEffect(() => {
     dispatch(actions.suiteScript.paging.job.setRowsPerPage(rowsPerPage));

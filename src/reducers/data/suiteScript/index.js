@@ -17,11 +17,13 @@ export default (
 
   if (
     ![
+      actionTypes.SUITESCRIPT.JOB.RECEIVED,
       actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION,
       actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE,
       actionTypes.SUITESCRIPT.JOB.CLEAR,
       actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR,
       actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION,
+      actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT,
     ].includes(type) &&
     !resourceType
   ) {
@@ -62,6 +64,21 @@ export default (
         }
 
         break;
+      case actionTypes.SUITESCRIPT.JOB.RECEIVED:
+        {
+          const { job } = action;
+          const jobIndex = state.jobs.findIndex(
+            j => j._id === job._id && j.type === job.type
+          );
+
+          if (jobIndex > -1) {
+            draft.jobs[jobIndex] = job;
+          } else if (job.status === 'queued') {
+            draft.jobs = [job, ...state.jobs];
+          }
+        }
+
+        break;
       case actionTypes.SUITESCRIPT.JOB.CLEAR:
         draft.jobs = emptyList;
         draft.paging.jobs.currentPage = 0;
@@ -77,6 +94,23 @@ export default (
           const { collection = emptyList } = action;
 
           draft.jobErrors = collection.filter(je => !je.resolved);
+        }
+
+        break;
+
+      case actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT:
+        {
+          const { selectedErrorIds } = action;
+
+          if (selectedErrorIds && selectedErrorIds.length > 0) {
+            draft.jobErrors = draft.jobErrors.map(je => {
+              if (selectedErrorIds.includes(je._id)) {
+                return { ...je, resolved: true };
+              }
+
+              return je;
+            });
+          }
         }
 
         break;
@@ -503,7 +537,7 @@ export function jobErrors(state, { jobId, jobType }) {
     state.jobErrors[0]._jobId === jobId &&
     state.jobErrors[0].type === jobType
   ) {
-    return state.jobErrors;
+    return state.jobErrors.filter(je => !je.resolved);
   }
 
   return emptyList;

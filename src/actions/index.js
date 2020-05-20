@@ -1819,8 +1819,11 @@ const suiteScript = {
       action(actionTypes.SUITESCRIPT.JOB.REQUEST, { jobId }),
     received: ({ job }) =>
       action(actionTypes.SUITESCRIPT.JOB.RECEIVED, { job }),
-    requestInProgressJobStatus: () =>
-      action(actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS),
+    requestInProgressJobStatus: ({ ssLinkedConnectionId, integrationId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS, {
+        ssLinkedConnectionId,
+        integrationId,
+      }),
     noInProgressJobs: () =>
       action(actionTypes.SUITESCRIPT.JOB.NO_IN_PROGRESS_JOBS),
     requestErrors: ({ ssLinkedConnectionId, integrationId, jobType, jobId }) =>
@@ -1866,10 +1869,18 @@ const suiteScript = {
       action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT, {
         selectedErrorIds,
       }),
-    resolveSelectedErrors: ({ jobId, flowJobId, selectedErrorIds }) =>
+    resolveSelectedErrors: ({
+      ssLinkedConnectionId,
+      integrationId,
+      jobId,
+      jobType,
+      selectedErrorIds,
+    }) =>
       action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED, {
+        ssLinkedConnectionId,
+        integrationId,
         jobId,
-        flowJobId,
+        jobType,
         selectedErrorIds,
       }),
     error: {
