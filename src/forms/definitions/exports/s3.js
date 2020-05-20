@@ -61,8 +61,13 @@ export default {
 
     if (newValues['/outputMode'] === 'blob') {
       newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-      newValues['/file/output'] = 'blobKeys';
+
+      if (newValues['/fileMetadata']) {
+        newValues['/file/output'] = 'metadata';
+      } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+    } else {
+      newValues['/file/output'] = 'records';
     }
 
     delete newValues['/outputMode'];

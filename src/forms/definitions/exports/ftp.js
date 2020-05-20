@@ -66,6 +66,8 @@ export default {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
       newValues['/file/type'] = undefined;
+    } else {
+      newValues['/file/output'] = 'records';
     }
 
     delete newValues['/outputMode'];
