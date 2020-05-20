@@ -236,7 +236,9 @@ export default {
       connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
       type: 'refreshableselect',
-      filterKey: 'salesforce-sObjects-triggerable',
+      bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+      bundleUrlHelp:
+        'Please install our <a target="_blank" href="BUNDLE_URL">integrator distributed adapter package</a> in your Salesforce account to create realtime exports.',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },
