@@ -568,7 +568,7 @@ export default {
     'Please specify whether the record is being created or updated using this field.',
 
   'agent.name':
-    "Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.  For example: 'Production AWS VPC, MySQL Connections'.",
+    'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':
     'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
@@ -962,7 +962,7 @@ export default {
   'editor.xml.simple':
     'Simple parsing means the code is converted to JSON without any user configurations.This typically generates a more complex and difficult to read JSON.\nIf you would like to have more control over what the JSON output looks like, use the Advanced options.',
   'export.name':
-    "Name your export so that you can easily reference it from other parts of the application.  For example: 'Salesforce - Query All Accounts'",
+    'Name your export so that you can easily reference it from other parts of the application.',
   'export._connectionId':
     'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'export.type':
@@ -1255,7 +1255,7 @@ export default {
   'flow._id':
     'System generated primary unique identifier for your connection.  For API users, this value should be used for GET and PUT requests.',
   'flow.name':
-    'Name your flow so that other users can understand at a very high level what it is doing. For example, "Send NetSuite Item Updates to Amazon". The name you choose will show up on your job dashboard and also in email notifications.',
+    'Name your flow so that other users can understand at a very high level what it is doing. The name you choose will show up on your job dashboard and also in email notifications.',
   'flow.description':
     'Describe your flow in more detail here so that other users can understand the business problem you are solving, and also how your integration solution works. Be sure to highlight any nuances that a user who will make changes in the future might need to know about.',
   'flow.schedule':
@@ -1290,7 +1290,7 @@ export default {
   'import._id':
     'System generated primary unique identifier for your import.  For API users, this value should be used for GET, PUT and DELETE requests.',
   'import.name':
-    "Name your import so that you can easily reference it from other parts of the application.  For example: 'Shopify - Import Tracking Numbers'",
+    'Name your import so that you can easily reference it from other parts of the application.',
   'import._connectionId':
     'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'import.lastModified':
@@ -1464,7 +1464,7 @@ export default {
   'import.salesforce.contentVersion.contentLocation':
     'Please enter the origin of the document\nValid values are:\n<b>S</b>—Document is located within Salesforce. Label is Salesforce.\n<b>E</b>—Document is located outside of Salesforce. Label is External.\n<b>L</b>—Document is located on a social network and accessed via Social Customer Service. Label is Social Customer Service.',
   'import.salesforce.document.name':
-    "Document name specifies the name or label of the document record getting imported to Salesforce. Please enter the name (e.g. 'temp.text') for your document that you want to import. Or, if the name should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the ID values. For example: myFileField.name.",
+    "Document name specifies the name or label of the document record getting imported to Salesforce. Please enter the name (e.g. 'temp.text') for your document that you want to import. Or, if the name should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the ID values.",
   'import.salesforce.document.folderId':
     'All documents in Salesforce must be imported/uploaded to a specific folder. Please enter the folder id where you want to upload your documents. Or, if the folder should be dynamic based on the data you are integrating then you can instead specify the JSON path to the field in your data containing the folder id values. For example: myFileField.folderID.',
   'import.salesforce.document.contentType':
@@ -1539,7 +1539,7 @@ export default {
   'integration._id':
     'System generated primary unique identifier for your integration.  For API users, this value should be used for GET and PUT requests.',
   'integration.name':
-    "Name your integration so that you can easily reference it from other parts of the application.  For example: 'NetSuite Flows'",
+    'Name your integration so that you can easily reference it from other parts of the application.',
   'integration.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'integration.description':
@@ -1575,7 +1575,7 @@ export default {
     "Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.",
   'script._id': 'System generated unique identifier for this script.',
   'script.name':
-    'Please name your script record so that you can easily reference it from other parts of the application.\n For example: "all-my-hooks.js"',
+    'Please name your script record so that you can easily reference it from other parts of the application.',
   'script.description':
     'Please describe your script so that other integrator.io users can quickly understand what it does and how it works.',
   'stack.type':
