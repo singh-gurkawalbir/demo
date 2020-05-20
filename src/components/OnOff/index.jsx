@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Tooltip } from '@material-ui/core';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
@@ -104,14 +105,18 @@ export default {
     };
 
     return onOffInProgressStatus ? (
-      <Spinner />
+      <Spinner size={20} />
     ) : (
-      <SwitchOnOff
-        disabled={disabled}
-        on={!flow.disabled}
-        onClick={enableOrDisableFlow}
-        data-test="switchFlowOnOff"
-      />
+      <Tooltip title="Off/On" placement="bottom">
+        <span>
+          <SwitchOnOff
+            disabled={disabled}
+            on={!flow.disabled}
+            onClick={enableOrDisableFlow}
+            data-test="switchFlowOnOff"
+          />
+        </span>
+      </Tooltip>
     );
   },
 };
