@@ -409,6 +409,11 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
+  clearValidations: (connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.CLEAR_VALIDATIONS, {
+      connectionId,
+      commMetaPath,
+    }),
   requestAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
       resourceId,
