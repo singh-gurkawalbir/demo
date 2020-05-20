@@ -35,7 +35,7 @@ export const getCreateScriptMetadata = scriptId => ({
       id: 'insertFunction',
       name: 'insertFunction',
       type: 'select',
-      label: 'Insert Function',
+      label: 'Insert function stub',
       helpKey: 'hooks.insertFunction',
       options: [
         {

@@ -14,7 +14,7 @@ export default {
   },
   insertFunction: {
     type: 'select',
-    label: 'Insert function',
+    label: 'Insert function stub',
     helpKey: 'hooks.insertFunction',
     options: [
       {
