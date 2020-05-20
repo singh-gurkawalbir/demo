@@ -28,7 +28,7 @@ export function* getNetsuiteOrSalesforceMeta({
   }
 
   try {
-    if (addInfo.bundlePath) {
+    if (addInfo && addInfo.bundlePath) {
       const bundleCheckResponse = yield call(apiCallWithRetry, {
         path: `/${addInfo.bundlePath}`,
         opts: {},
