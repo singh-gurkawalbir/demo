@@ -55,7 +55,7 @@ export default {
     required: true,
     bundlePath: r => r && `connections/${r._connectionId}/distributed`,
     bundleUrlHelp:
-      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
+      'Please install our <a target="_blank" href="BUNDLE_URL">integrator distributed adapter package</a> in your Salesforce account to create realtime exports.',
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',
