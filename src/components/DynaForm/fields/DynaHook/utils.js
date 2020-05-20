@@ -36,6 +36,7 @@ export const getCreateScriptMetadata = scriptId => ({
       name: 'insertFunction',
       type: 'select',
       label: 'Insert Function',
+      helpKey: 'hooks.insertFunction',
       options: [
         {
           items: hooksList.map(hook => ({
@@ -53,6 +54,7 @@ export const getCreateScriptMetadata = scriptId => ({
       refreshOptionsOnChangesTo: ['insertFunction'],
       resourceId: scriptId,
       label: 'Edit Content',
+      helpKey: 'hooks.scriptContent',
     },
   },
   layout: {
