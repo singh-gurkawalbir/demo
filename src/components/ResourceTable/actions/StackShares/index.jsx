@@ -1,4 +1,3 @@
-import { IconButton } from '@material-ui/core';
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
@@ -6,12 +5,13 @@ import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
   label: 'Stack Shares',
-  component: function StackShares({ resource }) {
+  component: function StackShares({ tooltipLabel, resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
     const resourceList = useSelectorMemo(
@@ -38,12 +38,15 @@ export default {
             }
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            label: tooltipLabel,
+          }}
           data-test="showStackShares"
           size="small"
           onClick={() => setShow(true)}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

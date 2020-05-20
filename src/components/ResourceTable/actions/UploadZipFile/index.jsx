@@ -1,11 +1,11 @@
 import { Fragment, useState, useCallback } from 'react';
-import { IconButton } from '@material-ui/core';
 import UploadIcon from '../../../../components/icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
   label: 'Upload ZIP File',
-  component: function UploadZipFile({ resourceType, resource }) {
+  component: function UploadZipFile({ tooltipLabel, resourceType, resource }) {
     const [showDialog, setShowDialog] = useState(false);
     const toggleDialog = useCallback(() => {
       setShowDialog(!showDialog);
@@ -22,12 +22,15 @@ export default {
             resourceId={resource._id}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            label: tooltipLabel,
+          }}
           data-test="toggleUploadZipFileModal"
           size="small"
           onClick={toggleDialog}>
           <UploadIcon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

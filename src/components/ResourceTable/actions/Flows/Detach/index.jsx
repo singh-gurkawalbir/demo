@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Detach Flow',
-  component: function DetachFlow({ resource }) {
+  component: function DetachFlow({ tooltipLabel, resource }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const handleDetachFlow = () => {
@@ -44,12 +44,15 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="detachFlow"
         size="small"
         onClick={handleDetachFlow}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

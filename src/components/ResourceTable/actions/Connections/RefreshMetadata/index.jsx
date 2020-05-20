@@ -1,11 +1,11 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 import actions from '../../../../../actions';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Refresh metadata',
-  component: function RefreshMetadata({ resource }) {
+  component: function RefreshMetadata({ tooltipLabel, resource }) {
     const dispatch = useDispatch();
     const handleClick = () => {
       if (resource.type === 'netsuite') {
@@ -51,12 +51,15 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="refreshConnectionMetadata"
         size="small"
         onClick={handleClick}>
         <RefreshIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

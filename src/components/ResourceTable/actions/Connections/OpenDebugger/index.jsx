@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import moment from 'moment';
 import * as selectors from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 import actions from '../../../../../actions';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Open debugger',
-  component: function OpenDebugger({ resource }) {
+  component: function OpenDebugger({ tooltipLabel, resource }) {
     const { _id: connectionId } = resource;
     const dispatch = useDispatch();
     // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api
@@ -34,12 +34,15 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="openDebugger"
         size="small"
         onClick={handleOpenDebuggerClick}>
         <DebugIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

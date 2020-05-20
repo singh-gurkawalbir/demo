@@ -1,11 +1,11 @@
-import { IconButton } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import Icon from '../../../../../components/icons/ReactivateTokenIcon';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Reactivate token',
-  component: function AccessTokens({ resourceType, resource }) {
+  component: function AccessTokens({ tooltipLabel, resourceType, resource }) {
     const dispatch = useDispatch();
 
     function handleReactivateClick() {
@@ -24,12 +24,15 @@ export default {
     }
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="reactivateAccessToken"
         size="small"
         onClick={() => handleReactivateClick()}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

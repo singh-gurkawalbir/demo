@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Revoke',
-  component: function Revoke({ resource: connection }) {
+  component: function Revoke({ tooltipLabel, resource: connection }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
@@ -34,9 +34,15 @@ export default {
     };
 
     return (
-      <IconButton data-test="revoke" size="small" onClick={handleClick}>
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
+        data-test="revoke"
+        size="small"
+        onClick={handleClick}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

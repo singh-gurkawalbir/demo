@@ -1,13 +1,13 @@
 import { Fragment, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import Icon from '../../../../icons/DebugIcon';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Configure debugger',
-  component: function ConfigDebugger({ resource }) {
+  component: function ConfigDebugger({ tooltipLabel, resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;
     const [show, setShow] = useState(false);
     const canAccess = useSelector(
@@ -29,12 +29,15 @@ export default {
             onClose={() => setShow(false)}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            label: tooltipLabel,
+          }}
           data-test="showConfigureDebugger"
           size="small"
           onClick={() => setShow(true)}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

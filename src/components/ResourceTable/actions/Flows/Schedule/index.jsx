@@ -1,12 +1,12 @@
 import { useState, Fragment } from 'react';
-import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/CalendarIcon';
 import FlowSchedule from '../../../../FlowSchedule';
 import ModalDialog from '../../../../ModalDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Schedule',
-  component: function Schedule({ resource }) {
+  component: function Schedule({ tooltipLabel, resource }) {
     const [showSchedule, setShowSchedule] = useState(false);
     const onScheduleClick = () => {
       setShowSchedule(!showSchedule);
@@ -26,12 +26,15 @@ export default {
             </div>
           </ModalDialog>
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            label: tooltipLabel,
+          }}
           data-test="showFlowSchedule"
           size="small"
           onClick={onScheduleClick}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

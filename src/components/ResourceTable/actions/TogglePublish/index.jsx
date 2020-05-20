@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import UnpublishIcon from '../../../../components/icons/UnpublishedIcon';
 import PublishIcon from '../../../../components/icons/PublishIcon';
 import actions from '../../../../actions';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
   label: r => (r.published ? 'Unpublish' : 'Publish'),
-  component: function TogglePublish({ resourceType, resource }) {
+  component: function TogglePublish({ tooltipLabel, resourceType, resource }) {
     const dispatch = useDispatch();
     const handleTogglePublishClick = () => {
       const patchSet = [
@@ -22,12 +22,15 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="togglePublish"
         size="small"
         onClick={handleTogglePublishClick}>
         {resource.published ? <UnpublishIcon /> : <PublishIcon />}
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

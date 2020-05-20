@@ -1,11 +1,11 @@
 import { Fragment, useState } from 'react';
-import { IconButton } from '@material-ui/core';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
   label: 'Audit log',
-  component: function AuditLogs({ resourceType, resource }) {
+  component: function AuditLogs({ tooltipLabel, resourceType, resource }) {
     const [show, setShow] = useState(false);
 
     return (
@@ -17,12 +17,15 @@ export default {
             onClose={() => setShow(false)}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            label: tooltipLabel,
+          }}
           data-test="showAuditLog"
           size="small"
           onClick={() => setShow(true)}>
           <AuditLogIcon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

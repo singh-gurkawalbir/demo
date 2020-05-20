@@ -1,12 +1,12 @@
 import { useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 import openExternalUrl from '../../../../../utils/window';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
   label: 'Download debug logs',
-  component: function DownloadDebugLogs({ resource }) {
+  component: function DownloadDebugLogs({ tooltipLabel, resource }) {
     const { _id: connectionId } = resource;
     let url = `/connections/${connectionId}/debug`;
     const additionalHeaders = useSelector(state =>
@@ -24,12 +24,15 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          label: tooltipLabel,
+        }}
         data-test="downloadDebugLog"
         size="small"
         onClick={handleDownloadDebugLogsClick}>
         <DownloadIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };
