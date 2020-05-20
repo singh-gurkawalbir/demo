@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
@@ -6,23 +6,23 @@ import DynaAction from '../../DynaForm/DynaAction';
 import * as selectors from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 const SaveButton = props => {
   const {
     submitButtonLabel = 'Submit',
     resourceType,
     resourceId,
-    classes,
     match,
     disabled = false,
     isGenerate = false,
     flowId,
   } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
@@ -60,4 +60,4 @@ const SaveButton = props => {
   );
 };
 
-export default withStyles(styles)(SaveButton);
+export default SaveButton;

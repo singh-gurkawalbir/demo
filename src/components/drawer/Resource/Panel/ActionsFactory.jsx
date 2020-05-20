@@ -1,4 +1,4 @@
-import { ButtonGroup, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import resourceConstants from '../../../../forms/constants/connection';
 import { getResourceSubType } from '../../../../utils/resource';
@@ -34,9 +34,7 @@ export const GenerateActions = ({ actions, actionProps }) => {
       return <Action key={action.id} {...actionProps} {...action} />;
     });
 
-  return (
-    <ButtonGroup className={classes.actionButtons}>{actionButtons}</ButtonGroup>
-  );
+  return <div className={classes.actionButtons}>{actionButtons}</div>;
 };
 
 export default function ActionsFactory(props) {
@@ -76,14 +74,15 @@ export default function ActionsFactory(props) {
   }
 
   return (
-    <ButtonGroup className={classes.actionButtons}>
+    <div className={classes.actionButtons}>
       {actionButtons.map(key => {
         const Action = consolidatedActions[key];
+
         // remove form disabled prop...
         // they dont necessary apply to action button
 
         return <Action key={key} dataTest={key} {...props} />;
       })}
-    </ButtonGroup>
+    </div>
   );
 }
