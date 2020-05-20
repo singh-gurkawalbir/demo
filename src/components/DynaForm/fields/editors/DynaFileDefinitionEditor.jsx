@@ -21,15 +21,15 @@ import helpTextMap from '../../../Help/helpTextMap';
  *    customized and saved by user while creation
  */
 const useStyles = makeStyles(theme => ({
-  fileDefinationContainer: {
+  fileDefinitionContainer: {
     flexDirection: `row !important`,
     width: '100%',
     alignItems: 'center',
   },
-  fileDefinationBtn: {
+  fileDefinitionBtn: {
     marginRight: theme.spacing(0.5),
   },
-  fileDefinationLabel: {
+  fileDefinitionLabel: {
     marginBottom: 0,
     marginRight: theme.spacing(1),
   },
@@ -180,11 +180,11 @@ function DynaFileDefinitionEditor(props) {
 
   return (
     <Fragment>
-      <div className={classes.fileDefinationContainer}>
+      <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
             <FileDefinitionEditorDialog
-              title={label || 'File Definition Editor'}
+              title={label || 'File definition editor'}
               id={id + resourceId}
               processor={processor}
               data={
@@ -198,13 +198,13 @@ function DynaFileDefinitionEditor(props) {
               disabled={disabled}
             />
           )}
-          <FormLabel className={classes.fileDefinationLabel}>
+          <FormLabel className={classes.fileDefinitionLabel}>
             {label}:
           </FormLabel>
           <Button
             variant="outlined"
             color="secondary"
-            className={classes.fileDefinationBtn}
+            className={classes.fileDefinitionBtn}
             onClick={handleEditorClick}>
             Launch
           </Button>
