@@ -193,6 +193,18 @@ const recycleBin = {
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
+const flowMetrics = {
+  request: (flowId, filters) =>
+    action(actionTypes.FLOW_METRICS.REQUEST, {
+      flowId,
+      filters,
+    }),
+
+  received: (flowId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
+  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+};
 const resource = {
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -443,6 +455,12 @@ const metadata = {
   receivedError: (metadataError, connectionId, commMetaPath) =>
     action(actionTypes.METADATA.RECEIVED_ERROR, {
       metadataError,
+      connectionId,
+      commMetaPath,
+    }),
+  validationError: (validationError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.VALIDATION_ERROR, {
+      validationError,
       connectionId,
       commMetaPath,
     }),
@@ -1503,10 +1521,10 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
       }),
-    received: ({ integrationId, errors }) =>
+    received: ({ integrationId, integrationErrors }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED, {
         integrationId,
-        errors,
+        integrationErrors,
       }),
   },
   flowErrorDetails: {
@@ -1608,6 +1626,35 @@ const errorManager = {
         flowId,
         resourceId,
         isResolved,
+      }),
+  },
+  retryData: {
+    request: ({ flowId, resourceId, retryId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+      }),
+    received: ({ flowId, resourceId, retryId, retryData }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }),
+    receivedError: ({ flowId, resourceId, retryId, error }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR, {
+        flowId,
+        resourceId,
+        retryId,
+        error,
+      }),
+    updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
       }),
   },
 };
@@ -1787,6 +1834,7 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  flowMetrics,
   job,
   errorManager,
   flow,

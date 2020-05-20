@@ -56,7 +56,6 @@ export default {
       '/type': 'http',
       '/assistant': 'acumatica',
       '/http/mediaType': 'json',
-      '/isHTTP': false,
       '/http/ping/method': 'GET',
       '/http/ping/relativeURI': '/FinancialPeriod',
     };

@@ -1,6 +1,16 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   optionsHandler: (fieldId, fields) => {
     if (
       [
@@ -121,8 +131,11 @@ export default {
       id: 'exportData',
       type: 'labeltitle',
       label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'What would you like to transfer from Salesforce??';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+          return 'What would you like to transfer from Salesforce?';
+        } else if (r.resourceType === 'realtime' || r.type === 'distributed') {
+          return 'What would you like to listen from Salesforce?';
+        }
 
         return 'What would you like to export from Salesforce?';
       },
@@ -223,7 +236,9 @@ export default {
       connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
       type: 'refreshableselect',
-      filterKey: 'salesforce-sObjects-triggerable',
+      bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+      bundleUrlHelp:
+        'Please install our <a target="_blank" href="BUNDLE_URL">integrator distributed adapter package</a> in your Salesforce account to create realtime exports.',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },

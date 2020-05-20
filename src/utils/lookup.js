@@ -76,7 +76,7 @@ export default {
 
     if (!formContext || !formContext.fields) return [];
     const lookupField = Object.values(formContext.fields).find(
-      field => field.key === lookupFieldId
+      field => field.id === lookupFieldId
     );
 
     return (lookupField && lookupField.value) || [];

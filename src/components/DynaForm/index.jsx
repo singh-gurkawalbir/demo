@@ -18,6 +18,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     overflow: 'hidden',
   },
+  actions: {
+    padding: theme.spacing(2, 0),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
 }));
 const DynaForm = props => {
   const {

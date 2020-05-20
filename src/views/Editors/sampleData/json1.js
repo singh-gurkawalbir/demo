@@ -7,6 +7,6 @@ const sampleData = {
 export default {
   key: 'json1',
   mode: 'json',
-  name: 'Simple JSON Record',
+  name: 'Simple JSON record',
   data: JSON.stringify(sampleData, null, 2),
 };

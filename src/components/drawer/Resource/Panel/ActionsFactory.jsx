@@ -15,8 +15,9 @@ const getConnectionType = resource => {
 };
 
 const useStylesButtons = makeStyles(theme => ({
-  actions: {
+  actionButtons: {
     padding: theme.spacing(2, 0),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 

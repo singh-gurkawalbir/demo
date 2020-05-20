@@ -71,7 +71,7 @@ const DynaHttpRequestBody = props => {
   const { adaptorType, connectionId } = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
       state,
-      'imports',
+      resourceType,
       resourceId
     );
     const { adaptorType, _connectionId: connectionId } = resourceData;
