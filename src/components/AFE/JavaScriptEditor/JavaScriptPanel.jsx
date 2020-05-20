@@ -174,7 +174,7 @@ export default function JavaScriptPanel(props) {
               onClick={handleInsertStubClick}
               disabled={disabled}
               data-test={insertStubKey}>
-              {`Insert ${hooksLabelMap[insertStubKey]} stub`}
+              {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
             </Button>
           )}
         </div>

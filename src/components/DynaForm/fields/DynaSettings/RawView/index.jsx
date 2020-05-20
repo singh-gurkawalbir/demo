@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core';
 import EditorField from '../../DynaEditor';
 import ActionButton from '../../../../ActionButton';
 import ScriptsIcon from '../../../../icons/ScriptsIcon';
-import DebugOnly from '../../../../DebugOnly';
 
 const useStyles = makeStyles(theme => ({
   editor: {
@@ -32,16 +31,14 @@ export default function RawView({ onToggleClick, ...rest }) {
         editorClassName={classes.editor}
         mode="json"
       />
-      <DebugOnly>
-        <ActionButton
-          data-test="toggleEditor"
-          variant="outlined"
-          color="secondary"
-          className={classes.rawSettingsActionButton}
-          onClick={onToggleClick}>
-          <ScriptsIcon />
-        </ActionButton>
-      </DebugOnly>
+      <ActionButton
+        data-test="toggleEditor"
+        variant="outlined"
+        color="secondary"
+        className={classes.rawSettingsActionButton}
+        onClick={onToggleClick}>
+        <ScriptsIcon />
+      </ActionButton>
     </div>
   );
 }
