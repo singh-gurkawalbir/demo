@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEqual } from 'lodash';
 import util from '../../../../utils/json';
 import { safeParse } from '../../../../utils/string';
 import javascript from './javascript';
@@ -37,7 +38,24 @@ export default {
   },
 
   dirty: editor => {
-    if (editor.data !== editor.initData) {
+    let parsedData;
+
+    try {
+      parsedData =
+        typeof editor.data === 'string' ? JSON.parse(editor.data) : editor.data;
+    } catch (err) {
+      return false;
+    }
+
+    if (editor.mode === 'script') {
+      parsedData =
+        parsedData &&
+        parsedData.resource &&
+        parsedData.resource.settingsForm &&
+        parsedData.resource.settingsForm.form;
+    }
+
+    if (!isEqual(parsedData, editor.initData)) {
       return true;
     }
 

@@ -6,8 +6,6 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import PanelHeader from '../../../../../../components/PanelHeader';
-import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -18,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralSection({ integrationId }) {
+export default function CustomSettings({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
@@ -32,28 +30,18 @@ export default function GeneralSection({ integrationId }) {
   );
   const fieldMeta = {
     fieldMap: {
-      name: {
-        id: 'name',
-        helpKey: 'integration.name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: name,
-      },
-      description: {
-        id: 'description',
-        helpKey: 'integration.description',
-        name: 'description',
-        type: 'text',
-        multiline: true,
-        maxRows: 5,
-
-        label: 'Description',
-        defaultValue: description,
+      settings: {
+        id: 'settings',
+        helpKey: 'integration.settings',
+        name: 'settings',
+        type: 'settings',
+        label: 'Settings',
+        defaultValue: settings,
+        collapsed: false,
       },
     },
     layout: {
-      fields: ['name', 'description'],
+      fields: ['settings'],
     },
   };
 
@@ -64,13 +52,8 @@ export default function GeneralSection({ integrationId }) {
     const patchSet = [
       {
         op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
+        path: '/settings',
+        value: formVal && formVal.settings,
       },
     ];
 
@@ -83,26 +66,20 @@ export default function GeneralSection({ integrationId }) {
     setCount(count => count + 1);
   };
 
-  const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
-    disabled: !canEditIntegration,
-    remount: count,
-    resourceType: 'integrations',
-    resourceId: integrationId,
-  });
-
   return (
     <Fragment>
-      <PanelHeader title="General" />
-
       <div className={classes.form}>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <DynaSubmit
-          formKey={formKey}
+        <DynaForm
           disabled={!canEditIntegration}
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
+          fieldMeta={fieldMeta}
+          resourceType="integrations"
+          resourceId={integrationId}
+          key={count}
+          render>
+          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+        </DynaForm>
       </div>
     </Fragment>
   );
