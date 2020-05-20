@@ -12,7 +12,6 @@ import DynaRefreshableSelect from './DynaRefreshableSelect';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
-import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -62,7 +61,6 @@ export default function DynaNSSavedSearch(props) {
     defaultValue,
     onFieldChange,
     id,
-    isValid,
     required,
     disabled,
     commMetaPath,
@@ -121,14 +119,13 @@ export default function DynaNSSavedSearch(props) {
     <Fragment>
       <div>
         <FormControl
-          error={!isValid}
           required={required}
           disabled={disabled}
           className={classes.nsSavedSearch}
           component="fieldset">
           <div className={classes.radioGroupWrapper}>
             <FormLabel component="legend" className={classes.radioGroupLabel}>
-              Saved search type
+              Saved search type:
             </FormLabel>
             <div className={classes.radioGroupWrapper}>
               <RadioGroup
@@ -152,7 +149,6 @@ export default function DynaNSSavedSearch(props) {
             </div>
           </div>
         </FormControl>
-        <ErroredMessageComponent {...props} />
       </div>
       <FormControl component="fieldset" className={classes.dynaNsSearched}>
         {searchType === 'public' ? (

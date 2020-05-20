@@ -1,9 +1,5 @@
 import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
-// import CheckboxIcon from '../components/icons/CheckboxUnselectedIcon';
-// import CheckboxSelectedIcon from '../components/icons/CheckboxSelectedIcon';
-// import RadioBtnIcon from '../components/icons/RadioBtnUnselectedIcon';
-// import RadioBtnSelectedIcon from '../components/icons/RadioBtnSelectedIcon';
 
 const appBarHeight = 36;
 
@@ -198,7 +194,6 @@ export default {
       root: {
         minHeight: 42,
         fontSize: 'unset',
-
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
@@ -408,7 +403,7 @@ export default {
         borderColor: colors.celigoNeutral3,
         height: 38,
         fontSize: 15,
-        padding: '0px 12px',
+        padding: '0px 15px',
         boxSizing: 'border-box',
         borderRadius: 2,
         '&:hover': {
@@ -497,8 +492,8 @@ export default {
         '&$disabled': {
           background: colors.celigoNeutral2,
           color: colors.celigoNeutral4,
-          '&hover': {
-            borderColor: '#cc0000',
+          '& >.MuiSelect-icon': {
+            display: 'none',
           },
         },
       },
@@ -618,19 +613,6 @@ export default {
       },
     },
   },
-
-  // TODO: Dave It is giving an error in console
-
-  // props: {
-  //   MuiCheckbox: {
-  //     icon: <CheckboxIcon />,
-  //     checkedIcon: <CheckboxSelectedIcon />,
-  //   },
-  //   MuiRadio: {
-  //     icon: <RadioBtnIcon />,
-  //     checkedIcon: <RadioBtnSelectedIcon />,
-  //   },
-  // },
 
   props: {
     MuiCheckbox: {
