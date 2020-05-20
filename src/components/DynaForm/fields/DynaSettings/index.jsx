@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
@@ -12,6 +12,7 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 import useIntegration from '../../../../hooks/useIntegration';
+import FieldHelp from '../../../DynaForm/FieldHelp';
 
 const emptyObj = {};
 // TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
@@ -49,6 +50,9 @@ const useStyles = makeStyles(theme => ({
   },
   expDetails: {
     padding: 0,
+  },
+  launchButton: {
+    marginLeft: theme.spacing(2),
   },
 }));
 const settingsContainer = {
@@ -125,31 +129,48 @@ export default function DynaSettings(props) {
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.label}>
             {settingsContainer.label}
+            {isDeveloper && !isViewMode && (
+              <Fragment>
+                <Button
+                  data-test="form-editor-action"
+                  variant="outlined"
+                  className={classes.launchButton}
+                  // color="secondary"
+                  onClick={toggleEditMode}>
+                  Launch form builder
+                </Button>
+                <FieldHelp
+                  id="settingsForm"
+                  resourceType={resourceType}
+                  helpKey="settingsForm"
+                  label="Settings form builder"
+                />
+              </Fragment>
+            )}
           </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.expDetails}>
-          {isDeveloper && !isViewMode && (
-            <EditDrawer
-              editorId={id}
-              resourceId={resourceId}
-              resourceType={resourceType}
-              settingsForm={settingsForm}
-              onClose={handleEditClose}
-            />
-          )}
           {hasSettingsForm ? (
             <FormView
               resourceId={resourceId}
               resourceType={resourceType}
               disabled={disabled}
               onFormChange={handleSettingFormChange}
-              onToggleClick={toggleEditMode}
             />
           ) : (
-            <RawView {...props} onToggleClick={toggleEditMode} />
+            <RawView {...props} />
           )}
         </ExpansionPanelDetails>
       </ExpansionPanel>
+      {isDeveloper && !isViewMode && (
+        <EditDrawer
+          editorId={id}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          settingsForm={settingsForm}
+          onClose={handleEditClose}
+        />
+      )}
     </div>
   );
 }

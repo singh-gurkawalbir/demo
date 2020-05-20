@@ -1,6 +1,8 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
+  settingsForm:
+    'You can launch and use the form builder if you want to create a form to manage the settings object for this resource.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
