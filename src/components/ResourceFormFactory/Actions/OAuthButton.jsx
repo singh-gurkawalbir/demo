@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
