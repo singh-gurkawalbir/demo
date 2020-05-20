@@ -161,13 +161,13 @@ export default function Suggestions(props) {
     () => getMatchingText(value, textInsertPosition),
     [textInsertPosition, value]
   );
-  const filteredLookup = useMemo(
-    () =>
-      lookups.filter(
-        l => l.name.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
-      ),
-    [lookups, matchingText]
-  );
+  const filteredLookup = useMemo(() => {
+    if (!lookups || !lookups.filter) return [];
+
+    return lookups.filter(
+      l => l.name.toLowerCase().indexOf(matchingText.toLowerCase()) > -1
+    );
+  }, [lookups, matchingText]);
   const filteredExtracts = useMemo(
     () =>
       extracts
