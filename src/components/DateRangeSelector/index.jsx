@@ -206,8 +206,12 @@ export default function DateRangeSelector({ value, onSave }) {
               showPreview={false}
             />
             <div>
-              <Button onClick={handleSave}>Apply</Button>
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" color="primary" onClick={handleSave}>
+                Apply
+              </Button>
+              <Button variant="text" color="primary" onClick={handleClose}>
+                Cancel
+              </Button>
             </div>
           </div>
         )}
