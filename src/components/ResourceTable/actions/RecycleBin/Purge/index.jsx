@@ -7,8 +7,7 @@ import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resour
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Purge',
-  component: function Purge({ tooltipLabel, resource }) {
+  component: function Purge({ resource }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const handleClick = () => {
@@ -40,7 +39,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Purge',
           }}
           size="small"
           onClick={handleClick}>

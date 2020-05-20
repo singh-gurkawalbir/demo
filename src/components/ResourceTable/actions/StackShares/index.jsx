@@ -10,8 +10,7 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
-  label: 'Stack Shares',
-  component: function StackShares({ tooltipLabel, resource }) {
+  component: function StackShares({ resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
     const resourceList = useSelectorMemo(
@@ -40,7 +39,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Stack Shares',
           }}
           data-test="showStackShares"
           size="small"

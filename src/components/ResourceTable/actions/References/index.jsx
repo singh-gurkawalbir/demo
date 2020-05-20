@@ -5,8 +5,7 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 // TODO: In case of monitor user, refernces shouldn't call accesstokens
 export default {
-  label: 'Used by',
-  component: function References({ tooltipLabel, resourceType, resource }) {
+  component: function References({ resourceType, resource }) {
     const [show, setShow] = useState(false);
 
     return (
@@ -20,7 +19,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Used by',
           }}
           data-test="showReferences"
           size="small"

@@ -8,8 +8,7 @@ import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resour
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Restore',
-  component: function Restore({ tooltipLabel, resource }) {
+  component: function Restore({ resource }) {
     const dispatch = useDispatch();
     const handleClick = () => {
       dispatch(
@@ -24,7 +23,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: tooltipLabel,
+            label: 'Restore',
           }}
           size="small"
           onClick={handleClick}
