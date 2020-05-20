@@ -323,8 +323,6 @@ export default function Panel(props) {
             resourceType={resourceType}
             resourceId={id}
             flowId={flowId}
-            // TODO: push this to directly to the button
-            submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
           />
           <ActionsFactory
@@ -333,7 +331,6 @@ export default function Panel(props) {
             resourceType={resourceType}
             resourceId={id}
             flowId={flowId}
-            // TODO: push this to directly to the button
             submitButtonLabel={submitButtonLabel}
             onCancel={abortAndClose}
           />

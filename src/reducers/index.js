@@ -4382,10 +4382,11 @@ export const lookupProcessorResourceType = (state, id) => {
     // TODO: we need a better pattern for logging warnings. We need a common util method
     // which logs these warning only if the build is dev... if build is prod, these
     // console.warn/logs should not even be bundled by webpack...
-    // eslint-disable-next-line
-      return console.warn(
-      'No patch-set available to determine new Page Processor resourceType.'
-    );
+    // no need to log
+    //   return console.warn(
+    //   'No patch-set available to determine new Page Processor resourceType.'
+    // );'
+    return;
   }
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
@@ -4396,10 +4397,10 @@ export const lookupProcessorResourceType = (state, id) => {
   // console.log(`adaptorType-${id}`, adaptorType);
 
   if (!adaptorType || !adaptorType.value) {
-    // eslint-disable-next-line
-     return console.warn(
-      'No replace operation against /adaptorType found in the patch-set.'
-    );
+    //  return console.warn(
+    //   'No replace operation against /adaptorType found in the patch-set.'
+    // );
+    return;
   }
 
   return adaptorType.value.includes('Export') ? 'exports' : 'imports';
