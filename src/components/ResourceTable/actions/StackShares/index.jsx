@@ -21,7 +21,7 @@ export default {
     const showStackShare = useCallback(() => {
       setShow(true);
     }, []);
-    const handleStackStareClose = useCallback(() => {
+    const handleStackShareClose = useCallback(() => {
       setShow(false);
     }, []);
 
@@ -34,7 +34,7 @@ export default {
         {show && (
           <ShareStackDialog
             stackId={resource._id}
-            onClose={handleStackStareClose}
+            onClose={handleStackShareClose}
             stackShareCollectionById={
               stackShareCollection &&
               stackShareCollection.filter(
