@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { celigoListCompare } from './sort';
 
 const emptySet = [];
 /**
@@ -130,34 +131,7 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
     return paths;
   }
 
-  return paths.sort((a, b) => {
-    if (
-      (a.id && a.id.indexOf('[*]') > -1 && b.id && b.id.indexOf('[*]') > -1) ||
-      (a.id && a.id.indexOf('[*]') === -1 && b.id && b.id.indexOf('[*]') === -1)
-    ) {
-      return a.id > b.id ? 1 : -1;
-    }
-
-    if (
-      a.id &&
-      a.id.indexOf('[*]') === -1 &&
-      b.id &&
-      b.id.indexOf('[*]') > -1
-    ) {
-      return -1;
-    }
-
-    if (
-      a.id &&
-      a.id.indexOf('[*]') > -1 &&
-      b.id &&
-      b.id.indexOf('[*]') === -1
-    ) {
-      return 1;
-    }
-
-    return 0;
-  });
+  return paths.sort(celigoListCompare);
 }
 
 /**
@@ -295,34 +269,7 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
     return paths;
   }
 
-  return paths.sort((a, b) => {
-    if (
-      (a.id && b.id && a.id.indexOf('[*]') > -1 && b.id.indexOf('[*]') > -1) ||
-      (a.id && b.id && a.id.indexOf('[*]') === -1 && b.id.indexOf('[*]') === -1)
-    ) {
-      return a.id > b.id ? 1 : -1;
-    }
-
-    if (
-      a.id &&
-      b.id &&
-      a.id.indexOf('[*]') === -1 &&
-      b.id.indexOf('[*]') > -1
-    ) {
-      return -1;
-    }
-
-    if (
-      a.id &&
-      b.id &&
-      a.id.indexOf('[*]') > -1 &&
-      b.id.indexOf('[*]') === -1
-    ) {
-      return 1;
-    }
-
-    return 0;
-  });
+  return paths.sort(celigoListCompare);
 }
 
 /**
