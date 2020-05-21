@@ -1,6 +1,8 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
+  settingsForm:
+    'You can launch and use the form builder if you want to create a form to manage the settings object for this resource.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -2096,5 +2098,9 @@ export default {
   'myaccount.timeFormat':
     'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': `Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.`,
+  'hooks.insertFunction':
+    'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
+  'hooks.scriptContent':
+    'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
   // #region UI help text
 };

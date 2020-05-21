@@ -272,6 +272,10 @@ export default {
       retValues['/http/existingDataId'] = undefined;
     }
 
+    if (retValues['/inputMode'] !== 'blob') {
+      delete retValues['/blobKeyPath'];
+    }
+
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
 

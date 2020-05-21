@@ -33,7 +33,10 @@ export default {
       newValues['/type'] = 'webhook';
       newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+
+      if (application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+      } else newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
       newValues['/resourceType'] = type;
