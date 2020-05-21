@@ -60,6 +60,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
       showLookup: false,
       value: values[pathParam.id],
       required: !!pathParam.required,
+      helpText: pathParam.description,
     };
 
     if (pathParam.options && pathParam.options.length > 0) {
@@ -110,6 +111,7 @@ export function exportTypeFieldsMeta({
 
   return [
     {
+      helpKey: 'export.type',
       fieldId: 'assistantMetadata.exportType',
       options: [
         {
