@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useCallback } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
 import Icon from '../../../icons/TrashIcon';
