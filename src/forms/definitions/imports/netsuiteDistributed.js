@@ -8,6 +8,8 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+    } else {
+      delete newValues['/blobKeyPath'];
     }
 
     const subrecords = newValues['/netsuite_da/subrecords'];

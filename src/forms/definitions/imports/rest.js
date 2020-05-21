@@ -174,6 +174,10 @@ export default {
       retValues['/rest/existingDataId'] = undefined;
     }
 
+    if (retValues['/inputMode'] !== 'blob') {
+      delete retValues['/blobKeyPath'];
+    }
+
     delete retValues['/inputMode'];
 
     return {
