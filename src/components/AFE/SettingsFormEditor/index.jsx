@@ -147,9 +147,11 @@ export default function SettingsFormEditor({
             readOnly
           />
         ) : (
-          <Typography>
-            Click the ‘test form’ button above to preview form output.
-          </Typography>
+          status !== 'error' && (
+            <Typography>
+              Click the ‘test form’ button above to preview form output.
+            </Typography>
+          )
         )}
       </PanelGridItem>
 
