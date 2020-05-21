@@ -1,8 +1,39 @@
 import getUnixTime from 'date-fns/getUnixTime';
+import formatDistanceStrict from 'date-fns/formatDistanceStrict';
+import startOfDay from 'date-fns/startOfDay';
+import addDays from 'date-fns/addDays';
+import isSameDay from 'date-fns/isSameDay';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
-export const getDurationLabel = () => 'Last 24 hours';
+export const getDurationLabel = (ranges = []) => {
+  const { startDate, endDate } = ranges[0] || {};
+  const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
+  const distanceInHours = formatDistanceStrict(startDate, endDate, {
+    unit: 'hour',
+  });
+  const startOfToday = startOfDay(new Date());
+  const startOfYesterday = startOfDay(addDays(new Date(), -1));
+
+  switch (distance) {
+    case '1 day':
+      if (startDate.toISOString() === startOfToday.toISOString()) {
+        return 'Today';
+      } else if (startDate.toISOString() === startOfYesterday.toISOString()) {
+        return 'Yesterday';
+      } else if (
+        distanceInHours === '24 hours' &&
+        isSameDay(addDays(new Date(), -1), startDate) &&
+        isSameDay(new Date(), endDate)
+      ) {
+        return 'Last 24 hours';
+      }
+
+      return 'Custom';
+    default:
+      return 'Custom';
+  }
+};
 
 export const getFlowMetricsQuery = (flowId, userId, filters) => {
   const { range = {} } = filters;

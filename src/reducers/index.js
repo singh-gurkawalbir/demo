@@ -62,6 +62,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import { stringCompare } from '../utils/sort';
 
 const emptySet = [];
 const emptyObject = {};
@@ -1061,7 +1062,7 @@ export function marketplaceConnectors(
 
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort(stringCompare('name'));
 }
 
 export const makeMarketPlaceConnectorsSelector = () =>

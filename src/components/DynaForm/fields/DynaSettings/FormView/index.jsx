@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
-import useIntegration from '../../../../../hooks/useIntegration';
 
 const useStyles = makeStyles({
   spinnerWrapper: {
@@ -30,20 +29,12 @@ export default function FormView({
   resourceId,
   resourceType,
   onFormChange,
-  onToggleClick,
   disabled,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const formState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
-  );
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
-  );
-  const integrationId = useIntegration(resourceType, resourceId);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
   useEffect(() => {
@@ -76,14 +67,6 @@ export default function FormView({
     return (
       <div>
         <Typography>{formState.error}</Typography>
-        {isDeveloper && !isViewMode && (
-          <Button
-            data-test="toggleEditor"
-            variant="contained"
-            onClick={onToggleClick}>
-            Launch form builder
-          </Button>
-        )}
       </div>
     );
   }
@@ -98,15 +81,6 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      {isDeveloper && !isViewMode && (
-        <Button
-          data-test="toggleEditor"
-          variant="outlined"
-          color="secondary"
-          onClick={onToggleClick}>
-          Launch form builder
-        </Button>
-      )}
       <DynaForm formKey={formKey} fieldMeta={formState.meta} />
     </div>
   );

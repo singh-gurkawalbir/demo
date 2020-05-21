@@ -62,7 +62,7 @@ const rangeList = [
   {
     label: 'Last 7 Days',
     range: () => ({
-      startDate: defineds.startOfLastWeek,
+      startDate: defineds.startOfLastSevenDays,
       endDate: defineds.endOfToday,
     }),
   },

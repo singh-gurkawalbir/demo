@@ -1,4 +1,5 @@
 import { isProduction } from '../forms/utils';
+import { stringCompare } from '../utils/sort';
 
 // Schema details:
 // ---------------
@@ -776,16 +777,7 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-connectors.sort((a, b) => {
-  const nameA = a.name ? a.name.toUpperCase() : '';
-  const nameB = b.name ? b.name.toUpperCase() : '';
-
-  if (nameA < nameB) return -1;
-
-  if (nameA > nameB) return 1;
-
-  return 0; // names must be equal
-});
+connectors.sort(stringCompare('name'));
 
 export const groupApplications = (
   resourceType,
@@ -820,16 +812,7 @@ export const groupApplications = (
     });
   }
 
-  assistantConnectors.sort((a, b) => {
-    const nameA = a.name ? a.name.toUpperCase() : '';
-    const nameB = b.name ? b.name.toUpperCase() : '';
-
-    if (nameA < nameB) return -1;
-
-    if (nameA > nameB) return 1;
-
-    return 0; // names must be equal
-  });
+  assistantConnectors.sort(stringCompare('name'));
 
   let filteredConnectors = assistantConnectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
