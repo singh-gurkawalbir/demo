@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/RevokeTokenIcon';
@@ -5,13 +6,14 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  component: function Revoke({ resource: connection }) {
+  component: function Revoke({ resource: connection = {} }) {
+    const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
       const message = [
         'Are you sure you want to revoke',
-        connection.name || connection._id,
+        connectionName || connectionId,
         'token?',
       ].join(' ');
 
@@ -25,12 +27,12 @@ export default {
           {
             label: 'Yes',
             onClick: () => {
-              dispatch(actions.connection.requestRevoke(connection._id));
+              dispatch(actions.connection.requestRevoke(connectionId));
             },
           },
         ],
       });
-    };
+    }, [confirmDialog, connectionId, connectionName, dispatch]);
 
     return (
       <IconButtonWithTooltip

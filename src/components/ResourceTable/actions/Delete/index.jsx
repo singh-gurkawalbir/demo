@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
 import Icon from '../../../icons/TrashIcon';
@@ -9,18 +9,26 @@ import ResourceReferences from '../../../ResourceReferences';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  component: function Delete({ resourceType, resource }) {
+  component: function Delete({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(false);
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)
     );
     const { confirmDialog } = useConfirmDialog();
-    const type =
-      resourceType && resourceType.indexOf('/licenses') >= 0
-        ? 'license'
-        : MODEL_PLURAL_TO_LABEL[resourceType];
-    const handleClick = () => {
+    const type = useMemo(
+      () =>
+        resourceType && resourceType.indexOf('/licenses') >= 0
+          ? 'license'
+          : MODEL_PLURAL_TO_LABEL[resourceType],
+      [resourceType]
+    );
+    const deleteResource = useCallback(() => {
+      dispatch(actions.resource.delete(resourceType, resourceId));
+      setShowRef(true);
+    }, [dispatch, resourceId, resourceType]);
+    const handleDeleteClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${type}?`,
@@ -30,15 +38,11 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(actions.resource.delete(resourceType, resource._id));
-              setShowRef(true);
-            },
+            onClick: deleteResource,
           },
         ],
       });
-    };
-
+    }, [confirmDialog, deleteResource, type]);
     const handleResourceReferenceClose = () => {
       setShowRef(false);
     };
@@ -51,7 +55,7 @@ export default {
           }}
           data-test="deleteResource"
           size="small"
-          onClick={handleClick}>
+          onClick={handleDeleteClick}>
           <Icon />
         </IconButtonWithTooltip>
         {showRef && resourceReferences && resourceReferences.length > 0 && (
@@ -65,7 +69,7 @@ export default {
             // suffixed with "Dialog". Why not this one?
             title
             resourceType={resourceType}
-            resourceId={resource._id}
+            resourceId={resourceId}
             onClose={handleResourceReferenceClose}
           />
         )}

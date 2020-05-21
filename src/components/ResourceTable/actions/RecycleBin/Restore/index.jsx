@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Icon from '../../../../icons/RestoreIcon';
@@ -10,14 +10,14 @@ import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 export default {
   component: function Restore({ resource }) {
     const dispatch = useDispatch();
-    const handleClick = () => {
+    const handleRestoreClick = useCallback(() => {
       dispatch(
         actions.recycleBin.restore(
           `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
           resource.doc && resource.doc._id
         )
       );
-    };
+    }, [dispatch, resource.doc, resource.model]);
 
     return (
       <Fragment>
@@ -26,7 +26,7 @@ export default {
             title: 'Restore',
           }}
           size="small"
-          onClick={handleClick}
+          onClick={handleRestoreClick}
           component={Link}
           to={getRoutePath(
             `/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`

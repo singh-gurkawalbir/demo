@@ -1,13 +1,14 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import Icon from '../../../../../components/icons/ReactivateTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  component: function AccessTokens({ resourceType, resource }) {
+  component: function AccessTokens({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-
-    function handleReactivateClick() {
+    const handleReactivateClick = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -16,11 +17,11 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(
-        actions.resource.commitStaged(resourceType, resource._id, 'value')
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
-    }
+    }, [dispatch, resourceId, resourceType]);
 
     return (
       <IconButtonWithTooltip

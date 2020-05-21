@@ -5,11 +5,12 @@ import Icon from '../../../icons/DownloadIcon';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  component: function DownloadResources({ resourceType, resource }) {
+  component: function DownloadResources({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const handleDownloadReferenceClick = useCallback(() => {
-      dispatch(actions.resource.downloadFile(resource._id, resourceType));
-    }, [dispatch, resource._id, resourceType]);
+      dispatch(actions.resource.downloadFile(resourceId, resourceType));
+    }, [dispatch, resourceId, resourceType]);
 
     return (
       <IconButtonWithTooltip

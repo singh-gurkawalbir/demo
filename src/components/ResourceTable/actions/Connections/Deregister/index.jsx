@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -21,12 +22,7 @@ export default {
           'connections'
         ).edit
     );
-
-    if (!canAccess || isStandalone) {
-      return null;
-    }
-
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -53,7 +49,18 @@ export default {
           },
         ],
       });
-    };
+    }, [
+      confirmDialog,
+      connection._id,
+      connectionId,
+      connectionName,
+      dispatch,
+      integrationId,
+    ]);
+
+    if (!canAccess || isStandalone) {
+      return null;
+    }
 
     return (
       <IconButtonWithTooltip

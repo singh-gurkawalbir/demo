@@ -1,25 +1,25 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  component: function AuditLogs({ resourceType, resource }) {
+  component: function AuditLogs({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const [show, setShow] = useState(false);
-    const showAutitLogs = () => {
+    const showAutitLogs = useCallback(() => {
       setShow(true);
-    };
-
-    const handleAuditLogsClose = () => {
+    }, []);
+    const handleAuditLogsClose = useCallback(() => {
       setShow(false);
-    };
+    }, []);
 
     return (
       <Fragment>
         {show && (
           <AuditLogDialog
             resourceType={resourceType}
-            resourceId={resource._id}
+            resourceId={resourceId}
             onClose={handleAuditLogsClose}
           />
         )}

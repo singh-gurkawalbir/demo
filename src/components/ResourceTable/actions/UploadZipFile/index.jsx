@@ -23,7 +23,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            title: 'Upload ZIP File',
+            title: 'Upload ZIP file',
           }}
           data-test="toggleUploadZipFileModal"
           size="small"

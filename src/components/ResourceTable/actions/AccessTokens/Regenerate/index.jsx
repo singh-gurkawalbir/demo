@@ -1,15 +1,16 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import Icon from '../../../../../components/icons/RegenerateTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  component: function AccessTokens({ resource }) {
+  component: function AccessTokens({ resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-
-    function handleRegenerateClick() {
-      dispatch(actions.accessToken.generateToken(resource._id));
-    }
+    const handleRegenerateClick = useCallback(() => {
+      dispatch(actions.accessToken.generateToken(resourceId));
+    }, [dispatch, resourceId]);
 
     return (
       <IconButtonWithTooltip

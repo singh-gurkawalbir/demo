@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import Icon from '../../../icons/ViewReferencesIcon';
 import ResourceReferences from '../../../ResourceReferences';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
@@ -7,13 +7,12 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 export default {
   component: function References({ resourceType, resource }) {
     const [show, setShow] = useState(false);
-    const showReferences = () => {
+    const showReferences = useCallback(() => {
       setShow(true);
-    };
-
-    const handleReferencesClose = () => {
+    }, []);
+    const handleReferencesClose = useCallback(() => {
       setShow(false);
-    };
+    }, []);
 
     return (
       <Fragment>

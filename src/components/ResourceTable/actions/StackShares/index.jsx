@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
@@ -18,13 +18,12 @@ export default {
       ssharesFilterConfig
     );
     const stackShareCollection = resourceList.resources;
-    const showStackShare = () => {
+    const showStackShare = useCallback(() => {
       setShow(true);
-    };
-
-    const handleStackStareClose = () => {
+    }, []);
+    const handleStackStareClose = useCallback(() => {
       setShow(false);
-    };
+    }, []);
 
     useEffect(() => {
       dispatch(actions.resource.requestCollection('sshares'));
@@ -46,7 +45,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            title: 'Stack Shares',
+            title: 'Stack shares',
           }}
           data-test="showStackShares"
           size="small"

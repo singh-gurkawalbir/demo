@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
@@ -7,20 +8,22 @@ import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 export default {
   component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
-    let url = `/connections/${connectionId}/debug`;
+    const url = `/connections/${connectionId}/debug`;
     const additionalHeaders = useSelector(state =>
       selectors.accountShareHeader(state, url)
     );
-    const handleDownloadDebugLogsClick = () => {
+    const handleDownloadDebugLogsClick = useCallback(() => {
+      let _url = url;
+
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-        url += `?integrator-ashareid=${
+        _url += `?integrator-ashareid=${
           additionalHeaders['integrator-ashareid']
         }`;
       }
 
-      url = `/api${url}`;
-      openExternalUrl({ url });
-    };
+      _url = `/api${url}`;
+      openExternalUrl({ url: _url });
+    }, [additionalHeaders, url]);
 
     return (
       <IconButtonWithTooltip

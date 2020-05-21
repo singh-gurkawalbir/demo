@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import * as selectors from '../../../../../reducers';
@@ -14,9 +15,7 @@ export default {
       state =>
         selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
-
-    if (!canAccess) return null;
-    const handleOpenDebuggerClick = () => {
+    const handleOpenDebuggerClick = useCallback(() => {
       dispatch(actions.connection.requestDebugLogs(connectionId));
 
       dispatch(
@@ -30,7 +29,9 @@ export default {
           },
         ])
       );
-    };
+    }, [connectionId, dispatch]);
+
+    if (!canAccess) return null;
 
     return (
       <IconButtonWithTooltip
