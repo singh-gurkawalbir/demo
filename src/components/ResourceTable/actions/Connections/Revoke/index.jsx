@@ -10,7 +10,10 @@ export default {
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleClick = useCallback(() => {
+    const revokeConnection = useCallback(() => {
+      dispatch(actions.connection.requestRevoke(connectionId));
+    }, [connectionId, dispatch]);
+    const handleRevokeClick = useCallback(() => {
       const message = [
         'Are you sure you want to revoke',
         connectionName || connectionId,
@@ -26,13 +29,11 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(actions.connection.requestRevoke(connectionId));
-            },
+            onClick: revokeConnection,
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, dispatch]);
+    }, [confirmDialog, connectionId, connectionName, revokeConnection]);
 
     return (
       <IconButtonWithTooltip
@@ -41,7 +42,7 @@ export default {
         }}
         data-test="revoke"
         size="small"
-        onClick={handleClick}>
+        onClick={handleRevokeClick}>
         <Icon />
       </IconButtonWithTooltip>
     );
