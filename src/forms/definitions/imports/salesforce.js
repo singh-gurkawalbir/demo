@@ -54,6 +54,10 @@ export default {
       }
     }
 
+    if (newValues['/inputMode'] !== 'blob') {
+      delete newValues['/blobKeyPath'];
+    }
+
     delete newValues['/inputMode'];
 
     return {

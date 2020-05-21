@@ -77,7 +77,8 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'Configure CSV parse options',
+      label: 'CSV parser helper:',
+      helpKey: 'file.csvParse',
       defaultValue: r =>
         (r.file && r.file.csv) || {
           rowsToSkip: 0,

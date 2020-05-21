@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import { useCallback, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -28,6 +28,18 @@ export default function DynaSelectOptionsGenerator(props) {
       commMetaPath: options.commMetaPath || commMetaPath,
       filterKey: options.filterKey || filterKey,
     })
+  );
+
+  useEffect(
+    () => () => {
+      dispatch(
+        actions.metadata.clearValidations(
+          connectionId,
+          options.commMetaPath || commMetaPath
+        )
+      );
+    },
+    [commMetaPath, connectionId, dispatch, options.commMetaPath]
   );
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {

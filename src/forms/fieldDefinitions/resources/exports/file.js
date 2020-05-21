@@ -46,7 +46,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'CSV', value: 'csv' },
+          { label: 'CSV (or any delimited text file)', value: 'csv' },
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
@@ -197,7 +197,8 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
+    label: 'CSV parser helper:',
+    helpKey: 'file.csvParse',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         rowsToSkip: 0,

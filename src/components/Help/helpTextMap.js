@@ -1,6 +1,8 @@
 // needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
+  settingsForm:
+    'You can launch and use the form builder if you want to create a form to manage the settings object for this resource.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -1949,7 +1951,7 @@ export default {
     'The invited user will have permissions to monitor the integrations listed here, but they will not have permissions to make any changes to them. They will however be able to run the flows within the integrations.',
   'accesstoken.description':
     'Describe how your token is being used and be sure to mention exactly where your token is being stored externally.',
-  'accesstoken.scope':
+  'accesstoken.fullAccess':
     'Scope is used to define access permissions for your token.\n\n<ul><li><b>Full Access</b> - Full access tokens provisioned at the account level have unrestricted permissions to your integrator.io account. Please be very careful provisioning full access tokens at the account level!  Full access tokens provisioned at the integration level can only be used to invoke exports and imports that belong to the integration, or to invoke virtual exports and imports using one of the connections that belong to the integration. Full access tokens provisioned at the integration level also include read-only access permissions to the resources that belong to the integration.</li>\n\n<li><b>Custom</b> - Custom scope tokens can be created with only minimal permissions to specific resources in your integrator.io account, and they can only be used to invoke very specific integrator.io APIs (i.e. only the APIs required to import or export data from external applications).</li></ul>',
   'accesstoken.name':
     'Name your token so that you can easily reference it from other parts of the application',
@@ -2096,5 +2098,13 @@ export default {
   'myaccount.timeFormat':
     'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': `Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an 'Export' or an 'Import' there are 'Hooks' fields available in the UI where custom code can be configured.`,
+  'hooks.insertFunction':
+    'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
+  'hooks.scriptContent':
+    'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
+  'file.csvGenerate':
+    'The CSV generator helper can be used to visualize and experiment with how integrator.io builds CSV files (or any other delimited text files) from the JSON records/rows being processed by your flow.',
+  'file.csvParse':
+    'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   // #region UI help text
 };

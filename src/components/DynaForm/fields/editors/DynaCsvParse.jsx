@@ -35,6 +35,7 @@ export default function DynaCsvParse(props) {
     resourceId,
     resourceType,
     disabled,
+    helpKey,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
@@ -124,17 +125,16 @@ export default function DynaCsvParse(props) {
             disabled={disabled}
           />
         )}
-        <FormLabel className={classes.csvLabel}>CSV parsing:</FormLabel>
+        <FormLabel className={classes.csvLabel}>{label}</FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.csvBtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
-        {/* TODO: surya we need to add the helptext for the upload file */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} helpKey={helpKey} />
       </div>
     </Fragment>
   );

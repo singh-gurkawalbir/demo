@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../../index';
 
 function* requestRetryData({ flowId, resourceId, retryId }) {
   try {
-    const retryData = yield apiCallWithRetry({
+    const retryDataResponse = yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/${retryId}/data`,
       opts: {
         method: 'GET',
@@ -17,7 +17,7 @@ function* requestRetryData({ flowId, resourceId, retryId }) {
         flowId,
         resourceId,
         retryId,
-        retryData,
+        retryData: retryDataResponse && retryDataResponse.data,
       })
     );
   } catch (e) {

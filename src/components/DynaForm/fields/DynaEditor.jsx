@@ -61,6 +61,7 @@ export default function DynaEditor({
   description,
   errorMessages,
   isValid,
+  helpKey,
 }) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -142,8 +143,7 @@ export default function DynaEditor({
         {showEditor && editorDialog}
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel>{label}</FormLabel>
-          {/* {TODO (Dave): props did not have the helpkey so passing label for design purpose} */}
-          <FieldHelp helpText={label} />
+          {helpKey && <FieldHelp helpKey={helpKey} />}
         </div>
 
         <div className={clsx(classes.inlineEditorContainer, editorClassName)}>

@@ -9,7 +9,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'CSV', value: 'csv' },
+          { label: 'CSV (or any delimited text file)', value: 'csv' },
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
@@ -100,7 +100,8 @@ export default {
   },
   'file.csv': {
     type: 'csvgenerate',
-    label: 'Configure CSV generate options',
+    label: 'CSV generator helper:',
+    helpKey: 'file.csvGenerate',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         includeHeader: true,
