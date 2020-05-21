@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const defaultFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt'],
+  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey'],
 };
 
 export default function OpenErrors({ flowId, resourceId, show }) {
