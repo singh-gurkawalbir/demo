@@ -39,21 +39,15 @@ export default function DynaWebHookSampleData(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
-    if (!options.webHookUrl || !options.webHookProvider) {
+    if (!options.webHookUrl) {
       return enqueueSnackbar({
-        message: 'Url and Provider are mandatory',
+        message: 'Webhook url is mandatory',
         variant: 'error',
       });
     }
 
     dispatch(actions.resource.request('exports', resourceId));
-  }, [
-    dispatch,
-    enqueueSnackbar,
-    options.webHookProvider,
-    options.webHookUrl,
-    resourceId,
-  ]);
+  }, [dispatch, enqueueSnackbar, options.webHookUrl, resourceId]);
   const handleManualEnter = useCallback(() => {
     setManualEnter(true);
   }, []);
