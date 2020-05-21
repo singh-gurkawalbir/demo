@@ -60,6 +60,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
         type: 'text',
         value: values[pathParam.id],
         required: !!pathParam.required,
+        helpText: pathParam.description,
       };
 
       if (pathParam.options && pathParam.options.length > 0) {
