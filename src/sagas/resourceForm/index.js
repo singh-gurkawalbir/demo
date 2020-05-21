@@ -572,6 +572,11 @@ export function* skipRetriesPatches(
     flow.pageGenerators.findIndex(
       pg => pg._exportId === (createdId || resourceId)
     );
+
+  if (index === -1) {
+    return null;
+  }
+
   const opDetermination =
     flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
 
