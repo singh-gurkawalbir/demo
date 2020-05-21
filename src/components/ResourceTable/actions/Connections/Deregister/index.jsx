@@ -7,7 +7,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'deRegister',
+  key: 'deregister',
   component: function Deregister({ resource: connection, integrationId }) {
     const isStandalone = integrationId === 'none';
     const { _id: connectionId, name: connectionName } = connection;
