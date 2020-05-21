@@ -10,10 +10,7 @@ function FormButton({
   id,
   className,
   color,
-  resourceType,
   skipDisableButtonForFormTouched = false,
-  resourceId,
-  formKey,
   ...props
 }) {
   const {
@@ -21,7 +18,7 @@ function FormButton({
     isValid: formInValid,
     disabled: formDisabled,
     value: formValue,
-  } = useFormContext(formKey) || {};
+  } = useFormContext(props.formKey) || {};
   const {
     isValid = formInValid,
     disabled = formDisabled,
@@ -29,11 +26,10 @@ function FormButton({
   } = props;
   const handleClick = useCallback(() => onClick(trim(value)), [onClick, value]);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
+    ...props,
     onClick: handleClick,
     fields,
     formIsValid: isValid,
-    resourceId,
-    resourceType,
   });
   const buttonDisabled = useMemo(
     () => disabled || (skipDisableButtonForFormTouched ? false : !formTouched),
@@ -61,12 +57,4 @@ function FormButton({
   );
 }
 
-const DynaSubmit = props => {
-  const form = useFormContext(props);
-
-  if (!form) return null;
-
-  return <FormButton {...form} {...props} />;
-};
-
-export default DynaSubmit;
+export default FormButton;
