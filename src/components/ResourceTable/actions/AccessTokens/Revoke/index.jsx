@@ -27,11 +27,11 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Revoke token',
+            title: 'Revoke token',
           }}
           data-test="revokeAccessToken"
           size="small"
-          onClick={() => handleRevokeClick()}>
+          onClick={handleRevokeClick}>
           <Icon />
         </IconButtonWithTooltip>
       </Fragment>

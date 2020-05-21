@@ -7,6 +7,13 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 export default {
   component: function References({ resourceType, resource }) {
     const [show, setShow] = useState(false);
+    const showReferences = () => {
+      setShow(true);
+    };
+
+    const handleReferencesClose = () => {
+      setShow(false);
+    };
 
     return (
       <Fragment>
@@ -14,16 +21,16 @@ export default {
           <ResourceReferences
             resourceType={resourceType}
             resourceId={resource._id}
-            onClose={() => setShow(false)}
+            onClose={handleReferencesClose}
           />
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Used by',
+            title: 'Used by',
           }}
           data-test="showReferences"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showReferences}>
           <Icon />
         </IconButtonWithTooltip>
       </Fragment>

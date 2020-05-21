@@ -18,6 +18,13 @@ export default {
       ssharesFilterConfig
     );
     const stackShareCollection = resourceList.resources;
+    const showStackShare = () => {
+      setShow(true);
+    };
+
+    const handleStackStareClose = () => {
+      setShow(false);
+    };
 
     useEffect(() => {
       dispatch(actions.resource.requestCollection('sshares'));
@@ -28,7 +35,7 @@ export default {
         {show && (
           <ShareStackDialog
             stackId={resource._id}
-            onClose={() => setShow(false)}
+            onClose={handleStackStareClose}
             stackShareCollectionById={
               stackShareCollection &&
               stackShareCollection.filter(
@@ -39,11 +46,11 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Stack Shares',
+            title: 'Stack Shares',
           }}
           data-test="showStackShares"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showStackShare}>
           <Icon />
         </IconButtonWithTooltip>
       </Fragment>

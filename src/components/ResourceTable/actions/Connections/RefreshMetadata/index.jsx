@@ -52,7 +52,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Refresh metadata',
+          title: 'Refresh metadata',
         }}
         data-test="refreshConnectionMetadata"
         size="small"

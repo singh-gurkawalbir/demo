@@ -9,7 +9,7 @@ export default {
       <Link to={getRoutePath(`clone/${resourceType}/${resource._id}/preview`)}>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Clone',
+            title: 'Clone',
           }}
           data-test="cloneResource"
           size="small">

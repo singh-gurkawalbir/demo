@@ -39,11 +39,15 @@ export default {
       });
     };
 
+    const handleResourceReferenceClose = () => {
+      setShowRef(false);
+    };
+
     return (
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Delete',
+            title: 'Delete',
           }}
           data-test="deleteResource"
           size="small"
@@ -62,7 +66,7 @@ export default {
             title
             resourceType={resourceType}
             resourceId={resource._id}
-            onClose={() => setShowRef(false)}
+            onClose={handleResourceReferenceClose}
           />
         )}
       </Fragment>

@@ -35,7 +35,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Revoke',
+          title: 'Revoke',
         }}
         data-test="revoke"
         size="small"

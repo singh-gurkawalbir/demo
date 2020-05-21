@@ -58,7 +58,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Deregister',
+          title: 'Deregister',
         }}
         data-test="closeDeregisterModal"
         size="small"

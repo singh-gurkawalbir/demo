@@ -25,11 +25,11 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Reactivate token',
+          title: 'Reactivate token',
         }}
         data-test="reactivateAccessToken"
         size="small"
-        onClick={() => handleReactivateClick()}>
+        onClick={handleReactivateClick}>
         <Icon />
       </IconButtonWithTooltip>
     );

@@ -3,13 +3,11 @@ import { IconButton, Tooltip } from '@material-ui/core';
 export default function IconButtonWithTooltip({
   tooltipProps = {},
   children,
-  ...props
+  ...buttonProps
 }) {
-  const { label, placement } = tooltipProps;
-
   return (
-    <Tooltip key={label} title={label} placement={placement}>
-      <IconButton {...props}>{children}</IconButton>
+    <Tooltip key={tooltipProps.title} {...tooltipProps}>
+      <IconButton {...buttonProps}>{children}</IconButton>
     </Tooltip>
   );
 }

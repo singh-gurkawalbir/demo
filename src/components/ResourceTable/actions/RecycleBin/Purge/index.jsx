@@ -39,7 +39,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Purge',
+            title: 'Purge',
           }}
           size="small"
           onClick={handleClick}>

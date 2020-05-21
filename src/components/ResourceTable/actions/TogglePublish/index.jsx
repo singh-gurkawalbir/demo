@@ -23,7 +23,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: resource.published ? 'Unpublish' : 'Publish',
+          title: resource.published ? 'Unpublish' : 'Publish',
         }}
         data-test="togglePublish"
         size="small"

@@ -14,11 +14,11 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Regenerate token',
+          title: 'Regenerate token',
         }}
         data-test="regenerateToken"
         size="small"
-        onClick={() => handleRegenerateClick()}>
+        onClick={handleRegenerateClick}>
         <Icon />
       </IconButtonWithTooltip>
     );

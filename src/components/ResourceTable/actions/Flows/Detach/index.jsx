@@ -45,7 +45,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Detach Flow',
+          title: 'Detach Flow',
         }}
         data-test="detachFlow"
         size="small"

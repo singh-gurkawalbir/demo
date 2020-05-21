@@ -27,7 +27,7 @@ export default {
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Schedule',
+            title: 'Schedule',
           }}
           data-test="showFlowSchedule"
           size="small"

@@ -35,7 +35,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Open debugger',
+          title: 'Open debugger',
         }}
         data-test="openDebugger"
         size="small"

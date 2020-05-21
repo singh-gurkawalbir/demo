@@ -25,7 +25,7 @@ export default {
     return (
       <IconButtonWithTooltip
         tooltipProps={{
-          label: 'Download debug logs',
+          title: 'Download debug logs',
         }}
         data-test="downloadDebugLog"
         size="small"

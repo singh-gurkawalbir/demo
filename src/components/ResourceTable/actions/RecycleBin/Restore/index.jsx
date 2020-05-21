@@ -23,7 +23,7 @@ export default {
       <Fragment>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Restore',
+            title: 'Restore',
           }}
           size="small"
           onClick={handleClick}

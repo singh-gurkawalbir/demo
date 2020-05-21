@@ -13,6 +13,13 @@ export default {
       state =>
         selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
+    const showConfigDebugger = () => {
+      setShow(true);
+    };
+
+    const handleConfigDebuggerClose = () => {
+      setShow(false);
+    };
 
     if (!canAccess) {
       return null;
@@ -25,16 +32,16 @@ export default {
             id={connectionId}
             name={connectionName}
             debugDate={debugDate}
-            onClose={() => setShow(false)}
+            onClose={handleConfigDebuggerClose}
           />
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Configure debugger',
+            title: 'Configure debugger',
           }}
           data-test="showConfigureDebugger"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showConfigDebugger}>
           <Icon />
         </IconButtonWithTooltip>
       </Fragment>

@@ -9,7 +9,7 @@ export default {
       <Link to={getRoutePath(`/connectors/${resource._id}/connectorLicenses`)}>
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Licenses',
+            title: 'Licenses',
           }}
           size="small">
           <Icon />

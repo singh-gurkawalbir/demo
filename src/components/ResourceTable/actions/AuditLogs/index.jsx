@@ -6,6 +6,13 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 export default {
   component: function AuditLogs({ resourceType, resource }) {
     const [show, setShow] = useState(false);
+    const showAutitLogs = () => {
+      setShow(true);
+    };
+
+    const handleAuditLogsClose = () => {
+      setShow(false);
+    };
 
     return (
       <Fragment>
@@ -13,16 +20,16 @@ export default {
           <AuditLogDialog
             resourceType={resourceType}
             resourceId={resource._id}
-            onClose={() => setShow(false)}
+            onClose={handleAuditLogsClose}
           />
         )}
         <IconButtonWithTooltip
           tooltipProps={{
-            label: 'Audit log',
+            title: 'Audit log',
           }}
           data-test="showAuditLog"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showAutitLogs}>
           <AuditLogIcon />
         </IconButtonWithTooltip>
       </Fragment>
