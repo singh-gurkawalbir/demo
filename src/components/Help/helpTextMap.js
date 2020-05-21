@@ -2102,5 +2102,9 @@ export default {
     'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
   'hooks.scriptContent':
     'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
+  'file.csvGenerate':
+    'The CSV generator helper can be used to visualize and experiment with how integrator.io builds CSV files (or any other delimited text files) from the JSON records/rows being processed by your flow.',
+  'file.csvParse':
+    'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   // #region UI help text
 };

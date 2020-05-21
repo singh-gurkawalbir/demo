@@ -36,6 +36,7 @@ export default function DynaCsvGenerate(props) {
     flowId,
     resourceType,
     disabled,
+    helpKey,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
@@ -127,18 +128,17 @@ export default function DynaCsvGenerate(props) {
         />
       )}
       <div className={classes.dynaCsvGenerateWrapper}>
-        <FormLabel className={classes.dynaCsvLabel}>CSV generate:</FormLabel>
+        <FormLabel className={classes.dynaCsvLabel}>{label}</FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaCsvBtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
-        {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} helpKey={helpKey} />
       </div>
     </Fragment>
   );
