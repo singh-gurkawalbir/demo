@@ -197,7 +197,9 @@ function DynaAssistantOptions(props) {
 }
 
 const WrappedContextConsumer = props => {
-  const form = useFormContext(props);
+  const form = useFormContext(props.formKey);
+
+  if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;
 };
