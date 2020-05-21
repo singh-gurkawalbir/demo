@@ -115,7 +115,7 @@ export default function DynaCsvGenerate(props) {
       {showEditor && (
         <CsvConfigEditorDialog
           key={sampleDataLoaded}
-          title="CSV Generate Options"
+          title="CSV generator helper"
           id={id + resourceId}
           mode="csv"
           data={stringifiedSampleData}

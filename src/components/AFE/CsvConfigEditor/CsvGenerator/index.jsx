@@ -53,11 +53,11 @@ export default function CsvGenerateEditor(props) {
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="CSV generate options" />
+        <PanelTitle title="CSV generator options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Flow data" />
+        <PanelTitle title="Sample flow data" />
         <CodePanel
           name="data"
           value={data}
@@ -67,7 +67,7 @@ export default function CsvGenerateEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Generated result" />
+        <PanelTitle title="Generated CSV file" />
         <CodePanel
           name="result"
           value={result && result.data ? result.data : ''}
