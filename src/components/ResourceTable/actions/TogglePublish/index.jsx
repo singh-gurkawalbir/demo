@@ -1,33 +1,38 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import UnpublishIcon from '../../../../components/icons/UnpublishedIcon';
 import PublishIcon from '../../../../components/icons/PublishIcon';
 import actions from '../../../../actions';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: r => (r.published ? 'Unpublish' : 'Publish'),
-  component: function TogglePublish({ resourceType, resource }) {
+  key: 'togglePublish',
+  component: function TogglePublish({ resourceType, resource = {} }) {
+    const { _id: resourceId, published: isPublished } = resource;
     const dispatch = useDispatch();
-    const handleTogglePublishClick = () => {
+    const handleTogglePublishClick = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
           path: '/published',
-          value: !resource.published,
+          value: !isPublished,
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged(resourceType, resource._id));
-    };
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged(resourceType, resourceId));
+    }, [dispatch, isPublished, resourceId, resourceType]);
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: isPublished ? 'Unpublish' : 'Publish',
+        }}
         data-test="togglePublish"
         size="small"
         onClick={handleTogglePublishClick}>
-        {resource.published ? <UnpublishIcon /> : <PublishIcon />}
-      </IconButton>
+        {isPublished ? <UnpublishIcon /> : <PublishIcon />}
+      </IconButtonWithTooltip>
     );
   },
 };

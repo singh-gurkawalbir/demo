@@ -1,16 +1,20 @@
 import { Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Install Base',
+  key: 'installBase',
   component: function InstallBase({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/installBase`)}>
-        <IconButton size="small">
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Install base',
+          }}
+          size="small">
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Link>
     );
   },

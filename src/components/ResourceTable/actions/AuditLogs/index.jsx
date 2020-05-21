@@ -1,28 +1,38 @@
-import { Fragment, useState } from 'react';
-import { IconButton } from '@material-ui/core';
+import { Fragment, useState, useCallback } from 'react';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Audit log',
-  component: function AuditLogs({ resourceType, resource }) {
+  key: 'auditLogs',
+  component: function AuditLogs({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const [show, setShow] = useState(false);
+    const showAutitLogs = useCallback(() => {
+      setShow(true);
+    }, []);
+    const handleAuditLogsClose = useCallback(() => {
+      setShow(false);
+    }, []);
 
     return (
       <Fragment>
         {show && (
           <AuditLogDialog
             resourceType={resourceType}
-            resourceId={resource._id}
-            onClose={() => setShow(false)}
+            resourceId={resourceId}
+            onClose={handleAuditLogsClose}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Audit log',
+          }}
           data-test="showAuditLog"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showAutitLogs}>
           <AuditLogIcon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

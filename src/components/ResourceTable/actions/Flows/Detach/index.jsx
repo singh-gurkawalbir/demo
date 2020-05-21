@@ -1,17 +1,31 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import Icon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Detach Flow',
+  key: 'detachFlow',
   component: function DetachFlow({ resource }) {
+    const { name: resourceName, _id: resourceId } = resource;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleDetachFlow = () => {
+    const detachFlow = useCallback(() => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: undefined,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
+    }, [dispatch, resourceId]);
+    const handleDetachFlowClick = useCallback(() => {
       const message = `Are you sure you want to detach 
-      ${resource.name || resource._id} flow from this integration?`;
+      ${resourceName || resourceId} flow from this integration?`;
 
       confirmDialog({
         title: 'Confirm',
@@ -22,34 +36,22 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              const patchSet = [
-                {
-                  op: 'replace',
-                  path: '/_integrationId',
-                  value: undefined,
-                },
-              ];
-
-              dispatch(
-                actions.resource.patchStaged(resource._id, patchSet, 'value')
-              );
-              dispatch(
-                actions.resource.commitStaged('flows', resource._id, 'value')
-              );
-            },
+            onClick: detachFlow,
           },
         ],
       });
-    };
+    }, [confirmDialog, detachFlow, resourceId, resourceName]);
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Detach flow',
+        }}
         data-test="detachFlow"
         size="small"
-        onClick={handleDetachFlow}>
+        onClick={handleDetachFlowClick}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

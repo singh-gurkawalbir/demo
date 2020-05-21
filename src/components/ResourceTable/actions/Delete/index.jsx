@@ -1,27 +1,33 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import useConfirmDialog from '../../../ConfirmDialog';
 import Icon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Delete',
-  component: function Delete({ resourceType, resource }) {
+  key: 'deleteResource',
+  component: function DeleteResource({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(false);
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)
     );
     const { confirmDialog } = useConfirmDialog();
-    const type =
-      resourceType && resourceType.indexOf('/licenses') >= 0
-        ? 'license'
-        : MODEL_PLURAL_TO_LABEL[resourceType];
-    const handleClick = () => {
+    const deleteResource = useCallback(() => {
+      dispatch(actions.resource.delete(resourceType, resourceId));
+      setShowRef(true);
+    }, [dispatch, resourceId, resourceType]);
+    const handleDeleteClick = useCallback(() => {
+      const type =
+        resourceType && resourceType.indexOf('/licenses') >= 0
+          ? 'license'
+          : MODEL_PLURAL_TO_LABEL[resourceType];
+
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${type}?`,
@@ -31,23 +37,26 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(actions.resource.delete(resourceType, resource._id));
-              setShowRef(true);
-            },
+            onClick: deleteResource,
           },
         ],
       });
-    };
+    }, [confirmDialog, deleteResource, resourceType]);
+    const handleResourceReferenceClose = useCallback(() => {
+      setShowRef(false);
+    }, []);
 
     return (
       <Fragment>
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Delete',
+          }}
           data-test="deleteResource"
           size="small"
-          onClick={handleClick}>
+          onClick={handleDeleteClick}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
         {showRef && resourceReferences && resourceReferences.length > 0 && (
           <ResourceReferences
             // TODO: this is a horrible pattern.
@@ -59,8 +68,8 @@ export default {
             // suffixed with "Dialog". Why not this one?
             title
             resourceType={resourceType}
-            resourceId={resource._id}
-            onClose={() => setShowRef(false)}
+            resourceId={resourceId}
+            onClose={handleResourceReferenceClose}
           />
         )}
       </Fragment>
