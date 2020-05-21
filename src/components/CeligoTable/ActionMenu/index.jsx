@@ -29,11 +29,13 @@ export default function ActionMenu({ actions }) {
 
   if (!actions || !actions.length) return null;
 
-  const renderAction = ({ component }) => <Fragment>{component}</Fragment>;
+  const renderAction = ({ component }, index) => (
+    <Fragment key={`action-${index}`}>{component}</Fragment>
+  );
 
   return (
     <div ref={actionContainerEl} className={classes.actionContainer}>
-      {actions.map(a => renderAction(a))}
+      {actions.map((a, index) => renderAction(a, index))}
     </div>
   );
 }
