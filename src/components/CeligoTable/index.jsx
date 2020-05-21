@@ -80,7 +80,7 @@ export default function CeligoTable({
   const { sort = {} } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
-  const { order = 'desc', orderBy = 'lastModified' } = sort;
+  const { order = 'asc', orderBy = 'name' } = sort;
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
