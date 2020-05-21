@@ -9,7 +9,7 @@ export default {
       <Link to={getRoutePath(`/connectors/${resource._id}/installBase`)}>
         <IconButtonWithTooltip
           tooltipProps={{
-            title: 'Install Base',
+            title: 'Install base',
           }}
           size="small">
           <Icon />

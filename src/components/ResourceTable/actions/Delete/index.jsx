@@ -17,18 +17,16 @@ export default {
       selectors.resourceReferences(state)
     );
     const { confirmDialog } = useConfirmDialog();
-    const type = useMemo(
-      () =>
-        resourceType && resourceType.indexOf('/licenses') >= 0
-          ? 'license'
-          : MODEL_PLURAL_TO_LABEL[resourceType],
-      [resourceType]
-    );
     const deleteResource = useCallback(() => {
       dispatch(actions.resource.delete(resourceType, resourceId));
       setShowRef(true);
     }, [dispatch, resourceId, resourceType]);
     const handleDeleteClick = useCallback(() => {
+      const type =
+        resourceType && resourceType.indexOf('/licenses') >= 0
+          ? 'license'
+          : MODEL_PLURAL_TO_LABEL[resourceType];
+
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${type}?`,
@@ -42,10 +40,10 @@ export default {
           },
         ],
       });
-    }, [confirmDialog, deleteResource, type]);
-    const handleResourceReferenceClose = () => {
+    }, [confirmDialog, deleteResource, resourceType]);
+    const handleResourceReferenceClose = useCallback(() => {
       setShowRef(false);
-    };
+    }, []);
 
     return (
       <Fragment>
