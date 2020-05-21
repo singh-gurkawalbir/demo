@@ -9,7 +9,8 @@ import ResourceReferences from '../../../ResourceReferences';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  component: function Delete({ resourceType, resource = {} }) {
+  key: 'deleteResource',
+  component: function DeleteResource({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(false);

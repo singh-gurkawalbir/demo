@@ -5,7 +5,8 @@ import Icon from '../../../../../components/icons/ReactivateTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  component: function AccessTokens({ resourceType, resource = {} }) {
+  key: 'reactivateAccessToken',
+  component: function ReactivateAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const handleReactivateClick = useCallback(() => {

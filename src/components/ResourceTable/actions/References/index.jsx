@@ -5,6 +5,7 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 // TODO: In case of monitor user, refernces shouldn't call accesstokens
 export default {
+  key: 'references',
   component: function References({ resourceType, resource }) {
     const [show, setShow] = useState(false);
     const showReferences = useCallback(() => {

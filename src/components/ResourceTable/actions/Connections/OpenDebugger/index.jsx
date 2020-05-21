@@ -7,6 +7,7 @@ import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'openDebugger',
   component: function OpenDebugger({ resource }) {
     const { _id: connectionId } = resource;
     const dispatch = useDispatch();

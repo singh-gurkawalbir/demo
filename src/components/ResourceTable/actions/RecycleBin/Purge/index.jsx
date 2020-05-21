@@ -7,6 +7,7 @@ import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resour
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'purge',
   component: function Purge({ resource = {} }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();

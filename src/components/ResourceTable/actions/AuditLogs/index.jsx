@@ -4,6 +4,7 @@ import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
+  key: 'auditLogs',
   component: function AuditLogs({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const [show, setShow] = useState(false);

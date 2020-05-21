@@ -5,6 +5,7 @@ import actions from '../../../../../actions';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'refreshMetadata',
   component: function RefreshMetadata({ resource }) {
     const { type: resourceType, _id: resourceId } = resource;
     const dispatch = useDispatch();

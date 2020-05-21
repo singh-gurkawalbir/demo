@@ -5,7 +5,8 @@ import Icon from '../../../icons/DownloadIcon';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  component: function DownloadResources({ resourceType, resource = {} }) {
+  key: 'downloadResource',
+  component: function DownloadResource({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const handleDownloadReferenceClick = useCallback(() => {

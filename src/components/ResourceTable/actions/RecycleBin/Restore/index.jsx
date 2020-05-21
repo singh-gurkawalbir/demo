@@ -8,6 +8,7 @@ import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resour
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'restore',
   component: function Restore({ resource }) {
     const dispatch = useDispatch();
     const handleRestoreClick = useCallback(() => {

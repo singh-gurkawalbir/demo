@@ -10,6 +10,7 @@ import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
+  key: 'stackShares',
   component: function StackShares({ resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();

@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
+  key: 'togglePublish',
   component: function TogglePublish({ resourceType, resource = {} }) {
     const { _id: resourceId, published: isPublished } = resource;
     const dispatch = useDispatch();

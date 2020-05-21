@@ -4,6 +4,7 @@ import UploadFileDialog from './UploadFileDialog';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
+  key: 'uploadZipFile',
   component: function UploadZipFile({ resourceType, resource }) {
     const [showDialog, setShowDialog] = useState(false);
     const toggleDialog = useCallback(() => {

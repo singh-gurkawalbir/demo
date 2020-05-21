@@ -6,6 +6,7 @@ import openExternalUrl from '../../../../../utils/window';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'downloadDebugLogs',
   component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
     const url = `/connections/${connectionId}/debug`;

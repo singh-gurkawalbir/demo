@@ -6,6 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'detachFlow',
   component: function DetachFlow({ resource }) {
     const { name: resourceName, _id: resourceId } = resource;
     const dispatch = useDispatch();

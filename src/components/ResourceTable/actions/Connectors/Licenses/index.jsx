@@ -4,6 +4,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'licenses',
   component: function Licenses({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/connectorLicenses`)}>

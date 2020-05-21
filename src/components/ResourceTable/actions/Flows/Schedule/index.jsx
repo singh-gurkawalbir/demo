@@ -5,6 +5,7 @@ import ModalDialog from '../../../../ModalDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'schedule',
   component: function Schedule({ resource }) {
     const [showSchedule, setShowSchedule] = useState(false);
     const handleScheduleClick = useCallback(() => {

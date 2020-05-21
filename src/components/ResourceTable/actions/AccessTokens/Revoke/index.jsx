@@ -5,7 +5,8 @@ import Icon from '../../../../../components/icons/RevokeTokenIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  component: function AccessTokens({ resourceType, resource = {} }) {
+  key: 'revokeAccessToken',
+  component: function RevokeAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
     const handleRevokeClick = useCallback(() => {

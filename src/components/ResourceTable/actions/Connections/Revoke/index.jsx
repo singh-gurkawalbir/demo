@@ -6,6 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'revoke',
   component: function Revoke({ resource: connection = {} }) {
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();

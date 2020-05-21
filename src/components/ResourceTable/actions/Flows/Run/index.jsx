@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import getRoutePath from '../../../../../utils/routePaths';
 import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Run Flow',
+  key: 'runFlow',
   component: withRouter(({ resource, history }) => {
     const dispatch = useDispatch();
     const handleRunFlowClick = () => {
@@ -17,13 +17,16 @@ export default {
     };
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Run flow',
+        }}
         disabled={!resource.isRunnable}
         data-test="runFlow"
         size="small"
         onClick={handleRunFlowClick}>
         <RunIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   }),
 };

@@ -4,6 +4,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
+  key: 'installBase',
   component: function InstallBase({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/installBase`)}>
