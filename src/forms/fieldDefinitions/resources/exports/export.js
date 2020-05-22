@@ -62,7 +62,8 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
-    label: 'Invoke this export [post]',
+    label: 'Invoke',
+    helpKey: 'apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
