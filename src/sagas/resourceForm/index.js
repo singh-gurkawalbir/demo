@@ -16,7 +16,7 @@ import connectionSagas, { createPayload } from '../resourceForm/connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
-import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
+// import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
 
@@ -371,11 +371,6 @@ export function* submitFormValues({
     return yield put(
       actions.resourceForm.submitComplete(resourceType, resourceId, finalValues)
     );
-  }
-
-  // fetch all possible pending patches.
-  if (resourceType === 'exports' && isNewId(resourceId)) {
-    yield call(patchTransformationRulesForXMLResource, { resourceId });
   }
 
   const { patch } = yield select(

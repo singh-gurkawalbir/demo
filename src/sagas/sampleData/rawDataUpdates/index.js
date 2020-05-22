@@ -17,6 +17,7 @@ import {
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
+import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 
 function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
@@ -92,6 +93,10 @@ function* onResourceCreate({ id, resourceType, tempId }) {
    * Question: How to differentiate -- a lookup creation and an existing lookup add on flow
    */
   if (resourceType === 'exports') {
+    yield call(saveTransformationRulesForNewXMLExport, {
+      resourceId: id,
+      tempResourceId: tempId,
+    });
     const resourceObj = yield select(resource, resourceType, id);
 
     if (!resourceObj.isLookup) {
