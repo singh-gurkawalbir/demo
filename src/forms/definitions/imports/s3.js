@@ -199,13 +199,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode'],
+    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'How would you like to generate files?',
-        fields: ['fileType', 'file', 'dataMappings'],
+        fields: ['fileType', 'file'],
       },
       {
         collapsed: true,

@@ -256,7 +256,7 @@ export default function ProfileComponent() {
             preferences.auth_type_google &&
             preferences.auth_type_google.id && (
               <InputLabel>
-                <span className={classes.label}>Unlink to:</span>
+                <span className={classes.label}>Unlink from:</span>
                 <Button
                   data-test="unlinkWithGoogle"
                   variant="contained"

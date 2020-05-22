@@ -826,6 +826,14 @@ export function resourceListModified(userState, resourcesState, options = {}) {
   return fromResources.resourceList(resourcesState, options);
 }
 
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromData.hasSettingsForm(
+    state && state.data,
+    resourceType,
+    resourceId
+  );
+}
+
 export const makeResourceListSelector = () =>
   createSelector(
     userState,

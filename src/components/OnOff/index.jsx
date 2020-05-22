@@ -108,14 +108,14 @@ export default {
       <Spinner size={20} />
     ) : (
       <Tooltip title="Off/On" placement="bottom">
-        <span>
+        <div>
           <SwitchOnOff
             disabled={disabled}
             on={!flow.disabled}
             onClick={enableOrDisableFlow}
             data-test="switchFlowOnOff"
           />
-        </span>
+        </div>
       </Tooltip>
     );
   },

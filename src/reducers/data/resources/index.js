@@ -660,4 +660,11 @@ export function isAgentOnline(state, agentId) {
       process.env.AGENT_STATUS_INTERVAL
   );
 }
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  const res = resource(state, resourceType, resourceId);
+  const settingsForm = res && res.settingsForm;
+
+  return !!(settingsForm && (settingsForm.form || settingsForm.init));
+}
 // #endregion

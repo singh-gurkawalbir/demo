@@ -1440,7 +1440,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode'],
+    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
@@ -1453,7 +1453,6 @@ export default {
           return 'How would you like the records imported?';
         },
         fields: [
-          'dataMappings',
           'http.method',
           'http.blobMethod',
           'http.headers',

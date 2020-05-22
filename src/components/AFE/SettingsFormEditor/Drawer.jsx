@@ -153,7 +153,11 @@ export default function EditorDrawer({
     (isEditorDirty !== undefined && !isEditorDirty);
 
   useEffect(() => {
-    const initForm = form || { fieldMap: {}, layout: { fields: [] } };
+    const initForm = form || {
+      fieldMap: {},
+      layout: { fields: [] },
+    };
+    const mode = init._scriptId ? 'script' : 'json';
 
     dispatch(
       actions.editor.init(editorId, 'settingsForm', {
@@ -161,7 +165,7 @@ export default function EditorDrawer({
         initScriptId: init._scriptId,
         entryFunction: init.function || 'main',
         initEntryFunction: init.function || 'main',
-        data: init._scriptId ? toggleData(form, 'script') : initForm,
+        data: mode === 'script' ? toggleData(initForm, 'script') : initForm,
         initData: initForm,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
@@ -170,7 +174,7 @@ export default function EditorDrawer({
         resourceType,
         settings,
         previewOnSave: true,
-        mode: init._scriptId ? 'script' : 'json',
+        mode,
       })
     );
     // we only want to init the editor once per render (onMount)
