@@ -115,10 +115,10 @@ export default function SettingsFormEditor({
       )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
-        {result && status !== 'error' ? (
+        {result && result.data && status !== 'error' ? (
           <DynaForm
             key={key}
-            fieldMeta={result}
+            fieldMeta={result.data}
             // onChange={handleFormPreviewChange}
             resourceId={resourceId}
             resourceType={resourceType}>
