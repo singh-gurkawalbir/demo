@@ -80,7 +80,7 @@ export default function CeligoTable({
   const { sort = {} } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
-  const { order = 'asc', orderBy = 'name' } = sort;
+  const { order = 'desc', orderBy = 'lastModified' } = sort;
   const handleSort = useCallback(
     (order, orderBy) => {
       dispatch(actions.patchFilter(filterKey, { sort: { order, orderBy } }));
@@ -277,11 +277,8 @@ export default function CeligoTable({
                   actions={(typeof rowActions === 'function'
                     ? rowActions(r, actionProps)
                     : rowActions
-                  ).map(({ label, component: Action }) => ({
-                    label:
-                      typeof label === 'function'
-                        ? label(r, actionProps)
-                        : label,
+                  ).map(({ key, component: Action }) => ({
+                    key,
                     component: <Action {...actionProps} resource={r} />,
                   }))}
                 />

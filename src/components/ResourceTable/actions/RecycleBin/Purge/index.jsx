@@ -1,17 +1,25 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Purge',
-  component: function Purge({ resource }) {
+  key: 'purge',
+  component: function Purge({ resource = {} }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleClick = () => {
+    const purgeResource = useCallback(() => {
+      dispatch(
+        actions.recycleBin.purge(
+          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
+          resource.doc && resource.doc._id
+        )
+      );
+    }, [dispatch, resource.doc, resource.model]);
+    const handlePurgeClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${
@@ -23,24 +31,22 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(
-                actions.recycleBin.purge(
-                  `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
-                  resource.doc && resource.doc._id
-                )
-              );
-            },
+            onClick: purgeResource,
           },
         ],
       });
-    };
+    }, [confirmDialog, purgeResource, resource.model]);
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={handleClick}>
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Purge',
+          }}
+          size="small"
+          onClick={handlePurgeClick}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

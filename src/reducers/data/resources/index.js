@@ -5,6 +5,7 @@ import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyObject = {};
 const emptyList = [];
@@ -561,25 +562,8 @@ export function resourceList(
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  function desc(a, b, orderBy) {
-    const aVal = get(a, orderBy);
-    const bVal = get(b, orderBy);
-
-    if (bVal < aVal) {
-      return -1;
-    }
-
-    if (bVal > aVal) {
-      return 1;
-    }
-
-    return 0;
-  }
-
   const comparer = ({ order, orderBy }) =>
-    order === 'desc'
-      ? (a, b) => desc(a, b, orderBy)
-      : (a, b) => -desc(a, b, orderBy);
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
   let filteredByEnvironment;

@@ -1,12 +1,13 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Deregister',
+  key: 'deregister',
   component: function Deregister({ resource: connection, integrationId }) {
     const isStandalone = integrationId === 'none';
     const { _id: connectionId, name: connectionName } = connection;
@@ -22,12 +23,12 @@ export default {
           'connections'
         ).edit
     );
-
-    if (!canAccess || isStandalone) {
-      return null;
-    }
-
-    const handleClick = () => {
+    const deregiterConnection = useCallback(() => {
+      dispatch(
+        actions.connection.requestDeregister(connection._id, integrationId)
+      );
+    }, [connection._id, dispatch, integrationId]);
+    const handleDeregisterClick = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -43,26 +44,26 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(
-                actions.connection.requestDeregister(
-                  connection._id,
-                  integrationId
-                )
-              );
-            },
+            onClick: deregiterConnection,
           },
         ],
       });
-    };
+    }, [confirmDialog, connectionId, connectionName, deregiterConnection]);
+
+    if (!canAccess || isStandalone) {
+      return null;
+    }
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Deregister',
+        }}
         data-test="closeDeregisterModal"
         size="small"
-        onClick={handleClick}>
+        onClick={handleDeregisterClick}>
         <CloseIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

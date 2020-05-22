@@ -1,13 +1,19 @@
-import { Fragment, useState } from 'react';
-import { IconButton } from '@material-ui/core';
+import { Fragment, useState, useCallback } from 'react';
 import Icon from '../../../icons/ViewReferencesIcon';
 import ResourceReferences from '../../../ResourceReferences';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 // TODO: In case of monitor user, refernces shouldn't call accesstokens
 export default {
-  label: 'Used by',
+  key: 'references',
   component: function References({ resourceType, resource }) {
     const [show, setShow] = useState(false);
+    const showReferences = useCallback(() => {
+      setShow(true);
+    }, []);
+    const handleReferencesClose = useCallback(() => {
+      setShow(false);
+    }, []);
 
     return (
       <Fragment>
@@ -15,15 +21,18 @@ export default {
           <ResourceReferences
             resourceType={resourceType}
             resourceId={resource._id}
-            onClose={() => setShow(false)}
+            onClose={handleReferencesClose}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Used by',
+          }}
           data-test="showReferences"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showReferences}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

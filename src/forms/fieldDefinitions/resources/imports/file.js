@@ -100,7 +100,8 @@ export default {
   },
   'file.csv': {
     type: 'csvgenerate',
-    label: 'Configure CSV generate options',
+    label: 'CSV generator helper:',
+    helpKey: 'file.csvGenerate',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         includeHeader: true,

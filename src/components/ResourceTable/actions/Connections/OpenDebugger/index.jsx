@@ -1,12 +1,13 @@
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import moment from 'moment';
 import * as selectors from '../../../../../reducers';
 import DebugIcon from '../../../../icons/DebugIcon';
 import actions from '../../../../../actions';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Open debugger',
+  key: 'openDebugger',
   component: function OpenDebugger({ resource }) {
     const { _id: connectionId } = resource;
     const dispatch = useDispatch();
@@ -15,9 +16,7 @@ export default {
       state =>
         selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
-
-    if (!canAccess) return null;
-    const handleOpenDebuggerClick = () => {
+    const handleOpenDebuggerClick = useCallback(() => {
       dispatch(actions.connection.requestDebugLogs(connectionId));
 
       dispatch(
@@ -31,15 +30,20 @@ export default {
           },
         ])
       );
-    };
+    }, [connectionId, dispatch]);
+
+    if (!canAccess) return null;
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Open debugger',
+        }}
         data-test="openDebugger"
         size="small"
         onClick={handleOpenDebuggerClick}>
         <DebugIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

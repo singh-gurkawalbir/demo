@@ -1,16 +1,16 @@
-import { IconButton } from '@material-ui/core';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
 import ShareStackDialog from '../../../../components/ShareStackDialog';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
-  label: 'Stack Shares',
+  key: 'stackShares',
   component: function StackShares({ resource }) {
     const [show, setShow] = useState(false);
     const dispatch = useDispatch();
@@ -19,6 +19,12 @@ export default {
       ssharesFilterConfig
     );
     const stackShareCollection = resourceList.resources;
+    const showStackShare = useCallback(() => {
+      setShow(true);
+    }, []);
+    const handleStackShareClose = useCallback(() => {
+      setShow(false);
+    }, []);
 
     useEffect(() => {
       dispatch(actions.resource.requestCollection('sshares'));
@@ -29,7 +35,7 @@ export default {
         {show && (
           <ShareStackDialog
             stackId={resource._id}
-            onClose={() => setShow(false)}
+            onClose={handleStackShareClose}
             stackShareCollectionById={
               stackShareCollection &&
               stackShareCollection.filter(
@@ -38,12 +44,15 @@ export default {
             }
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Stack shares',
+          }}
           data-test="showStackShares"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showStackShare}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },
