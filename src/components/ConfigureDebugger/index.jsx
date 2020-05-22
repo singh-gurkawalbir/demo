@@ -14,15 +14,8 @@ import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    margin: theme.spacing(2, 0),
-  },
   submit: {
     marginTop: theme.spacing(3),
-  },
-  radioLabel: {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
   },
   label: {
     marginBottom: theme.spacing(1),
@@ -89,7 +82,6 @@ export default function ConfigureDebugger(props) {
     onClose();
   }, [debugValue, dispatch, id, onClose]);
   const handleValueChange = useCallback((_id, val) => {
-    console.log('val', val);
     setDebugValue(val);
   }, []);
   const defaultVal = useMemo(() => {
@@ -110,11 +102,16 @@ export default function ConfigureDebugger(props) {
       classes={{
         paper: classes.drawerPaper,
       }}>
-      <DrawerTitleBar onClose={onClose} title={`Configure Debugger: ${name}`} />
+      <DrawerTitleBar
+        onClose={onClose}
+        title={`Configure debugger: ${name}`}
+        helpKey="connection.configDebugger"
+        helpTitle="Configure debugger"
+      />
       <div className={classes.content}>
         <FormControl component="fieldset">
           <FormLabel className={classes.label} component="legend">
-            Debug Duration:
+            Debug duration:
           </FormLabel>
           <RadioGroup
             id="debugDuration"
