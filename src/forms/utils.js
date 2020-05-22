@@ -123,6 +123,15 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
 };
 
+export const isExpansionPanelRequired = (meta, fieldStates) => {
+  const requiredFields = fieldStates.filter(field => field.required);
+  const { layout, fieldMap } = meta;
+
+  return requiredFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
+};
+
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
