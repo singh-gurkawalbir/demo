@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -39,6 +39,7 @@ import StatusCircle from '../../components/StatusCircle';
 import HelpIcon from '../../components/icons/HelpIcon';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
+import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
 /* 
@@ -562,25 +563,28 @@ function FlowBuilder() {
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-
           {flowDetails && flowDetails.showScheduleIcon && (
-            <Tooltip title="Schedule" placement="bottom">
-              <IconButton
-                disabled={isNewFlow}
-                data-test="scheduleFlow"
-                onClick={handleDrawerClick('schedule')}>
-                <CalendarIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Settings" placement="bottom">
-            <IconButton
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Schedule',
+                placement: 'bottom',
+              }}
               disabled={isNewFlow}
-              onClick={handleDrawerClick('settings')}
-              data-test="flowSettings">
-              <SettingsIcon />
-            </IconButton>
-          </Tooltip>
+              data-test="scheduleFlow"
+              onClick={handleDrawerClick('schedule')}>
+              <CalendarIcon />
+            </IconButtonWithTooltip>
+          )}
+          <IconButtonWithTooltip
+            tooltipProps={{
+              title: 'Settings',
+              placement: 'bottom',
+            }}
+            disabled={isNewFlow}
+            onClick={handleDrawerClick('settings')}
+            data-test="flowSettings">
+            <SettingsIcon />
+          </IconButtonWithTooltip>
 
           {!isIAType && (
             <FlowEllipsisMenu
