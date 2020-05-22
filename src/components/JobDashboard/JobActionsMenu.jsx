@@ -279,7 +279,9 @@ export default function JobActionsMenu({
       }
 
       enqueueSnackbar({
-        message: `${job.numError} errors retried.`,
+        message: `${
+          job.numError === '1' ? 'error retried.' : 'errors retried.'
+        }`,
         action,
         showUndo: true,
         autoHideDuration: UNDO_TIME.RETRY,
