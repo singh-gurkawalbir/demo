@@ -100,7 +100,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -116,14 +116,15 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+        'exportId',
+      ],
       visibleWhenAll: [
         {
           field: 'application',
-          isNot: [''],
-        },
-        {
-          field: 'connection',
           isNot: [''],
         },
       ],
@@ -136,31 +137,33 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
+    const connectionField = fields.find(field => field.id === 'connection');
+    const typeField = fields.find(field => field.id === 'type');
+    let options = sourceOptions[app.assistant || app.type];
+
+    if (!options) {
+      if (app.assistant && app.webhook) {
+        options = [
+          {
+            label: 'Export records from source application',
+            value: 'exportRecords',
+          },
+          {
+            label: 'Listen for real-time data from source application',
+            value: 'webhook',
+          },
+        ];
+      } else options = sourceOptions.common || [];
+    }
 
     if (fieldId === 'type') {
-      const typeField = fields.find(field => field.id === 'type');
-      let options = sourceOptions[app.assistant || app.type];
-
-      if (!options) {
-        if (app.assistant && app.webhook) {
-          options = [
-            {
-              label: 'Export records from source application',
-              value: 'exportRecords',
-            },
-            {
-              label: 'Listen for real-time data from source application',
-              value: 'webhook',
-            },
-          ];
-        } else options = sourceOptions.common || [];
-      }
-
       if (options && options.length === 1) {
         typeField.value = options[0] && options[0].value;
         typeField.disabled = true;
       } else {
         typeField.value = '';
+
+        if (connectionField) connectionField.visible = false;
       }
 
       return [
@@ -195,7 +198,11 @@ export default {
     }
 
     if (fieldId === 'exportId') {
-      const connectionField = fields.find(field => field.id === 'connection');
+      if (options && options.length === 1) {
+        typeField.value = options[0] && options[0].value;
+        typeField.disabled = true;
+      }
+
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =

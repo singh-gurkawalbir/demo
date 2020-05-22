@@ -60,7 +60,7 @@ const allSections = [
   },
   {
     path: 'customSettings',
-    label: 'Custom settings',
+    label: 'Custom',
     Section: CustomSettings,
     id: 'customSettings',
   },

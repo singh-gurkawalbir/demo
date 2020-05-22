@@ -104,6 +104,7 @@ export default function SettingsDrawer({
         id: 'settings',
         name: 'settings',
         type: 'settings',
+        label: 'Custom',
         defaultValue: flow && flow.settings,
       },
     },

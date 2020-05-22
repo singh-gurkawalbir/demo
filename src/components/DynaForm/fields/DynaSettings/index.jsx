@@ -55,11 +55,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
 }));
-const settingsContainer = {
-  // collapsed: true,
-  label: 'Custom settings',
-  fields: ['settings'],
-};
 
 export default function DynaSettings(props) {
   const classes = useStyles();
@@ -68,8 +63,14 @@ export default function DynaSettings(props) {
     resourceContext,
     disabled,
     onFieldChange,
+    label,
     collapsed = true,
   } = props;
+  const settingsContainer = {
+    // collapsed: true,
+    label: label || 'Custom settings',
+    fields: ['settings'],
+  };
   const { resourceType, resourceId } = resourceContext;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const history = useHistory();

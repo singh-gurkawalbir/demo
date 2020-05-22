@@ -9,6 +9,7 @@ import FormGenerator from '../';
 import {
   isExpansionPanelErrored,
   isAnyExpansionPanelFieldVisible,
+  isExpansionPanelRequired,
 } from '../../../../forms/utils';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 
@@ -99,13 +100,17 @@ const ExpansionPannelExpandOnInValidState = props => {
     { layout, fieldMap },
     form.fields
   );
+  const isPanelRequired = isExpansionPanelRequired(
+    { layout, fieldMap },
+    form.fields
+  );
 
   useEffect(() => {
-    if (!expandOnce && isPanelErrored) {
+    if (!expandOnce && (isPanelErrored || isPanelRequired)) {
       setShouldExpand(true);
       setExpandOnce(true);
     }
-  }, [expandOnce, isPanelErrored]);
+  }, [expandOnce, isPanelErrored, isPanelRequired]);
   useEffect(() => {
     setComponentLoaded(true);
   }, []);

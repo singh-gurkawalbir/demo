@@ -67,7 +67,7 @@ export function userPreferences(state) {
 }
 
 export function accountShareHeader(preferences, path) {
-  const headers = emptyObj;
+  const headers = {};
 
   if (
     !preferences ||

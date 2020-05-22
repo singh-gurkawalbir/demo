@@ -12,5 +12,6 @@ export default {
   },
   settings: {
     type: 'settings',
+    label: 'Custom',
   },
 };

@@ -42,7 +42,7 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [

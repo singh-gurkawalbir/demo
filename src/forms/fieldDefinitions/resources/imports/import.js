@@ -12,7 +12,8 @@ export default {
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {
-    label: 'Invoke this import [post]',
+    label: 'Invoke',
+    helpKey: 'apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
