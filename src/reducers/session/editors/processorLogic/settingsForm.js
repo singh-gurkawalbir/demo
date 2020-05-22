@@ -1,22 +1,40 @@
 import produce from 'immer';
 import util from '../../../../utils/json';
+import { safeParse } from '../../../../utils/string';
 import javascript from './javascript';
-
-function safeParse(o) {
-  if (typeof o === 'object') return o;
-
-  try {
-    return JSON.parse(o);
-  } catch (e) {
-    return undefined;
-  }
-}
 
 export default {
   processor: 'javascript',
   skipPreview: ({ code, entryFunction }) => !code || !entryFunction,
 
-  requestBody: javascript.requestBody,
+  requestBody: ({ data, code, entryFunction, context, mode }) => {
+    let parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+
+    if (mode === 'json') {
+      parsedData = {
+        resource: {
+          settingsForm: {
+            form: parsedData,
+          },
+        },
+        parentResource: {},
+        license: {},
+        parentLicense: {},
+        sandbox: false,
+      };
+    }
+
+    const body = {
+      rules: {
+        function: entryFunction,
+        code,
+      },
+      options: context,
+      data: parsedData,
+    };
+
+    return body;
+  },
 
   dirty: editor => {
     if (editor.data !== editor.initData) {
@@ -36,7 +54,7 @@ export default {
     return { dataError: dataError !== null && dataError };
   },
 
-  processResult: ({ settings, data }, newResult) => {
+  processResult: ({ settings, data, mode }, newResult) => {
     let meta;
 
     if (newResult) {
@@ -47,16 +65,20 @@ export default {
       if (!parsedData) return undefined;
       // console.log('parsedData', parsedData);
 
-      meta =
-        parsedData.resource &&
-        parsedData.resource.settingsForm &&
-        parsedData.resource.settingsForm.form;
+      if (mode === 'json') {
+        meta = parsedData;
+      } else {
+        meta =
+          parsedData.resource &&
+          parsedData.resource.settingsForm &&
+          parsedData.resource.settingsForm.form;
+      }
     }
 
     // inject the current setting values (found in resource.settings)
     // into the respective field’s defaultValue prop.
     return produce(meta, draft => {
-      if (settings && meta) {
+      if (settings && meta && typeof draft.fieldMap === 'object') {
         Object.keys(draft.fieldMap).forEach(key => {
           const field = draft.fieldMap[key];
 

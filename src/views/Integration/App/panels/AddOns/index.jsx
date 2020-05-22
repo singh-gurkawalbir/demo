@@ -123,7 +123,7 @@ export default function AddOnsPanel({ integrationId }) {
                 <Button
                   data-test="contactSales"
                   onClick={() => handleContactSales(data.name)}
-                  variant="text"
+                  variant="outlined"
                   color="primary">
                   Contact Sales
                 </Button>

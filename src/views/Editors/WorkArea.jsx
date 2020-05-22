@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -9,13 +8,13 @@ import FormControl from '@material-ui/core/FormControl';
 import CodeEditor from '../../components/CodeEditor';
 import sampleData from './sampleData';
 
-@hot(module)
 @withStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
+    height: '100%',
   },
   rawDataContainer: {
-    height: '25vh',
+    height: 'calc(100% - 84px)',
   },
   caption: {
     marginTop: theme.spacing(2),
@@ -63,8 +62,8 @@ export default class WorkArea extends Component {
       <Fragment>
         <Paper className={classes.paper}>
           <Typography variant="body1">
-            Click on any editor in the left margin to launch it. The raw data
-            below will be used as the input.
+            Click on any editor in the left margin to launch it. The sample data
+            below will be used as the input to the editor.
           </Typography>
 
           <div className={classes.rawDataTitleBar}>
@@ -73,7 +72,7 @@ export default class WorkArea extends Component {
                 color="textSecondary"
                 className={classes.caption}
                 variant="caption">
-                RAW DATA
+                Sample Data
               </Typography>
             </div>
             <div className={classes.titleBarItem}>
@@ -94,6 +93,7 @@ export default class WorkArea extends Component {
 
           <div className={classes.rawDataContainer}>
             <CodeEditor
+              key={sampleType}
               name="rawData"
               value={rawData}
               mode={mode}

@@ -384,13 +384,13 @@ describe('saveProcessor saga', () => {
       .isDone();
   });
 
-  test('should not save the editor if no patch sets are given', () =>
+  test('should dispatch save complete action if no patch sets are given', () =>
     expectSaga(saveProcessor, { id })
       .provide([[select(selectors.editorPatchSet, id), '']])
       .put(actions.editor.saveFailed(id))
       .run());
 
-  test('should save the editor if no foreground patch', async () => {
+  test('should set editor save status to complete if no foreground patch exists', async () => {
     delete patches.foregroundPatches;
 
     const { effects } = await expectSaga(saveProcessor, { id })
@@ -402,14 +402,14 @@ describe('saveProcessor saga', () => {
     expect(effects.call).toBeUndefined();
   });
 
-  test('should be backward compatible if foreground patch is an object', async () => {
+  test('should be backward compatible if foreground patch is an object', () => {
     patches.foregroundPatches = {
       patch: [{ op: 'replace', path: '/somepath', value: 'some value' }],
       resourceType: 'imports',
       resourceId: '999',
     };
 
-    const { effects } = await expectSaga(saveProcessor, { id })
+    return expectSaga(saveProcessor, { id })
       .provide([
         [select(selectors.editorPatchSet, id), patches],
         [matchers.call.fn(commitStagedChanges), undefined],
@@ -417,11 +417,9 @@ describe('saveProcessor saga', () => {
       .not.put(actions.editor.saveFailed(id))
       .put(actions.editor.saveComplete(id))
       .run();
-
-    expect(effects.call).toHaveLength(1);
   });
 
-  test('should not close the editor if ANY foregound patch fails', async () => {
+  test('should not dispatch save complete action if ANY foregound patch fails', async () => {
     const { effects } = await expectSaga(saveProcessor, { id })
       .provide([
         [select(selectors.editorPatchSet, id), patches],
@@ -450,7 +448,7 @@ describe('saveProcessor saga', () => {
     expect(effects.call).toHaveLength(2);
   });
 
-  test('should save the editor only if ALL foregound patches succeed', async () => {
+  test('should dispatch save complete action only if ALL foregound patches succeed', async () => {
     const { effects } = await expectSaga(saveProcessor, { id })
       .provide([
         [select(selectors.editorPatchSet, id), patches],
@@ -466,7 +464,7 @@ describe('saveProcessor saga', () => {
     expect(effects.put[3]).toEqual(put(actions.editor.saveComplete(id)));
   });
 
-  test('should close the editor without failing, if any background patch fails', async () => {
+  test('should dispatch save complete action even if background patches fail', async () => {
     const { effects } = await expectSaga(saveProcessor, { id })
       .provide([
         [select(selectors.editorPatchSet, id), patches],

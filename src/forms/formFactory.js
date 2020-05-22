@@ -60,11 +60,6 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
   return amalgamatedOptionsHandler;
 };
 
-const settingsContainer = {
-  collapsed: true,
-  label: 'Custom settings',
-  fields: ['settings'],
-};
 const applyCustomSettings = ({
   fieldMap,
   layout,
@@ -76,19 +71,28 @@ const applyCustomSettings = ({
       if (draft.type === 'column') {
         const firstContainer = draft.containers[0];
 
-        if (firstContainer.containers && firstContainer.containers.length)
-          firstContainer.containers.push(settingsContainer);
-        else {
-          firstContainer.type = 'collapse';
-
-          firstContainer.containers = [settingsContainer];
+        if (firstContainer.containers && firstContainer.containers.length) {
+          // HACK to ensure 'settings' is displayed at the end
+          firstContainer.containers = [
+            {
+              type: firstContainer.type,
+              containers: firstContainer.containers,
+            },
+            { fields: ['settings'] },
+          ];
+          delete firstContainer.type;
+        } else {
+          firstContainer.fields.push('settings');
         }
-      } else {
-        draft.containers.push(settingsContainer);
+      } else if (draft.type === 'collapse') {
+        draft.containers = [
+          { type: draft.type, containers: draft.containers },
+          { fields: ['settings'] },
+        ];
+        delete draft.type;
       }
-    } else {
-      draft.type = 'collapse';
-      draft.containers = [settingsContainer];
+    } else if (draft.fields) {
+      draft.fields.push('settings');
     }
   });
   const newFieldMap = produce(fieldMap, draft => {
@@ -154,7 +158,7 @@ const getResourceFormAssets = ({
   ssLinkedConnectionId,
 }) => {
   let fieldMap;
-  let layout = [];
+  let layout = {};
   let preSave;
   let init;
   let actions;

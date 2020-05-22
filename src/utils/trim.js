@@ -4,7 +4,10 @@ export default function trimObj(obj) {
   return Object.keys(obj).reduce(
     (acc, key) => {
       // Need to refactor this fix later
-      if (['columnDelimiter', 'rowDelimiter'].includes(key)) {
+
+      if (
+        ['columnDelimiter', 'rowDelimiter', '/rest/authScheme'].includes(key)
+      ) {
         acc[key] = typeof obj[key] === 'string' ? obj[key] : trimObj(obj[key]);
       } else {
         acc[key] =

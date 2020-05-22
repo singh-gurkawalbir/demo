@@ -450,6 +450,12 @@ const connectors = [
     assistant: 'liquidplanner',
   },
   {
+    id: 'logisense',
+    name: 'LogiSense',
+    type: 'http',
+    assistant: 'logisense',
+  },
+  {
     id: 'loopreturns',
     name: 'Loop Returns',
     type: 'http',
@@ -826,9 +832,14 @@ export const groupApplications = (
   });
 
   let filteredConnectors = assistantConnectors.filter(connector => {
-    if (connector.assistant && assistants && resourceType !== 'connections') {
-      const assistant = assistants.find(a => a.id === connector.assistant);
+    const assistant = assistants.find(a => a.id === connector.assistant);
 
+    if (
+      connector.assistant &&
+      assistants &&
+      resourceType !== 'connections' &&
+      appType
+    ) {
       if (assistant) {
         if (appType === 'import') {
           return assistant.import;
@@ -843,21 +854,16 @@ export const groupApplications = (
     }
 
     // Do not show FTP import for DataLoader flows
-    if (
-      resourceType === 'pageProcessor' &&
-      appType === 'import' &&
-      isSimpleImport
-    ) {
+    if (resourceType === 'pageProcessor' && isSimpleImport) {
       return connector.id !== 'ftp' && !connector.webhookOnly;
+    }
+
+    if (resourceType === 'pageProcessor' && assistant) {
+      return assistant.export || assistant.import;
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
     if (resourceType && !['exports', 'pageGenerator'].includes(resourceType)) {
-      // for pageProcessor lookups even ftps are not shown
-      if (resourceType === 'pageProcessor' && appType === 'export') {
-        return connector.id !== 'ftp' && !connector.webhookOnly;
-      }
-
       // all other resource types handled here
       return !connector.webhookOnly;
     }

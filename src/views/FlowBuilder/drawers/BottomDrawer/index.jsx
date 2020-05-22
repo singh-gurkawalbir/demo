@@ -118,6 +118,9 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
+  // Hard coded to false as we need to show bottom drawer
+  // till the new drawers are fully functional
+  const isUserInErrMgtTwoDotZero = false;
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -198,51 +201,64 @@ export default function BottomDrawer({
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example">
-          <Tab
-            {...tabProps(0)}
-            icon={
-              isAnyFlowConnectionOffline ? (
-                <WarningIcon className={classes.connectionWarning} />
-              ) : (
-                <ConnectionsIcon />
-              )
-            }
-            label="Connections"
-          />
-          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-          {connectionDebugLogs &&
-            Object.keys(connectionDebugLogs).map(
-              (connectionId, cIndex) =>
-                connectionDebugLogs[connectionId] && (
-                  <Tab
-                    className={classes.customTab}
-                    {...tabProps(cIndex + 3)}
-                    icon={<DebugIcon />}
-                    key={connectionId}
-                    component="div"
-                    label={
-                      <div className={classes.customTabContainer}>
-                        {connectionIdNameMap[connectionId]} - DEBUG
-                        <IconButton
-                          className={classes.closeBtn}
-                          onClick={handleDebugLogsClose(connectionId)}>
-                          <CloseIcon />
-                        </IconButton>
-                      </div>
-                    }
-                  />
+        {isUserInErrMgtTwoDotZero ? (
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+          </Tabs>
+        ) : (
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab
+              {...tabProps(0)}
+              icon={
+                isAnyFlowConnectionOffline ? (
+                  <WarningIcon className={classes.connectionWarning} />
+                ) : (
+                  <ConnectionsIcon />
                 )
-            )}
-        </Tabs>
+              }
+              label="Connections"
+            />
+            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+            {connectionDebugLogs &&
+              Object.keys(connectionDebugLogs).map(
+                (connectionId, cIndex) =>
+                  connectionDebugLogs[connectionId] && (
+                    <Tab
+                      className={classes.customTab}
+                      {...tabProps(cIndex + 3)}
+                      icon={<DebugIcon />}
+                      key={connectionId}
+                      component="div"
+                      label={
+                        <div className={classes.customTabContainer}>
+                          {connectionIdNameMap[connectionId]} - DEBUG
+                          <IconButton
+                            className={classes.closeBtn}
+                            onClick={handleDebugLogsClose(connectionId)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </div>
+                      }
+                    />
+                  )
+              )}
+          </Tabs>
+        )}
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
@@ -258,44 +274,51 @@ export default function BottomDrawer({
           </IconButton>
         </div>
       </div>
-
-      <TabPanel value={tabValue} index={0} classes={classes}>
-        <ConnectionPanel flow={flow} />
-      </TabPanel>
-      <TabPanel value={tabValue} index={1} classes={classes}>
-        <RunDashboardPanel flow={flow} />
-      </TabPanel>
-      <TabPanel value={tabValue} index={2} classes={classes}>
-        <AuditPanel flow={flow} />
-      </TabPanel>
-      {connectionDebugLogs &&
-        Object.keys(connectionDebugLogs).map(
-          (connectionId, cIndex) =>
-            connectionDebugLogs[connectionId] && (
-              <TabPanel
-                value={tabValue}
-                key={connectionId}
-                index={cIndex + 3}
-                classes={classes}>
-                <Fragment>
-                  <div className={classes.rightActionContainer}>
-                    <IconTextButton
-                      className={classes.refreshButton}
-                      onClick={handleDebugLogsRefresh(connectionId)}>
-                      <RefreshIcon /> Refresh
-                    </IconTextButton>
-                  </div>
-                  <CodePanel
-                    name="code"
-                    readOnly
-                    value={connectionDebugLogs[connectionId]}
-                    mode="javascript"
-                    overrides={{ useWorker: false }}
-                  />
-                </Fragment>
-              </TabPanel>
-            )
-        )}
+      {isUserInErrMgtTwoDotZero ? (
+        <TabPanel value={tabValue} index={0} classes={classes}>
+          <RunDashboardPanel flow={flow} />
+        </TabPanel>
+      ) : (
+        <Fragment>
+          <TabPanel value={tabValue} index={0} classes={classes}>
+            <ConnectionPanel flow={flow} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={1} classes={classes}>
+            <RunDashboardPanel flow={flow} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2} classes={classes}>
+            <AuditPanel flow={flow} />
+          </TabPanel>
+          {connectionDebugLogs &&
+            Object.keys(connectionDebugLogs).map(
+              (connectionId, cIndex) =>
+                connectionDebugLogs[connectionId] && (
+                  <TabPanel
+                    value={tabValue}
+                    key={connectionId}
+                    index={cIndex + 3}
+                    classes={classes}>
+                    <Fragment>
+                      <div className={classes.rightActionContainer}>
+                        <IconTextButton
+                          className={classes.refreshButton}
+                          onClick={handleDebugLogsRefresh(connectionId)}>
+                          <RefreshIcon /> Refresh
+                        </IconTextButton>
+                      </div>
+                      <CodePanel
+                        name="code"
+                        readOnly
+                        value={connectionDebugLogs[connectionId]}
+                        mode="javascript"
+                        overrides={{ useWorker: false }}
+                      />
+                    </Fragment>
+                  </TabPanel>
+                )
+            )}
+        </Fragment>
+      )}
     </Drawer>
   );
 }

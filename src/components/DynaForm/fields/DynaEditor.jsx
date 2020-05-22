@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     flexDirection: `row !important`,
     alignItems: 'flex-start',
+    display: 'flex',
   },
   dynaEditorWrapper: {
     width: '100%',

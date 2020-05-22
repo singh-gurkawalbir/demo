@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
     background: theme.palette.background.paper,
   },

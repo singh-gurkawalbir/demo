@@ -21,6 +21,7 @@ const dateTimeOptions = [
   { label: 'M/D/YY', value: 'M/D/YY' },
   { label: 'D/M/YYYY', value: 'D/M/YYYY' },
   { label: 'D/M/YY', value: 'D/M/YY' },
+  { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
   { label: 'MM/DD/YYYY', value: 'M/D/YYYY' },
   { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
   { label: 'MM/DD/YYYY HH:mm', value: 'MM/DD/YYYY HH:mm' },
@@ -215,6 +216,7 @@ export default {
           { label: 'Lightspeed', value: 'lightspeed' },
           { label: 'Linkedin', value: 'linkedin' },
           { label: 'Liquidplanner', value: 'liquidplanner' },
+          { label: 'LogiSense', value: 'logisense' },
           { label: 'Loop Returns', value: 'loopreturns' },
           { label: 'Magento 2', value: 'magento' },
           { label: 'Mailchimp', value: 'mailchimp' },
@@ -588,10 +590,7 @@ export default {
     visible: r => !(r && r.isLookup),
   },
   settings: {
-    type: 'editor',
-    mode: 'json',
-    label: 'Settings',
-    developerModeOnly: true,
-    defaultValue: r => (r && r.settings && JSON.stringify(r.settings)) || '{}',
+    type: 'settings',
+    defaultValue: r => r && r.settings,
   },
 };

@@ -1,8 +1,6 @@
-import { hot } from 'react-hot-loader';
-import { Fragment, Component } from 'react';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import { withStyles } from '@material-ui/core/styles';
+import { Fragment, useState, useMemo, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import { makeStyles, Drawer, List } from '@material-ui/core';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
 import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
 import FileDefinitionEditorDialog from '../../components/AFE/FileDefinitionEditor/Dialog';
@@ -11,15 +9,90 @@ import CsvConfigEditorDialog from '../../components/AFE/CsvConfigEditor/Dialog';
 import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
-import WorkArea from './WorkArea';
-import EditorListItem from './EditorListItem';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
 import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
+import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
+import { safeParse, hashCode } from '../../utils/string';
+import WorkArea from './WorkArea';
+import EditorListItem from './EditorListItem';
 
-@hot(module)
-@withStyles(theme => ({
+const editors = [
+  {
+    name: 'UrlEditor',
+    label: 'Url Editor',
+    description:
+      'This editor lets you create and test url templates against your raw data.',
+  },
+  {
+    name: 'HttpRequestBodyEditor',
+    label: 'Http Request Body',
+    description:
+      'This editor lets you create and test json or xml templates against your raw data.',
+  },
+  {
+    name: 'MergeEditor',
+    label: 'Merge Editor',
+    description:
+      'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
+  },
+  {
+    name: 'CsvParseEditor',
+    label: 'CSV Parser',
+    description: 'This processor converts comma separated values into JSON.',
+  },
+  {
+    name: 'XmlParseEditor',
+    label: 'XML Parser',
+    description:
+      'This processor wll convert XML to JSON controlled by an set of parse options.',
+  },
+
+  {
+    name: 'TransformEditor',
+    label: 'Transform Editor',
+    description:
+      'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
+  },
+
+  {
+    name: 'JavaScriptEditor',
+    label: 'JavaScript Editor',
+    description:
+      'This processor allows a user to run javascript safely in our secure jsruntime environment.',
+  },
+  {
+    name: 'FileDefinitionEditor',
+    label: 'File-Definition Parser',
+    description:
+      'This processor allows a user to parse junk data into readable json format by applying file definition structure on it',
+  },
+  {
+    name: 'SQLQueryBuilderEditor',
+    label: 'SQL Query Builder Editor',
+    description:
+      'This processor allows user to build Sql Query using handlerbars and json as input to it',
+  },
+  {
+    name: 'JSONEditor',
+    label: 'JSON Editor',
+    description: 'This processor allows user to edit JSON Object',
+  },
+  {
+    name: 'FilterEditor',
+    label: 'Filter Editor',
+    description:
+      'This editor allows a user to visually define an expression for filtering records.',
+  },
+  {
+    name: 'SettingsFormEditor',
+    label: 'Settings Form Editor',
+    description:
+      'This editor allows a user to build a custom form by providing a form definition as JSON and/or a javascript init function.',
+  },
+];
+const useStyles = makeStyles(theme => ({
   appFrame: {
     zIndex: 1,
     overflow: 'hidden',
@@ -35,7 +108,7 @@ import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 
   drawerPaper: {
     position: 'relative',
-    width: theme.drawerWidth,
+    width: 350,
     height: `calc(100vh - ${theme.spacing(17.5)}px)`,
     padding: theme.spacing(1),
   },
@@ -45,34 +118,36 @@ import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
     // backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
   },
-}))
-export default class Editors extends Component {
-  state = {
-    editorName: null,
-    rawData: '',
-  };
+}));
 
-  handleEditorChange = editorName => {
-    this.setState({ editorName });
-  };
+export default function Editors() {
+  const classes = useStyles();
+  const history = useHistory();
+  const [editorName, setEditorName] = useState();
+  const [rawData, setRawData] = useState();
+  const [rawDataKey, setRawDataKey] = useState(1);
+  const handleEditorChange = useCallback(
+    editorName => {
+      if (editorName === 'SettingsFormEditor') {
+        history.push('editors/editSettings');
+      }
 
-  handleClose = (shouldCommit, editorValues) => {
-    if (shouldCommit) {
-      const { data } = editorValues;
+      setEditorName(editorName);
+    },
+    [history]
+  );
+  const handleClose = useCallback(
+    (shouldCommit, editorValues) => {
+      if (shouldCommit) {
+        setRawData(editorValues.data);
+        setRawDataKey(rawDataKey + 1);
+      }
 
-      this.handleRawDataChange(data);
-    }
-
-    this.handleEditorChange(null);
-  };
-
-  handleRawDataChange = rawData => {
-    this.setState({ rawData });
-  };
-
-  getEditor = () => {
-    const { editorName, rawData } = this.state;
-
+      setEditorName();
+    },
+    [rawDataKey]
+  );
+  const currentEditor = useMemo(() => {
     switch (editorName) {
       case 'UrlEditor':
         return (
@@ -80,7 +155,7 @@ export default class Editors extends Component {
             title="Create URL template"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'HttpRequestBodyEditor':
@@ -89,7 +164,7 @@ export default class Editors extends Component {
             title="Create HTTP Request Body"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'MergeEditor':
@@ -98,7 +173,7 @@ export default class Editors extends Component {
             title="Apply Default Values"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
 
@@ -109,7 +184,7 @@ export default class Editors extends Component {
             csvEditorType="parse"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
 
@@ -118,9 +193,8 @@ export default class Editors extends Component {
           <XmlParseEditorDialog
             title="XML Parser"
             id={editorName}
-            // rules={{ attributePrefix: 'test_' }}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
 
@@ -130,7 +204,7 @@ export default class Editors extends Component {
             title="Transform Editor"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'JavaScriptEditor':
@@ -139,7 +213,7 @@ export default class Editors extends Component {
             title="Javascript Editor"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'FileDefinitionEditor':
@@ -148,7 +222,7 @@ export default class Editors extends Component {
             title="File definition rules"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'SQLQueryBuilderEditor':
@@ -160,7 +234,7 @@ export default class Editors extends Component {
             rule="Select * from {{orderId}}"
             data={rawData}
             defaultData={JSON.stringify({}, null, 2)}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       case 'JSONEditor':
@@ -184,115 +258,52 @@ export default class Editors extends Component {
             title="Filter Editor"
             id={editorName}
             data={rawData}
-            onClose={this.handleClose}
+            onClose={handleClose}
           />
         );
       default:
         return null;
     }
-  };
+  }, [editorName, handleClose, rawData]);
+  const drawerKey = hashCode(rawData);
 
-  render() {
-    const { classes } = this.props;
-    const { rawData, editorName } = this.state;
-    const editors = [
-      {
-        name: 'UrlEditor',
-        label: 'Url Editor',
-        description:
-          'This editor lets you create and test url templates against your raw data.',
-      },
-      {
-        name: 'HttpRequestBodyEditor',
-        label: 'Http Request Body',
-        description:
-          'This editor lets you create and test json or xml templates against your raw data.',
-      },
-      {
-        name: 'MergeEditor',
-        label: 'Merge Editor',
-        description:
-          'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
-      },
-      {
-        name: 'CsvParseEditor',
-        label: 'CSV Parser',
-        description:
-          'This processor converts comma separated values into JSON.',
-      },
-      {
-        name: 'XmlParseEditor',
-        label: 'XML Parser',
-        description:
-          'This processor wll convert XML to JSON controlled by an set of parse options.',
-      },
+  return (
+    <Fragment>
+      <CeligoPageBar title="Developer playground" />
 
-      {
-        name: 'TransformEditor',
-        label: 'Transform Editor',
-        description:
-          'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
-      },
+      <div className={classes.appFrame}>
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          classes={{
+            paper: classes.drawerPaper,
+          }}>
+          <List>
+            {editors.map(p => (
+              <EditorListItem
+                key={p.name}
+                item={p}
+                onClick={handleEditorChange}
+              />
+            ))}
+          </List>
+        </Drawer>
 
-      {
-        name: 'JavaScriptEditor',
-        label: 'JavaScript Editor',
-        description:
-          'This processor allows a user to run javascript safely in our secure jsruntime environmnet.',
-      },
-      {
-        name: 'FileDefinitionEditor',
-        label: 'File-Definition Parser',
-        description:
-          'This processor allows a user to parse junk data into readable json format by applying file definition sturcture on it',
-      },
-      {
-        name: 'SQLQueryBuilderEditor',
-        label: 'SQL Query Builder Editor',
-        description:
-          'This processor allows user to build Sql Query using handlerbars and json as input to it',
-      },
-      {
-        name: 'JSONEditor',
-        label: 'JSON Editor',
-        description: 'This processor allows user to edit JSON Object',
-      },
-      {
-        name: 'FilterEditor',
-        label: 'Filter Editor',
-        description: 'Filter Editor',
-      },
-    ];
+        {currentEditor}
 
-    return (
-      <Fragment>
-        <CeligoPageBar title="Editor playground (alpha)" />
-
-        <div className={classes.appFrame}>
-          <Drawer
-            variant="permanent"
-            anchor="left"
-            classes={{
-              paper: classes.drawerPaper,
-            }}>
-            <List>
-              {editors.map(p => (
-                <EditorListItem
-                  key={p.name}
-                  item={p}
-                  onClick={this.handleEditorChange}
-                />
-              ))}
-            </List>
-          </Drawer>
-
-          {editorName && this.getEditor()}
-
-          <main className={classes.content}>
-            <WorkArea rawData={rawData} onChange={this.handleRawDataChange} />
-          </main>
-        </div>
-      </Fragment>
-    );
-  }
+        <main className={classes.content}>
+          <WorkArea rawData={rawData} onChange={setRawData} />
+        </main>
+      </div>
+      <SettingsFormEditorDrawer
+        key={drawerKey}
+        editorId="settingsForm"
+        // resourceId={resourceId}
+        // resourceType={resourceType}
+        settingsForm={{ form: safeParse(rawData) }}
+        // eslint-disable-next-line react/jsx-handler-names
+        onClose={history.goBack}
+      />
+    </Fragment>
+  );
 }

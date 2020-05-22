@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   exitButtonsalsForceQualifier: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   dynaSalesforceQualifierWrapper: {
     flexDirection: `row !important`,

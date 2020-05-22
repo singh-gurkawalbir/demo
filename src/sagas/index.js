@@ -51,6 +51,8 @@ import { COMM_STATES } from '../reducers/comms/networkComms';
 import { transferSagas } from './transfer';
 import { suiteScriptSagas } from './suiteScript';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
+import openErrorsSagas from './errorManagement/openErrors';
+import errorDetailsSagas from './errorManagement/errorDetails';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 
@@ -152,6 +154,8 @@ export default function* rootSaga() {
     ...responseMappingSagas,
     ...suiteScriptSagas,
     ...jobErrorsPreviewSagas,
+    ...openErrorsSagas,
+    ...errorDetailsSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,

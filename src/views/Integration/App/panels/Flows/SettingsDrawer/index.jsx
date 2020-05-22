@@ -22,9 +22,24 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   settingsForm: {
-    maxHeight: `calc(100vh - 150px)`,
+    // maxHeight: `calc(100vh - 150px)`,
     // maxHeight: 'unset',
-    // padding: theme.spacing(2, 3),
+    minHeight: '100%',
+    // Todo (Azhar): nested styling for the CAM settings
+    padding: theme.spacing(2, 3),
+    '& + div': {
+      padding: theme.spacing(0, 3),
+    },
+    '& > * div.MuiTabs-vertical': {
+      marginTop: theme.spacing(-2),
+      marginLeft: theme.spacing(-3),
+    },
+    '& > div[class*= "fieldsContainer"]': {
+      height: '100%',
+      '& > div[class*= "makeStyles-root"]': {
+        height: '100%',
+      },
+    },
   },
 }));
 

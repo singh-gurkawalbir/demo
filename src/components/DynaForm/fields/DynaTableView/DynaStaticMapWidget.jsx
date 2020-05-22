@@ -7,13 +7,18 @@ import DynaSelect from '../../../../components/DynaForm/fields/DynaSelect';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   margin: {
     marginTop: '20px',
     marginBottom: '20px',
   },
   flexColumn: {
     flexDirection: 'column',
+  },
+  dynaStaticMapWidgetWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(2, 3),
   },
 }));
 
@@ -167,6 +172,7 @@ export default function DynaStaticMapWidget(props) {
         optionsMap={optionsMap}
         isLoading={isLoading ? fieldType : false}
         hideLabel
+        className={classes.dynaStaticMapWidgetWrapper}
         shouldReset={shouldReset}
         metadata={metadata}
         value={computedValue}

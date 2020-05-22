@@ -2,6 +2,9 @@ import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
+const emptyList = [];
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const {
     type,
@@ -159,7 +162,7 @@ export function stagedIdState(state, id) {
 // #region PUBLIC SELECTORS
 export function stagedResource(state, id, scope) {
   if (!state || !id || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   let updatedPatches;
@@ -196,13 +199,16 @@ export const makeTransformStagedResource = () =>
     (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
   );
 
-export function getAllResourceConflicts(state) {
-  if (!state) {
-    return [];
-  }
+export const getAllResourceConflicts = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return emptyList;
+    }
 
-  return Object.keys(state)
-    .filter(rId => state[rId] && state[rId].conflict)
-    .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
-}
+    return Object.keys(state)
+      .filter(rId => state[rId] && state[rId].conflict)
+      .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
+  }
+);
 // #endregion
