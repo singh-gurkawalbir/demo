@@ -89,7 +89,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common'],
+    fields: ['common', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
@@ -107,7 +107,6 @@ export default {
           'mongodb.ignoreExtract',
           'mongodb.document',
           'mongodb.update',
-          'dataMappings',
         ],
       },
     ],

@@ -110,8 +110,8 @@ export default {
   },
   oneToMany: {
     type: 'radiogroup',
-    label:
-      'Does each individual record being processed need to execute multiple different exports?',
+    label: 'One to many',
+    helpKey: 'oneToMany',
     defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
@@ -125,8 +125,8 @@ export default {
   },
   pathToMany: {
     type: 'text',
-    label:
-      'If records being processed are represented by Objects then please specify the JSON path to the child objects that should be used to parameterize each export',
+    label: 'Path to many',
+    helpKey: 'pathToMany',
     placeholder: 'Optional. Not needed for row/array formats.',
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {

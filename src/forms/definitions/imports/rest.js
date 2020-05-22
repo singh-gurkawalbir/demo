@@ -895,7 +895,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode'],
+    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
@@ -940,7 +940,6 @@ export default {
           'rest.existingDataId',
           'sampleDataTitle',
           'sampleData',
-          'dataMappings',
           'blobKeyPath',
         ],
       },

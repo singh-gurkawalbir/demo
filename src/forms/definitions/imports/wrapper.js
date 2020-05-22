@@ -14,7 +14,7 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common'],
+    fields: ['common', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
@@ -26,7 +26,6 @@ export default {
           'sampleData',
           'wrapper.lookups',
           'wrapper.sampleData',
-          'dataMappings',
         ],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
