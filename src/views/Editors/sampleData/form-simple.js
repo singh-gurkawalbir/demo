@@ -41,14 +41,11 @@ const sampleData = {
       ],
     },
   },
-  layout: {
-    fields: ['A', 'mode', 'body', 'url'],
-  },
 };
 
 export default {
-  key: 'form',
+  key: 'form-simple',
   mode: 'json',
-  name: 'Sample form definition',
+  name: 'Simple form',
   data: JSON.stringify(sampleData, null, 2),
 };
