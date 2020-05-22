@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    display: 'inline-block !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
