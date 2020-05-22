@@ -885,7 +885,7 @@ export function nextDataFlowsForFlow(state, flow) {
 }
 
 export function isIAConnectionSetupPending(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId);
+  const connection = resource(state, 'connections', connectionId) || {};
 
   if (!connection || !connection._connectorId) {
     return;
