@@ -14,7 +14,7 @@ import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
-import { safeParse, hashCode } from '../../utils/string';
+import { safeParse } from '../../utils/string';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
@@ -126,9 +126,11 @@ export default function Editors() {
   const [editorName, setEditorName] = useState();
   const [rawData, setRawData] = useState();
   const [rawDataKey, setRawDataKey] = useState(1);
+  const [count, setCount] = useState(0);
   const handleEditorChange = useCallback(
     editorName => {
       if (editorName === 'SettingsFormEditor') {
+        setCount(count => count + 1);
         history.push('editors/editSettings');
       }
 
@@ -265,7 +267,6 @@ export default function Editors() {
         return null;
     }
   }, [editorName, handleClose, rawData]);
-  const drawerKey = hashCode(rawData);
 
   return (
     <Fragment>
@@ -296,7 +297,7 @@ export default function Editors() {
         </main>
       </div>
       <SettingsFormEditorDrawer
-        key={drawerKey}
+        key={count}
         editorId="settingsForm"
         // resourceId={resourceId}
         // resourceType={resourceType}

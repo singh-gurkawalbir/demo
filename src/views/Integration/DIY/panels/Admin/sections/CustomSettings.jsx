@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
@@ -20,7 +20,7 @@ export default function CustomSettings({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
-  const { name, description, settings } =
+  const { settings } =
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
@@ -28,43 +28,53 @@ export default function CustomSettings({ integrationId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const fieldMeta = {
-    fieldMap: {
-      settings: {
-        id: 'settings',
-        helpKey: 'integration.settings',
-        name: 'settings',
-        type: 'settings',
-        label: 'Custom',
-        defaultValue: settings,
-        collapsed: false,
+  const fieldMeta = useMemo(
+    () => ({
+      fieldMap: {
+        settings: {
+          id: 'settings',
+          helpKey: 'integration.settings',
+          name: 'settings',
+          type: 'settings',
+          label: 'Custom',
+          defaultValue: settings,
+          collapsed: false,
+        },
       },
-    },
-    layout: {
-      fields: ['settings'],
-    },
-  };
+      layout: {
+        fields: ['settings'],
+      },
+    }),
+    [settings]
+  );
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [name, description, settings]);
-  const handleSubmit = formVal => {
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/settings',
-        value: formVal && formVal.settings,
-      },
-    ];
+  }, [settings]);
+  const handleSubmit = useCallback(
+    formVal => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/settings',
+          value: formVal && formVal.settings,
+        },
+      ];
 
-    dispatch(
-      actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-    );
-    dispatch(
-      actions.resource.commitStaged('integrations', integrationId, SCOPES.VALUE)
-    );
-    setCount(count => count + 1);
-  };
+      dispatch(
+        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
+      );
+      dispatch(
+        actions.resource.commitStaged(
+          'integrations',
+          integrationId,
+          SCOPES.VALUE
+        )
+      );
+      setCount(count => count + 1);
+    },
+    [dispatch, integrationId]
+  );
 
   return (
     <Fragment>

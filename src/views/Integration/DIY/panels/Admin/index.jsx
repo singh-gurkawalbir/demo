@@ -14,7 +14,6 @@ import GeneralSection from './sections/General';
 import CustomSettings from './sections/CustomSettings';
 import * as selectors from '../../../../../reducers';
 
-const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
@@ -72,16 +71,12 @@ export default function AdminPanel({ integrationId }) {
   const isViewMode = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', integrationId);
-
-    return (resource && resource.settingsForm) || emptyObj;
-  });
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
   );
-  const hasSettingsForm =
-    settingsForm && (settingsForm.form || settingsForm.init);
+  const hasSettingsForm = useSelector(state =>
+    selectors.hasSettingsForm(state, 'integrations', integrationId)
+  );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {

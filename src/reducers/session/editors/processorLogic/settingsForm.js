@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { isEqual } from 'lodash';
+import { isEqual, isEmpty } from 'lodash';
 import util from '../../../../utils/json';
 import { safeParse } from '../../../../utils/string';
 import javascript from './javascript';
@@ -38,12 +38,9 @@ export default {
   },
 
   dirty: editor => {
-    let parsedData;
+    let parsedData = safeParse(editor.data);
 
-    try {
-      parsedData =
-        typeof editor.data === 'string' ? JSON.parse(editor.data) : editor.data;
-    } catch (err) {
+    if (parsedData === undefined) {
       return false;
     }
 
@@ -65,8 +62,7 @@ export default {
   validate: ({ data }) => {
     let dataError;
 
-    if (data === '') dataError = 'Must provide some sample data.';
-    else if (typeof data === 'string')
+    if (typeof data === 'string' && !isEmpty(data))
       dataError = util.validateJsonString(data);
 
     return { dataError: dataError !== null && dataError };
@@ -77,15 +73,12 @@ export default {
 
     if (newResult) {
       meta = newResult.data;
-    } else if (data) {
+    } else {
       const parsedData = safeParse(data);
-
-      if (!parsedData) return undefined;
-      // console.log('parsedData', parsedData);
 
       if (mode === 'json') {
         meta = parsedData;
-      } else {
+      } else if (parsedData) {
         meta =
           parsedData.resource &&
           parsedData.resource.settingsForm &&
@@ -95,7 +88,7 @@ export default {
 
     // inject the current setting values (found in resource.settings)
     // into the respective field’s defaultValue prop.
-    return produce(meta, draft => {
+    const newMeta = produce(meta, draft => {
       if (settings && meta && typeof draft.fieldMap === 'object') {
         Object.keys(draft.fieldMap).forEach(key => {
           const field = draft.fieldMap[key];
@@ -108,5 +101,7 @@ export default {
         });
       }
     });
+
+    return { data: newMeta, logs: newResult && newResult.logs };
   },
 };
