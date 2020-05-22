@@ -35,7 +35,7 @@ export default function CustomSettings({ integrationId }) {
         helpKey: 'integration.settings',
         name: 'settings',
         type: 'settings',
-        label: 'Settings',
+        label: 'Custom',
         defaultValue: settings,
         collapsed: false,
       },

@@ -33,22 +33,22 @@ export const getAvailablePreviewStages = resource => {
       ];
     case 'netsuite':
     case 'salesforce':
-      return [{ label: 'Parsed Output', value: 'parse' }];
+      return [{ label: 'Parsed output', value: 'parse' }];
     case 'rest':
       return [
         { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed Output', value: 'parse' },
+        { label: 'Parsed output', value: 'parse' },
       ];
     case 'ftp':
       return [
         { label: 'Raw', value: 'raw' },
-        { label: 'Parsed Output', value: 'parse' },
+        { label: 'Parsed output', value: 'parse' },
       ];
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return [{ label: 'Parsed Output', value: 'parse' }];
+      return [{ label: 'Parsed output', value: 'parse' }];
     default:
       return emptyList;
   }

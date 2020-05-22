@@ -1326,6 +1326,8 @@ export default {
     'Set this field to true if you would like to delete the blob content which is intermittently stored during the transit. On successful import, intermittently stored blob content will be deleted.',
   'import.filter.rules':
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
+  'impoer.file.filedefinition.rules':
+    'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
   'import.hooks.preMap.function':
     "The name of the preMap hook function in your code that you want invoked. Please see <a href='https://github.com/celigo/integrator-extension/blob/master/README.md#hooks' target='_blank'>here</a> for the full documentation on hooks.",
   'import.hooks.preMap._stackId':
@@ -2106,5 +2108,7 @@ export default {
     'The CSV generator helper can be used to visualize and experiment with how integrator.io builds CSV files (or any other delimited text files) from the JSON records/rows being processed by your flow.',
   'file.csvParse':
     'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
+  apiIdentifier:
+    'This resource can be invoked via an HTTP POST request to this unique url.',
   // #region UI help text
 };
