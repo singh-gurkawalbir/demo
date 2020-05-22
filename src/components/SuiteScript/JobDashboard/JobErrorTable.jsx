@@ -105,10 +105,19 @@ function JobErrorTable({
 
   function handleResolveClick() {
     if (selectedErrorIds.length === 0) {
-      const jobsToResolve = [{ _id: job._id }];
+      const jobsToResolve = [
+        {
+          jobId: job._id,
+          jobType: job.type,
+          log: job.log,
+        },
+      ];
 
       dispatch(
         actions.suiteScript.job.resolveSelected({
+          ssLinkedConnectionId,
+          integrationId,
+          flowId: job._flowId,
           jobs: jobsToResolve,
         })
       );
@@ -147,6 +156,7 @@ function JobErrorTable({
           selectedErrorIds,
         })
       );
+      setSelectedErrors({});
     }
   }
 

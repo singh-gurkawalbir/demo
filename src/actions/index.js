@@ -1843,8 +1843,13 @@ const suiteScript = {
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_PENDING),
     resolve: ({ jobId }) =>
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE, { jobId }),
-    resolveSelected: ({ jobs }) =>
-      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_SELECTED, { jobs }),
+    resolveSelected: ({ ssLinkedConnectionId, integrationId, flowId, jobs }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_SELECTED, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        jobs,
+      }),
     resolveAll: ({ flowId, integrationId }) =>
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL, {
         flowId,
