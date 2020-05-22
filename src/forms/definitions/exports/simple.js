@@ -98,7 +98,7 @@ export default {
       name: '/file/type',
       type: 'select',
       label: 'File type',
-      defaultValue: r => (r && r.file && r.file.type) || 'csv',
+      defaultValue: r => r && r.file && r.file.type,
       options: [
         {
           items: [

@@ -1,20 +1,19 @@
-import { useState, Fragment } from 'react';
-import { IconButton } from '@material-ui/core';
+import { useState, Fragment, useCallback } from 'react';
 import Icon from '../../../../icons/CalendarIcon';
 import FlowSchedule from '../../../../FlowSchedule';
 import ModalDialog from '../../../../ModalDialog';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Schedule',
+  key: 'schedule',
   component: function Schedule({ resource }) {
     const [showSchedule, setShowSchedule] = useState(false);
-    const onScheduleClick = () => {
-      setShowSchedule(!showSchedule);
-    };
-
-    const handleClose = () => {
+    const handleScheduleClick = useCallback(() => {
+      setShowSchedule(true);
+    }, []);
+    const handleClose = useCallback(() => {
       setShowSchedule(false);
-    };
+    }, []);
 
     return (
       <Fragment>
@@ -26,12 +25,15 @@ export default {
             </div>
           </ModalDialog>
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Schedule',
+          }}
           data-test="showFlowSchedule"
           size="small"
-          onClick={onScheduleClick}>
+          onClick={handleScheduleClick}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

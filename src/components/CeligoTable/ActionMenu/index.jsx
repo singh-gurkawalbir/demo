@@ -1,6 +1,5 @@
-import { useRef } from 'react';
+import { useRef, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -30,14 +29,8 @@ export default function ActionMenu({ actions }) {
 
   if (!actions || !actions.length) return null;
 
-  const renderAction = ({ label, component }, placement) => (
-    <Tooltip
-      key={label}
-      title={label}
-      placement={placement}
-      disableFocusListener>
-      <span>{component}</span>
-    </Tooltip>
+  const renderAction = ({ key, component }) => (
+    <Fragment key={key}>{component}</Fragment>
   );
 
   return (

@@ -42,7 +42,7 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [
@@ -197,7 +197,8 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
+    label: 'CSV parser helper:',
+    helpKey: 'file.csvParse',
     defaultValue: r =>
       (r.file && r.file.csv) || {
         rowsToSkip: 0,

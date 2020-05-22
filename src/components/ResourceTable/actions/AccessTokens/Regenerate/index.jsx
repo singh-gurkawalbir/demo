@@ -1,24 +1,28 @@
-import { IconButton } from '@material-ui/core';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
 import Icon from '../../../../../components/icons/RegenerateTokenIcon';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Regenerate token',
-  component: function AccessTokens({ resource }) {
+  key: 'regenerateAccessToken',
+  component: function RegenerateAccessToken({ resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-
-    function handleRegenerateClick() {
-      dispatch(actions.accessToken.generateToken(resource._id));
-    }
+    const handleRegenerateClick = useCallback(() => {
+      dispatch(actions.accessToken.generateToken(resourceId));
+    }, [dispatch, resourceId]);
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Regenerate token',
+        }}
         data-test="regenerateToken"
         size="small"
-        onClick={() => handleRegenerateClick()}>
+        onClick={handleRegenerateClick}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

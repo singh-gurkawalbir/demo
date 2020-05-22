@@ -1,22 +1,28 @@
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../actions';
 import Icon from '../../../icons/DownloadIcon';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Download',
-  component: function DownloadResources({ resourceType, resource }) {
+  key: 'downloadResource',
+  component: function DownloadResource({ resourceType, resource = {} }) {
+    const { _id: resourceId } = resource;
     const dispatch = useDispatch();
+    const handleDownloadReferenceClick = useCallback(() => {
+      dispatch(actions.resource.downloadFile(resourceId, resourceType));
+    }, [dispatch, resourceId, resourceType]);
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Download',
+        }}
         data-test="downloadResourceFile"
         size="small"
-        onClick={() => {
-          dispatch(actions.resource.downloadFile(resource._id, resourceType));
-        }}>
+        onClick={handleDownloadReferenceClick}>
         <Icon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

@@ -66,7 +66,7 @@ const DynaTextWithFlowSuggestion = props => {
       onFieldChange(id, newValue);
       setState({
         textInsertPosition: 0,
-        hideSuggestion: false,
+        hideSuggestion: true,
       });
     },
     [id, onFieldChange]
