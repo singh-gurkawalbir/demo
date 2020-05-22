@@ -395,8 +395,12 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 
   let match = resources.find(r => r._id === id);
 
-  if (resourceType === 'connections' && !match) {
-    match = resources.find(r => r.id === id);
+  if (!match) {
+    if (resourceType === 'connections') {
+      match = resources.find(r => r.id === id);
+    } else if (resourceType === 'flows') {
+      match = resources.find(r => r._flowId === id);
+    }
   }
 
   if (!match) return null;

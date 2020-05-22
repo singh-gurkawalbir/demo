@@ -174,6 +174,8 @@ export default function JobTable({
               onViewErrorsClick={handleViewErrorsClick}
               integrationName={integrationName}
               isFlowBuilderView={isFlowBuilderView}
+              ssLinkedConnectionId={ssLinkedConnectionId}
+              integrationId={integrationId}
             />
           ))}
         </TableBody>

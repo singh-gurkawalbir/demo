@@ -8,7 +8,7 @@ import { useState, Fragment } from 'react';
 import { JOB_STATUS } from '../../../utils/constants';
 import JobStatus from './JobStatus';
 import { getSuccess } from './util';
-// import JobActionsMenu from './JobActionsMenu';
+import JobActionsMenu from './JobActionsMenu';
 import DateTimeDisplay from '../../DateTimeDisplay';
 
 const useStyles = makeStyles(theme => ({
@@ -117,6 +117,8 @@ export default function JobDetail({
   onViewErrorsClick,
   integrationName,
   isFlowBuilderView,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
   const classes = useStyles();
   const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
@@ -205,12 +207,14 @@ export default function JobDetail({
           <DateTimeDisplay dateTime={job.endedAt} />
         </TableCell>
         <TableCell className={classes.actions}>
-          {/* <JobActionsMenu
+          <JobActionsMenu
             job={job}
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             integrationName={integrationName}
             isFlowBuilderView={isFlowBuilderView}
-          /> */}
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
+          />
         </TableCell>
       </TableRow>
     </Fragment>

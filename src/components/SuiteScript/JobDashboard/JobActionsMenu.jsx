@@ -5,10 +5,9 @@ import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from 'react-router-dom';
-import { JOB_STATUS, JOB_TYPES } from '../../../utils/constants';
+import { JOB_STATUS } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import useConfirmDialog from '../../ConfirmDialog';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import CommStatus from '../../CommStatus';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -16,6 +15,7 @@ import { UNDO_TIME } from './util';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../../utils/routePaths';
 import * as selectors from '../../../reducers';
+import openExternalUrl from '../../../utils/window';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -26,19 +26,16 @@ const useStyle = makeStyles({
 export default function JobActionsMenu({
   job,
   onActionClick,
-  userPermissionsOnIntegration = {},
-  integrationName,
   isFlowBuilderView,
+  ssLinkedConnectionId,
+  integrationId,
 }) {
   const classes = useStyle();
   const dispatch = useDispatch();
   const history = useHistory();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
-  const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
-  const [showRetriesDialog, setShowRetriesDialog] = useState(false);
-  const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
   const isJobInProgress = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
     job.uiStatus
   );
@@ -47,11 +44,19 @@ export default function JobActionsMenu({
     JOB_STATUS.CANCELED,
     JOB_STATUS.FAILED,
   ].includes(job.uiStatus);
-  const menuOptions = [];
-  const flowDetails = useSelector(
-    state => selectors.flowDetails(state, job._flowId),
+  const flowDetails = useSelector(state =>
+    selectors.suiteScriptResource(state, {
+      resourceType: 'flows',
+      id: job._flowId,
+      integrationId,
+      ssLinkedConnectionId,
+    })
+  );
+  const additionalHeaders = useSelector(
+    state => selectors.accountShareHeader(state, ''),
     shallowEqual
   );
+  const menuOptions = [];
 
   if (isJobCompleted) {
     if (job.numError > 0) {
@@ -120,22 +125,22 @@ export default function JobActionsMenu({
         resourceId: job._flowId,
       },
     });
-    dispatch(actions.job.paging.setCurrentPage(0));
+    dispatch(actions.suiteScript.job.paging.setCurrentPage(0));
   };
 
   function handleActionClick(action) {
     handleMenuClose();
 
-    if (action === 'downloadDiagnostics') {
-      dispatch(
-        actions.job.downloadFiles({ jobId: job._id, fileType: 'diagnostics' })
-      );
-    } else if (action === 'downloadFiles') {
-      if (job.files.length === 1) {
-        dispatch(actions.job.downloadFiles({ jobId: job._id }));
-      } else if (job.files.length > 1) {
-        setShowFilesDownloadDialog(true);
+    if (action === 'downloadSuiteScriptLogs') {
+      let downloadUrl = `/api/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${job._id}/download?jobType=${job.type}&fileType=suitescriptlogs`;
+
+      if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+        downloadUrl += `&integrator-ashareid=${
+          additionalHeaders['integrator-ashareid']
+        }`;
       }
+
+      openExternalUrl({ url: downloadUrl });
     } else if (action === 'resolveJob') {
       closeSnackbar();
       dispatch(
@@ -168,9 +173,8 @@ export default function JobActionsMenu({
       // TODO: branch for dataloader flows. The url should use the segment /dataLoader/ if flow is DL.
       history.push(
         getRoutePath(
-          `/integrations/${job._integrationId || 'none'}/flowBuilder/${
-            job._flowId
-          }`
+          `/suitescript/${ssLinkedConnectionId}/integrations/${integrationId}/flowBuilder/${flowDetails &&
+            flowDetails._id}`
         )
       );
     } else {
@@ -191,15 +195,7 @@ export default function JobActionsMenu({
         onClose={handleMenuClose}>
         {menuOptions.map(opt => {
           if (opt.action === 'runFlow') {
-            return (
-              <MenuItem key="runFlow">
-                <RunFlowButton
-                  variant="text"
-                  flowId={job._flowId}
-                  onRunStart={handleRunStart}
-                />
-              </MenuItem>
-            );
+            return <span>Run</span>;
           }
 
           return (
