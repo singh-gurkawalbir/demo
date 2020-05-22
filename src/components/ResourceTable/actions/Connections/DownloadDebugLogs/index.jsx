@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 import openExternalUrl from '../../../../../utils/window';
@@ -10,11 +10,12 @@ export default {
   component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
     const url = `/connections/${connectionId}/debug`;
-    const additionalHeaders = useSelector(state =>
-      selectors.accountShareHeader(state, url)
+    const additionalHeaders = useSelector(
+      state => selectors.accountShareHeader(state, url),
+      shallowEqual
     );
     const handleDownloadDebugLogsClick = useCallback(() => {
-      let _url = url;
+      let _url = `/api${url}`;
 
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
         _url += `?integrator-ashareid=${
@@ -22,7 +23,6 @@ export default {
         }`;
       }
 
-      _url = `/api${url}`;
       openExternalUrl({ url: _url });
     }, [additionalHeaders, url]);
 
