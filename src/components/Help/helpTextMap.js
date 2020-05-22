@@ -2110,5 +2110,7 @@ export default {
     'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
     'This resource can be invoked via an HTTP POST request to this unique url.',
+  'connection.configDebugger':
+    'Enable Connection debugging for the selected period of time to collect all requests and responses made via the Connection. The debug logs can be accessed via the Connections tab of the Flow Builder.',
   // #region UI help text
 };
