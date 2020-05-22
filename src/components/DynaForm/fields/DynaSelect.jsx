@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
+import { stringCompare } from '../../../utils/sort';
 
 const useStyles = makeStyles({
   fieldWrapper: {
@@ -39,34 +40,41 @@ export default function DynaSelect(props) {
     options.reduce(
       (itemsSoFar, option) =>
         itemsSoFar.concat(
-          option.items.map(item => {
-            let label;
-            let value;
+          option.items
+            .map(item => {
+              let label;
+              let value;
 
-            if (typeof item === 'string') {
-              label = item;
-              value = item;
-            } else {
-              ({ value } = item);
-              label = item.label || item.value;
-            }
+              if (typeof item === 'string') {
+                label = item;
+                value = item;
+              } else {
+                ({ value } = item);
+                label = item.label || item.value;
+              }
 
-            const { subHeader, disabled = false } = item;
+              return typeof item === 'string'
+                ? { label, value }
+                : { ...item, label, value };
+            })
+            .sort(stringCompare('label'))
+            .map(item => {
+              const { label, value, subHeader, disabled = false } = item;
 
-            if (subHeader) {
+              if (subHeader) {
+                return (
+                  <ListSubheader disableSticky key={subHeader}>
+                    {subHeader}
+                  </ListSubheader>
+                );
+              }
+
               return (
-                <ListSubheader disableSticky key={subHeader}>
-                  {subHeader}
-                </ListSubheader>
+                <MenuItem key={value} value={value} disabled={disabled}>
+                  {label}
+                </MenuItem>
               );
-            }
-
-            return (
-              <MenuItem key={value} value={value} disabled={disabled}>
-                {label}
-              </MenuItem>
-            );
-          })
+            })
         ),
       []
     );
