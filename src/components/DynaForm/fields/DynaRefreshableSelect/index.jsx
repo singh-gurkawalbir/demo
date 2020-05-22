@@ -1,9 +1,16 @@
 import { useCallback, Fragment, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import RawHtml from '../../../RawHtml';
+
+const useStyles = makeStyles(() => ({
+  validationError: {
+    display: 'inline-block !important',
+  },
+}));
 
 /**
  *
@@ -20,6 +27,7 @@ export default function DynaSelectOptionsGenerator(props) {
     disableFetch,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { status, data, errorMessage, validationError } = useSelector(state =>
     selectors.metadataOptionsAndResources({
@@ -88,7 +96,7 @@ export default function DynaSelectOptionsGenerator(props) {
         disableOptionsLoad={disableOptionsLoad}
         {...props}
       />
-      <RawHtml html={validationError} />
+      <RawHtml className={classes.validationError} html={validationError} />
     </Fragment>
   );
 }
