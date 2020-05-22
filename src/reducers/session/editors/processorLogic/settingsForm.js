@@ -100,6 +100,10 @@ export default {
         Object.keys(draft.fieldMap).forEach(key => {
           const field = draft.fieldMap[key];
 
+          if (typeof field !== 'object') {
+            throw new Error('Invalid fieldMap. Key should be of object type');
+          }
+
           field.defaultValue = settings[field.name] || '';
         });
       }
