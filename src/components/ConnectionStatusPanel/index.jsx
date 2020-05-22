@@ -73,7 +73,8 @@ export default function ConnectionStatusPanel(props) {
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
   const isIAIntegration = useSelector(state => {
-    const connection = selectors.resource(state, 'connections', connectionId);
+    const connection =
+      selectors.resource(state, 'connections', connectionId) || {};
 
     return !!(connection && connection._connectorId);
   });
