@@ -19,6 +19,7 @@ export default function RawView(props) {
     <EditorField
       {...props}
       label="Settings"
+      helpKey="settings"
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       mode="json"

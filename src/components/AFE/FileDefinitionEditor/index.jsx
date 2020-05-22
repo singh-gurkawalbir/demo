@@ -27,7 +27,7 @@ export default function FileDefinitionEditor(props) {
   let resultMode;
 
   if (processor === FILE_GENERATOR) {
-    resultTitle = 'Generated import';
+    resultTitle = 'Generated file';
     dataMode = 'json';
     resultMode = 'text';
   } else {
@@ -61,7 +61,7 @@ export default function FileDefinitionEditor(props) {
       dataMode={dataMode}
       resultMode={resultMode}
       ruleTitle="Type your file definition rules here"
-      dataTitle="Sample file"
+      dataTitle="Sample flow data"
       resultTitle={resultTitle}
       disabled={disabled}
     />

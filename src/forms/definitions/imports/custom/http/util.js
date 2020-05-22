@@ -311,13 +311,13 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common'],
+      fields: ['common', 'dataMappings'],
       type: 'collapse',
       containers: [
         {
           collapsed: true,
           label: 'How would you like the data imported?',
-          fields: [...fieldIds, 'dataMappings'],
+          fields: [...fieldIds],
         },
       ],
     },

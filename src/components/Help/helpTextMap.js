@@ -2,7 +2,9 @@
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   settingsForm:
-    'You can launch and use the form builder if you want to create a form to manage the settings object for this resource.',
+    'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
+  settings:
+    'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
@@ -1326,7 +1328,7 @@ export default {
     'Set this field to true if you would like to delete the blob content which is intermittently stored during the transit. On successful import, intermittently stored blob content will be deleted.',
   'import.filter.rules':
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
-  'impoer.file.filedefinition.rules':
+  'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
   'import.hooks.preMap.function':
     "The name of the preMap hook function in your code that you want invoked. Please see <a href='https://github.com/celigo/integrator-extension/blob/master/README.md#hooks' target='_blank'>here</a> for the full documentation on hooks.",
@@ -2110,6 +2112,10 @@ export default {
     'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
     'This resource can be invoked via an HTTP POST request to this unique url.',
+  oneToMany:
+    'Select this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow).  For example, if you are processing order records, but for this step in the flow you want to process the line items within the orders as the main records.',
+  pathToMany:
+    'If the records being processed are JSON objects, then use this field to specify the JSON path to the child records. This field does not need to be set for array/row based data.',
   'connection.configDebugger':
     'Enable Connection debugging for the selected period of time to collect all requests and responses made via the Connection. The debug logs can be accessed via the Connections tab of the Flow Builder.',
   // #region UI help text
