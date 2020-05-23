@@ -93,6 +93,9 @@ function* onResourceCreate({ id, resourceType, tempId }) {
    * Question: How to differentiate -- a lookup creation and an existing lookup add on flow
    */
   if (resourceType === 'exports') {
+    // TODO @Raghu: figure out a way to make preview call once to save Transformation rules and also rawData
+    // Merge the below two sagas
+    // @Bugfix: 15331 transformation rules for XML related exports are saved after export is created
     yield call(saveTransformationRulesForNewXMLExport, {
       resourceId: id,
       tempResourceId: tempId,
