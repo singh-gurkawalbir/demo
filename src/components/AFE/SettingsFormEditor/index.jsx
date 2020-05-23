@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
   submitButton: {
     marginLeft: theme.spacing(1),
   },
+  formPreviewContainer: {
+    maxHeight: 'calc(100% - 54px) !important',
+  },
 }));
 
 export default function SettingsFormEditor({
@@ -115,10 +118,11 @@ export default function SettingsFormEditor({
       )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
-        {result && status !== 'error' ? (
+        {result && result.data && status !== 'error' ? (
           <DynaForm
+            className={classes.formPreviewContainer}
             key={key}
-            fieldMeta={result}
+            fieldMeta={result.data}
             // onChange={handleFormPreviewChange}
             resourceId={resourceId}
             resourceType={resourceType}>

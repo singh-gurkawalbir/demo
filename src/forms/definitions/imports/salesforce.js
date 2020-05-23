@@ -219,7 +219,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode'],
+    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
       {
@@ -266,7 +266,6 @@ export default {
           'salesforce.idLookup.whereClause',
           'salesforce.upsert.externalIdField',
           'salesforce.idLookup.extract',
-          'dataMappings',
           'blobKeyPath',
         ],
       },

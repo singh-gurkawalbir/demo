@@ -826,6 +826,14 @@ export function resourceListModified(userState, resourcesState, options = {}) {
   return fromResources.resourceList(resourcesState, options);
 }
 
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromData.hasSettingsForm(
+    state && state.data,
+    resourceType,
+    resourceId
+  );
+}
+
 export const makeResourceListSelector = () =>
   createSelector(
     userState,
@@ -877,7 +885,7 @@ export function nextDataFlowsForFlow(state, flow) {
 }
 
 export function isIAConnectionSetupPending(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId);
+  const connection = resource(state, 'connections', connectionId) || {};
 
   if (!connection || !connection._connectorId) {
     return;

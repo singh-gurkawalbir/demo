@@ -60,12 +60,9 @@ export default {
   },
   oneToMany: {
     type: 'radiogroup',
-    label:
-      'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: r =>
-      r &&
-      ((typeof r.oneToMany === 'string' && r.oneToMany === 'true') ||
-        !!r.oneToMany),
+    label: 'One to many',
+    helpKey: 'oneToMany',
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     options: [
       {
         items: [
@@ -77,8 +74,9 @@ export default {
   },
   pathToMany: {
     type: 'text',
-    label:
-      'if records being processed are represented by Objects then please specify the JSON path to be child records',
+    label: 'Path to many',
+    helpKey: 'pathToMany',
+
     placeholder: 'Optional. Not needed for row/array formats.',
     visibleWhen: [
       {

@@ -71,7 +71,7 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: ['common', 'modelMetadata'],
+    fields: ['common', 'dataMappings', 'modelMetadata'],
     type: 'collapse',
     containers: [
       {
@@ -81,7 +81,6 @@ export default {
           'rdbms.queryType',
           'rdbms.bulkInsert.tableName',
           'rdbms.query',
-          'dataMappings',
         ],
       },
       {

@@ -39,7 +39,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   // into the respective field’s defaultValue prop.
   let newFieldMeta = metadata;
 
-  if (resource.settings && metadata) {
+  if (resource.settings && metadata && typeof metadata.fieldMap === 'object') {
     newFieldMeta = produce(metadata, draft => {
       Object.keys(draft.fieldMap).forEach(key => {
         const field = draft.fieldMap[key];

@@ -73,6 +73,7 @@ export default function DynaSettings(props) {
   };
   const { resourceType, resourceId } = resourceContext;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
+  const [count, setCount] = useState(0);
   const history = useHistory();
   const match = useRouteMatch();
   const integrationId = useIntegration(resourceType, resourceId);
@@ -87,9 +88,17 @@ export default function DynaSettings(props) {
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
   );
-  const toggleEditMode = useCallback(() => {
-    history.push(`${match.url}/editSettings`);
-  }, [history, match.url]);
+  const hasSettingsForm = useSelector(state =>
+    selectors.hasSettingsForm(state, resourceType, resourceId)
+  );
+  const toggleEditMode = useCallback(
+    e => {
+      e.stopPropagation();
+      setCount(count => count + 1);
+      history.push(`${match.url}/editSettings`);
+    },
+    [history, match.url]
+  );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
       // console.log(isValid ? 'valid: ' : 'invalid: ', values);
@@ -106,8 +115,6 @@ export default function DynaSettings(props) {
     shouldExpand,
   ]);
   const handleEditClose = useCallback(() => history.goBack(), [history]);
-  const hasSettingsForm =
-    settingsForm && (settingsForm.form || settingsForm.init);
 
   // only developers can see/edit raw settings!
   // thus, if there is no metadata and the user is not a dev, render nothing.
@@ -165,6 +172,7 @@ export default function DynaSettings(props) {
       </ExpansionPanel>
       {isDeveloper && !isViewMode && (
         <EditDrawer
+          key={count}
           editorId={id}
           resourceId={resourceId}
           resourceType={resourceType}
