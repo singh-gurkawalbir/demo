@@ -120,9 +120,9 @@ export default function UserList({ integrationId, onEditUserClick }) {
               <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>
-                Access Level
+                Access level
                 <Help
-                  title="Access Level"
+                  title="Access level"
                   helpKey="users.accesslevel"
                   caption="users.accesslevel"
                   className={classes.helpIcon}
@@ -141,9 +141,9 @@ export default function UserList({ integrationId, onEditUserClick }) {
                 <Fragment>
                   {!integrationId && (
                     <TableCell>
-                      Enable User
+                      Enable user
                       <Help
-                        title="Enable User"
+                        title="Enable user"
                         helpKey="users.offOn"
                         caption="users.offOn"
                         className={classes.helpIcon}
