@@ -31,14 +31,22 @@ export function* changePassword({ updatedPassword }) {
       )
     );
   } catch (e) {
-    const errorsJSON = JSON.parse(e.message);
-    const { errors } = errorsJSON;
+    let errorMsg;
+
+    try {
+      const errorsJSON = JSON.parse(e.message);
+      const { errors } = errorsJSON;
+
+      errorMsg = errors && errors[0].message;
+    } catch (e) {
+      errorMsg = 'Invalid credentials provided.  Please try again.';
+    }
 
     yield put(
       actions.api.failure(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        errors[0].message
+        errorMsg
       )
     );
   }
