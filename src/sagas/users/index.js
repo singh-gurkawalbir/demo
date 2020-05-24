@@ -22,6 +22,7 @@ export function* changePassword({ updatedPassword }) {
       message: "Changing user's password",
       hidden: true,
     });
+
     yield put(
       actions.api.complete(
         changePasswordParams.path,
@@ -30,11 +31,14 @@ export function* changePassword({ updatedPassword }) {
       )
     );
   } catch (e) {
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
     yield put(
       actions.api.failure(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        'Invalid credentials provided.  Please try again.'
+        errors[0].message
       )
     );
   }
