@@ -66,7 +66,7 @@ function DynaUserEmail(props) {
       </div>
       <ChangeEmail
         show={state.openEmailModal}
-        onhandleClose={() => handleCloseModal('openEmailModal')}
+        onClose={() => handleCloseModal('openEmailModal')}
       />
     </FormControl>
   );

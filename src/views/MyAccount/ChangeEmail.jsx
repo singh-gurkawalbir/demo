@@ -50,14 +50,13 @@ const changeEmailFieldMeta = {
   },
 };
 
-export default function ChangeEmail(props) {
-  const { show, onhandleClose } = props;
+export default function ChangeEmail({ show, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const error = useSelector(state => selectors.changeEmailFailure(state));
   const success = useSelector(state => selectors.changeEmailSuccess(state));
   const message = useSelector(state => selectors.changeEmailMsg(state));
-  const handleOnSubmit = useCallback(
+  const handleEmailChangeClick = useCallback(
     formVal => {
       const payload = {
         newEmail: formVal.newEmail,
@@ -70,7 +69,7 @@ export default function ChangeEmail(props) {
   );
 
   return (
-    <ModalDialog show={show} onClose={onhandleClose}>
+    <ModalDialog show={show} onClose={onClose}>
       Change email
       {error && (
         <NotificationToaster variant="error" size="large">
@@ -87,7 +86,7 @@ export default function ChangeEmail(props) {
             <DynaSubmit
               data-test="changeEmail"
               id="changeEmail"
-              onClick={handleOnSubmit}>
+              onClick={handleEmailChangeClick}>
               Change email
             </DynaSubmit>
           </DynaForm>
