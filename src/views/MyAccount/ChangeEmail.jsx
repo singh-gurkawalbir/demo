@@ -16,13 +16,6 @@ const useStyles = makeStyles(() => ({
   textFormControl: {
     width: '100%',
   },
-  textLabelWrapper: {
-    display: props => (props.label ? 'flex' : 'none'),
-    alignItems: 'flex-start',
-    '&:empty': {
-      display: 'none',
-    },
-  },
 }));
 
 export default function ChangeEmail(props) {
@@ -54,21 +47,17 @@ export default function ChangeEmail(props) {
         <div>
           <form id="changeEmailForm" onSubmit={handleOnSubmit}>
             <FormControl className={classes.textFormControl}>
-              <div className={classes.textLabelWrapper}>
-                <FormLabel htmlFor="newEmail" required>
-                  New email
-                </FormLabel>
-              </div>
+              <FormLabel htmlFor="newEmail" required>
+                New email
+              </FormLabel>
               <TextField id="newEmail" fullWidth required variant="filled" />
               <br />
             </FormControl>
 
             <FormControl className={classes.textFormControl}>
-              <div className={classes.textLabelWrapper}>
-                <FormLabel htmlFor="newEmail" required>
-                  Password
-                </FormLabel>
-              </div>
+              <FormLabel htmlFor="password" required>
+                Password
+              </FormLabel>
               <TextField
                 id="password"
                 type="password"
