@@ -11,11 +11,17 @@ import {
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';
-import FieldHelp from '../../components/DynaForm/FieldHelp';
 
 const useStyles = makeStyles(() => ({
   textFormControl: {
     width: '100%',
+  },
+  textLabelWrapper: {
+    display: props => (props.label ? 'flex' : 'none'),
+    alignItems: 'flex-start',
+    '&:empty': {
+      display: 'none',
+    },
   },
 }));
 
@@ -48,22 +54,20 @@ export default function ChangeEmail(props) {
         <div>
           <form id="changeEmailForm" onSubmit={handleOnSubmit}>
             <FormControl className={classes.textFormControl}>
-              <div className={classes.dynaTextLabelWrapper}>
+              <div className={classes.textLabelWrapper}>
                 <FormLabel htmlFor="newEmail" required>
                   New email
                 </FormLabel>
-                {/* <FieldHelp /> */}
               </div>
               <TextField id="newEmail" fullWidth required variant="filled" />
               <br />
             </FormControl>
 
             <FormControl className={classes.textFormControl}>
-              <div className={classes.dynaTextLabelWrapper}>
+              <div className={classes.textLabelWrapper}>
                 <FormLabel htmlFor="newEmail" required>
                   Password
                 </FormLabel>
-                {/* <FieldHelp /> */}
               </div>
               <TextField
                 id="password"
