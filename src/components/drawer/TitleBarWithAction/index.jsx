@@ -17,9 +17,10 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    display: 'flex',
   },
   helpTextButton: {
-    padding: theme.spacing(1),
+    padding: 0,
   },
   closeIcon: {
     padding: 0,
@@ -60,8 +61,8 @@ export default function DrawerTitleBarWithAction({
           <BackArrowIcon />
         </IconButton>
       )}
-      <Typography variant="h3" className={classes.title}>
-        {title}
+      <div className={classes.title}>
+        <Typography variant="h3">{title}</Typography>
         {helpKey && (
           <Help
             title={helpTitle || title}
@@ -70,7 +71,8 @@ export default function DrawerTitleBarWithAction({
             fieldId={helpKey}
           />
         )}
-      </Typography>
+      </div>
+
       {action && <div className={classes.actions}>{action}</div>}
       <IconButton
         data-test="closeFlowSchedule"

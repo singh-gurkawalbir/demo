@@ -92,8 +92,8 @@ export default function ShareStack(props) {
       <DrawerTitleBarWithAction
         onClose={onClose}
         title={title}
-        // helpKey=""
-        // helpTitle=""
+        helpKey="stack.sharing"
+        helpTitle="Stack sharing"
         action={action}
       />
       <div className={classes.content}>
