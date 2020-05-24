@@ -1,11 +1,11 @@
-import { Fragment, useEffect, useState, useCallback } from 'react';
+import { Fragment, useMemo, useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/StacksIcon';
-import ShareStackDialog from '../../../../components/ShareStackDialog';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
+import ShareStack from '../../../ShareStack';
 
 const ssharesFilterConfig = { type: 'sshares' };
 
@@ -18,7 +18,12 @@ export default {
       selectors.makeResourceListSelector,
       ssharesFilterConfig
     );
-    const stackShareCollection = resourceList.resources;
+    const stackShareCollectionById = useMemo(
+      () =>
+        resourceList.resources &&
+        resourceList.resources.filter(stack => stack._stackId === resource._id),
+      [resource._id, resourceList.resources]
+    );
     const showStackShare = useCallback(() => {
       setShow(true);
     }, []);
@@ -32,18 +37,12 @@ export default {
 
     return (
       <Fragment>
-        {show && (
-          <ShareStackDialog
-            stackId={resource._id}
-            onClose={handleStackShareClose}
-            stackShareCollectionById={
-              stackShareCollection &&
-              stackShareCollection.filter(
-                stack => stack._stackId === resource._id
-              )
-            }
-          />
-        )}
+        <ShareStack
+          show={show}
+          stackId={resource._id}
+          onClose={handleStackShareClose}
+          stackShareCollectionById={stackShareCollectionById}
+        />
         <IconButtonWithTooltip
           tooltipProps={{
             title: 'Stack shares',
