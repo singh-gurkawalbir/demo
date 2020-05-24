@@ -63,7 +63,7 @@ export default function DynaUserPassword(props) {
           <EditIcon />
         </ActionButton>
       </div>
-      <ChangePassword open={showPasswordModal} onClose={handleModalClose} />
+      <ChangePassword show={showPasswordModal} onClose={handleModalClose} />
     </FormControl>
   );
 }

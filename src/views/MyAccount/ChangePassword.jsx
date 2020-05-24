@@ -44,7 +44,7 @@ const changePasswordFieldMeta = {
   },
 };
 
-export default function ChangePassword({ open, onClose }) {
+export default function ChangePassword({ show, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const error = useSelector(state => selectors.changePasswordFailure(state));
@@ -64,7 +64,7 @@ export default function ChangePassword({ open, onClose }) {
   );
 
   return (
-    <ModalDialog show={open} onClose={onClose}>
+    <ModalDialog show={show} onClose={onClose}>
       <span>Change Password</span>
       {error && (
         <NotificationToaster variant="error" size="large">
