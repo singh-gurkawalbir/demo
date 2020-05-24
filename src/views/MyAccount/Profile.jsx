@@ -1,4 +1,4 @@
-import { useMemo, Fragment } from 'react';
+import { useMemo, Fragment, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,6 +52,14 @@ export default function ProfileComponent() {
     ],
     []
   );
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -228,8 +236,12 @@ export default function ProfileComponent() {
   return (
     <Fragment>
       <PanelHeader title="Profile" />
-      <DynaForm fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+      <DynaForm formState={formState} fieldMeta={fieldMeta}>
+        <DynaSubmit
+          showCustomFormValidations={showCustomFormValidations}
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </DynaForm>
       {getDomain() !== 'eu.integrator.io' && (
         <div>

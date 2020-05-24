@@ -66,13 +66,14 @@ function* getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
 /*
  * Patches transformation rules incase of either a XML File export / Http XML Media type Export
  */
-export default function* patchTransformationRulesForXMLResource({
-  resourceId: newResourceId,
+export default function* saveTransformationRulesForNewXMLExport({
+  resourceId,
+  tempResourceId,
 }) {
   const { merged: resource = {} } = yield select(
     resourceData,
     'exports',
-    newResourceId,
+    resourceId,
     'value'
   );
   const isXmlFileAdaptor =
@@ -90,8 +91,14 @@ export default function* patchTransformationRulesForXMLResource({
   // Calls related saga for XML/FileAdaptor type
   // newResourceId is a temporary Id which is not part of 'resource' fetched from patches. So need to send explicitly
   const convertedXmlToJSON = isXmlFileAdaptor
-    ? yield call(getXmlFileAdaptorSampleData, { resource, newResourceId })
-    : yield call(getXmlHttpAdaptorSampleData, { resource, newResourceId });
+    ? yield call(getXmlFileAdaptorSampleData, {
+        resource,
+        newResourceId: tempResourceId,
+      })
+    : yield call(getXmlHttpAdaptorSampleData, {
+        resource,
+        newResourceId: tempResourceId,
+      });
 
   if (!convertedXmlToJSON) return;
 
@@ -101,5 +108,6 @@ export default function* patchTransformationRulesForXMLResource({
   };
   const patchSet = [{ op: 'replace', path: '/transform', value }];
 
-  yield put(actions.resource.patchStaged(newResourceId, patchSet, 'value'));
+  yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+  yield put(actions.resource.commitStaged('exports', resourceId, 'value'));
 }

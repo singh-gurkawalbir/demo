@@ -906,6 +906,59 @@ describe('resources selectors', () => {
       ]);
     });
   });
+
+  describe('hasSettingsForm', () => {
+    test('should return false on bad/empty state.', () => {
+      expect(selectors.hasSettingsForm(undefined, 'exports', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm({}, 'exports', 123)).toBeFalsy();
+    });
+
+    test('should return false on bad/empty arguments.', () => {
+      const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'junk', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm(state, 'exports')).toBeFalsy();
+      expect(selectors.hasSettingsForm(state)).toBeFalsy();
+    });
+
+    test('should return false if settings form is invalid on the resource', () => {
+      const testExports = [
+        { _id: 123, name: 'A' },
+        { _id: 567, name: 'B', settingsForm: {} },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'exports', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm(state, 'exports', 567)).toBeFalsy();
+    });
+
+    test('should return true if settings form is valid on the resource', () => {
+      const testExports = [
+        { _id: 123, name: 'A', settingsForm: { form: { fieldMap: {} } } },
+        { _id: 567, name: 'B', settingsForm: { init: { _scriptId: '123' } } },
+        {
+          _id: 890,
+          name: 'C',
+          settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
+        },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'exports', 123)).toBeTruthy();
+      expect(selectors.hasSettingsForm(state, 'exports', 567)).toBeTruthy();
+      expect(selectors.hasSettingsForm(state, 'exports', 890)).toBeTruthy();
+    });
+  });
 });
 
 describe('resourceDetailsMap selector', () => {
