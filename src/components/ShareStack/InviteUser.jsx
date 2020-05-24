@@ -14,7 +14,9 @@ const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    backgroundColor: theme.palette.background.default,
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    backgroundColor: 'transparent',
     overflowY: 'auto',
     height: '100%',
     width: '100%',
