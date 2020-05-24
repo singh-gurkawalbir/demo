@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 export default function ShareStack(props) {
   const {
     show,
-    title = 'Stack Sharing',
+    title = 'Stack sharing',
     stackId,
     onClose,
     stackShareCollectionById,

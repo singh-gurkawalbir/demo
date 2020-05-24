@@ -40,6 +40,7 @@ export default {
         <ShareStack
           show={show}
           stackId={resource._id}
+          title={`Stack sharing: ${resource.name}`}
           onClose={handleStackShareClose}
           stackShareCollectionById={stackShareCollectionById}
         />
