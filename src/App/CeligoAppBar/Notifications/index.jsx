@@ -34,10 +34,8 @@ export default function Notifications() {
   // lengths match. It is hard to imagine a situation were the number of notifications
   // remains the same and the notifications themselves change. usually new ones get
   // added or removed (if rejected/accepted).
-  const notifications = useSelector(
-    state => selectors.userNotifications(state),
-    // if the following expression is 'true', no re-render is performed
-    (left, right) => left.length === right.length
+  const notifications = useSelector(state =>
+    selectors.userNotifications(state)
   );
   const handleClick = useCallback(
     event => {
