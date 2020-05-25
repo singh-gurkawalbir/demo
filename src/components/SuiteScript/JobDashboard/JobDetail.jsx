@@ -176,7 +176,7 @@ export default function JobDetail({
           <JobStatus job={job} />
         </TableCell>
         <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
-        <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
+        <TableCell className={classes.ignore}>0</TableCell>
         <TableCell
           onMouseEnter={() => {
             setShowViewErrorsLink(true);
