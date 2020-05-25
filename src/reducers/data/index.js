@@ -265,3 +265,11 @@ export const fileDefinition = (state, definitionId, options) =>
     definitionId,
     options
   );
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromResources.hasSettingsForm(
+    state && state.resources,
+    resourceType,
+    resourceId
+  );
+}

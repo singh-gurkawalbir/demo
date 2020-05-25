@@ -1085,6 +1085,15 @@ const importSampleData = {
       options,
       refreshCache,
     }),
+  iaMetadataRequest: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_REQUEST, {
+      _importId,
+    }),
+  iaMetadataReceived: ({ _importId, metadata }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_RECEIVED, {
+      _importId,
+      metadata,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),

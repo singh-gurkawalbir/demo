@@ -1,12 +1,12 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import Icon from '../../../../icons/DebugIcon';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Configure debugger',
+  key: 'configDebugger',
   component: function ConfigDebugger({ resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;
     const [show, setShow] = useState(false);
@@ -14,6 +14,12 @@ export default {
       state =>
         selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
+    const showConfigDebugger = useCallback(() => {
+      setShow(true);
+    }, []);
+    const handleConfigDebuggerClose = useCallback(() => {
+      setShow(false);
+    }, []);
 
     if (!canAccess) {
       return null;
@@ -26,15 +32,18 @@ export default {
             id={connectionId}
             name={connectionName}
             debugDate={debugDate}
-            onClose={() => setShow(false)}
+            onClose={handleConfigDebuggerClose}
           />
         )}
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Configure debugger',
+          }}
           data-test="showConfigureDebugger"
           size="small"
-          onClick={() => setShow(true)}>
+          onClick={showConfigDebugger}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

@@ -1,16 +1,20 @@
 import { Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
 import Icon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Licenses',
+  key: 'licenses',
   component: function Licenses({ resource }) {
     return (
       <Link to={getRoutePath(`/connectors/${resource._id}/connectorLicenses`)}>
-        <IconButton size="small">
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Licenses',
+          }}
+          size="small">
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Link>
     );
   },

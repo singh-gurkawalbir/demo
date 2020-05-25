@@ -1,15 +1,15 @@
 import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
-import Icon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import Icon from '../../../../icons/RestoreIcon';
 
 export default {
-  label: 'Restore',
+  key: 'restore',
   component: function Restore({ resource }) {
     const dispatch = useDispatch();
-    const handleClick = useCallback(() => {
+    const handleRestoreClick = useCallback(() => {
       dispatch(
         actions.recycleBin.restore(
           `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
@@ -20,9 +20,14 @@ export default {
 
     return (
       <Fragment>
-        <IconButton size="small" onClick={handleClick}>
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Restore',
+          }}
+          size="small"
+          onClick={handleRestoreClick}>
           <Icon />
-        </IconButton>
+        </IconButtonWithTooltip>
       </Fragment>
     );
   },

@@ -1,62 +1,69 @@
-import { Fragment, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
-import { Button, InputLabel } from '@material-ui/core';
+import { FormControl, FormLabel, TextField } from '@material-ui/core';
 import ChangePassword from '../../../views/MyAccount/ChangePassword';
 import actions from '../../../actions';
+import FieldHelp from '../FieldHelp';
+import ActionButton from '../../ActionButton';
+import EditIcon from '../../icons/EditIcon';
 
-const useStyles = makeStyles(theme => ({
-  editRowElement: {
-    margin: `0 !important`,
+const useStyles = makeStyles(() => ({
+  formWrapper: {
+    alignItems: 'flex-start',
     display: 'flex',
-    flexDirection: `row !important`,
-    justifyContent: 'flex-start' /* center horizontally */,
-    alignItems: 'center' /* center vertically */,
-    height: '50%',
-    width: '70%',
-    marginBottom: 6,
   },
-  btnPassword: {
-    marginLeft: theme.spacing(1),
+
+  fieldWrapper: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+  },
+  field: {
+    width: '100%',
   },
 }));
 
-function DynaUserPassword() {
+export default function DynaUserPassword(props) {
+  const { id, label } = props;
   const classes = useStyles();
-  const [state, setState] = useState({
-    openPasswordModal: false,
-  });
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const dispatch = useDispatch();
-  const clearComms = () => dispatch(actions.clearComms());
-  const handleOpenModal = modalKey => {
+  const clearComms = useCallback(() => dispatch(actions.clearComms()), [
+    dispatch,
+  ]);
+  const handleModalOpen = useCallback(() => {
     clearComms();
-    setState({ ...state, [modalKey]: true });
-  };
-
-  const handleCloseModal = modalKey => {
-    setState({ ...state, [modalKey]: false });
-  };
+    setShowPasswordModal(true);
+  }, [clearComms]);
+  const handleModalClose = useCallback(() => {
+    setShowPasswordModal(false);
+  }, []);
 
   return (
-    <Fragment>
-      <InputLabel>
-        Password:
-        <Button
+    <FormControl>
+      <div className={classes.formWrapper}>
+        <FormLabel htmlFor={id}>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <div className={classes.fieldWrapper}>
+        <TextField
+          id={id}
+          type="password"
+          value="**********"
+          disabled
+          className={classes.field}
+          variant="filled"
+        />
+        <ActionButton
           data-test="editPassword"
-          color="secondary"
-          className={classes.btnPassword}
-          variant="outlined"
-          onClick={() => handleOpenModal('openPasswordModal')}>
-          Edit password
-        </Button>
-      </InputLabel>
-
-      <ChangePassword
-        show={state.openPasswordModal}
-        onhandleClose={() => handleCloseModal('openPasswordModal')}
-      />
-    </Fragment>
+          color="primary"
+          variant="contained"
+          onClick={handleModalOpen}>
+          <EditIcon />
+        </ActionButton>
+      </div>
+      <ChangePassword show={showPasswordModal} onClose={handleModalClose} />
+    </FormControl>
   );
 }
-
-export default DynaUserPassword;

@@ -5,7 +5,7 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [
@@ -63,7 +63,8 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File definition rules ',
+    label: 'File generator helper',
+    helpkey: 'import.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',

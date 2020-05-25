@@ -12,8 +12,9 @@ export default {
     label: 'Description',
   },
   apiIdentifier: {
-    label: 'Invoke this import [post]',
+    label: 'Invoke',
     type: 'apiidentifier',
+    helpKey: 'apiIdentifier',
     visible: r => r && !isNewId(r._id),
   },
   // #region ftp

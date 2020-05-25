@@ -1,35 +1,41 @@
-import { useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { useCallback } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 import openExternalUrl from '../../../../../utils/window';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  label: 'Download debug logs',
+  key: 'downloadDebugLogs',
   component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
-    let url = `/connections/${connectionId}/debug`;
-    const additionalHeaders = useSelector(state =>
-      selectors.accountShareHeader(state, url)
+    const url = `/connections/${connectionId}/debug`;
+    const additionalHeaders = useSelector(
+      state => selectors.accountShareHeader(state, url),
+      shallowEqual
     );
-    const handleDownloadDebugLogsClick = () => {
+    const handleDownloadDebugLogsClick = useCallback(() => {
+      let _url = `/api${url}`;
+
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
-        url += `?integrator-ashareid=${
+        _url += `?integrator-ashareid=${
           additionalHeaders['integrator-ashareid']
         }`;
       }
 
-      url = `/api${url}`;
-      openExternalUrl({ url });
-    };
+      openExternalUrl({ url: _url });
+    }, [additionalHeaders, url]);
 
     return (
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{
+          title: 'Download debug logs',
+        }}
         data-test="downloadDebugLog"
         size="small"
         onClick={handleDownloadDebugLogsClick}>
         <DownloadIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     );
   },
 };

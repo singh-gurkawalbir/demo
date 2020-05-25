@@ -36,6 +36,7 @@ export default {
       type: 'select',
       label: 'Account type',
       helpKey: 'logisense.connection.environment',
+      required: true,
       options: [
         {
           items: [

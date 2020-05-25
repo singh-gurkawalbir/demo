@@ -10,7 +10,4 @@ export default {
     maxRows: 5,
     label: 'Description',
   },
-  settings: {
-    type: 'settings',
-  },
 };

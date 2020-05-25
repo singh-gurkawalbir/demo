@@ -13,6 +13,7 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import importSampleData, * as fromImportSampleData from './sampleData/imports';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
@@ -47,6 +48,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  importSampleData,
   flowData,
   flowMetrics,
   integrationApps,
@@ -637,6 +639,13 @@ export function flowMetricsData(state, flowId, measurement) {
     state && state.flowMetrics,
     flowId,
     measurement
+  );
+}
+
+export function integrationAppImportMetadata(state, importId) {
+  return fromImportSampleData.integrationAppImportMetadata(
+    state && state.importSampleData,
+    importId
   );
 }
 

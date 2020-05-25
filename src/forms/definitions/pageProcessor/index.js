@@ -85,7 +85,12 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+        'importId',
+      ],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
@@ -103,7 +108,12 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+        'exportId',
+      ],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
@@ -122,7 +132,10 @@ export default {
       allowNew: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenHasApp],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'resourceType', isNot: [''] },
+      ],
     },
   },
   layout: {
@@ -137,43 +150,45 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const connectionField = fields.find(field => field.id === 'connection');
-    // const resourceTypeField = fields.find(field => field.id === 'resourceType');
     const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
+    let options = destinationOptions[app.assistant || app.type];
+
+    if (app.assistant) {
+      if (!app.export && app.import) {
+        options = [
+          {
+            label: 'Import records into destination application',
+            value: 'importRecords',
+          },
+        ];
+      } else if (!app.import && app.export) {
+        options = [
+          {
+            label: 'Lookup addition records (per record)',
+            value: 'lookupRecords',
+          },
+        ];
+      }
+    }
+
+    if (!options) {
+      options = destinationOptions.common || [];
+    }
 
     if (fieldId === 'resourceType') {
-      let options = destinationOptions[app.assistant || app.type];
-
-      if (app.assistant) {
-        if (!app.export && app.import) {
-          options = [
-            {
-              label: 'Import records into destination application',
-              value: 'importRecords',
-            },
-          ];
-        } else if (!app.import && app.export) {
-          options = [
-            {
-              label: 'Lookup addition records (per record)',
-              value: 'lookupRecords',
-            },
-          ];
-        }
-      }
-
-      if (!options) {
-        options = destinationOptions.common || [];
-      }
-
       if (options && options.length === 1) {
         resourceTypeField.value = options[0] && options[0].value;
         resourceTypeField.disabled = true;
+
+        if (connectionField) connectionField.visible = true;
       } else {
         resourceTypeField.value = '';
+
+        if (connectionField) connectionField.visible = false;
       }
 
       return [
@@ -208,6 +223,11 @@ export default {
     }
 
     if (['importId', 'exportId'].includes(fieldId)) {
+      if (options && options.length === 1 && resourceTypeField) {
+        resourceTypeField.value = options[0] && options[0].value;
+        resourceTypeField.disabled = true;
+      }
+
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;

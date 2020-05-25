@@ -4,7 +4,7 @@ export default {
   getLookupMetadata: ({
     lookup = {},
     connectionId,
-
+    opts = {},
     extractFields,
   }) => {
     const fieldMeta = {
@@ -49,6 +49,7 @@ export default {
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
           value: lookup.whereClause,
           data: extractFields,
+          opts,
         },
         _whereClauseText: {
           id: '_whereClauseText',

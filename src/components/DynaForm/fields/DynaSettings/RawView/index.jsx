@@ -12,15 +12,14 @@ const useStyles = makeStyles({
   },
 });
 
-export default function RawView({ props }) {
+export default function RawView(props) {
   const classes = useStyles();
 
-  // Only developers would ever see this raw settings view, so we can safely
-  // render the toggle editor button with no other conditions.
   return (
     <EditorField
       {...props}
       label="Settings"
+      helpKey="settings"
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       mode="json"

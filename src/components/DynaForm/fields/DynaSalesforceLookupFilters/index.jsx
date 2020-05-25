@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    display: 'inline-block !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
@@ -31,10 +32,18 @@ export default function DynaSalesforceLookupFilters(props) {
     connectionId,
     data,
     options = {},
+    opts = {},
     onFieldChange,
     editorId,
   } = props;
-  const modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
+  let modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
+
+  if (opts.isGroupedSampleData && Array.isArray(data)) {
+    modifiedData = modifiedData.concat(
+      modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
+    );
+  }
+
   const { disableFetch, commMetaPath } = options;
   const handleEditorInit = useCallback(() => {
     dispatch(
