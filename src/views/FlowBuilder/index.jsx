@@ -36,6 +36,7 @@ import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import DateTimeDisplay from '../../components/DateTimeDisplay';
 import StatusCircle from '../../components/StatusCircle';
+import useConfirmDialog from '../../components/ConfirmDialog';
 import HelpIcon from '../../components/icons/HelpIcon';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
@@ -266,6 +267,7 @@ function FlowBuilder() {
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
+  const { confirmDialog } = useConfirmDialog();
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -328,22 +330,46 @@ function FlowBuilder() {
     [pageProcessors, patchFlow]
   );
   const handleDelete = useCallback(
-    type => index => {
+    type => resourceName => index => {
+      let resourceType;
+
       if (type === itemTypes.PAGE_PROCESSOR) {
-        const newOrder = [...pageProcessors];
-
-        newOrder.splice(index, 1);
-        patchFlow('/pageProcessors', newOrder);
+        resourceType = 'Page Processor';
+      } else {
+        resourceType = 'Page Generator';
       }
 
-      if (type === itemTypes.PAGE_GENERATOR) {
-        const newOrder = [...pageGenerators];
+      confirmDialog({
+        title: `Remove ${resourceName} ${resourceType}`,
+        message: `Are you sure you want to remove this ${resourceType} from this flow?`,
+        buttons: [
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+          {
+            label: `Remove ${resourceType}`,
+            color: 'primary',
+            onClick: () => {
+              if (type === itemTypes.PAGE_PROCESSOR) {
+                const newOrder = [...pageProcessors];
 
-        newOrder.splice(index, 1);
-        patchFlow('/pageGenerators', newOrder);
-      }
+                newOrder.splice(index, 1);
+                patchFlow('/pageProcessors', newOrder);
+              }
+
+              if (type === itemTypes.PAGE_GENERATOR) {
+                const newOrder = [...pageGenerators];
+
+                newOrder.splice(index, 1);
+                patchFlow('/pageGenerators', newOrder);
+              }
+            },
+          },
+        ],
+      });
     },
-    [pageGenerators, pageProcessors, patchFlow]
+    [pageGenerators, pageProcessors, patchFlow, confirmDialog]
   );
   const pushOrReplaceHistory = useCallback(
     to => {
