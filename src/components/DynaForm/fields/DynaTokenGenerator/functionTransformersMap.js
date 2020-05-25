@@ -186,11 +186,12 @@ export default {
 
     payloadTransformer: form => ({
       baseURI: `https://${form['/storeURL']}`,
+      strictSSL: !(form['/environment'] === 'sandbox'),
       body: `{"username":"${form['/http/unencrypted/username']}","password":"${
         form['/http/encrypted/password']
       }","grant_type":"password","client_id":"${
         form['/http/encrypted/clientId']
-      }","strictSSL":${!(form['/environment'] === 'sandbox')}}`,
+      }"}`,
     }),
   },
 };
