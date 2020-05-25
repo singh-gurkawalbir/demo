@@ -1,40 +1,33 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Icon from '../../../../icons/RestoreIcon';
+import { useHistory } from 'react-router-dom';
+import RestoreIcon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'restore',
+  title: 'Restore',
+  icon: RestoreIcon,
   component: function Restore({ resource }) {
     const dispatch = useDispatch();
-    const handleRestoreClick = useCallback(() => {
+    const history = useHistory();
+    const restore = useCallback(() => {
       dispatch(
         actions.recycleBin.restore(
           `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
           resource.doc && resource.doc._id
         )
       );
-    }, [dispatch, resource.doc, resource.model]);
+      history.push(
+        getRoutePath(`/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`)
+      );
+    }, [dispatch, history, resource.doc, resource.model]);
 
-    return (
-      <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Restore',
-          }}
-          size="small"
-          onClick={handleRestoreClick}
-          component={Link}
-          to={getRoutePath(
-            `/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`
-          )}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    useEffect(() => {
+      restore();
+    }, [restore]);
+
+    return null;
   },
 };

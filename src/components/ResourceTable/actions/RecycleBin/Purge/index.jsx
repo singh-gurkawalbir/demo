@@ -1,13 +1,13 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import Icon from '../../../../icons/PurgeIcon';
+import PurgeIcon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'purge',
+  title: 'purge',
+  icon: PurgeIcon,
   component: function Purge({ resource = {} }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
@@ -19,7 +19,7 @@ export default {
         )
       );
     }, [dispatch, resource.doc, resource.model]);
-    const handlePurgeClick = useCallback(() => {
+    const confirmPurge = useCallback(() => {
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${
@@ -37,17 +37,10 @@ export default {
       });
     }, [confirmDialog, purgeResource, resource.model]);
 
-    return (
-      <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Purge',
-          }}
-          size="small"
-          onClick={handlePurgeClick}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    useEffect(() => {
+      confirmPurge();
+    }, [confirmPurge]);
+
+    return null;
   },
 };

@@ -1,22 +1,23 @@
-import { Link } from 'react-router-dom';
-import Icon from '../../../icons/CopyIcon';
+import { useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import CopyIcon from '../../../icons/CopyIcon';
 import getRoutePath from '../../../../utils/routePaths';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  key: 'clone',
+  title: 'Clone',
+  icon: CopyIcon,
   component: function Clone({ resourceType, resource }) {
-    return (
-      <Link to={getRoutePath(`clone/${resourceType}/${resource._id}/preview`)}>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Clone',
-          }}
-          data-test="cloneResource"
-          size="small">
-          <Icon />
-        </IconButtonWithTooltip>
-      </Link>
-    );
+    const history = useHistory();
+    const openCloneURL = useCallback(() => {
+      history.push(
+        getRoutePath(`clone/${resourceType}/${resource._id}/preview`)
+      );
+    }, [history, resource._id, resourceType]);
+
+    useEffect(() => {
+      openCloneURL();
+    }, [openCloneURL]);
+
+    return null;
   },
 };

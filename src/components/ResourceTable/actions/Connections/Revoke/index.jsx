@@ -1,20 +1,21 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/RevokeTokenIcon';
+import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'revoke',
-  component: function Revoke({ resource: connection = {} }) {
+  title: 'Revoke',
+  icon: RevokeTokenIcon,
+  component: function Revoke({ onItemClick, resource: connection = {} }) {
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const revokeConnection = useCallback(() => {
       dispatch(actions.connection.requestRevoke(connectionId));
     }, [connectionId, dispatch]);
-    const handleRevokeClick = useCallback(() => {
+    const revoke = useCallback(() => {
+      onItemClick();
       const message = [
         'Are you sure you want to revoke',
         connectionName || connectionId,
@@ -34,18 +35,18 @@ export default {
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, revokeConnection]);
+    }, [
+      confirmDialog,
+      connectionId,
+      connectionName,
+      onItemClick,
+      revokeConnection,
+    ]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Revoke',
-        }}
-        data-test="revoke"
-        size="small"
-        onClick={handleRevokeClick}>
-        <Icon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      revoke();
+    }, [revoke]);
+
+    return null;
   },
 };

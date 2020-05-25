@@ -1,22 +1,19 @@
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import Icon from '../../../../icons/DebugIcon';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  key: 'configDebugger',
+  title: 'Configure debugger',
+  icon: DebugIcon,
   component: function ConfigDebugger({ resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState(true);
     const canAccess = useSelector(
       state =>
         selectors.resourcePermissions(state, 'connections', connectionId).edit
     );
-    const showConfigDebugger = useCallback(() => {
-      setShow(true);
-    }, []);
     const handleConfigDebuggerClose = useCallback(() => {
       setShow(false);
     }, []);
@@ -35,15 +32,6 @@ export default {
             onClose={handleConfigDebuggerClose}
           />
         )}
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Configure debugger',
-          }}
-          data-test="showConfigureDebugger"
-          size="small"
-          onClick={showConfigDebugger}>
-          <Icon />
-        </IconButtonWithTooltip>
       </Fragment>
     );
   },

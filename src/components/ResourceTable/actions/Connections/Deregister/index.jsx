@@ -1,13 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'deregister',
+  label: 'Deregister',
+  icon: CloseIcon,
   component: function Deregister({ resource: connection, integrationId }) {
     const isStandalone = integrationId === 'none';
     const { _id: connectionId, name: connectionName } = connection;
@@ -28,7 +28,7 @@ export default {
         actions.connection.requestDeregister(connection._id, integrationId)
       );
     }, [connection._id, dispatch, integrationId]);
-    const handleDeregisterClick = useCallback(() => {
+    const deregisterConnection = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -50,20 +50,12 @@ export default {
       });
     }, [confirmDialog, connectionId, connectionName, deregiterConnection]);
 
-    if (!canAccess || isStandalone) {
-      return null;
-    }
+    useEffect(() => {
+      if (canAccess && !isStandalone) {
+        deregisterConnection();
+      }
+    }, [canAccess, deregisterConnection, isStandalone]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Deregister',
-        }}
-        data-test="closeDeregisterModal"
-        size="small"
-        onClick={handleDeregisterClick}>
-        <CloseIcon />
-      </IconButtonWithTooltip>
-    );
+    return null;
   },
 };

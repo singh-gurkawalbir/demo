@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import RefreshIcon from '../../../../icons/RefreshIcon';
 import actions from '../../../../../actions';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import RefreshIcon from '../../../../icons/RefreshIcon';
 
 export default {
-  key: 'refreshMetadata',
+  title: 'Refresh metadata',
+  icon: RefreshIcon,
   component: function RefreshMetadata({ resource }) {
     const { type: resourceType, _id: resourceId } = resource;
     const dispatch = useDispatch();
-    const handleClick = useCallback(() => {
+    const refreshMetadata = useCallback(() => {
       if (resourceType === 'netsuite') {
         dispatch(
           actions.metadata.request(
@@ -52,16 +52,10 @@ export default {
       }
     }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Refresh metadata',
-        }}
-        data-test="refreshConnectionMetadata"
-        size="small"
-        onClick={handleClick}>
-        <RefreshIcon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      refreshMetadata();
+    }, [refreshMetadata]);
+
+    return null;
   },
 };

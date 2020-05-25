@@ -1,19 +1,19 @@
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
-import Icon from '../../../icons/TrashIcon';
+import TrashIcon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  key: 'deleteResource',
+  title: 'Delete',
+  icon: TrashIcon,
   component: function DeleteResource({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-    const [showRef, setShowRef] = useState(false);
+    const [showRef, setShowRef] = useState(true);
     const resourceReferences = useSelector(state =>
       selectors.resourceReferences(state)
     );
@@ -22,7 +22,7 @@ export default {
       dispatch(actions.resource.delete(resourceType, resourceId));
       setShowRef(true);
     }, [dispatch, resourceId, resourceType]);
-    const handleDeleteClick = useCallback(() => {
+    const deleteResouce = useCallback(() => {
       const type =
         resourceType && resourceType.indexOf('/licenses') >= 0
           ? 'license'
@@ -46,17 +46,12 @@ export default {
       setShowRef(false);
     }, []);
 
+    useEffect(() => {
+      deleteResouce();
+    }, [deleteResouce]);
+
     return (
       <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Delete',
-          }}
-          data-test="deleteResource"
-          size="small"
-          onClick={handleDeleteClick}>
-          <Icon />
-        </IconButtonWithTooltip>
         {showRef && resourceReferences && resourceReferences.length > 0 && (
           <ResourceReferences
             // TODO: this is a horrible pattern.

@@ -1,11 +1,11 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/RevokeTokenIcon';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import RevokeTokenIcon from '../../../../../components/icons/RevokeTokenIcon';
 
 export default {
-  key: 'revokeAccessToken',
+  title: 'Revoke token',
+  icon: RevokeTokenIcon,
   component: function RevokeAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
@@ -24,18 +24,10 @@ export default {
       );
     }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Revoke token',
-          }}
-          data-test="revokeAccessToken"
-          size="small"
-          onClick={handleRevokeClick}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    useEffect(() => {
+      handleRevokeClick();
+    }, [handleRevokeClick]);
+
+    return null;
   },
 };
