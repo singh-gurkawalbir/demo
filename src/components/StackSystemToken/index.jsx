@@ -66,13 +66,6 @@ export default function StackSystemToken({ stackId }) {
           Show Token
         </Typography>
       )}
-      {/* <IconButton
-        data-test="regenerateStackSystemToken"
-        title="Regenerate Token"
-        onClick={generateSystemToken}
-        size="small">
-        <RegenerateToken />
-      </IconButton> */}
     </div>
   );
 }
