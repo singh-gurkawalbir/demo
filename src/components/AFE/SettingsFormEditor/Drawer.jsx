@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
@@ -11,7 +11,53 @@ import * as selectors from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import RightDrawer from '../../drawer/Right';
+import TextToggle from '../../../components/TextToggle';
 import SettingsFormEditor from './';
+import { isJsonString } from '../../../utils/string';
+
+function toggleData(data, mode) {
+  if (typeof data === 'string' && !isJsonString(data)) {
+    return data;
+  }
+
+  const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+  const hasWrapper = !!(
+    parsedData &&
+    parsedData.resource &&
+    parsedData.resource.settingsForm &&
+    parsedData.resource.settingsForm.form !== undefined
+  );
+  let finalData = parsedData;
+
+  // console.log(mode, hasWrapper);
+
+  if (mode === 'json') {
+    // try and find only the form meta...
+    // since the user can type anything, we are not guaranteed of a
+    // json schema that contains an expected shape... for now, lets
+    // assume we do.
+    if (hasWrapper) {
+      finalData = parsedData.resource.settingsForm.form;
+    }
+    // script
+  } else if (!hasWrapper) {
+    finalData = {
+      resource: {
+        settingsForm: {
+          form: parsedData || {
+            form: { fieldMeta: {}, layout: { fields: [] } },
+          },
+        },
+      },
+      parentResource: {},
+      license: {},
+      parentLicense: {},
+      sandbox: false,
+    };
+  }
+
+  return JSON.stringify(finalData, null, 2);
+}
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -19,12 +65,34 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(2),
     },
   },
+  actionSpacer: {
+    flexGrow: 100,
+  },
 }));
+const toggleOptions = [
+  { label: 'JSON', value: 'json' },
+  { label: 'Script', value: 'script' },
+];
 
-export default function EditorDrawer({ editorId, onClose, ...rest }) {
+export default function EditorDrawer({
+  editorId,
+  onClose,
+  settingsForm = {},
+  resourceId,
+  resourceType,
+  disabled,
+}) {
+  const { form, init = {} } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const settings = useSelector(state => {
+    if (!resourceType || !resourceId) return {};
+
+    const resource = selectors.resource(state, resourceType, resourceId);
+
+    return (resource && resource.settings) || {};
+  });
   const editor = useSelector(state => selectors.editor(state, editorId));
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, editorId).saveInProgress
@@ -34,6 +102,14 @@ export default function EditorDrawer({ editorId, onClose, ...rest }) {
   );
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, editorId)
+  );
+  const handleModeToggle = useCallback(
+    mode => {
+      const data = toggleData(editor.data, mode);
+
+      dispatch(actions.editor.patch(editorId, { mode, data }));
+    },
+    [dispatch, editor.data, editorId]
   );
   const handlePreview = useCallback(
     () => dispatch(actions.editor.evaluateRequest(editorId)),
@@ -75,20 +151,53 @@ export default function EditorDrawer({ editorId, onClose, ...rest }) {
     editor.error ||
     editorViolations ||
     (isEditorDirty !== undefined && !isEditorDirty);
-  // if the editor is not yet initialized, then the autoevealuate flag is undefined
+
+  useEffect(() => {
+    dispatch(
+      actions.editor.init(editorId, 'settingsForm', {
+        scriptId: init._scriptId,
+        initScriptId: init._scriptId,
+        entryFunction: init.function || 'main',
+        initEntryFunction: init.function || 'main',
+        data: form,
+        initData: form,
+        fetchScriptContent: true, // @Adi: what is this?
+        autoEvaluate: true,
+        autoEvaluateDelay: 200,
+        resourceId,
+        resourceType,
+        settings,
+        previewOnSave: true,
+        mode: 'json',
+      })
+    );
+    // we only want to init the editor once per render (onMount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // if the editor is not yet initialized, then the auto-evaluate flag is undefined
   // so lets default to ON.
   const autoEvaluate = editor.autoEvaluate || editor.autoEvaluate === undefined;
   const drawerActions = (
-    <FormControlLabel
-      control={
-        <Checkbox
-          checked={autoEvaluate}
-          onChange={handlePreviewChange}
-          name="autoEvaluate"
-        />
-      }
-      label="Auto preview"
-    />
+    <Fragment>
+      <TextToggle
+        value={editor.mode}
+        onChange={handleModeToggle}
+        exclusive
+        options={toggleOptions}
+      />
+      <div className={classes.actionSpacer} />
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={autoEvaluate}
+            onChange={handlePreviewChange}
+            name="autoEvaluate"
+          />
+        }
+        label="Auto preview"
+      />
+    </Fragment>
   );
 
   return (
@@ -101,7 +210,12 @@ export default function EditorDrawer({ editorId, onClose, ...rest }) {
       variant="temporary"
       actions={drawerActions}
       onClose={handleCancelClick}>
-      <SettingsFormEditor editorId={editorId} {...rest} />
+      <SettingsFormEditor
+        editorId={editorId}
+        disabled={disabled}
+        resourceId={resourceId}
+        resourceType={resourceType}
+      />
       <div className={classes.actionContainer}>
         {!editor.autoEvaluate && (
           <Button

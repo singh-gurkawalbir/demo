@@ -7,14 +7,14 @@ import { makeStyles } from '@material-ui/core/styles';
 // import GlobalSearch from '../GlobalSearch';
 import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
-import DebugOnly from '../../components/DebugOnly';
+// import DebugOnly from '../../components/DebugOnly';
 import ProfileMenuButton from './ProfileMenuButton';
 import * as selectors from '../../reducers';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
-import ThemeToggle from './ThemeToggle';
+// import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
@@ -115,11 +115,16 @@ export default function CeligoAppBar() {
               <li>
                 <AccountList />
               </li>
+              {/* 
+              // Theme is for now tightly coupled with environment, so this
+              // toggle will not work.
+              
               <DebugOnly>
                 <li>
                   <ThemeToggle />
                 </li>
               </DebugOnly>
+              */}
               <li>
                 <EnvironmentToggle />
               </li>
