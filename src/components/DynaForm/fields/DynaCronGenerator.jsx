@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   resetBtn: {
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
 }));
 

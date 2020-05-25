@@ -91,23 +91,18 @@ export default {
     importData: {
       id: 'importData',
       type: 'labeltitle',
-      label: 'How would you like the data imported?',
+      label: `How would you like the files transferred?`,
     },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Input mode',
+      label: 'Generate file from records?',
+      helpKey: 'import.inputMode',
       options: [
         {
           items: [
-            {
-              label: 'Records',
-              value: 'records',
-            },
-            {
-              label: 'Blob keys',
-              value: 'blob',
-            },
+            { label: 'Yes', value: 'records' },
+            { label: 'No', value: 'blob' },
           ],
         },
       ],
@@ -145,8 +140,8 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Launch XML builder',
-      title: 'XML Document Editor',
+      label: 'XML document builder',
+      title: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [
@@ -194,13 +189,15 @@ export default {
         },
       ],
     },
+    fileApiIdentifier: {
+      formId: 'fileApiIdentifier',
+    },
   },
   layout: {
     fields: [
       'common',
       'inputMode',
       'importData',
-      'blobKeyPath',
       's3.region',
       's3.bucket',
       'fileType',
@@ -209,13 +206,18 @@ export default {
       'file',
       'dataMappings',
       'file.lookups',
+      'blobKeyPath',
     ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['fileAdvancedSettings', 'deleteAfterImport'],
+        fields: [
+          'fileAdvancedSettings',
+          'deleteAfterImport',
+          'fileApiIdentifier',
+        ],
       },
     ],
   },

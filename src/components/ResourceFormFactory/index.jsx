@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
@@ -8,7 +8,21 @@ import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
 import { getResourceSubType } from '../../utils/resource';
+import Spinner from '../Spinner';
 
+const useStyles = makeStyles({
+  spinnerWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    margin: 'auto',
+  },
+});
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
     state,
@@ -131,6 +145,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
 }
 
 export const FormStateManager = props => {
+  const classes = useStyles();
   const { formState, fieldMeta, onSubmitComplete } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
@@ -155,7 +170,11 @@ export const FormStateManager = props => {
   }, [fieldMeta, remountForm]);
 
   if (!formState.initComplete) {
-    return <Typography>Initializing Form</Typography>;
+    return (
+      <div className={classes.spinnerWrapper}>
+        <Spinner />
+      </div>
+    );
   }
 
   return (

@@ -1437,6 +1437,129 @@ const job = {
       action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
+const errorManager = {
+  openFlowErrors: {
+    request: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST, { flowId }),
+    received: ({ flowId, openErrors }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED, {
+        flowId,
+        openErrors,
+      }),
+  },
+  integrationErrors: {
+    request: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
+        integrationId,
+      }),
+    received: ({ integrationId, errors }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED, {
+        integrationId,
+        errors,
+      }),
+  },
+  flowErrorDetails: {
+    request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
+        flowId,
+        resourceId,
+        loadMore,
+        isResolved,
+      }),
+    received: ({
+      flowId,
+      resourceId,
+      errorDetails,
+      loadMore,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED, {
+        flowId,
+        resourceId,
+        errorDetails,
+        loadMore,
+        isResolved,
+      }),
+    error: ({ flowId, resourceId, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectErrors: ({
+      flowId,
+      resourceId,
+      errorIds,
+      checked,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS, {
+        flowId,
+        resourceId,
+        errorIds,
+        checked,
+        isResolved,
+      }),
+    selectAll: ({ flowId, resourceId, checked, options }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        checked,
+        options,
+      }),
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
+        {
+          flowId,
+          resourceId,
+          retryIds,
+          isResolved,
+        }
+      ),
+    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
+        {
+          flowId,
+          resourceId,
+          errorIds,
+        }
+      ),
+    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
+        {
+          flowId,
+          resourceId,
+          isResolved,
+          retryCount,
+        }
+      ),
+    resolveReceived: ({ flowId, resourceId, resolveCount }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,
+        {
+          flowId,
+          resourceId,
+          resolveCount,
+        }
+      ),
+    remove: ({ flowId, resourceId, errorIds = [], isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE, {
+        flowId,
+        resourceId,
+        isResolved,
+        errorIds,
+      }),
+    clear: ({ flowId, resourceId, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+  },
+};
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
@@ -1613,6 +1736,7 @@ export default {
   auditLogs,
   accessToken,
   job,
+  errorManager,
   flow,
   agent,
   template,

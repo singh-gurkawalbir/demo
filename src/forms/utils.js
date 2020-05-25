@@ -725,6 +725,155 @@ export const conditionalLookupOptionsforRestProduction = [
     value: 'extract_not_empty',
   },
 ];
+export const sourceOptions = {
+  ftp: [
+    {
+      label: 'You can only transfer files using FTP',
+      value: 'transferFiles',
+    },
+  ],
+  s3: [
+    {
+      label: 'You can only transfer files using Amazon S3',
+      value: 'transferFiles',
+    },
+  ],
+  webhook: [
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'webhook',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'realtime',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'realtime',
+    },
+  ],
+  common: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+};
+export const destinationOptions = {
+  ftp: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+  ],
+  s3: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+  ],
+  http: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  rest: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup addition files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+
+  as2: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+  ],
+  common: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup addition records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+};
 
 // #END_REGION Integration App from utils
 

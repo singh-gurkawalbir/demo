@@ -60,6 +60,10 @@ const useStyles = makeStyles(theme => ({
   label: {
     paddingRight: theme.spacing(1),
   },
+  dynaTableActions: {
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(1),
+  },
 }));
 
 function reducer(state, action) {
@@ -106,6 +110,7 @@ export const DynaTable = props => {
   const {
     label,
     value,
+    className,
     hideLabel = false,
     optionsMap: optionsMapInit,
     handleRefreshClickHandler,
@@ -275,7 +280,7 @@ export const DynaTable = props => {
   const handleRemoveRow = row => e => dispatchActionToDelete(e, row);
 
   return (
-    <div className={classes.container}>
+    <div className={clsx(classes.container, className)}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
       <Grid data-test={id} container className={classes.root} spacing={2}>
         {!hideHeaders && (
@@ -375,7 +380,11 @@ export const DynaTable = props => {
                     )}
                   </Grid>
                 ))}
-                <Grid item key="delete_button" xs={1}>
+                <Grid
+                  item
+                  key="delete_button"
+                  xs={1}
+                  className={classes.dynaTableActions}>
                   <ActionButton
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"

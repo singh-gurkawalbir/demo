@@ -54,6 +54,26 @@ export function* retrievingAssistantDetails() {
     actions.resource.requestCollection('ui/assistants')
   );
   const assistantConnectors = [];
+  const webhookAssistants = [
+    'activecampaign',
+    'dropbox',
+    'github',
+    'box',
+    'hubspot',
+    'intercom',
+    'jira',
+    'mailchimp',
+    'parseur',
+    'postmark',
+    'recurly',
+    'intercom',
+    'segment',
+    'shipwire',
+    'shopify',
+    'slack',
+    'stripe',
+    'travis',
+  ];
 
   if (
     collection &&
@@ -68,6 +88,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
     collection.rest.applications.forEach(asst => {
@@ -78,6 +99,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
     assistantConnectors.push({

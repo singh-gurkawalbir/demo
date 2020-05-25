@@ -8,13 +8,14 @@ import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   label: {
     fontSize: '12px',
     marginTop: theme.spacing(1),
   },
-  DynaEditorButton: {
+  dynaEditorButton: {
     float: 'right',
     marginTop: theme.spacing(4),
   },
@@ -30,14 +31,19 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     flexDirection: `row !important`,
     alignItems: 'flex-start',
+    display: 'flex',
   },
   dynaEditorWrapper: {
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
-  CodeEditorWrapper: {
+  codeEditorWrapper: {
     width: '100%',
+  },
+  dynaEditorTextLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -133,8 +139,10 @@ export default function DynaEditor({
     <div className={classes.wrapper}>
       <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
-        <div>
+        <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel>{label}</FormLabel>
+          {/* {TODO (Dave): props did not have the helpkey so passing label for design purpose} */}
+          <FieldHelp helpText={label} />
         </div>
 
         <div
@@ -147,7 +155,7 @@ export default function DynaEditor({
             name={`${id}-inline`}
             value={value}
             mode={mode}
-            className={classes.CodeEditorWrapper}
+            className={classes.codeEditorWrapper}
             onChange={handleUpdate}
           />
         </div>
@@ -160,7 +168,7 @@ export default function DynaEditor({
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
-        className={classes.DynaEditorButton}>
+        className={classes.dynaEditorButton}>
         <ExpandWindowIcon />
       </ActionButton>
     </div>

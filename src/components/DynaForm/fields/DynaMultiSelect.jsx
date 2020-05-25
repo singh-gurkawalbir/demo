@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
-    padding: [[12, 0]],
+    padding: 0,
   },
   chip: {
     margin: 4,

@@ -18,7 +18,7 @@ export default {
       options,
       lookups,
     } = params;
-    const { connectionId } = options;
+    const { connectionId, flowId, resourceId } = options;
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
     const fieldMeta = {
@@ -457,12 +457,11 @@ export default {
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'textwithlookupextract',
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           importType: 'salesforce',
-          connectionId,
-          extractFields,
           refreshOptionsOnChangesTo: ['lookups'],
-          fieldType: 'lookupMappings',
           label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [

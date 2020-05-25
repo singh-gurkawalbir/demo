@@ -16,8 +16,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-// import StatusCircle from '../../../components/StatusCircle';
-// import Status from '../../../components/Status/';
+import StatusCircle from '../../../components/StatusCircle';
+import Status from '../../../components/Status/';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 
@@ -140,6 +140,7 @@ const useStyles = makeStyles(theme => ({
 function AppBlock({
   className,
   onDelete,
+  onErrors,
   children,
   forwardedRef,
   onBlockClick,
@@ -159,6 +160,7 @@ function AppBlock({
   isPageGenerator,
   schedule,
   index,
+  openErrorCount,
   ...rest
 }) {
   const classes = useStyles();
@@ -356,11 +358,14 @@ function AppBlock({
             ) : null}
           </div>
         </div>
-        {/* connectorType && (
-          <Status className={classes.status} label="5324 new errors">
+        {openErrorCount ? (
+          <Status
+            className={classes.status}
+            onClick={onErrors}
+            label={`${openErrorCount} errors`}>
             <StatusCircle variant="error" size="small" />
           </Status>
-        ) */}
+        ) : null}
       </div>
     </div>
   );

@@ -505,6 +505,10 @@ export function avatarUrl(state) {
   return fromUser.avatarUrl(state.user);
 }
 
+export function isUserInErrMgtTwoDotZero(state) {
+  return fromUser.isUserInErrMgtTwoDotZero(state && state.user);
+}
+
 export function userProfile(state) {
   return state && state.user && state.user.profile;
 }
@@ -861,6 +865,29 @@ export function nextDataFlowsForFlow(state, flow) {
   const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
 
   return getNextDataFlows(flows, flow);
+}
+
+export function isIAConnectionSetupPending(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!connection._connectorId) {
+    return;
+  }
+
+  const { _integrationId } = connection;
+  const integration = resource(state, 'integrations', _integrationId);
+
+  if (integration && integration.install) {
+    const installStep = integration.install.find(
+      step => step._connectionId === connectionId
+    );
+
+    if (!installStep.completed) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function isConnectionOffline(state, id) {
@@ -3177,11 +3204,11 @@ export function optionsMapFromMetadata(
   );
 }
 
-export const getPreBuiltFileDefinitions = (state, format) =>
-  fromData.getPreBuiltFileDefinitions(state && state.data, format);
+export const preBuiltFileDefinitions = (state, format) =>
+  fromData.preBuiltFileDefinitions(state && state.data, format);
 
-export const getFileDefinition = (state, definitionId, options) =>
-  fromData.getFileDefinition(state && state.data, definitionId, options);
+export const fileDefinition = (state, definitionId, options) =>
+  fromData.fileDefinition(state && state.data, definitionId, options);
 
 export function metadataOptionsAndResources({
   state,
@@ -3580,6 +3607,12 @@ export function flowConnectionList(state, flow) {
   return connectionList;
 }
 
+export function flowConnections(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  return flowConnectionList(state, flow);
+}
+
 export function flowReferencesForResource(state, resourceType, resourceId) {
   const flowsState = state && state.session && state.session.flowData;
   const exports = resourceList(state, {
@@ -3793,11 +3826,40 @@ export function getCustomResourceLabel(
 
   // Incase of Flow context, 2nd step of PG/PP creation resource labels handled here
   // The Below resource labels override the default labels above
-  if (flowId) {
-    if (isNewResource && resourceType === 'exports') {
-      resourceLabel = isLookup ? 'Lookup' : 'Source';
-    } else if (isNewResource && resourceType === 'imports') {
+  if (flowId && isNewResource) {
+    if (resource.resourceType === 'exportRecords') {
+      resourceLabel = 'Export';
+    } else if (
+      ['transferFiles', 'lookupFiles'].indexOf(resource.resourceType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
+    } else if (['webhook', 'realtime'].indexOf(resource.resourceType) >= 0) {
+      resourceLabel = 'Listener';
+    } else if (resource.resourceType === 'importRecords') {
       resourceLabel = 'Import';
+    } else if (resource.resourceType === 'lookupRecords') {
+      resourceLabel = 'Lookup';
+    }
+  } else if (flowId) {
+    if (
+      ([
+        'RESTExport',
+        'HTTPExport',
+        'NetSuiteExport',
+        'SalesforceExport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.type === 'blob') ||
+      ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0 ||
+      ([
+        'RESTImport',
+        'HTTPImport',
+        'NetSuiteImport',
+        'SalesforceImport',
+      ].indexOf(resource.adaptorType) >= 0 &&
+        resource.blobKeyPath) ||
+      ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+    ) {
+      resourceLabel = 'Transfer';
     }
   }
 
@@ -4050,6 +4112,21 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resource } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resource || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RestExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
+
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);
 }
@@ -4085,6 +4162,86 @@ export function getJobErrorsPreview(state, jobId) {
 
 export function integrationAppClonedDetails(state, id) {
   return fromSession.integrationAppClonedDetails(state && state.session, id);
+}
+
+export function resourceErrors(state, { flowId, resourceId, options = {} }) {
+  return fromSession.resourceErrors(state && state.session, {
+    flowId,
+    resourceId,
+    options,
+  });
+}
+
+// Given an errorId, gives back error doc
+export function resourceError(state, { flowId, resourceId, options, errorId }) {
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options,
+  });
+
+  return errors.find(error => error.errorId === errorId);
+}
+
+export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors
+    .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
+    .map(error => error.retryDataKey);
+}
+
+export function selectedErrorIds(state, { flowId, resourceId, options = {} }) {
+  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+
+  return errors.filter(({ selected }) => selected).map(error => error.errorId);
+}
+
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, filterKey, defaultFilter, isResolved }
+) {
+  const errorFilter = filter(state, filterKey) || defaultFilter;
+  const { errors = [] } = resourceErrors(state, {
+    flowId,
+    resourceId,
+    options: { ...errorFilter, isResolved },
+  });
+  const errorIds = errors.map(error => error.errorId);
+
+  return fromSession.isAllErrorsSelected(state && state.session, {
+    flowId,
+    resourceId,
+    isResolved,
+    errorIds,
+  });
+}
+
+export function errorMap(state, resourceId) {
+  return fromSession.errorMap(state && state.session, resourceId);
+}
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromSession.errorActionsContext(state && state.session, {
+    flowId,
+    resourceId,
+    actionType,
+    errorType,
+  });
+}
+
+export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
+  const isRetryInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      .status === 'requested';
+  const isResolveInProgress =
+    errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      .status === 'requested';
+
+  return isRetryInProgress || isResolveInProgress;
 }
 
 export function customSettingsForm(state, resourceId) {
