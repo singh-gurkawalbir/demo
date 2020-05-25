@@ -3545,7 +3545,7 @@ export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData } = resource;
 
-  if (assistant) {
+  if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
   } else if (adaptorType === 'NetSuiteDistributedImport') {
