@@ -39,9 +39,6 @@ export default function StackSystemToken({ stackId }) {
     [enqueueSnackbar]
   );
 
-  // const generateSystemToken = () => {
-  //   dispatch(actions.stack.generateToken(stackId));
-  // };
   return (
     <div className={classes.root}>
       {systemToken && (

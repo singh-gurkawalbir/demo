@@ -5,6 +5,7 @@ import AuditLogs from '../../actions/AuditLogs';
 import StackShares from '../../actions/StackShares';
 import StackSystemToken from '../../../../components/StackSystemToken';
 import { formatLastModified } from '../../../CeligoTable/util';
+import GenerateToken from '../../actions/GenerateToken';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -36,14 +37,14 @@ export default {
       orderBy: 'lastModified',
     },
     {
-      heading: 'Access key Id',
+      heading: 'Access Key Id',
       value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
-      heading: 'System token',
-      width: '250px',
+      heading: 'System Token',
+      width: '285px',
       value: r => !r.shared && r.server && getSystemToken(r),
     },
   ],
-  rowActions: [StackShares, AuditLogs, References, Delete],
+  rowActions: [GenerateToken, StackShares, AuditLogs, References, Delete],
 };

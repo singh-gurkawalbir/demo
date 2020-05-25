@@ -23,12 +23,12 @@ export default {
           'connections'
         ).edit
     );
-    const deregiterConnection = useCallback(() => {
+    const deregisterConnection = useCallback(() => {
       dispatch(
         actions.connection.requestDeregister(connection._id, integrationId)
       );
     }, [connection._id, dispatch, integrationId]);
-    const deregisterConnection = useCallback(() => {
+    const confirmDeregister = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -44,17 +44,17 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: deregiterConnection,
+            onClick: deregisterConnection,
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, deregiterConnection]);
+    }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
 
     useEffect(() => {
       if (canAccess && !isStandalone) {
-        deregisterConnection();
+        confirmDeregister();
       }
-    }, [canAccess, deregisterConnection, isStandalone]);
+    }, [canAccess, confirmDeregister, isStandalone]);
 
     return null;
   },
