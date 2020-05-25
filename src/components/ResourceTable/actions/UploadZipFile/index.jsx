@@ -3,7 +3,7 @@ import UploadIcon from '../../../../components/icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
-  title: 'Upload ZIP file',
+  label: 'Upload ZIP file',
   icon: UploadIcon,
   component: function UploadZipFile({ resourceType, resource }) {
     const [showDialog, setShowDialog] = useState(true);

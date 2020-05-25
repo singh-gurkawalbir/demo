@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import RefreshIcon from '../../../../icons/RefreshIcon';
 
 export default {
-  title: 'Refresh metadata',
+  label: 'Refresh metadata',
   icon: RefreshIcon,
   component: function RefreshMetadata({ resource }) {
     const { type: resourceType, _id: resourceId } = resource;

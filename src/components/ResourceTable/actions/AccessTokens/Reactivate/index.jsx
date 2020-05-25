@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import ReactivateTokenIcon from '../../../../../components/icons/ReactivateTokenIcon';
 
 export default {
-  title: 'Reactivate token',
+  label: 'Reactivate token',
   icon: ReactivateTokenIcon,
   component: function ReactivateAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;

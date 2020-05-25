@@ -5,7 +5,7 @@ import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  title: 'Detach flow',
+  label: 'Detach flow',
   icon: CloseIcon,
   component: function DetachFlow({ resource }) {
     const { name: resourceName, _id: resourceId } = resource;

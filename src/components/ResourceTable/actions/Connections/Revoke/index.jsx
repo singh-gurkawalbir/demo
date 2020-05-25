@@ -5,7 +5,7 @@ import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  title: 'Revoke',
+  label: 'Revoke',
   icon: RevokeTokenIcon,
   component: function Revoke({ onItemClick, resource: connection = {} }) {
     const { _id: connectionId, name: connectionName } = connection;

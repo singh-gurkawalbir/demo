@@ -5,8 +5,8 @@ import openExternalUrl from '../../../../../utils/window';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 
 export default {
+  label: 'Download debug logs',
   icon: DownloadIcon,
-  title: 'Download debug logs',
   component: function DownloadDebugLogs({ resource }) {
     const { _id: connectionId } = resource;
     const url = `/connections/${connectionId}/debug`;

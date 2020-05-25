@@ -6,7 +6,7 @@ import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
 
 export default {
-  title: 'Run flow',
+  label: 'Run flow',
   icon: RunIcon,
   component: withRouter(({ resource, history }) => {
     const dispatch = useDispatch();

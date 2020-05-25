@@ -3,7 +3,7 @@ import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 
 export default {
-  title: 'Audit log',
+  label: 'Audit log',
   icon: AuditLogIcon,
   component: function AuditLogs({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;

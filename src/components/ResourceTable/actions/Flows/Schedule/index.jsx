@@ -3,7 +3,7 @@ import FlowSchedule from '../../../../FlowSchedule';
 import ModalDialog from '../../../../ModalDialog';
 
 export default {
-  title: 'Schedule',
+  label: 'Schedule',
   icon: FlowSchedule,
   component: function Schedule({ resource }) {
     const [showSchedule, setShowSchedule] = useState(true);

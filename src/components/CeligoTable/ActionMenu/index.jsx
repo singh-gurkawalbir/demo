@@ -10,15 +10,15 @@ export default function ActionMenu({ actions, selectAction }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const renderActionmenu = ({ title, icon, component }) => {
+  const renderActionMenu = ({ label, icon, component }) => {
     const handleActionClick = () => {
       selectAction(component);
     };
 
     return (
-      <MenuItem key={title} onClick={handleActionClick}>
+      <MenuItem key={label} onClick={handleActionClick}>
         {icon}
-        {title}
+        {label}
       </MenuItem>
     );
   };
@@ -44,7 +44,7 @@ export default function ActionMenu({ actions, selectAction }) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleMenuClose}>
-        {actions.map(a => renderActionmenu(a))}
+        {actions.map(a => renderActionMenu(a))}
       </Menu>
     </Fragment>
   );

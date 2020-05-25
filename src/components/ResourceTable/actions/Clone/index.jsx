@@ -4,7 +4,7 @@ import CopyIcon from '../../../icons/CopyIcon';
 import getRoutePath from '../../../../utils/routePaths';
 
 export default {
-  title: 'Clone',
+  label: 'Clone',
   icon: CopyIcon,
   component: function Clone({ resourceType, resource }) {
     const history = useHistory();

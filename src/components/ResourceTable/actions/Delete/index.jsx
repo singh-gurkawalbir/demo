@@ -8,7 +8,7 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
 
 export default {
-  title: 'Delete',
+  label: 'Delete',
   icon: TrashIcon,
   component: function DeleteResource({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;

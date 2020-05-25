@@ -5,7 +5,7 @@ import ConfigureDebugger from '../../../../ConfigureDebugger';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  title: 'Configure debugger',
+  label: 'Configure debugger',
   icon: DebugIcon,
   component: function ConfigDebugger({ resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;

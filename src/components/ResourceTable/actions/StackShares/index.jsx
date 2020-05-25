@@ -9,7 +9,7 @@ import * as selectors from '../../../../reducers';
 const ssharesFilterConfig = { type: 'sshares' };
 
 export default {
-  title: 'Stack shares',
+  label: 'Stack shares',
   icon: StacksIcon,
   component: function StackShares({ resource }) {
     const [show, setShow] = useState(true);

@@ -7,7 +7,7 @@ import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
-  title: 'Restore',
+  label: 'Restore',
   icon: RestoreIcon,
   component: function Restore({ resource }) {
     const dispatch = useDispatch();

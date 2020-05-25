@@ -6,10 +6,9 @@ import actions from '../../../../../actions';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
+  label: 'Open debugger',
   icon: DebugIcon,
-  title: 'Open debugger',
   component: function OpenDebugger({ resource }) {
-    console.log('hello everyone');
     const { _id: connectionId } = resource;
     const dispatch = useDispatch();
     // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api

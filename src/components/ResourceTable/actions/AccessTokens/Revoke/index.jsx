@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import RevokeTokenIcon from '../../../../../components/icons/RevokeTokenIcon';
 
 export default {
-  title: 'Revoke token',
+  label: 'Revoke token',
   icon: RevokeTokenIcon,
   component: function RevokeAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;

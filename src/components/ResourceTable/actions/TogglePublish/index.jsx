@@ -5,7 +5,7 @@ import PublishIcon from '../../../../components/icons/PublishIcon';
 import actions from '../../../../actions';
 
 export default {
-  title: r => (r.published ? 'Unpublish' : 'Publish'),
+  label: r => (r.published ? 'Unpublish' : 'Publish'),
   icon: r => (r.published ? UnpublishIcon : PublishIcon),
   component: function TogglePublish({ resourceType, resource = {} }) {
     const { _id: resourceId, published: isPublished } = resource;

@@ -4,8 +4,7 @@ import actions from '../../../../actions';
 import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
-  key: 'downloadResource',
-  title: 'Download',
+  label: 'Download',
   icon: DownloadIcon,
   component: function DownloadResource({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;

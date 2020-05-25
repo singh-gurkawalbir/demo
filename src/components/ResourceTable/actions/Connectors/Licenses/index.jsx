@@ -4,9 +4,8 @@ import TokensApiIcon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  key: 'licenses',
+  label: 'Licenses',
   icon: TokensApiIcon,
-  title: 'Licenses',
   component: function Licenses({ resource }) {
     const history = useHistory();
     const showLicenses = useCallback(() => {

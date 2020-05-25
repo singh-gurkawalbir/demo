@@ -4,9 +4,8 @@ import GroupOfUsersIcon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  key: 'installBase',
+  label: 'Install base',
   icon: GroupOfUsersIcon,
-  title: 'Install base',
   component: function InstallBase({ resource }) {
     const history = useHistory();
     const installBase = useCallback(() => {

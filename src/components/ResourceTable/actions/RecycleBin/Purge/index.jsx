@@ -6,7 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
-  title: 'purge',
+  label: 'purge',
   icon: PurgeIcon,
   component: function Purge({ resource = {} }) {
     const dispatch = useDispatch();
