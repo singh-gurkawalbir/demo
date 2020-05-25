@@ -29,8 +29,10 @@ import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import customSettings, * as fromCustomSettings from './customSettings';
+import recycleBin, * as fromRecycleBin from './recycleBin';
 
 export default combineReducers({
+  recycleBin,
   stage,
   filters,
   editors,
@@ -92,6 +94,10 @@ export function tokenRequestLoading(state, resourceId) {
     state && state.connectionToken,
     resourceId
   );
+}
+
+export function recycleBinState(state) {
+  return fromRecycleBin.recycleBinState(state && state.recycleBin);
 }
 
 export function filter(state, name) {
