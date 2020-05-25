@@ -151,6 +151,7 @@ export default function ProfileComponent() {
       password: {
         id: 'password',
         name: 'password',
+        label: 'Password',
         helpKey: 'myaccount.password',
         type: 'userpassword',
       },
