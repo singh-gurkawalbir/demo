@@ -59,7 +59,8 @@ export default function StandaloneMapping(props) {
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const isAssistant = !!resourceData.assistant;
+  const isAssistant =
+    !!resourceData.assistant && resourceData.assistant !== 'financialforce';
   const isIntegrationApp = !!resourceData._connectorId;
   const integrationId = resourceData._integrationId;
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
