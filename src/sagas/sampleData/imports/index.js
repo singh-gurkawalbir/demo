@@ -149,6 +149,8 @@ function* fetchIAMetaData({
         metadata: iaMetadata,
       })
     );
+    // TODO @Raghu: Whenever refreshMetadata call is invoked, it updates sampleData on the import as well
+    // So, do we need to re-fetch the import again and invalidate any sampleData if existed further on the flow?
   } catch (e) {
     // on receiving error , update with resource's sampleData
     // TODO @Raghu: revisit once BE implementation done to support specific IAs
