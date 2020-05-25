@@ -176,6 +176,7 @@ import orderful from './orderful';
 import gorgias from './gorgias';
 import walmart from './walmart';
 import logisense from './logisense';
+import joor from './joor';
 
 export default {
   bigquery,
@@ -355,4 +356,5 @@ export default {
   gorgias,
   walmart,
   logisense,
+  joor,
 };
