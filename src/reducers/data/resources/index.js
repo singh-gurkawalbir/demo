@@ -93,7 +93,10 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.name === step.name
+            s =>
+              (step.installerFunction &&
+                s.installerFunction === step.installerFunction) ||
+              (step.name && s.name === step.name)
           );
 
           if (stepIndex !== -1) {
