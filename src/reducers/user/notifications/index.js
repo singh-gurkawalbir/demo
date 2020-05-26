@@ -39,11 +39,11 @@ export const userNotifications = createSelector(
   state => state && state.accounts,
   state => state && state.stacks,
   (accounts, stacks) => {
-    const notifications = emptySet;
-
-    if (!accounts || !stacks) {
-      return notifications;
+    if (!accounts && !stacks) {
+      return emptySet;
     }
+
+    const notifications = [];
 
     accounts &&
       accounts.forEach(a => {

@@ -129,7 +129,8 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && assistantName;
+  const isFlowBuilderAssistant =
+    flowId && assistantName && assistantName !== 'financialforce';
 
   return isFlowBuilderAssistant ? (
     <DynaSelect
