@@ -24,7 +24,6 @@ export function* restore({ resourceType, resourceId }) {
     return;
   }
 
-  // TODO: what does recycleBinTTL do?
   // wait for the completion of resource calls, so that the state is ready for the redirectUrlToResourceListingPage selector
   yield all(
     [...(recycleBinDependencies[resourceType] || []), 'recycleBinTTL'].map(
