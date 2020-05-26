@@ -29,7 +29,6 @@ function FileUploader(props) {
     errorMessages,
     name,
     required,
-    label,
     handleFileChosen,
     fileName,
     uploadError,
@@ -65,7 +64,7 @@ function FileUploader(props) {
           onChange={handleFileChosen}
         />
         {/* TODO: surya we need to add the helptext for the upload file */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
       {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}

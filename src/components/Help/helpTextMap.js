@@ -1884,6 +1884,11 @@ export default {
     'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
     'Save your Client Id and Client Secret in iClient for an added layer of security.',
+  'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
+  'connection.http.clientCertificates.cert':
+    'Select a certificate of .PEM or .PFX format.',
+  'connection.http.clientCertificates.passphrase':
+    'Enter a passphrase if you need to further protect this certificate file',
   'connection.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':

@@ -1248,14 +1248,17 @@ export default {
   'http.clientCertificates.cert': {
     type: 'uploadfile',
     label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.cert',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
     label: 'SSL client key',
+    helpKey: 'connection.http.clientCertificates.key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
     label: 'SSL passphrase',
+    helpKey: 'connection.http.clientCertificates.passphrase',
   },
   // #endregion http
   // #region ftp
