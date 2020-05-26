@@ -53,7 +53,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
       _users = selectors.integrationUsers(state, integrationId);
     }
 
-    if (integrationId && users && users.length > 0) {
+    if (integrationId && _users && _users.length > 0) {
       const accountOwner = selectors.accountOwner(state);
 
       _users = [
