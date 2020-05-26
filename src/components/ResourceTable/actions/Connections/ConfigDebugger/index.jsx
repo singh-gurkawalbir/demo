@@ -1,5 +1,4 @@
 import { Fragment, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -7,20 +6,22 @@ import DebugIcon from '../../../../icons/DebugIcon';
 export default {
   label: 'Configure debugger',
   icon: DebugIcon,
+  hasAccess: ({ state, resource }) => {
+    const { _id: connectionId } = resource;
+    const hasAccess = selectors.resourcePermissions(
+      state,
+      'connections',
+      connectionId
+    ).edit;
+
+    return hasAccess;
+  },
   component: function ConfigDebugger({ resource }) {
     const { _id: connectionId, name: connectionName, debugDate } = resource;
     const [show, setShow] = useState(true);
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit
-    );
     const handleConfigDebuggerClose = useCallback(() => {
       setShow(false);
     }, []);
-
-    if (!canAccess) {
-      return null;
-    }
 
     return (
       <Fragment>

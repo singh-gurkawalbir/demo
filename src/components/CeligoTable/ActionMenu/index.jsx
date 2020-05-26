@@ -1,9 +1,12 @@
 import React, { Fragment, useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { IconButton, MenuItem, Menu } from '@material-ui/core';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 
 export default function ActionMenu({ actions, selectAction }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  // We are passing state to action items where each Action item would check if it has got permission.
+  const state = useSelector(state => state);
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'row-actions' : undefined;
   const handleMenuClick = useCallback(event => {
@@ -11,10 +14,14 @@ export default function ActionMenu({ actions, selectAction }) {
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const renderActionMenu = useCallback(
-    ({ label, icon, component }) => {
+    ({ label, icon, hasAccess, actionProps, resource, component }) => {
       const handleActionClick = () => {
         selectAction(component);
       };
+
+      if (hasAccess && !hasAccess({ state, ...actionProps, resource })) {
+        return;
+      }
 
       return (
         <MenuItem key={label} onClick={handleActionClick}>
@@ -23,7 +30,7 @@ export default function ActionMenu({ actions, selectAction }) {
         </MenuItem>
       );
     },
-    [selectAction]
+    [selectAction, state]
   );
 
   if (!actions || !actions.length) return null;

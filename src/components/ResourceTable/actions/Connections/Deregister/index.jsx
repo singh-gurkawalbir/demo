@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
@@ -8,21 +8,21 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 export default {
   label: 'Deregister',
   icon: CloseIcon,
-  component: function Deregister({ resource: connection, integrationId }) {
+  hasAccess: ({ state, integrationId }) => {
     const isStandalone = integrationId === 'none';
+    const hasAccess = selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    ).edit;
+
+    return hasAccess && !isStandalone;
+  },
+  component: function Deregister({ resource: connection, integrationId }) {
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    // todo when to show deregister
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(
-          state,
-          'integrations',
-          integrationId,
-          'connections'
-        ).edit
-    );
     const deregisterConnection = useCallback(() => {
       dispatch(
         actions.connection.requestDeregister(connection._id, integrationId)
@@ -51,10 +51,8 @@ export default {
     }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
 
     useEffect(() => {
-      if (canAccess && !isStandalone) {
-        confirmDeregister();
-      }
-    }, [canAccess, confirmDeregister, isStandalone]);
+      confirmDeregister();
+    }, [confirmDeregister]);
 
     return null;
   },

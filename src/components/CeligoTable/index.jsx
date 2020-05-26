@@ -279,14 +279,18 @@ export default function CeligoTable({
                     // rowActions may or may not be a fn. Sometimes
                     // the actions are static, other times they are
                     // determinant on the resource they apply to.
+                    // Check on this later for the scope of refactor
                     actions={(typeof rowActions === 'function'
                       ? rowActions(r, actionProps)
                       : rowActions
-                    ).map(({ icon, label, component: Action }) => ({
+                    ).map(({ icon, label, hasAccess, component: Action }) => ({
                       icon:
                         typeof icon === 'function'
                           ? icon(r, actionProps)
                           : icon,
+                      hasAccess,
+                      resource: r,
+                      actionProps,
                       label:
                         typeof label === 'function'
                           ? label(r, actionProps)
