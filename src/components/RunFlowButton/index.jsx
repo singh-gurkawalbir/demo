@@ -7,7 +7,11 @@ import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
-import { EMPTY_RAW_DATA } from '../../utils/constants';
+import {
+  EMPTY_RAW_DATA,
+  MAX_DATA_LOADER_FILE_SIZE,
+} from '../../utils/constants';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -17,6 +21,20 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
 }));
+
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
+  if (isRequested) return <Spinner size={20} />;
+
+  return variant === 'icon' ? (
+    <IconButton disabled={disabled} data-test="runFlow" onClick={onRunClick}>
+      <RunIcon />
+    </IconButton>
+  ) : (
+    <span onClick={onRunClick} data-test="runFlow">
+      Run flow
+    </span>
+  );
+}
 
 export default function RunFlowButton({
   flowId,
@@ -118,6 +136,7 @@ export default function RunFlowButton({
           fileId: flowId,
           file,
           fileType: dataLoaderFileType,
+          fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
     },
@@ -166,6 +185,8 @@ export default function RunFlowButton({
     onRunStart,
     uploadedFile,
   ]);
+  const isDataLoaderFileProcessRequested =
+    isDataLoaderFlow && uploadedFile && uploadedFile.status;
 
   return (
     <Fragment>
@@ -177,18 +198,12 @@ export default function RunFlowButton({
         />
       )}
 
-      {variant === 'icon' ? (
-        <IconButton
-          disabled={disabled}
-          data-test="runFlow"
-          onClick={handleClick}>
-          <RunIcon />
-        </IconButton>
-      ) : (
-        <span onClick={handleClick} data-test="runFlow">
-          Run flow
-        </span>
-      )}
+      <RunFlowLabel
+        isRequested={isDataLoaderFileProcessRequested}
+        onRunClick={handleClick}
+        variant={variant}
+        disabled={disabled}
+      />
 
       {isDataLoaderFlow && !hasRunKey && (
         <input
