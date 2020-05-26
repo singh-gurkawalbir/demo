@@ -2133,6 +2133,7 @@ export default {
   'netsuite.tokenEnvironment': {
     type: 'select',
     label: 'Environment',
+    required: true,
     defaultValue: r => r && r.netsuite && r.netsuite.environment,
     options: [
       {
