@@ -135,6 +135,9 @@ const marketplace = {
 const recycleBin = {
   restore: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  restoreRedirectUrl: redirectTo =>
+    action(actionTypes.RECYCLEBIN.RESTORE_REDIRECT_TO, { redirectTo }),
+  restoreClear: () => action(actionTypes.RECYCLEBIN.RESTORE_CLEAR),
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };

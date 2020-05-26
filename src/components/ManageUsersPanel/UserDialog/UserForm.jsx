@@ -26,7 +26,12 @@ const integrationsFilterConfig = {
   ignoreEnvironmentFilter: true,
 };
 
-export default function UserForm({ id, onSaveClick, onCancelClick }) {
+export default function UserForm({
+  id,
+  onSaveClick,
+  onCancelClick,
+  disableSave,
+}) {
   const classes = useStyles();
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -168,10 +173,11 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
       <DynaForm fieldMeta={fieldMeta}>
         <div className={classes.actions}>
           <DynaSubmit
+            disabled={disableSave}
             data-test="submitUserForm"
             className={classes.actionButton}
             onClick={onSaveClick}>
-            Save
+            {disableSave ? 'Saving...' : 'Save'}
           </DynaSubmit>
           <Button
             data-test="cancelUserForm"
