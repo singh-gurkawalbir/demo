@@ -21,11 +21,11 @@ export default {
       },
       orderBy: 'name',
     },
-    // {
-    //   heading: 'Description',
-    //   value: r => r.description,
-    //   orderBy: 'description',
-    // },
+    {
+      heading: 'Description',
+      value: r => r.description,
+      orderBy: 'description',
+    },
     {
       heading: 'Status',
       value(r) {
@@ -33,7 +33,7 @@ export default {
       },
     },
     {
-      heading: 'Updated On',
+      heading: 'Updated on',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
@@ -44,7 +44,7 @@ export default {
       value: r => getAgentDownloadInstaller(r),
     },
     {
-      heading: 'Access Token',
+      heading: 'Access token',
       width: '285px',
       value: r => getAgentToken(r),
     },

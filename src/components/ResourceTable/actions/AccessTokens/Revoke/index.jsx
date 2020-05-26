@@ -9,7 +9,7 @@ export default {
   component: function RevokeAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-    const handleRevokeClick = useCallback(() => {
+    const revokeAccessToken = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -25,8 +25,8 @@ export default {
     }, [dispatch, resourceId, resourceType]);
 
     useEffect(() => {
-      handleRevokeClick();
-    }, [handleRevokeClick]);
+      revokeAccessToken();
+    }, [revokeAccessToken]);
 
     return null;
   },

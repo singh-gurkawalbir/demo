@@ -7,15 +7,14 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 export default {
   label: 'Revoke',
   icon: RevokeTokenIcon,
-  component: function Revoke({ onItemClick, resource: connection = {} }) {
+  component: function Revoke({ resource: connection = {} }) {
     const { _id: connectionId, name: connectionName } = connection;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const revokeConnection = useCallback(() => {
       dispatch(actions.connection.requestRevoke(connectionId));
     }, [connectionId, dispatch]);
-    const revoke = useCallback(() => {
-      onItemClick();
+    const confirmRevoke = useCallback(() => {
       const message = [
         'Are you sure you want to revoke',
         connectionName || connectionId,
@@ -35,17 +34,11 @@ export default {
           },
         ],
       });
-    }, [
-      confirmDialog,
-      connectionId,
-      connectionName,
-      onItemClick,
-      revokeConnection,
-    ]);
+    }, [confirmDialog, connectionId, connectionName, revokeConnection]);
 
     useEffect(() => {
-      revoke();
-    }, [revoke]);
+      confirmRevoke();
+    }, [confirmRevoke]);
 
     return null;
   },

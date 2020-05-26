@@ -9,7 +9,7 @@ export default {
   component: function ReactivateAccessToken({ resourceType, resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-    const handleReactivateClick = useCallback(() => {
+    const reactivateAccessToken = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -25,8 +25,8 @@ export default {
     }, [dispatch, resourceId, resourceType]);
 
     useEffect(() => {
-      handleReactivateClick();
-    }, [handleReactivateClick]);
+      reactivateAccessToken();
+    }, [reactivateAccessToken]);
 
     return null;
   },

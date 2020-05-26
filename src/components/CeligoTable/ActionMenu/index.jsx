@@ -10,18 +10,21 @@ export default function ActionMenu({ actions, selectAction }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const renderActionMenu = ({ label, icon, component }) => {
-    const handleActionClick = () => {
-      selectAction(component);
-    };
+  const renderActionMenu = useCallback(
+    ({ label, icon, component }) => {
+      const handleActionClick = () => {
+        selectAction(component);
+      };
 
-    return (
-      <MenuItem key={label} onClick={handleActionClick}>
-        {icon}
-        {label}
-      </MenuItem>
-    );
-  };
+      return (
+        <MenuItem key={label} onClick={handleActionClick}>
+          {icon}
+          {label}
+        </MenuItem>
+      );
+    },
+    [selectAction]
+  );
 
   if (!actions || !actions.length) return null;
 

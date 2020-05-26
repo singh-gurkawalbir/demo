@@ -8,7 +8,7 @@ export default {
   icon: TokensApiIcon,
   component: function Licenses({ resource }) {
     const history = useHistory();
-    const showLicenses = useCallback(() => {
+    const openLicensesURL = useCallback(() => {
       history.push(
         getRoutePath(
           getRoutePath(`/connectors/${resource._id}/connectorLicenses`)
@@ -17,8 +17,8 @@ export default {
     }, [history, resource._id]);
 
     useEffect(() => {
-      showLicenses();
-    }, [showLicenses]);
+      openLicensesURL();
+    }, [openLicensesURL]);
 
     return null;
   },

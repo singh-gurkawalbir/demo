@@ -9,13 +9,13 @@ export default {
   component: function RegenerateAccessToken({ resource = {} }) {
     const { _id: resourceId } = resource;
     const dispatch = useDispatch();
-    const handleRegenerateClick = useCallback(() => {
+    const regenerateAccessToken = useCallback(() => {
       dispatch(actions.accessToken.generateToken(resourceId));
     }, [dispatch, resourceId]);
 
     useEffect(() => {
-      handleRegenerateClick();
-    }, [handleRegenerateClick]);
+      regenerateAccessToken();
+    }, [regenerateAccessToken]);
 
     return null;
   },

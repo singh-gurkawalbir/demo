@@ -32,16 +32,16 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: `Updated On`,
+      heading: `Updated on`,
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
     {
-      heading: 'Access Key Id',
+      heading: 'Access key Id',
       value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
-      heading: 'System Token',
+      heading: 'System token',
       width: '285px',
       value: r => !r.shared && r.server && getSystemToken(r),
     },

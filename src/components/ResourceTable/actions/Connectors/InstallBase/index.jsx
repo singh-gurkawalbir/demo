@@ -8,15 +8,15 @@ export default {
   icon: GroupOfUsersIcon,
   component: function InstallBase({ resource }) {
     const history = useHistory();
-    const installBase = useCallback(() => {
+    const openInstallBaseURL = useCallback(() => {
       history.push(
         getRoutePath(getRoutePath(`/connectors/${resource._id}/installBase`))
       );
     }, [history, resource._id]);
 
     useEffect(() => {
-      installBase();
-    }, [installBase]);
+      openInstallBaseURL();
+    }, [openInstallBaseURL]);
 
     return null;
   },

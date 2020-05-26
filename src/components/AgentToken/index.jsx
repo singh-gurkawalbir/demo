@@ -4,8 +4,6 @@ import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
-// import ShowContentIcon from '../icons/ShowContentIcon';
-// import RegenerateToken from '../icons/RegenerateTokenIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 
