@@ -208,7 +208,7 @@ export default {
         return 'What would you like to listen from NetSuite?';
       }
 
-      return 'What would you like to export from NetSuite?';
+      return 'What would you like to export?';
     },
     type: 'labeltitle',
   },

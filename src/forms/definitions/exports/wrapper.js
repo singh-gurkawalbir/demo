@@ -77,7 +77,7 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common'],
+    fields: ['common', 'type'],
     type: 'collapse',
     containers: [
       {
@@ -91,7 +91,6 @@ export default {
         fields: [
           'wrapper.function',
           'wrapper.configuration',
-          'type',
           'delta.dateField',
           'once.booleanField',
         ],

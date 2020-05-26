@@ -73,7 +73,7 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common'],
+        fields: ['common', 'type'],
         type: 'collapse',
         containers: [
           {
@@ -84,7 +84,7 @@ export default {
           {
             collapsed: true,
             label: 'What would you like to export from?',
-            fields: ['rdbms.query', 'type', 'rdbms.once.query'],
+            fields: ['rdbms.query', 'rdbms.once.query'],
           },
           {
             collapsed: true,

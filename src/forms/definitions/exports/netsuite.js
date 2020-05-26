@@ -191,7 +191,7 @@ export default {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
-      label: 'API type',
+      label: 'NetSuite API type',
       required: true,
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
@@ -206,6 +206,8 @@ export default {
         if (netsuiteType) {
           return netsuiteType === 'restlet' ? 'restlet' : 'search';
         }
+
+        return 'restlet';
       },
       options: [
         {
@@ -327,12 +329,7 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'netsuite.execution.type',
-          'netsuite.api.type',
-        ],
+        fields: ['common', 'outputMode', 'netsuite.execution.type'],
         type: 'collapse',
         containers: [
           {
@@ -352,9 +349,10 @@ export default {
                 return 'What would you like to listen from NetSuite?';
               }
 
-              return 'What would you like to export from NetSuite?';
+              return 'What would you like to export?';
             },
             fields: [
+              'netsuite.api.type',
               'distributed',
               'restlet',
               'search',

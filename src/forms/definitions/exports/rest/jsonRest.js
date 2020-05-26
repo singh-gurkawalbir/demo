@@ -260,12 +260,13 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
+        fields: ['common', 'outputMode', 'type', 'formView'],
         type: 'collapse',
         containers: [
           {
@@ -290,7 +291,6 @@ export default {
               'rest.resourcePath',
               'rest.successPath',
               'rest.successValues',
-              'type',
               'delta.dateFormat',
               'delta.lagOffset',
               'rest.blobFormat',

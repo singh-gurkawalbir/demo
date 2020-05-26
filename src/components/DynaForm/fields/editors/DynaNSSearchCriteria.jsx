@@ -74,7 +74,7 @@ export default function DynaNSSearchCriteria(props) {
     <Fragment>
       {showEditor && (
         <SearchCriteriaDialog
-          title="Search Criteria"
+          title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
           fieldOptions={{
@@ -88,7 +88,7 @@ export default function DynaNSSearchCriteria(props) {
       )}
       <div className={classes.dynaNSSearchCriteriaWrapper}>
         <FormLabel className={classes.dynaFormLabel}>
-          Define criteria:
+          Additional search criteria:
         </FormLabel>
         <Button
           data-test={id}
@@ -96,7 +96,7 @@ export default function DynaNSSearchCriteria(props) {
           color="secondary"
           className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
         {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
