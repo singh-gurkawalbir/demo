@@ -19,6 +19,7 @@ import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import StackShareDrawer from '../../components/StackShare/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -94,6 +95,7 @@ export default function ResourceList(props) {
         PERMISSIONS[resourceType] &&
         PERMISSIONS[resourceType].view
       }>
+      {resourceType === 'stacks' && <StackShareDrawer />}
       <ResourceDrawer {...props} />
       <CeligoPageBar
         title={`${resourceName}s`}
