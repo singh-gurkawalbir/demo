@@ -9,7 +9,7 @@ import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
 import InviteUser from './InviteUser';
 
-const rootPath = ':stackId/share';
+const rootPath = 'share/stacks/:stackId';
 
 export default function StackShareDrawer() {
   const dispatch = useDispatch();
@@ -60,11 +60,11 @@ export default function StackShareDrawer() {
         helpTitle={!isInviteUser && 'Stack sharing'}
         hideBackButton={!isInviteUser}>
         <Switch>
-          <Route path={`${match.url}/${rootPath}`}>
-            <SharedUserList />
-          </Route>
           <Route path={`${match.url}/${rootPath}/invite`}>
             <InviteUser />
+          </Route>
+          <Route path={`${match.url}/${rootPath}`}>
+            <SharedUserList />
           </Route>
         </Switch>
       </RightDrawer>
