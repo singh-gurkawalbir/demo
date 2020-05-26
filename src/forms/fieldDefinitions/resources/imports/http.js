@@ -299,8 +299,8 @@ export default {
     label: 'Response path',
     visibleWhenAll: [
       {
-        field: 'http.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        field: 'http.batchSize',
+        isNot: [''],
       },
       {
         field: 'inputMode',
@@ -340,7 +340,7 @@ export default {
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
+    label: 'Override success media type',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -358,7 +358,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
+    label: 'Override error media type',
     visibleWhen: [
       {
         field: 'inputMode',

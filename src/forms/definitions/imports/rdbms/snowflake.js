@@ -39,7 +39,7 @@ export default {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
       arrayIndex: 0,
-      label: 'Launch Query Builder',
+      label: 'Query builder',
       title: 'SQL Query Builder',
       refreshOptionsOnChangesTo: ['rdbms.queryType', 'modelMetadata'],
       visibleWhen: [
