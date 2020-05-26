@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import RestoreIcon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
-import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
+import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
   label: 'Restore',
