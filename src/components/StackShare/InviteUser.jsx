@@ -1,4 +1,4 @@
-import { useRouteMatch } from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
@@ -31,6 +31,10 @@ export default function InviteUser() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { stackId } = match.params;
+  const history = useHistory();
+  const handleClose = useCallback(() => {
+    history.goBack();
+  }, [history]);
   const handleInviteUser = useCallback(
     formVal => {
       const shareWithUserEmail = formVal.email;
@@ -40,9 +44,10 @@ export default function InviteUser() {
       }
 
       dispatch(actions.stack.inviteStackShareUser(shareWithUserEmail, stackId));
-      // onClose();
+      // TODO: currently we are closing instantly. We need to close one success
+      handleClose();
     },
-    [dispatch, stackId]
+    [dispatch, handleClose, stackId]
   );
 
   return (
@@ -58,8 +63,7 @@ export default function InviteUser() {
         color="primary"
         data-test="cancelInviteUser"
         label="Cancel"
-        // onClick={onClose}
-      >
+        onClick={handleClose}>
         Cancel
       </Button>
     </DynaForm>

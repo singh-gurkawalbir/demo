@@ -1,16 +1,19 @@
 import { Fragment, useMemo, useCallback } from 'react';
+import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import UserGroupIcon from '../icons/GroupOfUsersIcon';
 import RightDrawer from '../drawer/Right';
-import StackShare from './';
+import SharedUserList from './SharedUserList';
 import IconTextButton from '../IconTextButton';
 import RefreshIcon from '../icons/RefreshIcon';
 import actions from '../../actions';
 import InviteUser from './InviteUser';
 
+const rootPath = ':stackId/share';
+
 export default function StackShareDrawer() {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const history = useHistory();
   const handleRefreshClick = useCallback(
     () => dispatch(actions.resource.requestCollection('sshares')),
@@ -42,28 +45,28 @@ export default function StackShareDrawer() {
     ),
     [handleInviteClick, handleRefreshClick]
   );
+  const isInviteUser = history.location.pathname.includes(`/invite`);
 
   return (
     <Fragment>
       <RightDrawer
-        path=":stackId/share"
+        path={rootPath}
         height="tall"
         width="medium"
-        title="Stack sharing"
+        title={isInviteUser ? 'Invite user' : 'Stack sharing'}
         variant="temporary"
-        actions={action}
-        helpKey="stack.sharing"
-        helpTitle="Stack sharing"
-        hideBackButton>
-        <StackShare />
-      </RightDrawer>
-      <RightDrawer
-        path=":stackId/share/invite"
-        height="tall"
-        width="medium"
-        title="Invite user"
-        variant="temporary">
-        <InviteUser />
+        actions={!isInviteUser && action}
+        helpKey={!isInviteUser && 'stack.sharing'}
+        helpTitle={!isInviteUser && 'Stack sharing'}
+        hideBackButton={!isInviteUser}>
+        <Switch>
+          <Route path={`${match.url}/${rootPath}`}>
+            <SharedUserList />
+          </Route>
+          <Route path={`${match.url}/${rootPath}/invite`}>
+            <InviteUser />
+          </Route>
+        </Switch>
       </RightDrawer>
     </Fragment>
   );

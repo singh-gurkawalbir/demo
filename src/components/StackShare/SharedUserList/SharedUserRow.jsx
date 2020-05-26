@@ -7,12 +7,12 @@ import {
   Typography,
   IconButton,
 } from '@material-ui/core';
-import actions from '../../actions';
-import useConfirmDialog from '../../components/ConfirmDialog';
-import DeleteIcon from '../icons/TrashIcon';
-import CeligoSwitch from '../CeligoSwitch';
+import actions from '../../../actions';
+import useConfirmDialog from '../../../components/ConfirmDialog';
+import DeleteIcon from '../../icons/TrashIcon';
+import CeligoSwitch from '../../CeligoSwitch';
 
-export default function ShareStackUserDetail({ user }) {
+export default function SharedUserRow({ user }) {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const handleDeleteUserClick = useCallback(() => {

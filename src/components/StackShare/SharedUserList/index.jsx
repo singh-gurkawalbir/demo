@@ -9,10 +9,10 @@ import {
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useMemo, useEffect } from 'react';
-import ShareStackUserDetail from './ShareStackUserDetail';
-import * as selectors from '../../reducers';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import actions from '../../actions';
+import * as selectors from '../../../reducers';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import actions from '../../../actions';
+import SharedUserRow from './SharedUserRow';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const ssharesFilterConfig = { type: 'sshares' };
 
-export default function ShareStackUserTable() {
+export default function SharedUserList() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -60,7 +60,7 @@ export default function ShareStackUserTable() {
         <TableBody>
           {stackShareCollectionById &&
             stackShareCollectionById.map(user => (
-              <ShareStackUserDetail key={user._id} user={user} />
+              <SharedUserRow key={user._id} user={user} />
             ))}
         </TableBody>
       </Table>
