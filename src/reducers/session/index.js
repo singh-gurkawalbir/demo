@@ -13,6 +13,7 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import importSampleData, * as fromImportSampleData from './sampleData/imports';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
@@ -29,8 +30,10 @@ import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import customSettings, * as fromCustomSettings from './customSettings';
+import recycleBin, * as fromRecycleBin from './recycleBin';
 
 export default combineReducers({
+  recycleBin,
   stage,
   filters,
   editors,
@@ -45,6 +48,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  importSampleData,
   flowData,
   flowMetrics,
   integrationApps,
@@ -92,6 +96,10 @@ export function tokenRequestLoading(state, resourceId) {
     state && state.connectionToken,
     resourceId
   );
+}
+
+export function recycleBinState(state) {
+  return fromRecycleBin.recycleBinState(state && state.recycleBin);
 }
 
 export function filter(state, name) {
@@ -631,6 +639,13 @@ export function flowMetricsData(state, flowId, measurement) {
     state && state.flowMetrics,
     flowId,
     measurement
+  );
+}
+
+export function integrationAppImportMetadata(state, importId) {
+  return fromImportSampleData.integrationAppImportMetadata(
+    state && state.importSampleData,
+    importId
   );
 }
 

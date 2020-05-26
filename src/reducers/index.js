@@ -58,6 +58,7 @@ import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import { stringCompare } from '../utils/sort';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 const emptySet = [];
 const emptyObject = {};
@@ -82,6 +83,10 @@ const rootReducer = (state, action) => {
 };
 
 export default rootReducer;
+
+export function recycleBinState(state) {
+  return fromSession.recycleBinState(state && state.session);
+}
 
 export function marketPlaceState(state) {
   return fromData.marketPlaceState(state && state.data);
@@ -3541,9 +3546,17 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return getPageProcessorImportsFromFlow(imports, pageProcessors);
 }
 
+export function integrationAppImportMetadata(state, importId) {
+  return fromSession.integrationAppImportMetadata(
+    state && state.session,
+    importId
+  );
+}
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
-  const { assistant, adaptorType, sampleData } = resource;
+  const { assistant, adaptorType, sampleData, _connectorId } = resource;
+  const isIntegrationApp = !!_connectorId;
 
   if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
@@ -3584,6 +3597,9 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
+  } else if (isIntegrationApp) {
+    // handles incase of IAs
+    return integrationAppImportMetadata(state, resourceId);
   } else if (sampleData) {
     // Formats sample data into readable form
     return {
@@ -4331,6 +4347,28 @@ export function flowResources(state, flowId) {
 
   return resources;
 }
+
+export const redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);

@@ -434,7 +434,8 @@ export default function StandaloneMapping(props) {
   };
   const isGenerateRefreshSupported =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||
-    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
+    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport ||
+    isIntegrationApp;
 
   return (
     <ImportMapping

@@ -45,7 +45,7 @@ function* getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
     );
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {
       flowId,
-      _pageProcessorId: newResourceId,
+      _pageProcessorId: resource._id,
       previewType: 'raw',
       hidden: true,
     });
@@ -55,7 +55,7 @@ function* getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
 
   // Basic Exports preview call to fetch sample data
   const exportPreviewData = yield call(exportPreview, {
-    resourceId: newResourceId,
+    resourceId: resource._id,
     hidden: true,
   });
 
