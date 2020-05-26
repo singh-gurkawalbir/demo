@@ -58,6 +58,7 @@ import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import { stringCompare } from '../utils/sort';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 const emptySet = [];
 const emptyObject = {};
@@ -82,6 +83,10 @@ const rootReducer = (state, action) => {
 };
 
 export default rootReducer;
+
+export function recycleBinState(state) {
+  return fromSession.recycleBinState(state && state.session);
+}
 
 export function marketPlaceState(state) {
   return fromData.marketPlaceState(state && state.data);
@@ -4342,6 +4347,28 @@ export function flowResources(state, flowId) {
 
   return resources;
 }
+
+export const redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
