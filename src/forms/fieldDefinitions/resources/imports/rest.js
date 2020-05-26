@@ -204,7 +204,6 @@ export default {
   'rest.successPath': {
     type: 'text',
     label: 'Success path',
-    placeholder: 'Optional',
     visibleWhenAll: [
       {
         field: 'rest.method',
@@ -221,7 +220,6 @@ export default {
   'rest.successValues': {
     type: 'text',
     label: 'Success values',
-    placeholder: 'Optional',
     visibleWhenAll: [
       {
         field: 'rest.method',
@@ -238,7 +236,6 @@ export default {
   'rest.responseIdPath': {
     type: 'text',
     label: 'Response ID path',
-    placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'rest.method',

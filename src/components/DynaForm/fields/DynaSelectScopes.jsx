@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
 }));
-const excludeSelectedScopes = (defaultScopes, selectedScopes) =>
+const excludeSelectedScopes = (defaultScopes, selectedScopes = []) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
 const TransferListModal = props => {
   const {

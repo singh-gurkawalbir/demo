@@ -33,6 +33,15 @@ export default {
       ];
     },
   },
+  'webhook.slackKey': {
+    type: 'textforsetfields',
+    label: 'Signing Secret (Slack App Credentials)',
+    inputType: 'password',
+    helpKey: 'export.webhook.key',
+    setFieldIds: ['webhook.url'],
+    defaultValue: r => r && r.webhook && r.webhook.key,
+    visible: r => r && r.webhook && r.webhook.provider === 'slack',
+  },
   'webhook.verify': {
     type: 'selectforsetfields',
     label: 'Verification type',
@@ -107,27 +116,54 @@ export default {
     buttonLabel: 'Generate URL',
   },
   'webhook.username': {
-    type: 'text',
+    type: 'textforsetfields',
     label: 'Username',
     required: true,
-    visibleWhen: [
-      {
-        field: 'webhook.verify',
-        is: ['basic'],
-      },
-    ],
+    setFieldIds: ['webhook.url'],
+    visible: true,
+    visibleWhen: r => {
+      const providerList = ['zendesk'];
+
+      if (
+        r &&
+        r.webhook &&
+        r.webhook.provider &&
+        providerList.includes(r.webhook.provider)
+      )
+        return [];
+
+      return [
+        {
+          field: 'webhook.verify',
+          is: ['basic'],
+        },
+      ];
+    },
   },
   'webhook.password': {
-    type: 'text',
+    type: 'textforsetfields',
     label: 'Password',
     required: true,
     inputType: 'password',
-    visibleWhen: [
-      {
-        field: 'webhook.verify',
-        is: ['basic'],
-      },
-    ],
+    visible: true,
+    visibleWhen: r => {
+      const providerList = ['zendesk'];
+
+      if (
+        r &&
+        r.webhook &&
+        r.webhook.provider &&
+        providerList.includes(r.webhook.provider)
+      )
+        return [];
+
+      return [
+        {
+          field: 'webhook.verify',
+          is: ['basic'],
+        },
+      ];
+    },
   },
   'webhook.path': {
     type: 'textforsetfields',
@@ -150,7 +186,6 @@ export default {
     visibleWhen: r => {
       const providerList = [
         'travis',
-        'slack',
         'box',
         'stripe',
         'aha',
@@ -178,15 +213,30 @@ export default {
       return [
         {
           field: 'webhook.verify',
-          is: ['secret_url', 'token'],
+          is: ['secret_url'],
         },
       ];
     },
+  },
+  'webhook.generateToken': {
+    type: 'webhooktokengenerator',
+    label: 'Token',
+    buttonLabel: 'Generate new token',
+    setFieldIds: ['webhook.url'],
+    helpKey: 'export.webhook.token',
+    defaultValue: r => r && r.webhook && r.webhook.token,
+    visibleWhen: [
+      {
+        field: 'webhook.verify',
+        is: ['token'],
+      },
+    ],
   },
   'webhook.sampledata': {
     id: 'sampleData',
     name: '/sampleData',
     type: 'webhooksampledata',
+    helpKey: 'export.webhook.sampledata',
     label: 'Sample data',
   },
 };

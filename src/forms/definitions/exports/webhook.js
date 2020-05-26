@@ -29,6 +29,24 @@ export default {
 
     return null;
   },
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/webhook/verify'] === 'token') {
+      retValues['/webhook/token'] = retValues['/webhook/generateToken'];
+    }
+
+    if (retValues['/webhook/provider'] === 'slack') {
+      retValues['/webhook/key'] = retValues['/webhook/slackKey'];
+    }
+
+    delete retValues['/webhook/generateToken'];
+    delete retValues['/webhook/slackKey'];
+
+    return {
+      ...retValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
     // 'webhook.provider': { fieldId: 'webhook.provider' },
@@ -40,6 +58,12 @@ export default {
     'webhook.token': {
       fieldId: 'webhook.token',
       refreshOptionsOnChangesTo: ['webhook.provider'],
+    },
+    'webhook.generateToken': {
+      fieldId: 'webhook.generateToken',
+    },
+    'webhook.slackKey': {
+      fieldId: 'webhook.slackKey',
     },
     'webhook.url': {
       fieldId: 'webhook.url',
@@ -61,14 +85,16 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: 'Security',
+        label: 'Secure the listener',
         fields: [
           'webhook.verify',
           'webhook.algorithm',
           'webhook.encoding',
           'webhook.key',
+          'webhook.slackKey',
           'webhook.header',
           'webhook.token',
+          'webhook.generateToken',
           'webhook.path',
           'webhook.username',
           'webhook.password',
@@ -76,7 +102,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Public URL & sample data',
+        label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },

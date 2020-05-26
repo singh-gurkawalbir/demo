@@ -488,7 +488,6 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -606,7 +605,6 @@ export default {
       id: 'http.failPathCreate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -704,7 +702,7 @@ export default {
       id: 'http.failPathUpdate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -786,7 +784,7 @@ export default {
       id: 'http.resourceIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -871,7 +869,7 @@ export default {
       id: 'http.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1031,7 +1029,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1137,7 +1135,7 @@ export default {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1206,7 +1204,7 @@ export default {
       id: 'http.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1460,6 +1458,7 @@ export default {
           'http.compositeType',
           'http.lookups',
           'http.relativeURI',
+          'http.batchSize',
           'http.body',
           'http.response.successPath',
           'http.response.successValues',
@@ -1468,7 +1467,6 @@ export default {
           'http.response.resourceIdPath',
           'http.response.resourcePath',
           'http.response.errorPath',
-          'http.batchSize',
           'createNewData',
           'http.compositeMethodCreate',
           'http.relativeURICreate',

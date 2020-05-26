@@ -12,11 +12,11 @@ export default {
       {
         items: [
           {
-            label: 'InsertMany',
+            label: 'Insert many',
             value: 'insertMany',
           },
           {
-            label: 'UpdateOne',
+            label: 'Update one',
             value: 'updateOne',
           },
         ],

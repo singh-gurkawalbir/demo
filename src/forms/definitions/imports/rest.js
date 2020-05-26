@@ -417,7 +417,7 @@ export default {
       id: 'rest.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -452,7 +452,6 @@ export default {
       id: 'rest.successValuesCreate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -487,7 +486,6 @@ export default {
       id: 'rest.responseIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -693,7 +691,7 @@ export default {
       id: 'rest.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -724,7 +722,7 @@ export default {
       id: 'rest.successValuesUpdate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -755,7 +753,7 @@ export default {
       id: 'rest.responseIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',

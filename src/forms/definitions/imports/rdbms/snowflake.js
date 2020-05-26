@@ -76,7 +76,7 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: 'How would you like the data imported?',
+        label: 'How would you like the records imported?',
         fields: [
           'rdbms.queryType',
           'rdbms.bulkInsert.tableName',

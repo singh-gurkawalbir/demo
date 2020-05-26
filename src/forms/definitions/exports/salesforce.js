@@ -316,7 +316,7 @@ export default {
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {
-                return 'What would you like to listen from Salesforce?';
+                return 'Configure real-time export in source application';
               }
 
               return 'What would you like to export from Salesforce?';
