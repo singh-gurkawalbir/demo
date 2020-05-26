@@ -505,7 +505,13 @@ export function defaultStoreId(state, id, store) {
       return store;
     }
 
-    return settings.stores[0].value;
+    // If the first store in the integration is in incomplete state or uninstall mode, on clicking the tile from dashboard
+    // user will be redirected directly to uninstall steps or install steps, which may confuse user.
+    // As done in ampersand, will select first "valid" store available as defaullt store.
+    return (
+      (settings.stores.find(s => s.mode === 'settings') || {}).value ||
+      settings.stores[0].value
+    );
   }
 
   return undefined;
