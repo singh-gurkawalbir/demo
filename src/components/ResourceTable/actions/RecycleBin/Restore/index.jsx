@@ -1,11 +1,9 @@
 import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Icon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
-import getRoutePath from '../../../../../utils/routePaths';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import Icon from '../../../../icons/RestoreIcon';
 
 export default {
   key: 'restore',
@@ -27,11 +25,7 @@ export default {
             title: 'Restore',
           }}
           size="small"
-          onClick={handleRestoreClick}
-          component={Link}
-          to={getRoutePath(
-            `/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`
-          )}>
+          onClick={handleRestoreClick}>
           <Icon />
         </IconButtonWithTooltip>
       </Fragment>
