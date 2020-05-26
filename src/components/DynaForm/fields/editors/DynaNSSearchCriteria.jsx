@@ -31,7 +31,6 @@ export default function DynaNSSearchCriteria(props) {
     id,
     onFieldChange,
     value = [],
-    label,
     resourceId,
     connectionId,
 
@@ -100,7 +99,7 @@ export default function DynaNSSearchCriteria(props) {
         </Button>
         {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
     </Fragment>
   );

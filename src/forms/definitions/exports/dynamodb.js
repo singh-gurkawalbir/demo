@@ -133,7 +133,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'What would you like to export from DynamoDB?',
+            label: 'What would you like to export?',
             fields: [
               'dynamodb.region',
               'dynamodb.method',

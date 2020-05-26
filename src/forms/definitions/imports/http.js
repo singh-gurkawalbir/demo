@@ -1438,9 +1438,10 @@ export default {
         },
       ],
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'inputMode', 'formView', 'dataMappings'],
     type: 'collapse',
     containers: [
       {

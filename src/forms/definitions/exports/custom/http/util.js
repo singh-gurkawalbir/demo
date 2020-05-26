@@ -269,11 +269,6 @@ export function fieldMeta({ resource, assistantData }) {
     },
     formView: { fieldId: 'formView' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
     'assistantMetadata.exportType': {
       ...((exportTypeFields && exportTypeFields[0]) || {}),
     },

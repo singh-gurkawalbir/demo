@@ -319,7 +319,7 @@ export default {
                 return 'What would you like to listen from Salesforce?';
               }
 
-              return 'What would you like to export from Salesforce?';
+              return 'What would you like to export?';
             },
             fields: [
               'salesforce.sObjectType',
