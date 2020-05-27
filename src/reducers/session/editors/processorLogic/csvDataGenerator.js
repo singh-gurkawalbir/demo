@@ -3,7 +3,7 @@ import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 
 const requestBody = editor => ({
   rules: {
-    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
+    columnDelimiter: editor.columnDelimiter,
     rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
@@ -47,16 +47,6 @@ const dirty = editor => {
 
 const init = editor => {
   const { rule = {}, ...others } = editor;
-
-  // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
-  if (rule.columnDelimiter) {
-    const columnDelimiter = util.getObjectKeyFromValue(
-      csvOptions.ColumnDelimiterMap,
-      rule.columnDelimiter
-    );
-
-    rule.columnDelimiter = columnDelimiter;
-  }
 
   // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
   if (rule.rowDelimiter) {

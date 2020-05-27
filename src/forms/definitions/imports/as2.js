@@ -2,7 +2,40 @@ import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'file.filedefinition.rules') {
+    if (fieldId === 'file.csv') {
+      const includeHeaderField = fields.find(
+        field => field.id === 'file.csv.includeHeader'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const replaceNewlineWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceNewlineWithSpace'
+      );
+      const replaceTabWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceTabWithSpace'
+      );
+      const wrapWithQuotesField = fields.find(
+        field => field.id === 'file.csv.wrapWithQuotes'
+      );
+
+      return {
+        includeHeader: (includeHeaderField && includeHeaderField.value) || true,
+        columnDelimiter:
+          (columnDelimiterField && columnDelimiterField.value) || ',',
+        rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
+        replaceNewlineWithSpace: !!(
+          replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
+        ),
+        replaceTabWithSpace: !!(
+          replaceTabWithSpaceField && replaceTabWithSpaceField.value
+        ),
+        wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+      };
+    } else if (fieldId === 'file.filedefinition.rules') {
       let definitionFieldId;
       const fileType = fields.find(field => field.id === 'file.type');
 
@@ -19,9 +52,7 @@ export default {
         format: definition && definition.format,
         definitionId: definition && definition.value,
       };
-    }
-
-    if (fieldId === 'as2.fileNameTemplate') {
+    } else if (fieldId === 'as2.fileNameTemplate') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const newExtension = [
@@ -40,9 +71,7 @@ export default {
 
         fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
-    }
-
-    if (fieldId === 'dataURITemplate') {
+    } else if (fieldId === 'dataURITemplate') {
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
@@ -125,6 +154,14 @@ export default {
     distributed: { fieldId: 'distributed', defaultValue: false },
 
     'file.csv': { fieldId: 'file.csv' },
+    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.replaceNewlineWithSpace': {
+      fieldId: 'file.csv.replaceNewlineWithSpace',
+    },
+    'file.csv.replaceTabWithSpace': { fieldId: 'file.csv.replaceTabWithSpace' },
+    'file.csv.wrapWithQuotes': { fieldId: 'file.csv.wrapWithQuotes' },
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
     'as2.fileNameTemplate': { fieldId: 'as2.fileNameTemplate' },
     'as2.messageIdTemplate': { fieldId: 'as2.messageIdTemplate' },
@@ -180,6 +217,12 @@ export default {
           'as2.messageIdTemplate',
           'file.xml.body',
           'file.csv',
+          'file.csv.includeHeader',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.replaceNewlineWithSpace',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.wrapWithQuotes',
           'file.xlsx.includeHeader',
           'file.filedefinition.rules',
           'as2.headers',

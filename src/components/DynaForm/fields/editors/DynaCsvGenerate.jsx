@@ -30,13 +30,13 @@ export default function DynaCsvGenerate(props) {
   const {
     id,
     onFieldChange,
-    value = {},
     label,
     resourceId,
     flowId,
     resourceType,
     disabled,
     helpKey,
+    options = {},
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
@@ -91,7 +91,7 @@ export default function DynaCsvGenerate(props) {
 
       onFieldChange(id, {
         rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
+        columnDelimiter,
         includeHeader,
         truncateLastRowDelimiter,
         replaceTabWithSpace,
@@ -122,7 +122,7 @@ export default function DynaCsvGenerate(props) {
           resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
-          rule={value}
+          rule={options}
           onClose={handleClose}
           disabled={disabled}
         />
