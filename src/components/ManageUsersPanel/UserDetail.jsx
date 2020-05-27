@@ -4,7 +4,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import EditIcon from '../icons/EditIcon';
@@ -19,7 +18,9 @@ import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
 import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
+import CeligoSwitch from '../CeligoSwitch';
 
+// TODO: Refactor this component
 export default function UserDetail(props) {
   const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -199,8 +200,10 @@ export default function UserDetail(props) {
       />
       <TableRow key={user._id}>
         <TableCell>
-          <div>{user.sharedWithUser.name}</div>
           <div>{user.sharedWithUser.email}</div>
+        </TableCell>
+        <TableCell>
+          <div>{user.sharedWithUser.name}</div>
         </TableCell>
         <TableCell>
           {!integrationId &&
@@ -250,10 +253,10 @@ export default function UserDetail(props) {
             {!integrationId && (
               <Fragment>
                 <TableCell>
-                  <Switch
+                  <CeligoSwitch
                     data-test="disableUser"
-                    checked={!user.disabled}
-                    onClick={() => {
+                    enabled={!user.disabled}
+                    onChange={() => {
                       handleActionClick('disable');
                     }}
                   />
