@@ -18,6 +18,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
+import { isIntegrationApp } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -666,6 +667,15 @@ export function* submitResourceForm(params) {
 
   // if it fails return
   if (submitFailed || !flowId) return;
+
+  const { merged: flow } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+
+  // do not update the flow when its an IA
+  if (isIntegrationApp(flow)) return;
 
   // when there is nothing to commit there is no reason to update the flow doc..hence we return
   // however there is a usecase where we create a resource from an existing resource and that
