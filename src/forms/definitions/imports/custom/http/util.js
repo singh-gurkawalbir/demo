@@ -293,7 +293,6 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
-    formView: { fieldId: 'formView' },
     dataMappings: {
       formId: 'dataMappings',
     },
@@ -312,7 +311,7 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common', 'formView', 'dataMappings'],
+      fields: ['common', 'dataMappings'],
       type: 'collapse',
       containers: [
         {
