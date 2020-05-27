@@ -261,17 +261,14 @@ export function fieldMeta({ resource, assistantData }) {
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
+    ...exportTypeFields,
     ...searchParameterFields,
   ];
   const fieldMap = {
     common: {
       formId: 'common',
     },
-    formView: { fieldId: 'formView' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    'assistantMetadata.exportType': {
-      ...((exportTypeFields && exportTypeFields[0]) || {}),
-    },
   };
   const fieldIds = [];
 
@@ -303,7 +300,7 @@ export function fieldMeta({ resource, assistantData }) {
       type: 'column',
       containers: [
         {
-          fields: ['common', 'assistantMetadata.exportType', 'formView'],
+          fields: ['common'],
           type: 'collapse',
           containers: [
             {

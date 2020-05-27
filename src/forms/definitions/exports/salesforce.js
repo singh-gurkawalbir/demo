@@ -299,7 +299,7 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'type', 'salesforce.executionType'],
+        fields: ['common', 'outputMode', 'salesforce.executionType'],
         type: 'collapse',
         containers: [
           {
@@ -329,10 +329,17 @@ export default {
               'salesforce.distributed.relatedLists',
               'salesforce.distributed.qualifier',
               'salesforce.soql',
+              'salesforce.id',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: [
+              'type',
               'delta.dateField',
               'delta.lagOffset',
               'once.booleanField',
-              'salesforce.id',
             ],
           },
           {

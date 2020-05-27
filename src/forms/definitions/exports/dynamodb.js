@@ -128,7 +128,7 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'type'],
+        fields: ['common'],
         type: 'collapse',
         containers: [
           {
@@ -143,6 +143,13 @@ export default {
               'dynamodb.keyConditionExpression',
               'dynamodb.filterExpression',
               'dynamodb.projectionExpression',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: [
+              'type',
               'delta.dateField',
               'once.booleanField',
               'dynamodb.onceExportPartitionKey',

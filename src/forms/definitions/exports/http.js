@@ -375,14 +375,13 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
-    formView: { fieldId: 'formView' },
   },
 
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'type', 'formView'],
+        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
           {
@@ -413,15 +412,16 @@ export default {
               'http.response.failValues',
               'http.response.errorPath',
               'file.csv',
-              'delta.dateFormat',
-              'delta.lagOffset',
               'http.response.blobFormat',
             ],
           },
           {
             collapsed: true,
-            label: 'Configure Once',
+            label: 'Configure export type',
             fields: [
+              'type',
+              'delta.dateFormat',
+              'delta.lagOffset',
               'once.booleanField',
               'http.once.relativeURI',
               'http.once.method',

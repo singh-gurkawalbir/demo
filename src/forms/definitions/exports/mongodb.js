@@ -91,7 +91,7 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'type'],
+        fields: ['common'],
         type: 'collapse',
         containers: [
           {
@@ -106,9 +106,12 @@ export default {
               'mongodb.collection',
               'mongodb.filter',
               'mongodb.projection',
-              'delta.dateField',
-              'once.booleanField',
             ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: ['type', 'delta.dateField', 'once.booleanField'],
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],

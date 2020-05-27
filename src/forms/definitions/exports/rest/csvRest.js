@@ -105,10 +105,9 @@ export default {
         },
       ],
     },
-    formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: ['common', 'outputMode', 'formView'],
+    fields: ['common', 'outputMode'],
     type: 'collapse',
     containers: [
       {

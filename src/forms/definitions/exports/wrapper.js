@@ -77,7 +77,7 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common', 'type'],
+    fields: ['common'],
     type: 'collapse',
     containers: [
       {
@@ -88,12 +88,12 @@ export default {
       {
         collapsed: true,
         label: 'What would you like to export?',
-        fields: [
-          'wrapper.function',
-          'wrapper.configuration',
-          'delta.dateField',
-          'once.booleanField',
-        ],
+        fields: ['wrapper.function', 'wrapper.configuration'],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type?',
+        fields: ['type', 'delta.dateField', 'once.booleanField'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
