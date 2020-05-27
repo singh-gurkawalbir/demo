@@ -191,7 +191,7 @@ export default {
       id: 'netsuite.api.type',
       name: 'apiType',
       type: 'radiogroup',
-      label: 'API type',
+      label: 'NetSuite API type',
       required: true,
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
@@ -206,6 +206,8 @@ export default {
         if (netsuiteType) {
           return netsuiteType === 'restlet' ? 'restlet' : 'search';
         }
+
+        return 'restlet';
       },
       options: [
         {
@@ -322,17 +324,167 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    'delta.dateField': {
+      id: 'delta.dateField',
+      label: 'Date field',
+      type: 'refreshableselect',
+      required: true,
+      placeholder: 'Please select a date field',
+      connectionId: r => r && r._connectionId,
+      filterKey: 'webservices-dateField',
+      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.webservices.recordType', isNot: [''] },
+        { field: 'type', is: ['delta'] },
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
+    'once.booleanField': {
+      id: 'once.booleanField',
+      label: 'Boolean field',
+      type: 'refreshableselect',
+      placeholder: 'Please select a Boolean field',
+      required: true,
+      connectionId: r => r && r._connectionId,
+      filterKey: 'webservices-booleanField',
+      refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.webservices.recordType', isNot: [''] },
+        { field: 'type', is: ['once'] },
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
+    type: {
+      id: 'type',
+      type: 'select',
+      label: 'Export type',
+      required: true,
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
+      options: [
+        {
+          items: [
+            { label: 'All', value: 'all' },
+            { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
+    'delta.lagOffset': {
+      fieldId: 'delta.lagOffset',
+      visibleWhenAll: [
+        { field: 'type', is: ['delta'] },
+        { field: 'netsuite.api.type', is: ['search'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
+      ],
+    },
+    'restlet.type': {
+      id: 'restlet.type',
+      type: 'netsuiteexporttype',
+      label: 'Export Type',
+      required: true,
+      helpKey: 'export.type',
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+      filterKey: 'suitescript-recordTypes',
+      defaultValue: r => {
+        const isNew = isNewId(r._id);
+
+        // if its create
+        if (isNew) return '';
+        const output = r && r.type;
+
+        return output || 'all';
+      },
+      selectOptions: [
+        { label: 'All', value: 'all' },
+        { label: 'Test', value: 'test' },
+        { label: 'Delta', value: 'delta' },
+        { label: 'Once', value: 'once' },
+      ],
+      visibleWhenAll: [
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
+    },
+    'restlet.delta.dateField': {
+      id: 'restlet.delta.dateField',
+      label: 'Date field',
+      type: 'refreshableselect',
+      helpKey: 'export.delta.dateField',
+      filterKey: 'suitescript-dateField',
+      required: true,
+      placeholder: 'Please select a date field',
+      connectionId: r => r && r._connectionId,
+      defaultValue: r => r && r.delta && r.delta.dateField,
+      refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
+        { field: 'restlet.type', is: ['delta'] },
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
+    },
+    'restlet.delta.lagOffset': {
+      id: 'restlet.delta.lagOffset',
+      type: 'text',
+      label: 'Offset',
+      helpKey: 'export.delta.lagOffset',
+      defaultValue: r => r && r.delta && r.delta.lagOffset,
+      visibleWhenAll: [
+        { field: 'restlet.type', is: ['delta'] },
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
+    },
+    'restlet.once.booleanField': {
+      id: 'restlet.once.booleanField',
+      label: 'Boolean field',
+      type: 'refreshableselect',
+      helpKey: 'export.delta.booleanField',
+      placeholder: 'Please select a Boolean field',
+      filterKey: 'suitescript-booleanField',
+      required: true,
+      defaultValue: r => r && r.once && r.once.booleanField,
+      connectionId: r => r && r._connectionId,
+      refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
+      visibleWhenAll: [
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
+        { field: 'restlet.type', is: ['once'] },
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
+    },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'netsuite.execution.type',
-          'netsuite.api.type',
-        ],
+        fields: ['common', 'outputMode', 'netsuite.execution.type'],
         type: 'collapse',
         containers: [
           {
@@ -352,9 +504,10 @@ export default {
                 return 'What would you like to listen from NetSuite?';
               }
 
-              return 'What would you like to export from NetSuite?';
+              return 'What would you like to export?';
             },
             fields: [
+              'netsuite.api.type',
               'distributed',
               'restlet',
               'search',
@@ -362,6 +515,20 @@ export default {
               'blob',
               'netsuite.restlet.criteria',
               'netsuite.webservices.criteria',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: [
+              'type',
+              'delta.dateField',
+              'delta.lagOffset',
+              'once.booleanField',
+              'restlet.type',
+              'restlet.delta.dateField',
+              'restlet.delta.lagOffset',
+              'restlet.once.booleanField',
             ],
           },
           {

@@ -208,7 +208,7 @@ export default {
         return 'What would you like to listen from NetSuite?';
       }
 
-      return 'What would you like to export from NetSuite?';
+      return 'What would you like to export?';
     },
     type: 'labeltitle',
   },
@@ -279,6 +279,7 @@ export default {
     ],
   },
   'netsuite.restlet.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
@@ -286,6 +287,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],

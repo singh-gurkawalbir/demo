@@ -261,25 +261,26 @@ export function fieldMeta({ resource, assistantData }) {
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
-    ...exportTypeFields,
+
     ...searchParameterFields,
   ];
+  const exportTypeRelatedFields = [...exportTypeFields];
   const fieldMap = {
     common: {
       formId: 'common',
     },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
   };
   const fieldIds = [];
+  const exportTypeFieldIds = [];
 
   fields.forEach(field => {
     fieldMap[field.id || field.fieldId] = field;
     fieldIds.push(field.id || field.fieldId);
+  });
+  exportTypeRelatedFields.forEach(field => {
+    fieldMap[field.id || field.fieldId] = field;
+    exportTypeFieldIds.push(field.id || field.fieldId);
   });
 
   fieldMap.exportPanel = {
@@ -317,6 +318,11 @@ export function fieldMeta({ resource, assistantData }) {
               collapsed: true,
               label: 'What would you like to export?',
               fields: [...fieldIds],
+            },
+            {
+              collapsed: true,
+              label: 'Configure export type?',
+              fields: [...exportTypeFieldIds],
             },
           ],
         },
