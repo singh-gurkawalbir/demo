@@ -6,8 +6,8 @@ import RevokeTokenIcon from '../../../../../components/icons/RevokeTokenIcon';
 export default {
   label: 'Revoke token',
   icon: RevokeTokenIcon,
-  component: function RevokeAccessToken({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function RevokeAccessToken({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const revokeAccessToken = useCallback(() => {
       const patchSet = [

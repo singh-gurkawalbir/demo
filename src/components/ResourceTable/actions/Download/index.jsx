@@ -6,8 +6,8 @@ import DownloadIcon from '../../../icons/DownloadIcon';
 export default {
   label: 'Download',
   icon: DownloadIcon,
-  component: function DownloadResource({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function DownloadResource({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const downloadReference = useCallback(() => {
       dispatch(actions.resource.downloadFile(resourceId, resourceType));

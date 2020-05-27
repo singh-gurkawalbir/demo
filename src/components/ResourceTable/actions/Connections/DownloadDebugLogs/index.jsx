@@ -7,8 +7,8 @@ import DownloadIcon from '../../../../icons/DownloadIcon';
 export default {
   label: 'Download debug logs',
   icon: DownloadIcon,
-  component: function DownloadDebugLogs({ resource }) {
-    const { _id: connectionId } = resource;
+  component: function DownloadDebugLogs({ rowData = {} }) {
+    const { _id: connectionId } = rowData;
     const url = `/connections/${connectionId}/debug`;
     const additionalHeaders = useSelector(
       state => selectors.accountShareHeader(state, url),

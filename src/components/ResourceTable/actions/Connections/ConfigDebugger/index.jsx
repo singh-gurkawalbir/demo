@@ -6,8 +6,8 @@ import DebugIcon from '../../../../icons/DebugIcon';
 export default {
   label: 'Configure debugger',
   icon: DebugIcon,
-  hasAccess: ({ state, resource }) => {
-    const { _id: connectionId } = resource;
+  hasAccess: ({ state, rowData }) => {
+    const { _id: connectionId } = rowData;
     const hasAccess = selectors.resourcePermissions(
       state,
       'connections',
@@ -16,8 +16,8 @@ export default {
 
     return hasAccess;
   },
-  component: function ConfigDebugger({ resource }) {
-    const { _id: connectionId, name: connectionName, debugDate } = resource;
+  component: function ConfigDebugger({ rowData = {} }) {
+    const { _id: connectionId, name: connectionName, debugDate } = rowData;
     const [show, setShow] = useState(true);
     const handleConfigDebuggerClose = useCallback(() => {
       setShow(false);

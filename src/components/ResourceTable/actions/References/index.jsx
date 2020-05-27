@@ -6,7 +6,8 @@ import ResourceReferences from '../../../ResourceReferences';
 export default {
   label: 'References',
   icon: ViewReferencesIcon,
-  component: function References({ resourceType, resource }) {
+  component: function References({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const [show, setShow] = useState(true);
     const handleReferencesClose = useCallback(() => {
       setShow(false);
@@ -17,7 +18,7 @@ export default {
         {show && (
           <ResourceReferences
             resourceType={resourceType}
-            resourceId={resource._id}
+            resourceId={resourceId}
             onClose={handleReferencesClose}
           />
         )}

@@ -6,8 +6,8 @@ import ReactivateTokenIcon from '../../../../../components/icons/ReactivateToken
 export default {
   label: 'Reactivate token',
   icon: ReactivateTokenIcon,
-  component: function ReactivateAccessToken({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function ReactivateAccessToken({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const reactivateAccessToken = useCallback(() => {
       const patchSet = [

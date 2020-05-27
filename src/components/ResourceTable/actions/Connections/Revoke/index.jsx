@@ -7,8 +7,8 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 export default {
   label: 'Revoke',
   icon: RevokeTokenIcon,
-  component: function Revoke({ resource: connection = {} }) {
-    const { _id: connectionId, name: connectionName } = connection;
+  component: function Revoke({ rowData = {} }) {
+    const { _id: connectionId, name: connectionName } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const revokeConnection = useCallback(() => {

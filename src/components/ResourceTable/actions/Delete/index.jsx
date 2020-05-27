@@ -10,8 +10,8 @@ import ResourceReferences from '../../../ResourceReferences';
 export default {
   label: 'Delete',
   icon: TrashIcon,
-  component: function DeleteResource({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function DeleteResource({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const [showRef, setShowRef] = useState(true);
     const resourceReferences = useSelector(state =>

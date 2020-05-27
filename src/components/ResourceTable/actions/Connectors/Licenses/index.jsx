@@ -6,15 +6,16 @@ import getRoutePath from '../../../../../utils/routePaths';
 export default {
   label: 'Licenses',
   icon: TokensApiIcon,
-  component: function Licenses({ resource }) {
+  component: function Licenses({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const history = useHistory();
     const openLicensesURL = useCallback(() => {
       history.push(
         getRoutePath(
-          getRoutePath(`/connectors/${resource._id}/connectorLicenses`)
+          getRoutePath(`/connectors/${resourceId}/connectorLicenses`)
         )
       );
-    }, [history, resource._id]);
+    }, [history, resourceId]);
 
     useEffect(() => {
       openLicensesURL();

@@ -9,20 +9,20 @@ import getRoutePath from '../../../../../utils/routePaths';
 export default {
   label: 'Restore',
   icon: RestoreIcon,
-  component: function Restore({ resource }) {
+  component: function Restore({ rowData = {} }) {
     const dispatch = useDispatch();
     const history = useHistory();
     const restore = useCallback(() => {
       dispatch(
         actions.recycleBin.restore(
-          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
-          resource.doc && resource.doc._id
+          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]}s`,
+          rowData.doc && rowData.doc._id
         )
       );
       history.push(
-        getRoutePath(`/${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`)
+        getRoutePath(`/${RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]}s`)
       );
-    }, [dispatch, history, resource.doc, resource.model]);
+    }, [dispatch, history, rowData.doc, rowData.model]);
 
     useEffect(() => {
       restore();

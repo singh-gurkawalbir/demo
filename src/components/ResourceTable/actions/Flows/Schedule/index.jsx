@@ -5,7 +5,7 @@ import ModalDialog from '../../../../ModalDialog';
 export default {
   label: 'Schedule',
   icon: FlowSchedule,
-  component: function Schedule({ resource }) {
+  component: function Schedule({ rowData = {} }) {
     const [showSchedule, setShowSchedule] = useState(true);
     const handleClose = useCallback(() => {
       setShowSchedule(false);
@@ -17,7 +17,7 @@ export default {
           <ModalDialog show maxWidth={false}>
             <div>Flow Schedule</div>
             <div>
-              <FlowSchedule flow={resource} onClose={handleClose} />
+              <FlowSchedule flow={rowData} onClose={handleClose} />
             </div>
           </ModalDialog>
         )}

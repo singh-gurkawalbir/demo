@@ -9,17 +9,22 @@ export default function ActionMenu({ actions, selectAction }) {
   const state = useSelector(state => state);
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'row-actions' : undefined;
-  const handleMenuClick = useCallback(event => {
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const handleMenuClick = useCallback(
+    event => {
+      setAnchorEl(event.currentTarget);
+      selectAction(undefined);
+    },
+    [selectAction]
+  );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const renderActionMenu = useCallback(
-    ({ label, icon, hasAccess, actionProps, resource, component }) => {
+    ({ label, icon, hasAccess, actionProps, rowData, component }) => {
       const handleActionClick = () => {
         selectAction(component);
+        handleMenuClose();
       };
 
-      if (hasAccess && !hasAccess({ state, ...actionProps, resource })) {
+      if (hasAccess && !hasAccess({ state, ...actionProps, rowData })) {
         return;
       }
 
@@ -30,7 +35,8 @@ export default function ActionMenu({ actions, selectAction }) {
         </MenuItem>
       );
     },
-    [selectAction, state]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectAction]
   );
 
   if (!actions || !actions.length) return null;

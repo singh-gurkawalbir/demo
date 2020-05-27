@@ -6,13 +6,14 @@ import getRoutePath from '../../../../../utils/routePaths';
 export default {
   label: 'Install base',
   icon: GroupOfUsersIcon,
-  component: function InstallBase({ resource }) {
+  component: function InstallBase({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const history = useHistory();
     const openInstallBaseURL = useCallback(() => {
       history.push(
-        getRoutePath(getRoutePath(`/connectors/${resource._id}/installBase`))
+        getRoutePath(getRoutePath(`/connectors/${resourceId}/installBase`))
       );
-    }, [history, resource._id]);
+    }, [history, resourceId]);
 
     useEffect(() => {
       openInstallBaseURL();

@@ -6,8 +6,8 @@ import RefreshIcon from '../../../../icons/RefreshIcon';
 export default {
   label: 'Refresh metadata',
   icon: RefreshIcon,
-  component: function RefreshMetadata({ resource }) {
-    const { type: resourceType, _id: resourceId } = resource;
+  component: function RefreshMetadata({ rowData = {} }) {
+    const { type: resourceType, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const refreshMetadata = useCallback(() => {
       if (resourceType === 'netsuite') {

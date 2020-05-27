@@ -19,15 +19,15 @@ export default {
 
     return hasAccess && !isStandalone;
   },
-  component: function Deregister({ resource: connection, integrationId }) {
-    const { _id: connectionId, name: connectionName } = connection;
+  component: function Deregister({ rowData = {}, integrationId }) {
+    const { _id: connectionId, name: connectionName } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deregisterConnection = useCallback(() => {
       dispatch(
-        actions.connection.requestDeregister(connection._id, integrationId)
+        actions.connection.requestDeregister(connectionId, integrationId)
       );
-    }, [connection._id, dispatch, integrationId]);
+    }, [connectionId, dispatch, integrationId]);
     const confirmDeregister = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',

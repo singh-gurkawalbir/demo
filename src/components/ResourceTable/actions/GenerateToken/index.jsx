@@ -7,8 +7,8 @@ import useConfirmDialog from '../../../ConfirmDialog';
 export default {
   label: 'Generate token',
   icon: RegenerateTokenIcon,
-  component: function GenerateToken({ resource, resourceType }) {
-    const { _id: resourceId } = resource;
+  component: function GenerateToken({ rowData = {}, resourceType }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const generateSystemToken = useCallback(() => {

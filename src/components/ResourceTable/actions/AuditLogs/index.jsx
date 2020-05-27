@@ -5,8 +5,8 @@ import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 export default {
   label: 'Audit log',
   icon: AuditLogIcon,
-  component: function AuditLogs({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function AuditLogs({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const [show, setShow] = useState(true);
     const handleAuditLogsClose = useCallback(() => {
       setShow(false);

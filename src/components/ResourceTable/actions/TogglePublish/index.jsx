@@ -7,8 +7,8 @@ import actions from '../../../../actions';
 export default {
   label: r => (r.published ? 'Unpublish' : 'Publish'),
   icon: r => (r.published ? UnpublishIcon : PublishIcon),
-  component: function TogglePublish({ resourceType, resource = {} }) {
-    const { _id: resourceId, published: isPublished } = resource;
+  component: function TogglePublish({ resourceType, rowData = {} }) {
+    const { _id: resourceId, published: isPublished } = rowData;
     const dispatch = useDispatch();
     const togglePublish = useCallback(() => {
       const patchSet = [

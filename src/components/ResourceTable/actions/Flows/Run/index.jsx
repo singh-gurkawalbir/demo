@@ -8,14 +8,13 @@ import RunIcon from '../../../../icons/RunIcon';
 export default {
   label: 'Run flow',
   icon: RunIcon,
-  component: withRouter(({ resource, history }) => {
+  component: withRouter(({ rowData = {}, history }) => {
+    const { _integrationId: integrationId, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const runFlow = useCallback(() => {
-      dispatch(actions.flow.run({ flowId: resource._id }));
-      history.push(
-        getRoutePath(`integrations/${resource._integrationId}/dashboard`)
-      );
-    }, [dispatch, history, resource._id, resource._integrationId]);
+      dispatch(actions.flow.run({ flowId: resourceId }));
+      history.push(getRoutePath(`integrations/${integrationId}/dashboard`));
+    }, [dispatch, history, integrationId, resourceId]);
 
     useEffect(() => {
       runFlow();

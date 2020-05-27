@@ -5,7 +5,8 @@ import UploadFileDialog from './UploadFileDialog';
 export default {
   label: 'Upload ZIP file',
   icon: UploadIcon,
-  component: function UploadZipFile({ resourceType, resource }) {
+  component: function UploadZipFile({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const [showDialog, setShowDialog] = useState(true);
     const toggleDialog = useCallback(() => {
       setShowDialog(!showDialog);
@@ -19,7 +20,7 @@ export default {
             fileType="application/zip"
             onClose={toggleDialog}
             type="Zip"
-            resourceId={resource._id}
+            resourceId={resourceId}
           />
         )}
       </Fragment>

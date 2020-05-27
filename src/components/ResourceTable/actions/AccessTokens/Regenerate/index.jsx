@@ -6,8 +6,8 @@ import RegenerateTokenIcon from '../../../../../components/icons/RegenerateToken
 export default {
   label: 'Regenerate token',
   icon: RegenerateTokenIcon,
-  component: function RegenerateAccessToken({ resource = {} }) {
-    const { _id: resourceId } = resource;
+  component: function RegenerateAccessToken({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const regenerateAccessToken = useCallback(() => {
       dispatch(actions.accessToken.generateToken(resourceId));

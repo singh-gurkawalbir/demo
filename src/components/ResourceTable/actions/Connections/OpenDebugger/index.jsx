@@ -8,8 +8,8 @@ import DebugIcon from '../../../../icons/DebugIcon';
 export default {
   label: 'Open debugger',
   icon: DebugIcon,
-  hasAccess: ({ state, resource }) => {
-    const { _id: connectionId } = resource;
+  hasAccess: ({ state, rowData }) => {
+    const { _id: connectionId } = rowData;
     const hasAccess = selectors.resourcePermissions(
       state,
       'connections',
@@ -18,8 +18,8 @@ export default {
 
     return hasAccess;
   },
-  component: function OpenDebugger({ resource }) {
-    const { _id: connectionId } = resource;
+  component: function OpenDebugger({ rowData = {} }) {
+    const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const openDebugger = useCallback(() => {
       dispatch(actions.connection.requestDebugLogs(connectionId));

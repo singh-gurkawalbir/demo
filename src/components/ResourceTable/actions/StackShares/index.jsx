@@ -11,7 +11,8 @@ const ssharesFilterConfig = { type: 'sshares' };
 export default {
   label: 'Stack shares',
   icon: StacksIcon,
-  component: function StackShares({ resource }) {
+  component: function StackShares({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const [show, setShow] = useState(true);
     const dispatch = useDispatch();
     const resourceList = useSelectorMemo(
@@ -31,12 +32,12 @@ export default {
       <Fragment>
         {show && (
           <ShareStackDialog
-            stackId={resource._id}
+            stackId={resourceId}
             onClose={handleStackShareClose}
             stackShareCollectionById={
               stackShareCollection &&
               stackShareCollection.filter(
-                stack => stack._stackId === resource._id
+                stack => stack._stackId === resourceId
               )
             }
           />

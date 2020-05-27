@@ -7,8 +7,8 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 export default {
   label: 'Detach flow',
   icon: CloseIcon,
-  component: function DetachFlow({ resource }) {
-    const { name: resourceName, _id: resourceId } = resource;
+  component: function DetachFlow({ rowData = {} }) {
+    const { name: resourceName, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const detachFlow = useCallback(() => {

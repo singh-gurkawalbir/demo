@@ -231,14 +231,14 @@ export default function CeligoTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map(r => (
-            <TableRow hover key={r._id} className={classes.row}>
+          {data.map(rowData => (
+            <TableRow hover key={rowData._id} className={classes.row}>
               {selectableRows && (
                 <TableCell>
-                  {(isSelectableRow ? !!isSelectableRow(r) : true) && (
+                  {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
                     <Checkbox
-                      onChange={event => handleSelectChange(event, r._id)}
-                      checked={!!selectedResources[r._id]}
+                      onChange={event => handleSelectChange(event, rowData._id)}
+                      checked={!!selectedResources[rowData._id]}
                       color="primary"
                       icon={
                         <span>
@@ -255,7 +255,7 @@ export default function CeligoTable({
                 </TableCell>
               )}
               {(typeof columns === 'function'
-                ? columns(r, actionProps)
+                ? columns(rowData, actionProps)
                 : columns
               ).map((col, index) =>
                 index === 0 ? (
@@ -264,11 +264,11 @@ export default function CeligoTable({
                     scope="row"
                     key={col.heading}
                     align={col.align || 'left'}>
-                    {col.value(r, actionProps, history.location)}
+                    {col.value(rowData, actionProps, history.location)}
                   </TableCell>
                 ) : (
                   <TableCell key={col.heading} align={col.align || 'left'}>
-                    {col.value(r, actionProps, history.location)}
+                    {col.value(rowData, actionProps, history.location)}
                   </TableCell>
                 )
               )}
@@ -281,21 +281,21 @@ export default function CeligoTable({
                     // determinant on the resource they apply to.
                     // Check on this later for the scope of refactor
                     actions={(typeof rowActions === 'function'
-                      ? rowActions(r, actionProps)
+                      ? rowActions(rowData, actionProps)
                       : rowActions
                     ).map(({ icon, label, hasAccess, component: Action }) => ({
                       icon:
                         typeof icon === 'function'
-                          ? icon(r, actionProps)
+                          ? icon(rowData, actionProps)
                           : icon,
                       hasAccess,
-                      resource: r,
+                      rowData,
                       actionProps,
                       label:
                         typeof label === 'function'
-                          ? label(r, actionProps)
+                          ? label(rowData, actionProps)
                           : label,
-                      component: <Action {...actionProps} resource={r} />,
+                      component: <Action {...actionProps} rowData={rowData} />,
                     }))}
                   />
                 </TableCell>
