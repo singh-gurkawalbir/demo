@@ -206,7 +206,7 @@ describe('editor selectors', () => {
         processor: 'csvParser',
         valid: {
           initOpts: {
-            columnDelimiter: 'tab',
+            columnDelimiter: '\t',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',
@@ -236,7 +236,7 @@ describe('editor selectors', () => {
         processor: 'csvDataGenerator',
         valid: {
           initOpts: {
-            columnDelimiter: 'tab',
+            columnDelimiter: '\t',
             rowDelimiter: 'crlf',
             hasHeaderRow: true,
             trimSpaces: true,
