@@ -629,6 +629,12 @@ export const getMetadata = ({
           flows,
           exports
         ),
+        requiredWhen: [
+          {
+            field: '_keepDeltaBehindFlowId',
+            isNot: [''],
+          },
+        ],
         visible: isDeltaFlowModel(pg, exp, flow, exports),
         refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
         defaultValue: resource && resource._keepDeltaBehindExportId,

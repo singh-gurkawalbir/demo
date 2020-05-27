@@ -319,7 +319,7 @@ export default {
                 return 'Configure real-time export in source application';
               }
 
-              return 'What would you like to export from Salesforce?';
+              return 'What would you like to export?';
             },
             fields: [
               'salesforce.sObjectType',
@@ -329,11 +329,17 @@ export default {
               'salesforce.distributed.relatedLists',
               'salesforce.distributed.qualifier',
               'salesforce.soql',
+              'salesforce.id',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: [
               'type',
               'delta.dateField',
               'delta.lagOffset',
               'once.booleanField',
-              'salesforce.id',
             ],
           },
           {

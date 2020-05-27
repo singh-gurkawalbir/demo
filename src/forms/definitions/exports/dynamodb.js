@@ -133,7 +133,7 @@ export default {
         containers: [
           {
             collapsed: true,
-            label: 'What would you like to export from DynamoDB?',
+            label: 'What would you like to export?',
             fields: [
               'dynamodb.region',
               'dynamodb.method',
@@ -143,6 +143,12 @@ export default {
               'dynamodb.keyConditionExpression',
               'dynamodb.filterExpression',
               'dynamodb.projectionExpression',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: [
               'type',
               'delta.dateField',
               'once.booleanField',

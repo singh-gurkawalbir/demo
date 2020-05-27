@@ -65,7 +65,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'Yes (advanced)', value: 'true' },
           { label: 'No', value: 'false' },
         ],
       },
