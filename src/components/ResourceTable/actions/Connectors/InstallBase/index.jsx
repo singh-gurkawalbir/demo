@@ -1,21 +1,24 @@
-import { Link } from 'react-router-dom';
-import Icon from '../../../../icons/GroupOfUsersIcon';
+import { useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import GroupOfUsersIcon from '../../../../icons/GroupOfUsersIcon';
 import getRoutePath from '../../../../../utils/routePaths';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'installBase',
-  component: function InstallBase({ resource }) {
-    return (
-      <Link to={getRoutePath(`/connectors/${resource._id}/installBase`)}>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Install base',
-          }}
-          size="small">
-          <Icon />
-        </IconButtonWithTooltip>
-      </Link>
-    );
+  label: 'Install base',
+  icon: GroupOfUsersIcon,
+  component: function InstallBase({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const history = useHistory();
+    const openInstallBaseURL = useCallback(() => {
+      history.push(
+        getRoutePath(getRoutePath(`/connectors/${resourceId}/installBase`))
+      );
+    }, [history, resourceId]);
+
+    useEffect(() => {
+      openInstallBaseURL();
+    }, [openInstallBaseURL]);
+
+    return null;
   },
 };

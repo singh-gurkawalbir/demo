@@ -1,34 +1,34 @@
-import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'deregister',
-  component: function Deregister({ resource: connection, integrationId }) {
+  label: 'Deregister',
+  icon: CloseIcon,
+  hasAccess: ({ state, integrationId }) => {
     const isStandalone = integrationId === 'none';
-    const { _id: connectionId, name: connectionName } = connection;
+    const hasAccess = selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    ).edit;
+
+    return hasAccess && !isStandalone;
+  },
+  component: function Deregister({ rowData = {}, integrationId }) {
+    const { _id: connectionId, name: connectionName } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    // todo when to show deregister
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(
-          state,
-          'integrations',
-          integrationId,
-          'connections'
-        ).edit
-    );
-    const deregiterConnection = useCallback(() => {
+    const deregisterConnection = useCallback(() => {
       dispatch(
-        actions.connection.requestDeregister(connection._id, integrationId)
+        actions.connection.requestDeregister(connectionId, integrationId)
       );
-    }, [connection._id, dispatch, integrationId]);
-    const handleDeregisterClick = useCallback(() => {
+    }, [connectionId, dispatch, integrationId]);
+    const confirmDeregister = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -44,26 +44,16 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: deregiterConnection,
+            onClick: deregisterConnection,
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, deregiterConnection]);
+    }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
 
-    if (!canAccess || isStandalone) {
-      return null;
-    }
+    useEffect(() => {
+      confirmDeregister();
+    }, [confirmDeregister]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Deregister',
-        }}
-        data-test="closeDeregisterModal"
-        size="small"
-        onClick={handleDeregisterClick}>
-        <CloseIcon />
-      </IconButtonWithTooltip>
-    );
+    return null;
   },
 };

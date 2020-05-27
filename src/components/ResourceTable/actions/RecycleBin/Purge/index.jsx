@@ -1,29 +1,29 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import Icon from '../../../../icons/PurgeIcon';
+import PurgeIcon from '../../../../icons/PurgeIcon';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'purge',
-  component: function Purge({ resource = {} }) {
+  label: 'purge',
+  icon: PurgeIcon,
+  component: function Purge({ rowData = {} }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const purgeResource = useCallback(() => {
       dispatch(
         actions.recycleBin.purge(
-          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
-          resource.doc && resource.doc._id
+          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]}s`,
+          rowData.doc && rowData.doc._id
         )
       );
-    }, [dispatch, resource.doc, resource.model]);
-    const handlePurgeClick = useCallback(() => {
+    }, [dispatch, rowData.doc, rowData.model]);
+    const confirmPurge = useCallback(() => {
       confirmDialog({
         title: 'Confirm',
         message: `Are you sure you want to delete this ${
-          RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]
+          RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]
         }?`,
         buttons: [
           {
@@ -35,19 +35,12 @@ export default {
           },
         ],
       });
-    }, [confirmDialog, purgeResource, resource.model]);
+    }, [confirmDialog, purgeResource, rowData.model]);
 
-    return (
-      <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Purge',
-          }}
-          size="small"
-          onClick={handlePurgeClick}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    useEffect(() => {
+      confirmPurge();
+    }, [confirmPurge]);
+
+    return null;
   },
 };

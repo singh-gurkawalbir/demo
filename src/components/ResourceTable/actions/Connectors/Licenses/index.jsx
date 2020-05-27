@@ -1,21 +1,26 @@
-import { Link } from 'react-router-dom';
-import Icon from '../../../../icons/TokensApiIcon';
+import { useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import TokensApiIcon from '../../../../icons/TokensApiIcon';
 import getRoutePath from '../../../../../utils/routePaths';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'licenses',
-  component: function Licenses({ resource }) {
-    return (
-      <Link to={getRoutePath(`/connectors/${resource._id}/connectorLicenses`)}>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Licenses',
-          }}
-          size="small">
-          <Icon />
-        </IconButtonWithTooltip>
-      </Link>
-    );
+  label: 'Licenses',
+  icon: TokensApiIcon,
+  component: function Licenses({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const history = useHistory();
+    const openLicensesURL = useCallback(() => {
+      history.push(
+        getRoutePath(
+          getRoutePath(`/connectors/${resourceId}/connectorLicenses`)
+        )
+      );
+    }, [history, resourceId]);
+
+    useEffect(() => {
+      openLicensesURL();
+    }, [openLicensesURL]);
+
+    return null;
   },
 };
