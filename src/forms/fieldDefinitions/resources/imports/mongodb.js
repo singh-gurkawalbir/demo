@@ -98,7 +98,8 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
@@ -139,10 +140,10 @@ export default {
     label: 'Which field?',
     required: true,
     visibleWhen: [
-      {
-        field: 'ignoreMissing',
-        is: [true],
-      },
+      // {
+      //   field: 'ignoreMissing',
+      //   is: [true],
+      // },
       {
         field: 'mongodb.lookupType',
         is: ['source'],

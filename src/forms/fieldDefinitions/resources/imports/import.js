@@ -40,12 +40,12 @@ export default {
   },
   ignoreExisting: {
     type: 'checkbox',
-    label: 'Ignore existing',
+    label: 'Ignore existing records',
     defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
-    label: 'Ignore missing',
+    label: 'Ignore missing records',
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {

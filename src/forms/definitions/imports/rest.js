@@ -783,7 +783,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore existing data',
+      label: 'Ignore existing records',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -936,10 +936,13 @@ export default {
           'ignoreExistingData',
           'ignoreNewData',
           'rest.existingDataId',
-          'sampleDataTitle',
-          'sampleData',
           'blobKeyPath',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Do you have a sample destination record?',
+        fields: ['sampleData'],
       },
       {
         collapsed: true,

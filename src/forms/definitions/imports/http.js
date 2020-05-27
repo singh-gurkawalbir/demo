@@ -547,7 +547,7 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for create',
+      label: 'Build HTTP request body',
       helpKey: 'import.http.body',
       arrayIndex: 1,
       requestMediaType: r =>
@@ -1063,7 +1063,7 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for update',
+      label: 'Build HTTP request body',
       helpKey: 'import.http.body',
       arrayIndex: 0,
       requestMediaType: r =>
@@ -1251,7 +1251,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore existing data',
+      label: 'Ignore existing records',
       visibleWhenAll: [
         {
           field: 'http.compositeType',

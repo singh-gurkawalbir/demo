@@ -187,7 +187,7 @@ export default {
     type: 'httprequestbody',
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
-    label: 'Build HTTP request body',
+    label: 'Override HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     visibleWhen: [
@@ -252,7 +252,7 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    label: 'Paste your sample data here',
+    label: 'Paste destination record here',
     visibleWhenAll: [
       {
         field: 'inputMode',
