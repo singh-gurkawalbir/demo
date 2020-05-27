@@ -1,34 +1,33 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import RestoreIcon from '../../../../icons/RestoreIcon';
 import actions from '../../../../../actions';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import Icon from '../../../../icons/RestoreIcon';
+import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
-  key: 'restore',
-  component: function Restore({ resource }) {
+  label: 'Restore',
+  icon: RestoreIcon,
+  component: function Restore({ rowData = {} }) {
     const dispatch = useDispatch();
-    const handleRestoreClick = useCallback(() => {
+    const history = useHistory();
+    const restore = useCallback(() => {
       dispatch(
         actions.recycleBin.restore(
-          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[resource.model]}s`,
-          resource.doc && resource.doc._id
+          `${RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]}s`,
+          rowData.doc && rowData.doc._id
         )
       );
-    }, [dispatch, resource.doc, resource.model]);
+      history.push(
+        getRoutePath(`/${RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]}s`)
+      );
+    }, [dispatch, history, rowData.doc, rowData.model]);
 
-    return (
-      <Fragment>
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Restore',
-          }}
-          size="small"
-          onClick={handleRestoreClick}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    useEffect(() => {
+      restore();
+    }, [restore]);
+
+    return null;
   },
 };
