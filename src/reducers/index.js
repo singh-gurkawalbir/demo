@@ -4250,3 +4250,9 @@ export function customSettingsForm(state, resourceId) {
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+
+export const rdbmsConnectionType = (state, connectionId) => {
+  const connection = resource(state, 'connections', connectionId) || {};
+
+  return connection.rdbms && connection.rdbms.type;
+};

@@ -71,6 +71,9 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
+  );
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (
@@ -189,6 +192,13 @@ const PageProcessor = ({
           path: '/_connectionId',
           value: pp._connectionId,
         },
+        // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+        // used to populate the same when user opens resource form
+        {
+          op: 'add',
+          path: '/rdbmsAppType',
+          value: rdbmsAppType,
+        },
       ];
 
       // console.log('patchSet: ', patchSet);
@@ -212,6 +222,7 @@ const PageProcessor = ({
     match.url,
     pending,
     pp._connectionId,
+    rdbmsAppType,
     resource,
     resourceId,
     resourceType,
