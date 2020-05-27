@@ -85,29 +85,31 @@ export default function UserList({ integrationId, onEditUserClick }) {
     requestIntegrationAShares();
   }, [requestIntegrationAShares]);
 
-  const statusHandler = ({ status, message }) => {
-    enquesnackbar(message, {
-      variant: status,
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'center',
-      },
-      // eslint-disable-next-line react/display-name
-      action: key => (
-        <IconButton
-          data-test="closeUserListSnackbar"
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => {
-            this.props.closeSnackbar(key);
-          }}>
-          <CloseIcon />
-        </IconButton>
-      ),
-    });
-  };
-
+  const statusHandler = useCallback(
+    ({ status, message }) => {
+      enquesnackbar(message, {
+        variant: status,
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'center',
+        },
+        // eslint-disable-next-line react/display-name
+        action: key => (
+          <IconButton
+            data-test="closeUserListSnackbar"
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => {
+              this.props.closeSnackbar(key);
+            }}>
+            <CloseIcon />
+          </IconButton>
+        ),
+      });
+    },
+    [enquesnackbar]
+  );
   const isAccountOwner =
     permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
@@ -172,9 +174,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
                   integrationId={integrationId}
                   isAccountOwner={isAccountOwner}
                   editClickHandler={onEditUserClick}
-                  statusHandler={({ status, message }) => {
-                    statusHandler({ status, message });
-                  }}
+                  statusHandler={statusHandler}
                 />
               ))}
           </TableBody>

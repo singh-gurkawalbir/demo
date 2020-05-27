@@ -1,15 +1,19 @@
 import { useCallback, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import getRoutePath from '../../../../utils/routePaths';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import ShareStackIcon from '../../../icons/ShareStackIcon';
 
 // Todo fix icon after other PR merge
 export default {
+  label: 'Stack shares',
+  icon: ShareStackIcon,
   key: 'stackShares',
-  component: function StackShares({ resource }) {
+  component: function StackShares({ rowData = {} }) {
+    const { _id: stackId } = rowData;
+    const match = useRouteMatch();
     const history = useHistory();
     const openShareStackURL = useCallback(() => {
-      history.push(getRoutePath(`/stacks/share/stacks/${resource._id}`));
-    }, [history, resource._id]);
+      history.push(`${match.url}/share/stacks/${stackId}`);
+    }, [history, match.url, stackId]);
 
     useEffect(() => {
       openShareStackURL();

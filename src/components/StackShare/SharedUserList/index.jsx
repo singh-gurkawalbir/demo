@@ -30,6 +30,7 @@ export default function SharedUserList() {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { stackId } = match.params;
+  // TODO: Move this logic to a single selector
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     ssharesFilterConfig
@@ -41,6 +42,7 @@ export default function SharedUserList() {
     [resourceList.resources, stackId]
   );
 
+  // TODO Copied existing logic. Check if we need this.
   useEffect(() => {
     dispatch(actions.resource.requestCollection('sshares'));
   }, [dispatch]);
