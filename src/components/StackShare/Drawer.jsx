@@ -48,26 +48,24 @@ export default function StackShareDrawer() {
   const isInviteUser = history.location.pathname.includes(`/invite`);
 
   return (
-    <Fragment>
-      <RightDrawer
-        path={rootPath}
-        height="tall"
-        width="medium"
-        title={isInviteUser ? 'Invite user' : 'Stack sharing'}
-        variant="temporary"
-        actions={!isInviteUser && action}
-        helpKey={!isInviteUser && 'stack.sharing'}
-        helpTitle={!isInviteUser && 'Stack sharing'}
-        hideBackButton={!isInviteUser}>
-        <Switch>
-          <Route path={`${match.url}/${rootPath}/invite`}>
-            <InviteUser />
-          </Route>
-          <Route path={`${match.url}/${rootPath}`}>
-            <SharedUserList />
-          </Route>
-        </Switch>
-      </RightDrawer>
-    </Fragment>
+    <RightDrawer
+      path={rootPath}
+      height="tall"
+      width="medium"
+      title={isInviteUser ? 'Invite user' : 'Stack sharing'}
+      variant="temporary"
+      actions={!isInviteUser && action}
+      helpKey={!isInviteUser && 'stack.sharing'}
+      helpTitle={!isInviteUser && 'Stack sharing'}
+      hideBackButton={!isInviteUser}>
+      <Switch>
+        <Route path={`${match.url}/${rootPath}/invite`}>
+          <InviteUser />
+        </Route>
+        <Route path={`${match.url}/${rootPath}`}>
+          <SharedUserList />
+        </Route>
+      </Switch>
+    </RightDrawer>
   );
 }

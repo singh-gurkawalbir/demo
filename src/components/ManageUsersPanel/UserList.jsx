@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function UserList({ integrationId, onEditUserClick }) {
   const classes = useStyles();
-  const [enquesnackbar] = useEnqueueSnackbar();
+  const [enquesnackbar, closeSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
   // Copied the existing logic. Todo: Refactor this selector
@@ -101,14 +101,14 @@ export default function UserList({ integrationId, onEditUserClick }) {
             aria-label="Close"
             color="inherit"
             onClick={() => {
-              this.props.closeSnackbar(key);
+              closeSnackbar(key);
             }}>
             <CloseIcon />
           </IconButton>
         ),
       });
     },
-    [enquesnackbar]
+    [closeSnackbar, enquesnackbar]
   );
   const isAccountOwner =
     permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
@@ -146,8 +146,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
                       Enable user
                       <Help
                         title="Enable user"
-                        helpKey="users.offOn"
-                        caption="users.offOn"
+                        helpKey="users.enable"
+                        caption="users.enable"
                         className={classes.helpIcon}
                       />
                     </TableCell>
