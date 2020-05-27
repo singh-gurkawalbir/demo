@@ -83,8 +83,13 @@ export default {
           },
           {
             collapsed: true,
-            label: 'What would you like to export from?',
-            fields: ['rdbms.query', 'type', 'rdbms.once.query'],
+            label: 'What would you like to export?',
+            fields: ['rdbms.query'],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type?',
+            fields: ['type', 'rdbms.once.query'],
           },
           {
             collapsed: true,
