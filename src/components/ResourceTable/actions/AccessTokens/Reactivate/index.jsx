@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/ReactivateTokenIcon';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import ReactivateTokenIcon from '../../../../../components/icons/ReactivateTokenIcon';
 
 export default {
-  key: 'reactivateAccessToken',
-  component: function ReactivateAccessToken({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  label: 'Reactivate token',
+  icon: ReactivateTokenIcon,
+  component: function ReactivateAccessToken({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
-    const handleReactivateClick = useCallback(() => {
+    const reactivateAccessToken = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -24,16 +24,10 @@ export default {
       );
     }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Reactivate token',
-        }}
-        data-test="reactivateAccessToken"
-        size="small"
-        onClick={handleReactivateClick}>
-        <Icon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      reactivateAccessToken();
+    }, [reactivateAccessToken]);
+
+    return null;
   },
 };

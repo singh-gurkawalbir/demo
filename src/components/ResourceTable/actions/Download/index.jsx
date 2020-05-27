@@ -1,28 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import Icon from '../../../icons/DownloadIcon';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
+import DownloadIcon from '../../../icons/DownloadIcon';
 
 export default {
-  key: 'downloadResource',
-  component: function DownloadResource({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
+  label: 'Download',
+  icon: DownloadIcon,
+  component: function DownloadResource({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
-    const handleDownloadReferenceClick = useCallback(() => {
+    const downloadReference = useCallback(() => {
       dispatch(actions.resource.downloadFile(resourceId, resourceType));
     }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Download',
-        }}
-        data-test="downloadResourceFile"
-        size="small"
-        onClick={handleDownloadReferenceClick}>
-        <Icon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      downloadReference();
+    }, [downloadReference]);
+
+    return null;
   },
 };
