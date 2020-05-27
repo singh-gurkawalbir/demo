@@ -11,28 +11,30 @@ const emptySet = [];
 export default (state = defaultState, action) => {
   const { type, resourceType, collection = [] } = action;
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-      if (!['shared/ashares', 'shared/sshares'].includes(resourceType)) {
-        return state;
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+        if (!['shared/ashares', 'shared/sshares'].includes(resourceType)) {
+          break;
+        }
+
+        const pendingShares = collection.filter(
+          s => s.ownerUser && !s.accepted && !s.rejected && !s.dismissed
+        );
+
+        if (resourceType === 'shared/ashares') {
+          draft.accounts = pendingShares;
+        } else if (resourceType === 'shared/sshares') {
+          draft.stacks = pendingShares;
+        }
+
+        break;
       }
 
-      const pendingShares = collection.filter(
-        s => s.ownerUser && !s.accepted && !s.rejected && !s.dismissed
-      );
-
-      if (resourceType === 'shared/ashares') {
-        return produce((state, draft) => (draft.accounts = pendingShares));
-      } else if (resourceType === 'shared/sshares') {
-        return { ...state, stacks: pendingShares };
-      }
-
-      return state;
+      default:
+        break;
     }
-
-    default:
-      return state;
-  }
+  });
 };
 
 export const userNotifications = createSelector(
