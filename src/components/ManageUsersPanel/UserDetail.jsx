@@ -20,6 +20,7 @@ import CommStatus from '../CommStatus';
 import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
 import CeligoSwitch from '../CeligoSwitch';
 
+// TODO: Refactor this component
 export default function UserDetail(props) {
   const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
