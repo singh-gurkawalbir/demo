@@ -6,17 +6,19 @@ export default {
       { id: 'ignoreMissing', type: 'checkbox' },
       { id: 'mongodb.update', type: 'sqlquerybuilder' },
       { id: 'mongodb.document', type: 'sqlquerybuilder' },
+      { id: 'mongodb.lookupType', type: 'select' },
+      { id: 'mongodb.ignoreExtract', type: 'text' },
     ],
     label: 'Method',
     options: [
       {
         items: [
           {
-            label: 'Insert many',
+            label: 'InsertMany',
             value: 'insertMany',
           },
           {
-            label: 'Update one',
+            label: 'UpdateOne',
             value: 'updateOne',
           },
         ],
@@ -48,7 +50,7 @@ export default {
             value: 'source',
           },
           {
-            label: 'Run a dynamic search against MongoDB',
+            label: 'Run a dynamic search against Mongodb',
             value: 'lookup',
           },
         ],
@@ -69,9 +71,9 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Query builder',
+    label: 'Launch query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB query Builder',
+    title: 'MongoDB Data Builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -85,9 +87,9 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Query builder',
+    label: 'Launch query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB query Builder',
+    title: 'MongoDB Data Builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -98,8 +100,7 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'editor',
-    mode: 'json',
+    type: 'textarea',
     label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
@@ -140,10 +141,10 @@ export default {
     label: 'Which field?',
     required: true,
     visibleWhen: [
-      // {
-      //   field: 'ignoreMissing',
-      //   is: [true],
-      // },
+      {
+        field: 'ignoreMissing',
+        is: [true],
+      },
       {
         field: 'mongodb.lookupType',
         is: ['source'],
