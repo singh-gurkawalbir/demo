@@ -1,14 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/CloseIcon';
+import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'detachFlow',
-  component: function DetachFlow({ resource }) {
-    const { name: resourceName, _id: resourceId } = resource;
+  label: 'Detach flow',
+  icon: CloseIcon,
+  component: function DetachFlow({ rowData = {} }) {
+    const { name: resourceName, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const detachFlow = useCallback(() => {
@@ -23,7 +23,7 @@ export default {
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
     }, [dispatch, resourceId]);
-    const handleDetachFlowClick = useCallback(() => {
+    const confirmDetachFlow = useCallback(() => {
       const message = `Are you sure you want to detach 
       ${resourceName || resourceId} flow from this integration?`;
 
@@ -42,16 +42,10 @@ export default {
       });
     }, [confirmDialog, detachFlow, resourceId, resourceName]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Detach flow',
-        }}
-        data-test="detachFlow"
-        size="small"
-        onClick={handleDetachFlowClick}>
-        <Icon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      confirmDetachFlow();
+    }, [confirmDetachFlow]);
+
+    return null;
   },
 };

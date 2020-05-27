@@ -1,16 +1,13 @@
 import { Fragment, useState, useCallback } from 'react';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 export default {
-  key: 'auditLogs',
-  component: function AuditLogs({ resourceType, resource = {} }) {
-    const { _id: resourceId } = resource;
-    const [show, setShow] = useState(false);
-    const showAutitLogs = useCallback(() => {
-      setShow(true);
-    }, []);
+  label: 'Audit log',
+  icon: AuditLogIcon,
+  component: function AuditLogs({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const [show, setShow] = useState(true);
     const handleAuditLogsClose = useCallback(() => {
       setShow(false);
     }, []);
@@ -24,15 +21,6 @@ export default {
             onClose={handleAuditLogsClose}
           />
         )}
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Audit log',
-          }}
-          data-test="showAuditLog"
-          size="small"
-          onClick={showAutitLogs}>
-          <AuditLogIcon />
-        </IconButtonWithTooltip>
       </Fragment>
     );
   },

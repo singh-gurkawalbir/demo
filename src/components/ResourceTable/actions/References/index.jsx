@@ -1,16 +1,14 @@
 import { Fragment, useState, useCallback } from 'react';
-import Icon from '../../../icons/ViewReferencesIcon';
+import ViewReferencesIcon from '../../../icons/ViewReferencesIcon';
 import ResourceReferences from '../../../ResourceReferences';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 // TODO: In case of monitor user, refernces shouldn't call accesstokens
 export default {
-  key: 'references',
-  component: function References({ resourceType, resource }) {
-    const [show, setShow] = useState(false);
-    const showReferences = useCallback(() => {
-      setShow(true);
-    }, []);
+  label: 'References',
+  icon: ViewReferencesIcon,
+  component: function References({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const [show, setShow] = useState(true);
     const handleReferencesClose = useCallback(() => {
       setShow(false);
     }, []);
@@ -20,19 +18,10 @@ export default {
         {show && (
           <ResourceReferences
             resourceType={resourceType}
-            resourceId={resource._id}
+            resourceId={resourceId}
             onClose={handleReferencesClose}
           />
         )}
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Used by',
-          }}
-          data-test="showReferences"
-          size="small"
-          onClick={showReferences}>
-          <Icon />
-        </IconButtonWithTooltip>
       </Fragment>
     );
   },
