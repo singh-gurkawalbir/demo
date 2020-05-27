@@ -129,6 +129,7 @@ export default {
     label: 'Required trigger',
     multiline: true,
     omitWhenHidden: true,
+    copyToClipboard: true,
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',
