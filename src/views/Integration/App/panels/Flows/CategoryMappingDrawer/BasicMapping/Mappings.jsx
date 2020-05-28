@@ -333,6 +333,7 @@ export default function ImportMapping(props) {
     return generateField &&
       generateField.options &&
       generateField.options.length ? (
+      // TODO: @Azhar should be replaced by a ListIcon
       <KnowledgeBaseIcon />
     ) : null;
   };
