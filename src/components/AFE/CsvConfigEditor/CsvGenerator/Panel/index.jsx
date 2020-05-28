@@ -61,7 +61,7 @@ export default function CsvGeneratePanel(props) {
       <FormGroup column="true">
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="columnDelimiter">
-            Column Delimiter
+            Column delimiter
           </InputLabel>
           <CeligoSelect
             native
@@ -81,7 +81,7 @@ export default function CsvGeneratePanel(props) {
         </FormControl>
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
-            Row Delimiter
+            Row delimiter
           </InputLabel>
           <CeligoSelect
             native
@@ -107,7 +107,7 @@ export default function CsvGeneratePanel(props) {
               onChange={() => patchEditor('includeHeader', !includeHeader)}
             />
           }
-          label="Include Header"
+          label="Include header"
         />
         <FormControlLabel
           disabled={disabled}

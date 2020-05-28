@@ -291,7 +291,40 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (
+    if (fieldId === 'file.csv') {
+      const includeHeaderField = fields.find(
+        field => field.id === 'file.csv.includeHeader'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const replaceNewlineWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceNewlineWithSpace'
+      );
+      const replaceTabWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceTabWithSpace'
+      );
+      const wrapWithQuotesField = fields.find(
+        field => field.id === 'file.csv.wrapWithQuotes'
+      );
+
+      return {
+        includeHeader: (includeHeaderField && includeHeaderField.value) || true,
+        columnDelimiter:
+          (columnDelimiterField && columnDelimiterField.value) || ',',
+        rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
+        replaceNewlineWithSpace: !!(
+          replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
+        ),
+        replaceTabWithSpace: !!(
+          replaceTabWithSpaceField && replaceTabWithSpaceField.value
+        ),
+        wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+      };
+    } else if (
       fieldId === 'http.body' ||
       fieldId === 'http.bodyCreate' ||
       fieldId === 'http.bodyUpdate'
@@ -1360,6 +1393,66 @@ export default {
         },
       ],
     },
+    'file.csv.includeHeader': {
+      fieldId: 'file.csv.includeHeader',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.columnDelimiter': {
+      fieldId: 'file.csv.columnDelimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.rowDelimiter': {
+      fieldId: 'file.csv.rowDelimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.replaceNewlineWithSpace': {
+      fieldId: 'file.csv.replaceNewlineWithSpace',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.replaceTabWithSpace': {
+      fieldId: 'file.csv.replaceTabWithSpace',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.wrapWithQuotes': {
+      fieldId: 'file.csv.wrapWithQuotes',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'file.csv.customHeaderRows': {
       id: 'file.csv.customHeaderRows',
       label: 'Custom header rows',
@@ -1424,6 +1517,12 @@ export default {
           'http.body',
           'uploadFile',
           'file.csv',
+          'file.csv.includeHeader',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.replaceNewlineWithSpace',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.wrapWithQuotes',
           'file.csv.customHeaderRows',
           'blobKeyPath',
         ],

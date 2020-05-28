@@ -101,7 +101,7 @@ export default function CsvParsePanel(props) {
       <FormGroup column="true">
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="columnDelimiter">
-            Column Delimiter
+            Column delimiter
           </InputLabel>
           <CeligoSelect
             native
@@ -120,7 +120,7 @@ export default function CsvParsePanel(props) {
         </FormControl>
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">
-            Row Delimiter
+            Row delimiter
           </InputLabel>
           <CeligoSelect
             native

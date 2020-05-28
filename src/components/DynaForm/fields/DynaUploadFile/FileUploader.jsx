@@ -58,7 +58,7 @@ function FileUploader(props) {
           required={required}
           className={classes.uploadBtn}
           data-test={id}>
-          Choose File
+          Choose file
         </Button>
         <input
           data-test="uploadFile"
