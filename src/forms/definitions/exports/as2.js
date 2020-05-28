@@ -148,9 +148,6 @@ export default {
       ],
       required: true,
     },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
-    },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
   },
@@ -165,7 +162,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'What would you like to listen?',
+        label: 'How would you like to parse files?',
         fields: [
           'file.type',
           'file.csv.columnDelimiter',
@@ -185,7 +182,6 @@ export default {
           'fixed.format',
           'edifact.format',
           'file.filedefinition.rules',
-          'file.fileDefinition.resourcePath',
         ],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },

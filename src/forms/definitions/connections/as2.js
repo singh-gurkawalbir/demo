@@ -334,7 +334,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Routing Rules',
+        label: 'Configure routing for shared connection',
         fields: ['as2.contentBasedFlowRouter'],
       },
       {

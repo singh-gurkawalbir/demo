@@ -311,12 +311,12 @@ export default {
             collapsed: true,
             label: r => {
               if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-                return 'What would you like to transfer from Salesforce?';
+                return 'What would you like to transfer?';
               } else if (
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {
-                return 'What would you like to listen from Salesforce?';
+                return 'Configure real-time export in source application';
               }
 
               return 'What would you like to export?';
@@ -334,7 +334,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Configure export type?',
+            label: 'Configure export type',
             fields: [
               'type',
               'delta.dateField',

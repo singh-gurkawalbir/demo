@@ -110,7 +110,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Configure export type?',
+            label: 'Configure export type',
             fields: ['type', 'delta.dateField', 'once.booleanField'],
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },

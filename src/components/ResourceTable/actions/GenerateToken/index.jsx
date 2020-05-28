@@ -18,14 +18,10 @@ export default {
         dispatch(actions.stack.generateToken(resourceId));
     }, [dispatch, resourceId, resourceType]);
     const confirmGenerateToken = useCallback(() => {
-      const message = [
-        `Are you sure you want to generate a new token? Your old token will be replaced with a new one.`,
-        `You will not be able to use your old token.`,
-      ].join(' ');
-
       confirmDialog({
         title: 'Generate new token?',
-        message,
+        message:
+          'Are you sure you want to generate a new token? Your old token will be replaced with a new one. You will not be able to use your old token.',
         buttons: [
           {
             label: 'Generate token',
