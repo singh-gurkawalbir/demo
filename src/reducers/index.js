@@ -2701,51 +2701,53 @@ export function tiles(state) {
   let connector;
   let status;
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles
+    .filter(t => !t._parentId)
+    .map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        t._connectorId &&
+        integration.mode !== INTEGRATION_MODES.SETTINGS
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || {
-        user: {},
-      };
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
+
+        return {
+          ...t,
+          status,
+          integration: {
+            mode: integration.mode,
+            permissions: integration.permissions,
+          },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
+        };
+      }
 
       return {
         ...t,
         status,
         integration: {
-          mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
       };
-    }
-
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
+    });
 }
 // #endregion
 
