@@ -123,7 +123,7 @@ export default function DynaAssistantSearchParams(props) {
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
-          {'Launch'} {required && !isValid ? '*' : ''}
+          {'Configure'} {required && !isValid ? '*' : ''}
         </Button>
         {/* {Todo (shiva): we need helpText for the component} */}
         <FieldHelp {...props} helpText={label} />
