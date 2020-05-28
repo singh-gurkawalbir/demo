@@ -326,6 +326,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     dataMappings: { formId: 'dataMappings' },
+    formView: { fieldId: 'formView' },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -420,25 +421,6 @@ export default {
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.batchSize': { fieldId: 'http.batchSize' },
-    createNewData: {
-      id: 'createNewData',
-      type: 'labeltitle',
-      label: 'Create new data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       type: 'select',
@@ -488,7 +470,6 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -567,7 +548,8 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for create',
+      label: 'Build HTTP request body',
+      helpKey: 'import.http.body',
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -606,7 +588,6 @@ export default {
       id: 'http.failPathCreate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -704,7 +685,7 @@ export default {
       id: 'http.failPathUpdate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -786,7 +767,7 @@ export default {
       id: 'http.resourceIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -871,7 +852,7 @@ export default {
       id: 'http.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -967,25 +948,6 @@ export default {
         return '';
       },
     },
-    upateExistingData: {
-      id: 'upateExistingData',
-      type: 'labeltitle',
-      label: 'Update existing data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
       type: 'select',
@@ -1031,7 +993,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1102,7 +1064,8 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for update',
+      label: 'Build HTTP request body',
+      helpKey: 'import.http.body',
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -1137,7 +1100,7 @@ export default {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1206,7 +1169,7 @@ export default {
       id: 'http.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1289,7 +1252,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore existing data',
+      label: 'Ignore existing records',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1440,7 +1403,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
       {
@@ -1460,47 +1423,65 @@ export default {
           'http.compositeType',
           'http.lookups',
           'http.relativeURI',
-          'http.body',
-          'http.response.successPath',
-          'http.response.successValues',
-          'http.response.failPath',
-          'http.response.failValues',
-          'http.response.resourceIdPath',
-          'http.response.resourcePath',
-          'http.response.errorPath',
           'http.batchSize',
-          'createNewData',
-          'http.compositeMethodCreate',
-          'http.relativeURICreate',
-          'http.requestTypeCreate',
-          'http.bodyCreate',
-          'http.successPathCreate',
-          'http.successValuesCreate',
-          'http.failPathCreate',
-          'http.failValuesCreate',
-          'http.resourceIdPathCreate',
-          'http.resourcePathCreate',
-          'upateExistingData',
-          'http.compositeMethodUpdate',
-          'http.relativeURIUpdate',
-          'http.requestTypeUpdate',
-          'http.bodyUpdate',
-          'http.successPathUpdate',
-          'http.successValuesUpdate',
-          'http.failPathUpdate',
-          'http.failValuesUpdate',
-          'http.resourceIdPathUpdate',
-          'http.resourcePathUpdate',
+          'http.body',
           'ignoreExistingData',
           'ignoreNewData',
           'http.existingDataId',
-          'mediatypeInformation',
-          'http.successMediaType',
-          'http.errorMediaType',
           'uploadFile',
           'file.csv',
           'file.csv.customHeaderRows',
           'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'http.compositeMethodCreate',
+              'http.relativeURICreate',
+              'http.requestTypeCreate',
+              'http.bodyCreate',
+              'http.successPathCreate',
+              'http.successValuesCreate',
+              'http.failPathCreate',
+              'http.failValuesCreate',
+              'http.resourceIdPathCreate',
+              'http.resourcePathCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'http.compositeMethodUpdate',
+              'http.relativeURIUpdate',
+              'http.requestTypeUpdate',
+              'http.bodyUpdate',
+              'http.successPathUpdate',
+              'http.successValuesUpdate',
+              'http.failPathUpdate',
+              'http.failValuesUpdate',
+              'http.resourceIdPathUpdate',
+              'http.resourcePathUpdate',
+            ],
+          },
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: [
+          'http.response.resourcePath',
+          'http.response.resourceIdPath',
+          'http.response.errorPath',
+          'http.response.successPath',
+          'http.response.successValues',
+          'http.response.failPath',
+          'http.response.failValues',
+          'http.successMediaType',
+          'http.errorMediaType',
         ],
       },
       {

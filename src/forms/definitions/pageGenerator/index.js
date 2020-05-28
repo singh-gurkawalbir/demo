@@ -252,9 +252,10 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
-      let label = isWebhook
-        ? 'Would you like to use an existing listener?'
-        : exportField.label;
+      let label =
+        isWebhook || type === 'realtime'
+          ? 'Would you like to use an existing listener?'
+          : exportField.label;
 
       if (type === 'transferFiles') {
         label = 'Would you like to use an existing transfer?';
