@@ -468,7 +468,6 @@ describe('Reducers in the root reducer', () => {
     expect(state).toEqual({
       app: {
         appErrored: false,
-        drawerOpened: true,
         bannerOpened: true,
         count: 1,
       },

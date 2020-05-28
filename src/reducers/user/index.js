@@ -113,6 +113,38 @@ export const appTheme = createSelector(
   }
 );
 
+export function drawerOpened(state) {
+  const preferences = userPreferences(state);
+  const currentAccount = preferences.defaultAShareId;
+
+  if (currentAccount) {
+    const accountPrefs =
+      preferences.accounts && preferences.accounts[currentAccount];
+
+    if (accountPrefs) {
+      return fromPreferences.drawerOpened(accountPrefs);
+    }
+  }
+
+  return fromPreferences.drawerOpened(state && state.preferences);
+}
+
+export function expandSelected(state) {
+  const preferences = userPreferences(state);
+  const currentAccount = preferences.defaultAShareId;
+
+  if (currentAccount) {
+    const accountPrefs =
+      preferences.accounts && preferences.accounts[currentAccount];
+
+    if (accountPrefs) {
+      return fromPreferences.expandSelected(accountPrefs);
+    }
+  }
+
+  return fromPreferences.expandSelected(state && state.preferences);
+}
+
 export const editorTheme = createSelector(
   state => state,
   appTheme,
