@@ -79,31 +79,9 @@ export default function DynaCsvGenerate(props) {
   }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      // const {
-      //   rowDelimiter,
-      //   columnDelimiter,
-      //   includeHeader,
-      //   wrapWithQuotes,
-      //   replaceTabWithSpace,
-      //   replaceNewlineWithSpace,
-      //   truncateLastRowDelimiter,
-      // } = editorValues;
-
       Object.keys(fields).forEach(key => {
         onFieldChange(`${id}.${key}`, editorValues[key]);
       });
-      // onFieldChange(id, {
-      //   rowDelimiter,
-      //   columnDelimiter,
-      //   includeHeader,
-      //   truncateLastRowDelimiter,
-      //   replaceTabWithSpace,
-      //   replaceNewlineWithSpace,
-      //   wrapWithQuotes,
-      // });
-
-      // On change of rules, trigger sample data update
-      // It calls processor on final rules to parse csv file
     }
 
     handleEditorClick();
