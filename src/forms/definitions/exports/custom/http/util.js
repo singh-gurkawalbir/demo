@@ -322,7 +322,7 @@ export function fieldMeta({ resource, assistantData }) {
             },
             {
               collapsed: true,
-              label: 'Configure export type?',
+              label: 'Configure export type',
               fields: [...exportTypeFieldIds],
             },
             {

@@ -984,7 +984,7 @@ export default {
   'export.dataURITemplate':
     "When your flow runs but has data errors this field can be really helpful in that it allows you to make sure that all the errors in your job dashboard have a link to the original data in the export application.  This field uses a handlebars template to generate the dynamic links based on the data being exported.  For example, if you are exporting a customer record from Shopify, you would most likely set this field to the following value 'https://your-store.myshopify.com/admin/customers/{{{id}}}'.  Or, if you are just exporting a CSV file from an FTP site then this field could simply be one or more columns from the file: {{{internal_id}}, {{{email}}}, etc...",
   'export.sampleData':
-    'If you have sample data please provide it here.  This data will be used to help you map fields later.  Please note also that the sample data does not need to be overly large, but it should contain all the fields you want to work with, and also be in the exact same format that the export will see when running in a production capacity.',
+    'Enter a sample destination record here so that integrator.io can help you later map fields between source and destination applications. The sample destination record should ideally contain all fields that you want to process in this flow, and should follow the exact same formatting rules that the destination application/API requires.',
   'export.description':
     'Describe your resource so that other users can quickly understand what it is doing without having to read through all the fields and settings. Be sure to highlight any nuances that a user should be aware of before using your export in their flows. Also, as you make changes to the export be sure to keep this field up to date.',
   'export.filter.rules':
@@ -996,7 +996,7 @@ export default {
   'export.delta.dateField':
     "Please select a date field from the export application that integrator.io can use to keep track of records that have changed since the last time the export was run.  It is recommended that you pick a system generated field.  For example, many applications maintain a standard 'Date Last Modified' (or 'Last Modified Date', etc...) field that always contains the date and time that a record was last changed.  You can also select a non system generated field if you have your own logic in place (in the export application) to set the field accordingly whenever a relevant change is made to a record.",
   'export.delta.dateFormat':
-    "The default data format is ISO8601. If your application uses a different format, you can specify it here. For a detailed instructions on how to specify custom formats, please visit <a href='https://momentjs.com/docs/#/displaying/' target='_blank'>momentjs.com/docs/#/displaying/</a>",
+    'This field ONLY needs to be set if the standard ISO8601 date format is not supported by the source application. If this is the case, then there are multiple non-standard formats to pick from, or you can define a completely custom format. For instructions on how to specify custom formats, please visit <a class="sc-dEfkYy jDnahj" href="https://momentjs.com/docs/#/displaying/" title="https://momentjs.com/docs/#/displaying/">https://momentjs.com/docs/#/displaying/</a>',
   'export.delta.startDate':
     'If no date is specified, the first execution of a deltaExport uses the current date. This effectively sets the startDate to the first time the delta export is run.  You can override this by providing your own start date.',
   'export.delta.lagOffset':
@@ -1081,9 +1081,9 @@ export default {
   'export.rest.lastPageValue':
     'If "lastPageStatusCode" and "lastPagePath" you can set this field to tell integrator.io to check a specific field\'s value in the response object to determine if paging is complete.  If the value in the response object matches this field then paging will be considered complete if  response object, otherwise this response will be considered an error.',
   'export.rest.once.relativeURI':
-    "This is the relativeURI for making the 'Once' HTTP request directed against the export application. It is possible to use placeholders within the url that will get replaced by values from your export record(s).",
+    'The relative URI that will be used to mark records as exported.',
   'export.rest.once.method':
-    "Choose the HTTP method our platform should use when making this 'Once' request. Most often 'Once' HTTP request will use the PUT method since the idea here is that we are updating the record just exported. As such the HTTP convention is to use \"PUT\" in this situation.",
+    'The HTTP method that will be used to mark records as exported.',
   'export.rest.once.postBody':
     "This postBody will in most cases be a template modeling the record to update. The template should have named placeholders matching the JSON fields in the record being exported. The export record becomes the data source for the 'body' template. If not provided, the export record itself is used as the body of the request. Note that in both cases, the field described in 'booleanField' is added/set to 'true'.",
   'export.s3.keyStartsWith':
@@ -1099,7 +1099,7 @@ export default {
   'export.http.method':
     "The most common HTTP method used by APIs for the retrieval of resources is 'GET'. In some cases, RPC style or SOAP/XML APIs will require the use of the 'POST' HTTP method.  Both of these scenarios are supported by integrator.io.  If the POST method is used, typically the body of the HTTP request will contain filtering or selection criteria.  This information can be provided in the 'body' field. Refer to this field for more information.",
   'export.http.body':
-    "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebar templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
+    'Typically exports will use an HTTP GET method, and do not require an HTTP request body.  That said, there are use cases where a different HTTP method is used, and/or a request body is required.  Use this field to define the HTTP request body that will get sent to the source application endpoint.',
   'export.http.headers':
     "In some cases, it may be necessary to include custom HTTP headers with your API requests. As with the 'body' field, any value from the connection or export models can be references using {{placeholders}} with a complete path matching either the connection or export field.",
   'export.http.paging.method':
@@ -1133,11 +1133,11 @@ export default {
   'export.http.paging.path':
     'If the paging method is set to token, integrator.io needs to be able to find the token in the HTTP response of each page in order to construct the next page request. This field lets integrator.io know where to look for the next page token. If no value is found at this path, then paging is terminated (final page reached). When the paging method is set to "nextPageUrl", this "path" field is used to tell integrator.io where in the HTTP response to look to find a URL to use when requesting the next page of data. The format of this path is dependent on the media-type (content-type) of the original (first) page response. For JSON responses, the path should be represented in "dot" notation. Example: "result.paging.nextPageUrl".In contrast, if the response contains XML, then an XPATH style path should be used. Example: "/result/paging/nextPageUrl".Paging is terminated when no URL is found at the specified path.',
   'export.http.once.relativeURI':
-    'This field indicates what url endpoint to hit for each successful exported record. It can contain {{{placeholders}}} that will be populated from a model object that consists of a connection, export and data property. The data property is the record that was just exported.',
+    'The relative URI that will be used to mark records as exported.',
   'export.http.once.method':
-    'The HTTP method (GET/PUT/POST/PATCH/DELETE) of the once request.',
+    'The HTTP method that will be used to mark records as exported.',
   'export.http.once.body':
-    'This field represents the body of the once http request that is hit for each successful exported record. It can contain {{{placeholders}}} that will be populated from a model object that consists of a connection, export and data property. The data property is the record that was just exported.',
+    'The HTTP request body that should be used to mark records as exported.  If no HTTP request body is configured, then integrator.io will simply re-submit the exported record itself, but with the once boolean field set to true.',
   'export.http.response.resourcePath':
     'This optional field is used to help integrator.io locate the resource (or set of resources) returned from an API call.  If the HTTP response from an API contains the resource(s) at the root, then no value is necessary for this field.  If on the other hand, the response from an API contains a deeper response structure that for example contains paging information, it will be necessary for you to provide the path to the resource(s). If no value is provided, integrator.io assumes that the resources can be found at the root of the response. Note that the format of this path is specific to the media type. If the response is represented in JSON structure, then use "dot" notation to describe the path to your resources. Example: "results.customers". If the response is XML, then use XPATH style selectors. Example: "/SearchResults/Customers/Customer"',
   'export.http.response.successPath':

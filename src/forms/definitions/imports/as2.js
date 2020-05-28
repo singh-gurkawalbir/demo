@@ -169,7 +169,7 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: 'How would you like the files transferred?',
+        label: 'How would you like the records imported?',
         fields: [
           'distributed',
           'file.type',

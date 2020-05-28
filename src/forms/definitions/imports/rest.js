@@ -6,7 +6,11 @@ export default {
     const lookups = retValues['/rest/lookups'];
     const lookup =
       lookups &&
-      lookups.find(l => l.name === retValues['/rest/existingDataId']);
+      lookups.find(
+        l =>
+          `${l.name}` === retValues['/rest/existingDataId'] ||
+          `${l.name}` === retValues['/rest/update/existingDataId']
+      );
     const sampleData = retValues['/sampleData'];
 
     if (sampleData === '') {
@@ -154,14 +158,15 @@ export default {
 
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
-            retValues['/rest/existingDataId'];
+            retValues['/rest/update/existingDataId'];
           retValues['/rest/ignoreExtract'] = null;
         } else {
-          retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] =
+            retValues['/rest/update/existingDataId'];
           retValues['/rest/ignoreLookupName'] = null;
         }
 
-        retValues['/rest/existingDataId'] = undefined;
+        retValues['/rest/update/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -172,6 +177,7 @@ export default {
       retValues['/rest/ignoreLookupName'] = undefined;
       retValues['/rest/ignoreExtract'] = undefined;
       retValues['/rest/existingDataId'] = undefined;
+      retValues['/rest/update/existingDataId'] = undefined;
     }
 
     if (retValues['/inputMode'] !== 'blob') {
@@ -377,7 +383,7 @@ export default {
       type: 'httprequestbody',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body',
+      label: 'HTTP request body',
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
@@ -656,7 +662,7 @@ export default {
       id: 'rest.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body',
+      label: 'HTTP request body',
       arrayIndex: 0,
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
@@ -827,7 +833,41 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.rest) {
+          return '';
+        }
+
+        if (r.rest.ignoreLookupName) {
+          return r.rest.ignoreLookupName;
+        } else if (r.rest.ignoreExtract) {
+          return r.rest.ignoreExtract;
+        }
+
+        return '';
+      },
+    },
+    'rest.update.existingDataId': {
+      id: 'rest.update.existingDataId',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
+      label: 'Existing data id',
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'rest.method',
@@ -915,29 +955,70 @@ export default {
           // 'mapping',
           'rest.relativeURI',
           'rest.body',
+          'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'rest.compositeMethodCreate',
+              'rest.relativeURICreate',
+              'rest.requestTypeCreate',
+              'rest.bodyCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore existing records',
+            fields: ['rest.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore new data',
+            fields: ['rest.update.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'rest.compositeMethodUpdate',
+              'rest.relativeURIUpdate',
+              'rest.requestTypeUpdate',
+              'rest.bodyUpdate',
+            ],
+          },
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: [
           'rest.successPath',
           'rest.successValues',
           'rest.responseIdPath',
-          'createNewData',
-          'rest.compositeMethodCreate',
-          'rest.relativeURICreate',
-          'rest.requestTypeCreate',
-          'rest.bodyCreate',
-          'rest.successPathCreate',
-          'rest.successValuesCreate',
-          'rest.responseIdPathCreate',
-          'upateExistingData',
-          'rest.compositeMethodUpdate',
-          'rest.relativeURIUpdate',
-          'rest.requestTypeUpdate',
-          'rest.bodyUpdate',
-          'rest.successPathUpdate',
-          'rest.successValuesUpdate',
-          'rest.responseIdPathUpdate',
-          'ignoreExistingData',
-          'ignoreNewData',
-          'rest.existingDataId',
-          'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'rest.successPathCreate',
+              'rest.successValuesCreate',
+              'rest.responseIdPathCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'rest.successPathUpdate',
+              'rest.successValuesUpdate',
+              'rest.responseIdPathUpdate',
+            ],
+          },
         ],
       },
       {
