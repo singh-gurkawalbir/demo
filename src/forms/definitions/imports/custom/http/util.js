@@ -296,6 +296,7 @@ export function fieldMeta({ resource, assistantData }) {
     dataMappings: {
       formId: 'dataMappings',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
 
@@ -318,6 +319,11 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'How would you like the data imported?',
           fields: [...fieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Advanced Settings',
+          fields: ['apiIdentifier'],
         },
       ],
     },
