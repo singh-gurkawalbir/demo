@@ -326,6 +326,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     dataMappings: { formId: 'dataMappings' },
+    formView: { fieldId: 'formView' },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -1402,7 +1403,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
       {
