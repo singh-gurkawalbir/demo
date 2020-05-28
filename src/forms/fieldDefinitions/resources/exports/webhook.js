@@ -116,54 +116,27 @@ export default {
     buttonLabel: 'Generate URL',
   },
   'webhook.username': {
-    type: 'textforsetfields',
+    type: 'text',
     label: 'Username',
     required: true,
-    setFieldIds: ['webhook.url'],
-    visible: true,
-    visibleWhen: r => {
-      const providerList = ['zendesk'];
-
-      if (
-        r &&
-        r.webhook &&
-        r.webhook.provider &&
-        providerList.includes(r.webhook.provider)
-      )
-        return [];
-
-      return [
-        {
-          field: 'webhook.verify',
-          is: ['basic'],
-        },
-      ];
-    },
+    visibleWhen: [
+      {
+        field: 'webhook.verify',
+        is: ['basic'],
+      },
+    ],
   },
   'webhook.password': {
-    type: 'textforsetfields',
+    type: 'text',
     label: 'Password',
     required: true,
     inputType: 'password',
-    visible: true,
-    visibleWhen: r => {
-      const providerList = ['zendesk'];
-
-      if (
-        r &&
-        r.webhook &&
-        r.webhook.provider &&
-        providerList.includes(r.webhook.provider)
-      )
-        return [];
-
-      return [
-        {
-          field: 'webhook.verify',
-          is: ['basic'],
-        },
-      ];
-    },
+    visibleWhen: [
+      {
+        field: 'webhook.verify',
+        is: ['basic'],
+      },
+    ],
   },
   'webhook.path': {
     type: 'textforsetfields',

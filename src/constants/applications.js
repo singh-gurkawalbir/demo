@@ -760,7 +760,6 @@ const connectors = [
     name: 'Zendesk',
     type: 'rest',
     assistant: 'zendesk',
-    webhook: true,
   },
   {
     id: 'zendesksell',
