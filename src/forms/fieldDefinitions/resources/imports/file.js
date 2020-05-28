@@ -133,7 +133,7 @@ export default {
     ],
   },
   'file.csv.columnDelimiter': {
-    type: 'select',
+    type: 'selectwithinput',
     label: 'Column delimiter',
     defaultValue: r =>
       (r && r.file && r.file.csv && r.file.csv.columnDelimiter) || ',',
@@ -143,11 +143,7 @@ export default {
         is: ['csv'],
       },
     ],
-    options: [
-      {
-        items: csvOptions.ColumnDelimiterOptions,
-      },
-    ],
+    options: csvOptions.ColumnDelimiterOptions,
   },
   'file.csv.rowDelimiter': {
     type: 'select',

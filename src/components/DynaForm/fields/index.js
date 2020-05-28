@@ -98,6 +98,7 @@ import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectLookup from './DynaSelectLookup';
 import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
+import DynaSelectWithInput from './DynaSelectWithInput';
 
 export default {
   mode: DynaMode,
@@ -209,4 +210,5 @@ export default {
   namewitheditor: DynaNameWithEditor,
   selectlookup: DynaSelectLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
+  selectwithinput: DynaSelectWithInput,
 };

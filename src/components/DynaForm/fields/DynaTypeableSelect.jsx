@@ -315,6 +315,7 @@ export default function DynaTypeableSelect(props) {
             disabled={disabled}
             multiline
             readOnly
+            placeholder={placeholder}
             onFieldChange={handleTextChange}
             endAdornment={endAdornment}
             className={classes.dynaTextContainer}

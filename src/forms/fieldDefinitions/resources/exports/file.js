@@ -218,7 +218,7 @@ export default {
   },
   'file.csv.columnDelimiter': {
     id: 'file.csv.columnDelimiter',
-    type: 'select',
+    type: 'selectwithinput',
     label: 'Column delimiter',
     visibleWhenAll: [
       {
@@ -226,11 +226,7 @@ export default {
         is: ['csv'],
       },
     ],
-    options: [
-      {
-        items: csvOptions.ColumnDelimiterOptions,
-      },
-    ],
+    options: csvOptions.ColumnDelimiterOptions,
     defaultValue: r =>
       (r && r.file && r.file.csv && r.file.csv.columnDelimiter) || ',',
   },
