@@ -3,7 +3,7 @@ import { isNewId } from '../../../../utils/resource';
 export default {
   'salesforce.api': {
     type: 'radiogroupforresetfields',
-    label: 'API type',
+    label: 'Salesforce API type',
     required: true,
     fieldsToReset: [
       { id: 'salesforce.operation', type: 'radiogroupforresetfields' },

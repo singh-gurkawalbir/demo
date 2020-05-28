@@ -40,12 +40,12 @@ export default {
   },
   ignoreExisting: {
     type: 'checkbox',
-    label: 'Ignore existing',
+    label: 'Ignore existing records',
     defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
-    label: 'Ignore missing',
+    label: 'Ignore missing records',
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
@@ -56,7 +56,6 @@ export default {
     type: 'datauritemplate',
     label: 'Data URI template',
     editorTitle: 'Build data URI template',
-    placeholder: 'Optional',
   },
   oneToMany: {
     type: 'radiogroup',
@@ -76,8 +75,7 @@ export default {
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
-
-    placeholder: 'Optional. Not needed for row/array formats.',
+    placeholder: 'Not needed for array/row based data',
     visibleWhen: [
       {
         field: 'oneToMany',

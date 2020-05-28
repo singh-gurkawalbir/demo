@@ -417,7 +417,7 @@ export default {
       id: 'rest.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -452,7 +452,6 @@ export default {
       id: 'rest.successValuesCreate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -487,7 +486,6 @@ export default {
       id: 'rest.responseIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -693,7 +691,7 @@ export default {
       id: 'rest.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -724,7 +722,7 @@ export default {
       id: 'rest.successValuesUpdate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -755,7 +753,7 @@ export default {
       id: 'rest.responseIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -785,7 +783,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore existing data',
+      label: 'Ignore existing records',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -939,10 +937,13 @@ export default {
           'ignoreExistingData',
           'ignoreNewData',
           'rest.existingDataId',
-          'sampleDataTitle',
-          'sampleData',
           'blobKeyPath',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Do you have a sample destination record?',
+        fields: ['sampleData'],
       },
       {
         collapsed: true,
