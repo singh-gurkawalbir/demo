@@ -19,6 +19,7 @@ import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
+import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -325,6 +326,17 @@ export default function ImportMapping(props) {
     );
   };
 
+  const ListIconComponent = ({ mapping, generateFields = [] }) => {
+    const { generate } = mapping;
+    const generateField = generateFields.find(f => f.id === generate);
+
+    return generateField &&
+      generateField.options &&
+      generateField.options.length ? (
+      <KnowledgeBaseIcon />
+    ) : null;
+  };
+
   const ValueContainer = ({ children, ...props }) => {
     const value = props.selectProps.inputValue;
     const { filterType } =
@@ -423,6 +435,13 @@ export default function ImportMapping(props) {
                     id={`fieldMappingExtract-${mapping.index}`}
                     labelName="name"
                     valueName="id"
+                    endAdornment={
+                      <ListIconComponent
+                        mapping={mapping}
+                        extractFields={extractFields}
+                        generateFields={generateFields}
+                      />
+                    }
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
                     disabled={mapping.isNotEditable || disabled}
