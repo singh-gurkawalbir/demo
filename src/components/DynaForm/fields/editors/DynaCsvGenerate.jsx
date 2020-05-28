@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
-import csvOptions from '../../../AFE/CsvConfigEditor/options';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -38,6 +37,7 @@ export default function DynaCsvGenerate(props) {
     helpKey,
     options = {},
   } = props;
+  const { fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
   const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
@@ -79,25 +79,28 @@ export default function DynaCsvGenerate(props) {
   }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const {
-        rowDelimiter,
-        columnDelimiter,
-        includeHeader,
-        wrapWithQuotes,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        truncateLastRowDelimiter,
-      } = editorValues;
+      // const {
+      //   rowDelimiter,
+      //   columnDelimiter,
+      //   includeHeader,
+      //   wrapWithQuotes,
+      //   replaceTabWithSpace,
+      //   replaceNewlineWithSpace,
+      //   truncateLastRowDelimiter,
+      // } = editorValues;
 
-      onFieldChange(id, {
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
-        columnDelimiter,
-        includeHeader,
-        truncateLastRowDelimiter,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        wrapWithQuotes,
+      Object.keys(fields).forEach(key => {
+        onFieldChange(`${id}.${key}`, editorValues[key]);
       });
+      // onFieldChange(id, {
+      //   rowDelimiter,
+      //   columnDelimiter,
+      //   includeHeader,
+      //   truncateLastRowDelimiter,
+      //   replaceTabWithSpace,
+      //   replaceNewlineWithSpace,
+      //   wrapWithQuotes,
+      // });
 
       // On change of rules, trigger sample data update
       // It calls processor on final rules to parse csv file
@@ -122,7 +125,7 @@ export default function DynaCsvGenerate(props) {
           resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
-          rule={options}
+          rule={fields}
           onClose={handleClose}
           disabled={disabled}
         />

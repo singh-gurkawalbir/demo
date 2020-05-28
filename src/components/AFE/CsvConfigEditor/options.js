@@ -6,14 +6,9 @@ export default {
     { label: 'Space', value: ' ' },
     { label: 'Tab', value: '\t' },
   ],
-  RowDelimiterMap: {
-    lf: '\n',
-    cr: '\r',
-    crlf: '\r\n',
-  },
   RowDelimiterOptions: [
-    { label: 'LF (\\n)', value: 'lf' },
-    { label: 'CR (\\r)', value: 'cr' },
-    { label: 'CRLF (\\r\\n)', value: 'crlf' },
+    { label: 'LF (\\n)', value: '\n' },
+    { label: 'CR (\\r)', value: '\r' },
+    { label: 'CRLF (\\r\\n)', value: '\r\n' },
   ],
 };

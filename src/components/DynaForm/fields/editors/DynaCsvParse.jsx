@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
-import csvOptions from '../../../AFE/CsvConfigEditor/options';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -76,8 +75,8 @@ export default function DynaCsvParse(props) {
         trimSpaces,
       } = editorValues;
       const savedVal = {
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
+        columnDelimiter,
+        rowDelimiter,
         hasHeaderRow,
         keyColumns,
         trimSpaces,

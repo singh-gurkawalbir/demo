@@ -160,11 +160,7 @@ export default {
     ],
     options: [
       {
-        items: [
-          { label: 'LF (\\n)', value: '\n' },
-          { label: 'CR (\\r)', value: '\r' },
-          { label: 'CRLF (\\r\\n)', value: '\r\n' },
-        ],
+        items: csvOptions.RowDelimiterOptions,
       },
     ],
     defaultValue: r =>

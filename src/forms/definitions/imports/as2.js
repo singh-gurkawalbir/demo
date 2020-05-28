@@ -23,17 +23,20 @@ export default {
       );
 
       return {
-        includeHeader: (includeHeaderField && includeHeaderField.value) || true,
-        columnDelimiter:
-          (columnDelimiterField && columnDelimiterField.value) || ',',
-        rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
-        replaceNewlineWithSpace: !!(
-          replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
-        ),
-        replaceTabWithSpace: !!(
-          replaceTabWithSpaceField && replaceTabWithSpaceField.value
-        ),
-        wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+        fields: {
+          includeHeader:
+            (includeHeaderField && includeHeaderField.value) || true,
+          columnDelimiter:
+            (columnDelimiterField && columnDelimiterField.value) || ',',
+          rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
+          replaceNewlineWithSpace: !!(
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
+          ),
+          replaceTabWithSpace: !!(
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value
+          ),
+          wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+        },
       };
     } else if (fieldId === 'file.filedefinition.rules') {
       let definitionFieldId;
