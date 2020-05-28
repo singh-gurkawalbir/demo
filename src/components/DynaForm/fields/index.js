@@ -97,6 +97,7 @@ import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectLookup from './DynaSelectLookup';
 import DynaURI from './DynaURI';
+import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 
 export default {
   mode: DynaMode,
@@ -207,4 +208,5 @@ export default {
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
   selectlookup: DynaSelectLookup,
+  csvhasheaderrow: DynaCsvHasHeaderRow,
 };

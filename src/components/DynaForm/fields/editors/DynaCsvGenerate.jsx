@@ -80,7 +80,7 @@ export default function DynaCsvGenerate(props) {
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       Object.keys(fields).forEach(key => {
-        onFieldChange(`${id}.${key}`, editorValues[key]);
+        onFieldChange(`file.csv.${key}`, editorValues[key]);
       });
     }
 

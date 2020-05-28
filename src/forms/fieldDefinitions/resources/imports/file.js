@@ -101,7 +101,7 @@ export default {
       },
     ],
   },
-  'file.csv': {
+  'file.csvHelper': {
     type: 'csvgenerate',
     label: 'CSV generator helper:',
     helpKey: 'file.csvGenerate',

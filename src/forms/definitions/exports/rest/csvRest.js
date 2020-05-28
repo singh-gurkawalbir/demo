@@ -74,8 +74,8 @@ export default {
         },
       ],
     },
-    'file.csv': {
-      id: 'file.csv',
+    'file.csvHelper': {
+      id: 'file.csvHelper',
       type: 'csvparse',
       label: 'CSV parser helper:',
       helpKey: 'file.csvParse',
@@ -128,7 +128,7 @@ export default {
           'rest.relativeURI',
           'rest.headers',
           'uploadFile',
-          'file.csv',
+          'file.csvHelper',
           'rest.resourcePath',
           'rest.blobFormat',
         ],

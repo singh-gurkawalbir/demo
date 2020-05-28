@@ -1,6 +1,6 @@
 export default {
   optionsHandler(fieldId, fields) {
-    if (fieldId === 'file.csv') {
+    if (fieldId === 'file.csvHelper') {
       const includeHeaderField = fields.find(
         field => field.id === 'file.csv.includeHeader'
       );
@@ -22,18 +22,14 @@ export default {
 
       return {
         fields: {
-          includeHeader:
-            (includeHeaderField && includeHeaderField.value) || true,
-          columnDelimiter:
-            (columnDelimiterField && columnDelimiterField.value) || ',',
-          rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
-          replaceNewlineWithSpace: !!(
-            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
-          ),
-          replaceTabWithSpace: !!(
-            replaceTabWithSpaceField && replaceTabWithSpaceField.value
-          ),
-          wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+          includeHeader: includeHeaderField && includeHeaderField.value,
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          replaceNewlineWithSpace:
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
+          replaceTabWithSpace:
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
         },
       };
     } else if (fieldId === 'uploadFile') {
@@ -67,7 +63,7 @@ export default {
       placeholder: 'Sample file (that would be generated):',
       helpKey: 'import.uploadFile',
     },
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
     'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
     'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
@@ -81,13 +77,13 @@ export default {
   layout: {
     fields: [
       'uploadFile',
-      'file.csv',
       'file.csv.includeHeader',
       'file.csv.columnDelimiter',
       'file.csv.rowDelimiter',
       'file.csv.replaceNewlineWithSpace',
       'file.csv.replaceTabWithSpace',
       'file.csv.wrapWithQuotes',
+      'file.csvHelper',
       'file.xlsx.includeHeader',
     ],
   },
