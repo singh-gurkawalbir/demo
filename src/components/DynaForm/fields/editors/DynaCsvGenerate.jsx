@@ -135,7 +135,7 @@ export default function DynaCsvGenerate(props) {
           color="secondary"
           className={classes.dynaCsvBtn}
           onClick={handleEditorClick}>
-          Launch
+          Configure
         </Button>
 
         <FieldHelp {...props} helpKey={helpKey} />

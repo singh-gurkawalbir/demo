@@ -874,8 +874,8 @@ export const destinationOptions = {
 
   as2: [
     {
-      label: 'Transfer files into destination application',
-      value: 'transferFiles',
+      label: 'Import records into destination application',
+      value: 'importRecords',
     },
   ],
   common: [
