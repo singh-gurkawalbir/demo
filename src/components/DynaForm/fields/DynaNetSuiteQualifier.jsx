@@ -102,7 +102,7 @@ export default function DynaNetSuiteQualifier(props) {
         </div>
         {showEditor && (
           <NetSuiteQualificationCriteriaEditor
-            title="Qualification Criteria"
+            title="Field specific qualification criteria"
             id={id}
             value={rule}
             onClose={handleClose}

@@ -1,28 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/RegenerateTokenIcon';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
+import RegenerateTokenIcon from '../../../../../components/icons/RegenerateTokenIcon';
 
 export default {
-  key: 'regenerateAccessToken',
-  component: function RegenerateAccessToken({ resource = {} }) {
-    const { _id: resourceId } = resource;
+  label: 'Regenerate token',
+  icon: RegenerateTokenIcon,
+  component: function RegenerateAccessToken({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
-    const handleRegenerateClick = useCallback(() => {
+    const regenerateAccessToken = useCallback(() => {
       dispatch(actions.accessToken.generateToken(resourceId));
     }, [dispatch, resourceId]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Regenerate token',
-        }}
-        data-test="regenerateToken"
-        size="small"
-        onClick={handleRegenerateClick}>
-        <Icon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      regenerateAccessToken();
+    }, [regenerateAccessToken]);
+
+    return null;
   },
 };

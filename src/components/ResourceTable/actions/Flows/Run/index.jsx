@@ -1,32 +1,25 @@
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import getRoutePath from '../../../../../utils/routePaths';
 import actions from '../../../../../actions';
 import RunIcon from '../../../../icons/RunIcon';
-import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default {
-  key: 'runFlow',
-  component: withRouter(({ resource, history }) => {
+  label: 'Run flow',
+  icon: RunIcon,
+  component: withRouter(({ rowData = {}, history }) => {
+    const { _integrationId: integrationId, _id: resourceId } = rowData;
     const dispatch = useDispatch();
-    const handleRunFlowClick = () => {
-      dispatch(actions.flow.run({ flowId: resource._id }));
-      history.push(
-        getRoutePath(`integrations/${resource._integrationId}/dashboard`)
-      );
-    };
+    const runFlow = useCallback(() => {
+      dispatch(actions.flow.run({ flowId: resourceId }));
+      history.push(getRoutePath(`integrations/${integrationId}/dashboard`));
+    }, [dispatch, history, integrationId, resourceId]);
 
-    return (
-      <IconButtonWithTooltip
-        tooltipProps={{
-          title: 'Run flow',
-        }}
-        disabled={!resource.isRunnable}
-        data-test="runFlow"
-        size="small"
-        onClick={handleRunFlowClick}>
-        <RunIcon />
-      </IconButtonWithTooltip>
-    );
+    useEffect(() => {
+      runFlow();
+    }, [runFlow]);
+
+    return null;
   }),
 };

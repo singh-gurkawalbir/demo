@@ -1,59 +1,24 @@
-import { Fragment, useEffect, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import actions from '../../../../actions';
-import Icon from '../../../../components/icons/StacksIcon';
-import ShareStackDialog from '../../../../components/ShareStackDialog';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../reducers';
-import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
+import { useCallback, useEffect } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import ShareStackIcon from '../../../icons/ShareStackIcon';
 
-const ssharesFilterConfig = { type: 'sshares' };
-
+// Todo fix icon after other PR merge
 export default {
+  label: 'Stack shares',
+  icon: ShareStackIcon,
   key: 'stackShares',
-  component: function StackShares({ resource }) {
-    const [show, setShow] = useState(false);
-    const dispatch = useDispatch();
-    const resourceList = useSelectorMemo(
-      selectors.makeResourceListSelector,
-      ssharesFilterConfig
-    );
-    const stackShareCollection = resourceList.resources;
-    const showStackShare = useCallback(() => {
-      setShow(true);
-    }, []);
-    const handleStackShareClose = useCallback(() => {
-      setShow(false);
-    }, []);
+  component: function StackShares({ rowData = {} }) {
+    const { _id: stackId } = rowData;
+    const match = useRouteMatch();
+    const history = useHistory();
+    const openShareStackURL = useCallback(() => {
+      history.push(`${match.url}/share/stacks/${stackId}`);
+    }, [history, match.url, stackId]);
 
     useEffect(() => {
-      dispatch(actions.resource.requestCollection('sshares'));
-    }, [dispatch]);
+      openShareStackURL();
+    }, [openShareStackURL]);
 
-    return (
-      <Fragment>
-        {show && (
-          <ShareStackDialog
-            stackId={resource._id}
-            onClose={handleStackShareClose}
-            stackShareCollectionById={
-              stackShareCollection &&
-              stackShareCollection.filter(
-                stack => stack._stackId === resource._id
-              )
-            }
-          />
-        )}
-        <IconButtonWithTooltip
-          tooltipProps={{
-            title: 'Stack shares',
-          }}
-          data-test="showStackShares"
-          size="small"
-          onClick={showStackShare}>
-          <Icon />
-        </IconButtonWithTooltip>
-      </Fragment>
-    );
+    return null;
   },
 };

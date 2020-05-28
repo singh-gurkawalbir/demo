@@ -743,8 +743,8 @@ export const sourceOptions = {
   ],
   as2: [
     {
-      label: 'Listen for real-time data from source application',
-      value: 'realtime',
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
     },
   ],
   s3: [

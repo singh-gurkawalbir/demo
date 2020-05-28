@@ -141,8 +141,8 @@ export default function ConnectionStatusPanel(props) {
           <Typography variant="h6">{message}</Typography>
         ) : (
           <Typography component="div" variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited.
+            The connection associated with this resource is currently offline
+            and configuration is limited.
             <Button
               data-test="fixConnection"
               className={classes.fixConnectionBtn}

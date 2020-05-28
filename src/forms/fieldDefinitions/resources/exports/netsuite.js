@@ -203,12 +203,12 @@ export default {
   'netsuite.netsuiteExportlabel': {
     label: r => {
       if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-        return 'What would you like to transfer from NetSuite??';
+        return 'What would you like to transfer?';
       } else if (r.resourceType === 'realtime' || r.type === 'distributed') {
-        return 'What would you like to listen from NetSuite?';
+        return 'Configure real-time export in source application';
       }
 
-      return 'What would you like to export from NetSuite?';
+      return 'What would you like to export?';
     },
     type: 'labeltitle',
   },
@@ -279,6 +279,7 @@ export default {
     ],
   },
   'netsuite.restlet.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
@@ -286,6 +287,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],

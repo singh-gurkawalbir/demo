@@ -39,7 +39,7 @@ export default {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
       arrayIndex: 0,
-      label: 'Launch Query Builder',
+      label: 'Query builder',
       title: 'SQL Query Builder',
       refreshOptionsOnChangesTo: ['rdbms.queryType', 'modelMetadata'],
       visibleWhen: [
@@ -76,7 +76,7 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: 'How would you like the data imported?',
+        label: 'How would you like the records imported?',
         fields: [
           'rdbms.queryType',
           'rdbms.bulkInsert.tableName',

@@ -293,9 +293,11 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
+    formView: { fieldId: 'formView' },
     dataMappings: {
       formId: 'dataMappings',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
 
@@ -311,13 +313,18 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common', 'dataMappings'],
+      fields: ['common', 'dataMappings', 'formView'],
       type: 'collapse',
       containers: [
         {
           collapsed: true,
           label: 'How would you like the data imported?',
           fields: [...fieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Advanced Settings',
+          fields: ['apiIdentifier'],
         },
       ],
     },

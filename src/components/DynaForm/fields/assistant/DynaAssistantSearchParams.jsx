@@ -114,7 +114,7 @@ export default function DynaAssistantSearchParams(props) {
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
         <FormLabel className={classes.dynaAssistantFormLabel}>
-          Search parameters:
+          Configure search parameters:
         </FormLabel>
 
         <Button
@@ -123,7 +123,7 @@ export default function DynaAssistantSearchParams(props) {
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
-          {label} {required && !isValid ? '*' : ''}
+          {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
         {/* {Todo (shiva): we need helpText for the component} */}
         <FieldHelp {...props} helpText={label} />

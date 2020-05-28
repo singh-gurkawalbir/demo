@@ -224,19 +224,9 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: r => {
-          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-            return 'Where would you like to transfer the files?';
-          }
-
-          return 'Where would you like to import the records?';
-        },
-        fields: ['salesforce.api'],
-      },
-      {
-        collapsed: true,
-        label: 'How would you like the data imported?',
+        label: 'How would you like the records imported?',
         fields: [
+          'salesforce.api',
           'salesforce.lookups',
           'salesforce.sObjectType',
           'salesforce.operation',

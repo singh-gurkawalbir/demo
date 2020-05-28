@@ -118,17 +118,6 @@ export default (
         break;
       }
 
-      case actionTypes.METADATA.CLEAR_VALIDATIONS: {
-        if (
-          draft.application[connectionId] &&
-          draft.application[connectionId][key]
-        ) {
-          delete draft.application[connectionId][key].validationError;
-        }
-
-        break;
-      }
-
       case actionTypes.METADATA.VALIDATION_ERROR: {
         if (
           draft.application[connectionId] &&

@@ -117,7 +117,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'Yes (advanced)', value: 'true' },
           { label: 'No', value: 'false' },
         ],
       },
@@ -127,7 +127,7 @@ export default {
     type: 'text',
     label: 'Path to many',
     helpKey: 'pathToMany',
-    placeholder: 'Optional. Not needed for row/array formats.',
+    placeholder: 'Not needed for array/row based data.',
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
       if (r && r.isLookup)

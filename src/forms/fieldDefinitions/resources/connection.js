@@ -2081,6 +2081,7 @@ export default {
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
+    helpkey: 'export.as2.contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
