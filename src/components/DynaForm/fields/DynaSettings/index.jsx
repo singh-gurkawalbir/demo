@@ -104,7 +104,7 @@ export default function DynaSettings(props) {
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
-        onFieldChange(id, { ...values, __invalid: !isValid });
+        onFieldChange(id, { ...values, __invalid: true });
       } else {
         onFieldChange(id, values);
       }

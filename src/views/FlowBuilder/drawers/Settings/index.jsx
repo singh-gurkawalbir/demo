@@ -109,15 +109,6 @@ export default function SettingsDrawer({
           defaultValue: flow && flow.settings,
         },
       },
-      layout: {
-        fields: [
-          'name',
-          'description',
-          '_integrationId',
-          '_runNextFlowIds',
-          'settings',
-        ],
-      },
     }),
     [flow, integrations, nextDataFlows]
   );
