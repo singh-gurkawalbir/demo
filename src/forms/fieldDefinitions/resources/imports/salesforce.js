@@ -399,6 +399,7 @@ export default {
     label: 'SObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
+    ignoreValidation: true,
     commMetaPath: r =>
       r && `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     connectionId: r => r && r._connectionId,

@@ -2074,7 +2074,7 @@ export default {
   'users.user': `All users who have access to your account and integrations, or who have been invited to join your account.`,
   'users.accesslevel': `The role of each user per integration. This is <b>Manager</b> if the user has full managing access, or <b>Monitor</b> if the user has full monitoring access. However, if a user has Manager for one integration, but Monitor for another, access level will display as <b>Tile Level</b>. Each role has its own permissions. Find out more about <a href='https://docs.celigo.com/hc/en-us/articles/115003929872-User-Management-Account-and-Integration-Level-Access-Transfer-Ownership' target='_blank'>roles and permissions</a>.`,
   'users.status': `Tells you who has accepted the invitation to join your account and who is still pending.`,
-  'users.offOn': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.`,
+  'users.enable': `This enables you to revoke access without deleting the user from the account. If Off, then the user will no longer be able to switch to this account - it will no longer show up in their <b>Accounts</b> drop-down.`,
   'users.actions': `These are actions the account owner can perform, like <b>Make account owner</b>, which will make that user the owner of the selected account. <b>Change permissions</b> enables the account owner to manage each user’s access level. <b>Delete</b> will delete the user from the account and they will no longer have access.`,
   'myaccount.name':
     'This field will be displayed to other integrator.io users that you are collaborating with, and is also used by Celigo to administrate your account/subscription.',
@@ -2111,5 +2111,7 @@ export default {
     'If the records being processed are JSON objects, then use this field to specify the JSON path to the child records. This field does not need to be set for array/row based data.',
   'connection.configDebugger':
     'Enable Connection debugging for the selected period of time to collect all requests and responses made via the Connection. The debug logs can be accessed via the Connections tab of the Flow Builder.',
+  'stack.sharing':
+    'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
   // #region UI help text
 };

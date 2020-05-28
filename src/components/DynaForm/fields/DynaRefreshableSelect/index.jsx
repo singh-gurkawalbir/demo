@@ -1,4 +1,4 @@
-import { useCallback, Fragment, useEffect } from 'react';
+import { useCallback, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -20,6 +20,7 @@ export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
     bundlePath,
+    ignoreValidation,
     bundleUrlHelp,
     options = {},
     filterKey,
@@ -36,18 +37,6 @@ export default function DynaSelectOptionsGenerator(props) {
       commMetaPath: options.commMetaPath || commMetaPath,
       filterKey: options.filterKey || filterKey,
     })
-  );
-
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.metadata.clearValidations(
-          connectionId,
-          options.commMetaPath || commMetaPath
-        )
-      );
-    },
-    [commMetaPath, connectionId, dispatch, options.commMetaPath]
   );
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
@@ -96,7 +85,9 @@ export default function DynaSelectOptionsGenerator(props) {
         disableOptionsLoad={disableOptionsLoad}
         {...props}
       />
-      <RawHtml className={classes.validationError} html={validationError} />
+      {!ignoreValidation && (
+        <RawHtml className={classes.validationError} html={validationError} />
+      )}
     </Fragment>
   );
 }
