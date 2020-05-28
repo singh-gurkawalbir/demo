@@ -377,7 +377,7 @@ export default {
       type: 'httprequestbody',
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body',
+      label: 'HTTP request body',
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
         {
@@ -656,7 +656,7 @@ export default {
       id: 'rest.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body',
+      label: 'HTTP request body',
       arrayIndex: 0,
       refreshOptionsOnChangesTo: ['rest.lookups'],
       visibleWhenAll: [
