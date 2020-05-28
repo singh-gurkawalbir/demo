@@ -35,7 +35,16 @@ export default function DynaSelect(props) {
     onFieldChange,
   } = props;
   const classes = useStyles();
-  let isSubHeader;
+  const isSubHeader =
+    options &&
+    options.length &&
+    options.some(
+      option =>
+        option &&
+        option.items &&
+        option.items.length &&
+        option.items.some(item => item.subHeader)
+    );
   let items =
     options &&
     options.reduce(
@@ -44,18 +53,13 @@ export default function DynaSelect(props) {
           option.items.map(item => {
             let label;
             let value;
-            let subHeader;
 
             if (typeof item === 'string') {
               label = item;
               value = item;
             } else {
-              ({ value, subHeader } = item);
+              ({ value } = item);
               label = item.label || item.value;
-
-              if (!isSubHeader) {
-                isSubHeader = subHeader;
-              }
             }
 
             return typeof item === 'string'
