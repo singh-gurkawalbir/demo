@@ -1,20 +1,21 @@
-import { Fragment } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@material-ui/core';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Switch from '@material-ui/core/Switch';
-import actions from '../../actions';
-import useConfirmDialog from '../../components/ConfirmDialog';
-import DeleteIcon from '../icons/TrashIcon';
+import {
+  Button,
+  TableCell,
+  TableRow,
+  Typography,
+  IconButton,
+} from '@material-ui/core';
+import actions from '../../../actions';
+import useConfirmDialog from '../../../components/ConfirmDialog';
+import DeleteIcon from '../../icons/TrashIcon';
+import CeligoSwitch from '../../CeligoSwitch';
 
-export default function ShareStackUserDetail(props) {
-  const { user } = props;
+export default function SharedUserRow({ user }) {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const handleDeleteUserClick = () => {
+  const handleDeleteUserClick = useCallback(() => {
     confirmDialog({
       title: 'Confirm',
       message: 'Are you sure you want to remove this sharing?',
@@ -30,9 +31,8 @@ export default function ShareStackUserDetail(props) {
         },
       ],
     });
-  };
-
-  const handleToggleSharingClick = () => {
+  }, [confirmDialog, dispatch, user._id]);
+  const handleToggleSharingClick = useCallback(() => {
     confirmDialog({
       title: 'Confirm',
       message: `Are you sure you want to ${
@@ -50,9 +50,8 @@ export default function ShareStackUserDetail(props) {
         },
       ],
     });
-  };
-
-  const handleReinviteClick = () => {
+  }, [confirmDialog, dispatch, user._id, user.disabled]);
+  const handleReinviteClick = useCallback(() => {
     const userInfo = {
       ...user,
       dismissed: false,
@@ -61,17 +60,15 @@ export default function ShareStackUserDetail(props) {
     };
 
     dispatch(actions.stack.reInviteStackUser(userInfo, userInfo._id));
-  };
+  }, [dispatch, user]);
 
   return (
     <TableRow>
       <TableCell>
-        {user.sharedWithUser && (
-          <Fragment>
-            <Typography>{user.sharedWithUser.name}</Typography>
-            <Typography>{user.sharedWithUser.email}</Typography>
-          </Fragment>
-        )}
+        <Typography>{user.sharedWithUser.email}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography>{user.sharedWithUser.name}</Typography>
       </TableCell>
       <TableCell>
         {user.accepted && 'Accepted'}
@@ -80,8 +77,9 @@ export default function ShareStackUserDetail(props) {
       </TableCell>
       <TableCell>
         {user.accepted && (
-          <Switch
-            checked={!user.disabled}
+          <CeligoSwitch
+            data-test="disableUser"
+            enabled={!user.disabled}
             onChange={handleToggleSharingClick}
           />
         )}
