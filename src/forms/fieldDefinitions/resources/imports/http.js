@@ -300,7 +300,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'http.batchSize',
-        isNot: [''],
+        isNot: ['', 0, 1],
       },
       {
         field: 'inputMode',
@@ -327,6 +327,9 @@ export default {
     type: 'text',
     label: 'Batch size limit',
     defaultValue: 1,
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
     visibleWhenAll: [
       {
         field: 'http.method',
