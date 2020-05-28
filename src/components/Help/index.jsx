@@ -19,7 +19,6 @@ function Help(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
     event => {
-      // REVIEW: is this ok to be added here?
       event.stopPropagation();
 
       if (anchorEl) {

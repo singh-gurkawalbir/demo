@@ -81,6 +81,7 @@ export default function EditorDrawer({
   resourceId,
   resourceType,
   disabled,
+  hideSaveAction = false,
 }) {
   const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
@@ -232,15 +233,17 @@ export default function EditorDrawer({
             Preview
           </Button>
         )}
-        <EditorSaveButton
-          id={editorId}
-          variant="outlined"
-          color="primary"
-          dataTest="saveEditor"
-          disabled={disableSave}
-          onClose={handleSave}
-          submitButtonLabel="Save"
-        />
+        {!hideSaveAction && (
+          <EditorSaveButton
+            id={editorId}
+            variant="outlined"
+            color="primary"
+            dataTest="saveEditor"
+            disabled={disableSave}
+            onClose={handleSave}
+            submitButtonLabel="Save"
+          />
+        )}
         <Button
           variant="text"
           color="primary"

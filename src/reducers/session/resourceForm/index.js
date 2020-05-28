@@ -58,7 +58,9 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
       // only after form successfully intializes does it make sense to show validations
       // if there is no form state it does not make sense to create a state and tie this property
-      if (!state[key] || !state[key].initComplete) return state;
+
+      // commenting below as some resources (eg integration) might not be initialized
+      // if (!state[key] || !state[key].initComplete) return state;
 
       return {
         ...state,
