@@ -83,7 +83,7 @@ const getLookupMetadata = ({
         resourceId,
         resourceType,
         flowId,
-        label: 'Build HTTP request body',
+        label: 'HTTP request body',
         defaultValue: lookup.body,
         visibleWhenAll: [
           {

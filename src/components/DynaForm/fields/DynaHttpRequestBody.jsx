@@ -167,7 +167,7 @@ const DynaHttpRequestBody = props => {
           color="secondary"
           className={classes.dynaReqBodyBtn}
           onClick={handleEditorClick}>
-          {'Configure'}
+          Configure
         </Button>
         <FieldHelp {...props} />
       </div>
