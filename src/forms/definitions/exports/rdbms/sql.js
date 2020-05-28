@@ -90,7 +90,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Configure export type?',
+            label: 'Configure export type',
             fields: ['type', 'rdbms.once.query'],
           },
           {
