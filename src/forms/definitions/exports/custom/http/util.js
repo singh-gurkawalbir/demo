@@ -270,6 +270,7 @@ export function fieldMeta({ resource, assistantData }) {
       formId: 'common',
     },
     exportOneToMany: { formId: 'exportOneToMany' },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -321,8 +322,13 @@ export function fieldMeta({ resource, assistantData }) {
             },
             {
               collapsed: true,
-              label: 'Configure export type?',
+              label: 'Configure export type',
               fields: [...exportTypeFieldIds],
+            },
+            {
+              collapsed: true,
+              label: 'Advanced Settings',
+              fields: ['apiIdentifier'],
             },
           ],
         },

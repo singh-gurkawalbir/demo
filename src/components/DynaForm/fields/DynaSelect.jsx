@@ -35,49 +35,58 @@ export default function DynaSelect(props) {
     onFieldChange,
   } = props;
   const classes = useStyles();
+  let isSubHeader;
   let items =
     options &&
     options.reduce(
       (itemsSoFar, option) =>
         itemsSoFar.concat(
-          option.items
-            .map(item => {
-              let label;
-              let value;
+          option.items.map(item => {
+            let label;
+            let value;
+            let subHeader;
 
-              if (typeof item === 'string') {
-                label = item;
-                value = item;
-              } else {
-                ({ value } = item);
-                label = item.label || item.value;
+            if (typeof item === 'string') {
+              label = item;
+              value = item;
+            } else {
+              ({ value, subHeader } = item);
+              label = item.label || item.value;
+
+              if (!isSubHeader) {
+                isSubHeader = subHeader;
               }
+            }
 
-              return typeof item === 'string'
-                ? { label, value }
-                : { ...item, label, value };
-            })
-            .sort(stringCompare('label'))
-            .map(item => {
-              const { label, value, subHeader, disabled = false } = item;
-
-              if (subHeader) {
-                return (
-                  <ListSubheader disableSticky key={subHeader}>
-                    {subHeader}
-                  </ListSubheader>
-                );
-              }
-
-              return (
-                <MenuItem key={value} value={value} disabled={disabled}>
-                  {label}
-                </MenuItem>
-              );
-            })
+            return typeof item === 'string'
+              ? { label, value }
+              : { ...item, label, value };
+          })
         ),
       []
     );
+
+  if (!isSubHeader) {
+    items = items.sort(stringCompare('label'));
+  }
+
+  items = items.map(item => {
+    const { label, value, subHeader, disabled = false } = item;
+
+    if (subHeader) {
+      return (
+        <ListSubheader disableSticky key={subHeader}>
+          {subHeader}
+        </ListSubheader>
+      );
+    }
+
+    return (
+      <MenuItem key={value} value={value} disabled={disabled}>
+        {label}
+      </MenuItem>
+    );
+  });
   let finalTextValue;
 
   if (value === undefined || value === null) {

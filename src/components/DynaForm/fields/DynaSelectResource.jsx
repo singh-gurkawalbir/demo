@@ -19,6 +19,7 @@ import {
 import ActionButton from '../../../components/ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../StatusCircle';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -285,7 +286,7 @@ function DynaSelectResource(props) {
     value,
   ]);
   const truncatedItems = items =>
-    items.map(i => ({
+    items.sort(stringCompare('label')).map(i => ({
       label: (
         <div title={i.label} className={classes.menuItem}>
           {i.label}

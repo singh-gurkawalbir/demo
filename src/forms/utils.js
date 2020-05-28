@@ -743,8 +743,8 @@ export const sourceOptions = {
   ],
   as2: [
     {
-      label: 'Listen for real-time data from source application',
-      value: 'realtime',
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
     },
   ],
   s3: [
@@ -874,8 +874,8 @@ export const destinationOptions = {
 
   as2: [
     {
-      label: 'Transfer files into destination application',
-      value: 'transferFiles',
+      label: 'Import records into destination application',
+      value: 'importRecords',
     },
   ],
   common: [
