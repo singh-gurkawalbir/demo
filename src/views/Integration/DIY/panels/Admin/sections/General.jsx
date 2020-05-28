@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
@@ -21,7 +21,7 @@ export default function GeneralSection({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
-  const { name, description, settings } =
+  const { name, description } =
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
@@ -29,58 +29,68 @@ export default function GeneralSection({ integrationId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const fieldMeta = {
-    fieldMap: {
-      name: {
-        id: 'name',
-        helpKey: 'integration.name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: name,
-      },
-      description: {
-        id: 'description',
-        helpKey: 'integration.description',
-        name: 'description',
-        type: 'text',
-        multiline: true,
-        maxRows: 5,
+  const fieldMeta = useMemo(
+    () => ({
+      fieldMap: {
+        name: {
+          id: 'name',
+          helpKey: 'integration.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          defaultValue: name,
+        },
+        description: {
+          id: 'description',
+          helpKey: 'integration.description',
+          name: 'description',
+          type: 'text',
+          multiline: true,
+          maxRows: 5,
 
-        label: 'Description',
-        defaultValue: description,
+          label: 'Description',
+          defaultValue: description,
+        },
       },
-    },
-    layout: {
-      fields: ['name', 'description'],
-    },
-  };
+      layout: {
+        fields: ['name', 'description'],
+      },
+    }),
+    [description, name]
+  );
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [name, description, settings]);
-  const handleSubmit = formVal => {
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
-      },
-    ];
+  }, [name, description]);
+  const handleSubmit = useCallback(
+    formVal => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/name',
+          value: formVal.name,
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: formVal.description,
+        },
+      ];
 
-    dispatch(
-      actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-    );
-    dispatch(
-      actions.resource.commitStaged('integrations', integrationId, SCOPES.VALUE)
-    );
-    setCount(count => count + 1);
-  };
+      dispatch(
+        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
+      );
+      dispatch(
+        actions.resource.commitStaged(
+          'integrations',
+          integrationId,
+          SCOPES.VALUE
+        )
+      );
+      setCount(count => count + 1);
+    },
+    [dispatch, integrationId]
+  );
 
   return (
     <Fragment>

@@ -73,7 +73,7 @@ export default function DynaSettings(props) {
   };
   const { resourceType, resourceId } = resourceContext;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
-  const [count, setCount] = useState(0);
+  const [drawerKey, setDrawerKey] = useState(0);
   const history = useHistory();
   const match = useRouteMatch();
   const integrationId = useIntegration(resourceType, resourceId);
@@ -94,17 +94,20 @@ export default function DynaSettings(props) {
   const toggleEditMode = useCallback(
     e => {
       e.stopPropagation();
-      setCount(count => count + 1);
+      setDrawerKey(drawerKey => drawerKey + 1);
       history.push(`${match.url}/editSettings`);
     },
     [history, match.url]
   );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
-      // console.log(isValid ? 'valid: ' : 'invalid: ', values);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
-      onFieldChange(id, { ...values, __invalid: !isValid });
+      if (!isValid) {
+        onFieldChange(id, { ...values, __invalid: !isValid });
+      } else {
+        onFieldChange(id, values);
+      }
       // dispatch(
       //   action.formFieldChange(formId, fieldId, newValue, shouldTouch, isValid)
       // );
@@ -172,7 +175,7 @@ export default function DynaSettings(props) {
       </ExpansionPanel>
       {isDeveloper && !isViewMode && (
         <EditDrawer
-          key={count}
+          key={drawerKey}
           editorId={id}
           resourceId={resourceId}
           resourceType={resourceType}
