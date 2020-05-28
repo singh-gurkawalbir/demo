@@ -1,31 +1,18 @@
+import { Button, Snackbar, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { Fragment, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  makeStyles,
-  LinearProgress,
-  Button,
-  Snackbar,
-  Typography,
-} from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import RawHtml from '../RawHtml';
+import SystemStatus from '../SystemStatus';
 
-const useStyles = makeStyles(theme => ({
-  snackbar: {
-    marginTop: theme.spacing(1),
+const useStyles = makeStyles({
+  snackbarWrapper: {
+    background: 'transparent',
   },
-  snackbarContent: {
-    w: theme.spacing(4),
-    flexGrow: 0,
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  contentWrapper: {
-    wordBreak: 'break-word',
-  },
-}));
+});
 const Dismiss = props =>
   props.show && (
     <Button
@@ -53,6 +40,34 @@ export const ErroredMessageList = ({ messages }) =>
         </Fragment>
       ))
     : null;
+const LOADING_MSG = 'Loading...';
+const RETRY_MSG = 'Retrying… please hold.';
+const Notifications = ({ allLoadingOrErrored }) => {
+  if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
+  const loadingMessage = allLoadingOrErrored.some(
+    r => r.status === COMM_STATES.LOADING && !r.retryCount
+  ) && (
+    <li key={LOADING_MSG}>
+      <Typography>{LOADING_MSG}</Typography>
+    </li>
+  );
+  const retryMessage = allLoadingOrErrored.some(
+    r => r.status === COMM_STATES.LOADING && r.retryCount
+  ) && (
+    <li key={RETRY_MSG}>
+      <Typography>{RETRY_MSG}</Typography>
+    </li>
+  );
+  const errored = allLoadingOrErrored
+    .filter(r => r.status === COMM_STATES.ERROR)
+    .map(r => (
+      <li key={r.name}>
+        {r.message && <ErroredMessageList messages={r.message} />}
+      </li>
+    ));
+
+  return [loadingMessage, retryMessage, ...errored].filter(r => r);
+};
 
 export default function NetworkSnackbar() {
   const classes = useStyles();
@@ -74,47 +89,14 @@ export default function NetworkSnackbar() {
     return null;
   }
 
-  const notification = r => {
-    if (r.status === COMM_STATES.ERROR)
-      return (
-        <li key={r.name}>
-          {r.message && <ErroredMessageList messages={r.message} />}
-        </li>
-      );
-
-    let msg = ` ${r.message}...`;
-
-    if (r.retryCount > 0) {
-      msg += ` Retry ${r.retryCount}`;
-    }
-
-    return (
-      <li key={r.name}>
-        <Typography>{msg}</Typography>
-      </li>
-    );
-  };
-
-  const msg = (
-    <div className={classes.contentWrapper}>
-      <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
-      {isLoadingAnyResource && <LinearProgress />}
-      <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
-    </div>
-  );
-
+  // const msg = (
+  //   <SystemStatus isLoading={isLoadingAnyResource}>
+  //     <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
+  //     <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
+  //   </SystemStatus>
+  // );
   return (
     <Snackbar
-      className={classes.snackbar}
-      ContentProps={{
-        // TODO: Are we overriding the default "paper" component style
-        // globally? The material-ui demo page has the snackbar width
-        // and corner radius set differently than our default... we need
-        // to use the overrides below to compensate. why? where in our
-        // component hierarchy are these css overrides?
-        square: false,
-        className: classes.snackbarContent,
-      }}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'center',
@@ -122,7 +104,15 @@ export default function NetworkSnackbar() {
       open
       // autoHideDuration={6000}
       // onClose={this.handleClose}
-      message={msg}
-    />
+      // message={msg}
+      className={classes.snackbarWrapper}>
+      <SystemStatus isLoading={isLoadingAnyResource}>
+        <ul>
+          <Notifications allLoadingOrErrored={allLoadingOrErrored} />
+        </ul>
+
+        <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
+      </SystemStatus>
+    </Snackbar>
   );
 }
