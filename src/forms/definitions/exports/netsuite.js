@@ -311,6 +311,7 @@ export default {
     skipRetries: {
       fieldId: 'skipRetries',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     pageSize: {
       fieldId: 'pageSize',
       visibleWhenAll: [
@@ -541,6 +542,7 @@ export default {
               'netsuite.distributed.forceReload',
               'pageSize',
               'netsuite.restlet.batchSize',
+              'apiIdentifier',
             ],
           },
         ],
