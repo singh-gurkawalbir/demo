@@ -18,6 +18,7 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   CONNECTION: 'Connection',
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
+  FORM: 'form',
 });
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',

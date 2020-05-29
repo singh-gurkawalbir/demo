@@ -771,23 +771,36 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
+    scriptInstallStep: (
+      integrationId,
+      connectionId,
+      connectionDoc,
+      formSubmission
+    ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
+        formSubmission,
       }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        formMeta,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
+      }),
+    initFormStep: (integrationId, form, initFormFunction) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.FORM_INIT, {
+        id: integrationId,
+        form,
+        initFormFunction,
       }),
   },
   uninstaller: {

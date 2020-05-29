@@ -32,6 +32,8 @@ import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
+import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import FormViewStep from '../../../../../components/InstallStep/FormViewStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,6 +99,9 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
+  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
+    installSteps,
+  ]);
   const selectedConnection = useSelector(state =>
     selectors.resource(
       state,
@@ -261,6 +266,8 @@ export default function ConnectorInstallation(props) {
       type,
       sourceConnection,
       completed,
+      form,
+      initFormFunction,
     } = step;
 
     if (completed) {
@@ -301,9 +308,20 @@ export default function ConnectorInstallation(props) {
           'inProgress'
         )
       );
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(integrationId)
-      );
+
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        dispatch(
+          actions.integrationApp.installer.initFormStep(
+            integrationId,
+            form,
+            initFormFunction
+          )
+        );
+      } else {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(integrationId)
+        );
+      }
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
@@ -382,6 +400,12 @@ export default function ConnectorInstallation(props) {
             onSubmitComplete={handleSubmitComplete}
           />
         ))}
+      {currentStep && currentStep.formMeta && (
+        <FormViewStep
+          integrationId={integrationId}
+          formMeta={currentStep.formMeta}
+        />
+      )}
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>

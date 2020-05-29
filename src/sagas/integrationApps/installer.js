@@ -74,7 +74,12 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   }
 }
 
-export function* installScriptStep({ id, connectionId, connectionDoc }) {
+export function* installScriptStep({
+  id,
+  connectionId,
+  connectionDoc,
+  formSubmission,
+}) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
   // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
@@ -85,9 +90,11 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body: connectionId
-          ? { _connectionId: connectionId }
-          : { connection: connectionDoc },
+        body:
+          formSubmission ||
+          (connectionId
+            ? { _connectionId: connectionId }
+            : { connection: connectionDoc }),
         method: 'POST',
       },
       hidden: true,
@@ -100,6 +107,14 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
   }
 
   if (!stepCompleteResponse) {
+    // to clear session state
+    yield put(
+      actions.integrationApp.installer.completedStepInstall(
+        { stepsToUpdate: [] },
+        id
+      )
+    );
+
     return yield put(actions.resource.request('integrations', id));
   }
 
@@ -206,11 +221,58 @@ export function* addNewStore({ id }) {
   }
 }
 
+export function* initFormStep({ id, form, initFormFunction }) {
+  if (!initFormFunction) {
+    // update formmeta in the session state
+    return yield put(
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
+        ...form,
+      })
+    );
+  }
+
+  const path = `/integrations/${id}/currentStep`;
+  let currentStepResponse;
+
+  try {
+    currentStepResponse = yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        method: 'GET',
+      },
+      hidden: true,
+    });
+  } catch (error) {
+    yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
+
+    return yield put(actions.api.failure(path, 'PUT', error.message, false));
+  }
+
+  if (!currentStepResponse || !currentStepResponse.result) {
+    return yield put(
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
+        ...form,
+      })
+    );
+  }
+
+  return yield put(
+    actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
+      ...currentStepResponse.result,
+    })
+  );
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST,
     installScriptStep
+  ),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.INSTALLER.STEP.FORM_INIT,
+    initFormStep
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
