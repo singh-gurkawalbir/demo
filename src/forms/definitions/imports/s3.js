@@ -95,7 +95,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate files from records',
+      label: 'Generate files from records:',
       helpKey: 'import.inputMode',
       options: [
         {
