@@ -886,6 +886,7 @@ export function* initFormValues({
     );
   } catch (e) {
     yield put(actions.resourceForm.initFailed(resourceType, resourceId));
+    // eslint-disable-next-line no-console
     console.warn(e);
   }
 }

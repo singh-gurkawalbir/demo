@@ -1,6 +1,12 @@
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Route, useLocation, generatePath } from 'react-router-dom';
+import {
+  Route,
+  useLocation,
+  generatePath,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../../components/LoadResources';
 import { isNewId } from '../../../utils/resource';
@@ -100,12 +106,35 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
 
+const useRedirectionToParentRoute = (resourceType, id) => {
+  const history = useHistory();
+  const match = useRouteMatch();
+  const { initFailed } = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)
+  );
+
+  useEffect(() => {
+    if (initFailed) {
+      // remove the last 3 segments from the route ...
+      // /:operation(add|edit)/:resourceType/:id
+      const stripedRoute = match.url
+        .split('/')
+        .slice(0, -3)
+        .join('/');
+
+      history.replace(stripedRoute);
+    }
+  }, [history, initFailed, match.url]);
+};
+
 export default function Panel(props) {
   const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const location = useLocation();
   const dispatch = useDispatch();
+
+  useRedirectionToParentRoute(resourceType, id);
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles({
     ...props,

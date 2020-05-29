@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ResourceDrawer(props) {
-  const { parentRoute } = props;
   const classes = useStyles();
   const match = useRouteMatch();
   const open = !!match;
@@ -43,16 +42,7 @@ function ResourceDrawer(props) {
       props.flowId
     )
   );
-  const { initFailed } = useSelector(state =>
-    selectors.resourceFormState(state, resourceType, id)
-  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-
-  useEffect(() => {
-    if (initFailed) {
-      history.replace(parentRoute);
-    }
-  }, [history, initFailed, parentRoute]);
 
   return (
     <Drawer
@@ -110,7 +100,6 @@ export default function ResourceDrawerRoute({
         return (
           <ResourceDrawer
             {...props}
-            parentRoute={match.url}
             flowId={flowId}
             integrationId={integrationId}
             disabled={!isConnectionUnderFlowContext && disabled}
