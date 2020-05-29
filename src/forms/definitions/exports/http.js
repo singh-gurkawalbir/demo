@@ -219,6 +219,64 @@ export default {
       ...retValues,
     };
   },
+  optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'file.csvHelper') {
+      const keyColumnsField = fields.find(
+        field => field.id === 'file.csv.keyColumns'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+
+      return {
+        fields: {
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          trimSpaces: trimSpacesField && trimSpacesField.value,
+          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+          keyColumns: keyColumnsField && keyColumnsField.value,
+        },
+      };
+    } else if (fieldId === 'file.csv.keyColumns') {
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+      const options = {
+        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+        trimSpaces: trimSpacesField && trimSpacesField.value,
+        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+      };
+
+      return options;
+    }
+  },
 
   fieldMap: {
     common: { formId: 'common' },
@@ -553,14 +611,6 @@ export default {
               'http.headers',
               'http.relativeURI',
               'http.body',
-              'file.csv.columnDelimiter',
-              'file.csv.rowDelimiter',
-              'file.csv.trimSpaces',
-              'file.csv.rowsToSkip',
-              'file.csv.hasHeaderRow',
-              'file.csv.rowsPerRecord',
-              'file.csv.keyColumns',
-              'file.csvHelper',
               'http.response.blobFormat',
             ],
           },
@@ -609,6 +659,14 @@ export default {
               'http.response.failPath',
               'http.response.failValues',
               'http.successMediaType',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns',
+              'file.csvHelper',
               'http.errorMediaType',
             ],
           },
