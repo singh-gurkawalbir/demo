@@ -18,6 +18,7 @@ import VariationAttributesList from './AttributesList';
 import VariationMappings from './MappingsWrapper';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
+import SpinnerWrapper from '../../../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -27,7 +28,6 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     overflowX: 'hidden',
   },
   saveButtonGroup: {
@@ -52,6 +52,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    minHeight: '100%',
   },
   subNav: {
     minWidth: '200px',
@@ -65,7 +66,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
-    background: theme.palette.primary.main,
+    // background: theme.palette.primary.main,
   },
   variationMapWrapper: {
     display: 'flex',
@@ -244,6 +245,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
                   </Button>
                   <Button
                     variant="text"
+                    color="primary"
                     data-test="saveImportMapping"
                     onClick={handleCancel}>
                     Close
@@ -253,7 +255,9 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
             </div>
           </div>
         ) : (
-          <Spinner />
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>
         )}
       </Drawer>
     </Fragment>

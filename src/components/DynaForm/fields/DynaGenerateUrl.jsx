@@ -100,7 +100,14 @@ function GenerateUrl(props) {
               </Button>
             </CopyToClipboard>
           )}
-          {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
+          {!value && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleGenerateUrl}>
+              {buttonLabel}
+            </Button>
+          )}
         </div>
       </div>
     </Fragment>
