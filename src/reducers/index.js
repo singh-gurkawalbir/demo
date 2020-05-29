@@ -3809,6 +3809,7 @@ export function getCustomResourceLabel(
   { resourceType, resourceId, flowId }
 ) {
   const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isDataloader = !!flowDetails(state, flowId).isSimpleImport;
   const isNewResource = isNewId(resourceId);
   const { merged: resource = {} } = resourceData(
     state,
@@ -3820,6 +3821,9 @@ export function getCustomResourceLabel(
   // Default resource labels based on resourceTypes handled here
   if (isLookup) {
     resourceLabel = 'Lookup';
+  } else if (isDataloader && resourceType === 'pageProcessor') {
+    // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
+    resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }

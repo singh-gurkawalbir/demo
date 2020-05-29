@@ -1,9 +1,6 @@
 import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { destinationOptions } from '../../utils';
-
-const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
 export default {
   init: meta => meta,
@@ -56,7 +53,8 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'destination',
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
@@ -129,7 +127,10 @@ export default {
       allowNew: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenHasApp],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'resourceType', isNot: [''] },
+      ],
     },
   },
   layout: {
@@ -152,38 +153,7 @@ export default {
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
 
     if (fieldId === 'resourceType') {
-      let options = destinationOptions[app.assistant || app.type];
-
-      if (app.assistant) {
-        if (!app.export && app.import) {
-          options = [
-            {
-              label: 'Lookup addition records (per record)',
-              value: 'lookupRecords',
-            },
-          ];
-        } else if (!app.import && app.export) {
-          options = [
-            {
-              label: 'Lookup addition records (per record)',
-              value: 'lookupRecords',
-            },
-          ];
-        }
-      }
-
-      if (!options) {
-        options = destinationOptions.common || [];
-      }
-
-      resourceTypeField.value = options && options[0] && options[0].value;
-      resourceTypeField.disabled = options && options.length === 1;
-
-      return [
-        {
-          items: options,
-        },
-      ];
+      return { selectedApplication: app };
     }
 
     if (fieldId === 'connection') {

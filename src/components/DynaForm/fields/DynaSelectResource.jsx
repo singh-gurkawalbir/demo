@@ -152,7 +152,6 @@ function DynaSelectResource(props) {
     onFieldChange,
     multiselect = false,
     value,
-    defaultValue,
     resourceType,
     allowNew,
     allowEdit,
@@ -185,12 +184,7 @@ function DynaSelectResource(props) {
   );
 
   useEffect(() => {
-    if (
-      !appTypeIsStatic &&
-      options.appType &&
-      !!value &&
-      value !== defaultValue
-    ) {
+    if (!appTypeIsStatic && options.appType && !!value) {
       onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

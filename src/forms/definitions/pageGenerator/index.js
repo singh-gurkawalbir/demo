@@ -4,7 +4,6 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { sourceOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -71,7 +70,8 @@ export default {
     type: {
       id: 'type',
       name: 'type',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'source',
       label: 'What would you like to do?',
       required: true,
       refreshOptionsOnChangesTo: ['application'],
@@ -100,7 +100,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -138,32 +138,7 @@ export default {
     const app = applications.find(a => a.id === appField.value) || {};
 
     if (fieldId === 'type') {
-      const typeField = fields.find(field => field.id === 'type');
-      let options = sourceOptions[app.assistant || app.type];
-
-      if (!options) {
-        if (app.assistant && app.webhook) {
-          options = [
-            {
-              label: 'Export records from source application',
-              value: 'exportRecords',
-            },
-            {
-              label: 'Listen for real-time data from source application',
-              value: 'webhook',
-            },
-          ];
-        } else options = sourceOptions.common || [];
-      }
-
-      typeField.value = options && options[0] && options[0].value;
-      typeField.disabled = options && options.length === 1;
-
-      return [
-        {
-          items: options,
-        },
-      ];
+      return { selectedApplication: app };
     }
 
     if (fieldId === 'connection') {
