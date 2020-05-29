@@ -9,6 +9,7 @@ import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -112,6 +113,19 @@ export default function SettingsDrawer({
     }),
     [flow, integrations, nextDataFlows]
   );
+  const validationHandler = field => {
+    // Incase of invalid json throws error to be shown on the field
+
+    if (field && field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Settings must be a valid JSON';
+    }
+  };
+
   const handleSubmit = useCallback(
     formVal => {
       const patchSet = [
@@ -171,6 +185,7 @@ export default function SettingsDrawer({
           resourceType={resourceType}
           resourceId={resourceId}
           fieldMeta={fieldMeta}
+          validationHandler={validationHandler}
           render>
           <DynaSubmit
             resourceType={resourceType}
