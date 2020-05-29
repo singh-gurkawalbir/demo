@@ -4,6 +4,8 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    delete newValues['/file/csvHelper'];
+
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -12,7 +14,7 @@ export default {
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
+
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -21,15 +23,23 @@ export default {
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
+
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -37,13 +47,16 @@ export default {
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {

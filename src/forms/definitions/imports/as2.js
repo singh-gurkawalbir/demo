@@ -2,7 +2,7 @@ import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'file.csv') {
+    if (fieldId === 'file.csvHelper') {
       const includeHeaderField = fields.find(
         field => field.id === 'file.csv.includeHeader'
       );
@@ -24,18 +24,14 @@ export default {
 
       return {
         fields: {
-          includeHeader:
-            (includeHeaderField && includeHeaderField.value) || true,
-          columnDelimiter:
-            (columnDelimiterField && columnDelimiterField.value) || ',',
-          rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
-          replaceNewlineWithSpace: !!(
-            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
-          ),
-          replaceTabWithSpace: !!(
-            replaceTabWithSpaceField && replaceTabWithSpaceField.value
-          ),
-          wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+          includeHeader: includeHeaderField && includeHeaderField.value,
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          replaceNewlineWithSpace:
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
+          replaceTabWithSpace:
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
         },
       };
     } else if (fieldId === 'file.filedefinition.rules') {
@@ -103,32 +99,44 @@ export default {
       ...formValues,
     };
 
+    delete newValues['/file/csvHelper'];
+
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
+
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/xml/body'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
+      delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -156,7 +164,7 @@ export default {
     common: { formId: 'common' },
     distributed: { fieldId: 'distributed', defaultValue: false },
 
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
     'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
     'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
     'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
@@ -219,13 +227,13 @@ export default {
           'as2.fileNameTemplate',
           'as2.messageIdTemplate',
           'file.xml.body',
-          'file.csv',
           'file.csv.includeHeader',
           'file.csv.columnDelimiter',
           'file.csv.rowDelimiter',
           'file.csv.replaceNewlineWithSpace',
           'file.csv.replaceTabWithSpace',
           'file.csv.wrapWithQuotes',
+          'file.csvHelper',
           'file.xlsx.includeHeader',
           'file.filedefinition.rules',
           'as2.headers',

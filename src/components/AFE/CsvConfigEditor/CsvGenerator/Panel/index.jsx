@@ -9,6 +9,7 @@ import actions from '../../../../../actions';
 import * as selectors from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import options from '../../options';
+import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,24 +61,16 @@ export default function CsvGeneratePanel(props) {
     <div className={classes.container}>
       <FormGroup column="true">
         <FormControl disabled={disabled} className={classes.formControl}>
-          <InputLabel shrink htmlFor="columnDelimiter">
-            Column delimiter
-          </InputLabel>
-          <CeligoSelect
-            native
+          <DynaSelectWithInput
+            label="Column delimiter"
             value={columnDelimiter}
-            className={classes.select}
-            placeholder="Please select"
-            onChange={event =>
-              patchEditor('columnDelimiter', event.target.value)
+            disabled={disabled}
+            isValid={columnDelimiter.length}
+            onFieldChange={(_id, value) =>
+              patchEditor('columnDelimiter', value)
             }
-            inputProps={{ id: 'columnDelimiter' }}>
-            {options.ColumnDelimiterOptions.map(opt => (
-              <option key={opt.value} value={opt.value} data-test={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </CeligoSelect>
+            options={options.ColumnDelimiterOptions}
+          />
         </FormControl>
         <FormControl disabled={disabled} className={classes.formControl}>
           <InputLabel shrink htmlFor="rowDelimiter">

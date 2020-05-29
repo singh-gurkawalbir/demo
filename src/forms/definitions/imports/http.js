@@ -291,7 +291,7 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'file.csv') {
+    if (fieldId === 'file.csvHelper') {
       const includeHeaderField = fields.find(
         field => field.id === 'file.csv.includeHeader'
       );
@@ -312,17 +312,16 @@ export default {
       );
 
       return {
-        includeHeader: (includeHeaderField && includeHeaderField.value) || true,
-        columnDelimiter:
-          (columnDelimiterField && columnDelimiterField.value) || ',',
-        rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
-        replaceNewlineWithSpace: !!(
-          replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
-        ),
-        replaceTabWithSpace: !!(
-          replaceTabWithSpaceField && replaceTabWithSpaceField.value
-        ),
-        wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+        fields: {
+          includeHeader: includeHeaderField && includeHeaderField.value,
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          replaceNewlineWithSpace:
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
+          replaceTabWithSpace:
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
+        },
       };
     } else if (
       fieldId === 'http.body' ||
@@ -1383,8 +1382,8 @@ export default {
         },
       ],
     },
-    'file.csv': {
-      fieldId: 'file.csv',
+    'file.csvHelper': {
+      fieldId: 'file.csvHelper',
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },
         {
@@ -1516,7 +1515,6 @@ export default {
           'http.batchSize',
           'http.body',
           'uploadFile',
-          'file.csv',
           'file.csv.includeHeader',
           'file.csv.columnDelimiter',
           'file.csv.rowDelimiter',
@@ -1524,6 +1522,7 @@ export default {
           'file.csv.replaceTabWithSpace',
           'file.csv.wrapWithQuotes',
           'file.csv.customHeaderRows',
+          'file.csvHelper',
           'blobKeyPath',
         ],
         type: 'collapse',
