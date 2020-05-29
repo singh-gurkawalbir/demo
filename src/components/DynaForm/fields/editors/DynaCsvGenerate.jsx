@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
-import csvOptions from '../../../AFE/CsvConfigEditor/options';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -30,14 +29,15 @@ export default function DynaCsvGenerate(props) {
   const {
     id,
     onFieldChange,
-    value = {},
     label,
     resourceId,
     flowId,
     resourceType,
     disabled,
     helpKey,
+    options = {},
   } = props;
+  const { fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
   const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
@@ -79,28 +79,9 @@ export default function DynaCsvGenerate(props) {
   }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const {
-        rowDelimiter,
-        columnDelimiter,
-        includeHeader,
-        wrapWithQuotes,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        truncateLastRowDelimiter,
-      } = editorValues;
-
-      onFieldChange(id, {
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
-        includeHeader,
-        truncateLastRowDelimiter,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        wrapWithQuotes,
+      Object.keys(fields).forEach(key => {
+        onFieldChange(`${id}.${key}`, editorValues[key]);
       });
-
-      // On change of rules, trigger sample data update
-      // It calls processor on final rules to parse csv file
     }
 
     handleEditorClick();
@@ -122,7 +103,7 @@ export default function DynaCsvGenerate(props) {
           resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
-          rule={value}
+          rule={fields}
           onClose={handleClose}
           disabled={disabled}
         />
@@ -135,7 +116,7 @@ export default function DynaCsvGenerate(props) {
           color="secondary"
           className={classes.dynaCsvBtn}
           onClick={handleEditorClick}>
-          Launch
+          Configure
         </Button>
 
         <FieldHelp {...props} helpKey={helpKey} />

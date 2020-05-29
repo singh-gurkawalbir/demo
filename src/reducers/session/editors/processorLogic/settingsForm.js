@@ -97,6 +97,7 @@ export default {
             throw new Error('Invalid fieldMap. Key should be of object type');
           }
 
+          if (!settings[field.name] && field.defaultValue) return;
           field.defaultValue = settings[field.name] || '';
         });
       }

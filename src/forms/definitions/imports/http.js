@@ -4,7 +4,11 @@ export default {
     const lookups = retValues['/http/lookups'];
     const lookup =
       lookups &&
-      lookups.find(l => l.name === retValues['/http/existingDataId']);
+      lookups.find(
+        l =>
+          `${l.name}` === retValues['/http/existingDataId'] ||
+          `${l.name}` === retValues['/http/update/existingDataId']
+      );
 
     if (retValues['/http/response/successValues']) {
       retValues['/http/response/successValues'] = [
@@ -252,14 +256,16 @@ export default {
 
         if (lookup) {
           retValues['/http/ignoreLookupName'] =
-            retValues['/http/existingDataId'];
+            retValues['/http/update/existingDataId'];
           retValues['/http/ignoreExtract'] = null;
         } else {
-          retValues['/http/ignoreExtract'] = retValues['/http/existingDataId'];
+          retValues['/http/ignoreExtract'] =
+            retValues['/http/update/existingDataId'];
           retValues['/http/ignoreLookupName'] = null;
         }
 
         retValues['/http/existingDataId'] = undefined;
+        retValues['/http/update/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -270,6 +276,7 @@ export default {
       retValues['/http/ignoreLookupName'] = undefined;
       retValues['/http/ignoreExtract'] = undefined;
       retValues['/http/existingDataId'] = undefined;
+      retValues['/http/update/existingDataId'] = undefined;
     }
 
     if (retValues['/inputMode'] !== 'blob') {
@@ -284,7 +291,40 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (
+    if (fieldId === 'file.csv') {
+      const includeHeaderField = fields.find(
+        field => field.id === 'file.csv.includeHeader'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const replaceNewlineWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceNewlineWithSpace'
+      );
+      const replaceTabWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceTabWithSpace'
+      );
+      const wrapWithQuotesField = fields.find(
+        field => field.id === 'file.csv.wrapWithQuotes'
+      );
+
+      return {
+        includeHeader: (includeHeaderField && includeHeaderField.value) || true,
+        columnDelimiter:
+          (columnDelimiterField && columnDelimiterField.value) || ',',
+        rowDelimiter: (rowDelimiterField && rowDelimiterField.value) || '\n',
+        replaceNewlineWithSpace: !!(
+          replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value
+        ),
+        replaceTabWithSpace: !!(
+          replaceTabWithSpaceField && replaceTabWithSpaceField.value
+        ),
+        wrapWithQuotes: !!(wrapWithQuotesField && wrapWithQuotesField.value),
+      };
+    } else if (
       fieldId === 'http.body' ||
       fieldId === 'http.bodyCreate' ||
       fieldId === 'http.bodyUpdate'
@@ -326,6 +366,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     dataMappings: { formId: 'dataMappings' },
+    formView: { fieldId: 'formView' },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -420,25 +461,6 @@ export default {
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.errorPath': { fieldId: 'http.response.errorPath' },
     'http.batchSize': { fieldId: 'http.batchSize' },
-    createNewData: {
-      id: 'createNewData',
-      type: 'labeltitle',
-      label: 'Create new data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'createandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodCreate': {
       id: 'http.compositeMethodCreate',
       type: 'select',
@@ -488,7 +510,6 @@ export default {
       arrayIndex: 1,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -567,7 +588,8 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for create',
+      label: 'HTTP request body',
+      helpKey: 'import.http.body',
       arrayIndex: 1,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -606,7 +628,6 @@ export default {
       id: 'http.failPathCreate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -704,7 +725,7 @@ export default {
       id: 'http.failPathUpdate',
       type: 'text',
       label: 'Fail path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -786,7 +807,7 @@ export default {
       id: 'http.resourceIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -871,7 +892,7 @@ export default {
       id: 'http.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -967,25 +988,6 @@ export default {
         return '';
       },
     },
-    upateExistingData: {
-      id: 'upateExistingData',
-      type: 'labeltitle',
-      label: 'Update existing data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandupdate', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
     'http.compositeMethodUpdate': {
       id: 'http.compositeMethodUpdate',
       type: 'select',
@@ -1031,7 +1033,7 @@ export default {
       arrayIndex: 0,
       connectionId: r => r && r._connectionId,
       label: 'Relative URI',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1102,7 +1104,8 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'Build HTTP request body for update',
+      label: 'HTTP request body',
+      helpKey: 'import.http.body',
       arrayIndex: 0,
       requestMediaType: r =>
         r && r.http ? r && r.http.requestMediaType : 'json',
@@ -1137,7 +1140,7 @@ export default {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1206,7 +1209,7 @@ export default {
       id: 'http.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1286,10 +1289,11 @@ export default {
         return '';
       },
     },
-    ignoreExistingData: {
-      id: 'ignoreExistingData',
-      type: 'labeltitle',
-      label: 'Ignore existing data',
+    'http.existingDataId': {
+      id: 'http.existingDataId',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
+      label: 'Existing data ID',
       visibleWhenAll: [
         {
           field: 'http.compositeType',
@@ -1304,49 +1308,10 @@ export default {
           is: ['records'],
         },
       ],
-    },
-    ignoreNewData: {
-      id: 'ignoreNewData',
-      type: 'labeltitle',
-      label: 'Ignore new data',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'http.existingDataId': {
-      id: 'http.existingDataId',
-      type: 'textwithflowsuggestion',
-      showSuggestionsWithoutHandlebar: true,
-      label: 'Existing data ID',
-      visibleWhenAll: [
-        {
-          field: 'http.compositeType',
-          is: ['createandignore', 'updateandignore'],
-        },
-        {
-          field: 'http.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
       requiredWhen: [
         {
           field: 'http.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
         },
       ],
       defaultValue: r => {
@@ -1363,16 +1328,44 @@ export default {
         return '';
       },
     },
-    mediatypeInformation: {
-      id: 'mediatypeInformation',
-      type: 'labeltitle',
-      label: 'Media type information',
-      visibleWhen: [
+    'http.update.existingDataId': {
+      id: 'http.update.existingDataId',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
+      label: 'Existing data ID',
+      visibleWhenAll: [
+        {
+          field: 'http.compositeType',
+          is: ['updateandignore'],
+        },
+        {
+          field: 'http.method',
+          is: ['COMPOSITE'],
+        },
         {
           field: 'inputMode',
           is: ['records'],
         },
       ],
+      requiredWhen: [
+        {
+          field: 'http.compositeType',
+          is: ['updateandignore'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.http) {
+          return '';
+        }
+
+        if (r.http.ignoreLookupName) {
+          return r.http.ignoreLookupName;
+        } else if (r.http.ignoreExtract) {
+          return r.http.ignoreExtract;
+        }
+
+        return '';
+      },
     },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
@@ -1392,6 +1385,66 @@ export default {
     },
     'file.csv': {
       fieldId: 'file.csv',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.includeHeader': {
+      fieldId: 'file.csv.includeHeader',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.columnDelimiter': {
+      fieldId: 'file.csv.columnDelimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.rowDelimiter': {
+      fieldId: 'file.csv.rowDelimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.replaceNewlineWithSpace': {
+      fieldId: 'file.csv.replaceNewlineWithSpace',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.replaceTabWithSpace': {
+      fieldId: 'file.csv.replaceTabWithSpace',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    'file.csv.wrapWithQuotes': {
+      fieldId: 'file.csv.wrapWithQuotes',
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },
         {
@@ -1440,7 +1493,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
       {
@@ -1460,47 +1513,93 @@ export default {
           'http.compositeType',
           'http.lookups',
           'http.relativeURI',
+          'http.batchSize',
           'http.body',
+          'uploadFile',
+          'file.csv',
+          'file.csv.includeHeader',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.replaceNewlineWithSpace',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.wrapWithQuotes',
+          'file.csv.customHeaderRows',
+          'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'http.compositeMethodCreate',
+              'http.relativeURICreate',
+              'http.requestTypeCreate',
+              'http.bodyCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore existing records',
+            fields: ['http.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore new data',
+            fields: ['http.update.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'http.compositeMethodUpdate',
+              'http.relativeURIUpdate',
+              'http.requestTypeUpdate',
+              'http.bodyUpdate',
+            ],
+          },
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: [
+          'http.response.resourcePath',
+          'http.response.resourceIdPath',
+          'http.response.errorPath',
           'http.response.successPath',
           'http.response.successValues',
           'http.response.failPath',
           'http.response.failValues',
-          'http.response.resourceIdPath',
-          'http.response.resourcePath',
-          'http.response.errorPath',
-          'http.batchSize',
-          'createNewData',
-          'http.compositeMethodCreate',
-          'http.relativeURICreate',
-          'http.requestTypeCreate',
-          'http.bodyCreate',
-          'http.successPathCreate',
-          'http.successValuesCreate',
-          'http.failPathCreate',
-          'http.failValuesCreate',
-          'http.resourceIdPathCreate',
-          'http.resourcePathCreate',
-          'upateExistingData',
-          'http.compositeMethodUpdate',
-          'http.relativeURIUpdate',
-          'http.requestTypeUpdate',
-          'http.bodyUpdate',
-          'http.successPathUpdate',
-          'http.successValuesUpdate',
-          'http.failPathUpdate',
-          'http.failValuesUpdate',
-          'http.resourceIdPathUpdate',
-          'http.resourcePathUpdate',
-          'ignoreExistingData',
-          'ignoreNewData',
-          'http.existingDataId',
-          'mediatypeInformation',
           'http.successMediaType',
           'http.errorMediaType',
-          'uploadFile',
-          'file.csv',
-          'file.csv.customHeaderRows',
-          'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'http.resourcePathCreate',
+              'http.resourceIdPathCreate',
+              'http.successPathCreate',
+              'http.successValuesCreate',
+              'http.failPathCreate',
+              'http.failValuesCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'http.resourcePathUpdate',
+              'http.resourceIdPathUpdate',
+              'http.successPathUpdate',
+              'http.successValuesUpdate',
+              'http.failPathUpdate',
+              'http.failValuesUpdate',
+            ],
+          },
         ],
       },
       {

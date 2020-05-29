@@ -39,12 +39,6 @@ export default {
 
       value.form = form;
 
-      if (!scriptId) {
-        // REVIEW: Hack to remove init values from BE. Giving empty init obj doesnt remove old values
-        value.init = {
-          function: '',
-        };
-      }
       // {
       //   fieldMap: {
       //     A: {

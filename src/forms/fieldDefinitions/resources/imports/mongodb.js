@@ -6,6 +6,8 @@ export default {
       { id: 'ignoreMissing', type: 'checkbox' },
       { id: 'mongodb.update', type: 'sqlquerybuilder' },
       { id: 'mongodb.document', type: 'sqlquerybuilder' },
+      { id: 'mongodb.lookupType', type: 'select' },
+      { id: 'mongodb.ignoreExtract', type: 'text' },
     ],
     label: 'Method',
     options: [

@@ -287,9 +287,6 @@ export default {
               'rest.headers',
               'rest.relativeURI',
               'rest.postBody',
-              'rest.resourcePath',
-              'rest.successPath',
-              'rest.successValues',
               'rest.blobFormat',
             ],
           },
@@ -322,6 +319,15 @@ export default {
               'rest.lastPageStatusCode',
               'rest.lastPagePath',
               'rest.lastPageValue',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Does this API have non-standard responses?',
+            fields: [
+              'rest.resourcePath',
+              'rest.successPath',
+              'rest.successValues',
             ],
           },
           {
