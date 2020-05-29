@@ -267,7 +267,7 @@ export default function DynaSQLQueryBuilder(props) {
           data-test={id}
           variant="outlined"
           onClick={handleEditorClick}>
-          Launch
+          {'Launch'}
         </Button>
       </div>
     </Fragment>
