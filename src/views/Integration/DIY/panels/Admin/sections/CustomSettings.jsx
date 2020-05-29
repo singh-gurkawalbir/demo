@@ -6,6 +6,7 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
+import { isJsonString } from '../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -52,6 +53,19 @@ export default function CustomSettings({ integrationId }) {
   useEffect(() => {
     setFormKey(formKey => formKey + 1);
   }, [settings]);
+  const validationHandler = field => {
+    // Incase of invalid json throws error to be shown on the field
+
+    if (field && field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Settings must be a valid JSON';
+    }
+  };
+
   const handleSubmit = useCallback(
     formVal => {
       // dont submit the form if there is validation error
@@ -88,6 +102,7 @@ export default function CustomSettings({ integrationId }) {
           fieldMeta={fieldMeta}
           resourceType="integrations"
           resourceId={integrationId}
+          validationHandler={validationHandler}
           key={formKey}>
           <DynaSubmit
             resourceType="integrations"
