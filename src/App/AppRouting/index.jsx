@@ -146,14 +146,7 @@ export default class AppRouting extends Component {
           ]}
           component={IntegrationAppUninstallation}
         />
-        <Route
-          path={[
-            '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
-            '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
-            '/pg/integrationapps/:integrationAppName/:integrationId',
-          ]}
-          component={IntegrationApp}
-        />
+
         <Route
           path={[
             '/pg/integrationapps/v2/:integrationAppName/:integrationId/child/:storeId/:tab',
@@ -161,6 +154,14 @@ export default class AppRouting extends Component {
             '/pg/integrationapps/v2/:integrationAppName/:integrationId',
           ]}
           component={IntegrationAppV2}
+        />
+        <Route
+          path={[
+            '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
+            '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
+            '/pg/integrationapps/:integrationAppName/:integrationId',
+          ]}
+          component={IntegrationApp}
         />
         <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name

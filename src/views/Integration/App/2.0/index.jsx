@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
@@ -34,6 +34,7 @@ import getRoutePath from '../../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import integrationAppUtil from '../../../../utils/integrationApps';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const allTabs = [
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
@@ -113,17 +114,29 @@ export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { integrationAppName, integrationId, storeId, tab } = match.params;
-  // TODO: Note this selector should return undefined/null if no
-  // integration exists. not a stubbed out complex object.
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
+  const childIntegrationsFilterConfig = {
+    type: 'integrations',
+    filter: { _parentId: integrationId },
+  };
+  const { _id: _integrationId, _connectorId, name, mode, tag, description } =
+    useSelector(state =>
+      selectors.integrationAppSettings(state, integrationId)
+    ) || {};
+  const defaultStoreId = integrationId;
+  const stores = useSelector(
+    state => selectors.integrationAppChildren(state, integrationId),
+    shallowEqual
   );
-  const defaultStoreId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId, storeId)
-  );
-  const currentStore = useSelector(state =>
-    selectors.integrationAppStore(state, integrationId, storeId)
-  );
+  const childIntegrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    childIntegrationsFilterConfig
+  ).resources;
+  const supportsMultiStore = !!childIntegrations.length;
+  const currentStoreMode = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', storeId);
+
+    return integration && integration.mode;
+  });
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
@@ -143,12 +156,10 @@ export default function IntegrationApp({ match, history }) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
-  const isCloningSupported =
-    integration &&
-    integrationAppUtil.isCloningSupported(
-      integration._connectorId,
-      integration.name
-    );
+  const isCloningSupported = integrationAppUtil.isCloningSupported(
+    _connectorId,
+    name
+  );
   //
   //
   // TODO: All the code below should be moved into the data layer.
@@ -252,7 +263,7 @@ export default function IntegrationApp({ match, history }) {
       // Redirect to current tab of new store
       history.push(
         getRoutePath(
-          `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+          `integrationapps/v2/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
         )
       );
     },
@@ -260,18 +271,18 @@ export default function IntegrationApp({ match, history }) {
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(
-      `/pg/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
+      `/pg/integrationapps/v2/${integrationAppName}/${integrationId}/install/addNewStore`
     );
   }, [history, integrationAppName, integrationId]);
 
   // There is no need for further processing if no integration
   // is returned. Most likely case is that there is a pending IO
   // call for integrations.
-  if (!integration || !integration._id) {
+  if (!_integrationId) {
     return <LoadResources required resources="integrations" />;
   }
 
-  const { supportsMultiStore, storeLabel } = integration.settings || {};
+  const storeLabel = 'Child';
 
   // To support breadcrumbs, and also to have a more robust url interface,
   // we want to "self-heal" partial urls hitting this page.  If an integration app
@@ -283,7 +294,7 @@ export default function IntegrationApp({ match, history }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
+          to={`/pg/integrationapps/v2/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
             'flows'}`}
         />
       );
@@ -298,8 +309,8 @@ export default function IntegrationApp({ match, history }) {
         push={false}
         to={
           supportsMultiStore
-            ? `/pg/integrationapps/${integrationAppName}/${integrationId}/child/${storeId}/flows`
-            : `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+            ? `/pg/integrationapps/v2/${integrationAppName}/${integrationId}/child/${storeId}/flows`
+            : `/pg/integrationapps/v2/${integrationAppName}/${integrationId}/flows`
         }
       />
     );
@@ -307,19 +318,19 @@ export default function IntegrationApp({ match, history }) {
 
   let redirectToPage;
 
-  if (currentStore.mode === 'install') {
+  if (currentStoreMode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
     );
-  } else if (currentStore.mode === 'uninstall') {
+  } else if (currentStoreMode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
     );
-  } else if (integration.mode === 'install') {
+  } else if (mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );
-  } else if (integration.mode === 'uninstall') {
+  } else if (mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
         storeId ? `/${storeId}` : ''
@@ -338,21 +349,21 @@ export default function IntegrationApp({ match, history }) {
       <ResourceDrawer />
       <QueuedJobsDrawer />
       <CeligoPageBar
-        title={integration.name}
+        title={name}
         titleTag={
           <ChipInput
             disabled={!['owner', 'manage'].includes(accessLevel)}
-            value={integration.tag || 'tag'}
+            value={tag || 'tag'}
             className={classes.tag}
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
         }
-        infoText={integration.description}>
-        {isCloningSupported && integration && !supportsMultiStore && (
+        infoText={description}>
+        {isCloningSupported && !supportsMultiStore && (
           <IconTextButton
             component={Link}
-            to={getRoutePath(`/clone/integrations/${integration._id}/preview`)}
+            to={getRoutePath(`/clone/integrations/${_integrationId}/preview`)}
             variant="text"
             data-test="cloneIntegrationApp">
             <CopyIcon /> Clone integration
@@ -379,7 +390,7 @@ export default function IntegrationApp({ match, history }) {
                 Select {storeLabel}
               </MenuItem>
 
-              {integration.stores.map(s => (
+              {stores.map(s => (
                 <MenuItem key={s.value} value={s.value}>
                   {s.label}
                 </MenuItem>

@@ -1494,6 +1494,23 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   };
 }
 
+export function integrationAppChildren(state, integrationId) {
+  if (!state) return null;
+  const children = [];
+  const integration = resource(state, 'integrations', integrationId) || {};
+  const childIntegrations = resourceList(state, {
+    type: 'integrations',
+    filter: { _parentId: integrationId },
+  }).resources;
+
+  children.push({ value: integrationId, label: integration.name });
+  childIntegrations.forEach(ci => {
+    children.push({ value: ci._id, label: ci.name });
+  });
+
+  return children;
+}
+
 export function integrationAppSettings(state, id) {
   if (!state) return null;
 
