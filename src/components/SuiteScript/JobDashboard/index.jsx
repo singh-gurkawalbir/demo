@@ -151,21 +151,18 @@ export default function JobDashboard({
           total += 1;
         }
 
-        if (job.children && job.children.length > 0) {
-          job.children.forEach(cJob => {
-            if (cJob.numError) {
-              // eslint-disable-next-line no-param-reassign
-              total += 1;
-            }
-          });
-        }
-
         return total;
       }, 0);
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, integrationId }));
+    dispatch(
+      actions.suiteScript.job.resolveAll({
+        flowId: selectedFlowId,
+        integrationId,
+        ssLinkedConnectionId,
+      })
+    );
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
       showUndo: true,
@@ -173,17 +170,19 @@ export default function JobDashboard({
       handleClose(event, reason) {
         if (reason === 'undo') {
           return dispatch(
-            actions.job.resolveAllUndo({
+            actions.suiteScript.job.resolveAllUndo({
               flowId: selectedFlowId,
               integrationId,
+              ssLinkedConnectionId,
             })
           );
         }
 
         dispatch(
-          actions.job.resolveAllCommit({
+          actions.suiteScript.job.resolveAllCommit({
             flowId: selectedFlowId,
             integrationId,
+            ssLinkedConnectionId,
           })
         );
         setActionsToMonitor({
@@ -204,6 +203,7 @@ export default function JobDashboard({
     flowId,
     integrationId,
     jobs,
+    ssLinkedConnectionId,
   ]);
   const resolveSelectedJobs = useCallback(() => {
     const jobsToResolve = [];
@@ -374,13 +374,9 @@ export default function JobDashboard({
         resolveAllJobs();
       } else if (action === 'resolveSelected') {
         resolveSelectedJobs();
-      } else if (action === 'retryAll') {
-        retryAllJobs();
-      } else if (action === 'retrySelected') {
-        retrySelectedJobs();
       }
     },
-    [resolveAllJobs, resolveSelectedJobs, retryAllJobs, retrySelectedJobs]
+    [resolveAllJobs, resolveSelectedJobs]
   );
   const handleCommsStatus = useCallback(
     objStatus => {

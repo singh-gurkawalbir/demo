@@ -279,6 +279,10 @@ export function* resolveJobExports({
     return true;
   }
 
+  if (!jobIdsToResolve || !jobIdsToResolve.length) {
+    return true;
+  }
+
   yield all(
     jobIdsToResolve.map(jobId =>
       call(getJob, {
@@ -317,6 +321,10 @@ export function* resolveJobImports({
   try {
     yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
+    return true;
+  }
+
+  if (!jobIdsToResolve || !jobIdsToResolve.length) {
     return true;
   }
 
@@ -455,6 +463,54 @@ export function* resolveSelected({
   }
 }
 
+export function* resolveAllCommit({
+  ssLinkedConnectionId,
+  integrationId,
+  flowId,
+}) {
+  yield all([
+    call(resolveJobExports, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+    }),
+    call(resolveJobImports, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+    }),
+    call(resolveLogs, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+    }),
+  ]);
+}
+
+export function* resolveAll({ ssLinkedConnectionId, integrationId, flowId }) {
+  yield put(actions.suiteScript.job.resolveAllPending());
+
+  yield put(actions.suiteScript.job.resolveAllInit());
+  const undoOrCommitAction = yield take([
+    actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_COMMIT,
+    actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO,
+    actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_PENDING,
+  ]);
+
+  if (
+    [
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_COMMIT,
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_PENDING,
+    ].includes(undoOrCommitAction.type)
+  ) {
+    yield call(resolveAllCommit, {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+    });
+  }
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION, getJobCollection),
   takeEvery(actionTypes.SUITESCRIPT.JOB.REQUEST, getJob),
@@ -468,4 +524,5 @@ export const jobSagas = [
     resolveSelectedErrors
   ),
   takeEvery(actionTypes.SUITESCRIPT.JOB.RESOLVE_SELECTED, resolveSelected),
+  takeEvery(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL, resolveAll),
 ];

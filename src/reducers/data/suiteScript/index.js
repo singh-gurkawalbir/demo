@@ -2,6 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { SUITESCRIPT_CONNECTORS, emptyObject } from '../../../utils/constants';
 import { parseJobs } from './util';
+import { actionChannel } from 'redux-saga-test-plan/matchers';
 
 const emptyList = [];
 
@@ -24,6 +25,10 @@ export default (
       actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR,
       actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION,
       actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT,
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT,
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO,
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT,
+      actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO,
     ].includes(type) &&
     !resourceType
   ) {
@@ -86,7 +91,7 @@ export default (
         break;
 
       case actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR:
-        draft.jobErrors = emptyList;
+        draft.jobErrors = undefined;
         break;
 
       case actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION:
@@ -316,6 +321,26 @@ export default (
         }
 
         break;
+      case actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO:
+        {
+          const { jobId, jobType } = action;
+          const jobIndex = state.jobs.findIndex(
+            j => j._id === jobId && j.type === jobType
+          );
+
+          if (jobIndex > -1) {
+            let job = { ...state.jobs[jobIndex] };
+            const { __original, ...rest } = job;
+
+            job = {
+              ...rest,
+              numError: __original ? __original.numError : 0,
+            };
+            draft.jobs[jobIndex] = job;
+          }
+        }
+
+        break;
       default:
     }
   });
@@ -533,8 +558,8 @@ export function hasData(
 }
 
 export function jobErrors(state, { jobId, jobType }) {
-  if (!state || !state.jobErrors || !state.jobErrors.length) {
-    return emptyList;
+  if (!state || !state.jobErrors) {
+    return undefined;
   }
 
   if (

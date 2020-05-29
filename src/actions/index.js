@@ -1973,23 +1973,21 @@ const suiteScript = {
         flowId,
         jobs,
       }),
-    resolveAll: ({ flowId, integrationId }) =>
+    resolveAll: ({ flowId, integrationId, ssLinkedConnectionId }) =>
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL, {
         flowId,
         integrationId,
+        ssLinkedConnectionId,
       }),
-    resolveInit: ({ parentJobId, childJobId }) =>
-      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, {
-        parentJobId,
-        childJobId,
-      }),
+    resolveInit: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, job),
     resolveAllInit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT),
-    resolveUndo: ({ parentJobId, childJobId }) =>
-      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, {
-        parentJobId,
-        childJobId,
+    resolveUndo: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, job),
+    resolveAllUndo: ({ flowId, integrationId, ssLinkedConnectionId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO, {
+        flowId,
+        integrationId,
+        ssLinkedConnectionId,
       }),
-    resolveAllUndo: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO),
     resolveCommit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_COMMIT),
     resolveAllCommit: () =>
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_COMMIT),

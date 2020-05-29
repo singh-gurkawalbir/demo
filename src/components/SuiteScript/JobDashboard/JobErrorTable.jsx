@@ -88,16 +88,16 @@ function JobErrorTable({
   const selectedErrorIds = Object.keys(selectedErrors).filter(
     jobErrorId => !!selectedErrors[jobErrorId]
   );
-  const hasUnresolvedErrors = jobErrors.filter(je => !je.resolved).length > 0;
-  const jobErrorsInCurrentPage = jobErrors.slice(
+  const hasUnresolvedErrors = jobErrors && jobErrors.filter(je => !je.resolved).length > 0;
+  const jobErrorsInCurrentPage = jobErrors ? jobErrors.slice(
     currentPage * rowsPerPage,
     (currentPage + 1) * rowsPerPage
-  );
+  ) : [];
   const hasUnresolvedErrorsInCurrentPage =
     jobErrorsInCurrentPage.filter(je => !je.resolved).length > 0;
-  const numSelectedResolvableErrors = jobErrors.filter(
+  const numSelectedResolvableErrors = jobErrors ? jobErrors.filter(
     je => selectedErrorIds.includes(je._id) && !je.resolved
-  ).length;
+  ).length : 0;
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
@@ -129,9 +129,7 @@ function JobErrorTable({
           if (reason === 'undo') {
             jobsToResolve.forEach(job =>
               dispatch(
-                actions.suiteScript.job.resolveUndo({
-                  _id: job._id,
-                })
+                actions.suiteScript.job.resolveUndo(job)
               )
             );
 
@@ -186,7 +184,7 @@ function JobErrorTable({
           </span>
         </li>
       </ul>
-      {jobErrorsInCurrentPage.length === 0 ? (
+      {!jobErrors ? (
         <div className={classes.spinner}>
           <Spinner size={20} /> <span>Loading errors...</span>
         </div>
