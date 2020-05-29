@@ -20,13 +20,10 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(0, 0, 0, 3),
     display: 'flex',
   },
-  buttonGroup: {
-    '& button': { marginRight: theme.spacing(1) },
-  },
+
   // TODO:check for better way to handle width when drawer open and closes
   fullWidthDrawerClose: {
     width: 'calc(100% - 60px)',

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import clsx from 'clsx';
 import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
@@ -57,6 +58,7 @@ export default function DrawerTitleBar({
   addCategory,
   parentUrl,
   help,
+  className,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -78,7 +80,7 @@ export default function DrawerTitleBar({
   };
 
   return (
-    <div className={classes.titleBar}>
+    <div className={clsx(classes.titleBar, className)}>
       <LoadResources required resources="flows">
         <Typography variant="h3" className={classes.title}>
           {title ||
