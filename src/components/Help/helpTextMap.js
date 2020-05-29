@@ -2100,9 +2100,9 @@ export default {
   'hooks.scriptContent':
     'Edit your script in the pane below, or expand the view by using the control. Your script should be valid JavaScript and may contain multiple functions that can be used across a range of flows within your account.',
   'file.csvGenerate':
-    'The CSV generator helper can be used to visualize and experiment with how integrator.io builds CSV files (or any other delimited text files) from the JSON records/rows being processed by your flow.',
+    'The CSV generator helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> builds CSV files (or any other delimited text files) from the JSON records/rows being processed by your flow.',
   'file.csvParse':
-    'The CSV parser helper can be used to visualize and experiment with how integrator.io parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
+    'The CSV parser helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
     'This resource can be invoked via an HTTP POST request to this unique url.',
   oneToMany:
