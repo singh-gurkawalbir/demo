@@ -517,6 +517,7 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    helpKey: 'http.body',
     visibleWhenAll: [
       {
         field: 'outputMode',

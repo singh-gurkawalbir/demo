@@ -14,11 +14,11 @@ export default {
       {
         items: [
           {
-            label: 'InsertMany',
+            label: 'Insert many',
             value: 'insertMany',
           },
           {
-            label: 'UpdateOne',
+            label: 'Update one',
             value: 'updateOne',
           },
         ],
@@ -50,7 +50,7 @@ export default {
             value: 'source',
           },
           {
-            label: 'Run a dynamic search against Mongodb',
+            label: 'Run a dynamic search against MongoDB',
             value: 'lookup',
           },
         ],
@@ -71,9 +71,9 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch query builder',
+    label: 'Query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB Data Builder',
+    title: 'MongoDB query builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -100,7 +100,8 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
