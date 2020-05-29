@@ -260,19 +260,15 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
+        fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {

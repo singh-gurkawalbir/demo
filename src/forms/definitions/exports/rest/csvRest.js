@@ -105,16 +105,12 @@ export default {
         },
       ],
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: ['common', 'outputMode'],
+    fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
-      },
       {
         collapsed: true,
         label: r => {

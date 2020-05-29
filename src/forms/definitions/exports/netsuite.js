@@ -485,14 +485,14 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'netsuite.execution.type'],
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'netsuite.execution.type',
+        ],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {
