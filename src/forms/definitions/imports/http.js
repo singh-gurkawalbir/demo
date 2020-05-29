@@ -588,7 +588,7 @@ export default {
       id: 'http.bodyCreate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'HTTP request body',
+      label: 'Build HTTP request body',
       helpKey: 'import.http.body',
       arrayIndex: 1,
       requestMediaType: r =>
@@ -1104,7 +1104,7 @@ export default {
       id: 'http.bodyUpdate',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'HTTP request body',
+      label: 'Build HTTP request body',
       helpKey: 'import.http.body',
       arrayIndex: 0,
       requestMediaType: r =>

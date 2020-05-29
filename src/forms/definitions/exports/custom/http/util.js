@@ -271,6 +271,7 @@ export function fieldMeta({ resource, assistantData }) {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+    formView: { fieldId: 'formView' },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -307,14 +308,9 @@ export function fieldMeta({ resource, assistantData }) {
       type: 'column',
       containers: [
         {
-          fields: ['common'],
+          fields: ['common', 'exportOneToMany', 'formView'],
           type: 'collapse',
           containers: [
-            {
-              collapsed: true,
-              label: 'How should this export be parameterized?',
-              fields: ['exportOneToMany'],
-            },
             {
               collapsed: true,
               label: 'What would you like to export?',

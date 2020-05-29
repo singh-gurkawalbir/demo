@@ -243,7 +243,7 @@ export default {
   'netsuite.internalId': {
     type: 'text',
     required: true,
-    label: 'Internal ID',
+    label: 'File internal id',
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',

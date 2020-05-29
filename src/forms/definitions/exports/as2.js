@@ -135,14 +135,9 @@ export default {
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
-    fields: ['common'],
+    fields: ['common', 'exportOneToMany'],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
-      },
       {
         collapsed: true,
         label: 'How would you like to parse files?',

@@ -41,7 +41,7 @@ export default {
   },
   'rest.postBody': {
     type: 'httprequestbody',
-    label: 'HTTP request body',
+    label: 'Build HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
     required: true,
@@ -364,6 +364,6 @@ export default {
         is: ['records'],
       },
     ],
-    label: 'HTTP request body',
+    label: 'Build HTTP request body',
   },
 };

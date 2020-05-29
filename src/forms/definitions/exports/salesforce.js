@@ -299,14 +299,14 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'salesforce.executionType'],
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'salesforce.executionType',
+        ],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {

@@ -27,7 +27,7 @@ const editors = [
   },
   {
     name: 'HttpRequestBodyEditor',
-    label: 'Http request body',
+    label: 'Build HTTP request body',
     description:
       'This editor lets you create and test json or xml templates against your raw data.',
   },

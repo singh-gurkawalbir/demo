@@ -113,7 +113,7 @@ export default {
   'http.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'HTTP request body',
+    label: 'Build HTTP request body',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
@@ -516,7 +516,7 @@ export default {
   'http.once.body': {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
-    label: 'HTTP request body',
+    label: 'Build HTTP request body',
     visibleWhenAll: [
       {
         field: 'outputMode',

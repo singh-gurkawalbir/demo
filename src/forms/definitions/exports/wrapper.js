@@ -77,14 +77,9 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common'],
+    fields: ['common', 'exportOneToMany'],
     type: 'collapse',
     containers: [
-      {
-        collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
-      },
       {
         collapsed: true,
         label: 'What would you like to export?',
