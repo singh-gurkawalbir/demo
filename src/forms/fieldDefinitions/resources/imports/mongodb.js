@@ -73,7 +73,7 @@ export default {
     hideDefaultData: true,
     label: 'Query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB query Builder',
+    title: 'MongoDB query builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
