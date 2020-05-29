@@ -100,7 +100,8 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
