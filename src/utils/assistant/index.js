@@ -1145,6 +1145,10 @@ export function convertToReactFormFields({
         readOnly: !!field.readOnly,
       };
 
+      if (fieldDef.readOnly) {
+        fieldDef.defaultDisabled = true;
+      }
+
       if (fieldDef.type === 'textwithflowsuggestion') {
         fieldDef.showLookup = false;
       }
