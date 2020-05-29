@@ -95,7 +95,7 @@ export default function DynaNSSearchCriteria(props) {
           color="secondary"
           className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
-          Configure
+          Launch
         </Button>
         {/* TODO (Aditya): we need to add the helptext for the upload file */}
 

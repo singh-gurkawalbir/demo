@@ -25,10 +25,10 @@ function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, fileType, name } = uploadedFile || {};
+    const { status, file, fileType } = uploadedFile || {};
 
     if (status === 'received') {
-      setFileName(`${DEFAULT_PLACEHOLDER} (${name})`);
+      setFileName(DEFAULT_PLACEHOLDER);
       onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(

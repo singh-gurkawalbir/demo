@@ -131,7 +131,7 @@ export default function DynaCsvParse(props) {
           color="secondary"
           className={classes.csvBtn}
           onClick={handleEditorClick}>
-          Configure
+          Launch
         </Button>
         <FieldHelp {...props} helpKey={helpKey} />
       </div>

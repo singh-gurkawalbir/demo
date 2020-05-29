@@ -198,7 +198,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate files from records',
+      label: 'Generate files from records:',
       helpKey: 'import.inputMode',
       options: [
         {
@@ -256,7 +256,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'dataMappings', 'inputMode'],
     type: 'collapse',
     containers: [
       {

@@ -299,6 +299,7 @@ export default {
       visibleWhenAll: [
         { field: 'netsuite.api.type', is: ['restlet'] },
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     'netsuite.webservices.criteria': {
@@ -306,6 +307,7 @@ export default {
       visibleWhenAll: [
         { field: 'netsuite.api.type', is: ['search'] },
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     skipRetries: {
@@ -480,19 +482,23 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
     },
+    'netsuite.blob.purgeFileAfterExport': {
+      fieldId: 'netsuite.blob.purgeFileAfterExport',
+      visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
+    },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'netsuite.execution.type'],
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'netsuite.execution.type',
+        ],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {
@@ -536,6 +542,7 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
+              'netsuite.blob.purgeFileAfterExport',
               'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
               'skipRetries',

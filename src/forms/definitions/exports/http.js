@@ -375,20 +375,16 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
 
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
+        fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {
@@ -443,7 +439,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Does this API have non-standard responses?',
+            label: 'Non-standard API response patterns',
             fields: [
               'http.response.resourcePath',
               'http.response.errorPath',

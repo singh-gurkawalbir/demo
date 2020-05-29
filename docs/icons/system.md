@@ -16,6 +16,7 @@ const CalendarIcon = require('../../src/components/icons/CalendarIcon').default;
 const CancelIcon = require('../../src/components/icons/CancelIcon').default;
 const CheckboxUnselectedIcon = require('../../src/components/icons/CheckboxUnselectedIcon').default;
 const CheckboxSelectedIcon = require('../../src/components/icons/CheckboxSelectedIcon').default;
+const CheckmarkIcon = require('../../src/components/icons/CheckmarkIcon').default;
 const ConditionalIcon = require('../../src/components/icons/ConditionalIcon').default;
 const CloseIcon = require('../../src/components/icons/CloseIcon').default;
 const CopyIcon = require('../../src/components/icons/CopyIcon').default;
@@ -31,6 +32,7 @@ const DashboardIcon = require('../../src/components/icons/DashboardIcon').defaul
 const DebugIcon = require('../../src/components/icons/DebugIcon').default;
 const DownloadIcon = require('../../src/components/icons/DownloadIcon').default;
 const DownloadIntegrationIcon = require('../../src/components/icons/DownloadIntegrationIcon').default;
+const DiamondIcon = require('../../src/components/icons/DiamondIcon').default;
 const EditIcon = require('../../src/components/icons/EditIcon').default;
 const EditScriptIcon = require('../../src/components/icons/EditScriptIcon').default;
 const EditorsPlaygroundIcon = require('../../src/components/icons/EditorsPlaygroundIcon').default;
@@ -48,6 +50,7 @@ const FullScreenOpenIcon = require('../../src/components/icons/FullScreenOpenIco
 const FullScreenCloseIcon = require('../../src/components/icons/FullScreenCloseIcon').default;
 const GettingStartedIcon = require('../../src/components/icons/GettingStartedIcon').default;
 const GroupOfUsersIcon = require('../../src/components/icons/GroupOfUsersIcon').default;
+const GraphIcon = require('../../src/components/icons/GraphIcon').default;
 const GripperIcon = require('../../src/components/icons/GripperIcon').default;
 const GeneralIcon = require('../../src/components/icons/GeneralIcon').default;
 const HelpIcon = require('../../src/components/icons/HelpIcon').default;
@@ -81,6 +84,7 @@ const PurgeIcon = require('../../src/components/icons/PurgeIcon').default;
 const PreferredIcon = require('../../src/components/icons/PreferredIcon').default;
 const PermissionsMonitorIcon = require('../../src/components/icons/PermissionsMonitorIcon').default;
 const PermissionExplorerIcon = require('../../src/components/icons/PermissionExplorerIcon').default;
+const PentagonIcon = require('../../src/components/icons/PentagonIcon').default;
 const RadioBtnSelectedIcon = require('../../src/components/icons/RadioBtnSelectedIcon').default;
 const RadioBtnUnselectedIcon = require('../../src/components/icons/RadioBtnUnselectedIcon').default;
 const ResourcesIcon = require('../../src/components/icons/ResourcesIcon').default;
@@ -103,6 +107,8 @@ const SettingsIcon = require('../../src/components/icons/SettingsIcon').default;
 const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
 const SingleUserIcon = require('../../src/components/icons/SingleUserIcon').default;
+const SquareIcon = require('../../src/components/icons/SquareIcon').default;
+const StarIcon = require('../../src/components/icons/StarIcon').default;
 const TransferOrderIcon = require('../../src/components/icons/TransferOrderIcon').default;
 const ToolsIcon = require('../../src/components/icons/ToolsIcon').default;
 const TokensApiIcon = require('../../src/components/icons/TokensApiIcon').default;
@@ -111,12 +117,15 @@ const TransferDownIcon = require('../../src/components/icons/TransferDownIcon').
 const TransferUpIcon = require('../../src/components/icons/TransferUpIcon').default;
 const TrashIcon = require('../../src/components/icons/TrashIcon').default;
 const TransfersIcon = require('../../src/components/icons/TransfersIcon').default;
+const TriangleIcon = require('../../src/components/icons/TriangleIcon').default;
 const UnlockIcon = require('../../src/components/icons/UnlockIcon').default;
 const UnlinkedIcon = require('../../src/components/icons/UnlinkedIcon').default;
 const UploadIcon = require('../../src/components/icons/UploadIcon').default;
 const UnpublishedIcon = require('../../src/components/icons/UnpublishedIcon').default;
 const UniversityIcon = require('../../src/components/icons/UniversityIcon').default;
 const ViewReferencesIcon = require('../../src/components/icons/ViewReferencesIcon').default;
+const ViewResolvedHistoryIcon = require('../../src/components/icons/ViewResolvedHistoryIcon').default;
+const ViewDetailsIcon = require('../../src/components/icons/ViewDetailsIcon').default;
 const WarningIcon = require('../../src/components/icons/WarningIcon').default;
 const WhatsNewIcon = require('../../src/components/icons/WhatsNewIcon').default;
 
@@ -204,6 +213,10 @@ const icon = {
       <CheckboxSelectedIcon style={icon} />
       <p>CheckboxSelected</p>
     </div>
+       <div style={wrapper}>
+        <CheckmarkIcon style={icon}/>
+        <p>Checkmark</p>
+    </div>
     <div style={wrapper}>
       <ConditionalIcon style={icon} />
       <p>Conditional</p>
@@ -259,6 +272,10 @@ const icon = {
     <div style={wrapper}>
       <DownloadIntegrationIcon style={icon} />
       <p>DownloadIntegration</p>
+    </div>
+     <div style={wrapper}>
+        <DiamondIcon style={icon}/>
+        <p>Diamond</p>
     </div>
      <div style={wrapper}>
       <EditIcon style={icon} />
@@ -327,6 +344,10 @@ const icon = {
     <div style={wrapper}>
       <GroupOfUsersIcon style={icon} />
       <p>GroupOfUsers</p>
+    </div>
+    <div style={wrapper}>
+        <GraphIcon style={icon}/>
+        <p>Graph</p>
     </div>
      <div style={wrapper}>
       <GripperIcon style={icon} />
@@ -462,6 +483,10 @@ const icon = {
       <PermissionExplorerIcon style={icon} />
       <p>PermissionExplorer</p>
     </div>
+      <div style={wrapper}>
+        <PentagonIcon style={icon}/>
+        <p>Pentagon</p>
+    </div>
     <div style={wrapper}>
       <RadioBtnSelectedIcon style={icon} />
       <p>RadioBtnSelected</p>
@@ -550,6 +575,14 @@ const icon = {
       <SingleUserIcon style={icon} />
       <p>SingleUser</p>
     </div>
+     <div style={wrapper}>
+        <SquareIcon style={icon}/>
+        <p>Square</p>
+    </div>
+     <div style={wrapper}>
+        <StarIcon style={icon}/>
+        <p>Star</p>
+    </div>
     <div style={wrapper}>
       <TransferOrderIcon style={icon} />
       <p>TransferOrder</p>
@@ -586,6 +619,10 @@ const icon = {
       <TransfersIcon style={icon} />
       <p>Transfers</p>
     </div>
+     <div style={wrapper}>
+        <TriangleIcon style={icon}/>
+        <p>Traingle</p>
+    </div>
     <div style={wrapper}>
       <UploadIcon style={icon} />
       <p>Upload</p>
@@ -609,6 +646,14 @@ const icon = {
     <div style={wrapper}>
       <ViewReferencesIcon style={icon} />
       <p>ViewReferences</p>
+    </div>
+     <div style={wrapper}>
+        <ViewResolvedHistoryIcon style={icon}/>
+        <p>ViewResolvedHistory</p>
+    </div>
+     <div style={wrapper}>
+        <ViewDetailsIcon style={icon}/>
+        <p> ViewDetails</p>
     </div>
     <div style={wrapper}>
       <WarningIcon style={icon} />

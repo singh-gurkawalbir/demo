@@ -208,7 +208,7 @@ function DynaFileDefinitionEditor(props) {
             color="secondary"
             className={classes.fileDefinitionBtn}
             onClick={handleEditorClick}>
-            Configure
+            Launch
           </Button>
           {/* TODO: surya we need to add the helptext for the upload file */}
           <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
