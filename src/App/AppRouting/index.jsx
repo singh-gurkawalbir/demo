@@ -46,6 +46,11 @@ const Integration = loadable(() =>
 const IntegrationApp = loadable(() =>
   import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration/App')
 );
+const IntegrationAppV2 = loadable(() =>
+  import(
+    /* webpackChunkName: 'IntegrationApp' */ '../../views/Integration/App/2.0'
+  )
+);
 const AccessTokenList = loadable(() =>
   import(
     /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
@@ -111,9 +116,11 @@ export default class AppRouting extends Component {
         <Route
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
             '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId/dataLoader/:flowId',
             '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
@@ -146,6 +153,14 @@ export default class AppRouting extends Component {
             '/pg/integrationapps/:integrationAppName/:integrationId',
           ]}
           component={IntegrationApp}
+        />
+        <Route
+          path={[
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId/child/:storeId/:tab',
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId/:tab',
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId',
+          ]}
+          component={IntegrationAppV2}
         />
         <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
