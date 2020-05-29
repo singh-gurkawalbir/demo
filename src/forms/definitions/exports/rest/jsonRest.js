@@ -319,7 +319,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Does this API have non-standard responses?',
+            label: 'Non-standard API response patterns',
             fields: [
               'rest.resourcePath',
               'rest.successPath',

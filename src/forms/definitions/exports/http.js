@@ -439,7 +439,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Does this API have non-standard responses?',
+            label: 'Non-standard API response patterns',
             fields: [
               'http.response.resourcePath',
               'http.response.errorPath',
