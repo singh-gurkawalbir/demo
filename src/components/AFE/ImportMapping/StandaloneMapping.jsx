@@ -1,6 +1,5 @@
 import { useMemo, useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
@@ -9,21 +8,7 @@ import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
 import Spinner from '../../Spinner';
-
-const useStyles = makeStyles({
-  spinnerWrapper: {
-    // Todo (Azhar) :spinner wrapper used multiple times so in the next phase will make component
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    margin: 'auto',
-  },
-});
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 export default function StandaloneMapping(props) {
   const {
@@ -35,7 +20,6 @@ export default function StandaloneMapping(props) {
     disabled,
     onClose,
   } = props;
-  const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
@@ -412,9 +396,9 @@ export default function StandaloneMapping(props) {
 
   if (!showMappings || isFetchingDuringInit) {
     return (
-      <div className={classes.spinnerWrapper}>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
     );
   }
 

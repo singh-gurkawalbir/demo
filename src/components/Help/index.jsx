@@ -8,11 +8,12 @@ import HelpContent from '../HelpContent';
 import HelpIcon from '../../components/icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpIcon: {
     fontSize: 18,
+    color: theme.palette.text.hint,
   },
-});
+}));
 
 function Help(props) {
   const classes = useStyles();

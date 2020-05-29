@@ -82,6 +82,11 @@ const useStyles = makeStyles(theme => ({
   topHeading: {
     fontFamily: 'Roboto500',
   },
+  importMappingButtonGroup: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    width: '100%',
+    padding: '16px 0px',
+  },
 }));
 const emptyMappingRow = {};
 
@@ -454,10 +459,14 @@ export default function ImportMapping(props) {
             isDraggable={false}
           />
         </div>
-        <ButtonGroup>
+        <ButtonGroup
+          className={clsx({
+            [classes.importMappingButtonGroup]: showPreviewPane,
+          })}>
           {showPreviewPane && (
             <Button
-              variant="text"
+              variant="outlined"
+              color="primary"
               data-test="preview"
               disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>

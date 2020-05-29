@@ -23,7 +23,7 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    overflowX: 'auto',
+    overflow: 'visible',
   },
   table: {
     minWidth: 700,
