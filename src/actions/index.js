@@ -1276,6 +1276,11 @@ const resourceForm = {
       skipCommit,
       flowId,
     }),
+  initFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT_FAILED, {
+      resourceId,
+      resourceType,
+    }),
   clearInitData: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
       resourceId,
