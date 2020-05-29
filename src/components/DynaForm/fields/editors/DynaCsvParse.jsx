@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,6 +6,7 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 import FieldHelp from '../../FieldHelp';
+import DynaUploadFile from '../DynaUploadFile';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -29,13 +30,14 @@ export default function DynaCsvParse(props) {
   const {
     id,
     onFieldChange,
-    value = {},
     label,
     resourceId,
     resourceType,
     disabled,
     helpKey,
+    options = {},
   } = props;
+  const { uploadSampleDataFieldName, fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
@@ -64,62 +66,113 @@ export default function DynaCsvParse(props) {
 
     return { csvData: rawData && rawData.body };
   });
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleClose = (shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       const {
-        columnDelimiter,
-        rowDelimiter,
-        hasHeaderRow,
-        keyColumns,
-        rowsToSkip,
-        trimSpaces,
-      } = editorValues;
-      const savedVal = {
-        columnDelimiter,
-        rowDelimiter,
-        hasHeaderRow,
-        keyColumns,
-        trimSpaces,
-      };
+        rowsToSkip: rowsToSkipField,
+        keyColumns: keyColumnsField,
+        ...otherFields
+      } = fields;
 
-      if (Number.isInteger(rowsToSkip)) {
-        savedVal.rowsToSkip = rowsToSkip;
+      Object.keys(otherFields).forEach(key => {
+        onFieldChange(`file.csv.${key}`, editorValues[key]);
+      });
+
+      const { rowsToSkip, keyColumns } = editorValues;
+
+      // when rowsToSkip is supported
+      if (typeof rowsToSkipField !== 'undefined') {
+        onFieldChange(
+          `file.csv.rowsToSkip`,
+          Number.isInteger(rowsToSkip) ? editorValues.rowsToSkip : 0
+        );
       }
 
-      onFieldChange(id, savedVal);
+      // when keyColumn is supported
+      if (typeof keyColumnsField !== 'undefined') {
+        onFieldChange(`file.csv.keyColumns`, keyColumns || []);
+        // set rowsPerRecord if key columns has value
+        onFieldChange(
+          `file.csv.rowsPerRecord`,
+          !!(keyColumns && keyColumns.length)
+        );
 
-      // On change of rules, trigger sample data update
-      // It calls processor on final rules to parse csv file
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: 'csv',
-            file: csvData,
-            editorValues,
-          },
-          'file'
-        )
-      );
+        if (keyColumns)
+          // On change of rules, trigger sample data update
+          // It calls processor on final rules to parse csv file
+          dispatch(
+            actions.sampleData.request(
+              resourceId,
+              resourceType,
+              {
+                type: 'csv',
+                file: csvData,
+                editorValues,
+              },
+              'file'
+            )
+          );
+      }
     }
 
     handleEditorClick();
   };
+
+  const rule = useMemo(
+    () => ({
+      rowsToSkip: fields.rowsToSkip,
+      trimSpaces: fields.trimSpaces,
+      columnDelimiter: fields.columnDelimiter,
+      hasHeaderRow: fields.hasHeaderRow,
+      rowDelimiter: fields.rowDelimiter,
+      multipleRowsPerRecord:
+        fields.keyColumns &&
+        Array.isArray(fields.keyColumns) &&
+        fields.keyColumns.length,
+      keyColumns: fields.keyColumns,
+    }),
+    [
+      fields.columnDelimiter,
+      fields.hasHeaderRow,
+      fields.keyColumns,
+      fields.rowDelimiter,
+      fields.rowsToSkip,
+      fields.trimSpaces,
+    ]
+  );
+  const uploadFileAction = useMemo(
+    () => {
+      if (uploadSampleDataFieldName) {
+        return (
+          <DynaUploadFile
+            resourceId={resourceId}
+            resourceType={resourceType}
+            onFieldChange={onFieldChange}
+            options="csv"
+            id={uploadSampleDataFieldName}
+          />
+        );
+      }
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [uploadSampleDataFieldName]
+  );
 
   return (
     <Fragment>
       <div className={classes.csvContainer}>
         {showEditor && (
           <CsvConfigEditorDialog
-            title="CSV Parse Options"
+            title="CSV parser helper"
             id={id + resourceId}
             mode="csv"
             data={csvData}
             resourceType={resourceType}
             csvEditorType="parse"
             /** rule to be passed as json */
-            rule={value}
+            rule={rule}
+            uploadFileAction={uploadFileAction}
             onClose={handleClose}
             disabled={disabled}
           />

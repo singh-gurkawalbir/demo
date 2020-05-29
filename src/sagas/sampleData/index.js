@@ -189,6 +189,13 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     return;
   }
 
+  if (type === 'csv') {
+    // Saving csv file content for csv in sample data for future use
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
+    );
+  }
+
   // For xlsx file , content gets converted to 'csv' before parsing
   if (type === 'xlsx') {
     const { result } = getCsvFromXlsx(file);
