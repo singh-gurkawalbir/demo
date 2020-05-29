@@ -256,7 +256,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'dataMappings', 'inputMode'],
     type: 'collapse',
     containers: [
       {

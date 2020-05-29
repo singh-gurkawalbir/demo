@@ -809,11 +809,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -827,11 +827,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -845,11 +845,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -863,11 +863,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -884,7 +884,7 @@ export const destinationOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
   ],
