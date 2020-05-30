@@ -1,12 +1,13 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isObject } from 'lodash';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
-import actions from '../../../../../../actions';
-import DynaForm from '../../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import PanelHeader from '../../../../../../components/PanelHeader';
+import * as selectors from '../../../../../reducers';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import actions from '../../../../../actions';
+import DynaForm from '../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -15,13 +16,18 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(3, 0),
     },
   },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
 
 export default function GeneralSection({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
-  const { name, description } =
+  const { settings } =
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
@@ -31,44 +37,35 @@ export default function GeneralSection({ integrationId }) {
   );
   const fieldMeta = {
     fieldMap: {
-      name: {
-        id: 'name',
-        helpKey: 'integration.name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: name,
-      },
-      description: {
-        id: 'description',
-        helpKey: 'integration.description',
-        name: 'description',
-        type: 'text',
-        multiline: true,
-        maxRows: 5,
-        label: 'Description',
-        defaultValue: description,
+      settings: {
+        id: 'settings',
+        helpKey: 'integration.settings',
+        name: 'settings',
+        type: 'settings',
+        label: 'Settings',
+        defaultValue: settings,
       },
     },
     layout: {
-      fields: ['name', 'description'],
+      fields: ['settings'],
     },
   };
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [name, description]);
+  }, [settings]);
   const handleSubmit = formVal => {
+    let settings;
+
+    if (isObject(formVal.settings)) {
+      ({ settings } = formVal);
+    }
+
     const patchSet = [
       {
         op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
+        path: '/settings',
+        value: settings,
       },
     ];
 
@@ -82,8 +79,8 @@ export default function GeneralSection({ integrationId }) {
   };
 
   return (
-    <Fragment>
-      <PanelHeader title="General" />
+    <div className={classes.root}>
+      <PanelHeader title="Settings" />
 
       <div className={classes.form}>
         <DynaForm
@@ -98,6 +95,6 @@ export default function GeneralSection({ integrationId }) {
           </DynaSubmit>
         </DynaForm>
       </div>
-    </Fragment>
+    </div>
   );
 }

@@ -9,6 +9,7 @@ import TrashIcon from '../../../components/icons/TrashIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import CustomSettingsIcon from '../../../components/icons/CustomSettingsIcon';
 import UsersIcon from '../../../components/icons/InviteUsersIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
@@ -18,7 +19,8 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
-import SettingsPanel from './panels/Admin';
+import SettingsPanel from './panels/Settings';
+import AdminPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -52,6 +54,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const tabs = [
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: CustomSettingsIcon,
+    Panel: SettingsPanel,
+  },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -84,10 +92,10 @@ const tabs = [
     Panel: AuditLogPanel,
   },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'admin',
+    label: 'Admin',
     Icon: SettingsIcon,
-    Panel: SettingsPanel,
+    Panel: AdminPanel,
   },
 ];
 
