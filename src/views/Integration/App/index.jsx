@@ -36,6 +36,12 @@ import integrationAppUtil from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: SettingsIcon,
+    Panel: AdminPanel,
+  },
   { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
@@ -69,12 +75,6 @@ const allTabs = [
     Panel: AuditLogPanel,
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
-  {
-    path: 'settings',
-    label: 'Settings',
-    Icon: SettingsIcon,
-    Panel: AdminPanel,
-  },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -218,22 +218,17 @@ export default function IntegrationApp({ match, history }) {
   // All the code ABOVE this comment should be moved from this component to the data-layer.
   //
   //
-  let availableTabs = allTabs;
+  const filterTabs = [];
 
   if (!hasAddOns) {
-    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'addons');
-
-    if (addOnTabIndex !== -1)
-      availableTabs = [
-        ...availableTabs.slice(0, addOnTabIndex),
-        ...availableTabs.slice(addOnTabIndex + 1),
-      ];
+    filterTabs.push('addons');
   }
 
   if (hideGeneralTab) {
-    availableTabs = availableTabs.slice(1);
+    filterTabs.push('general');
   }
 
+  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.id));
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
