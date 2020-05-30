@@ -11,7 +11,6 @@ import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
 import AdminIcon from '../../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
-import GeneralIcon from '../../../../components/icons/GeneralIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import NotificationsIcon from '../../../../components/icons/NotificationsIcon';
@@ -20,7 +19,6 @@ import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../../components/drawer/Resource';
 import ChipInput from '../../../../components/ChipInput';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
-import GeneralPanel from '../panels/General';
 import FlowsPanel from '../panels/Flows';
 import AuditLogPanel from '../panels/AuditLog';
 import NotificationsPanel from '../panels/Notifications';
@@ -37,7 +35,6 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const allTabs = [
-  { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -148,9 +145,7 @@ export default function IntegrationApp({ match, history }) {
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
-  const hideGeneralTab = useSelector(
-    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
-  );
+  const isParent = storeId === integrationId;
   const accessLevel = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
@@ -241,8 +236,14 @@ export default function IntegrationApp({ match, history }) {
       ];
   }
 
-  if (hideGeneralTab) {
-    availableTabs = availableTabs.slice(1);
+  if (isParent) {
+    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'flows');
+
+    if (addOnTabIndex !== -1)
+      availableTabs = [
+        ...availableTabs.slice(0, addOnTabIndex),
+        ...availableTabs.slice(addOnTabIndex + 1),
+      ];
   }
 
   const handleTagChangeHandler = useCallback(
@@ -295,23 +296,15 @@ export default function IntegrationApp({ match, history }) {
         <Redirect
           push={false}
           to={`/pg/integrationapps/v2/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
-            'flows'}`}
+            'settings'}`}
         />
       );
     }
   } else if (!tab) {
-    return <Redirect push={false} to={`${match.url}/flows`} />;
-  }
-
-  if (tab === 'general' && hideGeneralTab) {
     return (
       <Redirect
         push={false}
-        to={
-          supportsMultiStore
-            ? `/pg/integrationapps/v2/${integrationAppName}/${integrationId}/child/${storeId}/flows`
-            : `/pg/integrationapps/v2/${integrationAppName}/${integrationId}/flows`
-        }
+        to={`${match.url}/${storeId === integrationId ? 'settings' : 'flows'}`}
       />
     );
   }
@@ -341,8 +334,6 @@ export default function IntegrationApp({ match, history }) {
   if (redirectToPage) {
     return <Redirect push={false} to={redirectToPage} />;
   }
-
-  // console.log('render: <IntegrationApp>');
 
   return (
     <Fragment>
