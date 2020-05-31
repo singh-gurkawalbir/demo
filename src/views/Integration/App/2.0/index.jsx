@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -111,11 +111,12 @@ export default function IntegrationApp({ match, history }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
-  const defaultStoreId = integrationId;
   const stores = useSelector(
     state => selectors.integrationAppChildren(state, integrationId),
     shallowEqual
   );
+  const defaultStoreId = (stores.find(s => s.value !== integrationId) || {})
+    .value;
   const childIntegrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     childIntegrationsFilterConfig
@@ -129,8 +130,6 @@ export default function IntegrationApp({ match, history }) {
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
-  // TODO: This selector isn't actually returning add on state.
-  // it is returning ALL integration settings state.
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -147,44 +146,24 @@ export default function IntegrationApp({ match, history }) {
     _connectorId,
     name
   );
-  //
-  //
-  // TODO: All the code below should be moved into the data layer.
-  // the addonState selector should return a status to indicted if there
-  // is a pending request in progress. This would be used to dispatch
-  // a request instead of all these useEffects and local state management.
-  const [requestLicense, setRequestLicense] = useState(false);
-  const [requestMappingMetadata, setRequestMappingMetadata] = useState(false);
 
   useEffect(() => {
-    if (addOnState && !addOnState.addOns && !requestLicense) {
+    if (!addOnState || !addOnState.status) {
       dispatch(
         actions.integrationApp.settings.requestAddOnLicenseMetadata(
           integrationId
         )
       );
-      setRequestLicense(true);
     }
-  }, [addOnState, dispatch, integrationId, requestLicense]);
+  }, [addOnState, dispatch, integrationId]);
 
   useEffect(() => {
-    if (
-      integrationAppMetadata &&
-      !integrationAppMetadata.mappingMetadata &&
-      !requestMappingMetadata
-    ) {
+    if (!integrationAppMetadata.status) {
       dispatch(
         actions.integrationApp.settings.requestMappingMetadata(integrationId)
       );
-      setRequestMappingMetadata(true);
     }
-  }, [
-    addOnState,
-    dispatch,
-    integrationAppMetadata,
-    integrationId,
-    requestMappingMetadata,
-  ]);
+  }, [dispatch, integrationAppMetadata, integrationId]);
 
   useEffect(() => {
     if (redirectTo) {
@@ -227,7 +206,7 @@ export default function IntegrationApp({ match, history }) {
     filterTabs.push('dashboard');
   }
 
-  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.id));
+  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];

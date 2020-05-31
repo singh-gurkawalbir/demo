@@ -82,6 +82,10 @@ export function* getAddOnLicenseMetadata({ integrationId }) {
       hidden: true,
     });
   } catch (error) {
+    yield put(
+      actions.integrationApp.settings.addOnLicenseMetadataFailed(integrationId)
+    );
+
     return undefined;
   }
 

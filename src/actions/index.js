@@ -700,6 +700,13 @@ const integrationApp = {
           response,
         }
       ),
+    addOnLicenseMetadataFailed: integrationId =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE,
+        {
+          integrationId,
+        }
+      ),
     requestMappingMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
