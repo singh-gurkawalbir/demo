@@ -9,7 +9,6 @@ import LoadResources from '../../../../components/LoadResources';
 import AddIcon from '../../../../components/icons/AddIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import AdminIcon from '../../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
@@ -23,7 +22,6 @@ import FlowsPanel from '../panels/Flows';
 import AuditLogPanel from '../panels/AuditLog';
 import NotificationsPanel from '../panels/Notifications';
 import AdminPanel from '../panels/Admin';
-import UsersPanel from '../../../../components/ManageUsersPanel';
 import ConnectionsPanel from '../panels/Connections';
 import DashboardPanel from '../panels/Dashboard';
 import AddOnsPanel from '../panels/AddOns';
@@ -47,12 +45,6 @@ const allTabs = [
     label: 'Connections',
     Icon: ConnectionsIcon,
     Panel: ConnectionsPanel,
-  },
-  {
-    path: 'users',
-    label: 'Users',
-    Icon: AdminIcon,
-    Panel: UsersPanel,
   },
   {
     path: 'notifications',
@@ -224,28 +216,18 @@ export default function IntegrationApp({ match, history }) {
   // All the code ABOVE this comment should be moved from this component to the data-layer.
   //
   //
-  let availableTabs = allTabs;
+  const filterTabs = [];
 
   if (!hasAddOns) {
-    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'addons');
-
-    if (addOnTabIndex !== -1)
-      availableTabs = [
-        ...availableTabs.slice(0, addOnTabIndex),
-        ...availableTabs.slice(addOnTabIndex + 1),
-      ];
+    filterTabs.push('addons');
   }
 
   if (isParent) {
-    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'flows');
-
-    if (addOnTabIndex !== -1)
-      availableTabs = [
-        ...availableTabs.slice(0, addOnTabIndex),
-        ...availableTabs.slice(addOnTabIndex + 1),
-      ];
+    filterTabs.push('flows');
+    filterTabs.push('dashboard');
   }
 
+  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.id));
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
