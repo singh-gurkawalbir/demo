@@ -18,13 +18,15 @@ import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../../components/drawer/Resource';
 import ChipInput from '../../../../components/ChipInput';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
-import FlowsPanel from '../panels/Flows';
+import CustomSettingsIcon from '../../../../components/icons/CustomSettingsIcon';
+import FlowsPanel from './panels/Flows';
 import AuditLogPanel from '../panels/AuditLog';
 import NotificationsPanel from '../panels/Notifications';
 import AdminPanel from '../panels/Admin';
-import ConnectionsPanel from '../panels/Connections';
+import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from '../panels/Dashboard';
 import AddOnsPanel from '../panels/AddOns';
+import SettingsPanel from './panels/Settings';
 import IntegrationTabs from '../../common/Tabs';
 import getRoutePath from '../../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
@@ -33,6 +35,12 @@ import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const allTabs = [
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: CustomSettingsIcon,
+    Panel: SettingsPanel,
+  },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -60,8 +68,8 @@ const allTabs = [
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'admin',
+    label: 'Admin',
     Icon: SettingsIcon,
     Panel: AdminPanel,
   },
@@ -102,7 +110,7 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationApp({ match, history }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { integrationAppName, integrationId, storeId, tab } = match.params;
+  const { integrationAppName, integrationId, childId, tab } = match.params;
   const childIntegrationsFilterConfig = {
     type: 'integrations',
     filter: { _parentId: integrationId },
@@ -123,7 +131,7 @@ export default function IntegrationApp({ match, history }) {
   ).resources;
   const supportsMultiStore = !!childIntegrations.length;
   const currentStoreMode = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', storeId);
+    const integration = selectors.resource(state, 'integrations', childId);
 
     return integration && integration.mode;
   });
@@ -136,7 +144,7 @@ export default function IntegrationApp({ match, history }) {
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
-  const isParent = storeId === integrationId;
+  const isParent = childId === integrationId;
   const accessLevel = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
@@ -170,7 +178,7 @@ export default function IntegrationApp({ match, history }) {
       const path = generatePath(match.path, {
         integrationId,
         integrationAppName,
-        storeId,
+        childId,
         tab: redirectTo,
       });
 
@@ -184,7 +192,7 @@ export default function IntegrationApp({ match, history }) {
     integrationId,
     match.path,
     redirectTo,
-    storeId,
+    childId,
   ]);
 
   const hasAddOns =
@@ -221,15 +229,20 @@ export default function IntegrationApp({ match, history }) {
   const handleStoreChange = useCallback(
     e => {
       const newStoreId = e.target.value;
+      let newTab = tab;
+
+      if (!availableTabs.find(tab => tab.path === tab)) {
+        newTab = 'settings';
+      }
 
       // Redirect to current tab of new store
       history.push(
         getRoutePath(
-          `integrationapps/v2/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+          `integrationapps/v2/${integrationAppName}/${integrationId}/child/${newStoreId}/${newTab}`
         )
       );
     },
-    [history, integrationAppName, integrationId, tab]
+    [availableTabs, history, integrationAppName, integrationId, tab]
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(
@@ -248,11 +261,11 @@ export default function IntegrationApp({ match, history }) {
 
   // To support breadcrumbs, and also to have a more robust url interface,
   // we want to "self-heal" partial urls hitting this page.  If an integration app
-  // is routed to this component without a storeId (if it supports multi-store),
+  // is routed to this component without a childId (if it supports multi-store),
   // or if no tab is selected, we rewrite the current url in the history to carry
   // this state information forward.
   if (supportsMultiStore) {
-    if (!storeId) {
+    if (!childId) {
       return (
         <Redirect
           push={false}
@@ -265,7 +278,7 @@ export default function IntegrationApp({ match, history }) {
     return (
       <Redirect
         push={false}
-        to={`${match.url}/${storeId === integrationId ? 'settings' : 'flows'}`}
+        to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
       />
     );
   }
@@ -278,7 +291,7 @@ export default function IntegrationApp({ match, history }) {
     );
   } else if (currentStoreMode === 'uninstall') {
     redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
   } else if (mode === 'install') {
     redirectToPage = getRoutePath(
@@ -287,7 +300,7 @@ export default function IntegrationApp({ match, history }) {
   } else if (mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
-        storeId ? `/${storeId}` : ''
+        childId ? `/${childId}` : ''
       }`
     );
   }
@@ -337,7 +350,7 @@ export default function IntegrationApp({ match, history }) {
               className={classes.storeSelect}
               onChange={handleStoreChange}
               IconComponent={ArrowDownIcon}
-              value={storeId}>
+              value={childId}>
               <MenuItem disabled value="">
                 Select {storeLabel}
               </MenuItem>

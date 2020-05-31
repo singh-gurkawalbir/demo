@@ -1170,6 +1170,43 @@ export function integrationConnectionList(state, integrationId, tableConfig) {
   return resources;
 }
 
+export function integrationAppV2FlowList(state, integrationId, childId) {
+  if (!state) return null;
+
+  return resourceList(state, {
+    type: 'flows',
+    filter: { _integrationId: childId },
+  }).resources;
+}
+
+export function integrationAppV2ConnectionList(state, integrationId, childId) {
+  if (!state) return null;
+  const isParent = integrationId === childId;
+  let integrations;
+
+  if (isParent) {
+    const childIntegrations = resourceList(state, {
+      type: 'integrations',
+      filter: { _parentId: integrationId },
+    }).resources;
+
+    integrations = [integrationId, ...map(childIntegrations, '_id')];
+  } else {
+    integrations = [integrationId, childId];
+  }
+
+  const connections = resourceList(state, {
+    type: 'connections',
+    filter: {
+      $where() {
+        return integrations.includes(this._integrationId);
+      },
+    },
+  }).resources;
+
+  return connections;
+}
+
 export function integrationAppResourceList(
   state,
   integrationId,
