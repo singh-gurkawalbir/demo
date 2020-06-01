@@ -10,11 +10,7 @@ export default {
     const { _id: resourceId } = rowData;
     const history = useHistory();
     const openLicensesURL = useCallback(() => {
-      history.push(
-        getRoutePath(
-          getRoutePath(`/connectors/${resourceId}/connectorLicenses`)
-        )
-      );
+      history.push(getRoutePath(`/connectors/${resourceId}/connectorLicenses`));
     }, [history, resourceId]);
 
     useEffect(() => {

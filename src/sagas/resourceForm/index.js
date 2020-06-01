@@ -835,54 +835,60 @@ export function* initFormValues({
     );
   }
 
-  const defaultFormAssets = factory.getResourceFormAssets({
-    resourceType,
-    resource,
-    isNew,
-    assistantData,
-    connection,
-  });
-  const { customForm } = resource;
-  const form =
-    customForm && customForm.form
-      ? customForm.form
-      : defaultFormAssets.fieldMeta;
-  //
-  const fieldMeta = factory.getFieldsWithDefaults(
-    form,
-    resourceType,
-    resource,
-    { developerMode, flowId }
-  );
-  let finalFieldMeta = fieldMeta;
-
-  if (customForm && customForm.init) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
-    // TODO: if there is an error here we should show that message
-    // in the UI.....and point them to the link to edit the
-    // script or maybe prevent them from saving the script
-    finalFieldMeta = yield call(runHook, {
-      hook: customForm.init,
-      data: fieldMeta,
-    });
-  } else if (typeof defaultFormAssets.init === 'function') {
-    // standard form init fn...
-
-    finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
-  }
-
-  // console.log('finalFieldMeta', finalFieldMeta);
-  yield put(
-    actions.resourceForm.initComplete(
+  try {
+    const defaultFormAssets = factory.getResourceFormAssets({
       resourceType,
-      resourceId,
-      finalFieldMeta,
+      resource,
       isNew,
-      skipCommit,
-      flowId
-    )
-  );
+      assistantData,
+      connection,
+    });
+    const { customForm } = resource;
+    const form =
+      customForm && customForm.form
+        ? customForm.form
+        : defaultFormAssets.fieldMeta;
+    //
+    const fieldMeta = factory.getFieldsWithDefaults(
+      form,
+      resourceType,
+      resource,
+      { developerMode, flowId }
+    );
+    let finalFieldMeta = fieldMeta;
+
+    if (customForm && customForm.init) {
+      // pre-save-resource
+      // this resource has an embedded custom form.
+      // TODO: if there is an error here we should show that message
+      // in the UI.....and point them to the link to edit the
+      // script or maybe prevent them from saving the script
+      finalFieldMeta = yield call(runHook, {
+        hook: customForm.init,
+        data: fieldMeta,
+      });
+    } else if (typeof defaultFormAssets.init === 'function') {
+      // standard form init fn...
+
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+    }
+
+    // console.log('finalFieldMeta', finalFieldMeta);
+    yield put(
+      actions.resourceForm.initComplete(
+        resourceType,
+        resourceId,
+        finalFieldMeta,
+        isNew,
+        skipCommit,
+        flowId
+      )
+    );
+  } catch (e) {
+    yield put(actions.resourceForm.initFailed(resourceType, resourceId));
+    // eslint-disable-next-line no-console
+    console.warn(e);
+  }
 }
 
 // Maybe the session could be stale...and the pre-submit values might

@@ -49,6 +49,14 @@ export default function reducer(state = {}, action) {
           showFormValidationsBeforeTouch: false,
         },
       };
+    case actionTypes.RESOURCE_FORM.INIT_FAILED:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          initFailed: true,
+        },
+      };
 
     case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
       stateCopy[key] && delete stateCopy[key].initData;
