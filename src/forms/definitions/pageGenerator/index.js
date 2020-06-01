@@ -4,7 +4,6 @@ import applications, {
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { sourceOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -64,13 +63,18 @@ export default {
       appType: 'export',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
-      defaultValue: r => (r && r.application) || '',
+      defaultValue: r => {
+        if (!r) return '';
+
+        return r.rdbmsAppType || r.application || '';
+      },
       required: true,
     },
     type: {
       id: 'type',
       name: 'type',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'source',
       label: 'What would you like to do?',
       required: true,
       defaultValue: '',
@@ -138,39 +142,9 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
-    const typeField = fields.find(field => field.id === 'type');
-    let options = sourceOptions[app.assistant || app.type];
-
-    if (!options) {
-      if (app.assistant && app.webhook) {
-        options = [
-          {
-            label: 'Export records from source application',
-            value: 'exportRecords',
-          },
-          {
-            label: 'Listen for real-time data from source application',
-            value: 'webhook',
-          },
-        ];
-      } else options = sourceOptions.common || [];
-    }
 
     if (fieldId === 'type') {
-      if (options && options.length === 1) {
-        typeField.value = options[0] && options[0].value;
-        typeField.disabled = true;
-      } else {
-        typeField.value = '';
-
-        if (connectionField) connectionField.visible = false;
-      }
-
-      return [
-        {
-          items: options,
-        },
-      ];
+      return { selectedApplication: app };
     }
 
     if (fieldId === 'connection') {
@@ -198,11 +172,6 @@ export default {
     }
 
     if (fieldId === 'exportId') {
-      if (options && options.length === 1) {
-        typeField.value = options[0] && options[0].value;
-        typeField.disabled = true;
-      }
-
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =

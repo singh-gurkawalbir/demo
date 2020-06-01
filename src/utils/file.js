@@ -41,12 +41,13 @@ export function isValidFileType(fileType, file) {
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
-export const isValidFileSize = file => file.size <= MAX_FILE_SIZE;
+export const isValidFileSize = (file, maxSize) => file.size <= maxSize;
 
 // TODO: @Raghu Move these error messages to constants
-export const getUploadedFileStatus = (file, fileType) => {
-  // TODO: @Raghu Add MAX FILE SIZE for Data loader
-  if (!isValidFileSize(file))
+export const getUploadedFileStatus = (file, fileType, fileProps = {}) => {
+  const { maxSize = MAX_FILE_SIZE } = fileProps;
+
+  if (!isValidFileSize(file, maxSize))
     return { success: false, error: 'File exceeds max file size' };
 
   if (fileType && !isValidFileType(fileType, file))
