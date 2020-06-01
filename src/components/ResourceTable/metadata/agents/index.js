@@ -5,6 +5,7 @@ import AgentToken from '../../../AgentToken';
 import AgentStatus from '../../../AgentStatus';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
+import GenerateToken from '../../actions/GenerateToken';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -32,20 +33,21 @@ export default {
       },
     },
     {
-      heading: 'Last updated',
+      heading: 'Updated on',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
-    {
-      heading: 'Access Token',
-      width: '250px',
-      value: r => getAgentToken(r),
-    },
+
     {
       heading: 'Install',
       width: '175px',
       value: r => getAgentDownloadInstaller(r),
     },
+    {
+      heading: 'Access token',
+      width: '285px',
+      value: r => getAgentToken(r),
+    },
   ],
-  rowActions: () => [References, Delete],
+  rowActions: () => [GenerateToken, References, Delete],
 };

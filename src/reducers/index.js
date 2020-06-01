@@ -57,6 +57,8 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import { stringCompare } from '../utils/sort';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 const emptySet = [];
 const emptyObject = {};
@@ -81,6 +83,10 @@ const rootReducer = (state, action) => {
 };
 
 export default rootReducer;
+
+export function recycleBinState(state) {
+  return fromSession.recycleBinState(state && state.session);
+}
 
 export function marketPlaceState(state) {
   return fromData.marketPlaceState(state && state.data);
@@ -493,6 +499,14 @@ export function getSampleDataContext(
   });
 }
 
+export function flowMetricsData(state, flowId, measurement) {
+  return fromSession.flowMetricsData(
+    state && state.session,
+    flowId,
+    measurement
+  );
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -817,6 +831,14 @@ export function resourceListModified(userState, resourcesState, options = {}) {
   return fromResources.resourceList(resourcesState, options);
 }
 
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromData.hasSettingsForm(
+    state && state.data,
+    resourceType,
+    resourceId
+  );
+}
+
 export const makeResourceListSelector = () =>
   createSelector(
     userState,
@@ -868,7 +890,7 @@ export function nextDataFlowsForFlow(state, flow) {
 }
 
 export function isIAConnectionSetupPending(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId);
+  const connection = resource(state, 'connections', connectionId) || {};
 
   if (!connection || !connection._connectorId) {
     return;
@@ -877,12 +899,16 @@ export function isIAConnectionSetupPending(state, connectionId) {
   const { _integrationId } = connection;
   const integration = resource(state, 'integrations', _integrationId);
 
+  if (integration && integration.mode === 'settings') {
+    return false;
+  }
+
   if (integration && integration.install) {
     const installStep = integration.install.find(
       step => step._connectionId === connectionId
     );
 
-    if (!installStep.completed) {
+    if (installStep && !installStep.completed) {
       return true;
     }
   }
@@ -1000,7 +1026,7 @@ export function marketplaceConnectors(
 
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort(stringCompare('name'));
 }
 
 export const makeMarketPlaceConnectorsSelector = () =>
@@ -3576,11 +3602,19 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return getPageProcessorImportsFromFlow(imports, pageProcessors);
 }
 
+export function integrationAppImportMetadata(state, importId) {
+  return fromSession.integrationAppImportMetadata(
+    state && state.session,
+    importId
+  );
+}
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
-  const { assistant, adaptorType, sampleData } = resource;
+  const { assistant, adaptorType, sampleData, _connectorId } = resource;
+  const isIntegrationApp = !!_connectorId;
 
-  if (assistant) {
+  if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
   } else if (adaptorType === 'NetSuiteDistributedImport') {
@@ -3619,6 +3653,9 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
+  } else if (isIntegrationApp) {
+    // handles incase of IAs
+    return integrationAppImportMetadata(state, resourceId);
   } else if (sampleData) {
     // Formats sample data into readable form
     return {
@@ -4304,5 +4341,94 @@ export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
 }
 
+export function flowResources(state, flowId) {
+  const resources = [];
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (flow._exportId) {
+    const exportDoc = fromData.resource(
+      state && state.data,
+      'exports',
+      flow._exportId
+    );
+
+    resources.push({ _id: flow._exportId, name: exportDoc.name });
+  }
+
+  if (flow._importId) {
+    const importDoc = fromData.resource(
+      state && state.data,
+      'imports',
+      flow._importId
+    );
+
+    resources.push({ _id: flow._exportId, name: importDoc.name });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = fromData.resource(
+        state && state.data,
+        'exports',
+        pg._exportId
+      );
+
+      resources.push({ _id: pg._exportId, name: exportDoc.name });
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = fromData.resource(
+          state && state.data,
+          'imports',
+          pp._importId
+        );
+
+        resources.push({ _id: pp._importId, name: importDoc.name });
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = fromData.resource(
+          state && state.data,
+          'exports',
+          pp._exportId
+        );
+
+        resources.push({ _id: pp._exportId, name: exportDoc.name });
+      }
+    });
+  }
+
+  return resources;
+}
+
+export const redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
+
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+
+export function retryDataContext(state, retryId) {
+  return fromSession.retryDataContext(state && state.session, retryId);
+}

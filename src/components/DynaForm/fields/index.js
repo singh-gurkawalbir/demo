@@ -96,6 +96,9 @@ import DynaDataURITemplate from './DynaDataURITemplate';
 import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectLookup from './DynaSelectLookup';
+import DynaURI from './DynaURI';
+import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
+import DynaSelectWithInput from './DynaSelectWithInput';
 
 export default {
   mode: DynaMode,
@@ -119,6 +122,7 @@ export default {
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  uri: DynaURI,
   httprequestbody: DynaHttpRequestBody,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
@@ -205,4 +209,6 @@ export default {
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
   selectlookup: DynaSelectLookup,
+  csvhasheaderrow: DynaCsvHasHeaderRow,
+  selectwithinput: DynaSelectWithInput,
 };

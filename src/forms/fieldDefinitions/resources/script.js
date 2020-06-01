@@ -14,7 +14,8 @@ export default {
   },
   insertFunction: {
     type: 'select',
-    label: 'Insert function',
+    label: 'Insert function stub',
+    helpKey: 'hooks.insertFunction',
     options: [
       {
         items: hooksList.map(hook => ({
@@ -28,5 +29,6 @@ export default {
     defaultValue: r => ({ _scriptId: r._id, function: 'main' }),
     type: 'scriptcontent',
     label: 'Edit content',
+    helpKey: 'hooks.scriptContent',
   },
 };

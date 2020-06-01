@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaMultiSelect from './DynaMultiSelect';
-import { extractFieldsFromCsv } from '../../../utils/file';
+
+const getFileHeaderOptions = (fileData = {}) => {
+  const headers = typeof fileData === 'object' ? Object.keys(fileData) : [];
+
+  return headers.map(name => ({ label: name, value: name }));
+};
 
 export default function DynaFileKeyColumn(props) {
   const {
@@ -10,17 +15,16 @@ export default function DynaFileKeyColumn(props) {
     id,
     name,
     onFieldChange,
-    value = '',
+    value = [],
     label,
     required,
     resourceId,
     isValid,
     helpText,
     helpKey,
-    options = {},
   } = props;
   const [sampleData, setSampleData] = useState(props.sampleData || '');
-  const { data: fileData } = useSelector(state => {
+  const { data: csvData } = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
@@ -29,23 +33,31 @@ export default function DynaFileKeyColumn(props) {
 
     return { data: rawData && rawData.data && rawData.data.body };
   });
+  const { data: parsedData } = useSelector(state =>
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse')
+  );
 
-  // fileData is updated when user uploads new file
-  if (fileData && fileData !== sampleData) {
-    setSampleData(fileData);
+  useEffect(() => {
+    if (csvData && csvData !== sampleData) {
+      setSampleData(csvData);
 
-    onFieldChange(id, []);
-  }
+      onFieldChange(id, []);
+    }
+  }, [csvData, id, onFieldChange, sampleData]);
 
-  const getFileHeaderOptions = (fileData = '') => {
-    const headers = extractFieldsFromCsv(fileData, options) || [];
+  const multiSelectOptions = useMemo(() => {
+    const options = getFileHeaderOptions(parsedData || sampleData);
 
-    return headers.map(header => ({ label: header.id, value: header.id }));
-  };
+    if (Array.isArray(value)) {
+      value.forEach(val => {
+        if (!options.find(opt => opt.value === val)) {
+          options.push({ label: val, value: val });
+        }
+      });
+    }
 
-  const multiSelectOptions = [
-    { items: getFileHeaderOptions(fileData || sampleData) },
-  ];
+    return [{ items: options }];
+  }, [parsedData, sampleData, value]);
 
   return (
     <DynaMultiSelect

@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
   deleteIcon: {
     marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   header: {
     display: 'flex',
@@ -68,11 +69,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: 0,
   },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
   filterTypeIcon: {
     width: 9,
     height: 9,
@@ -80,7 +76,7 @@ const useStyles = makeStyles(theme => ({
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,
-    fontSize: theme.spacing(6),
+    fontSize: 38,
   },
   mapField: {
     display: 'flex',

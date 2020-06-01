@@ -6,7 +6,13 @@ export default function trimObj(obj) {
       // Need to refactor this fix later
 
       if (
-        ['columnDelimiter', 'rowDelimiter', '/rest/authScheme'].includes(key)
+        [
+          'columnDelimiter',
+          'rowDelimiter',
+          '/file/csv/rowDelimiter',
+          '/file/csv/columnDelimiter',
+          '/rest/authScheme',
+        ].includes(key)
       ) {
         acc[key] = typeof obj[key] === 'string' ? obj[key] : trimObj(obj[key]);
       } else {

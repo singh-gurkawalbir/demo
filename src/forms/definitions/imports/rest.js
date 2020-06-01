@@ -6,7 +6,11 @@ export default {
     const lookups = retValues['/rest/lookups'];
     const lookup =
       lookups &&
-      lookups.find(l => l.name === retValues['/rest/existingDataId']);
+      lookups.find(
+        l =>
+          `${l.name}` === retValues['/rest/existingDataId'] ||
+          `${l.name}` === retValues['/rest/update/existingDataId']
+      );
     const sampleData = retValues['/sampleData'];
 
     if (sampleData === '') {
@@ -154,14 +158,15 @@ export default {
 
         if (lookup) {
           retValues['/rest/ignoreLookupName'] =
-            retValues['/rest/existingDataId'];
+            retValues['/rest/update/existingDataId'];
           retValues['/rest/ignoreExtract'] = null;
         } else {
-          retValues['/rest/ignoreExtract'] = retValues['/rest/existingDataId'];
+          retValues['/rest/ignoreExtract'] =
+            retValues['/rest/update/existingDataId'];
           retValues['/rest/ignoreLookupName'] = null;
         }
 
-        retValues['/rest/existingDataId'] = undefined;
+        retValues['/rest/update/existingDataId'] = undefined;
       }
     } else {
       retValues['/ignoreExisting'] = false;
@@ -172,6 +177,11 @@ export default {
       retValues['/rest/ignoreLookupName'] = undefined;
       retValues['/rest/ignoreExtract'] = undefined;
       retValues['/rest/existingDataId'] = undefined;
+      retValues['/rest/update/existingDataId'] = undefined;
+    }
+
+    if (retValues['/inputMode'] !== 'blob') {
+      delete retValues['/blobKeyPath'];
     }
 
     delete retValues['/inputMode'];
@@ -194,17 +204,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-          return 'How would you like the files transferred?';
-        }
-
-        return 'How would you like the records imported?';
-      },
-    },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
@@ -424,7 +423,7 @@ export default {
       id: 'rest.successPathCreate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -459,7 +458,6 @@ export default {
       id: 'rest.successValuesCreate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -494,7 +492,6 @@ export default {
       id: 'rest.responseIdPathCreate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -700,7 +697,7 @@ export default {
       id: 'rest.successPathUpdate',
       type: 'text',
       label: 'Success path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -731,7 +728,7 @@ export default {
       id: 'rest.successValuesUpdate',
       type: 'text',
       label: 'Success values',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -762,7 +759,7 @@ export default {
       id: 'rest.responseIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-      placeholder: 'Optional',
+
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -792,7 +789,7 @@ export default {
     ignoreExistingData: {
       id: 'ignoreExistingData',
       type: 'labeltitle',
-      label: 'Ignore existing data',
+      label: 'Ignore existing records',
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
@@ -836,7 +833,41 @@ export default {
       visibleWhenAll: [
         {
           field: 'rest.compositeType',
-          is: ['createandignore', 'updateandignore'],
+          is: ['createandignore'],
+        },
+        {
+          field: 'rest.method',
+          is: ['COMPOSITE'],
+        },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => {
+        if (!r || !r.rest) {
+          return '';
+        }
+
+        if (r.rest.ignoreLookupName) {
+          return r.rest.ignoreLookupName;
+        } else if (r.rest.ignoreExtract) {
+          return r.rest.ignoreExtract;
+        }
+
+        return '';
+      },
+    },
+    'rest.update.existingDataId': {
+      id: 'rest.update.existingDataId',
+      type: 'textwithflowsuggestion',
+      showSuggestionsWithoutHandlebar: true,
+      label: 'Existing data id',
+      required: true,
+      visibleWhenAll: [
+        {
+          field: 'rest.compositeType',
+          is: ['updateandignore'],
         },
         {
           field: 'rest.method',
@@ -900,49 +931,101 @@ export default {
         },
       ],
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'rest.method',
-      'rest.blobMethod',
-      'rest.headers',
-      'rest.compositeType',
-      'rest.lookups',
-      // 'mapping',
-      'rest.relativeURI',
-      'rest.body',
-      'rest.successPath',
-      'rest.successValues',
-      'rest.responseIdPath',
-      'createNewData',
-      'rest.compositeMethodCreate',
-      'rest.relativeURICreate',
-      'rest.requestTypeCreate',
-      'rest.bodyCreate',
-      'rest.successPathCreate',
-      'rest.successValuesCreate',
-      'rest.responseIdPathCreate',
-      'upateExistingData',
-      'rest.compositeMethodUpdate',
-      'rest.relativeURIUpdate',
-      'rest.requestTypeUpdate',
-      'rest.bodyUpdate',
-      'rest.successPathUpdate',
-      'rest.successValuesUpdate',
-      'rest.responseIdPathUpdate',
-      'ignoreExistingData',
-      'ignoreNewData',
-      'rest.existingDataId',
-      'sampleDataTitle',
-      'sampleData',
-      'dataMappings',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+            return 'How would you like the files transferred?';
+          }
+
+          return 'How would you like the records imported?';
+        },
+        fields: [
+          'rest.method',
+          'rest.blobMethod',
+          'rest.headers',
+          'rest.compositeType',
+          'rest.lookups',
+          // 'mapping',
+          'rest.relativeURI',
+          'rest.body',
+          'blobKeyPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'rest.compositeMethodCreate',
+              'rest.relativeURICreate',
+              'rest.requestTypeCreate',
+              'rest.bodyCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore existing records',
+            fields: ['rest.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Ignore new data',
+            fields: ['rest.update.existingDataId'],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'rest.compositeMethodUpdate',
+              'rest.relativeURIUpdate',
+              'rest.requestTypeUpdate',
+              'rest.bodyUpdate',
+            ],
+          },
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: [
+          'rest.successPath',
+          'rest.successValues',
+          'rest.responseIdPath',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Create new data',
+            fields: [
+              'rest.successPathCreate',
+              'rest.successValuesCreate',
+              'rest.responseIdPathCreate',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Update existing data',
+            fields: [
+              'rest.successPathUpdate',
+              'rest.successValuesUpdate',
+              'rest.responseIdPathUpdate',
+            ],
+          },
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Do you have a sample destination record?',
+        fields: ['sampleData'],
+      },
       {
         collapsed: true,
         label: 'Advanced',

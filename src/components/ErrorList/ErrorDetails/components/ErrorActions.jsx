@@ -19,8 +19,17 @@ export default function Actions({
     return errorDoc.retryDataKey;
   });
   const updateRetry = useCallback(() => {
-    dispatch(actions.job.updateRetryData({ retryData, retryId }));
-  }, [dispatch, retryData, retryId]);
+    dispatch(
+      actions.errorManager.retryData.updateRequest({
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      })
+    );
+
+    if (onClose) onClose();
+  }, [dispatch, flowId, onClose, resourceId, retryData, retryId]);
   const resolve = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
@@ -55,7 +64,7 @@ export default function Actions({
         Resolve
       </Button>
       {retryId ? (
-        <Button variant="outlined" disabled onClick={updateRetry}>
+        <Button variant="outlined" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
       ) : (

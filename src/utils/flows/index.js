@@ -558,8 +558,8 @@ export function getFlowDetails(flow, integration, exports) {
       (flowSettings.sections && flowSettings.sections.length)
     );
     draft.showSchedule = flow._connectorId
-      ? flow.canSchedule && !!flowSettings.showSchedule
-      : flow.canSchedule;
+      ? draft.canSchedule && !!flowSettings.showSchedule
+      : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
     draft.showUtilityMapping = flowSettings.showUtilityMapping;

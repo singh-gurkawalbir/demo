@@ -38,6 +38,7 @@ export default {
       const form = extractForm(data, mode);
 
       value.form = form;
+
       // {
       //   fieldMap: {
       //     A: {

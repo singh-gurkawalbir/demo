@@ -33,7 +33,10 @@ export default {
       newValues['/type'] = 'webhook';
       newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+
+      if (application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+      } else newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
       newValues['/resourceType'] = type;
@@ -70,6 +73,8 @@ export default {
       type: 'select',
       label: 'What would you like to do?',
       required: true,
+      defaultValue: '',
+      placeholder: 'Please select',
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
@@ -77,7 +82,6 @@ export default {
           isNot: [''],
         },
       ],
-      helpKey: 'fb.resourceTypeOptions',
     },
     connection: {
       id: 'connection',
@@ -96,7 +100,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -112,14 +116,15 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+        'exportId',
+      ],
       visibleWhenAll: [
         {
           field: 'application',
-          isNot: [''],
-        },
-        {
-          field: 'connection',
           isNot: [''],
         },
       ],
@@ -132,28 +137,34 @@ export default {
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const app = applications.find(a => a.id === appField.value) || {};
+    const connectionField = fields.find(field => field.id === 'connection');
+    const typeField = fields.find(field => field.id === 'type');
+    let options = sourceOptions[app.assistant || app.type];
+
+    if (!options) {
+      if (app.assistant && app.webhook) {
+        options = [
+          {
+            label: 'Export records from source application',
+            value: 'exportRecords',
+          },
+          {
+            label: 'Listen for real-time data from source application',
+            value: 'webhook',
+          },
+        ];
+      } else options = sourceOptions.common || [];
+    }
 
     if (fieldId === 'type') {
-      const typeField = fields.find(field => field.id === 'type');
-      let options = sourceOptions[app.assistant || app.type];
+      if (options && options.length === 1) {
+        typeField.value = options[0] && options[0].value;
+        typeField.disabled = true;
+      } else {
+        typeField.value = '';
 
-      if (!options) {
-        if (app.assistant && app.webhook) {
-          options = [
-            {
-              label: 'Export records from source application',
-              value: 'exportRecords',
-            },
-            {
-              label: 'Listen for real-time data from source application',
-              value: 'webhook',
-            },
-          ];
-        } else options = sourceOptions.common || [];
+        if (connectionField) connectionField.visible = false;
       }
-
-      typeField.value = options && options[0] && options[0].value;
-      typeField.disabled = options && options.length === 1;
 
       return [
         {
@@ -187,7 +198,11 @@ export default {
     }
 
     if (fieldId === 'exportId') {
-      const connectionField = fields.find(field => field.id === 'connection');
+      if (options && options.length === 1) {
+        typeField.value = options[0] && options[0].value;
+        typeField.disabled = true;
+      }
+
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =
@@ -237,9 +252,10 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
-      let label = isWebhook
-        ? 'Would you like to use an existing listener?'
-        : exportField.label;
+      let label =
+        isWebhook || type === 'realtime'
+          ? 'Would you like to use an existing listener?'
+          : exportField.label;
 
       if (type === 'transferFiles') {
         label = 'Would you like to use an existing transfer?';

@@ -73,9 +73,14 @@ export default function ConnectionStatusPanel(props) {
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
   const isIAIntegration = useSelector(state => {
-    const connection = selectors.resource(state, 'connections', connectionId);
+    const connection =
+      selectors.resource(state, 'connections', connectionId) || {};
 
+<<<<<<< HEAD
     return connection && !!connection._connectorId;
+=======
+    return !!(connection && connection._connectorId);
+>>>>>>> 9d835a056a6d59e24f85e258c885796e083a2c18
   });
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
@@ -140,8 +145,8 @@ export default function ConnectionStatusPanel(props) {
           <Typography variant="h6">{message}</Typography>
         ) : (
           <Typography component="div" variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited.
+            The connection associated with this resource is currently offline
+            and configuration is limited.
             <Button
               data-test="fixConnection"
               className={classes.fixConnectionBtn}

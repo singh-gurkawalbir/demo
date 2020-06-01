@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { isEqual, isEmpty } from 'lodash';
 import util from '../../../../utils/json';
 import { safeParse } from '../../../../utils/string';
 import javascript from './javascript';
@@ -37,7 +38,21 @@ export default {
   },
 
   dirty: editor => {
-    if (editor.data !== editor.initData) {
+    let parsedData = safeParse(editor.data);
+
+    if (parsedData === undefined) {
+      return false;
+    }
+
+    if (editor.mode === 'script') {
+      parsedData =
+        parsedData &&
+        parsedData.resource &&
+        parsedData.resource.settingsForm &&
+        parsedData.resource.settingsForm.form;
+    }
+
+    if (!isEqual(parsedData, editor.initData)) {
       return true;
     }
 
@@ -47,8 +62,7 @@ export default {
   validate: ({ data }) => {
     let dataError;
 
-    if (data === '') dataError = 'Must provide some sample data.';
-    else if (typeof data === 'string')
+    if (typeof data === 'string' && !isEmpty(data))
       dataError = util.validateJsonString(data);
 
     return { dataError: dataError !== null && dataError };
@@ -59,15 +73,12 @@ export default {
 
     if (newResult) {
       meta = newResult.data;
-    } else if (data) {
+    } else {
       const parsedData = safeParse(data);
-
-      if (!parsedData) return undefined;
-      // console.log('parsedData', parsedData);
 
       if (mode === 'json') {
         meta = parsedData;
-      } else {
+      } else if (parsedData) {
         meta =
           parsedData.resource &&
           parsedData.resource.settingsForm &&
@@ -77,14 +88,21 @@ export default {
 
     // inject the current setting values (found in resource.settings)
     // into the respective field’s defaultValue prop.
-    return produce(meta, draft => {
+    const newMeta = produce(meta, draft => {
       if (settings && meta && typeof draft.fieldMap === 'object') {
         Object.keys(draft.fieldMap).forEach(key => {
           const field = draft.fieldMap[key];
 
+          if (typeof field !== 'object') {
+            throw new Error('Invalid fieldMap. Key should be of object type');
+          }
+
+          if (!settings[field.name] && field.defaultValue) return;
           field.defaultValue = settings[field.name] || '';
         });
       }
     });
+
+    return { data: newMeta, logs: newResult && newResult.logs };
   },
 };

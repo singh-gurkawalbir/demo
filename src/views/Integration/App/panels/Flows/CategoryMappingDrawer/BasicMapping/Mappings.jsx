@@ -19,6 +19,7 @@ import RequiredIcon from '../../../../../../../components/icons/RequiredIcon';
 import MappingConnectorIcon from '../../../../../../../components/icons/MappingConnectorIcon';
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
+import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -69,15 +70,7 @@ const useStyles = makeStyles(theme => ({
     right: 10,
     top: 10,
   },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-  },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
+
   filterTypeIcon: {
     width: 9,
     height: 9,
@@ -98,7 +91,7 @@ const useStyles = makeStyles(theme => ({
 
   mappingIcon: {
     color: theme.palette.secondary.lightest,
-    fontSize: theme.spacing(6),
+    fontSize: 38,
   },
   mapField: {
     display: 'flex',
@@ -118,6 +111,26 @@ const useStyles = makeStyles(theme => ({
       '& >:nth-child(2)': {
         minHeight: `16px !important`,
         wordBreak: 'break-word',
+      },
+    },
+  },
+
+  mappingActionsCategory: {
+    marginTop: theme.spacing(1),
+    display: 'flex',
+  },
+
+  helpTextButtonCategroryMapping: {
+    padding: 0,
+    marginLeft: theme.spacing(1),
+    '& svg': {
+      fontSize: theme.spacing(3),
+      marginTop: theme.spacing(-0.5),
+    },
+    '&:hover': {
+      background: 'none',
+      '& svg': {
+        color: theme.palette.primary.main,
       },
     },
   },
@@ -318,11 +331,23 @@ export default function ImportMapping(props) {
       <Help
         title={title}
         disabled={!field}
-        className={classes.helpTextButton}
+        className={classes.helpTextButtonCategroryMapping}
         helpKey={`categoryMappings-${id}`}
         helpText={description}
       />
     );
+  };
+
+  const ListIconComponent = ({ mapping, generateFields = [] }) => {
+    const { generate } = mapping;
+    const generateField = generateFields.find(f => f.id === generate);
+
+    return generateField &&
+      generateField.options &&
+      generateField.options.length ? (
+      // TODO: @Azhar should be replaced by a ListIcon
+      <KnowledgeBaseIcon />
+    ) : null;
   };
 
   const ValueContainer = ({ children, ...props }) => {
@@ -423,6 +448,13 @@ export default function ImportMapping(props) {
                     id={`fieldMappingExtract-${mapping.index}`}
                     labelName="name"
                     valueName="id"
+                    endAdornment={
+                      <ListIconComponent
+                        mapping={mapping}
+                        extractFields={extractFields}
+                        generateFields={generateFields}
+                      />
+                    }
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
                     disabled={mapping.isNotEditable || disabled}
@@ -442,40 +474,41 @@ export default function ImportMapping(props) {
                     </span>
                   )}
                 </div>
-                <div>
-                  <MappingSettings
-                    id={`fieldMappingSettings-${mapping.index}`}
-                    onSave={(id, evt) => {
-                      patchSettings(mapping.index, evt);
-                    }}
-                    value={mapping}
-                    options={options}
-                    generate={mapping.generate}
-                    application={application}
-                    isCategoryMapping
-                    updateLookup={updateLookupHandler}
-                    disabled={mapping.isNotEditable || disabled}
-                    lookups={lookups}
-                    extractFields={extractFields}
-                    generateFields={generateFields}
-                  />
-                </div>
-                <div key="delete_button">
-                  <ActionButton
-                    data-test={`fieldMappingRemove-${mapping.index}`}
-                    aria-label="delete"
-                    disabled={
-                      mapping.isRequired || mapping.isNotEditable || disabled
-                    }
-                    onClick={() => {
-                      handleDelete(mapping.index);
-                    }}
-                    className={classes.margin}>
-                    <TrashIcon />
-                  </ActionButton>
-                </div>
-                <div>
-                  <FieldHelp id={mapping.generate} />
+                <div className={classes.mappingActionsCategory}>
+                  <div>
+                    <MappingSettings
+                      id={`fieldMappingSettings-${mapping.index}`}
+                      onSave={(id, evt) => {
+                        patchSettings(mapping.index, evt);
+                      }}
+                      value={mapping}
+                      options={options}
+                      generate={mapping.generate}
+                      application={application}
+                      isCategoryMapping
+                      updateLookup={updateLookupHandler}
+                      disabled={mapping.isNotEditable || disabled}
+                      lookups={lookups}
+                      extractFields={extractFields}
+                      generateFields={generateFields}
+                    />
+                  </div>
+                  <div key="delete_button">
+                    <ActionButton
+                      data-test={`fieldMappingRemove-${mapping.index}`}
+                      aria-label="delete"
+                      disabled={
+                        mapping.isRequired || mapping.isNotEditable || disabled
+                      }
+                      onClick={() => {
+                        handleDelete(mapping.index);
+                      }}>
+                      <TrashIcon />
+                    </ActionButton>
+                  </div>
+                  <div>
+                    <FieldHelp id={mapping.generate} />
+                  </div>
                 </div>
               </div>
             </div>

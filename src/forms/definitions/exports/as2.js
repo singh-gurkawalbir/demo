@@ -1,51 +1,10 @@
-const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-  const fileDefinitionRulesField = fields.find(
-    field => field.id === 'file.filedefinition.rules'
-  );
-  const fileType = fields.find(field => field.id === 'file.type');
-  const fileDefinitionFieldsMap = {
-    filedefinition: 'edix12.format',
-    fixed: 'fixed.format',
-    'delimited/edifact': 'edifact.format',
-  };
-
-  if (
-    fileType &&
-    fileType.value &&
-    !fileDefinitionRulesField.userDefinitionId
-  ) {
-    // Delete existing visibility rules
-    delete fileDefinitionRulesField.visibleWhenAll;
-    delete fileDefinitionRulesField.visibleWhen;
-
-    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === formatFieldType
-      );
-
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
-    } else {
-      fileDefinitionRulesField.visible = false;
-    }
-  } else {
-    // make visibility of format fields false incase of edit mode of file adaptors
-    Object.values(fileDefinitionFieldsMap).forEach(field => {
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === field
-      );
-
-      delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.visible = false;
-    });
-  }
-};
+import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
+    delete newValues['/file/csvHelper'];
     newValues['/type'] = 'webhook';
 
     if (newValues['/file/json/resourcePath'] === '') {
@@ -56,7 +15,6 @@ export default {
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -65,15 +23,22 @@ export default {
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -81,13 +46,16 @@ export default {
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -144,20 +112,77 @@ export default {
         definitionId: definition && definition.value,
         resourcePath: resourcePath && resourcePath.value,
       };
+    } else if (fieldId === 'file.csvHelper') {
+      const keyColumnsField = fields.find(
+        field => field.id === 'file.csv.keyColumns'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+
+      return {
+        fields: {
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          trimSpaces: trimSpacesField && trimSpacesField.value,
+          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+          keyColumns: keyColumnsField && keyColumnsField.value,
+        },
+      };
+    } else if (fieldId === 'file.csv.keyColumns') {
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+      const options = {
+        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+        trimSpaces: trimSpacesField && trimSpacesField.value,
+        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+      };
+
+      return options;
     }
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
     'edix12.format': {
       fieldId: 'edix12.format',
     },
     'file.type': { fieldId: 'file.type' },
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
+    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
+    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
+    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
+    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
@@ -178,32 +203,37 @@ export default {
       ],
       required: true,
     },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
-    },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
   },
   layout: {
-    fields: [
-      'common',
-      'exportOneToMany',
-      'exportData',
-      'file.type',
-      'file.csv',
-      'file.xml.resourcePath',
-      'file.json.resourcePath',
-      'file.xlsx.hasHeaderRow',
-      'file.xlsx.rowsPerRecord',
-      'file.xlsx.keyColumns',
-      'edix12.format',
-      'fixed.format',
-      'edifact.format',
-      'file.filedefinition.rules',
-      'file.fileDefinition.resourcePath',
-    ],
+    fields: ['common', 'exportOneToMany'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: [
+          'file.type',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.trimSpaces',
+          'file.csv.rowsToSkip',
+          'file.csv.hasHeaderRow',
+          'file.csv.rowsPerRecord',
+          'file.csv.keyColumns',
+          'file.csvHelper',
+          'file.xml.resourcePath',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+          'edix12.format',
+          'fixed.format',
+          'edifact.format',
+          'file.filedefinition.rules',
+        ],
+      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

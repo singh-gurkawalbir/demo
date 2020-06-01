@@ -35,6 +35,7 @@ export default function HttpMappingAssistant(props) {
       dispatch(
         actions.editor.init(editorId, 'handlebars', {
           strict: false,
+          autoEvaluate: true,
           template: rule,
           data: dataInput,
         })

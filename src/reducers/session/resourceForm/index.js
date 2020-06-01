@@ -49,6 +49,14 @@ export default function reducer(state = {}, action) {
           showFormValidationsBeforeTouch: false,
         },
       };
+    case actionTypes.RESOURCE_FORM.INIT_FAILED:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          initFailed: true,
+        },
+      };
 
     case actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA:
       stateCopy[key] && delete stateCopy[key].initData;
@@ -58,7 +66,9 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
       // only after form successfully intializes does it make sense to show validations
       // if there is no form state it does not make sense to create a state and tie this property
-      if (!state[key] || !state[key].initComplete) return state;
+
+      // commenting below as some resources (eg integration) might not be initialized
+      // if (!state[key] || !state[key].initComplete) return state;
 
       return {
         ...state,

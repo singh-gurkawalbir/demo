@@ -1,14 +1,15 @@
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/ReactivateTokenIcon';
+import ReactivateTokenIcon from '../../../../../components/icons/ReactivateTokenIcon';
 
 export default {
   label: 'Reactivate token',
-  component: function AccessTokens({ resourceType, resource }) {
+  icon: ReactivateTokenIcon,
+  component: function ReactivateAccessToken({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
-
-    function handleReactivateClick() {
+    const reactivateAccessToken = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -17,19 +18,16 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(
-        actions.resource.commitStaged(resourceType, resource._id, 'value')
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
-    }
+    }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <IconButton
-        data-test="reactivateAccessToken"
-        size="small"
-        onClick={() => handleReactivateClick()}>
-        <Icon />
-      </IconButton>
-    );
+    useEffect(() => {
+      reactivateAccessToken();
+    }, [reactivateAccessToken]);
+
+    return null;
   },
 };

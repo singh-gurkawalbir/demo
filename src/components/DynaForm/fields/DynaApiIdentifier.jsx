@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
-import { MODEL_PLURAL_TO_LABEL, getApiUrl } from '../../../utils/resource';
+import { getApiUrl } from '../../../utils/resource';
 import FieldHelp from '../../../components/DynaForm/FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -15,15 +15,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaApiIdentifier(props) {
-  const { value, id, resourceType } = props;
+  const { value, id } = props;
   const classes = useStyles();
   const apiUrl = getApiUrl();
 
   return (
     <div className={classes.dynaAPIWrapper}>
       <Typography data-test={id} className={classes.text}>
-        Invoke this {MODEL_PLURAL_TO_LABEL[resourceType]} via [POST] to:
-        {` ${apiUrl}/${value}`}
+        Invoke :{` ${apiUrl}/${value}`}
       </Typography>
       <FieldHelp {...props} />
     </div>

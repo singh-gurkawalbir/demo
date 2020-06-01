@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: 624,
     marginTop: theme.appBarHeight,
+    paddingBottom: theme.appBarHeight,
     border: 'solid 1px',
     boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
@@ -29,12 +30,16 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: 'flex',
+    height: '100%',
   },
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 3, 3, 0),
+    padding: theme.spacing(0, 3),
     overflowX: 'scroll',
+  },
+  subRecordDynaForm: {
+    minHeight: `calc(100% - 56px)`,
   },
 }));
 
@@ -164,17 +169,22 @@ function SubRecordDrawer(props) {
           {fieldMeta && (
             <DynaForm
               // disabled={disabled}
+              className={classes.subRecordDynaForm}
               fieldMeta={fieldMeta}
               formState={formState}>
-              <Button data-test="cancel-subrecord" onClick={handleClose}>
-                Cancel
-              </Button>
               <DynaSubmit
                 data-test="save-subrecord"
                 showCustomFormValidations={showCustomFormValidations}
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
+              <Button
+                variant="text"
+                color="primary"
+                data-test="cancel-subrecord"
+                onClick={handleClose}>
+                Cancel
+              </Button>
             </DynaForm>
           )}
         </div>

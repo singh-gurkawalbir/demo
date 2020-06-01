@@ -1,4 +1,4 @@
-import { takeLatest, select, call, put } from 'redux-saga/effects';
+import { takeLatest, select, call, put, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { resource, resourceFormState, resourceData } from '../../../reducers';
@@ -17,6 +17,7 @@ import {
 import { exportPreview } from '../utils/previewCalls';
 import { saveRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
+import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 
 function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
@@ -92,6 +93,13 @@ function* onResourceCreate({ id, resourceType, tempId }) {
    * Question: How to differentiate -- a lookup creation and an existing lookup add on flow
    */
   if (resourceType === 'exports') {
+    // TODO @Raghu: figure out a way to make preview call once to save Transformation rules and also rawData
+    // Merge the below two sagas
+    // @Bugfix: 15331 transformation rules for XML related exports are saved after export is created
+    yield call(saveTransformationRulesForNewXMLExport, {
+      resourceId: id,
+      tempResourceId: tempId,
+    });
     const resourceObj = yield select(resource, resourceType, id);
 
     if (!resourceObj.isLookup) {
@@ -185,6 +193,6 @@ function* onResourceUpdate({
 }
 
 export default [
-  takeLatest(actionTypes.RESOURCE.CREATED, onResourceCreate),
+  takeEvery(actionTypes.RESOURCE.CREATED, onResourceCreate),
   takeLatest(actionTypes.RESOURCE.UPDATED, onResourceUpdate),
 ];

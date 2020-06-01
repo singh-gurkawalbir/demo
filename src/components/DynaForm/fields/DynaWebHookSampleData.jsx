@@ -10,10 +10,11 @@ import * as selectors from '../../../reducers';
 const useStyles = makeStyles(theme => ({
   container: {
     height: '15vh',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   actions: {
-    height: '6vh',
-    padding: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   inlineActions: {
     display: 'inline',
@@ -39,21 +40,15 @@ export default function DynaWebHookSampleData(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
-    if (!options.webHookUrl || !options.webHookProvider) {
+    if (!options.webHookUrl) {
       return enqueueSnackbar({
-        message: 'Url and Provider are mandatory',
+        message: 'Webhook url is mandatory',
         variant: 'error',
       });
     }
 
     dispatch(actions.resource.request('exports', resourceId));
-  }, [
-    dispatch,
-    enqueueSnackbar,
-    options.webHookProvider,
-    options.webHookUrl,
-    resourceId,
-  ]);
+  }, [dispatch, enqueueSnackbar, options.webHookUrl, resourceId]);
   const handleManualEnter = useCallback(() => {
     setManualEnter(true);
   }, []);
@@ -78,11 +73,19 @@ export default function DynaWebHookSampleData(props) {
         />
       </div>
       <div className={classes.actions}>
-        <Button className={classes.inlineActions} onClick={generateSampleData}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.inlineActions}
+          onClick={generateSampleData}>
           Click to Show
         </Button>
         <Typography className={classes.inlineActions}> or </Typography>
-        <Button className={classes.inlineActions} onClick={handleManualEnter}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.inlineActions}
+          onClick={handleManualEnter}>
           Manually Enter
         </Button>
       </div>

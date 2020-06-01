@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
   submitButton: {
     marginLeft: theme.spacing(1),
   },
+  formPreviewContainer: {
+    maxHeight: 'calc(100% - 54px) !important',
+  },
 }));
 
 export default function SettingsFormEditor({
@@ -58,9 +61,12 @@ export default function SettingsFormEditor({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
-  const { data, result, error, lastChange, mode } = editor;
+  const { data, result, error, lastChange, mode, status } = editor;
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
   );
@@ -72,6 +78,11 @@ export default function SettingsFormEditor({
   );
   const handleFormPreviewChange = useCallback(values => {
     setSettingsPreview(values);
+  }, []);
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
   }, []);
 
   // any time the form metadata updates, we need to reset the settings since
@@ -92,7 +103,7 @@ export default function SettingsFormEditor({
       width="100%">
       <PanelGridItem gridArea="meta">
         <PanelTitle
-          title={mode === 'json' ? 'Form Definition' : 'Script Input'}
+          title={mode === 'json' ? 'Form definition' : 'Script input'}
         />
         <CodePanel
           id="data"
@@ -101,6 +112,7 @@ export default function SettingsFormEditor({
           mode="json"
           readOnly={disabled}
           onChange={handleDataChange}
+          skipDelay
         />
       </PanelGridItem>
       {mode === 'script' && (
@@ -113,18 +125,21 @@ export default function SettingsFormEditor({
         </PanelGridItem>
       )}
       <PanelGridItem gridArea="form">
-        <PanelTitle title="Form Preview" />
-        {result ? (
+        <PanelTitle title="Form preview" />
+        {result && result.data && status !== 'error' ? (
           <DynaForm
+            className={classes.formPreviewContainer}
             key={key}
-            fieldMeta={result}
+            fieldMeta={result.data}
             // onChange={handleFormPreviewChange}
+            formState={formState}
             resourceId={resourceId}
             resourceType={resourceType}>
             <DynaSubmit
               className={classes.submitButton}
-              onClick={handleFormPreviewChange}>
-              Test Form Submission
+              onClick={handleFormPreviewChange}
+              showCustomFormValidations={showCustomFormValidations}>
+              Test form
             </DynaSubmit>
           </DynaForm>
         ) : (
@@ -135,7 +150,7 @@ export default function SettingsFormEditor({
         )}
       </PanelGridItem>
       <PanelGridItem gridArea="settings">
-        <PanelTitle title="Form Output" />
+        <PanelTitle title="Form output" />
         {settingsPreview ? (
           <CodePanel
             id="result"
@@ -146,9 +161,11 @@ export default function SettingsFormEditor({
             readOnly
           />
         ) : (
-          <Typography>
-            Use the form above to preview the form output.
-          </Typography>
+          status !== 'error' && (
+            <Typography>
+              Click the ‘test form’ button above to preview form output.
+            </Typography>
+          )
         )}
       </PanelGridItem>
 
