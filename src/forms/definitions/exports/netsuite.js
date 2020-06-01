@@ -18,11 +18,6 @@ export default {
 
     newValues['/netsuite/type'] = netsuiteType;
 
-    if (newValues['/outputMode'] === 'blob') {
-      newValues['/type'] = 'blob';
-      newValues['/netsuite/type'] = undefined;
-    }
-
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
@@ -113,6 +108,11 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/delta/dateField'];
       }
+    }
+
+    if (newValues['/netsuite/internalId']) {
+      newValues['/type'] = 'blob';
+      delete newValues['/netsuite/type'];
     }
 
     try {
