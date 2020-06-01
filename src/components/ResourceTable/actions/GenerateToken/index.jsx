@@ -7,6 +7,8 @@ import useConfirmDialog from '../../../ConfirmDialog';
 export default {
   label: 'Generate token',
   icon: RegenerateTokenIcon,
+  hasAccess: ({ rowData, resourceType }) =>
+    !(resourceType === 'stacks' && rowData.type === 'lambda'),
   component: function GenerateToken({ rowData = {}, resourceType }) {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
