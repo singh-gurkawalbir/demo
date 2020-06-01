@@ -144,9 +144,10 @@ const routes = [
   },
   {
     path: '/pg/templates/:integrationAppName/:integrationId',
-    breadcrumb: IntegrationAppCrumb,
-    childRoutes: integrationAppRoutes,
+    breadcrumb: IntegrationCrumb,
   },
+  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
   {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
