@@ -88,12 +88,14 @@ export default function DynaTrueFixedWidthColmnMapper({
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
-        val.map(({ fieldName, startPosition, endPosition, regex }) => ({
-          fieldName,
-          startPosition,
-          endPosition,
-          regex,
-        }))
+        val.map(
+          ({ fieldName, startPosition, endPosition, regexExpression }) => ({
+            fieldName,
+            startPosition,
+            endPosition,
+            regexExpression,
+          })
+        )
       );
     }
   };
