@@ -26,7 +26,9 @@ export default (state = { environment: 'production' }, action) => {
         if (resourceType === 'preferences') {
           draft.dateFormat = 'MM/DD/YYYY';
           draft.timeFormat = 'h:mm:ss a';
-          Object.assign(draft, resource);
+          Object.keys(resource).forEach(key => {
+            draft[key] = resource[key];
+          });
         }
 
         break;
@@ -35,7 +37,9 @@ export default (state = { environment: 'production' }, action) => {
           const { defaultAShareId } = draft;
 
           if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-            Object.assign(draft, preferences);
+            Object.keys(preferences).forEach(key => {
+              draft[key] = preferences[key];
+            });
           } else {
             Object.keys(preferences).forEach(key => {
               const preference = preferences[key];
@@ -68,18 +72,6 @@ export function userPreferences(state) {
   if (!state) return emptyObj;
 
   return state;
-}
-
-export function drawerOpened(preferences) {
-  if (!preferences) return false;
-
-  return !!preferences.drawerOpened;
-}
-
-export function expandSelected(preferences) {
-  if (!preferences) return null;
-
-  return preferences.expand;
 }
 
 export function accountShareHeader(preferences, path) {
