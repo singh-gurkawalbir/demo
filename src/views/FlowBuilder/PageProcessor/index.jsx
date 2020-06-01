@@ -294,9 +294,10 @@ const PageProcessor = ({
     return processorActions;
   }, [isLast, pending, pp.type, resource, resourceType, usedActions]);
   // #endregion
-
   // console.log('render: <PageProcessor>');
   // console.log(pp, usedActions);
+  const name = pending ? 'Pending configuration' : resource.name || resource.id;
+  const handleDelete = useCallback(onDelete(name), [onDelete]);
 
   return (
     <Fragment>
@@ -307,10 +308,8 @@ const PageProcessor = ({
         )}
         <AppBlock
           integrationId={integrationId}
-          name={
-            pending ? 'Pending configuration' : resource.name || resource.id
-          }
-          onDelete={onDelete}
+          name={name}
+          onDelete={handleDelete}
           onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}

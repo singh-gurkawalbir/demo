@@ -1,7 +1,7 @@
 import stableStringify from 'fast-json-stable-stringify';
 
 export const safeParse = o => {
-  if (typeof o === 'object') return o;
+  if (typeof o === 'object' || !o) return o;
 
   try {
     return JSON.parse(o);

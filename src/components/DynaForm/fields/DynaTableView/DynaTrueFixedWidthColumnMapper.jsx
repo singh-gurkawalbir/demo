@@ -40,7 +40,7 @@ const optionsMap = [
     space: 1,
   },
   {
-    id: 'regex',
+    id: 'regexExpression',
     label: 'Regex',
     required: false,
     type: 'input',

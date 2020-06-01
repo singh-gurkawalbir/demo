@@ -1,23 +1,43 @@
-import { useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import { useState, useCallback, Fragment, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core';
+import DynaText from '../DynaText';
 import DynaTableView from './DynaTable';
 
+const useStyles = makeStyles(theme => ({
+  camSettingFileParsingWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(2, 3),
+  },
+}));
+
 export default function DynaXMLMapper(props) {
-  const { onFieldChange, defaultValue, label, id } = props;
-  const [path, setPath] = useState(props.path);
-  const fieldChangeHandler = (id, val) => {
+  const classes = useStyles();
+  const { onFieldChange, properties = {}, value, id } = props;
+  const [path, setPath] = useState(properties.path || '');
+  let tableValue;
+
+  if (Array.isArray(value)) {
+    tableValue = value;
+  } else {
+    tableValue = value ? value.value : [];
+  }
+
+  const [dynaTableValue, setDynaTableValue] = useState(tableValue);
+
+  useEffect(() => {
+    onFieldChange(id, { path, value: dynaTableValue });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dynaTableValue, id, path]);
+
+  const fieldChangeHandler = useCallback((id1, val) => {
     if (val && Array.isArray(val)) {
-      onFieldChange(id, { path, value: val });
+      setDynaTableValue(val);
     }
-  };
-
-  const handlePathUpdate = e => {
-    setPath(e.target.value);
-    onFieldChange(id, { path, value: defaultValue });
-  };
-
+  }, []);
+  const handlePathUpdate = useCallback((id2, val) => {
+    setPath(val);
+  }, []);
   const optionsMap = [
     {
       id: 'fieldName',
@@ -43,29 +63,23 @@ export default function DynaXMLMapper(props) {
   ];
 
   return (
-    <Grid container spacing={2}>
-      <Grid item>
-        <Typography>{label}</Typography>
-      </Grid>
-      <Grid item>
-        <TextField
-          defaultValue={path}
-          label="Path:"
-          placeholder={path}
-          margin="normal"
-          variant="outlined"
-          onChange={handlePathUpdate}
-        />
-      </Grid>
-      <Grid item>
-        <DynaTableView
-          {...props}
-          optionsMap={optionsMap}
-          value={defaultValue}
-          hideLabel
-          onFieldChange={fieldChangeHandler}
-        />
-      </Grid>
-    </Grid>
+    <Fragment>
+      <DynaText
+        value={path}
+        label="Path:"
+        placeholder="Path"
+        margin="normal"
+        variant="outlined"
+        onFieldChange={handlePathUpdate}
+      />
+      <DynaTableView
+        {...props}
+        className={classes.camSettingFileParsingWrapper}
+        optionsMap={optionsMap}
+        value={dynaTableValue}
+        hideLabel
+        onFieldChange={fieldChangeHandler}
+      />
+    </Fragment>
   );
 }

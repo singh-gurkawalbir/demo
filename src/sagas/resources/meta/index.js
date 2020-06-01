@@ -28,6 +28,30 @@ export function* getNetsuiteOrSalesforceMeta({
   }
 
   try {
+    if (addInfo && addInfo.bundlePath) {
+      const bundleCheckResponse = yield call(apiCallWithRetry, {
+        path: `/${addInfo.bundlePath}`,
+        opts: {},
+        hidden: true,
+      });
+
+      if (bundleCheckResponse && !bundleCheckResponse.success) {
+        if (bundleCheckResponse.bundleURL)
+          yield put(
+            actions.metadata.validationError(
+              addInfo.bundleUrlHelp.replace(
+                /BUNDLE_URL/g,
+                bundleCheckResponse.bundleURL
+              ),
+              connectionId,
+              commMetaPath
+            )
+          );
+
+        return undefined;
+      }
+    }
+
     const metadata = yield call(apiCallWithRetry, {
       path,
       opts: {},

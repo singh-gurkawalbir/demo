@@ -33,6 +33,7 @@ function GenerateUrl(props) {
     options = {},
     buttonLabel,
     formContext,
+    flowId,
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -49,7 +50,9 @@ function GenerateUrl(props) {
         finalResourceId,
         formValues,
         null,
-        true
+        true,
+        false,
+        flowId
       )
     );
     setUrl(true);
@@ -97,7 +100,14 @@ function GenerateUrl(props) {
               </Button>
             </CopyToClipboard>
           )}
-          {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
+          {!value && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleGenerateUrl}>
+              {buttonLabel}
+            </Button>
+          )}
         </div>
       </div>
     </Fragment>

@@ -14,6 +14,7 @@ import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';
 import Spinner from '../../Spinner';
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   search: {
@@ -23,12 +24,6 @@ const useStyles = makeStyles(theme => ({
   },
   hide: {
     display: 'none',
-  },
-  loading: {
-    textAlign: 'center',
-    position: 'relative',
-    top: 100,
-    width: '100%',
   },
 }));
 const defaultFilter = {
@@ -143,9 +138,9 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       {isFreshDataLoad ? (
-        <div className={classes.loading}>
-          Loading Errors <Spinner size={20} />
-        </div>
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
       ) : (
         <ErrorTable
           paginationOptions={paginationOptions}

@@ -154,6 +154,7 @@ export default function ManageLookup(props) {
       fieldMetadata,
       fieldId,
       recordType,
+      opts: options,
     });
   } else if (resource.adaptorType === 'RDBMSImport') {
     fieldMeta = rdbmsMetadata.getLookupMetadata({

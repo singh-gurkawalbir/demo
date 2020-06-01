@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
-import csvOptions from '../../../AFE/CsvConfigEditor/options';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -20,6 +19,8 @@ const useStyles = makeStyles(theme => ({
   dynaCsvLabel: {
     marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 
@@ -28,13 +29,15 @@ export default function DynaCsvGenerate(props) {
   const {
     id,
     onFieldChange,
-    value = {},
     label,
     resourceId,
     flowId,
     resourceType,
     disabled,
+    helpKey,
+    options = {},
   } = props;
+  const { fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
   const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
@@ -76,28 +79,9 @@ export default function DynaCsvGenerate(props) {
   }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const {
-        rowDelimiter,
-        columnDelimiter,
-        includeHeader,
-        wrapWithQuotes,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        truncateLastRowDelimiter,
-      } = editorValues;
-
-      onFieldChange(id, {
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
-        includeHeader,
-        truncateLastRowDelimiter,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        wrapWithQuotes,
+      Object.keys(fields).forEach(key => {
+        onFieldChange(`file.csv.${key}`, editorValues[key]);
       });
-
-      // On change of rules, trigger sample data update
-      // It calls processor on final rules to parse csv file
     }
 
     handleEditorClick();
@@ -112,31 +96,30 @@ export default function DynaCsvGenerate(props) {
       {showEditor && (
         <CsvConfigEditorDialog
           key={sampleDataLoaded}
-          title="CSV Generate Options"
+          title="CSV generator helper"
           id={id + resourceId}
           mode="csv"
           data={stringifiedSampleData}
           resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
-          rule={value}
+          rule={fields}
           onClose={handleClose}
           disabled={disabled}
         />
       )}
       <div className={classes.dynaCsvGenerateWrapper}>
-        <FormLabel className={classes.dynaCsvLabel}>CSV generate:</FormLabel>
+        <FormLabel className={classes.dynaCsvLabel}>{label}</FormLabel>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaCsvBtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
-        {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} helpKey={helpKey} />
       </div>
     </Fragment>
   );

@@ -11,6 +11,7 @@ import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
+import CustomSettings from './sections/CustomSettings';
 import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -56,20 +57,35 @@ const allSections = [
     Section: ReadmeSection,
     id: 'readMe',
   },
+  {
+    path: 'customSettings',
+    label: 'Custom',
+    Section: CustomSettings,
+    id: 'customSettings',
+  },
 ];
 
 export default function AdminPanel({ integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const developerModeOn = useSelector(state => selectors.developerMode(state));
+  const isViewMode = useSelector(state =>
+    selectors.isFormAMonitorLevelAccess(state, integrationId)
+  );
+  const isDeveloper = useSelector(
+    state => selectors.userProfile(state).developer
+  );
+  const hasSettingsForm = useSelector(state =>
+    selectors.hasSettingsForm(state, 'integrations', integrationId)
+  );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readme');
+    sectionsToHide.push('readMe');
+    sectionsToHide.push('customSettings');
   }
 
-  if (!developerModeOn) {
-    sectionsToHide.push('settings');
+  if ((!isDeveloper || isViewMode) && !hasSettingsForm) {
+    sectionsToHide.push('customSettings');
   }
 
   const availableSections = allSections.filter(

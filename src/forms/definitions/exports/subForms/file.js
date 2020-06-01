@@ -1,48 +1,5 @@
 import { isNewId } from '../../../../utils/resource';
-
-const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-  const fileDefinitionRulesField = fields.find(
-    field => field.id === 'file.filedefinition.rules'
-  );
-  const fileType = fields.find(field => field.id === 'file.type');
-  const fileDefinitionFieldsMap = {
-    filedefinition: 'edix12.format',
-    fixed: 'fixed.format',
-    'delimited/edifact': 'edifact.format',
-  };
-
-  if (
-    fileType &&
-    fileType.value &&
-    !fileDefinitionRulesField.userDefinitionId
-  ) {
-    // Delete existing visibility rules
-    delete fileDefinitionRulesField.visibleWhenAll;
-    delete fileDefinitionRulesField.visibleWhen;
-
-    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === formatFieldType
-      );
-
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
-    } else {
-      fileDefinitionRulesField.visible = false;
-    }
-  } else {
-    // make visibility of format fields false incase of edit mode of file adaptors
-    Object.values(fileDefinitionFieldsMap).forEach(field => {
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === field
-      );
-
-      delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.visible = false;
-    });
-  }
-};
+import { alterFileDefinitionRulesVisibility } from '../../../utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {
@@ -50,9 +7,7 @@ export default {
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
-    }
-
-    if (fieldId === 'file.filedefinition.rules') {
+    } else if (fieldId === 'file.filedefinition.rules') {
       let definitionFieldId;
 
       // Fetch format specific Field Definition field to fetch id
@@ -72,6 +27,62 @@ export default {
         definitionId: definition && definition.value,
         resourcePath: resourcePath && resourcePath.value,
       };
+    } else if (fieldId === 'file.csvHelper') {
+      const keyColumnsField = fields.find(
+        field => field.id === 'file.csv.keyColumns'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+
+      return {
+        fields: {
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          trimSpaces: trimSpacesField && trimSpacesField.value,
+          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+          keyColumns: keyColumnsField && keyColumnsField.value,
+        },
+        uploadSampleDataFieldName: 'uploadFile',
+      };
+    } else if (fieldId === 'file.csv.keyColumns') {
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+      const options = {
+        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+        trimSpaces: trimSpacesField && trimSpacesField.value,
+        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+      };
+
+      return options;
     }
   },
   fieldMap: {
@@ -79,8 +90,16 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
+      placeholder: 'Sample file (that would be parsed):',
     },
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
+    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
+    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
+    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
+    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
@@ -127,7 +146,14 @@ export default {
     fields: [
       'file.type',
       'uploadFile',
-      'file.csv',
+      'file.csv.columnDelimiter',
+      'file.csv.rowDelimiter',
+      'file.csv.trimSpaces',
+      'file.csv.rowsToSkip',
+      'file.csv.hasHeaderRow',
+      'file.csv.rowsPerRecord',
+      'file.csv.keyColumns',
+      'file.csvHelper',
       'file.xml.resourcePath',
       'file.json.resourcePath',
       'file.xlsx.hasHeaderRow',
@@ -137,7 +163,6 @@ export default {
       'fixed.format',
       'edifact.format',
       'file.filedefinition.rules',
-      'file.fileDefinition.resourcePath',
     ],
   },
 };

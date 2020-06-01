@@ -1,8 +1,13 @@
-import { call, takeEvery, put, all } from 'redux-saga/effects';
+import { call, takeEvery, put, all, select } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import actions from '../../actions';
-import { recycleBinDependencies } from '../../constants/resource';
+import {
+  recycleBinDependencies,
+  RESOURCE_TYPE_PLURAL_TO_SINGULAR,
+} from '../../constants/resource';
+import { getResourceCollection } from '../resources';
+import * as selectors from '../../reducers';
 
 export function* restore({ resourceType, resourceId }) {
   const path = `/recycleBinTTL/${resourceType}/${resourceId}/doCascadeRestore`;
@@ -19,12 +24,20 @@ export function* restore({ resourceType, resourceId }) {
     return;
   }
 
+  // wait for the completion of resource calls, so that the state is ready for the redirectUrlToResourceListingPage selector
   yield all(
-    recycleBinDependencies[resourceType].map(resources =>
-      put(actions.resource.requestCollection(resources))
+    [...(recycleBinDependencies[resourceType] || []), 'recycleBinTTL'].map(
+      resourceType => call(getResourceCollection, { resourceType })
     )
   );
-  yield put(actions.resource.requestCollection('recycleBinTTL'));
+
+  const listingPageUrl = yield select(
+    selectors.redirectUrlToResourceListingPage,
+    RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType],
+    resourceId
+  );
+
+  yield put(actions.recycleBin.restoreRedirectUrl(listingPageUrl));
 }
 
 export function* purge({ resourceType, resourceId }) {

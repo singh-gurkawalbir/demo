@@ -85,7 +85,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         integration._templateId
       );
 
-      return getTemplateUrlName(template.applications);
+      if (template) return getTemplateUrlName(template.applications);
     }
 
     return null;

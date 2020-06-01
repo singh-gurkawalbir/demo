@@ -73,6 +73,8 @@ export default function* requestRealTimeMetadata({ resource }) {
         // Need to add actual logic and return the same
         const { _connectionId: connectionId, salesforce } = resource;
         const { sObjectType, distributed = {} } = salesforce;
+
+        if (!sObjectType) return;
         const { referencedFields = [], relatedLists = [] } = distributed;
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
         const sfMetadata = yield call(fetchMetadata, {

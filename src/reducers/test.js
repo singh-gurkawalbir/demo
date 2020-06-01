@@ -2318,7 +2318,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                             placeholder: 'Optional',
@@ -2703,7 +2703,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
                             placeholder: 'Optional',
@@ -3526,7 +3526,7 @@ describe('integrationApp Settings reducers', () => {
                         'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                     },
                     {
-                      label: 'Column Delimiter:',
+                      label: 'Column delimiter:',
                       type: 'input',
                       name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
@@ -4306,7 +4306,7 @@ describe('integrationApp Settings reducers', () => {
                       'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                   },
                   {
-                    label: 'Column Delimiter:',
+                    label: 'Column delimiter:',
                     type: 'input',
                     name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                     placeholder: 'Optional',

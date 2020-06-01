@@ -29,20 +29,19 @@ function ResourceDrawer(props) {
   const match = useRouteMatch();
   const open = !!match;
   const history = useHistory();
+  const { id, resourceType } = (props.match && props.match.params) || {};
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const isPreviewPanelAvailableForResource = useSelector(state => {
-    const { id, resourceType } = (props.match && props.match.params) || {};
-
+  const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
-    return selectors.isPreviewPanelAvailableForResource(
+    selectors.isPreviewPanelAvailableForResource(
       state,
       id,
       resourceType,
       props.flowId
-    );
-  });
+    )
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (

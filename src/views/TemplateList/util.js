@@ -1,3 +1,5 @@
+import { stringCompare } from '../../utils/sort';
+
 export const templateList = [
   { label: '3dCart', value: '3dcart' },
   { label: '3PL Central', value: '3plcentral' },
@@ -60,16 +62,7 @@ export const templateList = [
   { label: 'Zendesk Support', value: 'zendesk' },
   { label: 'Zuora', value: 'zuora' },
 ];
-templateList.sort((a, b) => {
-  const nameA = a.label ? a.label.toUpperCase() : '';
-  const nameB = b.label ? b.label.toUpperCase() : '';
-
-  if (nameA < nameB) return -1;
-
-  if (nameA > nameB) return 1;
-
-  return 0; // names must be equal
-});
+templateList.sort(stringCompare('label'));
 
 export default {
   templateList,

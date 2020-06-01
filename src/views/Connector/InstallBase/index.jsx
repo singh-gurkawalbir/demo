@@ -49,7 +49,7 @@ export default function InstallBase(props) {
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorInstallBaseConfig
-  ).resources;
+  );
   const licenses = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicenseFilterConfig

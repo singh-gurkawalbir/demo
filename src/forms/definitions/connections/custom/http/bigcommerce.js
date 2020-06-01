@@ -138,6 +138,7 @@ export default {
     },
     genericOauthConnector: {
       formId: 'genericOauthConnector',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',

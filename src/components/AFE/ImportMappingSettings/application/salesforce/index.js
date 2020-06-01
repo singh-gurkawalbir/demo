@@ -105,6 +105,7 @@ export default {
           ],
           value: lookup.whereClause,
           data: extractFields,
+          opts: options,
         },
         'lookup.whereClauseText': {
           id: 'lookup.whereClauseText',

@@ -13,8 +13,9 @@ function DynaUploadFile(props) {
     resourceType,
     formContext,
     onFieldChange,
+    placeholder,
   } = props;
-  const DEFAULT_PLACEHOLDER = 'Browse to zip file:';
+  const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
@@ -24,10 +25,10 @@ function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, fileType, name } = uploadedFile || {};
+    const { status, file, fileType } = uploadedFile || {};
 
     if (status === 'received') {
-      setFileName(name);
+      setFileName(DEFAULT_PLACEHOLDER);
       onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(

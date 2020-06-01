@@ -1,96 +1,98 @@
-import { Component, Fragment } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { Button, Typography } from '@material-ui/core';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Typography, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
+import * as selectors from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
-import {
-  changePasswordFailure,
-  changePasswordSuccess,
-  changePasswordMsg,
-} from '../../reducers';
+import NotificationToaster from '../../components/NotificationToaster';
+import DynaForm from '../../components/DynaForm';
+import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 
-const mapDispatchToProps = dispatch => ({
-  changePassword: message => {
-    dispatch(actions.auth.changePassword(message));
+const useStyles = makeStyles(theme => ({
+  container: {
+    padding: 10,
+    backgroundColor: theme.palette.background.default,
+    overflowY: 'auto',
+    height: '100%',
+    width: '100%',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
   },
-});
-const mapStateToProps = state => ({
-  error: changePasswordFailure(state),
-  success: changePasswordSuccess(state),
-  message: changePasswordMsg(state),
-});
+}));
+const changePasswordFieldMeta = {
+  fieldMap: {
+    currentPassword: {
+      id: 'currentPassword',
+      name: 'currentPassword',
+      type: 'text',
+      inputType: 'password',
+      label: 'Current password',
+      required: true,
+    },
+    newPassword: {
+      id: 'newPassword',
+      name: 'newPassword',
+      type: 'text',
+      inputType: 'password',
+      label: 'New password',
+      required: true,
+    },
+  },
+  layout: {
+    fields: ['currentPassword', 'newPassword'],
+  },
+};
 
-class ChangePassword extends Component {
-  handleOnSubmit = e => {
-    e.preventDefault();
-    const payload = {
-      currentPassword: e.target.currentPassword.value,
-      newPassword: e.target.newPassword.value,
-    };
+export default function ChangePassword({ show, onClose }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const error = useSelector(state => selectors.changePasswordFailure(state));
+  const success = useSelector(state => selectors.changePasswordSuccess(state));
+  const message = useSelector(state => selectors.changePasswordMsg(state));
+  const handleChangePasswordClick = useCallback(
+    formVal => {
+      const { currentPassword, newPassword } = formVal;
+      const payload = {
+        currentPassword,
+        newPassword,
+      };
 
-    this.props.changePassword(payload);
-  };
-  render() {
-    const { show, onhandleClose, error, success, message } = this.props;
+      dispatch(actions.auth.changePassword(payload));
+    },
+    [dispatch]
+  );
 
-    return (
-      <ModalDialog show={show} onClose={onhandleClose}>
-        <span>Change Password</span>
-        {success ? (
-          <span>{message}</span>
-        ) : (
-          <div>
-            <Typography variant="body2">
-              {`Please note that clicking 'Change Password' will sign you out of the
+  return (
+    <ModalDialog show={show} onClose={onClose}>
+      <span>Change Password</span>
+      {error && (
+        <NotificationToaster variant="error" size="large">
+          <Typography variant="h6">{message}</Typography>
+        </NotificationToaster>
+      )}
+
+      {success ? (
+        <NotificationToaster variant="success" size="large">
+          <Typography variant="h6">{message}</Typography>
+        </NotificationToaster>
+      ) : (
+        <div className={classes.container}>
+          <Typography variant="body2">
+            {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
-            </Typography>
-            <form id="changePasswordForm" onSubmit={this.handleOnSubmit}>
-              <TextField
-                id="currentPassword"
-                label="Current Password"
-                margin="normal"
-                type="password"
-                variant="filled"
-                fullWidth
-              />
-              <br />
-              <TextField
-                id="newPassword"
-                label="New Password"
-                margin="normal"
-                type="password"
-                variant="filled"
-                fullWidth
-              />
-            </form>
-          </div>
-        )}
+          </Typography>
 
-        {success ? (
-          <span />
-        ) : (
-          <Fragment>
-            {error && (
-              <Typography variant="body2" component="span" color="error">
-                {message}
-              </Typography>
-            )}
-            <Button
+          <DynaForm fieldMeta={changePasswordFieldMeta}>
+            <DynaSubmit
               data-test="changePassword"
-              variant="outlined"
-              color="primary"
-              type="submit"
-              form="changePasswordForm"
-              value="Submit">
+              id="changePassword"
+              onClick={handleChangePasswordClick}>
               Change password
-            </Button>
-          </Fragment>
-        )}
-      </ModalDialog>
-    );
-  }
+            </DynaSubmit>
+          </DynaForm>
+        </div>
+      )}
+    </ModalDialog>
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(ChangePassword);
