@@ -4,10 +4,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditorDialog from '../EditorDialog';
 import actions from '../../../actions';
 import TextToggle from '../../TextToggle';
+import Help from '../../Help';
+import InfoIconButton from '../../InfoIconButton';
+import helpTextMap from '../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   editorToggleContainer: {
     marginRight: theme.spacing(2),
+  },
+  helpTextButton: {
+    padding: 0,
   },
 }));
 const toggleEditorOptions = [
@@ -26,6 +32,7 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
         exclusive
         options={toggleEditorOptions}
       />
+      <InfoIconButton info={helpTextMap['editor.sampleDataSwitch']} />
     </div>
   );
 };
