@@ -189,7 +189,7 @@ export default function EditorDialog(props) {
             disabled={disabled}
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-preview"
+            label="Enable auto-run"
             value={!!editor.autoEvaluate}
           />
         </div>
