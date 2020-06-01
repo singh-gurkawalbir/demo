@@ -184,15 +184,7 @@ function AppBlock({
      */
 
     if (resource._connectionId) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        resource._connectionId
-      );
-
-      if (!connection || !connection.rdbms || !connection.rdbms.type) return;
-
-      return connection.rdbms.type;
+      return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
