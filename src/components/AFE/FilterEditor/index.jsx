@@ -68,8 +68,6 @@ export default function FilterEditor(props) {
     }
   }
 
-  console.log('lastValidData || data', lastValidData || data);
-
   return (
     <PanelGrid className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
