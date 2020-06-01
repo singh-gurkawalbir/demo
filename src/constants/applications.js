@@ -836,9 +836,9 @@ export const groupApplications = (
       return true;
     }
 
-    // Do not show FTP import for DataLoader flows
+    // Do not show FTP/S3 import for DataLoader flows
     if (resourceType === 'pageProcessor' && isSimpleImport) {
-      return connector.id !== 'ftp' && !connector.webhookOnly;
+      return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
     }
 
     if (resourceType === 'pageProcessor' && assistant) {
