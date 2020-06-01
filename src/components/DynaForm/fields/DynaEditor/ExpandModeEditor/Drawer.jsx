@@ -91,7 +91,7 @@ export default function EditorDrawer(props) {
           disabled={!isContentChanged}
           onClick={handleSaveAndClose}
           variant="outlined"
-          color="primary">
+          color="secondary">
           Save &amp; close
         </Button>
         <Button
