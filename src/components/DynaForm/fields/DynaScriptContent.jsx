@@ -80,6 +80,7 @@ export default function DynaScriptContent(props) {
       {...props}
       editorClassName={classes.editor}
       mode="javascript"
+      expandMode="drawer"
     />
   );
 }
