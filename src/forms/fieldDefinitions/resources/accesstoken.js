@@ -91,7 +91,7 @@ export default {
     multiselect: true,
     allowEdit: false,
     allowNew: false,
-    removeConnectionLoadingChip: true,
+    skipPingConnection: true,
     filter: r =>
       r._integrationId
         ? { _integrationId: r._integrationId }

@@ -162,7 +162,7 @@ function DynaSelectResource(props) {
     statusExport,
     ignoreEnvironmentFilter,
     resourceContext,
-    removeConnectionLoadingChip,
+    skipPingConnection,
   } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -337,11 +337,9 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' &&
-          !!value &&
-          !removeConnectionLoadingChip && (
-            <ConnectionLoadingChip connectionId={value} />
-          )}
+        {resourceType === 'connections' && !!value && !skipPingConnection && (
+          <ConnectionLoadingChip connectionId={value} />
+        )}
       </div>
     </div>
   );
