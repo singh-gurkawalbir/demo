@@ -993,6 +993,11 @@ export default {
       },
       {
         collapsed: true,
+        label: 'Do you have a sample destination record?',
+        fields: ['sampleData'],
+      },
+      {
+        collapsed: true,
         label: 'Non-standard API response patterns',
         fields: [
           'rest.successPath',

@@ -49,7 +49,7 @@ export default function InstallBase(props) {
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorInstallBaseConfig
-  ).resources;
+  );
   const licenses = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicenseFilterConfig
@@ -57,7 +57,7 @@ export default function InstallBase(props) {
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const resources = list.map(r => {
+  const resources = list.resources.map(r => {
     const license = licenses.find(l => l._integrationId === r._integrationId);
 
     return { ...r, _id: r._integrationId, license };

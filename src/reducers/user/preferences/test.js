@@ -62,6 +62,7 @@ describe('user reducers', () => {
           const patchedState = reducer(state, updatePreferencePatch);
 
           expect(patchedState).toEqual({
+            environment: 'production',
             themeName: 'blue',
             defaultAShareId: ACCOUNT_IDS.OWN,
             timeFormat: 'something else',
@@ -96,6 +97,7 @@ describe('user reducers', () => {
           const patchedState = reducer(state, updatePreferencePatch);
 
           expect(patchedState).toEqual({
+            environment: 'production',
             defaultAShareId: '123',
             timeFormat: 'something else',
             dateFormat: 'test',
@@ -118,6 +120,7 @@ describe('user reducers', () => {
         const state = reducer(undefined, receivedPreferences);
 
         expect(state).toEqual({
+          environment: 'production',
           themeName: 'fancy',
           dateFormat: defaultDateFormat,
           timeFormat: defaultTimeFormat,
@@ -164,6 +167,7 @@ describe('user reducers', () => {
       const state = reducer(undefined, receivedPreferencesAction);
 
       expect(selectors.userPreferences(state)).toEqual({
+        environment: 'production',
         themeName: 'fancy',
         timeFormat: 'something',
         dateFormat: defaultDateFormat,
@@ -183,6 +187,7 @@ describe('user reducers', () => {
       const state = reducer(undefined, receivedPreferences);
 
       expect(selectors.userPreferences(state)).toEqual({
+        environment: 'production',
         themeName: 'fancy',
         defaultAShareId: ACCOUNT_IDS.OWN,
         timeFormat: 'something',
@@ -209,6 +214,7 @@ describe('user reducers', () => {
       expect(selectors.userPreferences(state)).toEqual({
         ...invitedUserAccountPreferences,
         dateFormat: defaultDateFormat,
+        environment: 'production',
       });
     });
   });

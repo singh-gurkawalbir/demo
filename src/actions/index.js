@@ -950,11 +950,12 @@ const file = {
       fileType,
       file,
     }),
-  processFile: ({ fileId, file, fileType }) =>
+  processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
       fileId,
       file,
       fileType,
+      fileProps,
     }),
   processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
@@ -1275,6 +1276,11 @@ const resourceForm = {
       isNew,
       skipCommit,
       flowId,
+    }),
+  initFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT_FAILED, {
+      resourceId,
+      resourceType,
     }),
   clearInitData: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
