@@ -8,18 +8,18 @@ import HelpContent from '../HelpContent';
 import HelpIcon from '../../components/icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpIcon: {
     fontSize: 18,
+    color: theme.palette.text.hint,
   },
-});
+}));
 
 function Help(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
     event => {
-      // REVIEW: is this ok to be added here?
       event.stopPropagation();
 
       if (anchorEl) {

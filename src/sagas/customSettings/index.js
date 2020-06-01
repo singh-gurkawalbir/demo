@@ -44,6 +44,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
       Object.keys(draft.fieldMap).forEach(key => {
         const field = draft.fieldMap[key];
 
+        if (!resource.settings[field.name] && field.defaultValue) return;
         field.defaultValue = resource.settings[field.name] || '';
       });
     });

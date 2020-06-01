@@ -4,6 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
@@ -97,6 +98,8 @@ import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectLookup from './DynaSelectLookup';
 import DynaURI from './DynaURI';
+import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
+import DynaSelectWithInput from './DynaSelectWithInput';
 
 export default {
   mode: DynaMode,
@@ -115,6 +118,7 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
@@ -207,4 +211,6 @@ export default {
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
   selectlookup: DynaSelectLookup,
+  csvhasheaderrow: DynaCsvHasHeaderRow,
+  selectwithinput: DynaSelectWithInput,
 };

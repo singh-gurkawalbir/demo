@@ -6,32 +6,43 @@ export default {
       ...formValues,
     };
 
+    delete newValues['/file/csvHelper'];
+
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/xml/body'];
+      delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -198,7 +209,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate files from records',
+      label: 'Generate files from records:',
       helpKey: 'import.inputMode',
       options: [
         {
@@ -256,7 +267,7 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
+    fields: ['common', 'dataMappings', 'inputMode'],
     type: 'collapse',
     containers: [
       {

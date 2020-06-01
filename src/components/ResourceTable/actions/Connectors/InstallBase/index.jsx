@@ -10,9 +10,7 @@ export default {
     const { _id: resourceId } = rowData;
     const history = useHistory();
     const openInstallBaseURL = useCallback(() => {
-      history.push(
-        getRoutePath(getRoutePath(`/connectors/${resourceId}/installBase`))
-      );
+      history.push(getRoutePath(`/connectors/${resourceId}/installBase`));
     }, [history, resourceId]);
 
     useEffect(() => {

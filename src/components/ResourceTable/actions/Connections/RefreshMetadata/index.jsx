@@ -1,7 +1,9 @@
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import RefreshIcon from '../../../../icons/RefreshIcon';
+import * as selectors from '../../../../../reducers';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 export default {
   label: 'Refresh metadata',
@@ -51,10 +53,20 @@ export default {
         );
       }
     }, [dispatch, resourceId, resourceType]);
+    const isConnectionOffline = useSelector(state =>
+      selectors.isConnectionOffline(state, resourceId)
+    );
+    const [enqueueSnackbar] = useEnqueueSnackbar();
 
     useEffect(() => {
-      refreshMetadata();
-    }, [refreshMetadata]);
+      if (!isConnectionOffline) refreshMetadata();
+      else {
+        enqueueSnackbar({
+          message: 'Connection is offline',
+          variant: 'error',
+        });
+      }
+    }, [enqueueSnackbar, isConnectionOffline, refreshMetadata]);
 
     return null;
   },

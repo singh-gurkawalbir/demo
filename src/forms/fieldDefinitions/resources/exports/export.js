@@ -103,11 +103,6 @@ export default {
     label: 'Data URI template',
     editorTitle: 'Build data URI template',
   },
-  exportOneToMany: {
-    label: 'How should this export be parameterized?',
-    type: 'labeltitle',
-    visible: r => !!(r && r.isLookup),
-  },
   oneToMany: {
     type: 'radiogroup',
     label: 'One to many',

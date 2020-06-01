@@ -18,11 +18,6 @@ export default {
 
     newValues['/netsuite/type'] = netsuiteType;
 
-    if (newValues['/outputMode'] === 'blob') {
-      newValues['/type'] = 'blob';
-      newValues['/netsuite/type'] = undefined;
-    }
-
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
@@ -113,6 +108,11 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/delta/dateField'];
       }
+    }
+
+    if (newValues['/netsuite/internalId']) {
+      newValues['/type'] = 'blob';
+      delete newValues['/netsuite/type'];
     }
 
     try {
@@ -299,6 +299,7 @@ export default {
       visibleWhenAll: [
         { field: 'netsuite.api.type', is: ['restlet'] },
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     'netsuite.webservices.criteria': {
@@ -306,6 +307,7 @@ export default {
       visibleWhenAll: [
         { field: 'netsuite.api.type', is: ['search'] },
         { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] },
       ],
     },
     skipRetries: {
@@ -480,19 +482,23 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
     },
+    'netsuite.blob.purgeFileAfterExport': {
+      fieldId: 'netsuite.blob.purgeFileAfterExport',
+      visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
+    },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'netsuite.execution.type'],
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'netsuite.execution.type',
+        ],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {
@@ -520,7 +526,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Configure export type?',
+            label: 'Configure export type',
             fields: [
               'type',
               'delta.dateField',
@@ -536,6 +542,7 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
+              'netsuite.blob.purgeFileAfterExport',
               'dataURITemplate',
               'netsuite.distributed.skipExportFieldId',
               'skipRetries',

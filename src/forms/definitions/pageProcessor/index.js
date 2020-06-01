@@ -1,9 +1,6 @@
 import applications from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { destinationOptions } from '../../utils';
-
-const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
 export default {
   init: meta => meta,
@@ -56,11 +53,12 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'destination',
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,
-      visibleWhenAll: [visibleWhenHasApp],
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
       placeholder: 'Please select',
     },
     application: {
@@ -71,7 +69,11 @@ export default {
       refreshOptionsOnChangesTo: ['resourceType'],
       placeholder:
         'Choose application or start typing to browse 150+ applications',
-      defaultValue: r => (r && r.application) || '',
+      defaultValue: r => {
+        if (!r) return '';
+
+        return r.rdbmsAppType || r.application || '';
+      },
       required: true,
     },
 
@@ -155,47 +157,9 @@ export default {
       ? applications.find(a => a.id === appField.value) || {}
       : {};
     const resourceTypeField = fields.find(field => field.id === 'resourceType');
-    let options = destinationOptions[app.assistant || app.type];
-
-    if (app.assistant) {
-      if (!app.export && app.import) {
-        options = [
-          {
-            label: 'Import records into destination application',
-            value: 'importRecords',
-          },
-        ];
-      } else if (!app.import && app.export) {
-        options = [
-          {
-            label: 'Lookup addition records (per record)',
-            value: 'lookupRecords',
-          },
-        ];
-      }
-    }
-
-    if (!options) {
-      options = destinationOptions.common || [];
-    }
 
     if (fieldId === 'resourceType') {
-      if (options && options.length === 1) {
-        resourceTypeField.value = options[0] && options[0].value;
-        resourceTypeField.disabled = true;
-
-        if (connectionField) connectionField.visible = true;
-      } else {
-        resourceTypeField.value = '';
-
-        if (connectionField) connectionField.visible = false;
-      }
-
-      return [
-        {
-          items: options,
-        },
-      ];
+      return { selectedApplication: app };
     }
 
     if (fieldId === 'connection') {
@@ -223,11 +187,6 @@ export default {
     }
 
     if (['importId', 'exportId'].includes(fieldId)) {
-      if (options && options.length === 1 && resourceTypeField) {
-        resourceTypeField.value = options[0] && options[0].value;
-        resourceTypeField.disabled = true;
-      }
-
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
       if (!adaptorTypePrefix) return;

@@ -6,6 +6,7 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
+import { isJsonString } from '../../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -19,11 +20,12 @@ const useStyles = makeStyles(theme => ({
 export default function CustomSettings({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [count, setCount] = useState(0);
-  const { settings } =
-    useSelector(state =>
-      selectors.resource(state, 'integrations', integrationId)
-    ) || {};
+  const [formKey, setFormKey] = useState(0);
+  const settings = useSelector(state => {
+    const resource = selectors.resource(state, 'integrations', integrationId);
+
+    return resource ? resource.settings : {};
+  });
   const canEditIntegration = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
@@ -49,10 +51,26 @@ export default function CustomSettings({ integrationId }) {
   );
 
   useEffect(() => {
-    setCount(count => count + 1);
+    setFormKey(formKey => formKey + 1);
   }, [settings]);
+  const validationHandler = field => {
+    // Incase of invalid json throws error to be shown on the field
+
+    if (field && field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      )
+        return 'Settings must be a valid JSON';
+    }
+  };
+
   const handleSubmit = useCallback(
     formVal => {
+      // dont submit the form if there is validation error
+      // REVIEW: re-visit once Surya's form PR is merged
+      if (formVal && formVal.settings && formVal.settings.__invalid) return;
       const patchSet = [
         {
           op: 'replace',
@@ -71,7 +89,7 @@ export default function CustomSettings({ integrationId }) {
           SCOPES.VALUE
         )
       );
-      setCount(count => count + 1);
+      setFormKey(formKey => formKey + 1);
     },
     [dispatch, integrationId]
   );
@@ -84,9 +102,13 @@ export default function CustomSettings({ integrationId }) {
           fieldMeta={fieldMeta}
           resourceType="integrations"
           resourceId={integrationId}
-          key={count}
-          render>
-          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
+          validationHandler={validationHandler}
+          key={formKey}>
+          <DynaSubmit
+            resourceType="integrations"
+            resourceId={integrationId}
+            disabled={!canEditIntegration}
+            onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>

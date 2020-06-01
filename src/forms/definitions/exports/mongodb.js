@@ -91,14 +91,9 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common'],
+        fields: ['common', 'exportOneToMany'],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: 'What would you like to export?',
@@ -110,7 +105,7 @@ export default {
           },
           {
             collapsed: true,
-            label: 'Configure export type?',
+            label: 'Configure export type',
             fields: ['type', 'delta.dateField', 'once.booleanField'],
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },

@@ -113,6 +113,18 @@ export const appTheme = createSelector(
   }
 );
 
+export function drawerOpened(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && !!preferences.drawerOpened;
+}
+
+export function expandSelected(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && preferences.expand;
+}
+
 export const editorTheme = createSelector(
   state => state,
   appTheme,

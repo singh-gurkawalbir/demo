@@ -80,7 +80,8 @@ export default function AdminPanel({ integrationId }) {
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readme');
+    sectionsToHide.push('readMe');
+    sectionsToHide.push('customSettings');
   }
 
   if ((!isDeveloper || isViewMode) && !hasSettingsForm) {

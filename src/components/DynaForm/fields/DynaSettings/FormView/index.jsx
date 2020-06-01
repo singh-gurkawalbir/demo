@@ -6,19 +6,9 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../DynaForm';
 import Spinner from '../../../../Spinner';
+import SpinnerWrapper from '../../../../SpinnerWrapper';
 
 const useStyles = makeStyles({
-  spinnerWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    margin: 'auto',
-  },
   wrapper: {
     width: '100%',
   },
@@ -32,17 +22,20 @@ export default function FormView({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const formState = useSelector(state =>
+  const settingsFormState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
+  );
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
   );
 
   useEffect(() => {
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
-    if (!formState) {
+    if (!settingsFormState) {
       dispatch(actions.customSettings.formRequest(resourceType, resourceId));
     }
-  }, [dispatch, formState, resourceId, resourceType]);
+  }, [dispatch, settingsFormState, resourceId, resourceType]);
 
   useEffect(
     () => () => {
@@ -52,31 +45,32 @@ export default function FormView({
     [dispatch, resourceId]
   );
 
-  if (formState && formState.error) {
+  if (settingsFormState && settingsFormState.error) {
     return (
       <div>
-        <Typography>{formState.error}</Typography>
+        <Typography>{settingsFormState.error}</Typography>
       </div>
     );
   }
 
-  if (!formState || formState.status === 'request') {
+  if (!settingsFormState || settingsFormState.status === 'request') {
     return (
-      <div className={classes.spinnerWrapper}>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
     );
   }
 
   return (
     <div className={classes.wrapper}>
       <DynaForm
-        key={formState.key}
+        key={settingsFormState.key}
         onChange={onFormChange}
         disabled={disabled}
-        fieldMeta={formState.meta}
+        fieldMeta={settingsFormState.meta}
         resourceId={resourceId}
         resourceType={resourceType}
+        formState={formState}
       />
     </div>
   );

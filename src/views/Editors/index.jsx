@@ -27,7 +27,7 @@ const editors = [
   },
   {
     name: 'HttpRequestBodyEditor',
-    label: 'Http request body',
+    label: 'Build HTTP request body',
     description:
       'This editor lets you create and test json or xml templates against your raw data.',
   },
@@ -126,11 +126,11 @@ export default function Editors() {
   const [editorName, setEditorName] = useState();
   const [rawData, setRawData] = useState();
   const [rawDataKey, setRawDataKey] = useState(1);
-  const [count, setCount] = useState(0);
+  const [drawerKey, setDrawerKey] = useState(0);
   const handleEditorChange = useCallback(
     editorName => {
       if (editorName === 'SettingsFormEditor') {
-        setCount(count => count + 1);
+        setDrawerKey(drawerKey => drawerKey + 1);
         history.push('editors/editSettings');
       }
 
@@ -297,8 +297,9 @@ export default function Editors() {
         </main>
       </div>
       <SettingsFormEditorDrawer
-        key={count}
+        key={drawerKey}
         editorId="settingsForm"
+        hideSaveAction="true"
         // resourceId={resourceId}
         // resourceType={resourceType}
         settingsForm={{ form: safeParse(rawData) }}

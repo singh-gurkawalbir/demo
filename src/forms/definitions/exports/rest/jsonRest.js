@@ -260,19 +260,15 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
+        fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
           {
             collapsed: true,
             label: r => {
@@ -287,9 +283,6 @@ export default {
               'rest.headers',
               'rest.relativeURI',
               'rest.postBody',
-              'rest.resourcePath',
-              'rest.successPath',
-              'rest.successValues',
               'rest.blobFormat',
             ],
           },
@@ -322,6 +315,15 @@ export default {
               'rest.lastPageStatusCode',
               'rest.lastPagePath',
               'rest.lastPageValue',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Non-standard API response patterns',
+            fields: [
+              'rest.resourcePath',
+              'rest.successPath',
+              'rest.successValues',
             ],
           },
           {
