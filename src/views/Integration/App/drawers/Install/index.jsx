@@ -5,7 +5,7 @@
 */
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -89,6 +89,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
+  const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -317,6 +318,7 @@ export default function ConnectorInstallation(props) {
             initFormFunction
           )
         );
+        history.push(`${match.url}/editForm`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
@@ -404,6 +406,7 @@ export default function ConnectorInstallation(props) {
         <FormViewStep
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
+          title={currentStep.name}
         />
       )}
       <div className={classes.root}>
