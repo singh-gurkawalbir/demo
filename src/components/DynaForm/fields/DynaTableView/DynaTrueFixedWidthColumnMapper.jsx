@@ -20,14 +20,14 @@ const optionsMap = [
   {
     id: 'startPosition',
     label: 'Start',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
   {
     id: 'endPosition',
     label: 'End',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
