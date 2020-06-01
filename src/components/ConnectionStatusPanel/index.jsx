@@ -76,11 +76,7 @@ export default function ConnectionStatusPanel(props) {
     const connection =
       selectors.resource(state, 'connections', connectionId) || {};
 
-<<<<<<< HEAD
-    return connection && !!connection._connectorId;
-=======
     return !!(connection && connection._connectorId);
->>>>>>> 9d835a056a6d59e24f85e258c885796e083a2c18
   });
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
