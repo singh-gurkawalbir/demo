@@ -10,6 +10,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
+import { isJsonString } from '../../../utils/string';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -23,7 +24,7 @@ const useStyles = makeStyles({
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
-  const { data, result, error } = useSelector(state =>
+  const { data, lastValidData, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -39,9 +40,18 @@ export default function FilterEditor(props) {
       })
     );
   }, [dispatch, editorId, optionalSaveParams, props.data, props.rule]);
-  const handleDataChange = data => {
-    dispatch(actions.editor.patch(editorId, { data }));
-  };
+  const handleDataChange = useCallback(
+    data => {
+      const patchObj = { data };
+
+      if (isJsonString(data)) {
+        patchObj.lastValidData = data;
+      }
+
+      dispatch(actions.editor.patch(editorId, patchObj));
+    },
+    [dispatch, editorId]
+  );
 
   useEffect(() => {
     handleInit();
@@ -57,6 +67,8 @@ export default function FilterEditor(props) {
     }
   }
 
+  console.log('lastValidData || data', lastValidData || data);
+
   return (
     <PanelGrid className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
@@ -64,7 +76,7 @@ export default function FilterEditor(props) {
         <FilterPanel
           key={editorId}
           editorId={editorId}
-          data={data}
+          data={lastValidData || data}
           rule={props.rule}
           disabled={disabled}
         />

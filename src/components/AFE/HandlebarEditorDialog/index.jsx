@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditorDialog from '../EditorDialog';
 import actions from '../../../actions';
 import TextToggle from '../../TextToggle';
-import Help from '../../Help';
 import InfoIconButton from '../../InfoIconButton';
 import helpTextMap from '../../Help/helpTextMap';
 
