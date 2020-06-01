@@ -43,7 +43,7 @@ export default {
     {
       heading: 'System token',
       width: '285px',
-      value: r => !r.shared && r.server && getSystemToken(r),
+      value: r => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
     },
   ],
   rowActions: [GenerateToken, StackShares, AuditLogs, References, Delete],
