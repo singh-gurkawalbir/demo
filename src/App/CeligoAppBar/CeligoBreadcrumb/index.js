@@ -143,6 +143,11 @@ const routes = [
     ],
   },
   {
+    path: '/pg/templates/:integrationAppName/:integrationId',
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: integrationAppRoutes,
+  },
+  {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
@@ -215,7 +220,7 @@ const routes = [
       { path: '/transfers', breadcrumb: () => 'Transfers' },
     ],
   },
-  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
   { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
