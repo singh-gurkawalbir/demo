@@ -120,10 +120,6 @@ export function bannerOpened(state) {
   return fromApp.bannerOpened(state && state.app);
 }
 
-export function drawerOpened(state) {
-  return fromApp.drawerOpened(state && state.app);
-}
-
 export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
@@ -763,6 +759,14 @@ export function editorTheme(state) {
 
 export function hasPreferences(state) {
   return !!userPreferences(state);
+}
+
+export function drawerOpened(state) {
+  return fromUser.drawerOpened((state && state.user) || null);
+}
+
+export function expandSelected(state) {
+  return fromUser.expandSelected((state && state.user) || null);
 }
 
 export function hasProfile(state) {

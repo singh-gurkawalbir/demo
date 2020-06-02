@@ -3,7 +3,6 @@ import actionTypes from '../../actions/types';
 
 const defaultState = {
   appErrored: false,
-  drawerOpened: true,
   bannerOpened: true,
   count: 1,
 };
@@ -19,10 +18,6 @@ export default function(state = defaultState, action) {
 
       case actionTypes.APP_TOGGLE_BANNER:
         draft.bannerOpened = !draft.bannerOpened;
-        break;
-
-      case actionTypes.APP_TOGGLE_DRAWER:
-        draft.drawerOpened = !draft.drawerOpened;
         break;
 
       case actionTypes.APP_ERRORED:
@@ -44,12 +39,6 @@ export function bannerOpened(state) {
   if (!state) return true;
 
   return !!state.bannerOpened;
-}
-
-export function drawerOpened(state) {
-  if (!state) return true;
-
-  return !!state.drawerOpened;
 }
 
 export function reloadCount(state) {

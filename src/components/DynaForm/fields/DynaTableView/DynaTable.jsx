@@ -345,9 +345,11 @@ export const DynaTable = props => {
                             defaultValue={r.value || 0}
                             disabled={r.readOnly}
                             helperText={
-                              r.value === '' && TYPE_TO_ERROR_MESSAGE[r.type]
+                              r.required &&
+                              r.value === '' &&
+                              TYPE_TO_ERROR_MESSAGE[r.type]
                             }
-                            error={r.value === ''}
+                            error={r.required && r.value === ''}
                             type={r.type}
                             options={r.options}
                             onBlur={evt => {
