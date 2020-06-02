@@ -190,7 +190,7 @@ export default function EditorDialog(props) {
             hideLabelSpacing
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-run"
+            label="Enable auto-preview"
             value={!!editor.autoEvaluate}
           />
         </div>
@@ -239,7 +239,7 @@ export default function EditorDialog(props) {
             data-test="previewEditorResult"
             variant="outlined"
             onClick={handlePreview}>
-            Run
+            Preview
           </Button>
         )}
         {patchOnSave ? (
