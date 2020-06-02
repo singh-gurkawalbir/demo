@@ -4,7 +4,7 @@ import DynaSalesforceLookupFilters from '../../DynaForm/fields/DynaSalesforceLoo
 export default function SalesforceLookupFilterEditorDialog(props) {
   const { id } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,

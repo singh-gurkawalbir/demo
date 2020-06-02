@@ -12,7 +12,7 @@ export default {
   validate: ({ data }) => {
     let dataError;
 
-    if (data === '') dataError = 'Must provide some sample data.';
+    if (!data) dataError = 'Must provide some sample data.';
     else if (typeof data === 'string')
       dataError = util.validateJsonString(data);
 
