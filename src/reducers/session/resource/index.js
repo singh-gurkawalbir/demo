@@ -5,7 +5,15 @@ import actionTypes from '../../../actions/types';
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
 export default function reducer(state = {}, action) {
-  const { type, tempId, id, resourceReferences, response } = action;
+  const {
+    type,
+    tempId,
+    id,
+    resourceReferences,
+    response,
+    parentId,
+    childId,
+  } = action;
   let newState;
 
   switch (type) {
@@ -41,6 +49,13 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
       return produce(state, draft => {
         draft.numEnabledFlows = response;
+      });
+    case actionTypes.UPDATE_CHILD_INTEGRATION:
+      console.log('Here we have received parentId', parentId);
+      console.log('Here we have received childId', childId);
+
+      return produce(state, draft => {
+        draft[parentId] = childId;
       });
 
     default:
@@ -86,6 +101,14 @@ export function integratorLicenseActionMessage(state) {
   }
 
   return state.integratorLicenseActionMessage;
+}
+
+export function getChildIntegrationId(state, parentId) {
+  if (!state || !state[parentId]) {
+    return;
+  }
+
+  return state[parentId];
 }
 
 export const getNumEnabledFlows = createSelector(

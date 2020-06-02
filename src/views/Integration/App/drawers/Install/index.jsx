@@ -94,6 +94,13 @@ export default function ConnectorInstallation(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
+  const childIntegrationId = useSelector(
+    state => selectors.getChildIntegrationId(state, integrationId),
+    (left, right) => left && right && left === right
+  );
+  const childIntegration = useSelector(state =>
+    selectors.integrationAppSettings(state, childIntegrationId)
+  );
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
@@ -107,6 +114,9 @@ export default function ConnectorInstallation(props) {
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const integrationChildAppName =
+    childIntegration &&
+    getIntegrationAppUrlName(childIntegration && childIntegration.name);
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
@@ -201,9 +211,22 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('imports'));
 
       if (mode === 'settings') {
-        props.history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-        );
+        // Here i need to changes
+        if (
+          integration &&
+          integration.initChild &&
+          integration.initChild.function &&
+          childIntegration &&
+          childIntegration.mode === 'install'
+        ) {
+          props.history.push(
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+          );
+        } else {
+          props.history.push(
+            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+          );
+        }
       }
     }
   }, [
@@ -213,6 +236,9 @@ export default function ConnectorInstallation(props) {
     integrationId,
     isSetupComplete,
     props.history,
+    integration,
+    childIntegration,
+    integrationChildAppName,
   ]);
 
   if (!installSteps || !integration || !integration._connectorId) {

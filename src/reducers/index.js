@@ -201,6 +201,10 @@ export function resourceFormSaveProcessTerminated(
   );
 }
 
+export function getChildIntegrationId(state, parentId) {
+  return fromSession.getChildIntegrationId(state && state.session, parentId);
+}
+
 export function clonePreview(state, resourceType, resourceId) {
   return fromSession.previewTemplate(
     state && state.session,
@@ -2310,7 +2314,7 @@ export function userPermissionsOnConnection(state, connectionId) {
     const connection = resource(state, 'connections', connectionId);
 
     return (
-      (connection._connectorId
+      (connection && connection._connectorId
         ? permissions.integrations.connectors
         : permissions.integrations.all) || {}
     ).connections;

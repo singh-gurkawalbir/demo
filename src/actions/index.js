@@ -161,6 +161,8 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  updateChildIntegration: (parentId, childId) =>
+    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
 
   requestCollection: (resourceType, message) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
