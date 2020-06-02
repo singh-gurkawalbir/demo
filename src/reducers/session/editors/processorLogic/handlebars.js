@@ -6,10 +6,9 @@ export default {
     data: JSON.parse(editor.data),
   }),
   validate: editor => ({
-    dataError:
-      editor.data === ''
-        ? 'Must provide some sample data.'
-        : util.validateJsonString(editor.data),
+    dataError: !editor.data
+      ? 'Must provide some sample data.'
+      : util.validateJsonString(editor.data),
   }),
   dirty: editor => {
     const { template, initTemplate } = editor || {};

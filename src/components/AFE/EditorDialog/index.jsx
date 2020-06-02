@@ -187,6 +187,7 @@ export default function EditorDialog(props) {
           <Typography variant="h5">{title}</Typography>
           <DynaCheckbox
             disabled={disabled}
+            hideLabelSpacing
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}
             label="Enable auto-preview"
@@ -238,7 +239,7 @@ export default function EditorDialog(props) {
             data-test="previewEditorResult"
             variant="outlined"
             onClick={handlePreview}>
-            Run
+            Preview
           </Button>
         )}
         {patchOnSave ? (
