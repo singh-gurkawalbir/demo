@@ -43,9 +43,6 @@ export default function EditorDrawer(props) {
   const [content, setContent] = useState();
   const isContentChanged = content !== undefined;
   // #region methods
-  const onContentChange = useCallback(updatedContent => {
-    setContent(updatedContent);
-  }, []);
   const handleSave = useCallback(() => {
     handleUpdate(content);
   }, [content, handleUpdate]);
@@ -72,7 +69,7 @@ export default function EditorDrawer(props) {
           value={value}
           mode={mode}
           readOnly={disabled}
-          onChange={onContentChange}
+          onChange={setContent}
         />
       </div>
       <div className={classes.footer}>
