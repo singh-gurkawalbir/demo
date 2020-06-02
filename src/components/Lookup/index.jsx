@@ -110,7 +110,7 @@ export default function Lookup(props) {
       actionHandler={showListView && toggleLookupMode}
       minWidth="sm"
       maxWidth="md">
-      <span>Manage lookup</span>
+      <span>Manage lookups</span>
       {showListView ? (
         <div className={classes.listing}>
           <Table>
