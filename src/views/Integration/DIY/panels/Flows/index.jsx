@@ -6,6 +6,8 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import metadata from '../../../../../components/ResourceTable/metadata/flows';
+import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
@@ -36,13 +38,15 @@ const useStyles = makeStyles(theme => ({
     margin: 5,
   },
 }));
-const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowsPanel({ integrationId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
+  const filterKey = `${integrationId}+flows`;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = { ...flowFilter, type: 'flows' };
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -136,7 +140,14 @@ export default function FlowsPanel({ integrationId }) {
         )}
       </PanelHeader>
 
-      <LoadResources required resources="flows,exports">
+      <LoadResources required resources="flows, exports">
+        <CeligoTable
+          data={flows}
+          filterKey={filterKey}
+          {...metadata}
+          actionProps={{ integrationId }}
+        />
+
         {flows.map(f => (
           <FlowCard
             key={f._id}

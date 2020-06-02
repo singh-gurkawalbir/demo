@@ -16,6 +16,21 @@ import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
+  isSimpleImportFlow,
+  isRealtimeFlow,
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+  getImportsFromFlow,
+  getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
+  getFlowReferencesForResource,
+} from '../utils/flows';
+import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -30,19 +45,6 @@ import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import {
-  getExportIdsFromFlow,
-  getImportIdsFromFlow,
-  getUsedActionsMapForResource,
-  isPageGeneratorResource,
-  getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
-  getFlowListWithMetadata,
-  getNextDataFlows,
-  getIAFlowSettings,
-  getFlowDetails,
-  getFlowReferencesForResource,
-} from '../utils/flows';
 import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
@@ -874,6 +876,67 @@ export function flowDetails(state, id) {
 
   return getFlowDetails(flow, integration, exports);
 }
+
+/* ***********************************************************************
+  This is the beginning of refactoring the above selector. There is just WAY to 
+  much data returned above and in most cased a component only needs a small slice 
+  of the above. */
+export function isDataLoader(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  // TODO: review with team... is this an ok pattern to access
+  // state directly? seems ok.
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return false;
+
+  return isSimpleImportFlow(flow, exports);
+}
+
+export function flowType(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return '';
+
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return '';
+
+  if (isSimpleImportFlow(flow, exports)) {
+    return 'Data loader';
+  }
+
+  if (isRealtimeFlow(flow, exports)) {
+    return 'Realtime';
+  }
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function isFlowEnableLocked(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow || !flow._connectorId) return false;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  if (!integration) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  // strange flow setting name to indicate that flows can not be
+  // enabled/disabled by a user...
+  return !flowSettings.disableSlider;
+}
+
+/* End of refactoring of flowDetails selector.. Once all use is refactored of
+   the flowDetails, we should delete that selector.
+*********************************************************************** */
 
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || emptySet;
