@@ -13,7 +13,7 @@ function FileDefinitionEditorDialog(props) {
   } = props;
   const defaults = {
     width: '80vw',
-    layout: 'column',
+    layout: 'compact',
     height: '50vh',
     open: true,
   };
