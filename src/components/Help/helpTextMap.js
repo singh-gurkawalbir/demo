@@ -2113,6 +2113,6 @@ export default {
     'Enable Connection debugging for the selected period of time to collect all requests and responses made via the Connection. The debug logs can be accessed via the Connections tab of the Flow Builder.',
   'stack.sharing':
     'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
-  'editor.sampleDataSwitch': `Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...`,
+  'afe.sampleDataSwitch': `Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...`,
   // #region UI help text
 };
