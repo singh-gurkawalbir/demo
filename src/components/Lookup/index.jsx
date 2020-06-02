@@ -87,6 +87,9 @@ export default function Lookup(props) {
           obj => obj.name !== lookupObj.name
         );
 
+        // updating local state
+        setValue(modifiedLookups);
+
         onSave(modifiedLookups);
       }
     },
