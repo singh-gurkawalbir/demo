@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -26,6 +26,10 @@ export default function ManageLookup(props) {
     showDynamicLookupOnly = false,
     options = {},
   } = props;
+  // to be removed after form refactor PR merges
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const { merged: resource = {} } = useSelector(state =>
     selectors.resourceData(state, resourceType, resourceId)
   );
@@ -174,12 +178,20 @@ export default function ManageLookup(props) {
     });
   }
 
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
+
   return (
     <div data-test="lookup-form">
       <DynaForm
         disabled={disabled}
         fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}>
+        optionsHandler={fieldMeta.optionsHandler}
+        // to be removed after form refactor PR merges
+        formState={formState}>
         {error && (
           <div>
             <Typography color="error" variant="h5">
@@ -190,6 +202,7 @@ export default function ManageLookup(props) {
         <DynaSubmit
           disabled={disabled}
           data-test="saveLookupForm"
+          showCustomFormValidations={showCustomFormValidations}
           onClick={handleSubmit}>
           Save
         </DynaSubmit>
