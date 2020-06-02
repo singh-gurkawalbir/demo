@@ -14,7 +14,10 @@ export default function LookupListRow(props) {
   }, [onDelete, value]);
 
   return (
-    <TableRow>
+    <TableRow
+      classes={{
+        root: classes.row,
+      }}>
       <TableCell className={classes.columnName}>{name}</TableCell>
       <TableCell className={classes.columnAction}>
         <IconButton

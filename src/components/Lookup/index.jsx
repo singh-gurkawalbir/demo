@@ -6,6 +6,7 @@ import {
   TableRow,
   Table,
   TableBody,
+  TableHead,
 } from '@material-ui/core';
 import { filter } from 'lodash';
 import ModalDialog from '../ModalDialog';
@@ -17,7 +18,7 @@ const useStyles = makeStyles(() => ({
     minHeight: '30vh',
     maxHeight: '50vh',
   },
-  table: {
+  row: {
     background: 'transparent',
   },
   columnName: {
@@ -113,17 +114,16 @@ export default function Lookup(props) {
       {showListView ? (
         <div className={classes.listing}>
           <Table>
-            <TableRow
-              classes={{
-                root: classes.table,
-              }}>
-              <TableCell className={classes.columnName}>Name</TableCell>
-              <TableCell className={classes.columnAction}>Actions</TableCell>
-            </TableRow>
-            <TableBody
-              classes={{
-                root: classes.table,
-              }}>
+            <TableHead>
+              <TableRow
+                classes={{
+                  root: classes.row,
+                }}>
+                <TableCell className={classes.columnName}>Name</TableCell>
+                <TableCell className={classes.columnAction}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {value.map(r => (
                 <LookupListRow
                   classes={classes}
