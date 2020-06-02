@@ -43,13 +43,14 @@ export default function ManageUsersPanel({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <UserDialog
-        open={showDialog}
-        userId={userId}
-        onClose={handleCloseDialog}
-        onSuccess={handleCloseDialog}
-      />
-
+      {showDialog && (
+        <UserDialog
+          open={showDialog}
+          userId={userId}
+          onClose={handleCloseDialog}
+          onSuccess={handleCloseDialog}
+        />
+      )}
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInviteUserClick}>

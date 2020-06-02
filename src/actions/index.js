@@ -950,11 +950,12 @@ const file = {
       fileType,
       file,
     }),
-  processFile: ({ fileId, file, fileType }) =>
+  processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
       fileId,
       file,
       fileType,
+      fileProps,
     }),
   processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
