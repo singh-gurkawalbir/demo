@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
+import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -221,13 +222,20 @@ export function* addNewStore({ id }) {
   }
 }
 
-export function* initFormStep({ id, form, initFormFunction }) {
+// for certain type of steps ('form' for now), in order to display the step for the user,
+// we need to invoke get /currentStep route to get the form metadata
+export function* getCurrentStep({ id, step }) {
+  const { type, form, initFormFunction } = step;
+
+  //  currently only handling 'form' type step
+  if (type !== INSTALL_STEP_TYPES.FORM) {
+    return;
+  }
+
   if (!initFormFunction) {
     // update formmeta in the session state
     return yield put(
-      actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
-        ...form,
-      })
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
     );
   }
 
@@ -251,16 +259,17 @@ export function* initFormStep({ id, form, initFormFunction }) {
 
   if (!currentStepResponse || !currentStepResponse.result) {
     return yield put(
-      actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
-        ...form,
-      })
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
     );
   }
 
   return yield put(
-    actions.integrationApp.installer.updateStep(id, '', 'inProgress', {
-      ...currentStepResponse.result,
-    })
+    actions.integrationApp.installer.updateStep(
+      id,
+      '',
+      'inProgress',
+      currentStepResponse.result
+    )
   );
 }
 
@@ -271,8 +280,8 @@ export default [
     installScriptStep
   ),
   takeEvery(
-    actionTypes.INTEGRATION_APPS.INSTALLER.STEP.FORM_INIT,
-    initFormStep
+    actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP,
+    getCurrentStep
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),

@@ -33,7 +33,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
-import FormViewStep from '../../../../../components/InstallStep/FormViewStep';
+import FormViewStepDrawer from '../../../../../components/InstallStep/FormViewStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -101,6 +101,10 @@ export default function ConnectorInstallation(props) {
     selectors.integrationInstallSteps(state, integrationId)
   );
   const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
+    installSteps,
+  ]);
+  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
+    currentStep,
     installSteps,
   ]);
   const selectedConnection = useSelector(state =>
@@ -259,7 +263,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = step => {
+  const handleStepClick = (step, connection, index) => {
     const {
       _connectionId,
       installURL,
@@ -267,8 +271,6 @@ export default function ConnectorInstallation(props) {
       type,
       sourceConnection,
       completed,
-      form,
-      initFormFunction,
     } = step;
 
     if (completed) {
@@ -312,13 +314,9 @@ export default function ConnectorInstallation(props) {
 
       if (type === INSTALL_STEP_TYPES.FORM) {
         dispatch(
-          actions.integrationApp.installer.initFormStep(
-            integrationId,
-            form,
-            initFormFunction
-          )
+          actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/editForm`);
+        history.push(`${match.url}/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
@@ -403,10 +401,11 @@ export default function ConnectorInstallation(props) {
           />
         ))}
       {currentStep && currentStep.formMeta && (
-        <FormViewStep
+        <FormViewStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
           title={currentStep.name}
+          index={currStepIndex + 1}
         />
       )}
       <div className={classes.root}>

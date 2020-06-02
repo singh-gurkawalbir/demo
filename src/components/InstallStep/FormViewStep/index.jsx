@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../actions';
@@ -6,7 +6,12 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import RightDrawer from '../../drawer/Right';
 
-export default function FormViewStep({ integrationId, formMeta, title }) {
+export default function FormViewStep({
+  integrationId,
+  formMeta,
+  title,
+  index,
+}) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [formState, setFormState] = useState({
@@ -27,8 +32,9 @@ export default function FormViewStep({ integrationId, formMeta, title }) {
           formVal
         )
       );
+      history.goBack();
     },
-    [dispatch, integrationId]
+    [dispatch, history, integrationId]
   );
   const onClose = useCallback(() => {
     history.goBack();
@@ -39,21 +45,19 @@ export default function FormViewStep({ integrationId, formMeta, title }) {
 
   return (
     <RightDrawer
-      path="editForm"
+      path={index}
       height="tall"
-      width="l"
+      width="large"
       title={title}
       variant="temporary"
       onClose={onClose}>
-      <Fragment>
-        <DynaForm fieldMeta={formMeta} formState={formState}>
-          <DynaSubmit
-            onClick={handleSubmit}
-            showCustomFormValidations={showCustomFormValidations}>
-            Submit
-          </DynaSubmit>
-        </DynaForm>
-      </Fragment>
+      <DynaForm fieldMeta={formMeta} formState={formState}>
+        <DynaSubmit
+          onClick={handleSubmit}
+          showCustomFormValidations={showCustomFormValidations}>
+          Submit
+        </DynaSubmit>
+      </DynaForm>
     </RightDrawer>
   );
 }

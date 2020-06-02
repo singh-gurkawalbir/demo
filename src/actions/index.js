@@ -796,11 +796,10 @@ const integrationApp = {
         id,
         installerFunction,
       }),
-    initFormStep: (integrationId, form, initFormFunction) =>
-      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.FORM_INIT, {
+    getCurrentStep: (integrationId, step) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP, {
         id: integrationId,
-        form,
-        initFormFunction,
+        step,
       }),
   },
   uninstaller: {
