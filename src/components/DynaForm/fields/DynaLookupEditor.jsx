@@ -34,7 +34,6 @@ export default function DynaLookupEditor(props) {
           resourceType={resourceType}
           flowId={flowId}
           onSave={handleUpdate}
-          onSavelabel="Add new lookup"
         />
       )}
       <Button

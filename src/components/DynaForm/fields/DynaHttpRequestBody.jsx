@@ -85,9 +85,10 @@ const DynaHttpRequestBody = props => {
   );
   const lookups =
     supportLookup &&
+    resourceType === 'imports' &&
     lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const action = useMemo(() => {
-    if (!supportLookup) {
+    if (!supportLookup || resourceType !== 'imports') {
       return;
     }
 

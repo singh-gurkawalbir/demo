@@ -1,9 +1,34 @@
 import React, { useState, useCallback } from 'react';
-import { Button } from '@material-ui/core';
+import {
+  Button,
+  makeStyles,
+  TableCell,
+  TableRow,
+  Table,
+  TableBody,
+} from '@material-ui/core';
 import { filter } from 'lodash';
 import ModalDialog from '../ModalDialog';
 import ManageLookup from './Manage';
 import LookupListRow from './LookupListRow';
+
+const useStyles = makeStyles(() => ({
+  listing: {
+    minHeight: '30vh',
+    maxHeight: '50vh',
+  },
+  table: {
+    background: 'transparent',
+  },
+  columnName: {
+    width: '75%',
+    textAlign: 'left',
+  },
+  columnAction: {
+    width: '25%',
+    textAlign: 'center',
+  },
+}));
 
 export default function Lookup(props) {
   const {
@@ -16,6 +41,7 @@ export default function Lookup(props) {
     disabled,
     options,
   } = props;
+  const classes = useStyles();
   const [value, setValue] = useState(lookups);
   const [showListView, setShowListView] = useState(true);
   const [selectedLookup, setSelectedLookup] = useState({});
@@ -79,25 +105,37 @@ export default function Lookup(props) {
   return (
     <ModalDialog
       show
-      actionLabel={showListView ? 'New lookup' : 'Back to lookup'}
+      actionLabel={showListView ? 'Create lookup' : 'Back to lookup'}
       actionHandler={toggleLookupMode}
       minWidth="sm"
-      maxWidth="lg">
-      <span>Manage lookups</span>
+      maxWidth="md">
+      <span>Manage lookup</span>
       {showListView ? (
-        <div>
-          {value.map(r => (
-            <LookupListRow
-              value={r}
-              key={r.name}
-              disabled={disabled}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          ))}
-          <Button data-test="closeLookupListing" onClick={onCancel}>
-            Close
-          </Button>
+        <div className={classes.listing}>
+          <Table>
+            <TableRow
+              classes={{
+                root: classes.table,
+              }}>
+              <TableCell className={classes.columnName}>Name</TableCell>
+              <TableCell className={classes.columnAction}>Actions</TableCell>
+            </TableRow>
+            <TableBody
+              classes={{
+                root: classes.table,
+              }}>
+              {value.map(r => (
+                <LookupListRow
+                  classes={classes}
+                  value={r}
+                  key={r.name}
+                  disabled={disabled}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </TableBody>
+          </Table>
         </div>
       ) : (
         <ManageLookup
@@ -111,6 +149,11 @@ export default function Lookup(props) {
           resourceType={resourceType}
           flowId={flowId}
         />
+      )}
+      {showListView && (
+        <Button data-test="closeLookupListing" onClick={onCancel}>
+          Close
+        </Button>
       )}
     </ModalDialog>
   );
