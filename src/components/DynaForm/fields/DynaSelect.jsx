@@ -1,9 +1,10 @@
-import React from 'react';
+import { useMemo, useState } from 'react';
 import { ListSubheader, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import { FixedSizeList } from 'react-window';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
@@ -18,6 +19,9 @@ const useStyles = makeStyles({
     width: '100%',
   },
 });
+const NO_OF_OPTIONS = 6;
+const ITEM_SIZE = 48;
+const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 export default function DynaSelect(props) {
   const {
@@ -34,6 +38,7 @@ export default function DynaSelect(props) {
     label,
     onFieldChange,
   } = props;
+  const [open, setOpen] = useState(false);
   const classes = useStyles();
   const isSubHeader =
     options &&
@@ -45,52 +50,45 @@ export default function DynaSelect(props) {
         option.items.length &&
         option.items.some(item => item.subHeader)
     );
-  let items =
-    options &&
-    options.reduce(
-      (itemsSoFar, option) =>
-        itemsSoFar.concat(
-          option.items.map(item => {
-            let label;
-            let value;
+  const items = useMemo(() => {
+    let items =
+      options &&
+      options.reduce(
+        (itemsSoFar, option) =>
+          itemsSoFar.concat(
+            option.items.map(item => {
+              let label;
+              let value;
 
-            if (typeof item === 'string') {
-              label = item;
-              value = item;
-            } else {
-              ({ value } = item);
-              label = item.label || item.value;
-            }
+              if (typeof item === 'string') {
+                label = item;
+                value = item;
+              } else {
+                ({ value } = item);
+                label = item.label || item.value;
+              }
 
-            return typeof item === 'string'
-              ? { label, value }
-              : { ...item, label, value };
-          })
-        ),
-      []
-    );
-
-  if (!isSubHeader) {
-    items = items.sort(stringCompare('label'));
-  }
-
-  items = items.map(item => {
-    const { label, value, subHeader, disabled = false } = item;
-
-    if (subHeader) {
-      return (
-        <ListSubheader disableSticky key={subHeader}>
-          {subHeader}
-        </ListSubheader>
+              return typeof item === 'string'
+                ? { label, value }
+                : { ...item, label, value };
+            })
+          ),
+        []
       );
+
+    if (!isSubHeader) {
+      items = items.sort(stringCompare('label'));
     }
 
-    return (
-      <MenuItem key={value} value={value} disabled={disabled}>
-        {label}
-      </MenuItem>
-    );
-  });
+    const defaultItem = {
+      label: placeholder || 'Please select',
+      value: '',
+    };
+
+    items = [defaultItem, ...items];
+
+    return items;
+  }, [isSubHeader, options, placeholder]);
   let finalTextValue;
 
   if (value === undefined || value === null) {
@@ -99,13 +97,34 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const defaultItem = (
-    <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please select'}
-    </MenuItem>
-  );
+  const Row = ({ index, style }) => {
+    const { label, value, subHeader, disabled = false } = items[index];
 
-  items = [defaultItem, ...items];
+    if (subHeader) {
+      return (
+        <ListSubheader disableSticky key={subHeader} style={style}>
+          {subHeader}
+        </ListSubheader>
+      );
+    }
+
+    return (
+      <MenuItem
+        key={value}
+        value={value}
+        disabled={disabled}
+        style={style}
+        onClick={() => {
+          if (value !== undefined) {
+            onFieldChange(id, value);
+          }
+
+          setOpen(false);
+        }}>
+        {label}
+      </MenuItem>
+    );
+  };
 
   return (
     <div className={classes.dynaSelectWrapper}>
@@ -125,13 +144,31 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
-          disabled={disabled}
-          onChange={e => {
-            // if value is undefined could be a subHeader element since it does not have value property
-            if (e.target.value !== undefined) onFieldChange(id, e.target.value);
+          renderValue={selected => {
+            const item = items.find(item => item.value === selected);
+
+            return item && item.label;
           }}
+          open={open}
+          onOpen={() => {
+            setOpen(true);
+          }}
+          onClose={() => {
+            setOpen(false);
+          }}
+          disabled={disabled}
           input={<Input name={name} id={id} />}>
-          {items}
+          <FixedSizeList
+            itemSize={ITEM_SIZE}
+            // if there are fewer options the view port height then let height scale per number of options
+            height={
+              items.length > NO_OF_OPTIONS
+                ? OPTIONS_VIEW_PORT_HEIGHT
+                : ITEM_SIZE * items.length
+            }
+            itemCount={items.length}>
+            {Row}
+          </FixedSizeList>
         </CeligoSelect>
       </FormControl>
 
