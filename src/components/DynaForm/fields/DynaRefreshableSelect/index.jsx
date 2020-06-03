@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -73,7 +73,7 @@ export default function DynaSelectOptionsGenerator(props) {
   };
 
   return (
-    <Fragment>
+    <>
       <DynaGenericSelect
         resourceToFetch={options.commMetaPath || commMetaPath}
         resetValue={options.resetValue}
@@ -88,6 +88,6 @@ export default function DynaSelectOptionsGenerator(props) {
       {!ignoreValidation && (
         <RawHtml className={classes.validationError} html={validationError} />
       )}
-    </Fragment>
+    </>
   );
 }

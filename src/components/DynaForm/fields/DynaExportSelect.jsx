@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -46,10 +46,10 @@ function DynaExportSelect(props) {
 const DynaExportSelectCreator = props => {
   if (!props.resource || !props.resource.virtual) {
     return (
-      <Fragment>
+      <>
         <Typography>{`Field id=${props.id}, type=${props.type}`}</Typography>
         <Typography>requires virtual export.</Typography>
-      </Fragment>
+      </>
     );
   }
 

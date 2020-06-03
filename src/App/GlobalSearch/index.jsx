@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
@@ -151,7 +151,7 @@ function GlobalSearch({ location }) {
   };
 
   return (
-    <Fragment>
+    <>
       <div className={classes.search}>
         {filter.keyword && (
           <LoadResources resources={resourceTypes}>
@@ -194,7 +194,7 @@ function GlobalSearch({ location }) {
           inputProps={{ 'aria-label': 'search' }}
         />
       </div>
-    </Fragment>
+    </>
   );
 }
 

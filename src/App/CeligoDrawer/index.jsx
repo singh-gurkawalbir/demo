@@ -300,7 +300,7 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
+                    <Icon />
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{
@@ -343,7 +343,7 @@ export default function CeligoDrawer() {
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                              {<Icon />}
+                              <Icon />
                             </ListItemIcon>
                             <ListItemText
                               primary={label}

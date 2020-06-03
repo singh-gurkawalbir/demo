@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -280,21 +280,21 @@ export default function ClonePreview(props) {
       fields:
         resourceType === 'flows'
           ? [
-              'name',
-              'environment',
-              'integration',
-              'description',
-              'message',
-              'components',
-            ]
+            'name',
+            'environment',
+            'integration',
+            'description',
+            'message',
+            'components',
+          ]
           : [
-              'tag',
-              'name',
-              'environment',
-              'description',
-              'message',
-              'components',
-            ],
+            'tag',
+            'name',
+            'environment',
+            'description',
+            'message',
+            'components',
+          ],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -379,7 +379,7 @@ export default function ClonePreview(props) {
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title="Cloning" infoText={cloningDescription} />
-      <Fragment>
+      <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
@@ -391,7 +391,7 @@ export default function ClonePreview(props) {
             </DynaForm>
           </Grid>
         </Grid>
-      </Fragment>
+      </>
     </LoadResources>
   );
 }

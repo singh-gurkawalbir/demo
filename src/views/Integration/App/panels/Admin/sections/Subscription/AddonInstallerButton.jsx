@@ -87,11 +87,14 @@ export default function AddonInstallerButton({ resource }) {
   const getLabel = () => {
     if (resource.status === 'installed') {
       return 'Uninstall';
-    } else if (resource.status === 'paritallyUninstalled') {
+    }
+    if (resource.status === 'paritallyUninstalled') {
       return 'Resume Uninstall';
-    } else if (resource.status === 'available') {
+    }
+    if (resource.status === 'available') {
       return 'Install';
-    } else if (resource.status === 'partiallyInstalled') {
+    }
+    if (resource.status === 'partiallyInstalled') {
       return 'Resume Install';
     }
   };

@@ -1,9 +1,9 @@
 /*
- TODO: 
+ TODO:
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -233,7 +233,7 @@ export default function ConnectorInstallation(props) {
     e.preventDefault();
     confirmDialog({
       title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
+      message: 'Are you sure you want to uninstall',
       buttons: [
         {
           label: 'Cancel',
@@ -284,7 +284,7 @@ export default function ConnectorInstallation(props) {
 
       const newId = generateNewId();
 
-      if (!_connectionId)
+      if (!_connectionId) {
         dispatch(
           actions.resource.patchStaged(
             newId,
@@ -298,6 +298,7 @@ export default function ConnectorInstallation(props) {
             SCOPES.VALUE
           )
         );
+      }
       setConnection({
         newId,
         doc: sourceConnection,
@@ -378,7 +379,7 @@ export default function ConnectorInstallation(props) {
 
   const handleBackClick = e => {
     e.preventDefault();
-    props.history.push(`/pg`);
+    props.history.push('/pg');
   };
 
   return (

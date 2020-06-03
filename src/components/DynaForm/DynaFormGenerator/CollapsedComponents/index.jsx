@@ -1,11 +1,11 @@
 import { FormContext } from 'react-forms-processor/dist';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import FormGenerator from '../';
+import FormGenerator from '..';
 import {
   isExpansionPanelErrored,
   isAnyExpansionPanelFieldVisible,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       margin: theme.spacing(-0.5, 0.5, 0, 0),
       '&.Mui-expanded': {
-        transform: `rotate(90deg)`,
+        transform: 'rotate(90deg)',
       },
     },
     '&.Mui-expanded': {
@@ -118,8 +118,7 @@ const ExpansionPannelExpandOnInValidState = props => {
   // we need to let the component mount and the field state settle before determing if they need to be removed
   useEffect(() => {
     if (componentLoaded) {
-      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields))
-        setVisible(true);
+      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields)) setVisible(true);
       else setVisible(false);
     }
   }, [componentLoaded, fieldMap, form.fields, layout]);

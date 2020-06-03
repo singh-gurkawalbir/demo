@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import colors from '../theme/colors';
@@ -97,7 +97,7 @@ function ColorPalette() {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <Typography variant="h4" className={classes.title}>
         Celigo Accent Colors
       </Typography>
@@ -116,7 +116,7 @@ function ColorPalette() {
       <div className={classes.root}>
         <Tiles colors={other} />
       </div>
-    </Fragment>
+    </>
   );
 }
 

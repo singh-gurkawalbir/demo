@@ -1,3 +1,4 @@
+import React from 'react';
 import HandlebarsWithDefaultEditor from '../HandlebarsWithDefault';
 
 export default function SqlQueryBuilderEditor(props) {

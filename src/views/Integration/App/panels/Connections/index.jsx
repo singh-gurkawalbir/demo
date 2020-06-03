@@ -1,7 +1,8 @@
-import { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
@@ -71,7 +72,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       )}
 
       <PanelHeader title="Connections">
-        <Fragment>
+        <>
           {permission.create && (
             <IconTextButton
               component={Link}
@@ -86,7 +87,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
               <ConnectionsIcon /> Register connections
             </IconTextButton>
           )}
-        </Fragment>
+        </>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">

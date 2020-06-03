@@ -31,9 +31,8 @@ const CancellableSpinner = props => (
   </div>
 );
 const generateMessageBasedOnState = (commState, messages, onCancelTask) => {
-  if (commState === PING_STATES.LOADING)
-    return <CancellableSpinner onCancel={onCancelTask} />;
-  else if (commState === PING_STATES.ERROR && messages) {
+  if (commState === PING_STATES.LOADING) return <CancellableSpinner onCancel={onCancelTask} />;
+  if (commState === PING_STATES.ERROR && messages) {
     return <ErroredMessageList messages={messages} />;
   }
 };

@@ -1,4 +1,5 @@
-import CodeEditor from '../../../components/CodeEditor';
+import React from 'react';
+import CodeEditor from '../../CodeEditor';
 
 const defaults = {
   global: {

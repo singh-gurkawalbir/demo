@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import Field from './Field';
 
 export default function Section({
@@ -24,9 +24,9 @@ export default function Section({
   };
 
   return (
-    <Fragment>
+    <>
       {section.useHeading && (
-        <Fragment>
+        <>
           <div className="brandTertiaryBgr pbSubheader tertiaryPalette">
             {addRequiredInfo && (
               <span className="pbSubExtra">
@@ -41,7 +41,7 @@ export default function Section({
             )}
             <h3>{section.heading}</h3>
           </div>
-        </Fragment>
+        </>
       )}
       <div className="pbSubsection">
         <table
@@ -68,10 +68,11 @@ export default function Section({
                   />
                 ))}
               </tr>
-            ))}
+            ))
+}
           </tbody>
         </table>
       </div>
-    </Fragment>
+    </>
   );
 }

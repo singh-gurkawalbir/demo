@@ -1,9 +1,10 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Typography, Grid, Chip, Tooltip } from '@material-ui/core';
 import actions from '../../../../actions';
@@ -262,12 +263,13 @@ export default function FlowCard({
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
-    if (flowDetails.isRealtime) return `Realtime`;
+    if (flowDetails.isRealtime) return 'Realtime';
 
-    if (flowDetails.schedule)
+    if (flowDetails.schedule) {
       return `Runs ${cronstrue.toString(
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;
+    }
 
     if (isDataloader) return 'Manual Run';
 
