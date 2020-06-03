@@ -84,7 +84,8 @@ export function selectOptions({
     return resourceOptions({
       versionData: selectedVersion,
     });
-  } else if (assistantFieldType === 'operation') {
+  }
+  if (assistantFieldType === 'operation') {
     if (resourceType === 'imports') {
       return importOperationOptions({
         resourceData: resourceData({

@@ -33,8 +33,7 @@ export default {
     return null;
   },
   isContinuousSubSet: (src = [], target = []) => {
-    if (!src || !target || !Array.isArray(src) || !Array.isArray(target))
-      return false;
+    if (!src || !target || !Array.isArray(src) || !Array.isArray(target)) return false;
 
     if (src.length < target.length) return false;
 

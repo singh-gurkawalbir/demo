@@ -1,4 +1,4 @@
-import { useMemo, useEffect, Fragment } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -87,7 +87,7 @@ function PostResponseMapHook(props) {
   const { open } = props;
 
   return (
-    <Fragment>{open && <PostResponseMapHookDialog {...props} />}</Fragment>
+    <>{open && <PostResponseMapHookDialog {...props} />}</>
   );
 }
 

@@ -34,8 +34,7 @@ const getFormattedLookup = (lookup, formVal) => {
     });
   }
 
-  if (formVal.lookupAction === 'disallowFailure')
-    lookupTmp.allowFailures = false;
+  if (formVal.lookupAction === 'disallowFailure') lookupTmp.allowFailures = false;
   else {
     lookupTmp.allowFailures = true;
 

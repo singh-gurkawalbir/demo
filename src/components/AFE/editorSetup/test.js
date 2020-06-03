@@ -1,5 +1,7 @@
 /* global describe, test, expect ,beforeEach */
-import * as ace from 'brace';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ace from 'brace';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'brace/ext/language_tools';
 import handlebarCompleterSetup from './editorCompleterSetup/index';
 import * as utils from './completers/completerUtils';
@@ -126,10 +128,10 @@ describe('Handlebars autocomplete', () => {
   });
 
   /*
-  //Couldn't get this to work was expecting 
+  //Couldn't get this to work was expecting
   //the Tab or return to insert the autocomplete result
-  
-  test('should insert autocomplete result with tab 
+
+  test('should insert autocomplete result with tab
   keystroke for a possible match', () => {
     editor.execCommand('insertstring', '{{ad');
     let prevOp = editor.prevOp.command;

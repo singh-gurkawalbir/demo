@@ -122,7 +122,7 @@ export function* saveProcessor({ id }) {
         resourceType: ${resourceType},
         resourceId: ${resourceId},
      },
-    
+
         patch: [{ op: 'replace', path:${path}, value: ${value} }],
         resourceType: ${resourceType},
         resourceId: ${resourceId},

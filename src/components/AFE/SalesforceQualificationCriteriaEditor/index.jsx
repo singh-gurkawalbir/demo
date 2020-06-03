@@ -4,7 +4,7 @@ import DynaSalesforceQualificationCriteria from '../../DynaForm/fields/DynaSales
 export default function SalesforceQualificationCriteriaEditor(props) {
   const { id } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,

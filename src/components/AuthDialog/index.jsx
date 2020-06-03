@@ -1,5 +1,5 @@
 import { Typography, Button } from '@material-ui/core';
-import { React, useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';

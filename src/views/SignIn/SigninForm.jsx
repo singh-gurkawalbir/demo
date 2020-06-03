@@ -1,7 +1,7 @@
+import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { Component } from 'react';
-import { hot } from 'react-hot-loader';
 import { Typography, Button, Link, FormLabel } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
@@ -30,7 +30,6 @@ const mapDispatchToProps = dispatch => ({
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
-@hot(module)
 @withStyles(theme => ({
   snackbar: {
     margin: theme.spacing(1),

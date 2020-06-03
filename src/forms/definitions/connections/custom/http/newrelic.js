@@ -5,8 +5,8 @@ export default {
     '/assistant': 'newrelic',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.newrelic.com`,
-    '/http/ping/relativeURI': `/v2/applications.json`,
+    '/http/baseURI': 'https://api.newrelic.com',
+    '/http/ping/relativeURI': '/v2/applications.json',
     '/http/ping/method': 'GET',
     '/http/headers': [
       {

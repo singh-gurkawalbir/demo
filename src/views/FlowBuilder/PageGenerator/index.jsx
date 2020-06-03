@@ -72,6 +72,9 @@ const PageGenerator = ({
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
   );
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
+  );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
   const exportNeedsRouting = useSelector(state =>
@@ -128,11 +131,20 @@ const PageGenerator = ({
         }
 
         if (pg._connectionId) {
-          patchSet.push({
-            op: 'add',
-            path: '/_connectionId',
-            value: pg._connectionId,
-          });
+          // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+          // used to populate the same when user opens resource form
+          patchSet.push(
+            {
+              op: 'add',
+              path: '/_connectionId',
+              value: pg._connectionId,
+            },
+            {
+              op: 'add',
+              path: '/rdbmsAppType',
+              value: rdbmsAppType,
+            }
+          );
         }
       }
 
@@ -163,6 +175,7 @@ const PageGenerator = ({
     pg._exportId,
     pg.application,
     pg.webhookOnly,
+    rdbmsAppType,
     resource,
   ]);
   const getApplication = useCallback(() => {

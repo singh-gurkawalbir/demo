@@ -66,7 +66,8 @@ export default {
           if (baseUri) {
             if (baseUri.indexOf('demo.openair.com') !== -1) {
               return 'demo';
-            } else if (baseUri.indexOf('sandbox.openair.com') !== -1) {
+            }
+            if (baseUri.indexOf('sandbox.openair.com') !== -1) {
               return 'sandbox';
             }
 

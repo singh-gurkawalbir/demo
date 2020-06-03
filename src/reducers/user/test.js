@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import actions from '../../actions';
 import { ACCOUNT_IDS } from '../../utils/constants';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 
 describe('user selectors', () => {
   describe('accountOwner', () => {
@@ -239,7 +239,7 @@ describe('user selectors', () => {
     });
   });
 
-  describe(`user theme selectors`, () => {
+  describe('user theme selectors', () => {
     test('should return default theme if no profile exists', () => {
       expect(selectors.appTheme(undefined)).toEqual(selectors.DEFAULT_THEME);
     });
@@ -255,7 +255,7 @@ describe('user selectors', () => {
     });
   });
 
-  describe(`editor theme selector`, () => {
+  describe('editor theme selector', () => {
     test('should return default editor theme if no state exists', () => {
       expect(selectors.editorTheme(undefined)).toEqual(
         selectors.DEFAULT_EDITOR_THEME

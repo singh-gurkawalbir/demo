@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': 'carriers',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://ssapi.shipstation.com`,
+    '/http/baseURI': 'https://ssapi.shipstation.com',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
