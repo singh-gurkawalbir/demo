@@ -77,15 +77,14 @@ export default function UserDetail(props) {
         confirmDialog({
           title: 'Transfer Account Ownership',
           isHtml: true,
-          message: [
-            `${
-              user.sharedWithUser.name
-                ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
-                : `<b>${user.sharedWithUser.email}</b>`
-            }`,
-            'All owner privileges will be transferred to this user, and your account will be converted to Manager.',
-            'Please click Confirm to proceed with this change.',
-          ].join('<br/>'),
+          message: `${
+            user.sharedWithUser.name
+              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
+              : `<b>${user.sharedWithUser.email}</b>`
+          } <br/> 
+          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
+          Please click Confirm to proceed with this change.
+          `,
           buttons: [
             {
               label: 'Cancel',
