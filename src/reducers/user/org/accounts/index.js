@@ -32,7 +32,8 @@ export default (state = [], action) => {
         const sharedAccounts = state.filter(a => a._id !== ACCOUNT_IDS.OWN);
 
         return [ownAccount, ...sharedAccounts];
-      } else if (resourceType === 'shared/ashares') {
+      }
+      if (resourceType === 'shared/ashares') {
         const ownAccounts = state.filter(a => a._id === ACCOUNT_IDS.OWN);
 
         if (!ownAccounts.length) {

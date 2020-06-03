@@ -5,7 +5,7 @@
 */
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -32,6 +32,8 @@ import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
+import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -87,6 +89,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
+  const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -97,6 +100,13 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
+  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
+    installSteps,
+  ]);
+  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
+    currentStep,
+    installSteps,
+  ]);
   const selectedConnection = useSelector(state =>
     selectors.resource(
       state,
@@ -253,7 +263,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = step => {
+  const handleStepClick = (step, connection, index) => {
     const {
       _connectionId,
       installURL,
@@ -301,9 +311,17 @@ export default function ConnectorInstallation(props) {
           'inProgress'
         )
       );
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(integrationId)
-      );
+
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        dispatch(
+          actions.integrationApp.installer.getCurrentStep(integrationId, step)
+        );
+        history.push(`${match.url}/form-${index}`);
+      } else {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(integrationId)
+        );
+      }
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
@@ -382,6 +400,14 @@ export default function ConnectorInstallation(props) {
             onSubmitComplete={handleSubmitComplete}
           />
         ))}
+      {currentStep && currentStep.formMeta && (
+        <FormStepDrawer
+          integrationId={integrationId}
+          formMeta={currentStep.formMeta}
+          title={currentStep.name}
+          index={currStepIndex + 1}
+        />
+      )}
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>

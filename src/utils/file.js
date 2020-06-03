@@ -47,11 +47,9 @@ export const isValidFileSize = (file, maxSize) => file.size <= maxSize;
 export const getUploadedFileStatus = (file, fileType, fileProps = {}) => {
   const { maxSize = MAX_FILE_SIZE } = fileProps;
 
-  if (!isValidFileSize(file, maxSize))
-    return { success: false, error: 'File exceeds max file size' };
+  if (!isValidFileSize(file, maxSize)) return { success: false, error: 'File exceeds max file size' };
 
-  if (fileType && !isValidFileType(fileType, file))
-    return { success: false, error: `Please select valid ${fileType} file` };
+  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: `Please select valid ${fileType} file` };
 
   return { success: true };
 };
@@ -158,7 +156,7 @@ const generateFields = (data, options = {}) => {
   each(fieldsList, (field, index) => {
     const column = includeHeader
       ? // eslint-disable-next-line no-useless-escape
-        field.replace(/^\"(.*)\"$/, '$1').trim()
+      field.replace(/^\"(.*)\"$/, '$1').trim()
       : `Column${index}`;
 
     if (column) {

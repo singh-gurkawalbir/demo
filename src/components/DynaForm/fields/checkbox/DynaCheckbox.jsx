@@ -12,11 +12,13 @@ const useStyles = makeStyles({
     margin: 0,
     marginRight: 4,
   },
-  dynaCheckbox: { marginRight: 12 },
+  dynaCheckbox: props => {
+    props.hideLabelSpacing ? 0 : 12;
+  },
 });
 
 export default function DynaCheckbox(props) {
-  const classes = useStyles();
+  const classes = useStyles(props);
   const {
     disabled,
     id,

@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/3dCartWebAPI/v1/Customers',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://apirest.3dcart.com`,
+    '/http/baseURI': 'https://apirest.3dcart.com',
     '/http/auth/token/headerName': 'Token',
     '/http/auth/token/scheme': ' ',
     '/http/auth/token/location': 'header',

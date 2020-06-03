@@ -1,7 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -418,7 +416,6 @@ export default function ImportMapping(props) {
         </div>
 
         <div className={classes.mappingsBody} key={`${editorId}`}>
-          <DndProvider backend={HTML5Backend}>
             {tableData.map((mapping, index) => (
               <MappingRow
                 index={index}
@@ -441,7 +438,6 @@ export default function ImportMapping(props) {
                 isDraggable={!disabled}
               />
             ))}
-          </DndProvider>
           <MappingRow
             key={`${emptyRowIndex}`}
             index={emptyRowIndex}

@@ -4,7 +4,7 @@ import TransformEditor from './';
 const defaults = {
   width: '85vw',
   height: '60vh',
-  layout: 'column',
+  layout: 'compact',
   open: true,
 };
 

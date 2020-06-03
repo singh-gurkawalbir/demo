@@ -125,13 +125,14 @@ export default {
     placeholder: 'Not needed for array/row based data.',
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
-      if (r && r.isLookup)
+      if (r && r.isLookup) {
         return [
           {
             field: 'oneToMany',
             is: ['true'],
           },
         ];
+      }
 
       return [];
     },
@@ -422,8 +423,7 @@ export default {
       },
     ],
     isTextComponent: r => {
-      if ((r && r.delta === undefined) || r.delta.dateFormat === undefined)
-        return false;
+      if ((r && r.delta === undefined) || r.delta.dateFormat === undefined) return false;
 
       return !(
         r &&

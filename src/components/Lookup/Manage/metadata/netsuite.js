@@ -129,7 +129,8 @@ export default {
           return {
             resourceToFetch: 'recordTypes',
           };
-        } else if (fieldId === '_expressionText') {
+        }
+        if (fieldId === '_expressionText') {
           const expressionField = fields.find(
             field => field.id === '_expression'
           );

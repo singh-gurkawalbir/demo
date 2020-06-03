@@ -14,8 +14,8 @@ export default {
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
     '/http/auth/oauth/tokenURI': 'https://secure-wms.com/AuthServer/api/Token',
     '/http/auth/oauth/accessTokenBody': `{"grant_type": "client_credentials","tpl":"{${
-      formValues[`/http/unencrypted/tpl`]
-    }}", "user_login_id":"${formValues[`/http/unencrypted/userLoginId`]}"}`,
+      formValues['/http/unencrypted/tpl']
+    }}", "user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`,
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',

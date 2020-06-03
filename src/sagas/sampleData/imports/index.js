@@ -12,7 +12,7 @@ function* fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
   let sampleDataWrapper;
   let assistantMetadata;
-  const previewPath = `/exports/preview`;
+  const previewPath = '/exports/preview';
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
   assistantMetadata = yield select(assistantData, {
@@ -132,15 +132,15 @@ function* fetchIAMetaData({
   try {
     const iaMetadata = refreshMetadata
       ? yield call(apiCallWithRetry, {
-          path: `/integrations/${_integrationId}/settings/refreshMetadata`,
-          opts: {
-            method: 'PUT',
-            body: {
-              _importId,
-            },
+        path: `/integrations/${_integrationId}/settings/refreshMetadata`,
+        opts: {
+          method: 'PUT',
+          body: {
+            _importId,
           },
-          hidden: true,
-        })
+        },
+        hidden: true,
+      })
       : sampleData;
 
     yield put(

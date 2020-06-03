@@ -3,7 +3,7 @@ import actionTypes from '../../../../actions/types';
 import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const {
     type,
     flowId,

@@ -57,8 +57,7 @@ export function netsuiteUserRoles(
     .map(env => ({ label: env, value: env }))
     .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'environment')
-    return { ...state[connectionId], optionsArr: envs };
+  if (netsuiteResourceType === 'environment') return { ...state[connectionId], optionsArr: envs };
   // get matchings accounts for a user environment
   const allAcc =
     userRoles[env] &&
@@ -77,8 +76,7 @@ export function netsuiteUserRoles(
       }))
       .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'account')
-    return { ...state[connectionId], optionsArr: accounts };
+  if (netsuiteResourceType === 'account') return { ...state[connectionId], optionsArr: accounts };
   // get matching roles for a user environment and account
 
   const roles =
@@ -92,8 +90,7 @@ export function netsuiteUserRoles(
       }))
       .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'role')
-    return { ...state[connectionId], optionsArr: roles };
+  if (netsuiteResourceType === 'role') return { ...state[connectionId], optionsArr: roles };
 
   return { ...state[connectionId], optionsArr: null };
 }

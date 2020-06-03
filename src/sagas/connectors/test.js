@@ -3,7 +3,7 @@
 import { call, put } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { fetchMetadata } from './';
+import { fetchMetadata } from '.';
 
 describe('evaluateProcessor saga', () => {
   test('should return the correct selector and handle the respone correctly', () => {
@@ -19,7 +19,7 @@ describe('evaluateProcessor saga', () => {
       call(apiCallWithRetry, {
         path,
         opts: { body: { fieldName, type: fieldType }, method: 'PUT' },
-        message: `Fetching metadata`,
+        message: 'Fetching metadata',
       })
     );
 
@@ -48,7 +48,7 @@ describe('evaluateProcessor saga', () => {
       call(apiCallWithRetry, {
         path,
         opts: { body: { type: fieldType, fieldName }, method: 'PUT' },
-        message: `Fetching metadata`,
+        message: 'Fetching metadata',
       })
     );
 

@@ -46,8 +46,7 @@ export default {
       return { env };
     }
 
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '')
-      return { env, acc };
+    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -90,11 +89,11 @@ export default {
 
         return isRequired
           ? [
-              {
-                field: 'netsuite.authType',
-                is: ['token-auto'],
-              },
-            ]
+            {
+              field: 'netsuite.authType',
+              is: ['token-auto'],
+            },
+          ]
           : [];
       },
     },

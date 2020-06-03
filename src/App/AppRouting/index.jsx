@@ -1,5 +1,4 @@
-import { Component } from 'react';
-import { hot } from 'react-hot-loader';
+import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
@@ -60,7 +59,6 @@ const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
 
-@hot(module)
 export default class AppRouting extends Component {
   render() {
     // console.log('render: <AppRouting>');

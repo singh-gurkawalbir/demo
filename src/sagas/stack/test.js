@@ -7,7 +7,7 @@ import {
   generateToken,
   inviteStackShareUser,
   toggleUserStackSharing,
-} from './';
+} from '.';
 import { getResourceCollection } from '../resources/index';
 
 describe('system token sagas', () => {
