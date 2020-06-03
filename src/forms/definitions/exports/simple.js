@@ -98,11 +98,13 @@ export default {
       return {
         includeHeader: hasHeaderRowField.value,
       };
-    } else if (fieldId === 'uploadFile') {
+    }
+    if (fieldId === 'uploadFile') {
       const fileType = fields.find(field => field.id === 'file.type');
 
       return fileType.value;
-    } else if (fieldId === 'file.csvHelper') {
+    }
+    if (fieldId === 'file.csvHelper') {
       const keyColumnsField = fields.find(
         field => field.id === 'file.csv.keyColumns'
       );
@@ -132,7 +134,8 @@ export default {
           keyColumns: keyColumnsField && keyColumnsField.value,
         },
       };
-    } else if (fieldId === 'file.csv.keyColumns') {
+    }
+    if (fieldId === 'file.csv.keyColumns') {
       const columnDelimiterField = fields.find(
         field => field.id === 'file.csv.columnDelimiter'
       );

@@ -1,10 +1,12 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
+import * as selectors from '../../reducers';
+import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
@@ -74,7 +76,12 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
   }
 }
 
-export function* installScriptStep({ id, connectionId, connectionDoc }) {
+export function* installScriptStep({
+  id,
+  connectionId,
+  connectionDoc,
+  formSubmission,
+}) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
   // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
@@ -85,9 +92,11 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body: connectionId
-          ? { _connectionId: connectionId }
-          : { connection: connectionDoc },
+        body:
+          formSubmission ||
+          (connectionId
+            ? { _connectionId: connectionId }
+            : { connection: connectionDoc }),
         method: 'POST',
       },
       hidden: true,
@@ -100,6 +109,43 @@ export function* installScriptStep({ id, connectionId, connectionDoc }) {
   }
 
   if (!stepCompleteResponse) {
+    const integration = yield select(selectors.resource, 'integrations', id);
+
+    if (
+      integration &&
+      integration.initChild &&
+      integration.initChild.function
+    ) {
+      try {
+        const childIntegration = yield call(apiCallWithRetry, {
+          path: `/integrations/${id}/initChild`,
+          timeout: 5 * 60 * 1000,
+          opts: {
+            method: 'POST',
+          },
+          hidden: true,
+        }) || {};
+        const { _childIntegrationId } = childIntegration;
+
+        yield put(
+          actions.resource.request('integrations', _childIntegrationId)
+        );
+        yield put(
+          actions.resource.updateChildIntegration(id, _childIntegrationId)
+        );
+      } catch (error) {
+        yield put(actions.api.failure(path, 'PUT', error.message, false));
+      }
+    }
+
+    // to clear session state
+    yield put(
+      actions.integrationApp.installer.completedStepInstall(
+        { stepsToUpdate: [] },
+        id
+      )
+    );
+
     return yield put(actions.resource.request('integrations', id));
   }
 
@@ -145,7 +191,7 @@ export function* installStoreStep({ id, installerFunction }) {
       timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'PUT' },
       hidden: true,
-      message: `Installing`,
+      message: 'Installing',
     }) || {};
   } catch (error) {
     yield put(
@@ -189,7 +235,7 @@ export function* addNewStore({ id }) {
       path,
       opts: { body: {}, method: 'PUT' },
       hidden: true,
-      message: `Installing`,
+      message: 'Installing',
     });
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error && error.message, false));
@@ -206,11 +252,66 @@ export function* addNewStore({ id }) {
   }
 }
 
+// for certain type of steps ('form' for now), in order to display the step for the user,
+// we need to invoke get /currentStep route to get the form metadata
+export function* getCurrentStep({ id, step }) {
+  const { type, form, initFormFunction } = step;
+
+  //  currently only handling 'form' type step
+  if (type !== INSTALL_STEP_TYPES.FORM) {
+    return;
+  }
+
+  if (!initFormFunction) {
+    // update formmeta in the session state
+    return yield put(
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
+    );
+  }
+
+  const path = `/integrations/${id}/currentStep`;
+  let currentStepResponse;
+
+  try {
+    currentStepResponse = yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        method: 'GET',
+      },
+      hidden: true,
+    });
+  } catch (error) {
+    yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
+
+    return yield put(actions.api.failure(path, 'PUT', error.message, false));
+  }
+
+  if (!currentStepResponse || !currentStepResponse.result) {
+    return yield put(
+      actions.integrationApp.installer.updateStep(id, '', 'inProgress', form)
+    );
+  }
+
+  return yield put(
+    actions.integrationApp.installer.updateStep(
+      id,
+      '',
+      'inProgress',
+      currentStepResponse.result
+    )
+  );
+}
+
 export default [
   takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST,
     installScriptStep
+  ),
+  takeEvery(
+    actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP,
+    getCurrentStep
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),

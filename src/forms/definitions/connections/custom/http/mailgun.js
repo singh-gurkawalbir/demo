@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/domains',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.mailgun.net/v3`,
+    '/http/baseURI': 'https://api.mailgun.net/v3',
     '/http/auth/basic/username': 'api',
   }),
   fieldMap: {

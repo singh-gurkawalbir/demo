@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from '../../../../components/icons/CalendarIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';

@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer from './';
+import reducer from '.';
 import actions from '../../actions';
 import { COMM_STATES } from '../comms/networkComms';
 

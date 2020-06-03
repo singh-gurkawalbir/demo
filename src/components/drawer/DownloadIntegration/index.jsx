@@ -1,3 +1,4 @@
+import React from 'react';
 import GenerateZip from '../../GenerateZip';
 import RightDrawer from '../Right';
 

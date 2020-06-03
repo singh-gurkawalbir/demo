@@ -1,7 +1,5 @@
-import { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useEffect, useMemo, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { isEqual, difference } from 'lodash';
 import { userPreferences } from '../../reducers';
 import actions from '../../actions';
@@ -59,7 +57,7 @@ export default function DashboardCard({ sortedTiles }) {
   ]);
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <Fragment>
       {dashboardTiles.map((t, index) => (
         <div key={getTileId(t)}>
           {t._ioConnectionId ? (
@@ -79,6 +77,6 @@ export default function DashboardCard({ sortedTiles }) {
           )}
         </div>
       ))}
-    </DndProvider>
+    </Fragment>
   );
 }

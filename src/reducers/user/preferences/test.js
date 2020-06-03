@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import each from 'jest-each';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 import {
   ACCOUNT_IDS,
@@ -75,10 +75,10 @@ describe('user reducers', () => {
             defaultAShareId: '123',
             timeFormat: 'something',
             accounts: {
-              '123': {
+              123: {
                 themeName: 'fancy',
               },
-              '345': {
+              345: {
                 themeName: 'white',
               },
             },
@@ -102,8 +102,8 @@ describe('user reducers', () => {
             timeFormat: 'something else',
             dateFormat: 'test',
             accounts: {
-              '123': { themeName: 'blue' },
-              '345': { themeName: 'white' },
+              123: { themeName: 'blue' },
+              345: { themeName: 'white' },
             },
           });
         });
@@ -141,7 +141,7 @@ describe('user reducers', () => {
       });
     });
   });
-  describe(`user preferences selectors`, () => {
+  describe('user preferences selectors', () => {
     test('should generate nothing for payload in the preference update action', () => {
       const regularUserAccountPreferences = {};
       const receivedPreferencesAction = actions.resource.receivedCollection(
@@ -200,7 +200,7 @@ describe('user reducers', () => {
         defaultAShareId: '123',
         timeFormat: 'something',
         accounts: {
-          '123': {
+          123: {
             themeName: 'fancy',
           },
         },

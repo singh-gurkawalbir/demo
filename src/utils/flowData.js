@@ -216,8 +216,7 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   };
 
   updatedPathsFromPatchSet.forEach(path => {
-    if (pathRegex.sequence.test(path) && !updates.sequence)
-      updates.sequence = true;
+    if (pathRegex.sequence.test(path) && !updates.sequence) updates.sequence = true;
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path

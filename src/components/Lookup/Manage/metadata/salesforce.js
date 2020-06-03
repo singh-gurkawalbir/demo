@@ -116,7 +116,8 @@ export default {
               ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
               : '',
           };
-        } else if (fieldId === '_whereClauseText') {
+        }
+        if (fieldId === '_whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === '_whereClause'
           );

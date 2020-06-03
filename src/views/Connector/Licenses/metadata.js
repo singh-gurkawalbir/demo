@@ -1,3 +1,4 @@
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/actions/Delete';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';

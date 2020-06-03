@@ -204,6 +204,10 @@ export function resourceFormSaveProcessTerminated(
   );
 }
 
+export function getChildIntegrationId(state, parentId) {
+  return fromSession.getChildIntegrationId(state && state.session, parentId);
+}
+
 export function clonePreview(state, resourceType, resourceId) {
   return fromSession.previewTemplate(
     state && state.session,
@@ -1178,7 +1182,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  if (!options.ignoreBorrowedConnections)
+  if (!options.ignoreBorrowedConnections) {
     attachedConnections.forEach(conn => {
       if (
         conn &&
@@ -1188,6 +1192,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
         connectionIds.push(conn._borrowConcurrencyFromConnectionId);
       }
     });
+  }
 
   return connectionIds;
 }
@@ -1710,7 +1715,8 @@ export function hasGeneralSettings(state, integrationId, storeId) {
 
   if (supportsMultiStore) {
     return !!(general || []).find(s => s.id === storeId);
-  } else if (Array.isArray(general)) {
+  }
+  if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
   }
 
@@ -2394,11 +2400,12 @@ export function userPermissionsOnConnection(state, connectionId) {
     const connection = resource(state, 'connections', connectionId);
 
     return (
-      (connection._connectorId
+      (connection && connection._connectorId
         ? permissions.integrations.connectors
         : permissions.integrations.all) || {}
     ).connections;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+  }
+  if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
     const ioIntegrations = resourceList(state, {
       type: 'integrations',
     }).resources;
@@ -2467,7 +2474,8 @@ export const resourcePermissions = (
         (childResourceType ? value && value[childResourceType] : value) ||
         emptyObject
       );
-    } else if (resourceId) {
+    }
+    if (resourceId) {
       let value = permissions[resourceType][resourceId];
 
       // remove tile level permissions added to connector while are not valid.
@@ -2494,7 +2502,8 @@ export const resourcePermissions = (
     }
 
     return emptyObject;
-  } else if (resourceType) {
+  }
+  if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
@@ -2897,8 +2906,7 @@ export function resourceStatus(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -2925,8 +2933,7 @@ export function resourceStatusModified(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -3342,10 +3349,10 @@ export function metadataOptionsAndResources({
 
 /*
  * TODO: @Raghu - Should be removed and use above selector
- * Function Definition needs to be changed to 
+ * Function Definition needs to be changed to
  * metadataOptionsAndResources(
     state,
-    { 
+    {
       connectionId,
       commMetaPath,
       filterKey,
@@ -3649,7 +3656,8 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (adaptorType === 'NetSuiteDistributedImport') {
+  }
+  if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
@@ -3671,7 +3679,8 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (adaptorType === 'SalesforceImport') {
+  }
+  if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
     const { data, status } = metadataOptionsAndResources({
@@ -3685,10 +3694,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (isIntegrationApp) {
+  }
+  if (isIntegrationApp) {
     // handles incase of IAs
     return integrationAppImportMetadata(state, resourceId);
-  } else if (sampleData) {
+  }
+  if (sampleData) {
     // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),

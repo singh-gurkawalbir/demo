@@ -88,7 +88,7 @@ export function* pageProcessorPreview({
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
-      message: `Fetching flows Preview`,
+      message: 'Fetching flows Preview',
       hidden,
     });
 
@@ -131,13 +131,13 @@ export function* exportPreview({
     delete body.rawData;
   }
 
-  const path = `/exports/preview`;
+  const path = '/exports/preview';
 
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
-      message: `Fetching Exports Preview`,
+      message: 'Fetching Exports Preview',
       hidden,
     });
 
