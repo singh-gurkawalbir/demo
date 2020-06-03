@@ -17,6 +17,7 @@ import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
   isSimpleImportFlow,
+  showScheduleIcon,
   isRealtimeFlow,
   getExportIdsFromFlow,
   getImportIdsFromFlow,
@@ -932,6 +933,26 @@ export function isFlowEnableLocked(state, flowId) {
   // strange flow setting name to indicate that flows can not be
   // enabled/disabled by a user...
   return !flowSettings.disableSlider;
+}
+
+// Possible refactor! If we need both canSchedule (flow has ability to schedule),
+// and if the IA allows for schedule overrides, then we can return a touple...
+// for the current purpose, we just need to know if a flow allows or doesn't allow
+// schedule editing.
+export function flowAllowsScheduling(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return emptyObject;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  const allExports = state && state.data && state.data.resources.exports;
+  const canSchedule = showScheduleIcon(flow, allExports);
+
+  if (!isApp) return canSchedule;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return canSchedule && !!flowSettings.showSchedule;
 }
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of

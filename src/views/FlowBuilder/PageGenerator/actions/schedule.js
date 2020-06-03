@@ -27,13 +27,7 @@ function ScheduleDialog({
       disabled={isViewMode}>
       <div>Export schedule</div>
       <div>
-        <FlowSchedule
-          flow={flow}
-          pageGeneratorId={resourceId}
-          onClose={onClose}
-          pg={pg}
-          index={index}
-        />
+        <FlowSchedule flow={flow} onClose={onClose} pg={pg} index={index} />
       </div>
     </ModalDialog>
   );

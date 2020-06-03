@@ -145,7 +145,7 @@ export default function FlowsPanel({ integrationId }) {
           data={flows}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId }}
+          // actionProps={{ integrationId }}
         />
 
         {flows.map(f => (

@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
@@ -20,9 +20,6 @@ const exportFilterConfig = { type: 'exports' };
 const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowSchedule({
-  integrationId,
-  resourceType,
-  resourceId,
   flow,
   onClose,
   className,
@@ -131,23 +128,21 @@ export default function FlowSchedule({
   });
 
   return (
-    <Fragment>
-      <div className={className}>
-        <DynaForm
-          integrationId={integrationId}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}>
-          <DynaSubmit onClick={handleSubmit} color="primary">
-            Save
-          </DynaSubmit>
-          <Button onClick={onClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
-      </div>
-    </Fragment>
+    <div className={className}>
+      <DynaForm
+        integrationId={flow._integrationId}
+        resourceType="flows"
+        resourceId={flow._id}
+        disabled={disabled}
+        fieldMeta={fieldMeta}
+        optionsHandler={fieldMeta.optionsHandler}>
+        <DynaSubmit onClick={handleSubmit} color="primary">
+          Save
+        </DynaSubmit>
+        <Button onClick={onClose} variant="text" color="primary">
+          Cancel
+        </Button>
+      </DynaForm>
+    </div>
   );
 }

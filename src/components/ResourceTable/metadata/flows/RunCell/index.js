@@ -79,9 +79,7 @@ export default function RunCell({
 
   return (
     <Tooltip title="Run now" placement="bottom">
-      <div>
-        <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
-      </div>
+      <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
     </Tooltip>
   );
 }

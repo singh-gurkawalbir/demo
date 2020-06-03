@@ -519,12 +519,7 @@ function FlowBuilder() {
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flow={flow} />
       <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}

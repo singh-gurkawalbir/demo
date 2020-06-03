@@ -1,10 +1,11 @@
 import { useState, Fragment, useCallback } from 'react';
 import FlowSchedule from '../../../../FlowSchedule';
+import CalendarIcon from '../../../../icons/CalendarIcon';
 import ModalDialog from '../../../../ModalDialog';
 
 export default {
   label: 'Schedule',
-  icon: FlowSchedule,
+  icon: CalendarIcon,
   component: function Schedule({ rowData = {} }) {
     const [showSchedule, setShowSchedule] = useState(true);
     const handleClose = useCallback(() => {
