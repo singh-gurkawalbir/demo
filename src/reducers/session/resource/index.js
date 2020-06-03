@@ -50,6 +50,12 @@ export default function reducer(state = {}, action) {
       return produce(state, draft => {
         draft.numEnabledFlows = response;
       });
+    case actionTypes.CLEAR_CHILD_INTEGRATION:
+      return produce(state, draft => {
+        draft.parentChildMap = undefined;
+        delete draft.parentChildMap;
+      });
+
     case actionTypes.UPDATE_CHILD_INTEGRATION:
       return produce(state, draft => {
         draft.parentChildMap = {};
