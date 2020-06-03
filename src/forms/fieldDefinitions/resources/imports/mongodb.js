@@ -87,9 +87,9 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch query builder',
+    label: 'Query builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB Data Builder',
+    title: 'MongoDB query builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
