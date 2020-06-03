@@ -57,7 +57,7 @@ export default {
     id: 'rdbms.bulkInsert.tableName',
     type: 'text',
     label: 'Target table',
-    helpText: `Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.`,
+    helpText: 'Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.',
     required: true,
     visibleWhen: [
       {

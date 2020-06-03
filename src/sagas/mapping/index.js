@@ -7,7 +7,7 @@ import * as selectors from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
-import { apiCallWithRetry } from '../';
+import { apiCallWithRetry } from '..';
 import { adaptorTypeMap } from '../../utils/resource';
 
 export function* saveMappings({ id }) {
@@ -80,8 +80,7 @@ export function* saveMappings({ id }) {
     scope: SCOPES.VALUE,
   });
 
-  if (resp && (resp.error || resp.conflict))
-    return yield put(actions.mapping.saveFailed(id));
+  if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed(id));
 
   yield put(actions.mapping.saveComplete(id));
 }
@@ -166,7 +165,7 @@ export function* previewMappings({ id }) {
     const preview = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: `Fetching preview data`,
+      message: 'Fetching preview data',
     });
 
     if (application === adaptorTypeMap.NetSuiteDistributedImport) {

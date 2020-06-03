@@ -1,3 +1,4 @@
+import React from 'react';
 import DeleteIcon from '../../../../icons/TrashIcon';
 import EditIcon from '../../../../icons/EditIcon';
 

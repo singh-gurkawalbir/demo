@@ -5,7 +5,7 @@ export default {
     '/assistant': 'quip',
     '/http/auth/type': 'token',
     '/http/mediaType': 'urlencoded',
-    '/http/baseURI': `https://platform.quip.com`,
+    '/http/baseURI': 'https://platform.quip.com',
     '/http/ping/relativeURI': '/1/threads/recent',
     '/http/ping/method': 'GET',
   }),

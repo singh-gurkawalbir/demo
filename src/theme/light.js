@@ -230,7 +230,7 @@ export default {
     MuiTypography: {
       root: {
         color: colors.celigoNeutral6,
-        fontFamily: `Roboto400, sans-serif`,
+        fontFamily: 'Roboto400, sans-serif',
       },
       body1: {
         fontSize: '17px',
@@ -318,7 +318,7 @@ export default {
       },
       head: {
         '&:hover': {
-          background: `white !important`,
+          background: 'white !important',
         },
       },
     },

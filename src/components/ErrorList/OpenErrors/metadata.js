@@ -1,3 +1,4 @@
+import React from 'react';
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';

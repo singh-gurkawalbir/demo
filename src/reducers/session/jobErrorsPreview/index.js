@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const { type, jobId, previewData, error, errorFileId } = action;
 
   return produce(state, draft => {

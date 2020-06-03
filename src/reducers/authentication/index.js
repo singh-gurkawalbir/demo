@@ -5,7 +5,7 @@ import { COMM_STATES } from '../comms/networkComms/index';
 const defaultState = { initialized: false, commStatus: COMM_STATES.LOADING };
 
 // #region Reducers
-export default function(state = defaultState, action) {
+export default function (state = defaultState, action) {
   // Since the CLEAR_STORE action resets the state, it can not be placed in
   // the produce function since the draft object within the 'produce' fn context
   // should not be re-assigned. (only its properties)
@@ -77,7 +77,8 @@ export function showSessionStatus(state) {
   // authenticated and session Expired are mutually exclusive
   if (warning) {
     return 'warning';
-  } else if (sessionExpired) {
+  }
+  if (sessionExpired) {
     return 'expired';
   }
 }

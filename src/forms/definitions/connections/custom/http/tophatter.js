@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/products.json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://tophatter.com/merchant_api/v1`,
+    '/http/baseURI': 'https://tophatter.com/merchant_api/v1',
     '/http/auth/token/location': 'url',
     '/http/auth/token/paramName': 'access_token',
   }),

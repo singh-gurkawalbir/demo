@@ -24,7 +24,8 @@ export default {
       );
 
       return value;
-    } else if (fieldId === 'salesforce.distributed.qualifier') {
+    }
+    if (fieldId === 'salesforce.distributed.qualifier') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
       );
@@ -37,7 +38,8 @@ export default {
           sObjectTypeField &&
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
-    } else if (fieldId === 'salesforce.distributed.skipExportFieldId') {
+    }
+    if (fieldId === 'salesforce.distributed.skipExportFieldId') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
       );
@@ -142,8 +144,7 @@ export default {
       ],
       visible: false,
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -312,7 +313,8 @@ export default {
             label: r => {
               if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
                 return 'What would you like to transfer?';
-              } else if (
+              }
+              if (
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {

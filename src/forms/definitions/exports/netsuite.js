@@ -153,8 +153,7 @@ export default {
       required: true,
       visible: false,
       defaultValue: r => {
-        if (r.resourceType === 'realtime' || r.type === 'distributed')
-          return 'distributed';
+        if (r.resourceType === 'realtime' || r.type === 'distributed') return 'distributed';
 
         return 'scheduled';
       },
@@ -181,8 +180,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -504,7 +502,8 @@ export default {
             label: r => {
               if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
                 return 'What would you like to transfer?';
-              } else if (
+              }
+              if (
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {

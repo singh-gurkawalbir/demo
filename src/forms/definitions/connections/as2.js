@@ -1,3 +1,4 @@
+import React from 'react';
 import { isNewId } from '../../../utils/resource';
 
 export default {

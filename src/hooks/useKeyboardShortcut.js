@@ -13,20 +13,23 @@ const keysReducer = (state, action) => {
 };
 
 const useKeyboardShortcut = (shortcutKeys, callback) => {
-  if (!Array.isArray(shortcutKeys))
+  if (!Array.isArray(shortcutKeys)) {
     throw new Error(
       'The first parameter to `useKeyboardShortcut` must be an ordered array of `KeyboardEvent.key` strings.'
     );
+  }
 
-  if (!shortcutKeys.length)
+  if (!shortcutKeys.length) {
     throw new Error(
       'The first parameter to `useKeyboardShortcut` must contain at least one `KeyboardEvent.key` string.'
     );
+  }
 
-  if (!callback || typeof callback !== 'function')
+  if (!callback || typeof callback !== 'function') {
     throw new Error(
       'The second parameter to `useKeyboardShortcut` must be a function that will be invoked when the keys are pressed.'
     );
+  }
 
   const initialKeyMapping = shortcutKeys.reduce((currentKeys, key) => {
     // eslint-disable-next-line no-param-reassign
@@ -46,8 +49,7 @@ const useKeyboardShortcut = (shortcutKeys, callback) => {
 
       if (keys[loweredKey] === undefined) return;
 
-      if (keys[loweredKey] === false)
-        setKeys({ type: 'set-key-down', key: loweredKey });
+      if (keys[loweredKey] === false) setKeys({ type: 'set-key-down', key: loweredKey });
     },
     [keys]
   );
@@ -60,8 +62,7 @@ const useKeyboardShortcut = (shortcutKeys, callback) => {
 
       if (keys[loweredKey] === undefined) return;
 
-      if (keys[loweredKey] === true)
-        setKeys({ type: 'set-key-up', key: loweredKey });
+      if (keys[loweredKey] === true) setKeys({ type: 'set-key-up', key: loweredKey });
     },
     [keys]
   );

@@ -112,10 +112,10 @@ const generateExportHooksMetadata = ({
 
   return isSuiteScriptHooksSupported
     ? attachSuiteScriptHooks(
-        exportHooksMetadata,
-        resourceType,
-        defaultSuiteScriptHooks
-      )
+      exportHooksMetadata,
+      resourceType,
+      defaultSuiteScriptHooks
+    )
     : exportHooksMetadata;
 };
 
@@ -195,10 +195,10 @@ const generateImportHooksMetadata = ({
 
   return isSuiteScriptHooksSupported
     ? attachSuiteScriptHooks(
-        importHooksMetadata,
-        resourceType,
-        defaultSuiteScriptHooks
-      )
+      importHooksMetadata,
+      resourceType,
+      defaultSuiteScriptHooks
+    )
     : importHooksMetadata;
 };
 
@@ -218,16 +218,16 @@ export default function getHooksMetadata(
 
   return resourceType === 'exports'
     ? generateExportHooksMetadata({
-        ...defaultValues,
-        resourceType,
-        isStacksSupported,
-        isSuiteScriptHooksSupported,
-      })
+      ...defaultValues,
+      resourceType,
+      isStacksSupported,
+      isSuiteScriptHooksSupported,
+    })
     : generateImportHooksMetadata({
-        ...defaultValues,
-        resourceType,
-        resource,
-        isStacksSupported,
-        isSuiteScriptHooksSupported,
-      });
+      ...defaultValues,
+      resourceType,
+      resource,
+      isStacksSupported,
+      isSuiteScriptHooksSupported,
+    });
 }

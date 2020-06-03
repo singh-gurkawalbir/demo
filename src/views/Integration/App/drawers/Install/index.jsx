@@ -33,7 +33,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
-import FormViewStepDrawer from '../../../../../components/InstallStep/FormViewStep';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -340,7 +340,7 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/${index}`);
+        history.push(`${match.url}/form-${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
@@ -425,7 +425,7 @@ export default function ConnectorInstallation(props) {
           />
         ))}
       {currentStep && currentStep.formMeta && (
-        <FormViewStepDrawer
+        <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
           title={currentStep.name}

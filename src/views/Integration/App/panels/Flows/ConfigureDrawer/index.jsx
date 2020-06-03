@@ -14,6 +14,7 @@ import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASett
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
+    paddingBottom: theme.appBarHeight,
     width: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,

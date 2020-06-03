@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Switch, Typography } from '@material-ui/core';
@@ -92,7 +91,6 @@ const mapDispatchToProps = (dispatch, { match }) => {
   };
 };
 
-@hot(module)
 @withStyles(theme => ({
   editableFields: {
     paddingTop: theme.spacing(1),

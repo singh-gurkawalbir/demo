@@ -9,7 +9,7 @@ export default {
       formValues['/http/unencrypted/companyId']
     }/org-details`,
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.trinet.com/`,
+    '/http/baseURI': 'https://api.trinet.com/',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'apikey',

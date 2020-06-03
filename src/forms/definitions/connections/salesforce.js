@@ -2,7 +2,7 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   preSave: (formValues, res) => {
-    const newValues = Object.assign({}, formValues);
+    const newValues = { ...formValues};
 
     if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
       newValues['/salesforce/username'] = undefined;
