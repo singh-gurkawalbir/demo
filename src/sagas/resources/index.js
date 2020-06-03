@@ -561,7 +561,7 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       if (!collection) collection = invitedTransfers;
-      else collection = [...collection, ...invitedTransfers];
+      else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
