@@ -1,5 +1,5 @@
 import { FormContext } from 'react-forms-processor/dist';
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
@@ -14,7 +14,6 @@ function DynaUploadFile(props) {
     formContext,
     onFieldChange,
     placeholder,
-    persistData = false,
   } = props;
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
@@ -49,17 +48,14 @@ function DynaUploadFile(props) {
 
   useEffect(() => {
     // resets sample data on change of file type
-    // The below code includes clean up of sampleData, form field and file state
-    // when persistData is passed... no cleanup is done as it implies retaining existing state
-    // TODO @Raghu: Find a better way to clean up only when needed
-    if (options && !persistData) {
+    if (options) {
       dispatch(actions.sampleData.reset(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
       setFileName(DEFAULT_PLACEHOLDER);
     }
 
-    return () => !persistData && dispatch(actions.file.reset(fileId));
+    return () => dispatch(actions.file.reset(fileId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId, fileId]);
 
