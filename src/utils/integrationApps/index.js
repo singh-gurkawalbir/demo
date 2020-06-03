@@ -102,7 +102,8 @@ export default {
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
-      step.sourceConnection
+      step.sourceConnection ||
+      step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
         stepText = 'Configured';

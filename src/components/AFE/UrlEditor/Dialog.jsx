@@ -12,7 +12,7 @@ export default function UrlEditorDialog(props) {
     ...rest
   } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,

@@ -2,7 +2,7 @@
 import { call, put, all, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { restore, purge } from './';
+import { restore, purge } from '.';
 import { recycleBinDependencies } from '../../constants/resource';
 import { getResourceCollection } from '../resources';
 import * as selectors from '../../reducers';

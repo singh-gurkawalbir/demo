@@ -25,7 +25,7 @@ export default {
       },
       {
         name: 'wm_qos.correlation_id',
-        value: `{{{dateFormat 'X'}}}`,
+        value: "{{{dateFormat 'X'}}}",
       },
     ],
     '/http/auth/token/refreshMethod': 'POST',

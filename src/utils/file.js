@@ -41,16 +41,15 @@ export function isValidFileType(fileType, file) {
 }
 
 // Validates file size against MAX_FILE_SIZE as per Bug @IO-12216
-export const isValidFileSize = file => file.size <= MAX_FILE_SIZE;
+export const isValidFileSize = (file, maxSize) => file.size <= maxSize;
 
 // TODO: @Raghu Move these error messages to constants
-export const getUploadedFileStatus = (file, fileType) => {
-  // TODO: @Raghu Add MAX FILE SIZE for Data loader
-  if (!isValidFileSize(file))
-    return { success: false, error: 'File exceeds max file size' };
+export const getUploadedFileStatus = (file, fileType, fileProps = {}) => {
+  const { maxSize = MAX_FILE_SIZE } = fileProps;
 
-  if (fileType && !isValidFileType(fileType, file))
-    return { success: false, error: `Please select valid ${fileType} file` };
+  if (!isValidFileSize(file, maxSize)) return { success: false, error: 'File exceeds max file size' };
+
+  if (fileType && !isValidFileType(fileType, file)) return { success: false, error: `Please select valid ${fileType} file` };
 
   return { success: true };
 };
@@ -157,7 +156,7 @@ const generateFields = (data, options = {}) => {
   each(fieldsList, (field, index) => {
     const column = includeHeader
       ? // eslint-disable-next-line no-useless-escape
-        field.replace(/^\"(.*)\"$/, '$1').trim()
+      field.replace(/^\"(.*)\"$/, '$1').trim()
       : `Column${index}`;
 
     if (column) {

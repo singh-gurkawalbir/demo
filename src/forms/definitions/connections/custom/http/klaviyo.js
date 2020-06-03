@@ -5,7 +5,7 @@ export default {
     '/assistant': 'klaviyo',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'urlencoded',
-    '/http/baseURI': `https://a.klaviyo.com/api/`,
+    '/http/baseURI': 'https://a.klaviyo.com/api/',
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI':
       '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',

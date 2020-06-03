@@ -15,7 +15,7 @@ export default {
       '/assistant': 'merchantesolutions',
       '/http/auth/type': 'custom',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `https://cert.merchante-solutions.com`,
+      '/http/baseURI': 'https://cert.merchante-solutions.com',
       '/http/ping/relativeURI': '/mes-api/tridentApi',
       '/http/ping/method': 'POST',
       '/http/ping/successValues': ['000'],

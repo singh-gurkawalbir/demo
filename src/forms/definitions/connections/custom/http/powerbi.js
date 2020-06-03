@@ -5,7 +5,7 @@ export default {
     '/assistant': 'powerbi',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.powerbi.com`,
+    '/http/baseURI': 'https://api.powerbi.com',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':

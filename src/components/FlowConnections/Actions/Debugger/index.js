@@ -1,13 +1,13 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { debugLogs } from '../../../../reducers';
-import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
-import RefreshIcon from '../../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../../components/IconTextButton';
+import CodePanel from '../../../AFE/GenericEditor/CodePanel';
+import RefreshIcon from '../../../icons/RefreshIcon';
+import IconTextButton from '../../../IconTextButton';
 import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(() => ({

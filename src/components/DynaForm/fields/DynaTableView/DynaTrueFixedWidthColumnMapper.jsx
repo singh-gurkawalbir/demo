@@ -20,14 +20,14 @@ const optionsMap = [
   {
     id: 'startPosition',
     label: 'Start',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
   {
     id: 'endPosition',
     label: 'End',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
@@ -88,12 +88,14 @@ export default function DynaTrueFixedWidthColmnMapper({
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
-        val.map(({ fieldName, startPosition, endPosition, regex }) => ({
-          fieldName,
-          startPosition,
-          endPosition,
-          regex,
-        }))
+        val.map(
+          ({ fieldName, startPosition, endPosition, regexExpression }) => ({
+            fieldName,
+            startPosition,
+            endPosition,
+            regexExpression,
+          })
+        )
       );
     }
   };

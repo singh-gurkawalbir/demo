@@ -1,7 +1,7 @@
-import { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import TextToggle from '../../components/TextToggle';
+import TextToggle from '../TextToggle';
 import OpenErrors from './OpenErrors';
 import ResolvedErrors from './ResolvedErrors';
 
@@ -31,7 +31,7 @@ export default function ErrorList({ flowId }) {
   }, [errorType]);
 
   return (
-    <Fragment>
+    <>
       <TextToggle
         value={errorType}
         className={classes.errorTypeToggle}
@@ -49,6 +49,6 @@ export default function ErrorList({ flowId }) {
         resourceId={resourceId}
         show={errorType === 'resolved'}
       />
-    </Fragment>
+    </>
   );
 }

@@ -17,8 +17,8 @@ export default {
     '/http/token/refreshHeaders': [
       { name: 'Content-Type', value: 'application/json' },
     ],
-    '/http/ping/relativeURI': `/1/users`,
-    '/http/ping/method': `GET`,
+    '/http/ping/relativeURI': '/1/users',
+    '/http/ping/method': 'GET',
   }),
   fieldMap: {
     'http.oneloginRegion': {

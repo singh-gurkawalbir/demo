@@ -61,8 +61,7 @@ export default (state = initialState, action) => {
           if (
             draft[i].status === COMM_STATES.ERROR ||
             draft[i].status === COMM_STATES.SUCCESS
-          )
-            delete draft[i];
+          ) delete draft[i];
         });
 
         break;
