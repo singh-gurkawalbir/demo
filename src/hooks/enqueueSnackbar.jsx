@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
@@ -24,7 +24,7 @@ export default function useEnqueueSnackbar() {
         },
         // eslint-disable-next-line react/display-name
         action: key => (
-          <Fragment>
+          <>
             {showUndo && (
               <Button
                 onClick={() => {
@@ -44,7 +44,7 @@ export default function useEnqueueSnackbar() {
               }}>
               <CloseIcon />
             </IconButton>
-          </Fragment>
+          </>
         ),
         onClose: (event, reason) => {
           handleClose && handleClose(event, reason);

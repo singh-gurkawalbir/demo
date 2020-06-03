@@ -1,4 +1,4 @@
-import { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -16,7 +16,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
-import TextToggle from '../../../components/TextToggle';
+import TextToggle from '../../TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
@@ -131,7 +131,7 @@ export default function ToggleEditorDialog(props) {
     if (isEditorDirty) {
       confirmDialog({
         title: 'Confirm',
-        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        message: 'You have made changes in the editor. Are you sure you want to discard them?',
         buttons: [
           {
             label: 'No',
@@ -252,7 +252,8 @@ export default function ToggleEditorDialog(props) {
           cloneElement(children[state.activeEditorIndex], {
             layout,
             editorId: `${id}-${state.activeEditorIndex}`,
-          })}
+          })
+}
       </DialogContent>
       <DialogActions className={classes.actions}>
         {showPreviewAction && (

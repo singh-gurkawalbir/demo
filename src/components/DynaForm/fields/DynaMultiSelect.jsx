@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -156,8 +157,7 @@ export default function DynaMultiSelect(props) {
                   typeof selected.map === 'function' &&
                   selected.map(createChip)}
               </div>
-            )
-          }>
+            )}>
           {items}
         </CeligoSelect>
       </FormControl>

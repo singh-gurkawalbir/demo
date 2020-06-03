@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -44,10 +44,10 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: `60%`,
+    width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
     overflowX: 'hidden',
@@ -463,7 +463,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     if (mappingSaveStatus === 'saved' || mappingSaveStatus === 'close') {
       enqueueSnackbar({
         variant: 'success',
-        message: `Your mapping settings have been saved.`,
+        message: 'Your mapping settings have been saved.',
         persist: false,
       });
     }
@@ -512,7 +512,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     );
     enqueueSnackbar({
       variant: 'info',
-      message: `Saving your mapping settings.`,
+      message: 'Saving your mapping settings.',
       persist: false,
     });
   }, [dispatch, enqueueSnackbar, flowId, integrationId]);
@@ -526,7 +526,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     );
     enqueueSnackbar({
       variant: 'info',
-      message: `Saving your mapping settings.`,
+      message: 'Saving your mapping settings.',
       persist: false,
     });
   }, [dispatch, enqueueSnackbar, flowId, integrationId]);
@@ -552,7 +552,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   }
 
   return (
-    <Fragment>
+    <>
       <Drawer
         anchor="right"
         open={!!match}
@@ -653,7 +653,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           </Loader>
         )}
       </Drawer>
-    </Fragment>
+    </>
   );
 }
 

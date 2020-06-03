@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
@@ -21,7 +22,7 @@ const mapDispatchToProps = dispatch => ({
 });
 const useStyles = makeStyles(theme => ({
   dynaTokenWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   dynaTokenField: {
     flex: 1,

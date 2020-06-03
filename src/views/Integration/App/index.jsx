@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -88,12 +88,12 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
     fontSize: 13,
     borderRadius: 4,
-    backgroundColor: `rgb(0,0,0,0)`,
+    backgroundColor: 'rgb(0,0,0,0)',
     transition: theme.transitions.create('background-color'),
     paddingLeft: theme.spacing(1),
     height: 'unset',
     '&:hover': {
-      backgroundColor: `rgb(0,0,0,0.05)`,
+      backgroundColor: 'rgb(0,0,0,0.05)',
     },
     '& > div': {
       paddingTop: theme.spacing(1),
@@ -223,11 +223,12 @@ export default function IntegrationApp({ match, history }) {
   if (!hasAddOns) {
     const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'addons');
 
-    if (addOnTabIndex !== -1)
+    if (addOnTabIndex !== -1) {
       availableTabs = [
         ...availableTabs.slice(0, addOnTabIndex),
         ...availableTabs.slice(addOnTabIndex + 1),
       ];
+    }
   }
 
   if (hideGeneralTab) {
@@ -334,7 +335,7 @@ export default function IntegrationApp({ match, history }) {
   // console.log('render: <IntegrationApp>');
 
   return (
-    <Fragment>
+    <>
       <ResourceDrawer />
       <QueuedJobsDrawer />
       <CeligoPageBar
@@ -390,6 +391,6 @@ export default function IntegrationApp({ match, history }) {
       </CeligoPageBar>
 
       <IntegrationTabs tabs={availableTabs} className={classes.PageWrapper} />
-    </Fragment>
+    </>
   );
 }

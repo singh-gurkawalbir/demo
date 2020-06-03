@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
-import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
+import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import WelcomeBanner from './WelcomeBanner';
@@ -63,7 +63,7 @@ export default function CeligoPageBar(props) {
   const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
 
   return (
-    <Fragment>
+    <>
       <SlideOnScroll threshold={250}>
         <ElevateOnScroll threshold={0}>
           <Paper
@@ -103,6 +103,6 @@ export default function CeligoPageBar(props) {
           [classes.bannerOffset]: showBanner,
         })}
       />
-    </Fragment>
+    </>
   );
 }

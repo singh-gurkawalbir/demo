@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, Fragment } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
@@ -62,12 +62,12 @@ export default function EditorSaveButton(props) {
       disabled={!!(disableBtn || disableSave)}
       onClick={handleButtonClick}>
       {disableSave ? (
-        <Fragment>
+        <>
           <Spinner size={16} />
           Saving
-        </Fragment>
+        </>
       ) : (
-        <Fragment>{submitButtonLabel}</Fragment>
+        <>{submitButtonLabel}</>
       )}
     </Button>
   );

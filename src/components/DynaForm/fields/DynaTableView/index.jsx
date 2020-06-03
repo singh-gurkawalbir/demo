@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import DynaConnectoroNColumnMap from './DynaConnectorNColumnMap';
 import DynaStaticMap from './DynaStaticMap';
 import DynaTableView from './DynaTable';
 import DynaStaticMapWidget from './DynaStaticMapWidget';
-import LoadResources from '../../../../components/LoadResources';
+import LoadResources from '../../../LoadResources';
 import DynaRefreshableStaticMap from './DynaRefreshableStaticMap';
 
 export default function DynaTable(props) {

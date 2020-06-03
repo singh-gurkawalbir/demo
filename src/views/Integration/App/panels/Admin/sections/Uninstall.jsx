@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
@@ -43,7 +43,7 @@ export default function UninstallSection({ storeId, integrationId }) {
   const handleUninstall = () => {
     confirmDialog({
       title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
+      message: 'Are you sure you want to uninstall',
       buttons: [
         {
           label: 'Cancel',
@@ -70,7 +70,7 @@ export default function UninstallSection({ storeId, integrationId }) {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
@@ -97,6 +97,6 @@ export default function UninstallSection({ storeId, integrationId }) {
           <DeleteIcon className={classes.rightIcon} />
         </Button>
       </div>
-    </Fragment>
+    </>
   );
 }

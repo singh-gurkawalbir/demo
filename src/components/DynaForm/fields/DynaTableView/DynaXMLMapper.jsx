@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import DynaText from '../DynaText';
 import DynaTableView from './DynaTable';
@@ -63,7 +63,7 @@ export default function DynaXMLMapper(props) {
   ];
 
   return (
-    <Fragment>
+    <>
       <DynaText
         value={path}
         label="Path:"
@@ -80,6 +80,6 @@ export default function DynaXMLMapper(props) {
         hideLabel
         onFieldChange={fieldChangeHandler}
       />
-    </Fragment>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useCallback, Fragment, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 
 function DynaSlider(props) {
@@ -34,7 +34,7 @@ function DynaSlider(props) {
   }, [id]);
 
   return (
-    <Fragment>
+    <>
       <Typography>{`Every ${sliderVal} ${unit}`} </Typography>
       <Slider
         value={parseInt(sliderVal, 10)}
@@ -46,7 +46,7 @@ function DynaSlider(props) {
         min={min}
         max={max}
       />
-    </Fragment>
+    </>
   );
 }
 

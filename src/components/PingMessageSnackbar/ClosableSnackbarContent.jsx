@@ -1,3 +1,4 @@
+import React from 'react';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { makeStyles } from '@material-ui/core/styles';
 // TODO: Azhar : Replace icons

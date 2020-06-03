@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import * as selectors from '../../../reducers';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 

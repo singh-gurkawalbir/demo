@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import loadable from '../../utils/loadable';
@@ -110,12 +110,13 @@ const tabs = [
     padding: theme.spacing(3),
   },
 }))
+
 class MyAccount extends Component {
   render() {
     const { match, permissions, classes } = this.props;
 
     return (
-      <Fragment>
+      <>
         <CeligoPageBar
           title={
             permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
@@ -128,12 +129,12 @@ class MyAccount extends Component {
             <Profile />
           </div>
         ) : (
-          <Fragment>
+          <>
             <ResourceDrawer match={match} />
             <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
-          </Fragment>
+          </>
         )}
-      </Fragment>
+      </>
     );
   }
 }

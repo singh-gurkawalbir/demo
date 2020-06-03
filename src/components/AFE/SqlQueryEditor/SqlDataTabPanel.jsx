@@ -31,7 +31,7 @@ const SqlDataTabPanel = props => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab
           label="Sample Data"
@@ -86,7 +86,7 @@ const SqlDataTabPanel = props => {
           </Typography>
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

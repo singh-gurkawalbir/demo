@@ -1,9 +1,10 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
 import { FormContext } from 'react-forms-processor/dist';
 import uuid from 'uuid';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
@@ -14,7 +15,7 @@ import { getWebhookUrl } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   dynaWebhookTokenField: {
     flex: 1,
@@ -103,7 +104,7 @@ function DynaWebhookTokenGenerator(props) {
   }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.dynaWebhookTokenWrapper}>
         <DynaTextForSetFields
           {...props}
@@ -120,8 +121,7 @@ function DynaWebhookTokenGenerator(props) {
                 enqueueSnackbar({
                   message: 'Token copied to clipboard.',
                   variant: 'success',
-                })
-              }>
+                })}>
               <Button
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
@@ -140,7 +140,7 @@ function DynaWebhookTokenGenerator(props) {
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }
 

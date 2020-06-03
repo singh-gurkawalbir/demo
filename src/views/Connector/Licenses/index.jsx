@@ -1,4 +1,4 @@
-import { useEffect, useMemo, Fragment } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -80,7 +80,7 @@ export default function Licenses(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <ResourceDrawer {...props} />
       <CeligoPageBar
         history={history}
@@ -105,7 +105,7 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <Typography>
               {list.total === 0
-                ? `You don't have any licenses.`
+                ? "You don't have any licenses."
                 : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
             </Typography>
           ) : (
@@ -125,6 +125,6 @@ export default function Licenses(props) {
         count={list.count}
         maxCount={list.filtered}
       />
-    </Fragment>
+    </>
   );
 }

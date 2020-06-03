@@ -1,8 +1,8 @@
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
@@ -39,7 +39,7 @@ function ResourceReferences(props) {
   }, [dispatch, resourceType, resourceId]);
 
   return (
-    <Fragment>
+    <>
       {!resourceReferences && (
         <Loader open>
           <Typography variant="h4">
@@ -76,7 +76,7 @@ function ResourceReferences(props) {
           </div>
         </ModalDialog>
       )}
-    </Fragment>
+    </>
   );
 }
 

@@ -1,10 +1,10 @@
-import { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import TablePagination from '@material-ui/core/TablePagination';
 import { withStyles } from '@material-ui/core/styles';
 import { withSnackbar } from 'notistack';
 import * as selectors from '../../reducers';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 
 const mapStateToProps = (
@@ -43,6 +43,7 @@ class AuditLogTable extends Component {
   handleChangePage = (event, newPage) => {
     this.setState({ page: newPage });
   };
+
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
   };
@@ -54,7 +55,7 @@ class AuditLogTable extends Component {
       auditLogs.slice(page * rowsPerPage, (page + 1) * rowsPerPage) || [];
 
     return (
-      <Fragment>
+      <>
         <div className={classes.root}>
           <TablePagination
             classes={{ root: classes.tablePaginationRoot }}
@@ -78,7 +79,7 @@ class AuditLogTable extends Component {
             actionProps={{ ...this.props }}
           />
         </div>
-      </Fragment>
+      </>
     );
   }
 }

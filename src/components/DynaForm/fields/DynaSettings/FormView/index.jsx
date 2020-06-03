@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import DynaForm from '../../../../DynaForm';
+import DynaForm from '../../..';
 import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
 

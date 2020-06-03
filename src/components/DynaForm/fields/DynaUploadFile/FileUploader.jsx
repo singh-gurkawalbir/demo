@@ -1,4 +1,4 @@
-import { useRef, Fragment, useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../../FieldHelp';
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   uploadContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -46,7 +46,7 @@ function FileUploader(props) {
   }, []);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.uploadContainer}>
         <span className={classes.fileName}>{fileName}</span>
         <Button
@@ -73,7 +73,7 @@ function FileUploader(props) {
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
       {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}
-    </Fragment>
+    </>
   );
 }
 

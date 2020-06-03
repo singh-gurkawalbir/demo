@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Typography, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -23,7 +23,7 @@ import SpinnerWrapper from '../../../../../../../components/SpinnerWrapper';
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     // marginTop: theme.appBarHeight,
-    width: `60%`,
+    width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
@@ -174,7 +174,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
   }
 
   return (
-    <Fragment>
+    <>
       <Drawer
         anchor="right"
         open={!!match}
@@ -260,7 +260,7 @@ function VariationMappingDrawer({ integrationId, parentUrl }) {
           </SpinnerWrapper>
         )}
       </Drawer>
-    </Fragment>
+    </>
   );
 }
 
