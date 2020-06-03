@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
@@ -76,7 +76,7 @@ export default function DynaXmlParse(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <XmlParseEditorDialog
           title="XML parse options"
@@ -91,6 +91,6 @@ export default function DynaXmlParse(props) {
       <Button data-test={id} variant="contained" onClick={handleEditorClick}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

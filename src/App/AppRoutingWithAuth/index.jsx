@@ -34,10 +34,11 @@ export function AppRoutingWithAuth(props) {
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
-      if (currentRoute !== getRoutePath('signin'))
+      if (currentRoute !== getRoutePath('signin')) {
         history.push({
           state: { attemptedRoute: currentRoute },
         });
+      }
       initSession();
     }
 

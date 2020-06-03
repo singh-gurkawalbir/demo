@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import CeligoSelect from '../../components/CeligoSelect';
+import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
 

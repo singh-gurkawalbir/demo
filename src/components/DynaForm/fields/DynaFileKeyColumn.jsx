@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaMultiSelect from './DynaMultiSelect';

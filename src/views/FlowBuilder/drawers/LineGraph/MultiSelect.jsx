@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -67,7 +68,8 @@ export default function MultiSelect(props) {
   const Value = ({ selected, items }) => {
     if (!selected || !selected.length) {
       return <span>{placeholder}</span>;
-    } else if (selected.length === 1 && items) {
+    }
+    if (selected.length === 1 && items) {
       const selectedItem = items.find(i => i.value === selected[0]).label;
 
       return <span>{selectedItem}</span>;

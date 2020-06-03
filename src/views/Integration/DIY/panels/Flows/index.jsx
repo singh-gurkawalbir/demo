@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect, Fragment } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -86,13 +87,13 @@ export default function FlowsPanel({ integrationId }) {
       <span>
         Integration flows
         {totalErrors ? (
-          <Fragment>
+          <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
               {totalErrors} errors
             </span>
-          </Fragment>
+          </>
         ) : null}
       </span>
     ),

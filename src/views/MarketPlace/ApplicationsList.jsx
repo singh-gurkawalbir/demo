@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { uniq } from 'lodash';
@@ -14,11 +14,11 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(204px, 1fr));`,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(204px, 1fr));',
     gridRowGap: theme.spacing(3),
     padding: '24px 10px',
     [theme.breakpoints.up('xl')]: {
-      gridTemplateColumns: `repeat(7, 1fr);`,
+      gridTemplateColumns: 'repeat(7, 1fr);',
     },
   },
   card: {
@@ -62,8 +62,8 @@ export default function ApplicationsList({ filter }) {
   const templates = useSelector(state => selectors.marketplaceTemplates(state));
   let applications = [];
 
-  connectors.forEach(c => (applications = applications.concat(c.applications)));
-  templates.forEach(t => (applications = applications.concat(t.applications)));
+  connectors.forEach(c => { applications = applications.concat(c.applications) });
+  templates.forEach(t => { applications = applications.concat(t.applications) });
   applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(
     a =>
@@ -76,7 +76,7 @@ export default function ApplicationsList({ filter }) {
   }, [dispatch]);
 
   return (
-    <Fragment>
+    <>
       {applications.length > 0 ? (
         <div className={classes.root}>
           {applications.map(id => (
@@ -99,6 +99,6 @@ export default function ApplicationsList({ filter }) {
           search criteria.
         </Typography>
       )}
-    </Fragment>
+    </>
   );
 }

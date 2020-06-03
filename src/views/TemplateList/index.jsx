@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -47,7 +47,7 @@ export default function TemplateList(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <CheckPermissions
         permission={
           PERMISSIONS && PERMISSIONS.templates && PERMISSIONS.templates.view
@@ -77,7 +77,7 @@ export default function TemplateList(props) {
             {list.count === 0 ? (
               <Typography>
                 {list.total === 0
-                  ? `You don't have any templates.`
+                  ? "You don't have any templates."
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
@@ -96,6 +96,6 @@ export default function TemplateList(props) {
           maxCount={list.filtered}
         />
       </CheckPermissions>
-    </Fragment>
+    </>
   );
 }

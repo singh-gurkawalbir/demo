@@ -8,7 +8,7 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import * as selectors from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../actions';

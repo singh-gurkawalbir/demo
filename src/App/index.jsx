@@ -36,12 +36,12 @@ const useStyles = makeStyles({
 
 function NonSigninHeaderComponents(props) {
   return (
-    <Fragment>
+    <>
       <CeligoAppBar {...props} />
       <AppErroredModal {...props} />
       <AuthDialog {...props} />
       <CeligoDrawer {...props} />
-    </Fragment>
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { hashCode } from '../../../utils/string';
@@ -19,13 +19,13 @@ import ConsoleGridItem from '../ConsoleGridItem';
   {
     "fieldMap": {
       "A": {
-        "id":  "settingA", 
+        "id":  "settingA",
         "name": "setA",
         "label": "Label for A",
         "type": "text"
       }
       "B": {
-        "id":  "settingB", 
+        "id":  "settingB",
         "name": "setB",
         "label": "Turn me on!",
         "type": "checkbox"

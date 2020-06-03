@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Button } from '@material-ui/core';
 import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
@@ -127,7 +127,7 @@ export default function OperandSettingsDialog({
   return (
     <ModalDialog show>
       <span>Operand Settings</span>
-      <Fragment>
+      <>
         <DynaForm
           disabled={disabled}
           fieldMeta={fieldMeta}
@@ -139,7 +139,7 @@ export default function OperandSettingsDialog({
             Cancel
           </Button>
         </DynaForm>
-      </Fragment>
+      </>
     </ModalDialog>
   );
 }

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Button,
@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import actions from '../../../actions';
-import useConfirmDialog from '../../../components/ConfirmDialog';
+import useConfirmDialog from '../../ConfirmDialog';
 import DeleteIcon from '../../icons/TrashIcon';
 import CeligoSwitch from '../../CeligoSwitch';
 

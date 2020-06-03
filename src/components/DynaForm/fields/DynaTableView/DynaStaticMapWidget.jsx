@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useState, useEffect, Fragment } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Divider, makeStyles } from '@material-ui/core';
 import actions from '../../../../actions';
-import RadioGroup from '../../../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
-import DynaSelect from '../../../../components/DynaForm/fields/DynaSelect';
+import RadioGroup from '../radiogroup/DynaRadioGroup';
+import DynaSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
@@ -46,9 +46,9 @@ export default function DynaStaticMapWidget(props) {
     if (allowFailures) {
       if (defaultValue) {
         return 'defaultLookup';
-      } else if (defaultValue === null) {
+      } if (defaultValue === null) {
         return 'useNull';
-      } else if (defaultValue === '') {
+      } if (defaultValue === '') {
         return 'useEmptyString';
       }
     }
@@ -157,8 +157,7 @@ export default function DynaStaticMapWidget(props) {
     });
   };
 
-  if (showDefault !== (radioState === 'defaultLookup'))
-    setShowDefault(radioState === 'defaultLookup');
+  if (showDefault !== (radioState === 'defaultLookup')) setShowDefault(radioState === 'defaultLookup');
 
   const handleDefaultValueChange = (defaultId, val) => {
     setDefaultVal(val);
@@ -166,7 +165,7 @@ export default function DynaStaticMapWidget(props) {
   };
 
   return (
-    <Fragment>
+    <>
       <DynaTableView
         {...props}
         optionsMap={optionsMap}
@@ -182,7 +181,7 @@ export default function DynaStaticMapWidget(props) {
       />
       <Divider className={classes.margin} />
       {!hideLookupAllowFailures && (
-        <Fragment>
+        <>
           <RadioGroup
             {...props}
             value={radioState}
@@ -193,14 +192,14 @@ export default function DynaStaticMapWidget(props) {
             options={[
               {
                 items: [
-                  { label: `Fail Record`, value: 'allowFailures' },
+                  { label: 'Fail Record', value: 'allowFailures' },
                   {
-                    label: `Use Empty String as Default Value`,
+                    label: 'Use Empty String as Default Value',
                     value: 'useEmptyString',
                   },
-                  { label: `Use Null as Default Value`, value: 'useNull' },
+                  { label: 'Use Null as Default Value', value: 'useNull' },
                   {
-                    label: `Use Custom Default Value`,
+                    label: 'Use Custom Default Value',
                     value: 'defaultLookup',
                   },
                 ],
@@ -216,8 +215,8 @@ export default function DynaStaticMapWidget(props) {
               options={[{ items: defaultOptions }]}
             />
           )}
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

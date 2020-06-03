@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PopupState, { bindMenu, bindTrigger } from 'material-ui-popup-state';
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import JavaScriptEditorDialog from '../../../components/AFE/JavaScriptEditor/Dialog';
@@ -31,7 +31,7 @@ export default function EditFieldButton(props) {
     const patchSet = [
       {
         op: 'replace',
-        path: `/content`,
+        path: '/content',
         value: code,
       },
     ];
@@ -82,10 +82,10 @@ export default function EditFieldButton(props) {
   const data = hookName === 'init' ? formMeta : formValues;
 
   return (
-    <Fragment>
+    <>
       <PopupState variant="popover" popupId="edit-hooks-menu">
         {popupState => (
-          <Fragment>
+          <>
             <Button
               data-test="hooks"
               size="small"
@@ -120,7 +120,7 @@ export default function EditFieldButton(props) {
                 PreSubmit
               </MenuItem>
             </Menu>
-          </Fragment>
+          </>
         )}
       </PopupState>
 
@@ -134,6 +134,6 @@ export default function EditFieldButton(props) {
           id={hookName}
         />
       )}
-    </Fragment>
+    </>
   );
 }

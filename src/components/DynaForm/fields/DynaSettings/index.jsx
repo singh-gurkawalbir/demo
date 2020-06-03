@@ -1,4 +1,4 @@
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Button } from '@material-ui/core';
@@ -12,7 +12,7 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FieldHelp from '../../../DynaForm/FieldHelp';
+import FieldHelp from '../../FieldHelp';
 
 const emptyObj = {};
 // TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       margin: theme.spacing(-0.5, 0.5, 0, 0),
       '&.Mui-expanded': {
-        transform: `rotate(90deg)`,
+        transform: 'rotate(90deg)',
       },
     },
     '&.Mui-expanded': {
@@ -125,8 +125,8 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    // Always render the edit drawer. This drawer has logic within to not display unless the
-    // browser location ends with a specific path.
+  // Always render the edit drawer. This drawer has logic within to not display unless the
+  // browser location ends with a specific path.
 
     <div className={classes.child}>
       <ExpansionPanel
@@ -141,7 +141,7 @@ export default function DynaSettings(props) {
           <Typography className={classes.label}>
             {settingsContainer.label}
             {isDeveloper && !isViewMode && (
-              <Fragment>
+              <>
                 <Button
                   data-test="form-editor-action"
                   variant="outlined"
@@ -156,7 +156,7 @@ export default function DynaSettings(props) {
                   helpKey="settingsForm"
                   label="Settings form builder"
                 />
-              </Fragment>
+              </>
             )}
           </Typography>
         </ExpansionPanelSummary>

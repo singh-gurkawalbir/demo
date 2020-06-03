@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -8,12 +8,12 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 import { isNewId } from '../../../utils/resource';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import Close from '../../../components/icons/CloseIcon';
+import Close from '../../icons/CloseIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
-    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
+    boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   resourceFormWrapper: {
     padding: theme.spacing(3, 3, 1, 3),
@@ -84,8 +84,7 @@ const determineRequiredResources = type => {
   }
 
   // if its exports or imports then we need associated connections to be loaded
-  if (resourceType.includes('exports') || resourceType.includes('imports'))
-    return [...resourceType, 'connections'];
+  if (resourceType.includes('exports') || resourceType.includes('imports')) return [...resourceType, 'connections'];
 
   return resourceType;
 };
@@ -100,7 +99,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
     queryParams.get('fixConnnection') === 'true';
 
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
-    return `Fix offline connection`;
+    return 'Fix offline connection';
   }
 
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
@@ -317,11 +316,12 @@ export default function Panel(props) {
         return;
       }
 
-      if (newResourceId)
+      if (newResourceId) {
         enqueueSnackbar({
           message: `${resourceLabel} created`,
           variant: 'success',
         });
+      }
       onClose();
     }
   }
@@ -343,7 +343,7 @@ export default function Panel(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.root}>
         <div className={classes.title}>
           <Typography variant="h3" className={classes.titleText}>
@@ -387,6 +387,6 @@ export default function Panel(props) {
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}
       />
-    </Fragment>
+    </>
   );
 }

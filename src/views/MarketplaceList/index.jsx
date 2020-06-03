@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -24,17 +24,17 @@ const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
     '& > div': {
       maxWidth: '100%',
       minWidth: '100%',
     },
     [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
     },
     [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
   card: {
@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     position: 'absolute',
     bottom: 0,
-    width: `calc(100% - 32px)`,
+    width: 'calc(100% - 32px)',
   },
   title: {
     overflow: 'hidden',

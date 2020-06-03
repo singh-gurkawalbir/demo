@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,7 +33,7 @@ export default function ApiTokenSection({ integrationId }) {
   );
 
   return (
-    <Fragment>
+    <>
       <ResourceDrawer match={match} />
 
       <PanelHeader title="API tokens">
@@ -79,6 +79,6 @@ export default function ApiTokenSection({ integrationId }) {
           )}
         </LoadResources>
       </div>
-    </Fragment>
+    </>
   );
 }

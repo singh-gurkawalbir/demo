@@ -1,8 +1,8 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useCallback, useMemo, useEffect, Fragment } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
-import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
+import HttpRequestBodyEditorDialog from '../../AFE/HttpRequestBodyEditor/Dialog';
+import UrlEditorDialog from '../../AFE/UrlEditor/Dialog';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import {
@@ -67,8 +67,7 @@ const DynaEditorWithFlowSampleData = ({
   const formattedRule = useMemo(() => {
     if (editorType === 'httpRequestBody' && !rule && templateVersion === 1) {
       // load sample template when rule is not yet defined
-      if (props.contentType === 'json')
-        return getJSONSampleTemplate((sampleData && sampleData.data) || []);
+      if (props.contentType === 'json') return getJSONSampleTemplate((sampleData && sampleData.data) || []);
 
       return getXMLSampleTemplate((sampleData && sampleData.data) || []);
     }
@@ -83,7 +82,7 @@ const DynaEditorWithFlowSampleData = ({
   }, [flowId, loadEditorSampleData]);
 
   return (
-    <Fragment>
+    <>
       {editorType === 'httpRequestBody' ? (
         <HttpRequestBodyEditorDialog
           {...props}
@@ -107,7 +106,7 @@ const DynaEditorWithFlowSampleData = ({
           onVersionToggle={handleEditorVersionToggle}
         />
       )}
-    </Fragment>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import { Button } from '@material-ui/core';
 import clsx from 'clsx';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
 import actions from '../../actions';
@@ -135,16 +135,16 @@ function JobDetail({
   );
   const childJobIds = job.children
     ? job.children
-        .filter(
-          cJob =>
-            [
-              JOB_STATUS.COMPLETED,
-              JOB_STATUS.FAILED,
-              JOB_STATUS.CANCELED,
-            ].includes(cJob.uiStatus) &&
+      .filter(
+        cJob =>
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.FAILED,
+            JOB_STATUS.CANCELED,
+          ].includes(cJob.uiStatus) &&
             (cJob.retriable || cJob.numError > 0)
-        )
-        .map(cJob => cJob._id)
+      )
+      .map(cJob => cJob._id)
     : [];
   const isJobInProgress = [
     JOB_STATUS.QUEUED,
@@ -239,7 +239,7 @@ function JobDetail({
   }
 
   return (
-    <Fragment>
+    <>
       <TableRow>
         <TableCell
           className={clsx({
@@ -357,7 +357,7 @@ function JobDetail({
             integrationName={integrationName}
           />
         ))}
-    </Fragment>
+    </>
   );
 }
 

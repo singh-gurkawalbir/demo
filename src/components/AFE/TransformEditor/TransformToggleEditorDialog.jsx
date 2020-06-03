@@ -1,3 +1,4 @@
+import React from 'react';
 import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';

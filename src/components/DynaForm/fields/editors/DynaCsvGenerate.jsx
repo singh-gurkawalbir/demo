@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FormLabel, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,7 +9,7 @@ import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaCsvGenerateWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -92,7 +92,7 @@ export default function DynaCsvGenerate(props) {
     : '';
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <CsvConfigEditorDialog
           key={sampleDataLoaded}
@@ -121,6 +121,6 @@ export default function DynaCsvGenerate(props) {
 
         <FieldHelp {...props} helpKey={helpKey} />
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     width: 1300,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   configureDrawerform: {

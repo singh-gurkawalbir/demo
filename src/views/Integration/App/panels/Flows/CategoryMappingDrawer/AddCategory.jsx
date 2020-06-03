@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   form: {
-    maxHeight: `calc(100vh - 180px)`,
+    maxHeight: 'calc(100vh - 180px)',
     padding: theme.spacing(2, 3),
   },
   addCategoryDrawerForm: {

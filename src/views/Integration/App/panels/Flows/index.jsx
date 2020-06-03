@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Route,
   Link,
@@ -7,6 +7,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
