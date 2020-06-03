@@ -349,11 +349,11 @@ export default function CeligoDrawer() {
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
                                 {drawerOpened ? <Icon /> :
-                                <Tooltip placement="right-end" key={label} title={label}>
-                                  <div>
-                                    <Icon />
-                                  </div>
-                                </Tooltip>}
+                                  <Tooltip placement="right-end" key={label} title={label}>
+                                    <div>
+                                      <Icon />
+                                    </div>
+                                  </Tooltip>}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}
