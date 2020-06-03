@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
@@ -24,7 +23,6 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-@hot(module)
 @withStyles(() => ({
   textField: {
     marginTop: 0,

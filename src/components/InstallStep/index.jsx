@@ -105,7 +105,7 @@ export default function InstallationStep(props) {
   }
 
   const onStepClick = () => {
-    handleStepClick(step, connection);
+    handleStepClick(step, connection, index);
   };
 
   return (

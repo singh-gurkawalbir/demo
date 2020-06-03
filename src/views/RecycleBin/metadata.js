@@ -1,3 +1,4 @@
+import React from 'react';
 import Restore from '../../components/ResourceTable/actions/RecycleBin/Restore';
 import Purge from '../../components/ResourceTable/actions/RecycleBin/Purge';
 import DateTimeDiaply from '../../components/DateTimeDisplay';

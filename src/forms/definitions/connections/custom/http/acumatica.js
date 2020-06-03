@@ -12,9 +12,9 @@ export default {
         formValues['/instanceURI']
       }/entity/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
-        formValues[`/http/unencrypted/username`]
-      }","password": "${formValues[`/http/encrypted/password`]}","company": "${
-        formValues[`/http/unencrypted/company`]
+        formValues['/http/unencrypted/username']
+      }","password": "${formValues['/http/encrypted/password']}","company": "${
+        formValues['/http/unencrypted/company']
       }"}`;
       retValues['/http/encrypted/cookieString'] = '';
       retValues['/http/auth/token/token'] = '';

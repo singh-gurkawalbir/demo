@@ -147,12 +147,12 @@ export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
-    )
+    ) {
       acc[curr] = {
         ...fieldMap[curr],
         defaultDisabled: true,
       };
-    else {
+    } else {
       acc[curr] = {
         ...fieldMap[curr],
       };
@@ -292,8 +292,7 @@ export const sanitizePatchSet = ({
             .replace(/\//g, '.');
 
           // consider it as a remove patch
-          if (get(resource, modifiedPath))
-            removePatches.push({ path: patch.path, op: 'remove' });
+          if (get(resource, modifiedPath)) removePatches.push({ path: patch.path, op: 'remove' });
         } else if (
           !field ||
           field.defaultValue !== patch.value ||
@@ -352,8 +351,8 @@ const refGeneration = field => {
   const { fieldId, id, formId } = field;
 
   if (fieldId) return fieldId;
-  else if (id) return id;
-  else if (formId) return formId;
+  if (id) return id;
+  if (formId) return formId;
   throw new Error('cant generate reference');
 };
 
@@ -442,11 +441,11 @@ export const translateDependencyProps = fieldMap => {
       Object.keys(dependencies).forEach(value => {
         const dependencyFields = dependencies[value].fields;
 
-        if (type === 'checkbox')
+        if (type === 'checkbox') {
           rules.push(
             ...(extractRules(dependencyFields, key, value === 'enabled') || [])
           );
-        else rules.push(...(extractRules(dependencyFields, key, value) || []));
+        } else rules.push(...(extractRules(dependencyFields, key, value) || []));
       });
 
       delete fieldMapCopy[key].dependencies;
@@ -520,8 +519,7 @@ const generateFieldsAndSections = (acc, field) => {
   ) {
     let expansionPanelTitle;
 
-    if (field.properties && field.properties.sectionName)
-      ({ sectionName: expansionPanelTitle } = field.properties);
+    if (field.properties && field.properties.sectionName) ({ sectionName: expansionPanelTitle } = field.properties);
     else expansionPanelTitle = field.title;
     const matchingContainer = acc.containers.find(
       container =>
@@ -610,8 +608,7 @@ export const integrationSettingsToDynaFormMetadata = (
     }));
   }
 
-  if (finalData.fieldMap)
-    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap) finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!skipContainerWrap) {

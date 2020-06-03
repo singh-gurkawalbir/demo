@@ -1,6 +1,6 @@
 export default {
   preSave: formValues => {
-    const newValues = Object.assign({}, formValues);
+    const newValues = { ...formValues};
 
     delete newValues['/mode'];
 
@@ -134,11 +134,9 @@ export default {
         newValues['/http/oauth/customAuthScheme'];
     }
 
-    if (!newValues['/http/auth/token/revoke/uri'])
-      delete newValues['/http/auth/token/revoke/uri'];
+    if (!newValues['/http/auth/token/revoke/uri']) delete newValues['/http/auth/token/revoke/uri'];
 
-    if (!newValues['/http/auth/token/revoke/body'])
-      delete newValues['/http/auth/token/revoke/body'];
+    if (!newValues['/http/auth/token/revoke/body']) delete newValues['/http/auth/token/revoke/body'];
 
     if (!newValues['/http/auth/failPath']) {
       newValues['/http/auth/failValues'] = undefined;

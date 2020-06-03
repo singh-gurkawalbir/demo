@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -64,7 +63,6 @@ const tabs = [
 ];
 
 // TODO: Ashok if these CSS are not being used then we can remove it.
-@hot(module)
 @withStyles(theme => ({
   link: {
     color: theme.palette.text.secondary,

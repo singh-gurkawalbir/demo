@@ -5,7 +5,7 @@ export default {
     '/assistant': 'paycor',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://secure.paycor.com`,
+    '/http/baseURI': 'https://secure.paycor.com',
     '/http/ping/relativeURI': 'Documents/api/documents/customreport',
     '/http/ping/method': 'GET',
   }),

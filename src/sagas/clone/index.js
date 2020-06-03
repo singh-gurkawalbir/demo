@@ -13,7 +13,7 @@ export function* requestPreview({ resourceType, resourceId }) {
   try {
     components = yield call(apiCallWithRetry, {
       path,
-      message: `Fetching Preview`,
+      message: 'Fetching Preview',
     });
   } catch (error) {
     yield put(actions.template.failedPreview(`${resourceType}-${resourceId}`));
@@ -53,7 +53,7 @@ export function* createComponents({ resourceType, resourceId }) {
           newTemplateInstaller: data.newTemplateInstaller,
         },
       },
-      message: `Cloning...`,
+      message: 'Cloning...',
     });
   } catch (error) {
     yield put(actions.template.failedInstall(`${resourceType}-${resourceId}`));

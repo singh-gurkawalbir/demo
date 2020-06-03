@@ -22,8 +22,7 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {
@@ -180,8 +179,7 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {

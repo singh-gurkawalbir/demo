@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component, Fragment, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -35,7 +34,6 @@ const mapDispatchToProps = (dispatch, { resourceType }) => ({
   },
 });
 
-@hot(module)
 @withStyles(theme => ({
   root: {
     width: '98%',

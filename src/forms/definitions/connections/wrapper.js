@@ -1,6 +1,6 @@
 export default {
   preSave: formValues => {
-    const newValues = Object.assign({}, formValues);
+    const newValues = { ...formValues};
 
     if (newValues['/wrapper/encrypted']) {
       try {

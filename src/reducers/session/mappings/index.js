@@ -182,8 +182,7 @@ export default function reducer(state = {}, action) {
 
           if (field === 'extract') {
             if (inputValue.indexOf('"') === 0) {
-              if (inputValue.charAt(inputValue.length - 1) !== '"')
-                inputValue += '"';
+              if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
               delete objCopy.extract;
               objCopy.hardCodedValue = inputValue.substr(
                 1,
@@ -281,8 +280,7 @@ export default function reducer(state = {}, action) {
           if ('hardCodedValue' in valueTmp) {
             // wrap anything expect '' and null ,
 
-            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length)
-              valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length) valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
             delete valueTmp.extract;
           }
 

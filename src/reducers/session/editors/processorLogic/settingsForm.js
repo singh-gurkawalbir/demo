@@ -62,8 +62,7 @@ export default {
   validate: ({ data }) => {
     let dataError;
 
-    if (typeof data === 'string' && !isEmpty(data))
-      dataError = util.validateJsonString(data);
+    if (typeof data === 'string' && !isEmpty(data)) dataError = util.validateJsonString(data);
 
     return { dataError: dataError !== null && dataError };
   },

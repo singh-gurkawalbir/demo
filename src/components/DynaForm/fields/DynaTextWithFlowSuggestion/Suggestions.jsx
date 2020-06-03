@@ -273,7 +273,6 @@ export default function Suggestions(props) {
             fieldId={id}
             showDynamicLookupOnly
             onSave={handleLookupAdd}
-            onSavelabel="Add new lookup"
             options={options}
           />
         </li>

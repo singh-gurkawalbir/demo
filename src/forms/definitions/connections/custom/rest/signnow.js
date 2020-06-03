@@ -5,7 +5,7 @@ export default {
     '/assistant': 'signnow',
     '/rest/authType': 'oauth',
     '/rest/mediaType': 'json',
-    '/rest/baseURI': `https://api-eval.signnow.com`,
+    '/rest/baseURI': 'https://api-eval.signnow.com',
     '/rest/authURI': 'https://eval.signnow.com/proxy/index.php/authorize',
     '/rest/oauthTokenURI': 'https://api-eval.signnow.com/oauth2/token',
     '/rest/refreshTokenHeaders': [

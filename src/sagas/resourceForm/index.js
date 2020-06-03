@@ -12,7 +12,7 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas, { createPayload } from '../resourceForm/connections';
+import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
@@ -104,7 +104,7 @@ export function* runHook({ hook, data }) {
     code = origin.content;
   }
 
-  const path = `/processors/javascript`;
+  const path = '/processors/javascript';
   const opts = {
     method: 'post',
     body: processorLogic.requestBody({
@@ -247,7 +247,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
     SCOPES.VALUE
   );
 
-  if (resource && resource.useParentForm)
+  if (resource && resource.useParentForm) {
     yield put(
       actions.resource.patchStaged(
         resourceId,
@@ -255,6 +255,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
         SCOPES.VALUE
       )
     );
+  }
   yield put(
     actions.resource.patchStaged(
       resourceId,
@@ -442,8 +443,7 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
     !['exports', 'imports'].includes(resourceType) ||
     !flowId ||
     !isNewId(tempResourceId)
-  )
-    return [];
+  ) return [];
 
   // is pageGenerator or pageProcessor
   const createdId = yield select(selectors.createdResourceId, tempResourceId);
@@ -487,7 +487,7 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
         flowPatches = [
           {
             op: 'replace',
-            path: `/pageGenerators/0`,
+            path: '/pageGenerators/0',
             value: { _exportId: createdId },
           },
         ];
@@ -517,25 +517,26 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
 
   let missingPatches = [];
 
-  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators)
+  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators) {
     missingPatches = [
       {
         op: 'add',
-        path: `/pageGenerators`,
+        path: '/pageGenerators',
         value: [],
       },
     ];
-  else if (
+  } else if (
     flowPatches[0].path.includes('pageProcessors') &&
     !flowDoc.pageProcessors
-  )
+  ) {
     missingPatches = [
       {
         op: 'add',
-        path: `/pageProcessors`,
+        path: '/pageProcessors',
         value: [],
       },
     ];
+  }
 
   return [...missingPatches, ...flowPatches];
 }

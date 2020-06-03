@@ -113,7 +113,7 @@ function DynaWebhookTokenGenerator(props) {
           setFieldIds={setFieldIds}
         />
         <div className={classes.dynaWebhookTokenbtn}>
-          {value.match(/^[A-Za-z0-9]/) ? (
+          {value && value.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
               text={value}
               onCopy={() =>

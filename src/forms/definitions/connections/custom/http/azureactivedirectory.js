@@ -5,7 +5,7 @@ export default {
     '/assistant': 'azureactivedirectory',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://graph.microsoft.com`,
+    '/http/baseURI': 'https://graph.microsoft.com',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':

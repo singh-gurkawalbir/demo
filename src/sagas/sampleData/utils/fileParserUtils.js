@@ -1,5 +1,5 @@
 import { call } from 'redux-saga/effects';
-import { evaluateExternalProcessor } from '../../../sagas/editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
 import { processJsonSampleData } from '../../../utils/sampleData';
 
@@ -69,7 +69,7 @@ export function* parseFileDefinition({ sampleData, resource }) {
           _fileDefinitionId,
         },
       },
-      message: `Fetching flows Preview`,
+      message: 'Fetching flows Preview',
       hidden: true,
     });
 

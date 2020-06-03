@@ -87,7 +87,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
 
   const statusHandler = useCallback(
     ({ status, message }) => {
-      enquesnackbar(message, {
+      enquesnackbar({
+        message,
         variant: status,
         anchorOrigin: {
           vertical: 'top',
