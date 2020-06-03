@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Link, Route } from 'react-router-dom';
@@ -24,7 +23,6 @@ const mapDispatchToProps = (dispatch, { list }) => ({
   },
 });
 
-@hot(module)
 @withStyles(theme => ({
   root: {
     marginTop: theme.spacing(3),

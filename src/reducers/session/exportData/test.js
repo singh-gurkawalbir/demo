@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, { exportData } from './';
+import reducer, { exportData } from '.';
 import actions from '../../../actions';
 
 describe('exportData reducers', () => {
@@ -73,7 +73,7 @@ describe('exportData reducers', () => {
     });
   });
 
-  describe(`request action`, () => {
+  describe('request action', () => {
     test('should do basic reset', () => {
       const state = reducer(
         undefined,
@@ -99,7 +99,7 @@ describe('exportData reducers', () => {
     });
   });
 
-  describe(`receive action`, () => {
+  describe('receive action', () => {
     test('should update data', () => {
       const state = reducer(
         undefined,
@@ -129,7 +129,7 @@ describe('exportData reducers', () => {
     });
   });
 
-  describe(`receive error action`, () => {
+  describe('receive error action', () => {
     test('should update data', () => {
       const state = reducer(
         undefined,

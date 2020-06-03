@@ -16,8 +16,7 @@ export default {
     let dataError;
 
     if (!data) dataError = 'Must provide some sample data.';
-    else if (typeof data !== 'object')
-      dataError = util.validateJsonString(data);
+    else if (typeof data !== 'object') dataError = util.validateJsonString(data);
     const isContainsAllKey = util.containsAllKeys(rule, [
       'generate',
       'extract',

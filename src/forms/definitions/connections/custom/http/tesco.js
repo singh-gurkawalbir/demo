@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/grocery/products/?query=name&offset=0&limit=10',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://dev.tescolabs.com`,
+    '/http/baseURI': 'https://dev.tescolabs.com',
     '/http/headers': [
       {
         name: 'Ocp-Apim-Subscription-Key',

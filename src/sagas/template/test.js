@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import { call } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../index';
-import { generateZip } from './';
+import { generateZip } from '.';
 
 describe('generateZip sagas', () => {
   const integrationId = '123';

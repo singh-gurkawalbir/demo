@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/candidates',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://harvest.greenhouse.io/v1`,
+    '/http/baseURI': 'https://harvest.greenhouse.io/v1',
     '/http/headers': [
       {
         name: 'On-Behalf-Of',

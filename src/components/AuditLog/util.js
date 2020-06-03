@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
 import getExistingResourcePagePath from '../../utils/resource';
@@ -64,7 +64,7 @@ export function getResource(resourceType, resourceId, actionProps) {
 
 export function getResourceLink(al, actionProps) {
   return (
-    <Fragment>
+    <>
       {al.event === 'delete' && al.deletedInfo && al.deletedInfo.name}
       {al.event !== 'delete' && (
         <Link
@@ -80,7 +80,7 @@ export function getResourceLink(al, actionProps) {
             .name || `${al._resourceId}`}
         </Link>
       )}
-    </Fragment>
+    </>
   );
 }
 
@@ -90,14 +90,14 @@ export function getOldValue(al) {
 
 export function getNewValue(al) {
   return (
-    <Fragment>
+    <>
       {!showViewDiffLink(al.fieldChange.oldValue, al.fieldChange.newValue) && (
-        <Fragment>
+        <>
           {al.fieldChange && typeof al.fieldChange.newValue === 'string'
             ? al.fieldChange.newValue
             : JSON.stringify(al.fieldChange.newValue)}
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

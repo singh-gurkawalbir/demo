@@ -161,7 +161,7 @@ export function* installStoreStep({ id, installerFunction }) {
       timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'PUT' },
       hidden: true,
-      message: `Installing`,
+      message: 'Installing',
     }) || {};
   } catch (error) {
     yield put(
@@ -205,7 +205,7 @@ export function* addNewStore({ id }) {
       path,
       opts: { body: {}, method: 'PUT' },
       hidden: true,
-      message: `Installing`,
+      message: 'Installing',
     });
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error && error.message, false));

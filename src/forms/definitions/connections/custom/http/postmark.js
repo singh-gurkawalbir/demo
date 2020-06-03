@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.postmarkapp.com/`,
+    '/http/baseURI': 'https://api.postmarkapp.com/',
     '/http/ping/relativeURI': '/servers?count=1&offset=0',
     '/http/headers': [
       { name: 'Content-Type', value: 'application/json' },

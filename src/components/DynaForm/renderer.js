@@ -1,3 +1,4 @@
+import React from 'react';
 import { FieldWrapper } from 'react-forms-processor/dist';
 import fields from './fields';
 
@@ -26,8 +27,8 @@ function getRenderer(editMode, formFieldsMeta, resourceId, resourceType) {
     }
 
     return (
-      /* TODO: Dave. refactor to allow useClasses...
-         Unable to add class in the makestyle because it is throwing and error that this 
+    /* TODO: Dave. refactor to allow useClasses...
+         Unable to add class in the makestyle because it is throwing and error that this
          function is not a react function neither hook so added inline. */
 
       <div key={fid} style={wrapper}>

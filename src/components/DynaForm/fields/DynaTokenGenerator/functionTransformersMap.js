@@ -5,12 +5,12 @@ Each assistant encompasses of two functions the responseParser
  and payloadTransformer that have to be implemented.
 
 payloadTransformer: This function is intended to fabricate the request
- payload for the generate token call from the from values. 
+ payload for the generate token call from the from values.
  The returned object would be the actual request payload.
 
-responseParser: This function is intended to map the 
+responseParser: This function is intended to map the
   response of the generate token call to field values.
-  The returned object should have fieldIds and the 
+  The returned object should have fieldIds and the
   corresponding values those fields should take.
 
 
@@ -22,8 +22,8 @@ export default {
     }),
 
     payloadTransformer: form => {
-      const apiKey = form[`/http/unencrypted/apiKey`];
-      const apiSecret = form[`/http/encrypted/apiSecret`];
+      const apiKey = form['/http/unencrypted/apiKey'];
+      const apiSecret = form['/http/encrypted/apiSecret'];
       const base64EncodedToken = window.btoa(`${apiKey}:${apiSecret}`);
       const baseURI = `https://api${
         form['/http/sandbox'] === 'true' ? '-sandbox' : ''
@@ -41,8 +41,8 @@ export default {
     }),
 
     payloadTransformer: form => {
-      const clientId = form[`/http/unencrypted/clientId`];
-      const clientSecret = form[`/http/encrypted/clientSecret`];
+      const clientId = form['/http/unencrypted/clientId'];
+      const clientSecret = form['/http/encrypted/clientSecret'];
       const base64EncodedToken = window.btoa(`${clientId}:${clientSecret}`);
       const baseURI = `https://api${
         form['/http/accountType'] === 'sandbox' ? '.sandbox' : ''
@@ -61,9 +61,9 @@ export default {
     }),
 
     payloadTransformer: form => ({
-      oneloginRegion: form[`/http/oneloginRegion`],
-      clientId: form[`/http/unencrypted/apiKey`],
-      clientSecret: form[`/http/encrypted/apiSecret`],
+      oneloginRegion: form['/http/oneloginRegion'],
+      clientId: form['/http/unencrypted/apiKey'],
+      clientSecret: form['/http/encrypted/apiSecret'],
     }),
   },
   tableau: {
@@ -73,10 +73,10 @@ export default {
     }),
 
     payloadTransformer: form => ({
-      username: form[`/http/auth/basic/username`],
-      password: form[`/http/auth/basic/password`],
-      baseURI: `https://${form[`/http/myServer`]}.online.tableau.com/api`,
-      contentUrl: form[`/http/unencrypted/contentUrl`],
+      username: form['/http/auth/basic/username'],
+      password: form['/http/auth/basic/password'],
+      baseURI: `https://${form['/http/myServer']}.online.tableau.com/api`,
+      contentUrl: form['/http/unencrypted/contentUrl'],
     }),
   },
   magento: {
@@ -85,9 +85,9 @@ export default {
     }),
 
     payloadTransformer: form => ({
-      baseURI: form[`/http/baseURI`],
-      username: form[`/http/unencrypted/username`],
-      password: form[`/http/encrypted/password`],
+      baseURI: form['/http/baseURI'],
+      username: form['/http/unencrypted/username'],
+      password: form['/http/encrypted/password'],
     }),
   },
   bronto: {
@@ -97,8 +97,8 @@ export default {
     }),
 
     payloadTransformer: form => ({
-      clientId: form[`/http/unencrypted/clientId`],
-      clientSecret: form[`/http/encrypted/clientSecret`],
+      clientId: form['/http/unencrypted/clientId'],
+      clientSecret: form['/http/encrypted/clientSecret'],
     }),
   },
   dunandbradstreet: {
@@ -108,8 +108,8 @@ export default {
     }),
 
     payloadTransformer: form => ({
-      username: form[`/http/unencrypted/username`],
-      password: form[`/http/encrypted/password`],
+      username: form['/http/unencrypted/username'],
+      password: form['/http/encrypted/password'],
     }),
   },
   sugarcrm: {
@@ -148,8 +148,8 @@ export default {
     }),
     // subscriptionKey: objData.encrypted && objData.encrypted.subscriptionKey, applicationKey: objData.unencrypted && objData.unencrypted.applicationKey
     payloadTransformer: form => ({
-      subscriptionKey: form[`/http/encrypted/subscriptionKey`],
-      applicationKey: form[`/http/unencrypted/applicationKey`],
+      subscriptionKey: form['/http/encrypted/subscriptionKey'],
+      applicationKey: form['/http/unencrypted/applicationKey'],
     }),
   },
   procurifyauthenticate: {
@@ -158,10 +158,10 @@ export default {
       'http.encrypted.clientSecret': resp && resp.data.client_secret,
     }),
     payloadTransformer: form => ({
-      baseURI: `https://${form[`/http/procurifySubdomain`]}.procurify.com/api`,
+      baseURI: `https://${form['/http/procurifySubdomain']}.procurify.com/api`,
       base64EncodedToken: window.btoa(
-        `${form[`/http/unencrypted/username`]}:${
-          form[`/http/encrypted/password`]
+        `${form['/http/unencrypted/username']}:${
+          form['/http/encrypted/password']
         }`
       ),
     }),
@@ -172,11 +172,11 @@ export default {
       'http.auth.token.token': resp && resp.access_token,
     }),
     payloadTransformer: form => ({
-      clientId: form[`/http/unencrypted/clientId`],
-      clientSecret: form[`/http/encrypted/clientSecret`],
-      username: form[`/http/unencrypted/username`],
-      password: form[`/http/encrypted/password`],
-      baseURI: `https://${form[`/http/procurifySubdomain`]}.procurify.com/api`,
+      clientId: form['/http/unencrypted/clientId'],
+      clientSecret: form['/http/encrypted/clientSecret'],
+      username: form['/http/unencrypted/username'],
+      password: form['/http/encrypted/password'],
+      baseURI: `https://${form['/http/procurifySubdomain']}.procurify.com/api`,
     }),
   },
   logisense: {

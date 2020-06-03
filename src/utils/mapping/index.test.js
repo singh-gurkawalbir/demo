@@ -1,6 +1,6 @@
 /* global describe,  expect */
 import each from 'jest-each';
-import util from './';
+import util from '.';
 
 describe('isEqual', () => {
   const testCases = [
