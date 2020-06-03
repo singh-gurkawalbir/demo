@@ -41,7 +41,7 @@ import {
   retrySelectedRetries,
   requestRetryData,
   updateRetryData,
-} from './';
+} from '.';
 import * as selectors from '../../reducers/index';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';

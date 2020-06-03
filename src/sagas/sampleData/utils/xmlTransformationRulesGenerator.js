@@ -92,13 +92,13 @@ export default function* saveTransformationRulesForNewXMLExport({
   // newResourceId is a temporary Id which is not part of 'resource' fetched from patches. So need to send explicitly
   const convertedXmlToJSON = isXmlFileAdaptor
     ? yield call(getXmlFileAdaptorSampleData, {
-        resource,
-        newResourceId: tempResourceId,
-      })
+      resource,
+      newResourceId: tempResourceId,
+    })
     : yield call(getXmlHttpAdaptorSampleData, {
-        resource,
-        newResourceId: tempResourceId,
-      });
+      resource,
+      newResourceId: tempResourceId,
+    });
 
   if (!convertedXmlToJSON) return;
 

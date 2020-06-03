@@ -38,8 +38,7 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
     (!isAS2Resource(resourceObj) &&
       isRealTimeOrDistributedResource(resourceObj)) ||
     isBlobTypeResource(resourceObj)
-  )
-    return;
+  ) return;
 
   // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state
   // Same applies for Rest Export incase of CSV as media type

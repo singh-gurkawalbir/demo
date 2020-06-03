@@ -5,7 +5,7 @@ import JavaScriptEditor from '../JavaScriptEditor';
 const defaults = {
   width: '85vw',
   height: '60vh',
-  layout: 'column',
+  layout: 'compact',
   open: true,
   labels: ['Rules', 'JavaScript'],
 };

@@ -122,7 +122,7 @@ export default function menuItems(
           href: SUBMIT_TICKET_URL,
         },
         {
-          label: `What's New`,
+          label: "What's New",
           Icon: WhatsNewIcon,
           component: 'a',
           href: WHATS_NEW_URL,

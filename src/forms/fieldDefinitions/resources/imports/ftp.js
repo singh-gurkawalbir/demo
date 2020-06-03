@@ -25,7 +25,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: `{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}`,
+              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
             },
           },
         ],
@@ -87,7 +87,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: `{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}`,
+              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
             },
           },
         ],

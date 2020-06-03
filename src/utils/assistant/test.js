@@ -15,7 +15,7 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
-} from './';
+} from '.';
 
 describe('getMatchingRoute', () => {
   const testCases = [

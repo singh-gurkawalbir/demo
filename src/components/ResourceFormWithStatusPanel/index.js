@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
@@ -7,7 +7,7 @@ import ResourceForm from '../ResourceFormFactory';
 
 const useStyles = makeStyles(() => ({
   removeTopPadding: {
-    paddingTop: `0px !important`,
+    paddingTop: '0px !important',
   },
   form: {
     height: props =>

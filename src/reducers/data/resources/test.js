@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions, { availableResources } from '../../../actions';
 
 describe('resources reducer', () => {
@@ -223,7 +223,7 @@ describe('resources reducer for special cases', () => {
 });
 
 describe('intetgrationApps installer reducer', () => {
-  describe(`integrationApps received installer install_inProgress action`, () => {
+  describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
       let state;
       const collection = [
@@ -362,7 +362,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_failure action`, () => {
+  describe('integrationApps received installer install_failure action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to false', () => {
       let state;
       const collection = [
@@ -494,7 +494,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_complete action`, () => {
+  describe('integrationApps received installer install_complete action', () => {
     test('should find the integration with id and replace all the install steps with stepsToUpdate', () => {
       let state;
       const stepsToUpdate = [{ a: 1, b: 2 }, { a: 2, b: 1 }];
@@ -579,7 +579,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_verify action`, () => {
+  describe('integrationApps received installer install_verify action', () => {
     test('should find the integration with id and find the install step by installerFunction and set verifying flag to true', () => {
       let state;
       const collection = [

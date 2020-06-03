@@ -80,8 +80,7 @@ export default (state = {}, action) => {
 
         return;
 
-      // eslint-disable-next-line no-case-declarations
-      case actionTypes.RESOURCE.STAGE_PATCH:
+      case actionTypes.RESOURCE.STAGE_PATCH: {
         if (!newPatch || !newPatch.length) return;
 
         if (!draft[id]) {
@@ -104,25 +103,24 @@ export default (state = {}, action) => {
             newPatch[0].path ===
               draft[id].patch[draft[id].patch.length - 1].path &&
             newPatch[0].op === draft[id].patch[draft[id].patch.length - 1].op
-          )
-            draft[id].patch.pop();
+          ) draft[id].patch.pop();
         }
 
         const scopedPatchWithTimestamp = scope
           ? newPatch.map(patch => ({
-              ...patch,
-              timestamp,
-              scope,
-            }))
+            ...patch,
+            timestamp,
+            scope,
+          }))
           : newPatch.map(patch => ({
-              ...patch,
-              timestamp,
-            }));
+            ...patch,
+            timestamp,
+          }));
 
         draft[id].patch = [...draft[id].patch, ...scopedPatchWithTimestamp];
 
         return;
-
+      }
       case actionTypes.RESOURCE.STAGE_CONFLICT:
         if (!draft[id]) {
           draft[id] = {};
@@ -167,12 +165,12 @@ export function stagedResource(state, id, scope) {
 
   let updatedPatches;
 
-  if (scope)
+  if (scope) {
     updatedPatches =
       state[id] &&
       state[id].patch &&
       state[id].patch.filter(patch => patch.scope === scope);
-  else updatedPatches = state[id] && state[id].patch;
+  } else updatedPatches = state[id] && state[id].patch;
 
   return { ...state[id], patch: updatedPatches };
 }
@@ -182,12 +180,12 @@ function transformStagedResource(stagedIdState, scope) {
 
   let updatedPatches;
 
-  if (scope)
+  if (scope) {
     updatedPatches =
       stagedIdState &&
       stagedIdState.patch &&
       stagedIdState.patch.filter(patch => patch.scope === scope);
-  else updatedPatches = stagedIdState && stagedIdState.patch;
+  } else updatedPatches = stagedIdState && stagedIdState.patch;
 
   return { ...stagedIdState, patch: updatedPatches };
 }

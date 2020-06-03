@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   AUDIT_LOG_SOURCE_LABELS,
   AUDIT_LOG_EVENT_LABELS,

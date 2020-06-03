@@ -8,8 +8,7 @@ import {
 } from './constants';
 
 export const getTemplateUrlName = applications => {
-  if (!applications || !Array.isArray(applications) || !applications.length)
-    return;
+  if (!applications || !Array.isArray(applications) || !applications.length) return;
   function appName(app) {
     return app.charAt(0).toUpperCase() + app.slice(1);
   }

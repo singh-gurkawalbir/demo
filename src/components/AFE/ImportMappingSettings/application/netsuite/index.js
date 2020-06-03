@@ -286,9 +286,9 @@ export default {
           visibleWhenAll: isCategoryMapping
             ? [{ field: 'fieldMappingType', is: ['lookup'] }]
             : [
-                { field: 'fieldMappingType', is: ['lookup'] },
-                { field: 'lookup.mode', is: ['static'] },
-              ],
+              { field: 'fieldMappingType', is: ['lookup'] },
+              { field: 'lookup.mode', is: ['static'] },
+            ],
         },
         functions: {
           id: 'functions',
@@ -337,7 +337,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {
@@ -367,9 +367,9 @@ export default {
           visibleWhenAll: isCategoryMapping
             ? [{ field: 'fieldMappingType', is: ['lookup'] }]
             : [
-                { field: 'lookup.mode', is: ['dynamic', 'static'] },
-                { field: 'fieldMappingType', is: ['lookup'] },
-              ],
+              { field: 'lookup.mode', is: ['dynamic', 'static'] },
+              { field: 'fieldMappingType', is: ['lookup'] },
+            ],
           helpKey: 'mapping.lookupAction',
         },
         hardcodedDefault: {
@@ -634,7 +634,8 @@ export default {
           }
 
           return expressionValue;
-        } else if (fieldId === 'lookupAction') {
+        }
+        if (fieldId === 'lookupAction') {
           const lookupModeField = fields.find(
             field => field.id === 'lookup.mode'
           );
@@ -669,11 +670,13 @@ export default {
           }
 
           return options;
-        } else if (fieldId === 'lookup.recordType') {
+        }
+        if (fieldId === 'lookup.recordType') {
           return {
             resourceToFetch: 'recordTypes',
           };
-        } else if (fieldId === 'lookup.expressionText') {
+        }
+        if (fieldId === 'lookup.expressionText') {
           const lookupExpressionField = fields.find(
             field => field.id === 'lookup.expression'
           );

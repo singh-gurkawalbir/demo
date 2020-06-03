@@ -27,7 +27,7 @@ export function* requestUpgrade({ integrationId, options }) {
         },
         method: 'POST',
       },
-      message: `Requesting license upgrade.`,
+      message: 'Requesting license upgrade.',
     });
   } catch (error) {
     return undefined;
@@ -194,7 +194,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
         body: { utilities: { options: { _flowId: flowId }, mappingData } },
         method: 'PUT',
       },
-      message: `Saving...`,
+      message: 'Saving...',
     }) || {};
   } catch (error) {
     yield put(
@@ -224,7 +224,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
         },
         method: 'PUT',
       },
-      message: `Fetching...`,
+      message: 'Fetching...',
     }) || {});
   } catch (error) {
     yield put(
@@ -259,7 +259,7 @@ export function* upgrade({ integrationId, license }) {
         body: { licenseOpts: license.opts, _integrationId: integrationId },
         method: 'PUT',
       },
-      message: `Upgrading...`,
+      message: 'Upgrading...',
     }) || {};
   } catch (error) {
     return undefined;

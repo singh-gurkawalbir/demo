@@ -1,10 +1,9 @@
 /* global describe, test, expect */
 import { call, put, all, select } from 'redux-saga/effects';
-import { apiCallWithRetry } from '../';
+import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import { authParams, logoutParams } from '../api/apiPaths';
 import { getResource, getResourceCollection } from '../resources';
-import { status422 } from '../test';
 import * as selectors from '../../reducers';
 import {
   auth,
@@ -16,7 +15,7 @@ import {
   validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
   invalidateSession,
-} from './';
+} from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS } from '../../utils/constants';
 
@@ -26,16 +25,16 @@ describe('initialize all app relevant resources sagas', () => {
       const saga = retrievingOrgDetails();
       const getLicensesEffect = call(
         getResourceCollection,
-        actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+        actions.user.org.accounts.requestLicenses('Retrieving licenses')
       );
       const getOrgUsersEffect = call(
         getResourceCollection,
-        actions.user.org.users.requestCollection(`Retrieving org users`)
+        actions.user.org.users.requestCollection('Retrieving org users')
       );
       const getOrgAccountsEffect = call(
         getResourceCollection,
         actions.user.org.accounts.requestCollection(
-          `Retrieving user's accounts`
+          'Retrieving user\'s accounts'
         )
       );
 
@@ -280,7 +279,7 @@ describe('auth saga flow', () => {
         hidden: true,
       })
     );
-    expect(saga.throw(status422).value).toEqual(
+    expect(saga.throw().value).toEqual(
       put(actions.auth.failure('Authentication Failure'))
     );
     const effect = saga.next().value;

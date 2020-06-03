@@ -155,7 +155,7 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RESOLVE_COMMIT:
       return {
-        path: resourceId ? `/jobs/${resourceId}/resolve` : `/jobs/resolve`,
+        path: resourceId ? `/jobs/${resourceId}/resolve` : '/jobs/resolve',
         opts: { method: 'PUT' },
       };
     case actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT:
@@ -170,7 +170,7 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RETRY_COMMIT:
       return {
-        path: resourceId ? `/jobs/${resourceId}/retry` : `/jobs/retry`,
+        path: resourceId ? `/jobs/${resourceId}/retry` : '/jobs/retry',
         opts: { method: resourceId ? 'POST' : 'PUT' },
       };
     case actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT:
@@ -247,7 +247,7 @@ export default function getRequestOptions(
       };
     case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
       return {
-        path: `/numEnabledFlows`,
+        path: '/numEnabledFlows',
         opts: { method: 'GET' },
       };
 

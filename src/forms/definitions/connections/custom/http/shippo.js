@@ -5,7 +5,7 @@ export default {
     '/assistant': 'shippo',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.goshippo.com`,
+    '/http/baseURI': 'https://api.goshippo.com',
     '/http/ping/relativeURI': '/addresses',
     '/http/ping/method': 'GET',
     '/http/headers': [

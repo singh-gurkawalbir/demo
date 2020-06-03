@@ -1,3 +1,4 @@
+import React from 'react';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';

@@ -217,8 +217,7 @@ export default (state = {}, action) => {
           draft[cKey].mappings[id].initChangeIdentifier += 1;
           draft[cKey].mappings[id].mappings.splice(index, 1);
 
-          if (draft[cKey].mappings[id].lastModifiedRow === index)
-            draft[cKey].mappings[id].lastModifiedRow = -1;
+          if (draft[cKey].mappings[id].lastModifiedRow === index) draft[cKey].mappings[id].lastModifiedRow = -1;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -346,8 +345,7 @@ export default (state = {}, action) => {
 
             if (field === 'extract') {
               if (inputValue.indexOf('"') === 0) {
-                if (inputValue.charAt(inputValue.length - 1) !== '"')
-                  inputValue += '"';
+                if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
                 delete objCopy.extract;
                 objCopy.hardCodedValue = inputValue.substr(
                   1,
@@ -448,8 +446,7 @@ export default (state = {}, action) => {
           if ('hardCodedValue' in valueTmp) {
             // wrap anything expect '' and null ,
 
-            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length)
-              valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
+            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length) valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
             delete valueTmp.extract;
           }
 
@@ -579,8 +576,7 @@ export default (state = {}, action) => {
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADD_CATEGORY:
-        if (draft[cKey])
-          mappingUtil.addCategory(draft, integrationId, flowId, data);
+        if (draft[cKey]) mappingUtil.addCategory(draft, integrationId, flowId, data);
 
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.DELETE_CATEGORY:

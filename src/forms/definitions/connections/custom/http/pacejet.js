@@ -5,7 +5,7 @@ export default {
     '/assistant': 'pacejet',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.pacejet.cc/`,
+    '/http/baseURI': 'https://api.pacejet.cc/',
     '/http/ping/relativeURI': '/Workstations',
     '/http/ping/method': 'GET',
     '/http/headers': [

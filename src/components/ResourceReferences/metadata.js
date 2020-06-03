@@ -1,3 +1,4 @@
+import React from 'react';
 import { GetResourceReferenceLink } from '../CeligoTable/util';
 
 export default {
