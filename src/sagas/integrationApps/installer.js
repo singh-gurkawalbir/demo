@@ -139,6 +139,7 @@ export function* installScriptStep({
         yield put(actions.api.failure(path, 'PUT', error.message, false));
       }
     }
+
     // to clear session state
     yield put(
       actions.integrationApp.installer.completedStepInstall(

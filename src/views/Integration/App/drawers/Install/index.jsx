@@ -97,13 +97,11 @@ export default function ConnectorInstallation(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const childIntegrationId = useSelector(
-    state => selectors.getChildIntegrationId(state, integrationId),
-    (left, right) => left && right && left === right
-  );
-  const childIntegration = useSelector(state =>
-    selectors.integrationAppSettings(state, childIntegrationId)
-  );
+  const childIntegration = useSelector(state => {
+    const id = selectors.getChildIntegrationId(state, integrationId);
+
+    return id && selectors.resource(state, 'integrations', id);
+  });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );

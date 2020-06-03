@@ -51,11 +51,9 @@ export default function reducer(state = {}, action) {
         draft.numEnabledFlows = response;
       });
     case actionTypes.UPDATE_CHILD_INTEGRATION:
-      console.log('Here we have received parentId', parentId);
-      console.log('Here we have received childId', childId);
-
       return produce(state, draft => {
-        draft[parentId] = childId;
+        draft.parentChildMap = {};
+        draft.parentChildMap[parentId] = childId;
       });
 
     default:
@@ -104,11 +102,11 @@ export function integratorLicenseActionMessage(state) {
 }
 
 export function getChildIntegrationId(state, parentId) {
-  if (!state || !state[parentId]) {
+  if (!state || !state.parentChildMap) {
     return;
   }
 
-  return state[parentId];
+  return state.parentChildMap[parentId];
 }
 
 export const getNumEnabledFlows = createSelector(
