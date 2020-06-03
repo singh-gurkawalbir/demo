@@ -1,6 +1,16 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   optionsHandler: (fieldId, fields) => {
     if (
       [
@@ -117,16 +127,6 @@ export default {
     common: { formId: 'common' },
     exportOneToMany: { formId: 'exportOneToMany' },
     'salesforce.executionType': { fieldId: 'salesforce.executionType' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'What would you like to transfer from Salesforce??';
-
-        return 'What would you like to export from Salesforce?';
-      },
-    },
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -224,6 +224,9 @@ export default {
       fieldId: 'salesforce.sObjectType',
       type: 'refreshableselect',
       filterKey: 'salesforce-sObjects-triggerable',
+      bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+      bundleUrlHelp:
+        'Please install our <a target="_blank" href="BUNDLE_URL">integrator distributed adapter package</a> in your Salesforce account to create realtime exports.',
       commMetaPath: r =>
         `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     },
@@ -301,22 +304,44 @@ export default {
           'outputMode',
           'exportOneToMany',
           'salesforce.executionType',
-          'exportData',
-          'salesforce.sObjectType',
-          'salesforce.objectType',
-          'salesforce.distributed.requiredTrigger',
-          'salesforce.distributed.referencedFields',
-          'salesforce.distributed.relatedLists',
-          'salesforce.distributed.qualifier',
-          'salesforce.soql',
-          'type',
-          'delta.dateField',
-          'delta.lagOffset',
-          'once.booleanField',
-          'salesforce.id',
         ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+                return 'What would you like to transfer?';
+              } else if (
+                r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+              ) {
+                return 'Configure real-time export in source application';
+              }
+
+              return 'What would you like to export?';
+            },
+            fields: [
+              'salesforce.sObjectType',
+              'salesforce.objectType',
+              'salesforce.distributed.requiredTrigger',
+              'salesforce.distributed.referencedFields',
+              'salesforce.distributed.relatedLists',
+              'salesforce.distributed.qualifier',
+              'salesforce.soql',
+              'salesforce.id',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: [
+              'type',
+              'delta.dateField',
+              'delta.lagOffset',
+              'once.booleanField',
+            ],
+          },
           {
             collapsed: true,
             label: 'Advanced',

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import resourceConstants from '../../forms/constants/connection';
@@ -9,20 +8,8 @@ import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
 import { getResourceSubType } from '../../utils/resource';
 import Spinner from '../Spinner';
+import SpinnerWrapper from '../SpinnerWrapper';
 
-const useStyles = makeStyles({
-  spinnerWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    margin: 'auto',
-  },
-});
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const formState = selectors.resourceFormState(
     state,
@@ -145,7 +132,6 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
 }
 
 export const FormStateManager = props => {
-  const classes = useStyles();
   const { formState, fieldMeta, onSubmitComplete } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
@@ -171,9 +157,9 @@ export const FormStateManager = props => {
 
   if (!formState.initComplete) {
     return (
-      <div className={classes.spinnerWrapper}>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
     );
   }
 

@@ -30,6 +30,7 @@ export default function CodeEditor(props) {
     useWorker,
     enableAutocomplete,
     onChange,
+    skipDelay = false,
   } = props;
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
@@ -46,11 +47,13 @@ export default function CodeEditor(props) {
   }, []);
 
   useEffect(() => {
-    // update the state value, only when user is not typing and new value is available from the selector.
-    if (inputVal !== value && !typingTimeout) {
-      setState({ ...state, inputVal: value, editorVal: value });
+    if (!skipDelay) {
+      // update the state value, only when user is not typing and new value is available from the selector.
+      if (inputVal !== value && !typingTimeout) {
+        setState({ ...state, inputVal: value, editorVal: value });
+      }
     }
-  }, [inputVal, state, typingTimeout, value]);
+  }, [inputVal, skipDelay, state, typingTimeout, value]);
 
   const handleLoad = useCallback(
     editor => {
@@ -62,6 +65,10 @@ export default function CodeEditor(props) {
   );
   const handleChange = useCallback(
     value => {
+      if (skipDelay) {
+        return onChange(value);
+      }
+
       if (typingTimeout) {
         clearTimeout(typingTimeout);
       }
@@ -74,12 +81,12 @@ export default function CodeEditor(props) {
         }, 500),
       });
     },
-    [onChange, state, typingTimeout]
+    [onChange, skipDelay, state, typingTimeout]
   );
-  const valueAsString =
-    typeof editorVal === 'string'
-      ? editorVal
-      : JSON.stringify(editorVal, null, 2);
+  let v = editorVal;
+
+  if (skipDelay) v = value;
+  const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
 
   return (
     <Fragment>

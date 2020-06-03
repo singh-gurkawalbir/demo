@@ -1,11 +1,18 @@
 import { useState } from 'react';
+import {
+  FormLabel,
+  Paper,
+  MenuItem,
+  TextField,
+  FormControl,
+} from '@material-ui/core';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { Paper, MenuItem, TextField, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
-// TODO (Azhar) : to work on styling
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -15,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsContainerOpen: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: 2000,
     left: 0,
     right: 0,
     maxHeight: 300,
@@ -43,6 +50,9 @@ const useStyles = makeStyles(theme => ({
         wordBreak: 'break-all',
       },
     },
+  },
+  dynaAutoSuggestLabelWrapper: {
+    display: 'flex',
   },
   divider: {
     height: theme.spacing(2),
@@ -161,20 +171,23 @@ export default function DynaAutoSuggest(props) {
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
+      <div className={classes.dynaAutoSuggestLabelWrapper}>
+        <FormLabel required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        {/* Todo: helpText is needed here */}
+        <FieldHelp {...props} helpText={label} />
+      </div>
       <div className={classes.root}>
         <Autosuggest
           {...autosuggestProps}
           inputProps={{
             classes,
             id,
-            label,
             placeholder,
             autoFocus,
             value,
             disabled,
-            error: !isValid,
-            helperText: isValid ? description : errorMessages,
-            required,
             onChange: handleChange,
           }}
           theme={{
@@ -188,6 +201,11 @@ export default function DynaAutoSuggest(props) {
               {options.children}
             </Paper>
           )}
+        />
+        <ErroredMessageComponent
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
         />
       </div>
     </FormControl>

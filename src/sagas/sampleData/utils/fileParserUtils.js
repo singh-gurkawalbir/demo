@@ -1,8 +1,6 @@
 import { call } from 'redux-saga/effects';
-import { invert } from 'lodash';
 import { evaluateExternalProcessor } from '../../../sagas/editor';
 import { apiCallWithRetry } from '../../index';
-import csvOptions from '../../../components/AFE/CsvConfigEditor/options';
 import { processJsonSampleData } from '../../../utils/sampleData';
 
 /*
@@ -15,26 +13,11 @@ const PARSERS = {
   xml: 'xmlParser',
 };
 
-/*
- * type: row / column
- * value: corresponds value in RowDelimiterMap/ColumnDelimiterMap
- * Returns label corresponding to the value of the map as evaluateExternalProcessor saga expects labels of delimiters
- */
-function getDelimiterLabel(type, value) {
-  const delimiterMap =
-    csvOptions[type === 'row' ? 'RowDelimiterMap' : 'ColumnDelimiterMap'];
-
-  // Extracts key from the value given against RowDelimiterMap & ColumnDelimiterMap
-  return value && invert(delimiterMap)[value];
-}
-
 // Any customization on file options before passing to processor is done here
 export const generateFileParserOptions = (options = {}, type) => {
   if (type === 'csv' || type === 'xlsx') {
     return {
       ...options,
-      rowDelimiter: getDelimiterLabel('row', options.rowDelimiter),
-      columnDelimiter: getDelimiterLabel('column', options.columnDelimiter),
       multipleRowsPerRecord: !!(
         options.keyColumns && options.keyColumns.length
       ),

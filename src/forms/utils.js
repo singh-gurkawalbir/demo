@@ -123,6 +123,15 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
 };
 
+export const isExpansionPanelRequired = (meta, fieldStates) => {
+  const requiredFields = fieldStates.filter(field => field.required);
+  const { layout, fieldMap } = meta;
+
+  return requiredFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
+};
+
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
@@ -728,13 +737,19 @@ export const conditionalLookupOptionsforRestProduction = [
 export const sourceOptions = {
   ftp: [
     {
-      label: 'You can only transfer files using FTP',
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
+  as2: [
+    {
+      label: 'Transfer files out of source application',
       value: 'transferFiles',
     },
   ],
   s3: [
     {
-      label: 'You can only transfer files using Amazon S3',
+      label: 'Transfer files out of source application',
       value: 'transferFiles',
     },
   ],
@@ -794,11 +809,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -812,11 +827,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -830,11 +845,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -848,19 +863,19 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
 
   as2: [
     {
-      label: 'Transfer files into destination application',
-      value: 'transferFiles',
+      label: 'Import records into destination application',
+      value: 'importRecords',
     },
   ],
   common: [
@@ -869,10 +884,63 @@ export const destinationOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
   ],
+};
+export const alterFileDefinitionRulesVisibility = fields => {
+  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
+  const fileDefinitionRulesField = fields.find(
+    field => field.id === 'file.filedefinition.rules'
+  );
+  const fileType = fields.find(field => field.id === 'file.type');
+  const fileDefinitionFieldsMap = {
+    filedefinition: 'edix12.format',
+    fixed: 'fixed.format',
+    'delimited/edifact': 'edifact.format',
+  };
+
+  // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
+  // Whether resource is in new or edit stage -- inferred by userDefinitionId
+  if (
+    fileType &&
+    fileType.value &&
+    !fileDefinitionRulesField.userDefinitionId
+  ) {
+    // Delete existing visibility rules
+    delete fileDefinitionRulesField.visibleWhenAll;
+    delete fileDefinitionRulesField.visibleWhen;
+
+    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
+      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === formatFieldType
+      );
+
+      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+    } else {
+      fileDefinitionRulesField.visible = false;
+    }
+  }
+  // fileDefinitionRulesField should be hidden when there is no file type.
+
+  if (fileType && !fileType.value) {
+    fileDefinitionRulesField.visible = false;
+  }
+  // userDefinitionId exists only in edit mode.
+
+  if (fileDefinitionRulesField.userDefinitionId) {
+    // make visibility of format fields false incase of edit mode of file adaptors
+    Object.values(fileDefinitionFieldsMap).forEach(field => {
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === field
+      );
+
+      delete fileDefinitionFormatField.visibleWhenAll;
+      fileDefinitionFormatField.visible = false;
+    });
+  }
 };
 
 // #END_REGION Integration App from utils

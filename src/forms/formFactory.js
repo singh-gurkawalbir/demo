@@ -371,14 +371,7 @@ const getResourceFormAssets = ({
 
   // Need to be revisited @Surya
   validationHandler = meta && meta.validationHandler;
-  const resourceTypesWithSettings = [
-    'integrations',
-    'exports',
-    'imports',
-    'pageProcessor',
-    'pageGenerator',
-    'connections',
-  ];
+  const resourceTypesWithSettings = ['exports', 'imports', 'connections'];
 
   if (
     !isNew &&

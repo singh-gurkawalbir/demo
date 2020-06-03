@@ -8,16 +8,10 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import Spinner from '../../Spinner';
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 const useStyles = makeStyles(() => ({
   ...layouts,
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
-  },
 }));
 const Editor = props => {
   const {
@@ -65,9 +59,9 @@ const Editor = props => {
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
         {isSampleDataLoading ? (
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={50} color="primary" />
-          </div>
+          <SpinnerWrapper>
+            <Spinner size={48} color="primary" />
+          </SpinnerWrapper>
         ) : (
           <CodePanel
             name="data"

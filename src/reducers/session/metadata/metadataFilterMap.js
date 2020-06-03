@@ -1,5 +1,5 @@
 import { getWSRecordId } from '../../../utils/metadata';
-import { sortElements } from '../netsuiteUserRoles';
+import { stringCompare } from '../../../utils/sort';
 
 /*
 This file consists of filter map which is used to filter netsuite and salesforce metadata
@@ -31,7 +31,7 @@ export default {
         label: item.name,
         value: item.id,
       }))
-      .sort(sortElements),
+      .sort(stringCompare('label')),
   'suitescript-dateField': data =>
     data
       .filter(item => item.type === 'datetime' || item.type === 'datetimetz')
@@ -134,7 +134,7 @@ export default {
         custom: d.custom,
         triggerable: d.triggerable,
       }))
-      .sort(sortElements),
+      .sort(stringCompare('label')),
 
   // check it is referenced to a single table
   'salesforce-sObjects-referenceFields': data =>
@@ -151,7 +151,7 @@ export default {
         triggerable: d.triggerable,
         referenceTo: d.referenceTo[0],
       }))
-      .sort(sortElements),
+      .sort(stringCompare('label')),
   'salesforce-sObjects-nonReferenceFields': data =>
     data.fields &&
     data.fields
@@ -162,7 +162,7 @@ export default {
         custom: d.custom,
         triggerable: d.triggerable,
       }))
-      .sort(sortElements),
+      .sort(stringCompare('label')),
   'salesforce-sObjects-childReferenceTo': data =>
     data.childRelationships &&
     data.childRelationships
@@ -175,7 +175,7 @@ export default {
         field: d.field,
         childSObject: d.childSObject,
       }))
-      .sort(sortElements),
+      .sort(stringCompare('label')),
   'salesforce-recordType': data =>
     (data.fields || []).map(d => ({
       label: d.label,

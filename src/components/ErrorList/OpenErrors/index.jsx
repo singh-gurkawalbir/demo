@@ -15,6 +15,7 @@ import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';
 import Spinner from '../../Spinner';
 import ErrorDetailsDrawer from './ErrorDetailsDrawer';
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -28,15 +29,9 @@ const useStyles = makeStyles(theme => ({
   hide: {
     display: 'none',
   },
-  loading: {
-    textAlign: 'center',
-    position: 'relative',
-    top: 100,
-    width: '100%',
-  },
 }));
 const defaultFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt'],
+  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey'],
 };
 
 export default function OpenErrors({ flowId, resourceId, show }) {
@@ -148,9 +143,9 @@ export default function OpenErrors({ flowId, resourceId, show }) {
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>
       {isFreshDataLoad ? (
-        <div className={classes.loading}>
-          Loading Errors <Spinner size={20} />
-        </div>
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
       ) : (
         <ErrorTable
           paginationOptions={paginationOptions}

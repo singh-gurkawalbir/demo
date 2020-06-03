@@ -1,13 +1,13 @@
 import { Fragment, useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 import { EMPTY_RAW_DATA } from '../../utils/constants';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -178,12 +178,16 @@ export default function RunFlowButton({
       )}
 
       {variant === 'icon' ? (
-        <IconButton
+        <IconButtonWithTooltip
+          tooltipProps={{
+            title: 'Run now',
+            placement: 'bottom',
+          }}
           disabled={disabled}
           data-test="runFlow"
           onClick={handleClick}>
           <RunIcon />
-        </IconButton>
+        </IconButtonWithTooltip>
       ) : (
         <span onClick={handleClick} data-test="runFlow">
           Run flow

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, IconButton, Chip } from '@material-ui/core';
+import { Typography, Grid, Chip, Tooltip } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
@@ -20,6 +20,7 @@ import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import Spinner from '../../../../components/Spinner';
 import StatusCircle from '../../../../components/StatusCircle';
 import { getTemplateUrlName } from '../../../../utils/template';
+import IconButtonWithTooltip from '../../../../components/IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -326,23 +327,36 @@ export default function FlowCard({
           )}
           {!flowDetails.disableSlider && onOffInProgressStatus && <Spinner />}
           {!flowDetails.disableSlider && !onOffInProgressStatus && (
-            <OnOffSwitch
-              data-test={`toggleOnAndOffFlow${flowName}`}
-              disabled={disableCard || accessLevel === 'monitor'}
-              on={!disableCard && !disabled}
-              onClick={handleDisableClick}
-            />
+            <Tooltip title="Off/On" placement="bottom">
+              <div>
+                <OnOffSwitch
+                  data-test={`toggleOnAndOffFlow${flowName}`}
+                  disabled={disableCard || accessLevel === 'monitor'}
+                  on={!disableCard && !disabled}
+                  onClick={handleDisableClick}
+                />
+              </div>
+            </Tooltip>
           )}
-          <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
+          <Tooltip title="Run now" placement="bottom">
+            <div>
+              <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
+            </div>
+          </Tooltip>
+
           {flowDetails._connectorId && (
-            <IconButton
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Settings',
+                placement: 'bottom',
+              }}
               size="small"
               disabled={!flowDetails.hasSettings}
               component={Link}
               data-test={`flowSettings${flowName}`}
               to={`${history.location.pathname}/${flowId}/settings`}>
               <SettingsIcon />
-            </IconButton>
+            </IconButtonWithTooltip>
           )}
           <FlowEllipsisMenu flowId={flowId} exclude={excludeActions} />
         </Grid>

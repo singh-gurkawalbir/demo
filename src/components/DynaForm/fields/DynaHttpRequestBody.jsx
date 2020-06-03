@@ -20,7 +20,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   dynaHttpReqLabel: {
+    marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 const ManageLookup = props => {
@@ -69,7 +72,7 @@ const DynaHttpRequestBody = props => {
   const { adaptorType, connectionId } = useSelector(state => {
     const { merged: resourceData = {} } = selectors.resourceData(
       state,
-      'imports',
+      resourceType,
       resourceId
     );
     const { adaptorType, _connectionId: connectionId } = resourceData;
@@ -164,7 +167,7 @@ const DynaHttpRequestBody = props => {
           color="secondary"
           className={classes.dynaReqBodyBtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
         <FieldHelp {...props} />
       </div>

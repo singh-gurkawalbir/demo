@@ -949,6 +949,11 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  /** paging.body should be a string */
+  if (exportDoc.paging && isObject(exportDoc.paging.body)) {
+    exportDoc.paging.body = JSON.stringify(exportDoc.paging.body);
+  }
+
   const assistantMetadata = { resource };
 
   if (version) {
@@ -1139,6 +1144,10 @@ export function convertToReactFormFields({
         type: inputType,
         readOnly: !!field.readOnly,
       };
+
+      if (fieldDef.readOnly) {
+        fieldDef.defaultDisabled = true;
+      }
 
       if (fieldDef.type === 'textwithflowsuggestion') {
         fieldDef.showLookup = false;

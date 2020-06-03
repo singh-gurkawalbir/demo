@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
@@ -7,27 +7,28 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Deregister',
-  component: function Deregister({ resource: connection, integrationId }) {
+  icon: CloseIcon,
+  hasAccess: ({ state, integrationId }) => {
     const isStandalone = integrationId === 'none';
-    const { _id: connectionId, name: connectionName } = connection;
+    const hasAccess = selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId,
+      'connections'
+    ).edit;
+
+    return hasAccess && !isStandalone;
+  },
+  component: function Deregister({ rowData = {}, integrationId }) {
+    const { _id: connectionId, name: connectionName } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    // todo when to show deregister
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(
-          state,
-          'integrations',
-          integrationId,
-          'connections'
-        ).edit
-    );
-
-    if (!canAccess || isStandalone) {
-      return null;
-    }
-
-    const handleClick = () => {
+    const deregisterConnection = useCallback(() => {
+      dispatch(
+        actions.connection.requestDeregister(connectionId, integrationId)
+      );
+    }, [connectionId, dispatch, integrationId]);
+    const confirmDeregister = useCallback(() => {
       const message = [
         'Are you sure you want to deregister',
         connectionName || connectionId,
@@ -43,26 +44,16 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(
-                actions.connection.requestDeregister(
-                  connection._id,
-                  integrationId
-                )
-              );
-            },
+            onClick: deregisterConnection,
           },
         ],
       });
-    };
+    }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
 
-    return (
-      <IconButton
-        data-test="closeDeregisterModal"
-        size="small"
-        onClick={handleClick}>
-        <CloseIcon />
-      </IconButton>
-    );
+    useEffect(() => {
+      confirmDeregister();
+    }, [confirmDeregister]);
+
+    return null;
   },
 };

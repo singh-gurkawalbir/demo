@@ -1,17 +1,31 @@
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/CloseIcon';
+import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Detach Flow',
-  component: function DetachFlow({ resource }) {
+  label: 'Detach flow',
+  icon: CloseIcon,
+  component: function DetachFlow({ rowData = {} }) {
+    const { name: resourceName, _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleDetachFlow = () => {
+    const detachFlow = useCallback(() => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: undefined,
+        },
+      ];
+
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
+    }, [dispatch, resourceId]);
+    const confirmDetachFlow = useCallback(() => {
       const message = `Are you sure you want to detach 
-      ${resource.name || resource._id} flow from this integration?`;
+      ${resourceName || resourceId} flow from this integration?`;
 
       confirmDialog({
         title: 'Confirm',
@@ -22,34 +36,16 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              const patchSet = [
-                {
-                  op: 'replace',
-                  path: '/_integrationId',
-                  value: undefined,
-                },
-              ];
-
-              dispatch(
-                actions.resource.patchStaged(resource._id, patchSet, 'value')
-              );
-              dispatch(
-                actions.resource.commitStaged('flows', resource._id, 'value')
-              );
-            },
+            onClick: detachFlow,
           },
         ],
       });
-    };
+    }, [confirmDialog, detachFlow, resourceId, resourceName]);
 
-    return (
-      <IconButton
-        data-test="detachFlow"
-        size="small"
-        onClick={handleDetachFlow}>
-        <Icon />
-      </IconButton>
-    );
+    useEffect(() => {
+      confirmDetachFlow();
+    }, [confirmDetachFlow]);
+
+    return null;
   },
 };

@@ -65,7 +65,7 @@ export default function DynaSalesforceQualifier(props) {
     <div className={classes.dynaSalesforceQualifierWrapper}>
       {showEditor && (
         <SalesforceEditorDialog
-          title="Qualification Criteria"
+          title="Field specific qualification criteria"
           id={id}
           value={value}
           resourceId={resourceId}

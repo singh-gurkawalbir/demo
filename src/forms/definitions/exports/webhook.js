@@ -29,14 +29,26 @@ export default {
 
     return null;
   },
+  preSave: (formValues, resource) => {
+    const retValues = { ...formValues };
+
+    if (retValues['/webhook/verify'] === 'token') {
+      retValues['/webhook/token'] = retValues['/webhook/generateToken'];
+    }
+
+    if (resource && resource.webhook && resource.webhook.provider === 'slack') {
+      retValues['/webhook/key'] = retValues['/webhook/slackKey'];
+    }
+
+    delete retValues['/webhook/generateToken'];
+    delete retValues['/webhook/slackKey'];
+
+    return {
+      ...retValues,
+    };
+  },
   fieldMap: {
     common: { formId: 'common' },
-    security: { fieldId: 'security', type: 'labeltitle', label: 'Security' },
-    publicURL: {
-      fieldId: 'publicURL',
-      type: 'labeltitle',
-      label: 'Public URL & sample data',
-    },
     // 'webhook.provider': { fieldId: 'webhook.provider' },
     'webhook.verify': { fieldId: 'webhook.verify' },
     'webhook.algorithm': { fieldId: 'webhook.algorithm' },
@@ -46,6 +58,12 @@ export default {
     'webhook.token': {
       fieldId: 'webhook.token',
       refreshOptionsOnChangesTo: ['webhook.provider'],
+    },
+    'webhook.generateToken': {
+      fieldId: 'webhook.generateToken',
+    },
+    'webhook.slackKey': {
+      fieldId: 'webhook.slackKey',
     },
     'webhook.url': {
       fieldId: 'webhook.url',
@@ -62,25 +80,31 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: [
-      'common',
-      'security',
-      // 'webhook.provider',
-      'webhook.verify',
-      'webhook.algorithm',
-      'webhook.encoding',
-      'webhook.key',
-      'webhook.header',
-      'webhook.token',
-      'webhook.path',
-      'webhook.username',
-      'webhook.password',
-      'publicURL',
-      'webhook.url',
-      'webhook.sampledata',
-    ],
+    fields: ['common'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'Secure the listener',
+        fields: [
+          'webhook.verify',
+          'webhook.algorithm',
+          'webhook.encoding',
+          'webhook.key',
+          'webhook.slackKey',
+          'webhook.header',
+          'webhook.token',
+          'webhook.generateToken',
+          'webhook.path',
+          'webhook.username',
+          'webhook.password',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Generate URL & sample data',
+        fields: ['webhook.url', 'webhook.sampledata'],
+      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

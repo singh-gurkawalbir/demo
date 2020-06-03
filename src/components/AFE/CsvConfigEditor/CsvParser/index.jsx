@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { string, object } from 'prop-types';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from '../../GenericEditor/CodePanel';
 import PanelGrid from '../../PanelGrid';
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function CsvParseEditor(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, uploadFileAction } = props;
   const classes = useStyles();
   const [editorInit, setEditorInit] = useState(false);
   const { data, result, error } = useSelector(state =>
@@ -32,15 +33,19 @@ export default function CsvParseEditor(props) {
   const dispatch = useDispatch();
   const handleInit = useCallback(() => {
     const options = {
-      data: props.data,
+      data: props.data || '',
       rule: props.rule,
+      autoEvaluate: true,
     };
 
     dispatch(actions.editor.init(editorId, 'csvParser', options));
   }, [dispatch, editorId, props]);
-  const handleDataChange = data => {
-    dispatch(actions.editor.patch(editorId, { data }));
-  };
+  const handleDataChange = useCallback(
+    data => {
+      dispatch(actions.editor.patch(editorId, { data }));
+    },
+    [dispatch, editorId]
+  );
 
   useEffect(() => {
     if (!editorInit) {
@@ -49,14 +54,28 @@ export default function CsvParseEditor(props) {
     }
   }, [editorInit, handleInit]);
 
+  useEffect(() => {
+    // trigger data change when editor is initialized and sample data changes while uploading new file
+    if (data !== undefined && props.data !== data) {
+      handleDataChange(props.data);
+    }
+    // trigger this only when sample data changes. Dont add other dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.data]);
+
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="CSV parse options" />
+        <PanelTitle title="CSV parser options" />
         <CsvParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="CSV to parse" />
+        <PanelTitle>
+          <div>
+            <Typography variant="body1">Sample CSV file</Typography>
+            {uploadFileAction}
+          </div>
+        </PanelTitle>
         <CodePanel
           name="data"
           value={data}

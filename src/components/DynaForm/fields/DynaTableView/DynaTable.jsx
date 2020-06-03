@@ -309,7 +309,7 @@ export const DynaTable = props => {
           key={changeIdentifier}
           className={classes.tableBody}
           direction="column">
-          {tableData.map(arr => (
+          {tableData.map((arr, rowIndex, rowCollection) => (
             <Grid item className={classes.rowContainer} key={arr.row}>
               <Grid container direction="row" spacing={2}>
                 {arr.values.map((r, index) => (
@@ -363,7 +363,8 @@ export const DynaTable = props => {
                             disabled={r.readOnly}
                             isValid={
                               !optionsMap[index].required ||
-                              (optionsMap[index].required && r.value)
+                              (rowIndex === rowCollection.length - 1 ||
+                                (optionsMap[index].required && r.value))
                             }
                             errorMessages={
                               TYPE_TO_ERROR_MESSAGE[r.type] ||

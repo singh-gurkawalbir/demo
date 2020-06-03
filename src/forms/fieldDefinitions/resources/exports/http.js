@@ -1,7 +1,7 @@
 export default {
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
+    label: 'Override success media type',
     options: [
       {
         items: [
@@ -20,7 +20,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
+    label: 'Override error media type',
     options: [
       {
         items: [
@@ -517,6 +517,7 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    helpKey: 'http.body',
     visibleWhenAll: [
       {
         field: 'outputMode',

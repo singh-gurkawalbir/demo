@@ -124,7 +124,7 @@ export default function IntegrationAppUninstaller({ match }) {
 
   if (!uninstallSteps) {
     return (
-      <Loader open>
+      <Loader open hideBackDrop>
         Loading uninstall steps
         <Spinner />
       </Loader>

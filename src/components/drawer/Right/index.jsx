@@ -14,6 +14,7 @@ import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
+import Help from '../../Help';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -78,6 +79,9 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 300,
     overflowY: 'auto',
   },
+  helpTextButton: {
+    padding: 0,
+  },
 }));
 
 export default function RightDrawer({
@@ -92,6 +96,8 @@ export default function RightDrawer({
   infoText,
   actions,
   variant = 'persistent',
+  helpTitle,
+  helpKey,
   ...rest
 }) {
   const classes = useStyles();
@@ -153,6 +159,14 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
+              {helpKey && (
+                <Help
+                  title={helpTitle}
+                  className={classes.helpTextButton}
+                  helpKey={helpKey}
+                  fieldId={helpKey}
+                />
+              )}
               {infoText && <InfoIconButton info={infoText} />}
             </Typography>
             {actions}

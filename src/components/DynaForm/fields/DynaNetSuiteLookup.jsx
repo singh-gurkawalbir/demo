@@ -1,21 +1,32 @@
 import { useState, useEffect, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  dynaNetsuiteLookupFormControl: {
+    width: '100%',
   },
-  filterButton: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
+  dynaNetsuiteLookupLabelWrapper: {
+    width: '100%',
+  },
+  dynaNetsuiteFieldLookupWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  dynaNetsuiteLookupField: {
+    width: '100%',
+  },
+  dynaNetsuiteLookupActionBtn: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -35,6 +46,7 @@ export default function DynaNetSuiteLookup(props) {
     resourceId,
     flowId,
     label,
+    helpText,
     options,
   } = props;
   const handleEditorClick = () => {
@@ -107,25 +119,41 @@ export default function DynaNetSuiteLookup(props) {
           options={options}
         />
       )}
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.filterButton}>
-        <FilterIcon />
-      </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? '' : errorMessages}
-        disabled
-        required={required}
-        error={!isValid}
-        value={value}
-        variant="filled"
-      />
+
+      <FormControl className={classes.dynaNetsuiteLookupFormControl}>
+        <div className={classes.dynaNetsuiteLookupLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          {/* //Todo: helpText is needed here */}
+          <FieldHelp {...props} helpText={helpText || label} />
+        </div>
+
+        <div className={classes.dynaNetsuiteFieldLookupWrapper}>
+          <div className={classes.dynaNetsuiteLookupField}>
+            <TextField
+              key={id}
+              name={name}
+              className={classes.dynaNetsuiteLookupField}
+              placeholder={placeholder}
+              disabled
+              value={value}
+              variant="filled"
+            />
+            <ErroredMessageComponent
+              isValid={isValid}
+              description=""
+              errorMessages={errorMessages}
+            />
+          </div>
+          <ActionButton
+            data-test={id}
+            onClick={handleEditorClick}
+            className={classes.dynaNetsuiteLookupActionBtn}>
+            <FilterIcon />
+          </ActionButton>
+        </div>
+      </FormControl>
     </Fragment>
   );
 }

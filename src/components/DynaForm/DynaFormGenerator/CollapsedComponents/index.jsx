@@ -9,6 +9,7 @@ import FormGenerator from '../';
 import {
   isExpansionPanelErrored,
   isAnyExpansionPanelFieldVisible,
+  isExpansionPanelRequired,
 } from '../../../../forms/utils';
 import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
 
@@ -53,11 +54,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap } = props;
+  const { containers, fieldMap, resource } = props;
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
-      const { label: header, collapsed = true, ...rest } = container;
+      const { label, collapsed = true, ...rest } = container;
+      const header = typeof label === 'function' ? label(resource) : label;
 
       return (
         // eslint-disable-next-line react/no-array-index-key
@@ -98,13 +100,17 @@ const ExpansionPannelExpandOnInValidState = props => {
     { layout, fieldMap },
     form.fields
   );
+  const isPanelRequired = isExpansionPanelRequired(
+    { layout, fieldMap },
+    form.fields
+  );
 
   useEffect(() => {
-    if (!expandOnce && isPanelErrored) {
+    if (!expandOnce && (isPanelErrored || isPanelRequired)) {
       setShouldExpand(true);
       setExpandOnce(true);
     }
-  }, [expandOnce, isPanelErrored]);
+  }, [expandOnce, isPanelErrored, isPanelRequired]);
   useEffect(() => {
     setComponentLoaded(true);
   }, []);

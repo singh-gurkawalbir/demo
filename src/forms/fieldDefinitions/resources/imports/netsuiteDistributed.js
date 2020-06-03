@@ -4,6 +4,9 @@ export default {
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
+    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+    bundleUrlHelp:
+      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,

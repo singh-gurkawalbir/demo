@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { isArray } from 'lodash';
-import OpenInNewIcon from '../../../components/icons/ExpandWindowIcon';
+import OpenInNewIcon from '../../../components/icons/FilterIcon';
 import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
@@ -102,7 +102,7 @@ export default function DynaNetSuiteQualifier(props) {
         </div>
         {showEditor && (
           <NetSuiteQualificationCriteriaEditor
-            title="Qualification Criteria"
+            title="Field specific qualification criteria"
             id={id}
             value={rule}
             onClose={handleClose}

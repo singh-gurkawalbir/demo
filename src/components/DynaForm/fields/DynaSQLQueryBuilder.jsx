@@ -1,7 +1,8 @@
 import { useState, useEffect, Fragment } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
-import Button from '@material-ui/core/Button';
+import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -12,7 +13,25 @@ import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
+const useStyles = makeStyles(theme => ({
+  sqlContainer: {
+    flexDirection: `row !important`,
+    width: '100%',
+    alignItems: 'center',
+  },
+  sqlBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  sqlLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
+  },
+}));
+
 export default function DynaSQLQueryBuilder(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -224,30 +243,33 @@ export default function DynaSQLQueryBuilder(props) {
 
   return (
     <Fragment>
-      {showEditor && (
-        <SqlQueryBuilderEditorDialog
-          key={changeIdentifier}
-          title={title}
-          id={`${resourceId}-${id}`}
-          rule={parsedRule}
-          lookups={lookups}
-          sampleData={formattedSampleData}
-          defaultData={formattedDefaultData}
-          onFieldChange={onFieldChange}
-          onClose={handleClose}
-          action={lookupField}
-          disabled={disabled}
-          showDefaultData={!hideDefaultData}
-          ruleTitle={ruleTitle}
-        />
-      )}
-      <Button
-        data-test={id}
-        variant="outlined"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
+      <div className={classes.sqlContainer}>
+        {showEditor && (
+          <SqlQueryBuilderEditorDialog
+            key={changeIdentifier}
+            title={title}
+            id={`${resourceId}-${id}`}
+            rule={parsedRule}
+            lookups={lookups}
+            sampleData={formattedSampleData}
+            defaultData={formattedDefaultData}
+            onFieldChange={onFieldChange}
+            onClose={handleClose}
+            action={lookupField}
+            disabled={disabled}
+            showDefaultData={!hideDefaultData}
+            ruleTitle={ruleTitle}
+          />
+        )}
+        <FormLabel className={classes.sqlLabel}>{label}:</FormLabel>
+        <Button
+          className={classes.sqlBtn}
+          data-test={id}
+          variant="outlined"
+          onClick={handleEditorClick}>
+          {'Launch'}
+        </Button>
+      </div>
     </Fragment>
   );
 }
