@@ -1,5 +1,5 @@
 /*
- TODO: 
+ TODO:
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
@@ -97,6 +97,11 @@ export default function ConnectorInstallation(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
+  const childIntegration = useSelector(state => {
+    const id = selectors.getChildIntegrationId(state, integrationId);
+
+    return id && selectors.resource(state, 'integrations', id);
+  });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
@@ -117,6 +122,9 @@ export default function ConnectorInstallation(props) {
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const integrationChildAppName =
+    childIntegration &&
+    getIntegrationAppUrlName(childIntegration && childIntegration.name);
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
@@ -211,9 +219,25 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('imports'));
 
       if (mode === 'settings') {
-        props.history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-        );
+        if (
+          integration &&
+          integration.initChild &&
+          integration.initChild.function &&
+          childIntegration &&
+          childIntegration.mode === 'install'
+        ) {
+          setIsSetupComplete(false);
+          props.history.push(
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+          );
+        } else {
+          dispatch(
+            actions.resource.clearChildIntegration()
+          );
+          props.history.push(
+            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+          );
+        }
       }
     }
   }, [
@@ -223,6 +247,9 @@ export default function ConnectorInstallation(props) {
     integrationId,
     isSetupComplete,
     props.history,
+    integration,
+    childIntegration,
+    integrationChildAppName,
   ]);
 
   if (!installSteps || !integration || !integration._connectorId) {
@@ -233,7 +260,7 @@ export default function ConnectorInstallation(props) {
     e.preventDefault();
     confirmDialog({
       title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
+      message: 'Are you sure you want to uninstall',
       buttons: [
         {
           label: 'Cancel',
@@ -284,7 +311,7 @@ export default function ConnectorInstallation(props) {
 
       const newId = generateNewId();
 
-      if (!_connectionId)
+      if (!_connectionId) {
         dispatch(
           actions.resource.patchStaged(
             newId,
@@ -298,6 +325,7 @@ export default function ConnectorInstallation(props) {
             SCOPES.VALUE
           )
         );
+      }
       setConnection({
         newId,
         doc: sourceConnection,
@@ -378,7 +406,7 @@ export default function ConnectorInstallation(props) {
 
   const handleBackClick = e => {
     e.preventDefault();
-    props.history.push(`/pg`);
+    props.history.push('/pg');
   };
 
   return (

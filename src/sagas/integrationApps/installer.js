@@ -1,10 +1,11 @@
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
+import * as selectors from '../../reducers';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
@@ -108,6 +109,35 @@ export function* installScriptStep({
   }
 
   if (!stepCompleteResponse) {
+    const integration = yield select(selectors.resource, 'integrations', id);
+
+    if (
+      integration &&
+      integration.initChild &&
+      integration.initChild.function
+    ) {
+      try {
+        const childIntegration = yield call(apiCallWithRetry, {
+          path: `/integrations/${id}/initChild`,
+          timeout: 5 * 60 * 1000,
+          opts: {
+            method: 'POST',
+          },
+          hidden: true,
+        }) || {};
+        const { _childIntegrationId } = childIntegration;
+
+        yield put(
+          actions.resource.request('integrations', _childIntegrationId)
+        );
+        yield put(
+          actions.resource.updateChildIntegration(id, _childIntegrationId)
+        );
+      } catch (error) {
+        yield put(actions.api.failure(path, 'PUT', error.message, false));
+      }
+    }
+
     // to clear session state
     yield put(
       actions.integrationApp.installer.completedStepInstall(
