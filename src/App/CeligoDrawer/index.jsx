@@ -351,7 +351,7 @@ export default function CeligoDrawer() {
                                 {drawerOpened ? <Icon /> :
                                 <Tooltip placement="right-end" key={label} title={label}>
                                   <div>
-                                  <Icon />
+                                    <Icon />
                                   </div>
                                 </Tooltip>}
                             </ListItemIcon>
