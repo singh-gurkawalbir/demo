@@ -1,5 +1,6 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
-import XmlParseEditor from './';
+import XmlParseEditor from '.';
 
 export default function XmlParseEditorDialog(props) {
   const { id, rule, data, disabled, ...rest } = props;

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../reducers';

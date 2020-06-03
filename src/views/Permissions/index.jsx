@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import ReactJson from 'react-json-view';
@@ -17,7 +17,7 @@ export default function Permissions() {
   const permissions = useSelector(state => selectors.userPermissions(state));
 
   return (
-    <Fragment>
+    <>
       <CeligoPageBar title="Permission Explorer" />
       <div className={classes.root}>
         <ReactJson
@@ -27,6 +27,6 @@ export default function Permissions() {
           src={permissions}
         />
       </div>
-    </Fragment>
+    </>
   );
 }

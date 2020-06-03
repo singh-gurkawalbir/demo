@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import * as selectors from '../../../../../reducers';
 import ConfigureDebugger from '../../../../ConfigureDebugger';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -24,7 +24,7 @@ export default {
     }, []);
 
     return (
-      <Fragment>
+      <>
         {show && (
           <ConfigureDebugger
             id={connectionId}
@@ -33,7 +33,7 @@ export default {
             onClose={handleConfigDebuggerClose}
           />
         )}
-      </Fragment>
+      </>
     );
   },
 };

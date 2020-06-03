@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import EditorField from './DynaEditor';
@@ -26,7 +26,7 @@ export default function DynaScriptContent(props) {
   const scriptContent = useMemo(() => {
     if (data && data.merged && data.merged.content !== undefined) {
       return data.merged && data.merged.content;
-    } else if (isNewId(resourceId)) {
+    } if (isNewId(resourceId)) {
       return '';
     }
 

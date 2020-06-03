@@ -1,3 +1,4 @@
+import React from 'react';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import { makeStyles } from '@material-ui/core';

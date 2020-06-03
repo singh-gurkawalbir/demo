@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
@@ -61,8 +61,9 @@ export default function CustomSettings({ integrationId }) {
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      )
+      ) {
         return 'Settings must be a valid JSON';
+      }
     }
   };
 
@@ -95,7 +96,7 @@ export default function CustomSettings({ integrationId }) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.form}>
         <DynaForm
           disabled={!canEditIntegration}
@@ -113,6 +114,6 @@ export default function CustomSettings({ integrationId }) {
           </DynaSubmit>
         </DynaForm>
       </div>
-    </Fragment>
+    </>
   );
 }

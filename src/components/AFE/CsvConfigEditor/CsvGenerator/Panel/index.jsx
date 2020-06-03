@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -67,8 +68,7 @@ export default function CsvGeneratePanel(props) {
             disabled={disabled}
             isValid={columnDelimiter.length}
             onFieldChange={(_id, value) =>
-              patchEditor('columnDelimiter', value)
-            }
+              patchEditor('columnDelimiter', value)}
             options={options.ColumnDelimiterOptions}
           />
         </FormControl>

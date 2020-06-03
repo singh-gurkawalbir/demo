@@ -1,4 +1,4 @@
-import { useState, Fragment, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,7 +10,7 @@ import DynaUploadFile from '../DynaUploadFile';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -83,21 +83,21 @@ export default function DynaCsvParse(props) {
       // when rowsToSkip is supported
       if (typeof rowsToSkipField !== 'undefined') {
         onFieldChange(
-          `file.csv.rowsToSkip`,
+          'file.csv.rowsToSkip',
           Number.isInteger(rowsToSkip) ? editorValues.rowsToSkip : 0
         );
       }
 
       // when keyColumn is supported
       if (typeof keyColumnsField !== 'undefined') {
-        onFieldChange(`file.csv.keyColumns`, keyColumns || []);
+        onFieldChange('file.csv.keyColumns', keyColumns || []);
         // set rowsPerRecord if key columns has value
         onFieldChange(
-          `file.csv.rowsPerRecord`,
+          'file.csv.rowsPerRecord',
           !!(keyColumns && keyColumns.length)
         );
 
-        if (keyColumns)
+        if (keyColumns) {
           // On change of rules, trigger sample data update
           // It calls processor on final rules to parse csv file
           dispatch(
@@ -112,6 +112,7 @@ export default function DynaCsvParse(props) {
               'file'
             )
           );
+        }
       }
     }
 
@@ -160,7 +161,7 @@ export default function DynaCsvParse(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.csvContainer}>
         {showEditor && (
           <CsvConfigEditorDialog
@@ -188,6 +189,6 @@ export default function DynaCsvParse(props) {
         </Button>
         <FieldHelp {...props} helpKey={helpKey} />
       </div>
-    </Fragment>
+    </>
   );
 }

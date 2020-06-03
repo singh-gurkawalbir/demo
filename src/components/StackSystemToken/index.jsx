@@ -1,6 +1,7 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Typography } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import CopyIcon from '../icons/CopyIcon';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -42,7 +43,7 @@ export default function StackSystemToken({ stackId }) {
   return (
     <div className={classes.root}>
       {systemToken && (
-        <Fragment>
+        <>
           <Typography variant="caption">
             {systemToken || <AccessToken count="23" />}
           </Typography>
@@ -53,7 +54,7 @@ export default function StackSystemToken({ stackId }) {
             size="small">
             <CopyIcon />
           </IconButton>
-        </Fragment>
+        </>
       )}
       {!systemToken && (
         <Typography

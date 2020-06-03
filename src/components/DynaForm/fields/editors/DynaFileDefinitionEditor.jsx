@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,7 +22,7 @@ import helpTextMap from '../../../Help/helpTextMap';
  */
 const useStyles = makeStyles(theme => ({
   fileDefinitionContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -181,7 +181,7 @@ function DynaFileDefinitionEditor(props) {
   }, [rule]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
@@ -214,7 +214,7 @@ function DynaFileDefinitionEditor(props) {
           <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
         </LoadResources>
       </div>
-    </Fragment>
+    </>
   );
 }
 

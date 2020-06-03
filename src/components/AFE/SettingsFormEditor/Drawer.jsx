@@ -1,4 +1,4 @@
-import { useCallback, useEffect, Fragment } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
@@ -11,8 +11,8 @@ import * as selectors from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import RightDrawer from '../../drawer/Right';
-import TextToggle from '../../../components/TextToggle';
-import SettingsFormEditor from './';
+import TextToggle from '../../TextToggle';
+import SettingsFormEditor from '.';
 import { isJsonString } from '../../../utils/string';
 
 const emptyObj = {};
@@ -128,7 +128,7 @@ export default function EditorDrawer({
 
     confirmDialog({
       title: 'Confirm',
-      message: `You have made changes in the editor. Are you sure you want to discard them?`,
+      message: 'You have made changes in the editor. Are you sure you want to discard them?',
       buttons: [
         {
           label: 'No',
@@ -186,7 +186,7 @@ export default function EditorDrawer({
   // so lets default to ON.
   const autoEvaluate = editor.autoEvaluate || editor.autoEvaluate === undefined;
   const drawerActions = (
-    <Fragment>
+    <>
       <TextToggle
         value={editor.mode}
         onChange={handleModeToggle}
@@ -204,7 +204,7 @@ export default function EditorDrawer({
         }
         label="Auto preview"
       />
-    </Fragment>
+    </>
   );
 
   return (

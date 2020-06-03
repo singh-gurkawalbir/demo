@@ -1,3 +1,4 @@
+import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import clsx from 'clsx';
 import DialogActions from '@material-ui/core/DialogActions';

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     width: 660,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   resourceFormWrapper: {
@@ -39,8 +39,7 @@ export default function ResourceSetupDrawer(props) {
   );
 
   useEffect(() => {
-    if (isAuthorized && !addOrSelect)
-      onSubmitComplete(resourceId, isAuthorized);
+    if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
   const title = useMemo(
