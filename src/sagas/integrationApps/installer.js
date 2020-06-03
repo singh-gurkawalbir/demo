@@ -116,8 +116,6 @@ export function* installScriptStep({
       integration.initChild &&
       integration.initChild.function
     ) {
-      // const { _childIntegrationId }
-
       try {
         const childIntegration = yield call(apiCallWithRetry, {
           path: `/integrations/${id}/initChild`,

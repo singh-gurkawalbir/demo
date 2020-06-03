@@ -219,7 +219,6 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('imports'));
 
       if (mode === 'settings') {
-        // Here i need to changes
         if (
           integration &&
           integration.initChild &&
@@ -227,6 +226,7 @@ export default function ConnectorInstallation(props) {
           childIntegration &&
           childIntegration.mode === 'install'
         ) {
+          setIsSetupComplete(false);
           props.history.push(
             `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
           );
