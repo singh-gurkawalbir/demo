@@ -75,6 +75,7 @@
     "react-timeago": "4.4.0",
     "react-toggle": "^4.1.1",
     "react-truncate": "2.4.0",
+    "react-window": "^1.8.5",
     "recharts": "^1.8.5",
     "redbox-react": "1.6.0",
     "redux": "4.0.4",
