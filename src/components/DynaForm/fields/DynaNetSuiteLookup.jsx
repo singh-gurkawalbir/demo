@@ -46,7 +46,6 @@ export default function DynaNetSuiteLookup(props) {
     resourceId,
     flowId,
     label,
-    helpText,
     options,
   } = props;
   const handleEditorClick = () => {
@@ -126,7 +125,7 @@ export default function DynaNetSuiteLookup(props) {
             {label}
           </FormLabel>
           {/* //Todo: helpText is needed here */}
-          <FieldHelp {...props} helpText={helpText || label} />
+          <FieldHelp {...props} />
         </div>
 
         <div className={classes.dynaNetsuiteFieldLookupWrapper}>
