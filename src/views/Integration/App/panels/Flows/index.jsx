@@ -13,7 +13,8 @@ import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import SettingsIcon from '../../../../../components/icons/SettingsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
+import CeligoTable from '../../../../../components/CeligoTable';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
@@ -96,6 +97,7 @@ function FlowList({ integrationId, storeId }) {
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
+  const filterKey = `${integrationId}-flows`;
 
   return (
     <LoadResources required resources="flows,exports">
@@ -146,20 +148,13 @@ function FlowList({ integrationId, storeId }) {
           </IconTextButton>
         )}
       </PanelHeader>
-      {flows.map(f => (
-        <FlowCard
-          key={f._id}
-          storeId={storeId}
-          flowId={f._id}
-          excludeActions={[
-            'detach',
-            'clone',
-            'delete',
-            'references',
-            'download',
-          ]}
+
+      <CeligoTable
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={{ storeId, resourceType: 'flows' }}
         />
-      ))}
     </LoadResources>
   );
 }
