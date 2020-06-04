@@ -27,6 +27,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
 
   return variant === 'icon' ? (
     <IconButtonWithTooltip
+      // size="small"
       tooltipProps={{
         title: 'Run now',
         placement: 'bottom',

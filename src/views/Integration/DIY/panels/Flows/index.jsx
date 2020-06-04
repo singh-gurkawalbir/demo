@@ -6,7 +6,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
-import metadata from '../../../../../components/ResourceTable/metadata/flows';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
 import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
@@ -43,7 +43,7 @@ export default function FlowsPanel({ integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
-  const filterKey = `${integrationId}+flows`;
+  const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = { ...flowFilter, type: 'flows' };
   const allFlows = useSelectorMemo(
@@ -143,7 +143,7 @@ export default function FlowsPanel({ integrationId }) {
         <CeligoTable
           data={flows}
           filterKey={filterKey}
-          {...metadata}
+          {...flowTableMeta}
           actionProps={{ resourceType: 'flows' }}
         />
       </LoadResources>

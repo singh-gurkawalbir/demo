@@ -5,6 +5,7 @@ import FlowSchedule from '../../../../FlowSchedule';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import ModalDialog from '../../../../ModalDialog';
 import * as selectors from '../../../../../reducers';
+import RemoveMargin from '../RemoveMargin';
 
 export default function ScheduleCell(props) {
   const [showSchedule, setShowSchedule] = useState(false);
@@ -18,7 +19,7 @@ export default function ScheduleCell(props) {
   if (!allowSchedule) return null;
 
   return (
-    <>
+    <RemoveMargin>
       <IconButton onClick={handleClick}>
         <CalendarIcon />
       </IconButton>
@@ -30,6 +31,6 @@ export default function ScheduleCell(props) {
           </div>
         </ModalDialog>
       )}
-    </>
+    </RemoveMargin>
   );
 }
