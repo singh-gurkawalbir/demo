@@ -298,7 +298,7 @@ const PageGenerator = ({
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');
-  const handleDelete = useCallback(onDelete(blockName), [onDelete]);
+  const handleDelete = useCallback(() => onDelete(blockName), [blockName, onDelete]);
 
   return (
     <div className={classes.pgContainer}>

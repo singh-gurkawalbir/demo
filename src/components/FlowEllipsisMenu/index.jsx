@@ -193,11 +193,11 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   let availableActions = [];
 
   if (integrationId && permission.detach) {
-    availableActions.push(allActions.detach); 
+    availableActions.push(allActions.detach);
   }
 
-  if (!flowDetails._connectorId || flowDetails.showMapping) { 
-    availableActions.push(allActions.mapping); 
+  if (!flowDetails._connectorId || flowDetails.showMapping) {
+    availableActions.push(allActions.mapping);
   }
 
   if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
