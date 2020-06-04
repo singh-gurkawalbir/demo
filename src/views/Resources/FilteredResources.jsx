@@ -111,7 +111,7 @@ class FilteredResources extends Component {
                     />
                   </Avatar>
                   ) : (
-                  <ResourceImage resource={r} resourceType={resourceType} />
+                    <ResourceImage resource={r} resourceType={resourceType} />
                   )}
               </ListItemAvatar>
               <ListItemText
