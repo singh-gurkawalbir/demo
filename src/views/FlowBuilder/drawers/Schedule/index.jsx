@@ -18,12 +18,7 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
-export default function ScheduleDrawer({
-  integrationId,
-  resourceType,
-  resourceId,
-  flow,
-}) {
+export default function ScheduleDrawer({ flow }) {
   const history = useHistory();
   const handleClose = useCallback(() => history.goBack(), [history]);
   const classes = useStyle();
@@ -32,9 +27,6 @@ export default function ScheduleDrawer({
   return (
     <RightDrawer path="schedule" width="medium" title="Flow schedule">
       <FlowSchedule
-        integrationId={integrationId}
-        resourceType={resourceType}
-        resourceId={resourceId}
         flow={flow}
         onClose={handleClose}
         className={classes.scheduleContainer}

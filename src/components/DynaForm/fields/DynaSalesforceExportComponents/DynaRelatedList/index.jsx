@@ -7,6 +7,7 @@ import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
+import FieldHelp from '../../../FieldHelp';
 import DynaForm from '../../..';
 import DynaSubmit from '../../../DynaSubmit';
 import * as selectors from '../../../../../reducers';
@@ -359,12 +360,15 @@ export default function DynaRelatedList(props) {
           {status === 'refreshed' ? (
             <Spinner />
           ) : (
-            <ActionButton
-              data-test="editRelatedList"
-              onClick={toggleFirstLevelModalOpen}
-              disabled={disabled}>
-              <EditIcon />
-            </ActionButton>
+            <>
+              <ActionButton
+                data-test="editRelatedList"
+                onClick={toggleFirstLevelModalOpen}
+                disabled={disabled}>
+                <EditIcon />
+              </ActionButton>
+              <FieldHelp {...props} />
+            </>
           )}
         </div>
       </div>

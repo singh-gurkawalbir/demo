@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
-import { getNetSuiteSubrecordImports } from '../../../../../../utils/resource';
+import * as selectors from '../../../../../reducers';
+import { getNetSuiteSubrecordImports } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {

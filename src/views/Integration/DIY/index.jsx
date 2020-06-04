@@ -34,6 +34,7 @@ import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -90,6 +91,7 @@ const tabs = [
     Panel: SettingsPanel,
   },
 ];
+const emptyObj = {};
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
@@ -97,23 +99,67 @@ export default function Integration({ history, match }) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
-  const permission = useSelector(state =>
-    selectors.resourcePermissions(state, 'integrations', integrationId)
-  );
+  const {
+    id,
+    name,
+    description,
+    sandbox,
+    templateId,
+    integration,
+    addNewStore,
+  } = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration) {
+      return {
+        integration: true,
+        templateId: integration._templateId,
+        name: integration.name,
+        description: integration.description,
+        sandbox: integration.sandbox,
+        id: integration._id,
+        addNewStore: integration && integration.initChild && integration.initChild.function
+      };
+    }
+
+    return emptyObj;
+  });
+  const childIntegration = useSelector(state => {
+    const id = selectors.getChildIntegrationId(state, integrationId);
+
+    return id && selectors.resource(state, 'integrations', id);
+  });
+  const integrationChildAppName =
+    childIntegration &&
+    getIntegrationAppUrlName(childIntegration && childIntegration.name);
+  const { pEdit, pClone, pDelete } = useSelector(state => {
+    const permission = selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    return {
+      pEdit: permission.edit,
+      pClone: permission.clone,
+      pDelete: permission.delete,
+    };
+  });
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
-    if (integration && integration._templateId) {
+    if (templateId) {
       const template = selectors.resource(
         state,
         'marketplacetemplates',
-        integration._templateId
+        templateId
       );
 
       return getTemplateUrlName(template && template.applications);
@@ -149,12 +195,16 @@ export default function Integration({ history, match }) {
     },
     [dispatch, integrationId]
   );
-
-  function handleTitleChange(title) {
-    patchIntegration('/name', title);
-  }
-
-  function handleDelete() {
+  const handleTitleChange = useCallback(
+    title => {
+      patchIntegration('/name', title);
+    },
+    [patchIntegration]
+  );
+  const handleAddNewStore = useCallback(() => {
+    dispatch(actions.integrationApp.installer.initChild(integrationId));
+  }, [integrationId, dispatch]);
+  const handleDelete = useCallback(() => {
     if (cantDelete) {
       enqueueSnackbar({
         message: INTEGRATION_DELETE_VALIDATE,
@@ -164,11 +214,11 @@ export default function Integration({ history, match }) {
       return;
     }
 
-    const name = integration ? integration.name : integrationId;
+    const iName = name || integrationId;
 
     confirmDialog({
       title: 'Confirm',
-      message: `Are you sure you want to delete ${name} integration?`,
+      message: `Are you sure you want to delete ${iName} integration?`,
       buttons: [
         {
           label: 'Cancel',
@@ -182,11 +232,20 @@ export default function Integration({ history, match }) {
         },
       ],
     });
-  }
-
-  function handleDescriptionChange(description) {
-    patchIntegration('/description', description);
-  }
+  }, [
+    cantDelete,
+    confirmDialog,
+    dispatch,
+    enqueueSnackbar,
+    integrationId,
+    name,
+  ]);
+  const handleDescriptionChange = useCallback(
+    description => {
+      patchIntegration('/description', description);
+    },
+    [patchIntegration]
+  );
 
   if (!integration && isDeleting) {
     ['integrations', 'tiles', 'scripts'].forEach(resource =>
@@ -198,13 +257,10 @@ export default function Integration({ history, match }) {
   }
 
   // If this integration does not belong to this environment, then switch the environment.
-  if (
-    integration &&
-    !!integration.sandbox !== (currentEnvironment === 'sandbox')
-  ) {
+  if (integration && !!sandbox !== (currentEnvironment === 'sandbox')) {
     dispatch(
       actions.user.preferences.update({
-        environment: integration.sandbox ? 'sandbox' : 'production',
+        environment: sandbox ? 'sandbox' : 'production',
       })
     );
   }
@@ -216,6 +272,19 @@ export default function Integration({ history, match }) {
       );
     }
   }, [history, integrationId, templateName, templateUrlName]);
+  useEffect(() => {
+    if (
+      childIntegration &&
+      childIntegration.mode === 'install'
+    ) {
+      history.push(
+        `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+      );
+      dispatch(
+        actions.resource.clearChildIntegration()
+      );
+    }
+  }, [dispatch, history, childIntegration, integrationChildAppName]);
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
@@ -229,9 +298,9 @@ export default function Integration({ history, match }) {
           title={
             integration ? (
               <EditableText
-                text={integration.name}
-                disabled={!permission.edit}
-                defaultText={`Unnamed: (${integration}) Click to add name`}
+                text={name}
+                disabled={!pEdit}
+                defaultText="Unnamed integration: Click to add name"
                 onChange={handleTitleChange}
                 inputClassName={
                   drawerOpened
@@ -248,7 +317,7 @@ export default function Integration({ history, match }) {
               <EditableText
                 multiline
                 allowOverflow
-                text={integration.description}
+                text={description}
                 defaultText="Click to add a description"
                 onChange={handleDescriptionChange}
               />
@@ -256,19 +325,27 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {permission.clone && integration && (
+          {pClone && integration && (
             <IconTextButton
               component={Link}
-              to={getRoutePath(
-                `/clone/integrations/${integration._id}/preview`
-              )}
+              to={getRoutePath(`/clone/integrations/${id}/preview`)}
               variant="text"
               data-test="cloneIntegration">
               <CopyIcon /> Clone integration
             </IconTextButton>
           )}
+          {/* Sravan needs to move add store functionality to integrationApps */}
+          { addNewStore && (
+            <IconTextButton
+              component={Link}
+              onClick={handleAddNewStore}
+              variant="text"
+              data-test="addNewStore">
+              <CopyIcon /> Add new store
+            </IconTextButton>
+          )}
 
-          {permission.delete && integration && (
+          {pDelete && integration && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"

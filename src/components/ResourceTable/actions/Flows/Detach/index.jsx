@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import CloseIcon from '../../../../icons/CloseIcon';
+import DetachIcon from '../../../../icons/unLinkedIcon';
+
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Detach flow',
-  icon: CloseIcon,
+  icon: DetachIcon,
   component: function DetachFlow({ rowData = {} }) {
     const { name: resourceName, _id: resourceId } = rowData;
     const dispatch = useDispatch();
