@@ -42,7 +42,7 @@ export default function CsvGenerateEditor(props) {
     const options = {
       data: props.data,
       rule: props.rule,
-      isSampleDataLoading: props.isSampleDataLoading || false,
+      isSampleDataLoading: !!(props.isSampleDataLoading),
       autoEvaluate: true,
     };
 
@@ -76,7 +76,7 @@ export default function CsvGenerateEditor(props) {
         })
       );
     }
-  }, [data, dispatch, editorId, editorInit, isSampleDataLoading, props.data, props.isSampleDataLoading]);
+  }, [data, dispatch, editorId, editorInit, props.data]);
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
