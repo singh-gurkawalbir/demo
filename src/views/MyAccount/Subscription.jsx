@@ -363,36 +363,36 @@ export default function Subscription() {
                     Number.MAX_SAFE_INTEGER ? (
                       <div className={classes.bold}>Unlimited</div>
                       ) : (
-                      <div>
-                        <div className={classes.itemsList}>
-                          <div>
-                            <span className={classes.bold}>
-                              {numEnabledPaidFlows} of{' '}
-                              {licenseActionDetails.totalFlowsAvailable} (
-                              <span className={classes.normal}>
-                                {licenseActionDetails.totalFlowsAvailable -
+                        <div>
+                          <div className={classes.itemsList}>
+                            <div>
+                              <span className={classes.bold}>
+                                {numEnabledPaidFlows} of{' '}
+                                {licenseActionDetails.totalFlowsAvailable} (
+                                <span className={classes.normal}>
+                                  {licenseActionDetails.totalFlowsAvailable -
                                   licenseActionDetails.numAddOnFlows}{' '}
-                                from subscription +{' '}
-                                {licenseActionDetails.numAddOnFlows} Add-on
-                                flows)
+                                  from subscription +{' '}
+                                  {licenseActionDetails.numAddOnFlows} Add-on
+                                  flows)
+                                </span>
                               </span>
-                            </span>
-                          </div>
-                          <span className={classes.bold}>
+                            </div>
+                            <span className={classes.bold}>
                             &nbsp;| {productionRemainingFlows}
-                          </span>
-                          <span> &nbsp;remaining</span>
-                        </div>
-                        <div className={classes.linearProgressWrapper}>
-                          <LinearProgress
-                            color="primary"
-                            value={productionConsumedFlowsPercentage}
-                            variant="determinate"
-                            thickness={10}
-                            className={classes.progressBar}
+                            </span>
+                            <span> &nbsp;remaining</span>
+                          </div>
+                          <div className={classes.linearProgressWrapper}>
+                            <LinearProgress
+                              color="primary"
+                              value={productionConsumedFlowsPercentage}
+                              variant="determinate"
+                              thickness={10}
+                              className={classes.progressBar}
                           />
+                          </div>
                         </div>
-                      </div>
                       )}
                   </div>
                   <div className={classes.wrapper}>
