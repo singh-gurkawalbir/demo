@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     margin: theme.spacing(1),
+    wordBreak: 'break-word',
   },
   wrapper: {
     padding: theme.spacing(2),

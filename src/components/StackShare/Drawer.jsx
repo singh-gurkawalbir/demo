@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import UserGroupIcon from '../icons/GroupOfUsersIcon';
+import UserGroupIcon from '../icons/SingleUserIcon';
 import RightDrawer from '../drawer/Right';
 import SharedUserList from './SharedUserList';
 import IconTextButton from '../IconTextButton';
@@ -51,7 +51,7 @@ export default function StackShareDrawer() {
     <RightDrawer
       path={rootPath}
       height="tall"
-      width="medium"
+      width="large"
       title={isInviteUser ? 'Invite user' : 'Stack sharing'}
       variant="temporary"
       actions={!isInviteUser && action}
