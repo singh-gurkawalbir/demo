@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Spinner from '../../../../Spinner';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';

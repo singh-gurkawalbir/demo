@@ -1,4 +1,5 @@
 import { isArray } from 'lodash';
+import { stringCompare } from '../../../../utils/sort';
 
 export function versionOptions({ assistantData }) {
   return assistantData.versions.map(vesrion => ({
@@ -13,17 +14,7 @@ export function resourceOptions({ versionData = { resources: [] } }) {
       label: resource.name,
       value: resource.id,
     }))
-    .sort((a, b) => {
-      if (a.label < b.label) {
-        return -1;
-      }
-
-      if (a.label > b.label) {
-        return 1;
-      }
-
-      return 0;
-    });
+    .sort(stringCompare('label'));
 }
 
 export function exportOperationOptions({ resourceData = { endpoints: [] } }) {
@@ -93,7 +84,8 @@ export function selectOptions({
     return resourceOptions({
       versionData: selectedVersion,
     });
-  } else if (assistantFieldType === 'operation') {
+  }
+  if (assistantFieldType === 'operation') {
     if (resourceType === 'imports') {
       return importOperationOptions({
         resourceData: resourceData({

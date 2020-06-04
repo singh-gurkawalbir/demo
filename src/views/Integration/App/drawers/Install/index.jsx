@@ -1,11 +1,11 @@
 /*
- TODO: 
+ TODO:
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -32,6 +32,8 @@ import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
+import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import FormViewStepDrawer from '../../../../../components/InstallStep/FormViewStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -87,6 +89,7 @@ export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
   const history = useHistory();
+  const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
@@ -97,6 +100,13 @@ export default function ConnectorInstallation(props) {
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
+  const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
+    installSteps,
+  ]);
+  const currStepIndex = useMemo(() => installSteps.indexOf(currentStep), [
+    currentStep,
+    installSteps,
+  ]);
   const selectedConnection = useSelector(state =>
     selectors.resource(
       state,
@@ -223,7 +233,7 @@ export default function ConnectorInstallation(props) {
     e.preventDefault();
     confirmDialog({
       title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
+      message: 'Are you sure you want to uninstall',
       buttons: [
         {
           label: 'Cancel',
@@ -253,7 +263,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = step => {
+  const handleStepClick = (step, connection, index) => {
     const {
       _connectionId,
       installURL,
@@ -274,7 +284,7 @@ export default function ConnectorInstallation(props) {
 
       const newId = generateNewId();
 
-      if (!_connectionId)
+      if (!_connectionId) {
         dispatch(
           actions.resource.patchStaged(
             newId,
@@ -288,6 +298,7 @@ export default function ConnectorInstallation(props) {
             SCOPES.VALUE
           )
         );
+      }
       setConnection({
         newId,
         doc: sourceConnection,
@@ -301,9 +312,17 @@ export default function ConnectorInstallation(props) {
           'inProgress'
         )
       );
-      dispatch(
-        actions.integrationApp.installer.scriptInstallStep(integrationId)
-      );
+
+      if (type === INSTALL_STEP_TYPES.FORM) {
+        dispatch(
+          actions.integrationApp.installer.getCurrentStep(integrationId, step)
+        );
+        history.push(`${match.url}/${index}`);
+      } else {
+        dispatch(
+          actions.integrationApp.installer.scriptInstallStep(integrationId)
+        );
+      }
     } else if (installURL) {
       if (!step.isTriggered) {
         dispatch(
@@ -360,7 +379,7 @@ export default function ConnectorInstallation(props) {
 
   const handleBackClick = e => {
     e.preventDefault();
-    props.history.push(`/pg`);
+    props.history.push('/pg');
   };
 
   return (
@@ -382,6 +401,14 @@ export default function ConnectorInstallation(props) {
             onSubmitComplete={handleSubmitComplete}
           />
         ))}
+      {currentStep && currentStep.formMeta && (
+        <FormViewStepDrawer
+          integrationId={integrationId}
+          formMeta={currentStep.formMeta}
+          title={currentStep.name}
+          index={currStepIndex + 1}
+        />
+      )}
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>

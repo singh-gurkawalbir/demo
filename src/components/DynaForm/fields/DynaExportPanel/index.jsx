@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormContext } from 'react-forms-processor/dist';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
 import actions from '../../../../actions';
 import {
@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
   },
   previewDataHeading: {
     fontSize: 18,
-    paddingBottom: 20,
   },
   drawerShift: {
     transition: theme.transitions.create(['width', 'margin'], {

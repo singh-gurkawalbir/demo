@@ -87,8 +87,7 @@ export default {
           r.http.auth.basic &&
           r.http.auth.basic.username
         ) {
-          if (r.http.auth.basic.username.indexOf('/token') !== -1)
-            return r.http.auth.basic.username.replace('/token', '');
+          if (r.http.auth.basic.username.indexOf('/token') !== -1) return r.http.auth.basic.username.replace('/token', '');
 
           return r.http.auth.basic.username;
         }

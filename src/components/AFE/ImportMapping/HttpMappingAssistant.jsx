@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,14 +31,16 @@ export default function HttpMappingAssistant(props) {
   );
 
   useEffect(() => {
-    if (!initTriggered && dataInput && rule)
+    if (!initTriggered && dataInput && rule) {
       dispatch(
         actions.editor.init(editorId, 'handlebars', {
           strict: false,
+          autoEvaluate: true,
           template: rule,
           data: dataInput,
         })
       );
+    }
     setInitTriggered(true);
   }, [
     data,
@@ -59,7 +61,7 @@ export default function HttpMappingAssistant(props) {
   });
 
   return (
-    <Fragment>
+    <>
       <div className={classes.header}>
         <Typography variant="h4">Preview</Typography>
       </div>
@@ -73,6 +75,6 @@ export default function HttpMappingAssistant(props) {
           readOnly
         />
       </div>
-    </Fragment>
+    </>
   );
 }

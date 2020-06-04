@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
@@ -94,8 +94,7 @@ export function FormView(props) {
     if (
       selectedApplication !== `${isParent}` &&
       staggedRes['/assistant'] === undefined
-    )
-      staggedRes['/assistant'] = assistantName;
+    ) staggedRes['/assistant'] = assistantName;
 
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
@@ -129,7 +128,8 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && assistantName;
+  const isFlowBuilderAssistant =
+    flowId && assistantName && assistantName !== 'financialforce';
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

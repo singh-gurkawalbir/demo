@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import moment from 'moment';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../../actions';
 import {
   ACCOUNT_IDS,

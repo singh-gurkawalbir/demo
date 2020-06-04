@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
@@ -70,14 +71,14 @@ const flowBuilderRoutes = [
 // to keep the code DRY, lets extract the common sub-set of routes.
 const integrationAppRoutes = [
   ...flowBuilderRoutes,
-  { path: '/general', breadcrumb: () => 'General' },
-  { path: '/addons', breadcrumb: () => 'Add-ons' },
-  { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-  { path: '/connections', breadcrumb: () => 'Connections' },
   {
     path: '/admin',
     breadcrumb: () => 'Admin',
     childRoutes: [
+      { path: '/general', breadcrumb: () => 'General' },
+      { path: '/addons', breadcrumb: () => 'Add-ons' },
+      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
       { path: '/apitokens', breadcrumb: () => 'Api tokens' },
       { path: '/users', breadcrumb: () => 'Users' },
       { path: '/audit', breadcrumb: () => 'Audit log' },
@@ -85,16 +86,16 @@ const integrationAppRoutes = [
       { path: '/uninstall', breadcrumb: () => 'Uninstall' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
       { path: '/apitoken', breadcrumb: () => 'API tokens' },
-    ],
-  },
-  {
-    path: '/flows',
-    breadcrumb: () => 'Flows',
-    childRoutes: [
       {
-        path: '/:section',
-        breadcrumb: a => a.section,
-        childRoutes: [{ path: '/:section', breadcrumb: a => a.section }],
+        path: '/flows',
+        breadcrumb: () => 'Flows',
+        childRoutes: [
+          {
+            path: '/:section',
+            breadcrumb: a => a.section,
+            childRoutes: [{ path: '/:section', breadcrumb: a => a.section }],
+          },
+        ],
       },
     ],
   },
@@ -105,13 +106,13 @@ const routes = [
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,
     childRoutes: [
-      { path: '/flows', breadcrumb: () => 'Flows' },
-      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
       {
         path: '/admin',
         breadcrumb: () => 'Admin',
         childRoutes: [
+          { path: '/flows', breadcrumb: () => 'Flows' },
+          { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+          { path: '/connections', breadcrumb: () => 'Connections' },
           { path: '/readme', breadcrumb: () => 'Readme' },
           { path: '/users', breadcrumb: () => 'Users' },
           { path: '/audit', breadcrumb: () => 'Audit log' },
@@ -142,6 +143,12 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/pg/templates/:integrationAppName/:integrationId',
+    breadcrumb: IntegrationCrumb,
+  },
+  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
   {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
@@ -215,11 +222,11 @@ const routes = [
       { path: '/transfers', breadcrumb: () => 'Transfers' },
     ],
   },
-  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
   { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },
-  { path: '/pg/editors', breadcrumb: () => 'Developer playground' },
+  { path: '/pg/editors', breadcrumb: () => 'Dev playground' },
   { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
   {
     path: '/pg/:resourceType',

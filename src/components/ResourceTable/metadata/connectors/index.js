@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from '@material-ui/core/Link';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';

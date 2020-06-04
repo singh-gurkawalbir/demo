@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,7 +15,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import ActionMenu from './ActionMenu';
-import EllipsisHorizontalIcon from '../icons/EllipsisHorizontalIcon';
 import CheckboxUnselectedIcon from '../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../icons/CheckboxSelectedIcon';
 
@@ -48,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionCell: {
-    padding: `0 !important`,
+    padding: '0 !important',
     textAlign: 'center',
   },
   actionContainer: {
@@ -77,6 +76,7 @@ export default function CeligoTable({
   const history = useHistory();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [selectedAction, setSelectedAction] = useState(undefined);
   const { sort = {} } = useSelector(state =>
     selectors.filter(state, filterKey)
   );
@@ -157,139 +157,152 @@ export default function CeligoTable({
     },
     [data, isSelectableRow, onSelectChange, selectedResources]
   );
+  const handleActionSelected = useCallback(component => {
+    setSelectedAction(component);
+  }, []);
 
   return (
-    <Table className={classes.table}>
-      <TableHead>
-        <TableRow>
-          {selectableRows && (
-            <TableCell>
-              <Checkbox
-                icon={
-                  <span>
-                    <CheckboxUnselectedIcon />
-                  </span>
-                }
-                checkedIcon={
-                  <span>
-                    <CheckboxSelectedIcon />
-                  </span>
-                }
-                onChange={event => handleSelectAllChange(event)}
-                checked={isAllSelected}
-                color="primary"
-              />
-            </TableCell>
-          )}
-          {(typeof columns === 'function'
-            ? columns('', actionProps)
-            : columns
-          ).map(col =>
-            col.orderBy ? (
-              <TableCell
-                style={col.width ? { width: col.width } : undefined}
-                key={col.heading}
-                align={col.align || 'left'}
-                sortDirection={orderBy === col.orderBy ? order : false}>
-                <TableSortLabel
-                  active={orderBy === col.orderBy}
-                  direction={order}
-                  onClick={() =>
-                    handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)
-                  }>
-                  {col.headerValue
-                    ? col.headerValue('', actionProps)
-                    : col.heading}
-                  {orderBy === col.orderBy ? (
-                    <span className={classes.visuallyHidden}>
-                      {order === 'desc'
-                        ? 'sorted descending'
-                        : 'sorted ascending'}
-                    </span>
-                  ) : null}
-                </TableSortLabel>
-              </TableCell>
-            ) : (
-              <TableCell
-                key={col.heading}
-                style={col.width ? { width: col.width } : undefined}
-                align={col.align || 'left'}>
-                {col.headerValue
-                  ? col.headerValue('', actionProps)
-                  : col.heading}
-              </TableCell>
-            )
-          )}
-          {rowActions && (
-            <TableCell className={classes.actionColHead}>Actions</TableCell>
-          )}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {data.map(r => (
-          <TableRow hover key={r._id} className={classes.row}>
+    <div>
+      {selectedAction}
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
             {selectableRows && (
               <TableCell>
-                {(isSelectableRow ? !!isSelectableRow(r) : true) && (
-                  <Checkbox
-                    onChange={event => handleSelectChange(event, r._id)}
-                    checked={!!selectedResources[r._id]}
-                    color="primary"
-                    icon={
-                      <span>
-                        <CheckboxUnselectedIcon />
-                      </span>
-                    }
-                    checkedIcon={
-                      <span>
-                        <CheckboxSelectedIcon />
-                      </span>
-                    }
-                  />
-                )}
+                <Checkbox
+                  icon={
+                    <span>
+                      <CheckboxUnselectedIcon />
+                    </span>
+                  }
+                  checkedIcon={
+                    <span>
+                      <CheckboxSelectedIcon />
+                    </span>
+                  }
+                  onChange={event => handleSelectAllChange(event)}
+                  checked={isAllSelected}
+                  color="primary"
+                />
               </TableCell>
             )}
             {(typeof columns === 'function'
-              ? columns(r, actionProps)
+              ? columns('', actionProps)
               : columns
-            ).map((col, index) =>
-              index === 0 ? (
+            ).map(col =>
+              col.orderBy ? (
                 <TableCell
-                  component="th"
-                  scope="row"
+                  style={col.width ? { width: col.width } : undefined}
                   key={col.heading}
-                  align={col.align || 'left'}>
-                  {col.value(r, actionProps, history.location)}
+                  align={col.align || 'left'}
+                  sortDirection={orderBy === col.orderBy ? order : false}>
+                  <TableSortLabel
+                    active={orderBy === col.orderBy}
+                    direction={order}
+                    onClick={() =>
+                      handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)}>
+                    {col.headerValue
+                      ? col.headerValue('', actionProps)
+                      : col.heading}
+                    {orderBy === col.orderBy ? (
+                      <span className={classes.visuallyHidden}>
+                        {order === 'desc'
+                          ? 'sorted descending'
+                          : 'sorted ascending'}
+                      </span>
+                    ) : null}
+                  </TableSortLabel>
                 </TableCell>
               ) : (
-                <TableCell key={col.heading} align={col.align || 'left'}>
-                  {col.value(r, actionProps, history.location)}
+                <TableCell
+                  key={col.heading}
+                  style={col.width ? { width: col.width } : undefined}
+                  align={col.align || 'left'}>
+                  {col.headerValue
+                    ? col.headerValue('', actionProps)
+                    : col.heading}
                 </TableCell>
               )
             )}
             {rowActions && (
-              <TableCell className={classes.actionCell}>
-                <EllipsisHorizontalIcon />
-                <ActionMenu
-                  // rowActions may or may not be a fn. Sometimes
-                  // the actions are static, other times they are
-                  // determinant on the resource they apply to.
-                  actions={(typeof rowActions === 'function'
-                    ? rowActions(r, actionProps)
-                    : rowActions
-                  ).map(({ label, component: Action }) => ({
-                    label:
-                      typeof label === 'function'
-                        ? label(r, actionProps)
-                        : label,
-                    component: <Action {...actionProps} resource={r} />,
-                  }))}
-                />
-              </TableCell>
+              <TableCell className={classes.actionColHead}>Actions</TableCell>
             )}
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {data.map(rowData => (
+            <TableRow hover key={rowData._id} className={classes.row}>
+              {selectableRows && (
+                <TableCell>
+                  {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
+                    <Checkbox
+                      onChange={event => handleSelectChange(event, rowData._id)}
+                      checked={!!selectedResources[rowData._id]}
+                      color="primary"
+                      icon={
+                        <span>
+                          <CheckboxUnselectedIcon />
+                        </span>
+                      }
+                      checkedIcon={
+                        <span>
+                          <CheckboxSelectedIcon />
+                        </span>
+                      }
+                    />
+                  )}
+                </TableCell>
+              )}
+              {(typeof columns === 'function'
+                ? columns(rowData, actionProps)
+                : columns
+              ).map((col, index) =>
+                index === 0 ? (
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    key={col.heading}
+                    align={col.align || 'left'}>
+                    {col.value(rowData, actionProps, history.location)}
+                  </TableCell>
+                ) : (
+                  <TableCell key={col.heading} align={col.align || 'left'}>
+                    {col.value(rowData, actionProps, history.location)}
+                  </TableCell>
+                )
+              )}
+              {rowActions && (
+                <TableCell className={classes.actionCell}>
+                  <ActionMenu
+                    selectAction={handleActionSelected}
+                    // rowActions may or may not be a fn. Sometimes
+                    // the actions are static, other times they are
+                    // determinant on the resource they apply to.
+                    // Check on this later for the scope of refactor
+                    actions={(typeof rowActions === 'function'
+                      ? rowActions(rowData, actionProps)
+                      : rowActions
+                    ).map(({ icon, label, hasAccess, component: Action }) => ({
+                      icon:
+                        typeof icon === 'function'
+                          ? icon(rowData, actionProps)
+                          : icon,
+                      hasAccess,
+                      rowData,
+                      actionProps,
+                      label:
+                        typeof label === 'function'
+                          ? label(rowData, actionProps)
+                          : label,
+                      component: <Action {...actionProps} rowData={rowData} />,
+                    }))}
+                  />
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

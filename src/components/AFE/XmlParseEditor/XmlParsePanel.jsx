@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -10,7 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import helpTextMap from '../../../components/Help/helpTextMap';
+import helpTextMap from '../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   helpText: {
@@ -90,7 +90,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
           </Typography>
         )}
         {advanced && (
-          <Fragment>
+          <>
             <FormControlLabel
               control={
                 <Checkbox
@@ -110,8 +110,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
                   checked={stripNewLineChars}
                   color="primary"
                   onChange={() =>
-                    patchEditor('stripNewLineChars', !stripNewLineChars)
-                  }
+                    patchEditor('stripNewLineChars', !stripNewLineChars)}
                 />
               }
               label="Strip Newline Chars"
@@ -182,7 +181,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               }}
               onChange={e => patchEditor('excludeNodes', e.target.value)}
             />
-          </Fragment>
+          </>
         )}
       </FormGroup>
     </div>

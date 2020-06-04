@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
+import { stringCompare } from '../../../utils/sort';
 
 const useStyles = makeStyles({
   fieldWrapper: {
@@ -34,6 +35,16 @@ export default function DynaSelect(props) {
     onFieldChange,
   } = props;
   const classes = useStyles();
+  const isSubHeader =
+    options &&
+    options.length &&
+    options.some(
+      option =>
+        option &&
+        option.items &&
+        option.items.length &&
+        option.items.some(item => item.subHeader)
+    );
   let items =
     options &&
     options.reduce(
@@ -51,25 +62,35 @@ export default function DynaSelect(props) {
               label = item.label || item.value;
             }
 
-            const { subHeader, disabled = false } = item;
-
-            if (subHeader) {
-              return (
-                <ListSubheader disableSticky key={subHeader}>
-                  {subHeader}
-                </ListSubheader>
-              );
-            }
-
-            return (
-              <MenuItem key={value} value={value} disabled={disabled}>
-                {label}
-              </MenuItem>
-            );
+            return typeof item === 'string'
+              ? { label, value }
+              : { ...item, label, value };
           })
         ),
       []
     );
+
+  if (!isSubHeader) {
+    items = items.sort(stringCompare('label'));
+  }
+
+  items = items.map(item => {
+    const { label, value, subHeader, disabled = false } = item;
+
+    if (subHeader) {
+      return (
+        <ListSubheader disableSticky key={subHeader}>
+          {subHeader}
+        </ListSubheader>
+      );
+    }
+
+    return (
+      <MenuItem key={value} value={value} disabled={disabled}>
+        {label}
+      </MenuItem>
+    );
+  });
   let finalTextValue;
 
   if (value === undefined || value === null) {

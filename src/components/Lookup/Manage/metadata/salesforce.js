@@ -4,7 +4,7 @@ export default {
   getLookupMetadata: ({
     lookup = {},
     connectionId,
-
+    opts = {},
     extractFields,
   }) => {
     const fieldMeta = {
@@ -49,6 +49,7 @@ export default {
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
           value: lookup.whereClause,
           data: extractFields,
+          opts,
         },
         _whereClauseText: {
           id: '_whereClauseText',
@@ -115,7 +116,8 @@ export default {
               ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
               : '',
           };
-        } else if (fieldId === '_whereClauseText') {
+        }
+        if (fieldId === '_whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === '_whereClause'
           );

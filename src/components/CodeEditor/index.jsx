@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import AceEditor from 'react-ace';
 import ReactResizeDetector from 'react-resize-detector';
 import 'brace/mode/javascript';
@@ -30,6 +31,7 @@ export default function CodeEditor(props) {
     useWorker,
     enableAutocomplete,
     onChange,
+    skipDelay = false,
   } = props;
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
@@ -41,16 +43,17 @@ export default function CodeEditor(props) {
   const theme = useSelector(state => selectors.editorTheme(state));
   const { inputVal, editorVal, typingTimeout } = state;
   const resize = useCallback(() => {
-    if (aceEditor && aceEditor.current && aceEditor.current.editor)
-      aceEditor.current.editor.resize();
+    if (aceEditor && aceEditor.current && aceEditor.current.editor) aceEditor.current.editor.resize();
   }, []);
 
   useEffect(() => {
-    // update the state value, only when user is not typing and new value is available from the selector.
-    if (inputVal !== value && !typingTimeout) {
-      setState({ ...state, inputVal: value, editorVal: value });
+    if (!skipDelay) {
+      // update the state value, only when user is not typing and new value is available from the selector.
+      if (inputVal !== value && !typingTimeout) {
+        setState({ ...state, inputVal: value, editorVal: value });
+      }
     }
-  }, [inputVal, state, typingTimeout, value]);
+  }, [inputVal, skipDelay, state, typingTimeout, value]);
 
   const handleLoad = useCallback(
     editor => {
@@ -62,6 +65,10 @@ export default function CodeEditor(props) {
   );
   const handleChange = useCallback(
     value => {
+      if (skipDelay) {
+        return onChange(value);
+      }
+
       if (typingTimeout) {
         clearTimeout(typingTimeout);
       }
@@ -74,15 +81,15 @@ export default function CodeEditor(props) {
         }, 500),
       });
     },
-    [onChange, state, typingTimeout]
+    [onChange, skipDelay, state, typingTimeout]
   );
-  const valueAsString =
-    typeof editorVal === 'string'
-      ? editorVal
-      : JSON.stringify(editorVal, null, 2);
+  let v = editorVal;
+
+  if (skipDelay) v = value;
+  const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
 
   return (
-    <Fragment>
+    <>
       <AceEditor
         ref={aceEditor}
         name={name}
@@ -109,6 +116,6 @@ export default function CodeEditor(props) {
       />
 
       <ReactResizeDetector handleWidth handleHeight onResize={resize} />
-    </Fragment>
+    </>
   );
 }

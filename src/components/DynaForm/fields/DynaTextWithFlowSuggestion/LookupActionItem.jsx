@@ -1,10 +1,10 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ManageLookupDialog from '../../../Lookup/Manage/Dialog';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   container: {
     minWidth: props => props.minWidth || 500,
   },
@@ -12,21 +12,23 @@ const useStyles = makeStyles({
     whiteSpace: 'pre-line',
   },
   label: {
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    width: '75%',
-    float: 'left',
+    marginRight: theme.spacing(2),
   },
   rowContainer: {
     display: 'flex',
   },
-  button: {
-    minWidth: 40,
-    width: 40,
+  lookupActionItemContainer: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
   },
-});
+  editButton: {
+    alignSelf: 'flex-start',
+    whiteSpace: 'nowrap',
+  },
+}));
 
-/** 
+/**
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
@@ -40,6 +42,9 @@ export default function LookupActionItem({
   value = {},
   options = {},
   onClick,
+  resourceId,
+  resourceType,
+  flowId,
 }) {
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
@@ -58,7 +63,7 @@ export default function LookupActionItem({
   };
 
   return (
-    <Fragment>
+    <>
       {showLookup && (
         <ManageLookupDialog
           value={value}
@@ -67,21 +72,29 @@ export default function LookupActionItem({
           onCancel={handleEditorClick}
           onSave={handleSave}
           options={options}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          flowId={flowId}
         />
       )}
-      {isEdit && (
-        <Typography onClick={handleLookupSelect} className={classes.label}>
-          {value.name}
-        </Typography>
-      )}
-      <Button
-        data-test={id}
-        variant="outlined"
-        className={clsx({ [classes.button]: isEdit })}
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
-    </Fragment>
+      <div className={classes.lookupActionItemContainer}>
+        {isEdit && (
+          <Typography
+            variant="body2"
+            onClick={handleLookupSelect}
+            className={classes.label}>
+            {value.name}
+          </Typography>
+        )}
+        <Button
+          data-test={id}
+          variant="outlined"
+          className={clsx({ [classes.editButton]: isEdit })}
+          color="secondary"
+          onClick={handleEditorClick}>
+          {label}
+        </Button>
+      </div>
+    </>
   );
 }

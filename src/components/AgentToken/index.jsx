@@ -1,21 +1,25 @@
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IconButton, Typography } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
-import ShowContentIcon from '../icons/ShowContentIcon';
-import RegenerateToken from '../icons/RegenerateTokenIcon';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import AccessToken from '../MaskToken';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
   },
-});
+  showToken: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
 
 export default function AgentToken({ agentId }) {
   const dispatch = useDispatch();
@@ -28,15 +32,8 @@ export default function AgentToken({ agentId }) {
     dispatch(actions.agent.displayToken(agentId));
   };
 
-  const changeAgentToken = () => {
-    dispatch(actions.agent.changeToken(agentId));
-  };
-
   return (
     <div className={classes.root}>
-      <Typography variant="caption">
-        {accessToken || <AccessToken count="22" />}
-      </Typography>
       {accessToken && (
         <CopyToClipboard
           text={accessToken}
@@ -44,8 +41,7 @@ export default function AgentToken({ agentId }) {
             enqueueSnackbar({
               message: 'Token copied to clipboard.',
               variant: 'success',
-            })
-          }>
+            })}>
           <IconButton
             data-test="copyToClipboard"
             title="Copy to clipboard"
@@ -55,21 +51,14 @@ export default function AgentToken({ agentId }) {
         </CopyToClipboard>
       )}
       {!accessToken && (
-        <IconButton
+        <Typography
           data-test="displayAgentToken"
-          title="View Token"
+          className={classes.showToken}
           onClick={displayAgentToken}
-          size="small">
-          <ShowContentIcon />
-        </IconButton>
+          variant="caption">
+          Show Token
+        </Typography>
       )}
-      <IconButton
-        data-test="regenerateAgentToken"
-        title="Re-generate Token"
-        onClick={changeAgentToken}
-        size="small">
-        <RegenerateToken />
-      </IconButton>
     </div>
   );
 }

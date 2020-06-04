@@ -23,7 +23,7 @@ export default function getFilteredErrors(errors = [], options = {}) {
 }
 
 export const formatErrorDetails = error => {
-  const { occurredAt, code, message, errorId } = error || {};
+  const { occurredAt, code, message, errorId, traceKey } = error || {};
   const content = `
   Timestamp: ${occurredAt}
 
@@ -33,6 +33,7 @@ export const formatErrorDetails = error => {
   ${message}
 
   Error ID: ${errorId}
+  ${traceKey ? `Trace key : ${traceKey} ` : ''}
   `;
 
   return content;

@@ -57,6 +57,8 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import { stringCompare } from '../utils/sort';
+import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
 const emptySet = [];
 const emptyObject = {};
@@ -81,6 +83,10 @@ const rootReducer = (state, action) => {
 };
 
 export default rootReducer;
+
+export function recycleBinState(state) {
+  return fromSession.recycleBinState(state && state.session);
+}
 
 export function marketPlaceState(state) {
   return fromData.marketPlaceState(state && state.data);
@@ -112,10 +118,6 @@ export function userState(state) {
 // #region app selectors
 export function bannerOpened(state) {
   return fromApp.bannerOpened(state && state.app);
-}
-
-export function drawerOpened(state) {
-  return fromApp.drawerOpened(state && state.app);
 }
 
 export function reloadCount(state) {
@@ -493,6 +495,14 @@ export function getSampleDataContext(
   });
 }
 
+export function flowMetricsData(state, flowId, measurement) {
+  return fromSession.flowMetricsData(
+    state && state.session,
+    flowId,
+    measurement
+  );
+}
+
 export function getFlowDataState(state, flowId, resourceId) {
   return fromSession.getFlowDataState(
     state && state.session,
@@ -751,6 +761,14 @@ export function hasPreferences(state) {
   return !!userPreferences(state);
 }
 
+export function drawerOpened(state) {
+  return fromUser.drawerOpened((state && state.user) || null);
+}
+
+export function expandSelected(state) {
+  return fromUser.expandSelected((state && state.user) || null);
+}
+
 export function hasProfile(state) {
   return !!userProfile(state);
 }
@@ -817,6 +835,14 @@ export function resourceListModified(userState, resourcesState, options = {}) {
   return fromResources.resourceList(resourcesState, options);
 }
 
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromData.hasSettingsForm(
+    state && state.data,
+    resourceType,
+    resourceId
+  );
+}
+
 export const makeResourceListSelector = () =>
   createSelector(
     userState,
@@ -868,21 +894,25 @@ export function nextDataFlowsForFlow(state, flow) {
 }
 
 export function isIAConnectionSetupPending(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId);
+  const connection = resource(state, 'connections', connectionId) || {};
 
-  if (!connection._connectorId) {
+  if (!connection || !connection._connectorId) {
     return;
   }
 
   const { _integrationId } = connection;
   const integration = resource(state, 'integrations', _integrationId);
 
+  if (integration && integration.mode === 'settings') {
+    return false;
+  }
+
   if (integration && integration.install) {
     const installStep = integration.install.find(
       step => step._connectionId === connectionId
     );
 
-    if (!installStep.completed) {
+    if (installStep && !installStep.completed) {
       return true;
     }
   }
@@ -1000,7 +1030,7 @@ export function marketplaceConnectors(
 
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort(stringCompare('name'));
 }
 
 export const makeMarketPlaceConnectorsSelector = () =>
@@ -1064,7 +1094,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  if (!options.ignoreBorrowedConnections)
+  if (!options.ignoreBorrowedConnections) {
     attachedConnections.forEach(conn => {
       if (
         conn &&
@@ -1074,6 +1104,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
         connectionIds.push(conn._borrowConcurrencyFromConnectionId);
       }
     });
+  }
 
   return connectionIds;
 }
@@ -1596,7 +1627,8 @@ export function hasGeneralSettings(state, integrationId, storeId) {
 
   if (supportsMultiStore) {
     return !!(general || []).find(s => s.id === storeId);
-  } else if (Array.isArray(general)) {
+  }
+  if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
   }
 
@@ -2284,7 +2316,8 @@ export function userPermissionsOnConnection(state, connectionId) {
         ? permissions.integrations.connectors
         : permissions.integrations.all) || {}
     ).connections;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+  }
+  if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
     const ioIntegrations = resourceList(state, {
       type: 'integrations',
     }).resources;
@@ -2353,7 +2386,8 @@ export const resourcePermissions = (
         (childResourceType ? value && value[childResourceType] : value) ||
         emptyObject
       );
-    } else if (resourceId) {
+    }
+    if (resourceId) {
       let value = permissions[resourceType][resourceId];
 
       // remove tile level permissions added to connector while are not valid.
@@ -2380,7 +2414,8 @@ export const resourcePermissions = (
     }
 
     return emptyObject;
-  } else if (resourceType) {
+  }
+  if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
@@ -2783,8 +2818,7 @@ export function resourceStatus(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -2811,8 +2845,7 @@ export function resourceStatusModified(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -3228,10 +3261,10 @@ export function metadataOptionsAndResources({
 
 /*
  * TODO: @Raghu - Should be removed and use above selector
- * Function Definition needs to be changed to 
+ * Function Definition needs to be changed to
  * metadataOptionsAndResources(
     state,
-    { 
+    {
       connectionId,
       commMetaPath,
       filterKey,
@@ -3520,14 +3553,23 @@ export function getAllPageProcessorImports(state, pageProcessors) {
   return getPageProcessorImportsFromFlow(imports, pageProcessors);
 }
 
+export function integrationAppImportMetadata(state, importId) {
+  return fromSession.integrationAppImportMetadata(
+    state && state.session,
+    importId
+  );
+}
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
-  const { assistant, adaptorType, sampleData } = resource;
+  const { assistant, adaptorType, sampleData, _connectorId } = resource;
+  const isIntegrationApp = !!_connectorId;
 
-  if (assistant) {
+  if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (adaptorType === 'NetSuiteDistributedImport') {
+  }
+  if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
@@ -3549,7 +3591,8 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (adaptorType === 'SalesforceImport') {
+  }
+  if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
     const { data, status } = metadataOptionsAndResources({
@@ -3563,7 +3606,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (sampleData) {
+  }
+  if (isIntegrationApp) {
+    // handles incase of IAs
+    return integrationAppImportMetadata(state, resourceId);
+  }
+  if (sampleData) {
     // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),
@@ -3809,6 +3857,7 @@ export function getCustomResourceLabel(
   { resourceType, resourceId, flowId }
 ) {
   const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isDataloader = !!flowDetails(state, flowId).isSimpleImport;
   const isNewResource = isNewId(resourceId);
   const { merged: resource = {} } = resourceData(
     state,
@@ -3820,6 +3869,9 @@ export function getCustomResourceLabel(
   // Default resource labels based on resourceTypes handled here
   if (isLookup) {
     resourceLabel = 'Lookup';
+  } else if (isDataloader && resourceType === 'pageProcessor') {
+    // Incase of data loader PP 1st step , we cannot add lookups so , resourceLabel is of imports type
+    resourceLabel = MODEL_PLURAL_TO_LABEL.imports;
   } else {
     resourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
   }
@@ -4248,5 +4300,100 @@ export function customSettingsForm(state, resourceId) {
   return fromSession.customSettingsForm(state && state.session, resourceId);
 }
 
+export function flowResources(state, flowId) {
+  const resources = [];
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (flow._exportId) {
+    const exportDoc = fromData.resource(
+      state && state.data,
+      'exports',
+      flow._exportId
+    );
+
+    resources.push({ _id: flow._exportId, name: exportDoc.name });
+  }
+
+  if (flow._importId) {
+    const importDoc = fromData.resource(
+      state && state.data,
+      'imports',
+      flow._importId
+    );
+
+    resources.push({ _id: flow._exportId, name: importDoc.name });
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = fromData.resource(
+        state && state.data,
+        'exports',
+        pg._exportId
+      );
+
+      resources.push({ _id: pg._exportId, name: exportDoc.name });
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = fromData.resource(
+          state && state.data,
+          'imports',
+          pp._importId
+        );
+
+        resources.push({ _id: pp._importId, name: importDoc.name });
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = fromData.resource(
+          state && state.data,
+          'exports',
+          pp._exportId
+        );
+
+        resources.push({ _id: pp._exportId, name: exportDoc.name });
+      }
+    });
+  }
+
+  return resources;
+}
+
+export const redirectUrlToResourceListingPage = (
+  state,
+  resourceType,
+  resourceId
+) => {
+  if (resourceType === 'integration') {
+    return getRoutePath(`/integrations/${resourceId}/flows`);
+  }
+
+  if (resourceType === 'flow') {
+    const flow = resource(state, 'flows', resourceId);
+
+    if (flow) {
+      return getRoutePath(
+        `integrations/${flow._integrationId || 'none'}/flows`
+      );
+    }
+  }
+
+  return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
+};
+
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+
+export function retryDataContext(state, retryId) {
+  return fromSession.retryDataContext(state && state.session, retryId);
+}
+
+export const rdbmsConnectionType = (state, connectionId) => {
+  const connection = resource(state, 'connections', connectionId) || {};
+
+  return connection.rdbms && connection.rdbms.type;
+};

@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
@@ -337,7 +337,7 @@ export default function JobActionsMenu({
   }
 
   return (
-    <Fragment>
+    <>
       {showRetriesDialog && (
         <JobRetriesDialog
           job={job}
@@ -392,6 +392,6 @@ export default function JobActionsMenu({
         disabled={menuOptions.length === 0}>
         <EllipsisHorizontallIcon />
       </IconButton>
-    </Fragment>
+    </>
   );
 }

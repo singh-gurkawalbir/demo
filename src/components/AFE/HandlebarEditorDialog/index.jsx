@@ -1,13 +1,17 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import EditorDialog from '../EditorDialog';
 import actions from '../../../actions';
 import TextToggle from '../../TextToggle';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   editorToggleContainer: {
     marginRight: theme.spacing(2),
+  },
+  helpTextButton: {
+    padding: 0,
   },
 }));
 const toggleEditorOptions = [
@@ -25,6 +29,11 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
         onChange={onVersionToggle}
         exclusive
         options={toggleEditorOptions}
+      />
+      <Help
+        title="AFE"
+        className={classes.helpTextButton}
+        helpKey="afe.sampleDataSwitch"
       />
     </div>
   );

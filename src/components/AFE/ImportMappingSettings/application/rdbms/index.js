@@ -143,7 +143,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {

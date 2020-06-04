@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,13 +9,13 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
-import ActionButton from '../../../../components/ActionButton';
-import useConfirmDialog from '../../../../components/ConfirmDialog';
+import ActionButton from '../../../ActionButton';
+import useConfirmDialog from '../../../ConfirmDialog';
 import {
   getNetSuiteSubrecordLabel,
   getNetSuiteSubrecordImports,
 } from '../../../../utils/resource';
-import AddIcon from '../../../../components/icons/AddIcon';
+import AddIcon from '../../../icons/AddIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing(2),
   },
   link: {
     display: 'flex',
@@ -54,6 +53,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: theme.spacing(2),
   },
   actionBtns: {
     display: 'flex',
@@ -119,14 +119,14 @@ export default function DynaNetSuiteSubRecords(props) {
       if (!hasNetsuiteDa) {
         patchSet.push({
           op: 'add',
-          path: `/netsuite_da`,
+          path: '/netsuite_da',
           value: {},
         });
       }
 
       patchSet.push({
         op: 'add',
-        path: `/netsuite_da/subrecords`,
+        path: '/netsuite_da/subrecords',
         value: subrecordsFromMappings,
       });
 
@@ -167,7 +167,7 @@ export default function DynaNetSuiteSubRecords(props) {
                   [
                     {
                       op: 'replace',
-                      path: `/netsuite_da/subrecords`,
+                      path: '/netsuite_da/subrecords',
                       value: updatedSubrecords,
                     },
                   ],
@@ -187,7 +187,7 @@ export default function DynaNetSuiteSubRecords(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <SubRecordDrawer
         resourceContext={resourceContext}
         flowId={flowId}
@@ -228,6 +228,6 @@ export default function DynaNetSuiteSubRecords(props) {
             </div>
           ))}
       </div>
-    </Fragment>
+    </>
   );
 }

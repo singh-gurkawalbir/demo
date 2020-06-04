@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions, { availableResources } from '../../../actions';
 
 describe('resources reducer', () => {
@@ -223,7 +223,7 @@ describe('resources reducer for special cases', () => {
 });
 
 describe('intetgrationApps installer reducer', () => {
-  describe(`integrationApps received installer install_inProgress action`, () => {
+  describe('integrationApps received installer install_inProgress action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to true', () => {
       let state;
       const collection = [
@@ -362,7 +362,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_failure action`, () => {
+  describe('integrationApps received installer install_failure action', () => {
     test('should find the integration with id and find the installation step with passed installerFunction and set isTriggered flag to false', () => {
       let state;
       const collection = [
@@ -494,7 +494,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_complete action`, () => {
+  describe('integrationApps received installer install_complete action', () => {
     test('should find the integration with id and replace all the install steps with stepsToUpdate', () => {
       let state;
       const stepsToUpdate = [{ a: 1, b: 2 }, { a: 2, b: 1 }];
@@ -579,7 +579,7 @@ describe('intetgrationApps installer reducer', () => {
       expect(installStepsAfterAction).toEqual([]);
     });
   });
-  describe(`integrationApps received installer install_verify action`, () => {
+  describe('integrationApps received installer install_verify action', () => {
     test('should find the integration with id and find the install step by installerFunction and set verifying flag to true', () => {
       let state;
       const collection = [
@@ -904,6 +904,59 @@ describe('resources selectors', () => {
         { aa: 2, isCurrentStep: true },
         { aa: 3 },
       ]);
+    });
+  });
+
+  describe('hasSettingsForm', () => {
+    test('should return false on bad/empty state.', () => {
+      expect(selectors.hasSettingsForm(undefined, 'exports', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm({}, 'exports', 123)).toBeFalsy();
+    });
+
+    test('should return false on bad/empty arguments.', () => {
+      const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'junk', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm(state, 'exports')).toBeFalsy();
+      expect(selectors.hasSettingsForm(state)).toBeFalsy();
+    });
+
+    test('should return false if settings form is invalid on the resource', () => {
+      const testExports = [
+        { _id: 123, name: 'A' },
+        { _id: 567, name: 'B', settingsForm: {} },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'exports', 123)).toBeFalsy();
+      expect(selectors.hasSettingsForm(state, 'exports', 567)).toBeFalsy();
+    });
+
+    test('should return true if settings form is valid on the resource', () => {
+      const testExports = [
+        { _id: 123, name: 'A', settingsForm: { form: { fieldMap: {} } } },
+        { _id: 567, name: 'B', settingsForm: { init: { _scriptId: '123' } } },
+        {
+          _id: 890,
+          name: 'C',
+          settingsForm: { form: { fieldMap: {} }, init: { _scriptId: '123' } },
+        },
+      ];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', testExports)
+      );
+
+      expect(selectors.hasSettingsForm(state, 'exports', 123)).toBeTruthy();
+      expect(selectors.hasSettingsForm(state, 'exports', 567)).toBeTruthy();
+      expect(selectors.hasSettingsForm(state, 'exports', 890)).toBeTruthy();
     });
   });
 });

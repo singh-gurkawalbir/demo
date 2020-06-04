@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
@@ -13,6 +13,7 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
   },
 }));
+const rowsPerPageOptions = [10, 25, 50];
 
 export default function ErrorTable(props) {
   const classes = useStyles();
@@ -46,12 +47,12 @@ export default function ErrorTable(props) {
   }, [dataFilter, rowsPerPage]);
 
   return (
-    <Fragment>
+    <>
       {data.length ? (
-        <Fragment>
+        <>
           <CeligPagination
             {...paginationOptions}
-            rowsPerPageOptions={[10, 25, 50]}
+            rowsPerPageOptions={rowsPerPageOptions}
             className={classes.tablePaginationRoot}
             count={data.length}
             page={page}
@@ -65,10 +66,10 @@ export default function ErrorTable(props) {
             {...metadata}
             actionProps={actionProps}
           />
-        </Fragment>
+        </>
       ) : (
         <div className={classes.emptyRow}>{emptyRowsLabel || 'No Rows'} </div>
       )}
-    </Fragment>
+    </>
   );
 }

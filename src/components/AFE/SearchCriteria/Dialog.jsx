@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -10,7 +10,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
-import SearchCriteriaEditor from './';
+import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 

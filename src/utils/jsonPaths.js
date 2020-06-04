@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { celigoListCompare } from './sort';
 
 const emptySet = [];
 /**
@@ -86,8 +87,8 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
               getUnionObject(v),
               prefix
                 ? [prefix, k + (options.isHandlebarExp ? '.0' : '[*]')].join(
-                    '.'
-                  )
+                  '.'
+                )
                 : k + (options.isHandlebarExp ? '.0' : '[*]'),
               options
             )
@@ -130,34 +131,7 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
     return paths;
   }
 
-  return paths.sort((a, b) => {
-    if (
-      (a.id && a.id.indexOf('[*]') > -1 && b.id && b.id.indexOf('[*]') > -1) ||
-      (a.id && a.id.indexOf('[*]') === -1 && b.id && b.id.indexOf('[*]') === -1)
-    ) {
-      return a.id > b.id ? 1 : -1;
-    }
-
-    if (
-      a.id &&
-      a.id.indexOf('[*]') === -1 &&
-      b.id &&
-      b.id.indexOf('[*]') > -1
-    ) {
-      return -1;
-    }
-
-    if (
-      a.id &&
-      a.id.indexOf('[*]') > -1 &&
-      b.id &&
-      b.id.indexOf('[*]') === -1
-    ) {
-      return 1;
-    }
-
-    return 0;
-  });
+  return paths.sort(celigoListCompare);
 }
 
 /**
@@ -218,7 +192,8 @@ export const getTransformPaths = (dataIn, prefix) => {
 export function pickFirstObject(param) {
   if (Object.prototype.toString.call(param) === '[object Object]') {
     return param;
-  } else if (_.isArray(param)) {
+  }
+  if (_.isArray(param)) {
     if (!!param.length && Array.isArray(param[0])) {
       if (param[0].length) {
         return getUnionObject(param[0]);
@@ -295,34 +270,7 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
     return paths;
   }
 
-  return paths.sort((a, b) => {
-    if (
-      (a.id && b.id && a.id.indexOf('[*]') > -1 && b.id.indexOf('[*]') > -1) ||
-      (a.id && b.id && a.id.indexOf('[*]') === -1 && b.id.indexOf('[*]') === -1)
-    ) {
-      return a.id > b.id ? 1 : -1;
-    }
-
-    if (
-      a.id &&
-      b.id &&
-      a.id.indexOf('[*]') === -1 &&
-      b.id.indexOf('[*]') > -1
-    ) {
-      return -1;
-    }
-
-    if (
-      a.id &&
-      b.id &&
-      a.id.indexOf('[*]') > -1 &&
-      b.id.indexOf('[*]') === -1
-    ) {
-      return 1;
-    }
-
-    return 0;
-  });
+  return paths.sort(celigoListCompare);
 }
 
 /**

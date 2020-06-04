@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import DoneIcon from '@material-ui/icons/Done';
 import { useDispatch, useSelector } from 'react-redux';
@@ -59,7 +59,7 @@ const TestButton = props => {
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
 
   return (
-    <Fragment>
+    <>
       <PingMessage resourceId={resourceId} />
       <DynaAction
         {...props}
@@ -71,7 +71,7 @@ const TestButton = props => {
         color="secondary">
         {label || 'Test connection'}
       </DynaAction>
-    </Fragment>
+    </>
   );
 };
 

@@ -14,6 +14,7 @@ export default (
     type,
     metadata,
     metadataError,
+    validationError,
     connectionId,
     commMetaPath,
     previewData,
@@ -117,6 +118,27 @@ export default (
         break;
       }
 
+      case actionTypes.METADATA.VALIDATION_ERROR: {
+        if (
+          draft.application[connectionId] &&
+          draft.application[connectionId][key] &&
+          draft.application[connectionId][key].status === 'refreshed'
+        ) {
+          draft.application[connectionId][key].status = 'error';
+          draft.application[connectionId][
+            key
+          ].validationError = validationError;
+        } else {
+          draft.application[connectionId][key] = {
+            status: 'error',
+            data: [],
+            validationError,
+          };
+        }
+
+        break;
+      }
+
       case actionTypes.METADATA.ASSISTANT_RECEIVED: {
         const { adaptorType, assistant, metadata } = action;
 
@@ -140,14 +162,14 @@ export const optionsFromMetadata = ({
 }) => {
   const applicationResource = (state && state.application) || null;
   const path = commMetaPath;
-  const { status, data, errorMessage, changeIdentifier } =
+  const { status, data, errorMessage, validationError, changeIdentifier } =
     (applicationResource &&
       applicationResource[connectionId] &&
       applicationResource[connectionId][path]) ||
     {};
 
   if (!data) {
-    return { status, data, errorMessage };
+    return { status, data, errorMessage, validationError };
   }
 
   const metaFilter = metadataFilterMap[filterKey || 'default'];
@@ -158,7 +180,13 @@ export const optionsFromMetadata = ({
       connectionId,
     });
 
-  return { data: transformedData, status, errorMessage, changeIdentifier };
+  return {
+    data: transformedData,
+    status,
+    errorMessage,
+    validationError,
+    changeIdentifier,
+  };
 };
 
 export const optionsMapFromMetadata = (
@@ -201,9 +229,7 @@ export const optionsMapFromMetadata = (
     data: {
       optionsMap: [
         { ...optionsMap[0] },
-        Object.assign({}, optionsMap[1], {
-          options: options.data || optionsMap[1].options || [],
-        }),
+        { ...optionsMap[1], options: options.data || optionsMap[1].options || [], },
       ],
     },
   };

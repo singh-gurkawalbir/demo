@@ -11,7 +11,7 @@ export default {
       formValues['/http/encrypted/securityKey']
     )}&includeWarehouses=True`,
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://upsprodwebservices.upsefulfillment.com/ws.asmx`,
+    '/http/baseURI': 'https://upsprodwebservices.upsefulfillment.com/ws.asmx',
     '/http/encrypted/securityKey': encodeURIComponent(
       formValues['/http/encrypted/securityKey']
     ),

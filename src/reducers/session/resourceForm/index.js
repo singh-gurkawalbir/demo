@@ -37,9 +37,9 @@ export default function reducer(state = {}, action) {
           initData:
             state[key] && state[key].initData
               ? fieldsTouchedForMeta(
-                  fieldMeta,
-                  state[key] && state[key].initData
-                )
+                fieldMeta,
+                state[key] && state[key].initData
+              )
               : null,
           isNew,
           skipCommit,
@@ -47,6 +47,14 @@ export default function reducer(state = {}, action) {
           fieldMeta,
           flowId,
           showFormValidationsBeforeTouch: false,
+        },
+      };
+    case actionTypes.RESOURCE_FORM.INIT_FAILED:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          initFailed: true,
         },
       };
 
@@ -58,7 +66,9 @@ export default function reducer(state = {}, action) {
     case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
       // only after form successfully intializes does it make sense to show validations
       // if there is no form state it does not make sense to create a state and tie this property
-      if (!state[key] || !state[key].initComplete) return state;
+
+      // commenting below as some resources (eg integration) might not be initialized
+      // if (!state[key] || !state[key].initComplete) return state;
 
       return {
         ...state,

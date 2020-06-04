@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 
@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(3),
-    overflow: 'scroll',
+    overflow: 'visible',
   },
   tab: {
     minWidth: theme.spacing(13.75),

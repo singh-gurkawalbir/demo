@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import classNames from 'classnames';
+import React, { useState } from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
-import CodeEditor from '../../../components/CodeEditor';
+import CodeEditor from '../../CodeEditor';
 import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     width: '65vh',
   },
   wrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'flex-start',
     display: 'flex',
   },
@@ -53,6 +53,7 @@ export default function DynaEditor({
   options,
   onFieldChange,
   value,
+  className,
   label,
   editorClassName,
   disabled,
@@ -60,6 +61,7 @@ export default function DynaEditor({
   description,
   errorMessages,
   isValid,
+  helpKey,
 }) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -136,20 +138,15 @@ export default function DynaEditor({
   );
 
   return (
-    <div className={classes.wrapper}>
+    <div className={clsx(classes.wrapper, className)}>
       <div className={classes.dynaEditorWrapper}>
         {showEditor && editorDialog}
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel>{label}</FormLabel>
-          {/* {TODO (Dave): props did not have the helpkey so passing label for design purpose} */}
-          <FieldHelp helpText={label} />
+          {helpKey && <FieldHelp helpKey={helpKey} />}
         </div>
 
-        <div
-          className={classNames(
-            classes.inlineEditorContainer,
-            editorClassName
-          )}>
+        <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
           <CodeEditor
             readOnly={disabled}
             name={`${id}-inline`}

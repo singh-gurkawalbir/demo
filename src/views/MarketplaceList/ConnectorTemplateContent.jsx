@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Chip } from '@material-ui/core';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -24,7 +24,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <div className={classes.content}>
         <ApplicationImg
           assistant={
@@ -50,6 +50,6 @@ export default function ConnectorTemplateContent({ resource, application }) {
           {description}
         </Typography>
       </div>
-    </Fragment>
+    </>
   );
 }

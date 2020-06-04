@@ -1,20 +1,25 @@
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton, Typography } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import ShowContentIcon from '../icons/ShowContentIcon';
 import CopyIcon from '../icons/CopyIcon';
-import RegenerateToken from '../icons/RegenerateTokenIcon';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
 import AccessToken from '../MaskToken';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
   },
-});
+  showToken: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
 
 export default function StackSystemToken({ stackId }) {
   const dispatch = useDispatch();
@@ -23,50 +28,42 @@ export default function StackSystemToken({ stackId }) {
   const { systemToken } = useSelector(state =>
     selectors.stackSystemToken(state, stackId)
   );
-  const displaySystemToken = () => {
+  const displaySystemToken = useCallback(() => {
     dispatch(actions.stack.displayToken(stackId));
-  };
-
-  const generateSystemToken = () => {
-    dispatch(actions.stack.generateToken(stackId));
-  };
-
-  const copyToClipboard = systemToken => () => {
-    enqueueSnackbar({
-      message: `Token (${systemToken}) copied to your clipboard!`,
-    });
-  };
+  }, [dispatch, stackId]);
+  const copyToClipboard = useCallback(
+    systemToken => () => {
+      enqueueSnackbar({
+        message: `Token (${systemToken}) copied to your clipboard!`,
+      });
+    },
+    [enqueueSnackbar]
+  );
 
   return (
     <div className={classes.root}>
-      <Typography variant="caption">
-        {systemToken || <AccessToken count="23" />}
-      </Typography>
       {systemToken && (
-        <IconButton
-          data-test="copyStackSystemToken"
-          title="Copy to clipboard"
-          onClick={copyToClipboard(systemToken)}
-          size="small">
-          <CopyIcon />
-        </IconButton>
+        <>
+          <Typography variant="caption">
+            {systemToken || <AccessToken count="23" />}
+          </Typography>
+          <IconButton
+            data-test="copyStackSystemToken"
+            title="Copy to clipboard"
+            onClick={copyToClipboard(systemToken)}
+            size="small">
+            <CopyIcon />
+          </IconButton>
+        </>
       )}
       {!systemToken && (
-        <IconButton
-          data-test="viewStackSystemToken"
-          title="View Token"
+        <Typography
+          className={classes.showToken}
           onClick={displaySystemToken}
-          size="small">
-          <ShowContentIcon />
-        </IconButton>
+          variant="caption">
+          Show Token
+        </Typography>
       )}
-      <IconButton
-        data-test="regenerateStackSystemToken"
-        title="Regenerate Token"
-        onClick={generateSystemToken}
-        size="small">
-        <RegenerateToken />
-      </IconButton>
     </div>
   );
 }

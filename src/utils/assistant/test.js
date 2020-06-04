@@ -15,7 +15,7 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
-} from './';
+} from '.';
 
 describe('getMatchingRoute', () => {
   const testCases = [
@@ -1148,7 +1148,7 @@ describe('generateValidReactFormFieldId', () => {
 });
 
 describe('convertToReactFormFields', () => {
-  let testCases = [
+  const testCases = [
     [
       {
         fieldDetailsMap: {},
@@ -1271,6 +1271,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
             type: 'textwithflowsuggestion',
@@ -1325,6 +1326,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
             type: 'textwithflowsuggestion',
@@ -1528,6 +1530,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
             type: 'textwithflowsuggestion',
@@ -1582,6 +1585,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
             type: 'textwithflowsuggestion',
@@ -1775,8 +1779,6 @@ describe('convertToReactFormFields', () => {
       },
     ],
   ];
-
-  testCases = [testCases[testCases.length - 1]];
 
   each(testCases).test(
     'should return %o when passed  %o ',

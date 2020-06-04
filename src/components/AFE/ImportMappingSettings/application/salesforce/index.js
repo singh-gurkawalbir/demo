@@ -105,6 +105,7 @@ export default {
           ],
           value: lookup.whereClause,
           data: extractFields,
+          opts: options,
         },
         'lookup.whereClauseText': {
           id: 'lookup.whereClauseText',
@@ -262,7 +263,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {
@@ -534,7 +535,8 @@ export default {
           }
 
           return expressionValue;
-        } else if (fieldId === 'lookup.whereClause') {
+        }
+        if (fieldId === 'lookup.whereClause') {
           const sObjectTypeField = fields.find(
             field => field.id === 'lookup.sObjectType'
           );
@@ -545,7 +547,8 @@ export default {
               ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
               : '',
           };
-        } else if (fieldId === 'lookup.whereClauseText') {
+        }
+        if (fieldId === 'lookup.whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === 'lookup.whereClause'
           );

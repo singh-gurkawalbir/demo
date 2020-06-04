@@ -1,6 +1,7 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import clsx from 'clsx';
 import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
@@ -8,7 +9,6 @@ import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
-import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 import Help from '../../../../../../components/Help';
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +58,7 @@ export default function DrawerTitleBar({
   addCategory,
   parentUrl,
   help,
-  backToParent,
+  className,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -80,17 +80,8 @@ export default function DrawerTitleBar({
   };
 
   return (
-    <div className={classes.titleBar}>
+    <div className={clsx(classes.titleBar, className)}>
       <LoadResources required resources="flows">
-        {backToParent && (
-          <IconButton
-            data-test="openBasicMapping"
-            aria-label="back"
-            onClick={handleClose}
-            className={classes.arrowLeft}>
-            <BackArrowIcon />
-          </IconButton>
-        )}
         <Typography variant="h3" className={classes.title}>
           {title ||
             `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${

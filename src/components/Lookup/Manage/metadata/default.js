@@ -15,6 +15,7 @@ const getLookupMetadata = ({
         name: '_mode',
         type: 'radiogroup',
         label: '',
+        required: true,
         defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
         options: [
           {
@@ -50,6 +51,7 @@ const getLookupMetadata = ({
         name: '_method',
         type: 'select',
         label: 'HTTP method',
+        required: true,
         defaultValue: lookup.method,
         options: [
           {
@@ -77,6 +79,7 @@ const getLookupMetadata = ({
         id: '_body',
         name: '_body',
         type: 'httprequestbody',
+        required: true,
         disableEditorV2: true,
         supportLookup: false,
         connectionId,
@@ -100,6 +103,7 @@ const getLookupMetadata = ({
         id: '_extract',
         name: '_extract',
         type: 'text',
+        required: true,
         label: 'Resource identifier path',
         placeholder: 'Resource identifier path',
         defaultValue: lookup.extract,
@@ -116,6 +120,7 @@ const getLookupMetadata = ({
         name: '_mapList',
         type: 'staticMap',
         label: '',
+        required: true,
         keyName: 'export',
         keyLabel: 'Export field',
         valueName: 'import',
@@ -133,6 +138,7 @@ const getLookupMetadata = ({
         name: '_name',
         type: 'text',
         label: 'Name',
+        required: true,
         defaultValue: lookup.name,
         placeholder: 'Alphanumeric characters only please',
         helpText:
@@ -174,6 +180,7 @@ const getLookupMetadata = ({
         type: 'text',
         label: 'Enter default value',
         defaultValue: lookup.default,
+        required: true,
         placeholder: 'Enter default value',
         visibleWhen: [
           {

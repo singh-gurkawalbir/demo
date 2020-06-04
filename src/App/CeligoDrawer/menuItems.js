@@ -62,7 +62,7 @@ export default function menuItems(
           routeProps: '/pg/integrations/:integrationId/dataloader',
         },
         {
-          label: 'Developer playground',
+          label: 'Dev playground',
           Icon: EditorsPlaygroundIcon,
           path: '/editors',
         },
@@ -122,7 +122,7 @@ export default function menuItems(
           href: SUBMIT_TICKET_URL,
         },
         {
-          label: `What's New`,
+          label: "What's New",
           Icon: WhatsNewIcon,
           component: 'a',
           href: WHATS_NEW_URL,
@@ -145,7 +145,7 @@ export default function menuItems(
 
     if (!isDeveloper) {
       toolItems.children = toolItems.children.filter(
-        i => !i.label.startsWith('Developer play')
+        i => !i.label.startsWith('Dev play')
       );
 
       resourceItems.children = resourceItems.children.filter(

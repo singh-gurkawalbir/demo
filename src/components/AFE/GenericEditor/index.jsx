@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { func, string } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from './CodePanel';
@@ -64,9 +64,10 @@ const Editor = props => {
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
+        {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
           <div className={classes.spinnerWrapper}>
-            <Spinner size={50} color="primary" />
+            <Spinner size={48} color="primary" />
           </div>
         ) : (
           <CodePanel
@@ -82,8 +83,10 @@ const Editor = props => {
         <PanelTitle title={resultTitle} />
         <CodePanel name="result" value={result} mode={resultMode} readOnly />
       </PanelGridItem>
-
-      <ErrorGridItem error={error} violations={violations} />
+      {/* Hide error panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        <ErrorGridItem error={error} violations={violations} />
+      )}
     </PanelGrid>
   );
 };

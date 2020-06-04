@@ -1,8 +1,8 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import StatusTag from '../../components/StatusTag';
+import StatusTag from '../StatusTag';
 import Spinner from '../Spinner';
 import { getJobStatusDetails } from './util';
 
@@ -50,7 +50,7 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showSpinner) {
     return (
-      <Fragment>
+      <>
         {!isJobInQueuedStatus && (
           <div className={classes.state}>
             <div className={classes.spinnerWrapper}>
@@ -73,7 +73,7 @@ export default function JobStatus({ job }) {
             </Button>
           </div>
         )}
-      </Fragment>
+      </>
     );
   }
 

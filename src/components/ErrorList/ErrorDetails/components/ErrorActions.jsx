@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
@@ -19,8 +19,17 @@ export default function Actions({
     return errorDoc.retryDataKey;
   });
   const updateRetry = useCallback(() => {
-    dispatch(actions.job.updateRetryData({ retryData, retryId }));
-  }, [dispatch, retryData, retryId]);
+    dispatch(
+      actions.errorManager.retryData.updateRequest({
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      })
+    );
+
+    if (onClose) onClose();
+  }, [dispatch, flowId, onClose, resourceId, retryData, retryId]);
   const resolve = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
@@ -45,7 +54,7 @@ export default function Actions({
   }, [dispatch, flowId, onClose, resourceId, retryId]);
 
   return (
-    <Fragment>
+    <>
       {retryId && (
         <Button variant="outlined" onClick={retry}>
           Retry
@@ -55,7 +64,7 @@ export default function Actions({
         Resolve
       </Button>
       {retryId ? (
-        <Button variant="outlined" disabled onClick={updateRetry}>
+        <Button variant="outlined" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
       ) : (
@@ -63,6 +72,6 @@ export default function Actions({
           Close
         </Button>
       )}
-    </Fragment>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import * as selectors from '../../reducers';
@@ -34,10 +34,11 @@ export function AppRoutingWithAuth(props) {
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
-      if (currentRoute !== getRoutePath('signin'))
+      if (currentRoute !== getRoutePath('signin')) {
         history.push({
           state: { attemptedRoute: currentRoute },
         });
+      }
       initSession();
     }
 

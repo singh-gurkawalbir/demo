@@ -1,10 +1,10 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEmpty } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DynaForm from '../..';
+import DynaSubmit from '../../DynaSubmit';
 import {
   convertToReactFormFields,
   updateFormValues,
@@ -15,7 +15,7 @@ import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaAssSearchParamsWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -25,6 +25,8 @@ const useStyles = makeStyles(theme => ({
   dynaAssistantFormLabel: {
     marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 const SearchParamsModal = props => {
@@ -57,10 +59,10 @@ const SearchParamsModal = props => {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <Fragment>
+      <>
         <span>Search parameters</span>
-      </Fragment>
-      <Fragment>
+      </>
+      <>
         <DynaForm
           fieldMeta={{
             fieldMap,
@@ -77,7 +79,7 @@ const SearchParamsModal = props => {
             </Button>
           </div>
         </DynaForm>
-      </Fragment>
+      </>
     </ModalDialog>
   );
 };
@@ -97,7 +99,7 @@ export default function DynaAssistantSearchParams(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {showSearchParamsModal && (
         <SearchParamsModal
           {...props}
@@ -112,7 +114,7 @@ export default function DynaAssistantSearchParams(props) {
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
         <FormLabel className={classes.dynaAssistantFormLabel}>
-          Search parameters:
+          Configure search parameters:
         </FormLabel>
 
         <Button
@@ -121,7 +123,7 @@ export default function DynaAssistantSearchParams(props) {
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
-          {label} {required && !isValid ? '*' : ''}
+          {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
         {/* {Todo (shiva): we need helpText for the component} */}
         <FieldHelp {...props} helpText={label} />
@@ -131,6 +133,6 @@ export default function DynaAssistantSearchParams(props) {
         description=""
         errorMessages="Please enter required parameters"
       />
-    </Fragment>
+    </>
   );
 }

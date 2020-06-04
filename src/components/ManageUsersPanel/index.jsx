@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    overflowX: 'scroll',
+    overflow: 'visible',
   },
 }));
 
@@ -43,13 +43,14 @@ export default function ManageUsersPanel({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <UserDialog
-        open={showDialog}
-        userId={userId}
-        onClose={handleCloseDialog}
-        onSuccess={handleCloseDialog}
-      />
-
+      {showDialog && (
+        <UserDialog
+          open={showDialog}
+          userId={userId}
+          onClose={handleCloseDialog}
+          onSuccess={handleCloseDialog}
+        />
+      )}
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInviteUserClick}>

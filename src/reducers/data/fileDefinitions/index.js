@@ -9,8 +9,7 @@ const addSubHeaderElement = (acc, curr) => {
   } else if (
     acc[acc.length - 1].vendor &&
     acc[acc.length - 1].vendor !== curr.vendor
-  )
-    acc.push(...[{ subHeader: curr.vendor }, curr]);
+  ) acc.push(...[{ subHeader: curr.vendor }, curr]);
   else acc.push(curr);
 
   return acc;

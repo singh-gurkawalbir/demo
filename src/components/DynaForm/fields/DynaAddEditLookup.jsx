@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
 });
 
-/** 
+/**
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
@@ -55,7 +55,7 @@ export default function DynaAddEditLookup(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showLookup && (
         <ManageLookupDialog
           lookup={value}
@@ -79,6 +79,6 @@ export default function DynaAddEditLookup(props) {
         onClick={handleEditorClick}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

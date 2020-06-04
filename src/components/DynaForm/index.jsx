@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Form } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -11,7 +11,7 @@ import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
-    maxHeight: `100%`,
+    maxHeight: '100%',
     overflowY: 'auto',
     padding: theme.spacing(1),
     border: 'none',
@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     padding: theme.spacing(2, 0),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 const DynaForm = props => {
@@ -101,13 +102,11 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     selectors.resource(state, resourceType, resourceId)
   );
   // pass in the integration Id to find access level of its associated forms
-  // eslint-disable-next-line prettier/prettier
   const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
     state => selectors.formAccessLevel(state, integrationId, resource, disabled)
   );
   const updatedFieldMeta = useMemo(() => {
-    if (disableAllFieldsExceptClocked)
-      return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
+    if (disableAllFieldsExceptClocked) return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
 
     return fieldMeta;
   }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);

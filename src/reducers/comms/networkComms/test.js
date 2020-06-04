@@ -15,7 +15,7 @@ describe('comms reducers', () => {
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
 
-  describe(`clear comms action `, () => {
+  describe('clear comms action ', () => {
     test('clear the comms part of the redux store', () => {
       const newState = reducer(undefined, actions.api.request(path, method));
       let completedApiActionState = reducer(
@@ -41,7 +41,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`request action`, () => {
+  describe('request action', () => {
     test('should set loading flag', () => {
       const newState = reducer(undefined, actions.api.request(path, method));
 
@@ -60,7 +60,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`completed action`, () => {
+  describe('completed action', () => {
     test('should clear loading flag', () => {
       const state = reducer(undefined, actions.api.request(path, method));
 
@@ -83,7 +83,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`failure action`, () => {
+  describe('failure action', () => {
     test('should set error message', () => {
       const state = reducer(
         undefined,
@@ -111,7 +111,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`retry action`, () => {
+  describe('retry action', () => {
     test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
       // force the retry value to be set...
       const state = reducer(undefined, actions.api.retry(path, method));
@@ -155,7 +155,7 @@ describe('comms selectors', () => {
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
 
-  describe(`isLoading`, () => {
+  describe('isLoading', () => {
     test('should be false on initial state', () => {
       const isLoading = selectors.isLoading(undefined, commKey);
 
@@ -176,7 +176,7 @@ describe('comms selectors', () => {
       expect(isLoading).toBe(false);
     });
   });
-  describe(`retryCount`, () => {
+  describe('retryCount', () => {
     test('should be 0 on initial state', () => {
       const count = selectors.retryCount(undefined, commKey);
 

@@ -5,7 +5,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
-import { evaluateExternalProcessor } from '../../sagas/editor';
+import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
@@ -187,6 +187,13 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
     );
 
     return;
+  }
+
+  if (type === 'csv') {
+    // Saving csv file content for csv in sample data for future use
+    yield put(
+      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
+    );
   }
 
   // For xlsx file , content gets converted to 'csv' before parsing

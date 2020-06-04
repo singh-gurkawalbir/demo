@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -16,17 +16,14 @@ const useStyles = makeStyles(theme => ({
     width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(0, 0, 0, 3),
     display: 'flex',
   },
-  buttonGroup: {
-    '& button': { marginRight: theme.spacing(1) },
-  },
+
   // TODO:check for better way to handle width when drawer open and closes
   fullWidthDrawerClose: {
     width: 'calc(100% - 60px)',
@@ -73,7 +70,7 @@ function MappingDrawer() {
           required="true"
           resources="imports, exports, connections">
           {importId ? (
-            <Fragment>
+            <>
               <StandaloneMapping
                 id={mappingEditorId}
                 onClose={handleClose}
@@ -84,7 +81,7 @@ function MappingDrawer() {
                 flowId={flowId}
                 subRecordMappingId={subRecordMappingId}
               />
-            </Fragment>
+            </>
           ) : (
             <SelectImport flowId={flowId} />
           )}

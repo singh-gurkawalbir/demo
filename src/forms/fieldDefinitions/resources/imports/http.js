@@ -176,7 +176,7 @@ export default {
     type: 'relativeuri',
     fieldType: 'relativeUri',
     label: 'Relative URI',
-    placeholder: 'Optional',
+
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
     visibleWhen: [
@@ -216,7 +216,7 @@ export default {
     type: 'text',
     label: 'Success path',
     delimiter: ',',
-    placeholder: 'Optional',
+
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -232,7 +232,7 @@ export default {
     type: 'text',
     label: 'Success values',
     delimiter: ',',
-    placeholder: 'Optional',
+
     // defaultValue: r =>
     //   r && r.http && r.http.response && r.http.response.successValues[0],
     visibleWhenAll: [
@@ -250,7 +250,7 @@ export default {
     type: 'text',
     label: 'Resource ID path',
     delimiter: ',',
-    placeholder: 'Optional',
+
     visibleWhen: [
       {
         field: 'http.method',
@@ -298,8 +298,8 @@ export default {
     label: 'Response path',
     visibleWhenAll: [
       {
-        field: 'http.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
+        field: 'http.batchSize',
+        isNot: ['', 0, 1],
       },
       {
         field: 'inputMode',
@@ -310,7 +310,7 @@ export default {
   'http.response.errorPath': {
     type: 'text',
     label: 'Error path',
-    placeholder: 'Optional',
+
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -326,6 +326,9 @@ export default {
     type: 'text',
     label: 'Batch size limit',
     defaultValue: 1,
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
     visibleWhenAll: [
       {
         field: 'http.method',
@@ -339,7 +342,7 @@ export default {
   },
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
+    label: 'Override success media type',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -357,7 +360,7 @@ export default {
   },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
+    label: 'Override error media type',
     visibleWhen: [
       {
         field: 'inputMode',

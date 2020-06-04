@@ -1,23 +1,27 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import * as selectors from '../../../../../reducers';
-import DebugIcon from '../../../../icons/DebugIcon';
 import actions from '../../../../../actions';
+import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
   label: 'Open debugger',
-  component: function OpenDebugger({ resource }) {
-    const { _id: connectionId } = resource;
-    const dispatch = useDispatch();
-    // TODO: Currently we dont show Open Debugger for monitor user. Since it also calls connection api
-    const canAccess = useSelector(
-      state =>
-        selectors.resourcePermissions(state, 'connections', connectionId).edit
-    );
+  icon: DebugIcon,
+  hasAccess: ({ state, rowData }) => {
+    const { _id: connectionId } = rowData;
+    const hasAccess = selectors.resourcePermissions(
+      state,
+      'connections',
+      connectionId
+    ).edit;
 
-    if (!canAccess) return null;
-    const handleOpenDebuggerClick = () => {
+    return hasAccess;
+  },
+  component: function OpenDebugger({ rowData = {} }) {
+    const { _id: connectionId } = rowData;
+    const dispatch = useDispatch();
+    const openDebugger = useCallback(() => {
       dispatch(actions.connection.requestDebugLogs(connectionId));
 
       dispatch(
@@ -31,15 +35,12 @@ export default {
           },
         ])
       );
-    };
+    }, [connectionId, dispatch]);
 
-    return (
-      <IconButton
-        data-test="openDebugger"
-        size="small"
-        onClick={handleOpenDebuggerClick}>
-        <DebugIcon />
-      </IconButton>
-    );
+    useEffect(() => {
+      openDebugger();
+    }, [openDebugger]);
+
+    return null;
   },
 };

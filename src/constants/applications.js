@@ -1,4 +1,5 @@
 import { isProduction } from '../forms/utils';
+import { stringCompare } from '../utils/sort';
 
 // Schema details:
 // ---------------
@@ -777,16 +778,7 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-connectors.sort((a, b) => {
-  const nameA = a.name ? a.name.toUpperCase() : '';
-  const nameB = b.name ? b.name.toUpperCase() : '';
-
-  if (nameA < nameB) return -1;
-
-  if (nameA > nameB) return 1;
-
-  return 0; // names must be equal
-});
+connectors.sort(stringCompare('name'));
 
 export const groupApplications = (
   resourceType,
@@ -821,16 +813,7 @@ export const groupApplications = (
     });
   }
 
-  assistantConnectors.sort((a, b) => {
-    const nameA = a.name ? a.name.toUpperCase() : '';
-    const nameB = b.name ? b.name.toUpperCase() : '';
-
-    if (nameA < nameB) return -1;
-
-    if (nameA > nameB) return 1;
-
-    return 0; // names must be equal
-  });
+  assistantConnectors.sort(stringCompare('name'));
 
   let filteredConnectors = assistantConnectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
@@ -844,7 +827,8 @@ export const groupApplications = (
       if (assistant) {
         if (appType === 'import') {
           return assistant.import;
-        } else if (appType === 'export') {
+        }
+        if (appType === 'export') {
           return assistant.export;
         }
 
@@ -854,9 +838,9 @@ export const groupApplications = (
       return true;
     }
 
-    // Do not show FTP import for DataLoader flows
+    // Do not show FTP/S3 import for DataLoader flows
     if (resourceType === 'pageProcessor' && isSimpleImport) {
-      return connector.id !== 'ftp' && !connector.webhookOnly;
+      return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
     }
 
     if (resourceType === 'pageProcessor' && assistant) {
@@ -893,13 +877,13 @@ export const groupApplications = (
 };
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
-  'helpscout', 
+  'helpscout',
   'errorception',
-  'aha', 
-  'pagerduty', 
-  'surveymonkey', 
-  'mailparser-io', 
-  'integrator-extension', 
+  'aha',
+  'pagerduty',
+  'surveymonkey',
+  'mailparser-io',
+  'integrator-extension',
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);

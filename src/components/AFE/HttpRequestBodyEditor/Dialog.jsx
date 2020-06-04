@@ -1,4 +1,5 @@
-import HttpRequestBodyEditor from './';
+import React from 'react';
+import HttpRequestBodyEditor from '.';
 import HandlebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function HttpRequestBodyDialog(props) {

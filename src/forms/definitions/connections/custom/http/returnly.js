@@ -5,7 +5,7 @@ export default {
     '/assistant': 'returnly',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.returnly.com/`,
+    '/http/baseURI': 'https://api.returnly.com/',
     '/http/ping/relativeURI': '/returns.json',
     '/http/ping/method': 'GET',
     '/http/headers': [

@@ -6,7 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
@@ -16,9 +16,10 @@ import {
   defaultPatchSetConverter,
   getMissingPatchSet,
 } from '../../../forms/utils';
-import ActionButton from '../../../components/ActionButton';
+import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../StatusCircle';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -47,11 +48,11 @@ const handleAddNewResource = args => {
   ) {
     let values;
 
-    if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+    if (['pageProcessor', 'pageGenerator'].includes(resourceType)) {
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
       });
-    else if (['iClients'].includes(resourceType)) {
+    } else if (['iClients'].includes(resourceType)) {
       values = {
         ...values,
         '/assistant': assistant,
@@ -162,6 +163,7 @@ function DynaSelectResource(props) {
     statusExport,
     ignoreEnvironmentFilter,
     resourceContext,
+    skipPingConnection,
   } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -285,7 +287,7 @@ function DynaSelectResource(props) {
     value,
   ]);
   const truncatedItems = items =>
-    items.map(i => ({
+    items.sort(stringCompare('label')).map(i => ({
       label: (
         <div title={i.label} className={classes.menuItem}>
           {i.label}
@@ -336,7 +338,7 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && (
+        {resourceType === 'connections' && !!value && !skipPingConnection && (
           <ConnectionLoadingChip connectionId={value} />
         )}
       </div>

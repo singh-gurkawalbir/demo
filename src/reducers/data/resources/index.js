@@ -5,6 +5,7 @@ import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyObject = {};
 const emptyList = [];
@@ -288,14 +289,16 @@ export default (state = {}, action) => {
     case actionTypes.CONNECTION.UPDATE_STATUS: {
       // cant implement immer here with current implementation. Sort being used in selector.
       if (newState.connections && newState.connections.length) {
-        collection.forEach(({ _id: cId, offline, queues }) => {
-          resourceIndex = newState.connections.findIndex(r => r._id === cId);
+        collection &&
+          collection.length &&
+          collection.forEach(({ _id: cId, offline, queues }) => {
+            resourceIndex = newState.connections.findIndex(r => r._id === cId);
 
-          if (resourceIndex !== -1) {
-            newState.connections[resourceIndex].offline = !!offline;
-            newState.connections[resourceIndex].queueSize = queues[0].size;
-          }
-        });
+            if (resourceIndex !== -1) {
+              newState.connections[resourceIndex].offline = !!offline;
+              newState.connections[resourceIndex].queueSize = queues[0].size;
+            }
+          });
 
         return newState;
       }
@@ -561,25 +564,8 @@ export function resourceList(
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  function desc(a, b, orderBy) {
-    const aVal = get(a, orderBy);
-    const bVal = get(b, orderBy);
-
-    if (bVal < aVal) {
-      return -1;
-    }
-
-    if (bVal > aVal) {
-      return 1;
-    }
-
-    return 0;
-  }
-
   const comparer = ({ order, orderBy }) =>
-    order === 'desc'
-      ? (a, b) => desc(a, b, orderBy)
-      : (a, b) => -desc(a, b, orderBy);
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
   let filteredByEnvironment;
@@ -675,5 +661,12 @@ export function isAgentOnline(state, agentId) {
     new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
       process.env.AGENT_STATUS_INTERVAL
   );
+}
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  const res = resource(state, resourceType, resourceId);
+  const settingsForm = res && res.settingsForm;
+
+  return !!(settingsForm && (settingsForm.form || settingsForm.init));
 }
 // #endregion

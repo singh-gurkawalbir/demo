@@ -5,7 +5,7 @@ export default {
     '/assistant': 'retailops',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.retailops.com`,
+    '/http/baseURI': 'https://api.retailops.com',
     '/http/ping/relativeURI': '/product/sku/get~1.json',
     '/http/ping/method': 'POST',
     '/http/ping/body': JSON.stringify({ sku_string: '1' }),

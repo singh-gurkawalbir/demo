@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import {
@@ -12,9 +12,11 @@ import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import CommStatus from '../../CommStatus';
 import ModalDialog from '../../ModalDialog';
 import UserForm from './UserForm';
+import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 export default function UserDialog({ open, userId, onClose, onSuccess }) {
   const [errorMessage, setErrorMessage] = useState();
+  const [disableSave, setDisableSave] = useState(false);
   const [actionsToClear, setActionsToClear] = useState();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -31,6 +33,8 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         accessLevel,
         integrationAccessLevel: [],
       };
+
+      setDisableSave(true);
 
       if (accessLevel === USER_ACCESS_LEVELS.TILE) {
         aShareData.accessLevel = undefined;
@@ -78,17 +82,20 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
 
           setErrorMessage();
         } else if (objStatus.createOrUpdate.status === COMM_STATES.ERROR) {
-          setErrorMessage(objStatus.createOrUpdate.message);
+          setErrorMessage(
+            inferErrorMessage(objStatus.createOrUpdate.message)[0]
+          );
         }
 
         setActionsToClear(['createOrUpdate']);
+        setDisableSave(false);
       }
     },
     [enqueueSnackbar, onSuccess, userId]
   );
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           createOrUpdate: {
@@ -110,11 +117,12 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
           )}
           <UserForm
             id={userId}
+            disableSave={disableSave}
             onSaveClick={handleSaveClick}
             onCancelClick={handleClose}
           />
         </div>
       </ModalDialog>
-    </Fragment>
+    </>
   );
 }

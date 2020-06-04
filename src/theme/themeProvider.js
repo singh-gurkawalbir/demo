@@ -3,7 +3,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import { merge } from 'lodash';
 import produce from 'immer';
 import styleguideTheme from '../styleguide/style';
-import colors from '../theme/colors';
+import colors from './colors';
 import light from './light';
 import dark from './dark';
 import sandbox from './sandbox';

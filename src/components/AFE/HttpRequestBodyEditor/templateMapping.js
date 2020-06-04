@@ -105,8 +105,8 @@ export function getXMLSampleTemplate(data) {
   if (data) {
     const eFields = Array.isArray(data)
       ? getJSONPaths(data[0], null, {
-          wrapSpecialChars: true,
-        })
+        wrapSpecialChars: true,
+      })
       : [];
 
     if (Array.isArray(data) && Array.isArray(data[0])) {

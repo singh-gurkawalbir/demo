@@ -1,5 +1,5 @@
 import { FormContext } from 'react-forms-processor/dist';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
@@ -13,8 +13,9 @@ function DynaUploadFile(props) {
     resourceType,
     formContext,
     onFieldChange,
+    placeholder,
   } = props;
-  const DEFAULT_PLACEHOLDER = 'Browse to zip file:';
+  const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
@@ -24,10 +25,10 @@ function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, fileType, name } = uploadedFile || {};
+    const { status, file, fileType } = uploadedFile || {};
 
     if (status === 'received') {
-      setFileName(name);
+      setFileName(DEFAULT_PLACEHOLDER);
       onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(

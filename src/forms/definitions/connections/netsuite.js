@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isProduction } from '../../utils';
 
 export default {
   preSave: formValues => {
@@ -45,8 +46,7 @@ export default {
       return { env };
     }
 
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '')
-      return { env, acc };
+    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -83,12 +83,19 @@ export default {
       connType: 'netsuite',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
-      requiredWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['token-auto'],
-        },
-      ],
+      requiredWhen: r => {
+        const isRequired =
+          !!r._connectorId || (!r._connectorId && !isProduction());
+
+        return isRequired
+          ? [
+            {
+              field: 'netsuite.authType',
+              is: ['token-auto'],
+            },
+          ]
+          : [];
+      },
     },
     'netsuite.account': {
       fieldId: 'netsuite.account',

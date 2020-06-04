@@ -1,24 +1,27 @@
-import { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowPopper from '../ArrowPopper';
 import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
-import HelpIcon from '../../components/icons/HelpIcon';
+import HelpIcon from '../icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpIcon: {
     fontSize: 18,
+    color: theme.palette.text.hint,
   },
-});
+}));
 
 function Help(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
     event => {
+      event.stopPropagation();
+
       if (anchorEl) {
         setAnchorEl(null);
       } else {
@@ -39,7 +42,7 @@ function Help(props) {
   if (!helpTextValue) return null;
 
   return (
-    <Fragment>
+    <>
       <ClickAwayListener onClickAway={handleClose}>
         <IconButton className={className} onClick={handleMenu}>
           <HelpIcon className={classes.helpIcon} />
@@ -59,7 +62,7 @@ function Help(props) {
           )}
         </HelpContent>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }
 

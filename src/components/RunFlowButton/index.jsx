@@ -1,13 +1,17 @@
-import { Fragment, useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
-import { EMPTY_RAW_DATA } from '../../utils/constants';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
+import {
+  EMPTY_RAW_DATA,
+  MAX_DATA_LOADER_FILE_SIZE,
+} from '../../utils/constants';
+import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -17,6 +21,27 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
 }));
+
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
+  if (isRequested) return <Spinner size={20} />;
+
+  return variant === 'icon' ? (
+    <IconButtonWithTooltip
+      tooltipProps={{
+        title: 'Run now',
+        placement: 'bottom',
+      }}
+      disabled={disabled}
+      data-test="runFlow"
+      onClick={onRunClick}>
+      <RunIcon />
+    </IconButtonWithTooltip>
+  ) : (
+    <span onClick={onRunClick} data-test="runFlow">
+      Run flow
+    </span>
+  );
+}
 
 export default function RunFlowButton({
   flowId,
@@ -118,6 +143,7 @@ export default function RunFlowButton({
           fileId: flowId,
           file,
           fileType: dataLoaderFileType,
+          fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
     },
@@ -166,9 +192,11 @@ export default function RunFlowButton({
     onRunStart,
     uploadedFile,
   ]);
+  const isDataLoaderFileProcessRequested =
+    isDataLoaderFlow && uploadedFile && uploadedFile.status;
 
   return (
-    <Fragment>
+    <>
       {showDeltaStartDateDialog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flowId}
@@ -176,19 +204,12 @@ export default function RunFlowButton({
           onRun={handleRunFlow}
         />
       )}
-
-      {variant === 'icon' ? (
-        <IconButton
-          disabled={disabled}
-          data-test="runFlow"
-          onClick={handleClick}>
-          <RunIcon />
-        </IconButton>
-      ) : (
-        <span onClick={handleClick} data-test="runFlow">
-          Run flow
-        </span>
-      )}
+      <RunFlowLabel
+        isRequested={isDataLoaderFileProcessRequested}
+        onRunClick={handleClick}
+        variant={variant}
+        disabled={disabled}
+      />
 
       {isDataLoaderFlow && !hasRunKey && (
         <input
@@ -200,6 +221,6 @@ export default function RunFlowButton({
           onChange={handleFileChange}
         />
       )}
-    </Fragment>
+    </>
   );
 }

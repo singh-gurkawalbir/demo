@@ -1,6 +1,7 @@
-import { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { generateNewId } from '../../../../../utils/resource';
@@ -78,7 +79,7 @@ export default function ConnectionsPanel({ integrationId }) {
       )}
 
       <PanelHeader title="Connections">
-        <Fragment>
+        <>
           {permission.create && (
             <IconTextButton
               onClick={() => {
@@ -107,7 +108,7 @@ export default function ConnectionsPanel({ integrationId }) {
               <ConnectionsIcon /> Register connections
             </IconTextButton>
           )}
-        </Fragment>
+        </>
       </PanelHeader>
 
       <LoadResources required resources="connections">

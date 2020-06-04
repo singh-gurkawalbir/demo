@@ -6,32 +6,43 @@ export default {
       ...formValues,
     };
 
+    delete newValues['/file/csvHelper'];
+
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
-      delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/xml/body'];
+      delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -52,6 +63,8 @@ export default {
       delete newValues['/ftp/blobFileName'];
       delete newValues['/ftp/blobUseTempFile'];
       delete newValues['/ftp/blobInProgressFileName'];
+    } else {
+      delete newValues['/blobKeyPath'];
     }
 
     if (newValues['/ftp/useTempFile'] === false) {
@@ -134,11 +147,6 @@ export default {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: `How would you like the files transferred?`,
-    },
     'ftp.directoryPath': {
       fieldId: 'ftp.directoryPath',
     },
@@ -187,6 +195,12 @@ export default {
     },
     dataMappings: {
       formId: 'dataMappings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
     },
     'file.lookups': {
       fieldId: 'file.lookups',
@@ -195,7 +209,7 @@ export default {
     inputMode: {
       id: 'inputMode',
       type: 'mode',
-      label: 'Generate file from records?',
+      label: 'Generate files from records:',
       helpKey: 'import.inputMode',
       options: [
         {
@@ -253,30 +267,34 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'ftp.directoryPath',
-      'fileType',
-      'ftp.fileName',
-      'file.xml.body',
-      'file',
-      'ftp.blobFileName',
-      'ftp.blobUseTempFile',
-      'ftp.blobInProgressFileName',
-      'dataMappings',
-      'file.lookups',
-      'blobKeyPath',
-    ],
+    fields: ['common', 'dataMappings', 'inputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'How would you like to generate files?',
+        fields: ['fileType', 'file'],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like the files transferred?',
+        fields: [
+          'ftp.directoryPath',
+          'ftp.fileName',
+          'file.xml.body',
+          'ftp.blobFileName',
+          'file.lookups',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced',
         fields: [
           'ftp.useTempFile',
           'ftp.inProgressFileName',
+          'ftp.blobUseTempFile',
+          'ftp.blobInProgressFileName',
+          'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',
