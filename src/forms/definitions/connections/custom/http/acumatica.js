@@ -30,7 +30,7 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
