@@ -7,7 +7,6 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
