@@ -601,26 +601,31 @@ function JobErrorTable({
                     value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                 ]}
-                // TODO : @Raghu Need to refactor.. Move all this metadata stuff out of this JSX
-                rowActions={r => {
-                  if (!(r.metadata &&
-                    r.metadata.isParent &&
-                    r.retryObject &&
-                    r.retryObject.isDataEditable)) return [];
-                  return [
-                    {
-                      icon: <EditIcon />,
-                      label: 'Edit Retry Data',
-                      component: function EditRetryData() {
-                        useEffect(() => {
-                          console.log('hi 1')
-                          handleEditRetryDataClick(r._retryId);
-                        }, []);
-                        return null;
-                      },
+                rowActions={r => [
+                  {
+                    icon: <EditIcon />,
+                    label: 'Edit Retry Data',
+                    component: function EditRetryData() {
+                      return (
+                        <>
+                          {r.metadata &&
+                            r.metadata.isParent &&
+                            r.retryObject &&
+                            r.retryObject.isDataEditable && (
+                              <IconButton
+                                data-test="editRetryData"
+                                size="small"
+                                onClick={() => {
+                                  handleEditRetryDataClick(r._retryId);
+                                }}>
+                                <EditIcon />
+                              </IconButton>
+                          )}
+                        </>
+                      );
                     },
-                  ]
-                }}
+                  },
+                ]}
               />
             </>
           )}
