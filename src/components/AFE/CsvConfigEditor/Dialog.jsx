@@ -2,6 +2,7 @@ import React from 'react';
 import EditorDialog from '../EditorDialog';
 import CsvParseEditor from './CsvParser';
 import CsvGenerateEditor from './CsvGenerator';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function CsvConfigEditorDialog(props) {
   // csvEditorType: ['parse', 'generate']
@@ -9,6 +10,7 @@ export default function CsvConfigEditorDialog(props) {
     id,
     rule,
     data,
+    isSampleDataLoading,
     disabled,
     csvEditorType = 'parse',
     uploadFileAction,
@@ -21,7 +23,7 @@ export default function CsvConfigEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <AFE2EditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -34,6 +36,7 @@ export default function CsvConfigEditorDialog(props) {
           editorId={id}
           rule={rule}
           data={data}
+          isSampleDataLoading={isSampleDataLoading}
         />
       ) : (
         <CsvParseEditor
@@ -44,6 +47,6 @@ export default function CsvConfigEditorDialog(props) {
           uploadFileAction={uploadFileAction}
         />
       )}
-    </EditorDialog>
+    </AFE2EditorDialog>
   );
 }
