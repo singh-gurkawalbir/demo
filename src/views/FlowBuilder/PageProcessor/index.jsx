@@ -308,7 +308,6 @@ const PageProcessor = ({
   // console.log('render: <PageProcessor>');
   // console.log(pp, usedActions);
   const name = pending ? 'Pending configuration' : resource.name || resource.id;
-  const handleDelete = useCallback(() => onDelete(name), [name, onDelete]);
 
   return (
     <>
@@ -320,7 +319,7 @@ const PageProcessor = ({
         <AppBlock
           integrationId={integrationId}
           name={name}
-          onDelete={handleDelete}
+          onDelete={onDelete(name)}
           onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
