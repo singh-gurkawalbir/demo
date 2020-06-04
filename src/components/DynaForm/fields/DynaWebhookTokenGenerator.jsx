@@ -32,7 +32,6 @@ function DynaWebhookTokenGenerator(props) {
     resourceId,
     id,
     value,
-    options = {},
     buttonLabel,
     setFieldIds = [],
     formContext,
@@ -101,7 +100,7 @@ function DynaWebhookTokenGenerator(props) {
       onFieldChange('webhook.url', whURL, true);
       setUrl(false);
     }
-  }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
+  }, [finalResourceId, id, onFieldChange, webHookProvider, resourceId, url, value]);
 
   return (
     <>
