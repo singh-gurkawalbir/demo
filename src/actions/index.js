@@ -471,9 +471,6 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
-  initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INIT_CHILD, {
-    id: integrationId,
-  }),
   settings: {
     categoryMappings: {
       init: (integrationId, flowId, id, options) =>
@@ -770,6 +767,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+      id: integrationId,
+    }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,

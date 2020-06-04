@@ -202,7 +202,7 @@ export default function Integration({ history, match }) {
     [patchIntegration]
   );
   const handleAddNewStore = useCallback(() => {
-    dispatch(actions.integrationApp.initChild(integrationId));
+    dispatch(actions.integrationApp.installer.initChild(integrationId));
   }, [integrationId, dispatch]);
   const handleDelete = useCallback(() => {
     if (cantDelete) {
@@ -334,6 +334,7 @@ export default function Integration({ history, match }) {
               <CopyIcon /> Clone integration
             </IconTextButton>
           )}
+          {/* Sravan needs to move add store functionality to integrationApps */}
           { addNewStore && (
             <IconTextButton
               component={Link}

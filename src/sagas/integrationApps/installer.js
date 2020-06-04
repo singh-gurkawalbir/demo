@@ -320,5 +320,5 @@ export default [
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
-  takeLatest(actionTypes.INTEGRATION_APPS.INIT_CHILD, installInitChild)
+  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild)
 ];
