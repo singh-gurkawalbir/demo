@@ -34,6 +34,7 @@ import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -105,6 +106,7 @@ export default function Integration({ history, match }) {
     sandbox,
     templateId,
     integration,
+    addNewStore,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -120,11 +122,20 @@ export default function Integration({ history, match }) {
         description: integration.description,
         sandbox: integration.sandbox,
         id: integration._id,
+        addNewStore: integration && integration.initChild && integration.initChild.function
       };
     }
 
     return emptyObj;
   });
+  const childIntegration = useSelector(state => {
+    const id = selectors.getChildIntegrationId(state, integrationId);
+
+    return id && selectors.resource(state, 'integrations', id);
+  });
+  const integrationChildAppName =
+    childIntegration &&
+    getIntegrationAppUrlName(childIntegration && childIntegration.name);
   const { pEdit, pClone, pDelete } = useSelector(state => {
     const permission = selectors.resourcePermissions(
       state,
@@ -190,6 +201,9 @@ export default function Integration({ history, match }) {
     },
     [patchIntegration]
   );
+  const handleAddNewStore = useCallback(() => {
+    dispatch(actions.integrationApp.installer.initChild(integrationId));
+  }, [integrationId, dispatch]);
   const handleDelete = useCallback(() => {
     if (cantDelete) {
       enqueueSnackbar({
@@ -258,6 +272,19 @@ export default function Integration({ history, match }) {
       );
     }
   }, [history, integrationId, templateName, templateUrlName]);
+  useEffect(() => {
+    if (
+      childIntegration &&
+      childIntegration.mode === 'install'
+    ) {
+      history.push(
+        `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+      );
+      dispatch(
+        actions.resource.clearChildIntegration()
+      );
+    }
+  }, [dispatch, history, childIntegration, integrationChildAppName]);
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
@@ -305,6 +332,16 @@ export default function Integration({ history, match }) {
               variant="text"
               data-test="cloneIntegration">
               <CopyIcon /> Clone integration
+            </IconTextButton>
+          )}
+          {/* Sravan needs to move add store functionality to integrationApps */}
+          { addNewStore && (
+            <IconTextButton
+              component={Link}
+              onClick={handleAddNewStore}
+              variant="text"
+              data-test="addNewStore">
+              <CopyIcon /> Add new store
             </IconTextButton>
           )}
 
