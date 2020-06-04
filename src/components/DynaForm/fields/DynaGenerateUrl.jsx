@@ -35,6 +35,7 @@ function GenerateUrl(props) {
     buttonLabel,
     formContext,
     flowId,
+    provider: webHookProvider
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -64,12 +65,13 @@ function GenerateUrl(props) {
       // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
       // TODO @Raghu : Fix this a better way
       setTimeout(() => {
-        const whURL = getWebhookUrl(options, finalResourceId);
+        const whURL = getWebhookUrl({ webHookProvider, webHookToken: value }, finalResourceId);
 
         onFieldChange(id, whURL);
         setUrl(false);
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalResourceId, options, id, onFieldChange, url]);
 
   return (

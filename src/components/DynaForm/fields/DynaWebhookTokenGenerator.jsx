@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
 import { FormContext } from 'react-forms-processor/dist';
-import uuid from 'uuid';
+import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
@@ -37,6 +37,7 @@ function DynaWebhookTokenGenerator(props) {
     setFieldIds = [],
     formContext,
     name,
+    provider: webHookProvider
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -48,7 +49,7 @@ function DynaWebhookTokenGenerator(props) {
     selectors.createdResourceId(state, resourceId)
   );
   const handleGenerateClick = () => {
-    const tokenValue = uuid.v4().replace(/-/g, '');
+    const tokenValue = v4().replace(/-/g, '');
 
     setToken(tokenValue);
     onFieldChange(id, tokenValue);
@@ -92,7 +93,6 @@ function DynaWebhookTokenGenerator(props) {
 
   useEffect(() => {
     if (url) {
-      const { webHookProvider } = options;
       const whURL = getWebhookUrl(
         { webHookProvider, webHookToken: value },
         resourceId
@@ -101,6 +101,7 @@ function DynaWebhookTokenGenerator(props) {
       onFieldChange('webhook.url', whURL, true);
       setUrl(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
 
   return (
