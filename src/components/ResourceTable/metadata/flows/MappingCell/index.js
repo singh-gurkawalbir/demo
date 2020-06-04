@@ -24,8 +24,8 @@ export default function MappingCell({flowId}) {
   if (!showMapping) return null;
 
   return (
-      <IconButton onClick={handleClick}>
-        <MapDataIcon />
-      </IconButton>
+    <IconButton onClick={handleClick}>
+      <MapDataIcon />
+    </IconButton>
   );
 }
