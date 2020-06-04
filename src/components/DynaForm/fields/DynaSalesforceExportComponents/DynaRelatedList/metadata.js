@@ -8,7 +8,8 @@ const Delete = {
   component: function Delete ({ handleDeleteItem, rowData }) {
     useEffect(() => {
       handleDeleteItem(rowData.index);
-    },[])
+    },[handleDeleteItem, rowData.index])
+    
     return null;
   },
 };
@@ -18,7 +19,8 @@ const Edit = {
   component: function Edit({ handleEditItem, rowData }) {
     useEffect(() => {
       handleEditItem(rowData.index);
-    },[])
+    },[handleEditItem, rowData.index])
+
     return null;
   },
 };
