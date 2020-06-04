@@ -101,13 +101,14 @@ const tabs = [
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
-  const { integrationId, templateName } = match.params;
+  const { integrationId, templateName, childId } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
+  const isParent = integrationId === childId
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId)
   );
@@ -115,6 +116,11 @@ export default function Integration({ history, match }) {
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
+  const filterTabs = [];
+  if (isParent) {
+    filterTabs.push('flows')
+  }
+  const availableTabs = tabs.filter(tab => !filterTabs.includes(tab.id))
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (integration && integration._templateId) {
@@ -287,7 +293,7 @@ export default function Integration({ history, match }) {
         </CeligoPageBar>
 
         <IntegrationTabs
-          tabs={tabs}
+          tabs={availableTabs}
           match={match}
           className={classes.PageWrapper}
         />
