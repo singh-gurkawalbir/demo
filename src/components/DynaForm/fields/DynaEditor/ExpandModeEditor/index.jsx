@@ -1,3 +1,4 @@
+import React from 'react';
 import EditorDrawer from './Drawer';
 import EditorModal from './Modal';
 
