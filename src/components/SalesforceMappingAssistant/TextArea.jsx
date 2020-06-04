@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function TextArea({ fieldMeta, onClick, value, isMapped }) {
   const fieldLength = fieldMeta.details.length;
   let cols = 40;

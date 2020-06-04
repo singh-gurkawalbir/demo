@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useCallback, Fragment } from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import AceEditor from 'react-ace';
 import ReactResizeDetector from 'react-resize-detector';
 import 'brace/mode/javascript';
@@ -42,8 +43,7 @@ export default function CodeEditor(props) {
   const theme = useSelector(state => selectors.editorTheme(state));
   const { inputVal, editorVal, typingTimeout } = state;
   const resize = useCallback(() => {
-    if (aceEditor && aceEditor.current && aceEditor.current.editor)
-      aceEditor.current.editor.resize();
+    if (aceEditor && aceEditor.current && aceEditor.current.editor) aceEditor.current.editor.resize();
   }, []);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function CodeEditor(props) {
   const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
 
   return (
-    <Fragment>
+    <>
       <AceEditor
         ref={aceEditor}
         name={name}
@@ -116,6 +116,6 @@ export default function CodeEditor(props) {
       />
 
       <ReactResizeDetector handleWidth handleHeight onResize={resize} />
-    </Fragment>
+    </>
   );
 }

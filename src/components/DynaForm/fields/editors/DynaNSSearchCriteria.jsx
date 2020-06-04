@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,7 +10,7 @@ import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaNSSearchCriteriaWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -70,7 +70,7 @@ export default function DynaNSSearchCriteria(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SearchCriteriaDialog
           title="Additional search criteria"
@@ -101,6 +101,6 @@ export default function DynaNSSearchCriteria(props) {
 
         <FieldHelp {...props} />
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -300,7 +300,7 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                  {drawerOpened ? <Icon /> :
+                    {drawerOpened ? <Icon /> :
                     <Tooltip placement="right-end" key={label} title={label}>
                       <div>
                         <Icon />
@@ -348,12 +348,12 @@ export default function CeligoDrawer() {
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                                {drawerOpened ? <Icon /> :
-                                  <Tooltip placement="right-end" key={label} title={label}>
-                                    <div>
-                                      <Icon />
-                                    </div>
-                                  </Tooltip>}
+                              {drawerOpened ? <Icon /> :
+                              <Tooltip placement="right-end" key={label} title={label}>
+                                <div>
+                                  <Icon />
+                                </div>
+                              </Tooltip>}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}

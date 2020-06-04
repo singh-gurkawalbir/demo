@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   FormLabel,
   Paper,
@@ -110,8 +110,8 @@ function getSuggestions(val, suggestions, showAllSuggestions) {
   return inputLength === 0
     ? suggestions
     : suggestions.filter(
-        suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
-      );
+      suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
+    );
 }
 
 function getSuggestionValue(suggestion) {

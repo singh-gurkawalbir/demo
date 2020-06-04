@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -124,7 +124,7 @@ function OAuthButton(props) {
         if (showError) {
           return snackbar({
             variant: 'error',
-            message: `Please configure the scopes.`,
+            message: 'Please configure the scopes.',
             persist: true,
           });
         }

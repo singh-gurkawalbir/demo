@@ -96,7 +96,8 @@ export default function ResourceList(props) {
         PERMISSIONS[resourceType].view
       }>
       {// This is where we will be adding all Right drawers to Celigo Table
-      resourceType === 'stacks' && <StackShareDrawer />}
+      resourceType === 'stacks' && <StackShareDrawer />
+      }
       <ResourceDrawer {...props} />
       <CeligoPageBar
         title={`${resourceName}s`}

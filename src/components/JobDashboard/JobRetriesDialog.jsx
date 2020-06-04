@@ -1,10 +1,11 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography, IconButton } from '@material-ui/core';
 import { reverse } from 'lodash';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import { JOB_STATUS } from '../../utils/constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import CloseIcon from '../icons/CloseIcon';

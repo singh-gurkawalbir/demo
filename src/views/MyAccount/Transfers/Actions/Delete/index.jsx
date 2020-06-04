@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../../components/icons/TrashIcon';

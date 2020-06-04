@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -46,7 +46,6 @@ export default function DynaNetSuiteLookup(props) {
     resourceId,
     flowId,
     label,
-    helpText,
     options,
   } = props;
   const handleEditorClick = () => {
@@ -107,7 +106,7 @@ export default function DynaNetSuiteLookup(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
           title="Lookup criteria"
@@ -126,7 +125,7 @@ export default function DynaNetSuiteLookup(props) {
             {label}
           </FormLabel>
           {/* //Todo: helpText is needed here */}
-          <FieldHelp {...props} helpText={helpText || label} />
+          <FieldHelp {...props} />
         </div>
 
         <div className={classes.dynaNetsuiteFieldLookupWrapper}>
@@ -154,6 +153,6 @@ export default function DynaNetSuiteLookup(props) {
           </ActionButton>
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

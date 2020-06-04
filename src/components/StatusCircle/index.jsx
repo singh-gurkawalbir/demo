@@ -1,3 +1,5 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';

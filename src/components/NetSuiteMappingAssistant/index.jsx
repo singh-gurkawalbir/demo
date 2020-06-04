@@ -1,5 +1,5 @@
 import Iframe from 'react-iframe';
-import { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -176,7 +176,7 @@ export default function NetSuiteMappingAssistant({
   }
 
   return (
-    <Fragment>
+    <>
       {netSuiteFormIsLoading && (
         <Typography>
           Loading {netSuiteRecordMetadata.label} form...
@@ -198,7 +198,7 @@ export default function NetSuiteMappingAssistant({
       )}
 
       {!showNetSuiteForm && (
-        <Fragment>
+        <>
           <div className={classes.NetsuiteRules}>
             <Button
               onClick={handleLaunchAssistantClick}
@@ -226,8 +226,8 @@ export default function NetSuiteMappingAssistant({
               </li>
             </ol>
           </div>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

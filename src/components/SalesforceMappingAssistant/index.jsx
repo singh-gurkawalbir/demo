@@ -1,5 +1,5 @@
 import Frame from 'react-frame-component';
-import { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -84,7 +84,7 @@ export default function SalesforceMappingAssistant({
       data-test="salesforceMappingAssistant"
       style={style}
       head={
-        <Fragment>
+        <>
           <link
             href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/css/bootstrap.css"
             rel="stylesheet"
@@ -95,7 +95,7 @@ export default function SalesforceMappingAssistant({
             rel="stylesheet"
             type="text/css"
           />
-        </Fragment>
+        </>
       }>
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">

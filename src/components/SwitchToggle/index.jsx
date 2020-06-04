@@ -54,7 +54,7 @@ const useStyle = makeStyles(theme => ({
     },
     '&:checked': {
       '&:before': {
-        transform: `translateX(36px)`,
+        transform: 'translateX(36px)',
         content: "''",
         backgroundColor: theme.palette.success.main,
       },
