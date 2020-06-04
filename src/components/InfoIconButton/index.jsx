@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
@@ -35,7 +36,7 @@ export default function InfoIconButton({ info, size = 'small', className }) {
   }
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="openPageInfo"
         size="small"
@@ -53,6 +54,6 @@ export default function InfoIconButton({ info, size = 'small', className }) {
         onClose={handleInfoClose}>
         <TooltipContent>{info}</TooltipContent>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, generatePath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -85,12 +85,12 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
     fontSize: 13,
     borderRadius: 4,
-    backgroundColor: `rgb(0,0,0,0)`,
+    backgroundColor: 'rgb(0,0,0,0)',
     transition: theme.transitions.create('background-color'),
     paddingLeft: theme.spacing(1),
     height: 'unset',
     '&:hover': {
-      backgroundColor: `rgb(0,0,0,0.05)`,
+      backgroundColor: 'rgb(0,0,0,0.05)',
     },
     '& > div': {
       paddingTop: theme.spacing(1),
@@ -286,7 +286,7 @@ export default function IntegrationApp({ match, history }) {
   // console.log('render: <IntegrationApp>');
 
   return (
-    <Fragment>
+    <>
       <ResourceDrawer />
       <QueuedJobsDrawer />
       <CeligoPageBar
@@ -342,6 +342,6 @@ export default function IntegrationApp({ match, history }) {
       </CeligoPageBar>
 
       <IntegrationTabs tabs={availableTabs} className={classes.PageWrapper} />
-    </Fragment>
+    </>
   );
 }

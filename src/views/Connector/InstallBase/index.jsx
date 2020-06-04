@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -118,7 +118,7 @@ export default function InstallBase(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <ResourceDrawer {...props} />
       <CeligoPageBar
         history={history}
@@ -137,7 +137,7 @@ export default function InstallBase(props) {
         {list.count === 0 ? (
           <Typography>
             {list.total === 0
-              ? `You don't have any installbase.`
+              ? 'You don\'t have any installbase.'
               : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
           </Typography>
         ) : (
@@ -155,6 +155,6 @@ export default function InstallBase(props) {
         count={list.count}
         maxCount={list.filtered}
       />
-    </Fragment>
+    </>
   );
 }

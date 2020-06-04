@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -146,7 +146,7 @@ function JobTable({
   }
 
   return (
-    <Fragment>
+    <>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -196,7 +196,7 @@ function JobTable({
           onCloseClick={handleJobErrorDialogCloseClick}
         />
       )}
-    </Fragment>
+    </>
   );
 }
 

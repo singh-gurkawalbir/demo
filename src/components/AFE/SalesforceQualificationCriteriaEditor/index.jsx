@@ -1,3 +1,4 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
 import DynaSalesforceQualificationCriteria from '../../DynaForm/fields/DynaSalesforceRealtimeQualifier';
 

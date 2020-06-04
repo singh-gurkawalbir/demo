@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import LoadResources from '../../components/LoadResources';
+import LoadResources from '../LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Filters from './Filters';

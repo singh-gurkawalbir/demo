@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -11,7 +11,7 @@ import {
   EMPTY_RAW_DATA,
   MAX_DATA_LOADER_FILE_SIZE,
 } from '../../utils/constants';
-import Spinner from '../../components/Spinner';
+import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -196,7 +196,7 @@ export default function RunFlowButton({
     isDataLoaderFlow && uploadedFile && uploadedFile.status;
 
   return (
-    <Fragment>
+    <>
       {showDeltaStartDateDialog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flowId}
@@ -221,6 +221,6 @@ export default function RunFlowButton({
           onChange={handleFileChange}
         />
       )}
-    </Fragment>
+    </>
   );
 }

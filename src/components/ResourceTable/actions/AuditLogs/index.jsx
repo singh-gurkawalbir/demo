@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 
@@ -13,7 +13,7 @@ export default {
     }, []);
 
     return (
-      <Fragment>
+      <>
         {show && (
           <AuditLogDialog
             resourceType={resourceType}
@@ -21,7 +21,7 @@ export default {
             onClose={handleAuditLogsClose}
           />
         )}
-      </Fragment>
+      </>
     );
   },
 };

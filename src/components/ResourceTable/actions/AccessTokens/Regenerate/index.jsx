@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import RegenerateTokenIcon from '../../../../../components/icons/RegenerateTokenIcon';
+import RegenerateTokenIcon from '../../../../icons/RegenerateTokenIcon';
 
 export default {
   label: 'Regenerate token',

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -6,8 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
-import DynaForm from '../../../../DynaForm';
-import DynaSubmit from '../../../../DynaForm/DynaSubmit';
+import DynaForm from '../../..';
+import DynaSubmit from '../../../DynaSubmit';
 import actions from '../../../../../actions';
 import getFormFieldMetadata from './util';
 import { SCOPES } from '../../../../../sagas/resourceForm';
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.appBarHeight,
     paddingBottom: theme.appBarHeight,
     border: 'solid 1px',
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   root: {
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'scroll',
   },
   subRecordDynaForm: {
-    minHeight: `calc(100% - 56px)`,
+    minHeight: 'calc(100% - 56px)',
   },
 }));
 
@@ -131,7 +131,7 @@ function SubRecordDrawer(props) {
           [
             {
               op: 'replace',
-              path: `/netsuite_da/subrecords`,
+              path: '/netsuite_da/subrecords',
               value: updatedSubrecords,
             },
           ],

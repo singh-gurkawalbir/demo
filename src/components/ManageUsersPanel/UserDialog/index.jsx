@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import {
@@ -95,7 +95,7 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
   );
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           createOrUpdate: {
@@ -123,6 +123,6 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
           />
         </div>
       </ModalDialog>
-    </Fragment>
+    </>
   );
 }

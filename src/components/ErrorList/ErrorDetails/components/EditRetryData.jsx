@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import CodeEditor from '../../../../components/CodeEditor';
+import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { retryDataContext } from '../../../../reducers';
 

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { Button, MenuItem } from '@material-ui/core';
@@ -25,13 +25,13 @@ export default function AgentDownloadInstaller({ agentId }) {
   }
 
   return (
-    <Fragment>
+    <>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleMenuClose}>
         <MenuItem onClick={handleInstallerClick('windows')}>Windows</MenuItem>
       </Menu>
       <Button data-test="downloadAgentInstaller" onClick={handleMenuClick}>
         Download <ArrowDownIcon />
       </Button>
-    </Fragment>
+    </>
   );
 }

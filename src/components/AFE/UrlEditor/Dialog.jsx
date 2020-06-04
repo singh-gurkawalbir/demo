@@ -1,4 +1,5 @@
-import UrlEditor from './';
+import React from 'react';
+import UrlEditor from '.';
 import HandlebarEditorDialog from '../HandlebarEditorDialog';
 
 export default function UrlEditorDialog(props) {

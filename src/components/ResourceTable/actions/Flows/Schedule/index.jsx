@@ -1,4 +1,4 @@
-import { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import FlowSchedule from '../../../../FlowSchedule';
 import ModalDialog from '../../../../ModalDialog';
 
@@ -12,7 +12,7 @@ export default {
     }, []);
 
     return (
-      <Fragment>
+      <>
         {showSchedule && (
           <ModalDialog show maxWidth={false}>
             <div>Flow Schedule</div>
@@ -21,7 +21,7 @@ export default {
             </div>
           </ModalDialog>
         )}
-      </Fragment>
+      </>
     );
   },
 };

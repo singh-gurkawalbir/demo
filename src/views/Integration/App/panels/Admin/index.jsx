@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Route,
   Switch,
@@ -7,7 +7,8 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';

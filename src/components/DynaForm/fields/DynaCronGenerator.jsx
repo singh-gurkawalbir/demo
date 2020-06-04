@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CronBuilder from '../../CronBuilder';
 import DynaText from './DynaText';
@@ -7,7 +7,7 @@ import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   field: {
     width: '100%',
@@ -30,7 +30,7 @@ export default function DynaCronGenerator(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.wrapper}>
         <DynaText className={classes.field} {...props} disabled />
         <ActionButton
@@ -50,6 +50,6 @@ export default function DynaCronGenerator(props) {
         value={value}
         onChange={onChange}
       />
-    </Fragment>
+    </>
   );
 }

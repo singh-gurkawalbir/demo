@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
@@ -255,10 +255,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   // #endregion
 
   return (
-    <Fragment>
+    <>
       {showNotYetSupportedDialog && (
         <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          <Fragment>Not Yet Available</Fragment>
+          <>Not Yet Available</>
           <Typography>
             This Integration App is not yet available from this UI. To access
             your Integration App, switch back to the <a href="/">legacy UI</a>.
@@ -303,7 +303,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                   </span>
                   <ApplicationImg type={app2} />
                 </ApplicationImages>
-              )}
+            )}
           </Content>
           <Footer>
             <FooterActions>
@@ -344,7 +344,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           </Footer>
         </HomePageCardContainer>
       </div>
-    </Fragment>
+    </>
   );
 }
 

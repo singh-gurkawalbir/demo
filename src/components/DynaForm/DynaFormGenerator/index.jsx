@@ -1,3 +1,4 @@
+import React from 'react';
 import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import CollapsedComponents from './CollapsedComponents';

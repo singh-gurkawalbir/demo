@@ -18,8 +18,8 @@ export default function CheckPermissions(props) {
 
     return permission
       ? !!permission
-          .split('.')
-          .reduce((prev, curr) => (prev ? prev[curr] : null), permissions)
+        .split('.')
+        .reduce((prev, curr) => (prev ? prev[curr] : null), permissions)
       : false;
   });
 

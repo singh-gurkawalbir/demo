@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   IconButton,
@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
-import ResourceForm from '../../components/ResourceFormFactory';
+import ResourceForm from '../ResourceFormFactory';
 import CloseIcon from '../icons/CloseIcon';
 
 // TODO: Azhar, can you use your generic modal here so we dont need custom styles?

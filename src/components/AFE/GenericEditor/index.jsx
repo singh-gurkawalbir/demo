@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { func, string } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from './CodePanel';

@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -13,13 +13,13 @@ import { UNDO_TIME } from './util';
 import JsonEditorDialog from '../JsonEditorDialog';
 import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import { JOB_STATUS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ButtonsGroup from '../ButtonGroup';
-import useConfirmDialog from '../../components/ConfirmDialog';
+import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 
 const useStyles = makeStyles(theme => ({
@@ -193,7 +193,7 @@ function JobErrorTable({
       // else take the confirmation from the user for the same and proceed if yes
       confirmDialog({
         title: 'Confirm',
-        message: `The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always 'Download All Errors' and work from the latest error file. Are you sure you want to proceed with this upload?`,
+        message: 'The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always \'Download All Errors\' and work from the latest error file. Are you sure you want to proceed with this upload?',
         buttons: [
           {
             label: 'Yes',
@@ -423,7 +423,7 @@ function JobErrorTable({
   };
 
   return (
-    <Fragment>
+    <>
       {editDataOfRetryId &&
         (retryObject && retryObject.retryData ? (
           <JsonEditorDialog
@@ -471,7 +471,7 @@ function JobErrorTable({
           <Spinner size={20} /> <span>Loading errors...</span>
         </div>
       ) : (
-        <Fragment>
+        <>
           <ButtonsGroup className={classes.btnsWrappper}>
             <Button
               data-test="retryErroredJobs"
@@ -520,14 +520,14 @@ function JobErrorTable({
           </ButtonsGroup>
 
           {jobErrorsInCurrentPage.length === 0 ? (
-            <Fragment>
+            <>
               <div>
                 Please use the &apos;Download All Errors&apos; button above to
                 view the errors for this job.
               </div>
-            </Fragment>
+            </>
           ) : (
-            <Fragment>
+            <>
               <TablePagination
                 classes={{ root: classes.tablePaginationRoot }}
                 rowsPerPageOptions={[rowsPerPage]}
@@ -551,8 +551,7 @@ function JobErrorTable({
                   !isJobInProgress && hasUnresolvedErrorsInCurrentPage
                 }
                 isSelectableRow={r =>
-                  r.metadata && r.metadata.isParent && !r.resolved
-                }
+                  r.metadata && r.metadata.isParent && !r.resolved}
                 onSelectChange={handleJobErrorSelectChange}
                 columns={[
                   {
@@ -607,7 +606,7 @@ function JobErrorTable({
                     label: 'Edit Retry Data',
                     component: function EditRetryData() {
                       return (
-                        <Fragment>
+                        <>
                           {r.metadata &&
                             r.metadata.isParent &&
                             r.retryObject &&
@@ -620,18 +619,18 @@ function JobErrorTable({
                                 }}>
                                 <EditIcon />
                               </IconButton>
-                            )}
-                        </Fragment>
+                          )}
+                        </>
                       );
                     },
                   },
                 ]}
               />
-            </Fragment>
+            </>
           )}
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }
 

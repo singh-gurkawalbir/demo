@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
@@ -229,7 +229,7 @@ export default function Integration({ history, match }) {
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
   return (
-    <Fragment>
+    <>
       <ResourceDrawer match={match} />
       <QueuedJobsDrawer />
       <LoadResources required resources="integrations,marketplacetemplates">
@@ -292,6 +292,6 @@ export default function Integration({ history, match }) {
           className={classes.PageWrapper}
         />
       </LoadResources>
-    </Fragment>
+    </>
   );
 }
