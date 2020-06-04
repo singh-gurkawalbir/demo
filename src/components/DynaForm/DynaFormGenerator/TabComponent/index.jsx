@@ -1,6 +1,6 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import React, { useState, useCallback } from 'react';
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import FormGenerator from '..';
@@ -31,8 +31,19 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
+
+const TabLabel = ({layout, fieldMap, label, tabType }) => (
+  <FormContext.Consumer>
+  {form => (
+    tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error">{label}</Typography> : label
+
+  )}
+  </FormContext.Consumer>
+)
+
 function TabComponent(props) {
-  const { containers, fieldMap, children, ...rest } = props;
+  const { containers, fieldMap, children, type,
+    ...rest } = props;
   const {
     externalTabState,
     setExternalTabState,
@@ -65,10 +76,16 @@ function TabComponent(props) {
 
           setSelectedTab(value);
         }}>
-        {containers.map(({ label }) => (
+        {containers.map(({ label, ...layout }) => (
           <Tab
             classes={{ wrapper: classes.MuiTabWrapper }}
-            label={label}
+            label={<TabLabel
+              layout={layout}
+              fieldMap={fieldMap}
+              label={label}
+              tabType={type}
+
+              />}
             key={label}
             data-test={label}
           />
@@ -145,6 +162,17 @@ export function TabComponentWithoutSave({ index, ...rest }) {
     <TabComponent
       {...rest}
       orientation="horizontal"
+      index={index === undefined ? 0 : index + 1}>
+      <FormGenerator />
+    </TabComponent>
+  );
+}
+
+export function TabComponentWithoutSaveVertical({ index, ...rest }) {
+  return (
+    <TabComponent
+      {...rest}
+      orientation="vertical"
       index={index === undefined ? 0 : index + 1}>
       <FormGenerator />
     </TabComponent>

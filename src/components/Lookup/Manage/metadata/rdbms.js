@@ -56,7 +56,6 @@ export default {
           name: '_mapList',
           type: 'staticMap',
           label: '',
-          required: true,
           keyName: 'export',
           keyLabel: 'Export field',
           valueName: 'import',
