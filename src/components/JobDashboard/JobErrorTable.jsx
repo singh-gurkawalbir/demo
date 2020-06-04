@@ -603,6 +603,7 @@ function JobErrorTable({
                 ]}
                 rowActions={r => [
                   {
+                    icon: <EditIcon />,
                     label: 'Edit Retry Data',
                     component: function EditRetryData() {
                       return (
