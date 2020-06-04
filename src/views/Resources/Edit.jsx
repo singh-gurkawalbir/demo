@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Switch, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
@@ -104,6 +104,7 @@ const mapDispatchToProps = (dispatch, { match }) => {
     color: theme.palette.text.secondary,
   },
 }))
+
 class Edit extends Component {
   state = {
     editMode: false,
@@ -128,6 +129,7 @@ class Edit extends Component {
   };
 
   handleToggleEditor = () => {
+    // eslint-disable-next-line react/no-access-state-in-setstate
     this.setState({ showEditor: !this.state.showEditor });
   };
 
@@ -295,4 +297,4 @@ class Edit extends Component {
 }
 
 // prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(Edit);
+export default connect(mapStateToProps, mapDispatchToProps)(Edit);

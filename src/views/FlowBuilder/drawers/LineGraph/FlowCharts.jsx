@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -83,7 +83,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
@@ -98,9 +98,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             dataKey="time"
             name="Time"
             type="category"
-            tickFormatter={unixTime =>
-              moment(unixTime).format('DD/MMM HH:mm  ')
-            }
+            tickFormatter={unixTime => moment(unixTime).format('DD/MMM HH:mm  ')}
           />
           <YAxis
             yAxisId={id}
@@ -127,7 +125,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
           ))}
         </LineChart>
       </ResponsiveContainer>
-    </Fragment>
+    </>
   );
 };
 
@@ -153,7 +151,8 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
         <Spinner color="primary" size={24} />
       </Loader>
     );
-  } else if (data.status === 'error') {
+  }
+  if (data.status === 'error') {
     return <Typography>Error Occured</Typography>;
   }
 

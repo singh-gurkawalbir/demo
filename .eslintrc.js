@@ -6,6 +6,7 @@ const {
 } = require('eslint-config-airbnb-base/rules/variables');
 
 module.exports = {
+  parser: 'babel-eslint',
   env: {
     browser: true,
     es6: true,
@@ -20,6 +21,7 @@ module.exports = {
   },
   parserOptions: {
     ecmaFeatures: {
+      legacyDecorators: true,
       jsx: true,
     },
     ecmaVersion: 11,
@@ -95,7 +97,7 @@ module.exports = {
         eventHandlerPropPrefix: 'on',
       },
     ],
-    'react/jsx-indent': 'off',
+    'react/jsx-indent': 1,
     'react/prefer-stateless-function': 'off',
     'react/prop-types': 'off',
     'react/sort-comp': 'off',
@@ -114,7 +116,7 @@ module.exports = {
     'react/no-did-mount-set-state': 'off',
     'no-underscore-dangle': 'off',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+    'react-hooks/exhaustive-deps': 1,
     'no-param-reassign': [
       'error',
       {

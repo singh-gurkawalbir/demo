@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Link, Route } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
@@ -46,6 +46,7 @@ const mapDispatchToProps = (dispatch, { list }) => ({
     wordBreak: 'break-word',
   },
 }))
+
 class FilteredResources extends Component {
   // TODO: use this component to highlight the matching text in the resuts:
   // https://github.com/bvaughn/react-highlight-words
@@ -70,23 +71,21 @@ class FilteredResources extends Component {
               path="/pg/resources/:resourceType/add/:id"
               render={() => null}
             />
-            {
-              <Route
-                render={() => (
-                  <Button
-                    size="small"
-                    data-test={`${resourceType}AddNew`}
-                    variant="outlined"
-                    color="primary"
-                    aria-label="Add"
-                    component={Link}
-                    to={`/pg/resources/${resourceType}/add/${generateNewId()}`}
-                    className={classes.addResource}>
-                    Add
-                  </Button>
-                )}
-              />
-            }
+            <Route
+              render={() => (
+                <Button
+                  size="small"
+                  data-test={`${resourceType}AddNew`}
+                  variant="outlined"
+                  color="primary"
+                  aria-label="Add"
+                  component={Link}
+                  to={`/pg/resources/${resourceType}/add/${generateNewId()}`}
+                  className={classes.addResource}>
+                  Add
+                </Button>
+              )}
+            />
           </Switch>
         </Typography>
 
@@ -111,9 +110,9 @@ class FilteredResources extends Component {
                       }
                     />
                   </Avatar>
-                ) : (
-                  <ResourceImage resource={r} resourceType={resourceType} />
-                )}
+                  ) : (
+                    <ResourceImage resource={r} resourceType={resourceType} />
+                  )}
               </ListItemAvatar>
               <ListItemText
                 primary={r.name || r._id}

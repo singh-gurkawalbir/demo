@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -43,7 +43,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
-/* 
+/*
   var FlowSchema = new Schema({
  _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
   schedule: {type: String, cLocked: false, template: true, patch: true},
@@ -519,12 +519,7 @@ function FlowBuilder() {
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flow={flow} />
       <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
@@ -554,14 +549,14 @@ function FlowBuilder() {
           />
         }
         subtitle={
-          <Fragment>
+          <>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
               <DateTimeDisplay dateTime={flow.lastModified} />
             )}
-          </Fragment>
+          </>
         }
         infoText={flow.description}>
         {totalErrors ? (
@@ -580,6 +575,7 @@ function FlowBuilder() {
             </IconButton>
           )}
           {!isDataLoaderFlow && (
+            // eslint-disable-next-line react/jsx-pascal-case
             <SwitchOnOff.component
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
@@ -619,7 +615,7 @@ function FlowBuilder() {
             />
           )}
           {isUserInErrMgtTwoDotZero ? (
-            <Fragment>
+            <>
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
@@ -633,7 +629,7 @@ function FlowBuilder() {
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>
-            </Fragment>
+            </>
           ) : null}
         </div>
       </CeligoPageBar>
@@ -761,7 +757,7 @@ function FlowBuilder() {
                     You can add a destination application once you complete the
                     configuration of your data loader.
                   </Typography>
-                )}
+              )}
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { instanceOf } from 'prop-types';
 import { RedBoxError } from 'redbox-react';
 import ErrorStackParser from 'error-stack-parser';
@@ -21,6 +22,7 @@ import CardContent from '@material-ui/core/CardContent';
   },
 })
 export default class ErrorBox extends RedBoxError {
+  // eslint-disable-next-line react/static-property-placement
   static propTypes = {
     error: instanceOf(Error).isRequired,
   };

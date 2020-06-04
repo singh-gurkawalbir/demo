@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography, Button } from '@material-ui/core';
@@ -12,9 +12,9 @@ function AppErroredModal({ history }) {
 
   return appErrored ? (
     <ModalDialog show>
-      <Fragment>
+      <>
         <span>Application errored</span>
-      </Fragment>
+      </>
       <Typography>
         Oops! Something caused our app to crash. <br />
         To resume working, please reload.

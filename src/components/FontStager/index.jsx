@@ -1,5 +1,5 @@
 import FoutStager from 'react-fout-stager';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import './index.css';
 
 /**

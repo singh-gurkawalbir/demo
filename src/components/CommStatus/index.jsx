@@ -64,6 +64,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class CommStatus extends Component {
+  // eslint-disable-next-line react/no-deprecated
   componentWillReceiveProps(nextProps) {
     const {
       actionsToMonitor,
@@ -109,6 +110,7 @@ class CommStatus extends Component {
       });
     }
   }
+
   render() {
     return null;
   }

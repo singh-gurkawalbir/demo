@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import DynaText from '../DynaText';
 import DynaSelect from '../DynaSelect';
 
@@ -17,7 +17,7 @@ export default function DynaToggleSelectToText(props) {
   const { textHrefLabel, selectHrefLabel, ...rest } = props;
 
   return (
-    <Fragment>
+    <>
       {isText ? <DynaText {...rest} /> : <DynaSelect {...rest} />}
       <Button
         variant="outlined"
@@ -26,6 +26,6 @@ export default function DynaToggleSelectToText(props) {
         onClick={() => setIsText(state => !state)}>
         {isText ? textHrefLabel : selectHrefLabel}
       </Button>
-    </Fragment>
+    </>
   );
 }

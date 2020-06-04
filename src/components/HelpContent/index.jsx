@@ -1,4 +1,4 @@
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -128,7 +128,7 @@ function HelpContent(props) {
         </Typography>
       )}
       {feedbackText ? (
-        <Fragment>
+        <>
           {/* TODO:Azhar some styling required */}
           <TextField
             name="feedbackText"
@@ -144,9 +144,9 @@ function HelpContent(props) {
             onClick={handleSendFeedbackText}>
             Submit
           </Button>
-        </Fragment>
+        </>
       ) : (
-        <Fragment>
+        <>
           <div className={classes.content}>{children}</div>
           <div className={classes.action}>
             <Typography className={classes.actionTitle}>
@@ -169,7 +169,7 @@ function HelpContent(props) {
               </Button>
             </div>
           </div>
-        </Fragment>
+        </>
       )}
     </div>
   );

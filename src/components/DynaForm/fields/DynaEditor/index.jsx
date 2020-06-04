@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
-import CodeEditor from '../../../../components/CodeEditor';
+import CodeEditor from '../../../CodeEditor';
 import ActionButton from '../../../ActionButton';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import ErroredMessageComponent from '../ErroredMessageComponent';
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(10),
   },
   wrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'flex-start',
     display: 'flex',
   },

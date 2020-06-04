@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useMemo, Fragment } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
 import { userPreferences } from '../../reducers';
@@ -57,7 +57,7 @@ export default function DashboardCard({ sortedTiles }) {
   ]);
 
   return (
-    <Fragment>
+    <>
       {dashboardTiles.map((t, index) => (
         <div key={getTileId(t)}>
           {t._ioConnectionId ? (
@@ -77,6 +77,6 @@ export default function DashboardCard({ sortedTiles }) {
           )}
         </div>
       ))}
-    </Fragment>
+    </>
   );
 }

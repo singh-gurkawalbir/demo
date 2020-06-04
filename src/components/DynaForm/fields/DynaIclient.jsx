@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
@@ -31,7 +31,7 @@ export default function DynaIclient(props) {
   });
 
   return hideFromUI ? null : (
-    <Fragment>
+    <>
       {connectorId && (
         <DynaSelect
           {...props}
@@ -48,6 +48,6 @@ export default function DynaIclient(props) {
       {connType !== 'ebay' &&
         (connType !== 'netsuite' || !isProduction()) &&
         !connectorId && <DynaSelectResource {...props} />}
-    </Fragment>
+    </>
   );
 }

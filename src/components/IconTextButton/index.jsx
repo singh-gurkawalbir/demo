@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 

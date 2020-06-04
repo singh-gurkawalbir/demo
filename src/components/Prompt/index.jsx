@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Prompt(props) {
   const { title, message, buttons, label, onClose } = props;
@@ -26,7 +26,7 @@ export default function Prompt(props) {
         <Typography variant="h6">{title}</Typography>
       </DialogTitle>
       <DialogContent>
-        <Fragment>
+        <>
           <DialogContentText>{message}</DialogContentText>
           <TextField
             label={label}
@@ -34,7 +34,7 @@ export default function Prompt(props) {
             margin="normal"
             variant="outlined"
           />
-        </Fragment>
+        </>
       </DialogContent>
       <DialogActions>
         {buttons.map(button => (

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
@@ -130,7 +130,7 @@ export default function TemplatePreview() {
 
     confirmDialog({
       title: 'Disclaimer',
-      message: `Please note that by default all integration flows will be disabled when first installed, and that you will need to explicitly enable each flow that you want to use. Please note also that you can modify, delete, or extend any of the components that get installed, and unlike Integration apps, updates to the master integration template will never be propagated automatically to your account. Lastly, please note that integration templates are not explicitly reviewed by Celigo, and please be sure to review all components in the integration before proceeding.`,
+      message: 'Please note that by default all integration flows will be disabled when first installed, and that you will need to explicitly enable each flow that you want to use. Please note also that you can modify, delete, or extend any of the components that get installed, and unlike Integration apps, updates to the master integration template will never be propagated automatically to your account. Lastly, please note that integration templates are not explicitly reviewed by Celigo, and please be sure to review all components in the integration before proceeding.',
       buttons: [
         {
           label: 'Cancel',
@@ -144,18 +144,18 @@ export default function TemplatePreview() {
   };
 
   return (
-    <Fragment>
+    <>
       <div className={classes.appLogos}>
         <ApplicationImg markOnly size="small" type={template.applications[0]} />
         {template.applications[1] && (
-          <Fragment>
+          <>
             <AddIcon className={classes.plusIcon} />
             <ApplicationImg
               markOnly
               size="small"
               type={template.applications[1]}
             />
-          </Fragment>
+          </>
         )}
       </div>
 
@@ -200,6 +200,6 @@ export default function TemplatePreview() {
           <PreviewTable templateId={templateId} />
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }
