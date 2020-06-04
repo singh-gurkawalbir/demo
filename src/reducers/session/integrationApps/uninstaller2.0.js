@@ -22,18 +22,18 @@ export default (state = {}, action) => {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT:
-        draft[id] = {init: true};
+        draft[id] = {};
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED:
         if (!draft[id]) {
-          draft[id] = {init: true};
+          draft[id] = {};
         }
 
         draft[id].error = error;
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS:
         if (!draft[id]) {
-          draft[id] = {init: true};
+          draft[id] = {};
         }
 
         // isFetched is used to identify if integration has 0 steps
