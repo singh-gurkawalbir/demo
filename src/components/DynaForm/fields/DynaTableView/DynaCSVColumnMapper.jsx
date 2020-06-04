@@ -1,3 +1,4 @@
+import React from 'react';
 import DynaTableView from './DynaTable';
 
 export default function DynaCSVColumnMapper(props) {

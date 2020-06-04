@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { IconButton, MenuItem, Menu } from '@material-ui/core';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
@@ -42,7 +42,7 @@ export default function ActionMenu({ actions, selectAction }) {
   if (!actions || !actions.length) return null;
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="openActionsMenu"
         aria-label="more"
@@ -62,6 +62,6 @@ export default function ActionMenu({ actions, selectAction }) {
         onClose={handleMenuClose}>
         {actions.map(a => renderActionMenu(a))}
       </Menu>
-    </Fragment>
+    </>
   );
 }

@@ -114,7 +114,7 @@ export default function SelectApplication(props) {
       position: 'relative',
       boxSizing: 'borderBox',
       transition: 'all 100ms ease 0s',
-      outline: `0px !important`,
+      outline: '0px !important',
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
@@ -225,9 +225,9 @@ export default function SelectApplication(props) {
     !value || isMulti
       ? ''
       : {
-          value,
-          label: applications.find(a => a.id === value).name,
-        };
+        value,
+        label: applications.find(a => a.id === value).name,
+      };
 
   function handleChange(e) {
     if (onFieldChange) {

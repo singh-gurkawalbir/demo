@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import RevokeTokenIcon from '../../../../../components/icons/RevokeTokenIcon';
+import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 
 export default {
   label: 'Revoke token',

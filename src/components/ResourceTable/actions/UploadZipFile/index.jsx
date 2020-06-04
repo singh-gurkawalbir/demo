@@ -1,5 +1,5 @@
-import { Fragment, useState, useCallback } from 'react';
-import UploadIcon from '../../../../components/icons/UploadIcon';
+import React, { useState, useCallback } from 'react';
+import UploadIcon from '../../../icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
@@ -13,7 +13,7 @@ export default {
     }, [showDialog]);
 
     return (
-      <Fragment>
+      <>
         {showDialog && (
           <UploadFileDialog
             resourceType={resourceType}
@@ -23,7 +23,7 @@ export default {
             resourceId={resourceId}
           />
         )}
-      </Fragment>
+      </>
     );
   },
 };

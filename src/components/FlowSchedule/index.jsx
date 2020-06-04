@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
@@ -57,7 +57,7 @@ export default function FlowSchedule({
         !moment(formVal.startTime, 'LT').isBefore(moment(formVal.endTime, 'LT'))
       ) {
         return enqueueSnackbar({
-          message: `End Time is invalid.`,
+          message: 'End Time is invalid.',
           variant: 'error',
         });
       }

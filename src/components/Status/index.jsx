@@ -1,5 +1,7 @@
+import React from 'react';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import ArrowRightIcon from '../icons/ArrowRightIcon';

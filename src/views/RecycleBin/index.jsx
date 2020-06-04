@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../actions';
@@ -76,7 +76,7 @@ export default function RecycleBin(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
         {status === 'requested' && <LoadingMask />}
         <ResourceDrawer {...props} />
@@ -93,7 +93,7 @@ export default function RecycleBin(props) {
             {list.count === 0 ? (
               <Typography>
                 {list.total === 0
-                  ? `Recycle bin is empty.`
+                  ? 'Recycle bin is empty.'
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
@@ -112,6 +112,6 @@ export default function RecycleBin(props) {
           maxCount={list.filtered}
         />
       </CheckPermissions>
-    </Fragment>
+    </>
   );
 }

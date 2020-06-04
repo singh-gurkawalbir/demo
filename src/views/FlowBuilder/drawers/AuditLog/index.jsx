@@ -1,3 +1,4 @@
+import React from 'react';
 import RightDrawer from '../../../../components/drawer/Right';
 import FlowAuditLog from '../../../../components/FlowAuditLog';
 

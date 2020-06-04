@@ -1,4 +1,6 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import Help from '../../Help';

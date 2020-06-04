@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -56,6 +56,7 @@ class Filters extends Component {
       source: OPTION_ALL.id,
     },
   };
+
   getResource = () => {
     const { resourceType, resourceId, resourceDetails } = this.props;
     const resource =
@@ -89,13 +90,14 @@ class Filters extends Component {
 
     affectedResources[filters.resourceType] &&
       affectedResources[filters.resourceType].forEach(ar => {
-        if (resourceDetails[filterResourceType])
+        if (resourceDetails[filterResourceType]) {
           options.push({
             id: ar,
             name:
               resourceDetails[filterResourceType][ar] &&
               resourceDetails[filterResourceType][ar].name,
           });
+        }
       });
 
     options = sortBy(options, ['name']);
@@ -126,6 +128,7 @@ class Filters extends Component {
       </FormControl>
     );
   };
+
   handleChange = event => {
     const { filters } = this.state;
     const toUpdate = { ...filters, [event.target.name]: event.target.value };
@@ -147,6 +150,7 @@ class Filters extends Component {
 
     onFiltersChange(updatedFilters);
   };
+
   render() {
     const { classes, users } = this.props;
     const { byUser, source } = this.state.filters;

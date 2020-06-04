@@ -84,8 +84,7 @@ export default class AppRouting extends Component {
           render={({ history, match }) =>
             history.replace(
               `/pg/templates/${match.params.templateName}/${match.params.integrationId}/flows`
-            )
-          }
+            )}
         />
         <Route
           path="/pg/integrations/:integrationId"
@@ -93,8 +92,7 @@ export default class AppRouting extends Component {
           render={({ history, match }) =>
             history.replace(
               `/pg/integrations/${match.params.integrationId}/flows`
-            )
-          }
+            )}
         />
 
         <Route
@@ -103,8 +101,7 @@ export default class AppRouting extends Component {
           render={({ history, match }) =>
             history.replace(
               `/pg/marketplace/templates/${match.params.templateId}/preview`
-            )
-          }
+            )}
         />
         <Route
           path={[
@@ -132,8 +129,8 @@ export default class AppRouting extends Component {
         />
         <Route
           path={[
-            `/pg/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId`,
-            `/pg/integrationapps/:integrationAppName/:integrationId/uninstall`,
+            '/pg/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId',
+            '/pg/integrationapps/:integrationAppName/:integrationId/uninstall',
           ]}
           component={IntegrationAppUninstallation}
         />

@@ -1,6 +1,6 @@
 import { Button, Snackbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useCallback } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -38,10 +38,10 @@ export const ErroredMessageList = ({ messages }) =>
           )}
           {index > 0 && <br />}
         </Fragment>
-      ))
+    ))
     : null;
-const LOADING_MSG = 'Loading...';
-const RETRY_MSG = 'Retrying… please hold.';
+const LOADING_MSG = 'Loading… What do you call 8 Hobbits? A Hobbyte.';
+const RETRY_MSG = 'Retrying… Hold your breath….';
 const Notifications = ({ allLoadingOrErrored }) => {
   if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
   const loadingMessage = allLoadingOrErrored.some(

@@ -1,4 +1,4 @@
-import { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   ClickAwayListener,
@@ -92,7 +92,7 @@ function Filters({ integrationId, flowId, uiAssistant }) {
 
   return (
     <ClickAwayListener onClickAway={handleClose}>
-      <Fragment>
+      <>
         <Button variant="text" onClick={handleMenu} className={classes.filter}>
           Filters
           {open ? <ArrowUpIcon /> : <ArrowDownIcon />}
@@ -186,7 +186,7 @@ function Filters({ integrationId, flowId, uiAssistant }) {
             </div>
           </div>
         </ArrowPopper>
-      </Fragment>
+      </>
     </ClickAwayListener>
   );
 }

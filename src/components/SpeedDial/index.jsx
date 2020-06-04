@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import MuiSpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
@@ -19,6 +19,7 @@ export default class SpeedDial extends Component {
   };
 
   handleClick = () => {
+    // eslint-disable-next-line react/no-access-state-in-setstate
     this.setState({ open: !this.state.open });
   };
 

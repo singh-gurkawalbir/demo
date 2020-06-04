@@ -1,4 +1,4 @@
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
@@ -192,9 +192,13 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  if (integrationId && permission.detach) { availableActions.push(allActions.detach); }
+  if (integrationId && permission.detach) {
+    availableActions.push(allActions.detach); 
+  }
 
-  if (!flowDetails._connectorId || flowDetails.showMapping) { availableActions.push(allActions.mapping); }
+  if (!flowDetails._connectorId || flowDetails.showMapping) { 
+    availableActions.push(allActions.mapping); 
+  }
 
   if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
 

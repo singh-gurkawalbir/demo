@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import ViewReferencesIcon from '../../../icons/ViewReferencesIcon';
 import ResourceReferences from '../../../ResourceReferences';
 
@@ -14,7 +14,7 @@ export default {
     }, []);
 
     return (
-      <Fragment>
+      <>
         {show && (
           <ResourceReferences
             resourceType={resourceType}
@@ -22,7 +22,7 @@ export default {
             onClose={handleReferencesClose}
           />
         )}
-      </Fragment>
+      </>
     );
   },
 };

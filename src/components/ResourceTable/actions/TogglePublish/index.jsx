@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import UnpublishIcon from '../../../../components/icons/UnpublishedIcon';
-import PublishIcon from '../../../../components/icons/PublishIcon';
+import UnpublishIcon from '../../../icons/UnpublishedIcon';
+import PublishIcon from '../../../icons/PublishIcon';
 import actions from '../../../../actions';
 
 export default {

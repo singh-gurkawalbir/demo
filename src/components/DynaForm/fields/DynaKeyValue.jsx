@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -134,8 +134,7 @@ export function KeyValueComponent(props) {
                 placeholder={keyName}
                 variant="filled"
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, keyName)
-                }
+                  handleUpdate(r.row, _value, keyName)}
                 labelName={suggestKeyConfig.labelName}
                 valueName={suggestKeyConfig.valueName}
                 options={{ suggestions: suggestKeyConfig.suggestions }}
@@ -168,8 +167,7 @@ export function KeyValueComponent(props) {
                 labelName={suggestValueConfig.labelName}
                 valueName={suggestValueConfig.valueName}
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, valueName)
-                }
+                  handleUpdate(r.row, _value, valueName)}
                 options={{ suggestions: suggestValueConfig.suggestions }}
                 fullWidth
               />
@@ -242,7 +240,7 @@ export default function DynaKeyValue(props) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <KeyValueComponent
         {...props}
         dataTest={id}
@@ -250,6 +248,6 @@ export default function DynaKeyValue(props) {
         classes={classes}
       />
       <ErroredMessageComponent {...props} />
-    </Fragment>
+    </>
   );
 }

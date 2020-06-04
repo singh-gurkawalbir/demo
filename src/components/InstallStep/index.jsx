@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,8 +22,8 @@ const useStyles = makeStyles(theme => ({
     background: step.completed
       ? theme.palette.primary.main
       : step.isCurrentStep
-      ? theme.palette.success.main
-      : theme.palette.secondary.lightest,
+        ? theme.palette.success.main
+        : theme.palette.secondary.lightest,
     color:
       step.isCurrentStep || step.completed
         ? theme.palette.background.paper
@@ -151,12 +151,12 @@ export default function InstallationStep(props) {
             </Button>
           )}
           {step.completed && (
-            <Fragment>
+            <>
               <Typography onClick={onStepClick} className={classes.successText}>
                 {integrationAppsUtil.getStepText(step, mode)}
               </Typography>
               <SuccessIcon />
-            </Fragment>
+            </>
           )}
         </Grid>
       </Grid>
