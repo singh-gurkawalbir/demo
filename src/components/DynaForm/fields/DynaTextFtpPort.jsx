@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
 import FieldHelp from '../FieldHelp';
@@ -15,8 +16,9 @@ const useStyle = makeStyles({
   },
 });
 
-export default function DynaTextFtpPort(props) {
+function DynaTextFtpPort(props) {
   const {
+    fields,
     description,
     errorMessages,
     id,
@@ -32,6 +34,14 @@ export default function DynaTextFtpPort(props) {
   } = props;
   const classes = useStyle();
   let result;
+  const ftptype = fields.find(obj => obj.key === 'ftp.type').value;
+
+  useEffect(() => {
+    if ((!value || [21, 22, 990].includes(value)) && options) {
+      onFieldChange(id, options, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ftptype]);
 
   if ([21, 22, 990].includes(value) && options) {
     result = options;
@@ -39,13 +49,16 @@ export default function DynaTextFtpPort(props) {
     result = value;
   }
 
-  const handleFieldChange = event => {
-    const { value, name } = event.target;
+  const handleFieldChange = useCallback(
+    event => {
+      const { value, name } = event.target;
 
-    if (!name || name !== props.name) return;
+      if (!name || name !== props.name) return;
 
-    return onFieldChange(id, value);
-  };
+      return onFieldChange(id, value);
+    },
+    [id, onFieldChange, props.name]
+  );
 
   return (
     <FormControl>
@@ -79,3 +92,11 @@ export default function DynaTextFtpPort(props) {
     </FormControl>
   );
 }
+
+const WrappedContextConsumer = props => (
+  <FormContext.Consumer>
+    {form => <DynaTextFtpPort {...form} {...props} />}
+  </FormContext.Consumer>
+);
+
+export default WrappedContextConsumer;
