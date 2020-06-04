@@ -1,5 +1,4 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
 import CsvParseEditor from './CsvParser';
 import CsvGenerateEditor from './CsvGenerator';
 import AFE2EditorDialog from '../AFE2EditorDialog';
