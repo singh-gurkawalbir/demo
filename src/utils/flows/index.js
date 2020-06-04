@@ -5,6 +5,7 @@ import {
   adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
+  isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 
@@ -184,8 +185,8 @@ export const isImportMappingAvailable = importResource => {
 
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
-  // For FTP XML Imports, no support for import mapping
-  if (appType === 'ftp' && file.type === 'xml') return false;
+  // For File Adaptor XML Imports, no support for import mapping
+  if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
 
