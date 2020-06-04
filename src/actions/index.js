@@ -471,6 +471,9 @@ const fileDefinitions = {
   },
 };
 const integrationApp = {
+  initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INIT_CHILD, {
+    id: integrationId,
+  }),
   settings: {
     categoryMappings: {
       init: (integrationId, flowId, id, options) =>

@@ -75,6 +75,30 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
     );
   }
 }
+export function* installInitChild({id}) {
+  const path = `/integrations/${id}/initChild`;
+  try {
+    const childIntegration = yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: {
+        method: 'POST',
+      },
+      hidden: true,
+    }) || {};
+    const { _childIntegrationId } = childIntegration;
+
+    yield put(
+      actions.resource.request('integrations', _childIntegrationId)
+    );
+    yield put(
+      actions.resource.updateChildIntegration(id, _childIntegrationId)
+    );
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error.message, false));
+  }
+}
+
 
 export function* installScriptStep({
   id,
@@ -116,26 +140,7 @@ export function* installScriptStep({
       integration.initChild &&
       integration.initChild.function
     ) {
-      try {
-        const childIntegration = yield call(apiCallWithRetry, {
-          path: `/integrations/${id}/initChild`,
-          timeout: 5 * 60 * 1000,
-          opts: {
-            method: 'POST',
-          },
-          hidden: true,
-        }) || {};
-        const { _childIntegrationId } = childIntegration;
-
-        yield put(
-          actions.resource.request('integrations', _childIntegrationId)
-        );
-        yield put(
-          actions.resource.updateChildIntegration(id, _childIntegrationId)
-        );
-      } catch (error) {
-        yield put(actions.api.failure(path, 'PUT', error.message, false));
-      }
+      yield call(installInitChild, {id});
     }
 
     // to clear session state
@@ -315,4 +320,5 @@ export default [
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
+  takeLatest(actionTypes.INTEGRATION_APPS.INIT_CHILD, installInitChild)
 ];
