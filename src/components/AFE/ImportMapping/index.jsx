@@ -419,28 +419,28 @@ export default function ImportMapping(props) {
         </div>
 
         <div className={classes.mappingsBody} key={`${editorId}`}>
-            {tableData.map((mapping, index) => (
-              <MappingRow
-                index={index}
-                id={`${mapping.key}-${mapping.rowIdentifier}`}
+          {tableData.map((mapping, index) => (
+            <MappingRow
+              index={index}
+              id={`${mapping.key}-${mapping.rowIdentifier}`}
                 // eslint-disable-next-line react/no-array-index-key
-                key={`${mapping.key}-${mapping.rowIdentifier}`}
-                mapping={mapping}
-                extractFields={extractFields}
-                onFieldUpdate={handleFieldUpdate}
-                generateFields={generateFields}
-                disabled={disabled}
-                updateLookupHandler={updateLookupHandler}
-                patchSettings={patchSettings}
-                application={application}
-                options={options}
-                lookups={lookups}
-                onDelete={handleDelete}
-                onMove={handleMove}
-                onDrop={handleDrop}
-                isDraggable={!disabled}
+              key={`${mapping.key}-${mapping.rowIdentifier}`}
+              mapping={mapping}
+              extractFields={extractFields}
+              onFieldUpdate={handleFieldUpdate}
+              generateFields={generateFields}
+              disabled={disabled}
+              updateLookupHandler={updateLookupHandler}
+              patchSettings={patchSettings}
+              application={application}
+              options={options}
+              lookups={lookups}
+              onDelete={handleDelete}
+              onMove={handleMove}
+              onDrop={handleDrop}
+              isDraggable={!disabled}
               />
-            ))}
+          ))}
           <MappingRow
             key={`${emptyRowIndex}`}
             index={emptyRowIndex}

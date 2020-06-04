@@ -9,12 +9,12 @@ export default function StyleGuide({ children }, ...props) {
   // console.log(props); // nothing there!
   // we need title, toc, sections, etc...
   return (
-  <>
-    <FontStager />
-    <DefaultStyleGuide
-      {...props}>
-      {children}
-    </DefaultStyleGuide>
-  </>
+    <>
+      <FontStager />
+      <DefaultStyleGuide
+        {...props}>
+        {children}
+      </DefaultStyleGuide>
+    </>
   );
 }
