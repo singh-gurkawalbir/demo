@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, Fragment } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {
   useRouteMatch,
@@ -52,7 +52,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
   }, [history]);
 
   return (
-    <Fragment>
+    <>
       {showDrawer ? (
         <RightDrawer
           path="details/:errorId/:mode"
@@ -67,6 +67,6 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
           />
         </RightDrawer>
       ) : null}
-    </Fragment>
+    </>
   );
 }

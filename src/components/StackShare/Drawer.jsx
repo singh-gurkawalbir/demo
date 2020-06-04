@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import UserGroupIcon from '../icons/GroupOfUsersIcon';
@@ -24,7 +24,7 @@ export default function StackShareDrawer() {
   }, [history]);
   const action = useMemo(
     () => (
-      <Fragment>
+      <>
         <IconTextButton
           data-test="retrieveStackShares"
           variant="text"
@@ -41,11 +41,11 @@ export default function StackShareDrawer() {
           <UserGroupIcon />
           Invite user
         </IconTextButton>
-      </Fragment>
+      </>
     ),
     [handleInviteClick, handleRefreshClick]
   );
-  const isInviteUser = history.location.pathname.includes(`/invite`);
+  const isInviteUser = history.location.pathname.includes('/invite');
 
   return (
     <RightDrawer

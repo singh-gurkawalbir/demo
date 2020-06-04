@@ -1,3 +1,4 @@
+import React from 'react';
 import DynaSelect from '../DynaSelect';
 
 export default function DynaSelectSetFieldValues(props) {

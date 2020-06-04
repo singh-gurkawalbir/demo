@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
-import Icon from '../../../components/icons/RefreshIcon';
+import Icon from '../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   card: {

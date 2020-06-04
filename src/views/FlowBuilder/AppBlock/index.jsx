@@ -17,7 +17,7 @@ import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status/';
+import Status from '../../../components/Status';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 
@@ -128,7 +128,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   deleteButton: {
-    position: `absolute`,
+    position: 'absolute',
     right: -theme.spacing(0.5),
     top: -theme.spacing(0.5),
     zIndex: 1,
@@ -192,8 +192,7 @@ function AppBlock({
     }
   });
   const connAssistant = useSelector(state => {
-    if (blockType === 'dataLoader' || !resource || !resource._connectionId)
-      return;
+    if (blockType === 'dataLoader' || !resource || !resource._connectionId) return;
 
     const connection = selectors.resource(
       state,

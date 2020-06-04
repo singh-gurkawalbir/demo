@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { showViewDiffLink } from './util';
@@ -20,7 +20,7 @@ export default function OldValue(props) {
   });
 
   return (
-    <Fragment>
+    <>
       {diffObj.showDiffDialog && (
         <DiffDialog
           auditLog={diffObj.selectedLog}
@@ -28,8 +28,7 @@ export default function OldValue(props) {
             setDiffObj({
               showDiffDialog: false,
               selectedLog: undefined,
-            })
-          }
+            })}
         />
       )}
       {showViewDiffLink(al.fieldChange.oldValue, al.fieldChange.newValue) ? (
@@ -42,17 +41,16 @@ export default function OldValue(props) {
             setDiffObj({
               showDiffDialog: true,
               selectedLog: al,
-            })
-          }>
+            })}>
           Click to view
         </Button>
       ) : (
-        <Fragment>
+        <>
           {typeof al.fieldChange.oldValue === 'string'
             ? al.fieldChange.oldValue
             : JSON.stringify(al.fieldChange.oldValue)}
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

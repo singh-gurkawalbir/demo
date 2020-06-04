@@ -81,9 +81,9 @@ function ProceedOnFailureDialog(props) {
   return (
     <ModalDialog show={open} onClose={onClose}>
       <div>
-{' '}
-{title}
-{' '}
+        {' '}
+        {title}
+        {' '}
       </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>

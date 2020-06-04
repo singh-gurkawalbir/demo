@@ -1,11 +1,11 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Typography, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import CommStatus from '../../../../../components/CommStatus';
+import CommStatus from '../../../../CommStatus';
 import actionTypes from '../../../../../actions/types';
 import * as selectors from '../../../../../reducers';
 
@@ -34,7 +34,7 @@ export default function Display({ accessToken }) {
   }
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           displayToken: {
@@ -51,11 +51,11 @@ export default function Display({ accessToken }) {
       {isPurged(accessToken.autoPurgeAt) ? (
         <Typography>Purged</Typography>
       ) : (
-        <Fragment>
+        <>
           {accessToken.permissions.displayToken && (
-            <Fragment>
+            <>
               {token && (
-                <Fragment>
+                <>
                   <Typography>{token}</Typography>
                   <CopyToClipboard
                     text={token}
@@ -63,13 +63,12 @@ export default function Display({ accessToken }) {
                       enqueueSnackbar({
                         message: 'Token copied to clipboard.',
                         variant: 'success',
-                      })
-                    }>
+                      })}>
                     <Button data-test="copyTokenToClipboard">
                       Click to Copy
                     </Button>
                   </CopyToClipboard>
-                </Fragment>
+                </>
               )}
               {!token &&
                 (tokenStatus || (
@@ -81,10 +80,10 @@ export default function Display({ accessToken }) {
                     Click to display
                   </Button>
                 ))}
-            </Fragment>
+            </>
           )}
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

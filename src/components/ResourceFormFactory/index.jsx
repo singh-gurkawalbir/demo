@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -149,7 +149,7 @@ export const FormStateManager = props => {
       onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* , onSubmitComplete */]);
+  }, [formState.submitComplete]);
 
   useEffect(() => {
     remountForm();

@@ -1,3 +1,4 @@
+import React from 'react';
 import { FormControl, makeStyles, Typography } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -6,7 +7,7 @@ import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles({
   dynaLabelWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   dynaCheckControlLabel: {
     margin: 0,
@@ -51,8 +52,7 @@ export default function DynaCheckbox(props) {
               onFieldChange(
                 id,
                 inverse ? !evt.target.checked : evt.target.checked
-              )
-            }
+              )}
           />
         }
         className={classes.dynaCheckControlLabel}

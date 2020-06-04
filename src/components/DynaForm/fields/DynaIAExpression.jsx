@@ -1,5 +1,5 @@
 /* eslint-disable import/no-duplicates */
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
@@ -67,7 +67,7 @@ export default function DynaIAExpression(props) {
   );
   const connection = useMemo(() => {
     if (resource) return connectionOrig;
-    else if (recordType) return connectionRecordType;
+    if (recordType) return connectionRecordType;
   }, [connectionOrig, connectionRecordType, recordType, resource]);
 
   if (!connection) {

@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Drawer, List } from '@material-ui/core';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
@@ -246,6 +246,7 @@ export default function Editors() {
             title="JSON editor"
             id={editorName}
             onClose={() => {
+              // eslint-disable-next-line react/no-this-in-sfc
               this.handleEditorChange(null);
             }}
             onChange={value => {
@@ -269,7 +270,7 @@ export default function Editors() {
   }, [editorName, handleClose, rawData]);
 
   return (
-    <Fragment>
+    <>
       <CeligoPageBar title="Dev playground" />
 
       <div className={classes.appFrame}>
@@ -306,6 +307,6 @@ export default function Editors() {
         // eslint-disable-next-line react/jsx-handler-names
         onClose={history.goBack}
       />
-    </Fragment>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -10,7 +10,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@material-ui/core';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import actions from '../../actions';
 import CloseIcon from '../icons/CloseIcon';
 

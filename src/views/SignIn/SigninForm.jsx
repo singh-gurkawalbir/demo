@@ -1,7 +1,6 @@
-import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Typography, Button, Link, FormLabel } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
@@ -119,10 +118,12 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     display: 'flex',
   },
 }))
+
 class SignIn extends Component {
   state = {
     email: '',
   };
+
   componentDidMount() {
     if (
       process.env.AUTO_LOGIN === 'true' &&
@@ -147,6 +148,7 @@ class SignIn extends Component {
   handleOnChangeEmail = e => {
     this.setState({ email: e.target.value });
   };
+
   handleOnSubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -154,6 +156,7 @@ class SignIn extends Component {
 
     this.props.handleAuthentication(email, password);
   };
+
   handleSignInWithGoogle = e => {
     e.preventDefault();
 

@@ -1,4 +1,4 @@
-import { Component, Fragment, cloneElement } from 'react';
+import React, { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -115,7 +115,7 @@ class ResourceList extends Component {
     // to the child RowDetail component within ExpansionPanelDetails
     // https://stackoverflow.com/questions/32370994/how-to-pass-props-to-this-props-children
     return (
-      <Fragment>
+      <>
         <div className={classes.root}>
           <TitleBar resourceType={resourceType} itemName={displayName} />
           {list.resources.map(r => (
@@ -158,7 +158,7 @@ class ResourceList extends Component {
             </Button>
           )}
         </div>
-      </Fragment>
+      </>
     );
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -106,7 +106,7 @@ export default function DynaNetSuiteLookup(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
           title="Lookup criteria"
@@ -153,6 +153,6 @@ export default function DynaNetSuiteLookup(props) {
           </ActionButton>
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

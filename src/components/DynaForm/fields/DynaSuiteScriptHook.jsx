@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import DynaText from './DynaText';
@@ -53,7 +53,7 @@ export default function DynaSuiteScriptHook(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.inputContainer}>
         <InputLabel className={classes.label}>{label}</InputLabel>
         <div className={classes.wrapper}>
@@ -91,6 +91,6 @@ export default function DynaSuiteScriptHook(props) {
           </div>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@material-ui/core';
 import LookupDialog from '../../Lookup/index';
 
@@ -23,7 +23,7 @@ export default function DynaLookupEditor(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <LookupDialog
           id={id}
@@ -43,6 +43,6 @@ export default function DynaLookupEditor(props) {
         onClick={handleEditorClick}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

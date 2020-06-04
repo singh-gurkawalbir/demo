@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, Collapse, ButtonBase, Chip } from '@material-ui/core';
+import { List, Collapse, ButtonBase, Chip, Tooltip } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -300,7 +300,12 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
+                    {drawerOpened ? <Icon /> :
+                    <Tooltip placement="right-end" enterDelay={500} title={label}>
+                      <div>
+                        <Icon />
+                      </div>
+                    </Tooltip>}
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{
@@ -343,7 +348,12 @@ export default function CeligoDrawer() {
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                              {<Icon />}
+                              {drawerOpened ? <Icon /> :
+                              <Tooltip placement="right-end" enterDelay={500} title={label}>
+                                <div>
+                                  <Icon />
+                                </div>
+                              </Tooltip>}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}
