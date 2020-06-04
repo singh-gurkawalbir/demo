@@ -13,8 +13,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 
@@ -68,7 +67,7 @@ export default function FlowsPanel({ integrationId }) {
   );
   const {
     status,
-    data: integrationErrorsMap = {},
+    // data: integrationErrorsMap = {},
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -145,17 +144,8 @@ export default function FlowsPanel({ integrationId }) {
           data={flows}
           filterKey={filterKey}
           {...metadata}
-          // actionProps={{ integrationId }}
+          actionProps={{ resourceType: 'flows' }}
         />
-
-        {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['schedule']}
-            errorCount={integrationErrorsMap[f._id] || 0}
-          />
-        ))}
       </LoadResources>
     </div>
   );

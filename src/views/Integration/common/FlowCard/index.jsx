@@ -4,16 +4,13 @@ import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, Chip, Tooltip } from '@material-ui/core';
+import { makeStyles, Typography, Grid, Chip, Tooltip } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
-// import DataloaderIcon from '../../../../components/icons/DataLoaderIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
