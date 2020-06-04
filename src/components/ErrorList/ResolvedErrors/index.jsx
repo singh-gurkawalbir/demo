@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -9,7 +9,7 @@ import {
   isAnyErrorActionInProgress,
 } from '../../../reducers';
 import metadata from './metadata';
-import KeywordSearch from '../../../components/KeywordSearch';
+import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
 import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';

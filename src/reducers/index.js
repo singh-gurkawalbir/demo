@@ -16,6 +16,22 @@ import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
+  isSimpleImportFlow,
+  showScheduleIcon,
+  isRealtimeFlow,
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+  getImportsFromFlow,
+  getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
+  getFlowReferencesForResource,
+} from '../utils/flows';
+import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -30,19 +46,6 @@ import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import {
-  getExportIdsFromFlow,
-  getImportIdsFromFlow,
-  getUsedActionsMapForResource,
-  isPageGeneratorResource,
-  getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
-  getFlowListWithMetadata,
-  getNextDataFlows,
-  getIAFlowSettings,
-  getFlowDetails,
-  getFlowReferencesForResource,
-} from '../utils/flows';
 import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
@@ -118,10 +121,6 @@ export function userState(state) {
 // #region app selectors
 export function bannerOpened(state) {
   return fromApp.bannerOpened(state && state.app);
-}
-
-export function drawerOpened(state) {
-  return fromApp.drawerOpened(state && state.app);
 }
 
 export function reloadCount(state) {
@@ -203,6 +202,10 @@ export function resourceFormSaveProcessTerminated(
     resourceType,
     resourceId
   );
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromSession.getChildIntegrationId(state && state.session, parentId);
 }
 
 export function clonePreview(state, resourceType, resourceId) {
@@ -765,6 +768,14 @@ export function hasPreferences(state) {
   return !!userPreferences(state);
 }
 
+export function drawerOpened(state) {
+  return fromUser.drawerOpened((state && state.user) || null);
+}
+
+export function expandSelected(state) {
+  return fromUser.expandSelected((state && state.user) || null);
+}
+
 export function hasProfile(state) {
   return !!userProfile(state);
 }
@@ -870,6 +881,116 @@ export function flowDetails(state, id) {
 
   return getFlowDetails(flow, integration, exports);
 }
+
+/* ***********************************************************************
+  This is the beginning of refactoring the above selector. There is just WAY to
+  much data returned above and in most cased a component only needs a small slice
+  of the above. */
+export function isDataLoader(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  // TODO: review with team... is this an ok pattern to access
+  // state directly? seems ok.
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return false;
+
+  return isSimpleImportFlow(flow, exports);
+}
+
+export function flowType(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return '';
+
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return '';
+
+  if (isSimpleImportFlow(flow, exports)) {
+    return 'Data loader';
+  }
+
+  if (isRealtimeFlow(flow, exports)) {
+    return 'Realtime';
+  }
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function isFlowEnableLocked(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow || !flow._connectorId) return false;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  if (!integration) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  // strange flow setting name to indicate that flows can not be
+  // enabled/disabled by a user...
+  return !flowSettings.disableSlider;
+}
+
+// Possible refactor! If we need both canSchedule (flow has ability to schedule),
+// and if the IA allows for schedule overrides, then we can return a touple...
+// for the current purpose, we just need to know if a flow allows or doesn't allow
+// schedule editing.
+export function flowAllowsScheduling(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  const allExports = state && state.data && state.data.resources.exports;
+  const canSchedule = showScheduleIcon(flow, allExports);
+
+  if (!isApp) return canSchedule;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function flowUsesUtilityMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  if (!isApp) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showUtilityMapping;
+}
+
+export function flowSupportsMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+
+  const isApp = flow._connectorId;
+
+  if (!isApp) return true;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showMapping;
+}
+
+/* End of refactoring of flowDetails selector.. Once all use is refactored of
+   the flowDetails, we should delete that selector.
+*********************************************************************** */
 
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || emptySet;
@@ -1090,7 +1211,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
     connections &&
     connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
 
-  if (!options.ignoreBorrowedConnections)
+  if (!options.ignoreBorrowedConnections) {
     attachedConnections.forEach(conn => {
       if (
         conn &&
@@ -1100,6 +1221,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
         connectionIds.push(conn._borrowConcurrencyFromConnectionId);
       }
     });
+  }
 
   return connectionIds;
 }
@@ -1622,7 +1744,8 @@ export function hasGeneralSettings(state, integrationId, storeId) {
 
   if (supportsMultiStore) {
     return !!(general || []).find(s => s.id === storeId);
-  } else if (Array.isArray(general)) {
+  }
+  if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
   }
 
@@ -2306,11 +2429,12 @@ export function userPermissionsOnConnection(state, connectionId) {
     const connection = resource(state, 'connections', connectionId);
 
     return (
-      (connection._connectorId
+      (connection && connection._connectorId
         ? permissions.integrations.connectors
         : permissions.integrations.all) || {}
     ).connections;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+  }
+  if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
     const ioIntegrations = resourceList(state, {
       type: 'integrations',
     }).resources;
@@ -2379,7 +2503,8 @@ export const resourcePermissions = (
         (childResourceType ? value && value[childResourceType] : value) ||
         emptyObject
       );
-    } else if (resourceId) {
+    }
+    if (resourceId) {
       let value = permissions[resourceType][resourceId];
 
       // remove tile level permissions added to connector while are not valid.
@@ -2406,7 +2531,8 @@ export const resourcePermissions = (
     }
 
     return emptyObject;
-  } else if (resourceType) {
+  }
+  if (resourceType) {
     return resourceId
       ? permissions[resourceType][resourceId]
       : permissions[resourceType];
@@ -2809,8 +2935,7 @@ export function resourceStatus(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -2837,8 +2962,7 @@ export function resourceStatusModified(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/'))
-    resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -3254,10 +3378,10 @@ export function metadataOptionsAndResources({
 
 /*
  * TODO: @Raghu - Should be removed and use above selector
- * Function Definition needs to be changed to 
+ * Function Definition needs to be changed to
  * metadataOptionsAndResources(
     state,
-    { 
+    {
       connectionId,
       commMetaPath,
       filterKey,
@@ -3561,7 +3685,8 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
     return assistantPreviewData(state, resourceId);
-  } else if (adaptorType === 'NetSuiteDistributedImport') {
+  }
+  if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
     const { _connectionId: connectionId, netsuite_da = {} } = resource;
     const { recordType } = options;
@@ -3583,7 +3708,8 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (adaptorType === 'SalesforceImport') {
+  }
+  if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
     const { data, status } = metadataOptionsAndResources({
@@ -3597,10 +3723,12 @@ export function getImportSampleData(state, resourceId, options = {}) {
     });
 
     return { data, status };
-  } else if (isIntegrationApp) {
+  }
+  if (isIntegrationApp) {
     // handles incase of IAs
     return integrationAppImportMetadata(state, resourceId);
-  } else if (sampleData) {
+  }
+  if (sampleData) {
     // Formats sample data into readable form
     return {
       data: processSampleData(sampleData, resource),

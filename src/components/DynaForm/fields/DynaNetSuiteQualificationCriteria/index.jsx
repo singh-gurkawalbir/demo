@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -94,7 +94,7 @@ export default function DynaNetSuiteQualificationCriteria(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
         Click{' '}
         <Button
@@ -114,6 +114,6 @@ export default function DynaNetSuiteQualificationCriteria(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

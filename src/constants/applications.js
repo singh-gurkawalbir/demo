@@ -826,7 +826,8 @@ export const groupApplications = (
       if (assistant) {
         if (appType === 'import') {
           return assistant.import;
-        } else if (appType === 'export') {
+        }
+        if (appType === 'export') {
           return assistant.export;
         }
 
@@ -875,13 +876,13 @@ export const groupApplications = (
 };
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
-  'helpscout', 
+  'helpscout',
   'errorception',
-  'aha', 
-  'pagerduty', 
-  'surveymonkey', 
-  'mailparser-io', 
-  'integrator-extension', 
+  'aha',
+  'pagerduty',
+  'surveymonkey',
+  'mailparser-io',
+  'integrator-extension',
 */
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group);

@@ -6,7 +6,7 @@ import {
   FormControl,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import * as selectors from '../../../reducers';
@@ -116,7 +116,7 @@ export default function DynaNSSavedSearch(props) {
   }, [value, netSuiteSystemDomain]);
 
   return (
-    <Fragment>
+    <>
       <div>
         <FormControl
           required={required}
@@ -171,6 +171,6 @@ export default function DynaNSSavedSearch(props) {
           </div>
         )}
       </FormControl>
-    </Fragment>
+    </>
   );
 }

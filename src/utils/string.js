@@ -16,8 +16,7 @@ export const hashCode = (s, stable) => {
   let chr;
   let str = s;
 
-  if (typeof s === 'object')
-    str = stable ? stableStringify(s) : JSON.stringify(s);
+  if (typeof s === 'object') str = stable ? stableStringify(s) : JSON.stringify(s);
 
   if (!str || str.length === 0) return hash;
 

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
-import CodeEditor from '../../../components/CodeEditor';
+import CodeEditor from '../../CodeEditor';
 import ActionButton from '../../ActionButton';
 import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
 import ModalDialog from '../../ModalDialog';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     width: '65vh',
   },
   wrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'flex-start',
     display: 'flex',
   },

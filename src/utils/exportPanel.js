@@ -167,8 +167,7 @@ export const getPreviewBodyTemplateType = (resource = {}, panelType) => {
   if (
     ['http', 'rest'].includes(appType) &&
     ['request', 'raw'].includes(panelType)
-  )
-    return 'tab';
+  ) return 'tab';
 
   return 'default';
 };

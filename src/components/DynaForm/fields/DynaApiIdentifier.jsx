@@ -1,7 +1,9 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography';
 import { getApiUrl } from '../../../utils/resource';
-import FieldHelp from '../../../components/DynaForm/FieldHelp';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -9,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   dynaAPIWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'center',
   },
 }));

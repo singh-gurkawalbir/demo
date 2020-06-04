@@ -1,12 +1,16 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import FormDialog from '../FormDialog';
-import CodeEditor from '../../components/CodeEditor';
+import CodeEditor from '../CodeEditor';
 
 export default class JsonEditorDialog extends Component {
-  state = {
-    value: {},
-    error: false,
-  };
+  constructor(props) {
+    super(props);
+    // eslint-disable-next-line react/state-in-constructor
+    this.state = {
+      value: {},
+      error: false,
+    };
+  }
 
   handleChange(value) {
     this.setState({ value });

@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { Fragment } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
@@ -80,7 +80,11 @@ function ProceedOnFailureDialog(props) {
 
   return (
     <ModalDialog show={open} onClose={onClose}>
-      <div> {title} </div>
+      <div>
+        {' '}
+        {title}
+        {' '}
+      </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <DynaSubmit
@@ -101,7 +105,7 @@ function ProceedOnFailureDialog(props) {
 function ProceedOnFailure(props) {
   const { open } = props;
 
-  return <Fragment>{open && <ProceedOnFailureDialog {...props} />}</Fragment>;
+  return <>{open && <ProceedOnFailureDialog {...props} />}</>;
 }
 
 export default {

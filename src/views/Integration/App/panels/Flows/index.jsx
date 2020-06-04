@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Route,
   Link,
@@ -7,8 +7,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import { Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
@@ -20,7 +19,7 @@ import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 
@@ -97,8 +96,6 @@ function FlowList({ integrationId, storeId }) {
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
-
-  // console.log('render: <Flow Settings>');
 
   return (
     <LoadResources required resources="flows,exports">

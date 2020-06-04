@@ -41,12 +41,14 @@ export function upgradeStatus(license, integration = {}) {
 
   if (presentEdition === highestEdition) {
     return '';
-  } else if (
+  }
+  if (
     presentEdition === connectorEdition &&
     presentEdition < highestEdition
   ) {
     return 'requestUpgrade';
-  } else if (presentEdition < connectorEdition) {
+  }
+  if (presentEdition < connectorEdition) {
     return 'upgrade';
   }
 
@@ -62,7 +64,8 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested) {
 
   if (value === 'upgrade') {
     return 'UPGRADE';
-  } else if (value === 'requestUpgrade') {
+  }
+  if (value === 'requestUpgrade') {
     return 'CONTACT US TO UPGRADE';
   }
 

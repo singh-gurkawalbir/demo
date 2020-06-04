@@ -1,3 +1,4 @@
+import React from 'react';
 import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
@@ -5,7 +6,7 @@ import JavaScriptEditor from '../JavaScriptEditor';
 const defaults = {
   width: '85vw',
   height: '60vh',
-  layout: 'column',
+  layout: 'compact',
   open: true,
   labels: ['Rules', 'JavaScript'],
 };

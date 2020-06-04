@@ -1,3 +1,4 @@
+import React from 'react';
 import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
@@ -18,7 +19,7 @@ export default function FilterToggleEditorDialog(props) {
   const defaults = {
     width: '85vw',
     height: '60vh',
-    layout: 'column',
+    layout: 'compact',
     open: true,
     labels: ['Rules', 'JavaScript'],
   };

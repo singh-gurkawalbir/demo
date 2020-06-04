@@ -1,18 +1,16 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import cronstrue from 'cronstrue';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import TimeAgo from 'react-timeago';
-import { makeStyles } from '@material-ui/styles';
-import { Typography, Grid, Chip, Tooltip } from '@material-ui/core';
+import { makeStyles, Typography, Grid, Chip, Tooltip } from '@material-ui/core';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import FlowEllipsisMenu from '../../../../components/FlowEllipsisMenu';
 import RunFlowButton from '../../../../components/RunFlowButton';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
-// import DataloaderIcon from '../../../../components/icons/DataLoaderIcon';
 import OnOffSwitch from '../../../../components/SwitchToggle';
 import InfoIconButton from '../../../../components/InfoIconButton';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
@@ -262,12 +260,13 @@ export default function FlowCard({
   // TODO: This function needs to be enhanced to handle all
   // the various cases.. realtime, scheduled, cron, not scheduled, etc...
   function getRunLabel() {
-    if (flowDetails.isRealtime) return `Realtime`;
+    if (flowDetails.isRealtime) return 'Realtime';
 
-    if (flowDetails.schedule)
+    if (flowDetails.schedule) {
       return `Runs ${cronstrue.toString(
         flowDetails.schedule.replace(/^\?/g, '0')
       )}`;
+    }
 
     if (isDataloader) return 'Manual Run';
 

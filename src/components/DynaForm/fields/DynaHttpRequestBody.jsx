@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, Fragment } from 'react';
+import React, { useState, useCallback, useMemo, Fragment } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { Button, FormLabel } from '@material-ui/core';
@@ -12,7 +12,7 @@ import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaHttpRequestBodyWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -85,9 +85,10 @@ const DynaHttpRequestBody = props => {
   );
   const lookups =
     supportLookup &&
+    resourceType === 'imports' &&
     lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const action = useMemo(() => {
-    if (!supportLookup) {
+    if (!supportLookup || resourceType !== 'imports') {
       return;
     }
 

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import AuditLog from '../../components/AuditLog';
 
 export default class Audit extends Component {

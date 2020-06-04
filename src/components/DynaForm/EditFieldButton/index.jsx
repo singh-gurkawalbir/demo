@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
@@ -57,8 +57,10 @@ class EditFieldButton extends Component {
     showEditor: false,
     insertField: false,
   };
+
   handleMetaChangeOperation = () =>
     this.setState({ showEditor: false, insertField: false });
+
   handleEditorChange = newMeta => {
     const { patchFormField, onChange } = this.props;
 
@@ -120,10 +122,10 @@ class EditFieldButton extends Component {
 
     /* eslint-disable react/jsx-handler-names */
     return (
-      <Fragment>
+      <>
         <PopupState variant="popover" popupId="edit-field-menu">
           {popupState => (
-            <Fragment>
+            <>
               <IconButton
                 data-testid="edit-meta"
                 className={className}
@@ -160,7 +162,7 @@ class EditFieldButton extends Component {
                   Delete
                 </MenuItem>
               </Menu>
-            </Fragment>
+            </>
           )}
         </PopupState>
         {insertField && (
@@ -182,7 +184,7 @@ class EditFieldButton extends Component {
             id={fieldMeta.fieldId}
           />
         )}
-      </Fragment>
+      </>
     );
   }
 }

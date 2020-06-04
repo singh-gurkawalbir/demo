@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   CardContent,
@@ -131,7 +131,7 @@ export function MultiSubsidiaryMapping(props) {
   );
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <MultiSubsidiaryMapWidgetDialog {...props} onClose={handleClose} />
       )}
@@ -146,6 +146,6 @@ export function MultiSubsidiaryMapping(props) {
           </ActionButton>
         </CardContent>
       </Card>
-    </Fragment>
+    </>
   );
 }

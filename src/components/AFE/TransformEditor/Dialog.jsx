@@ -1,10 +1,11 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
-import TransformEditor from './';
+import TransformEditor from '.';
 
 const defaults = {
   width: '85vw',
   height: '60vh',
-  layout: 'column',
+  layout: 'compact',
   open: true,
 };
 

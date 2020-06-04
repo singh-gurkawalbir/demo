@@ -37,9 +37,9 @@ export default function reducer(state = {}, action) {
           initData:
             state[key] && state[key].initData
               ? fieldsTouchedForMeta(
-                  fieldMeta,
-                  state[key] && state[key].initData
-                )
+                fieldMeta,
+                state[key] && state[key].initData
+              )
               : null,
           isNew,
           skipCommit,

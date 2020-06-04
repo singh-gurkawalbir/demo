@@ -1,7 +1,8 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
-import StatusCircle from '../../components/StatusCircle';
+import StatusCircle from '../StatusCircle';
 
 const useStyles = makeStyles({
   agentStatusWrapper: {

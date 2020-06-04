@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import PanelTitle from './PanelTitle';
@@ -8,7 +9,7 @@ import CodePanel from './GenericEditor/CodePanel';
 // utilizing the error section in grid to display console panel
 const useStyles = makeStyles(theme => ({
   gridItem: {
-    border: `solid 1px rgb(0,0,0,0.3)`,
+    border: 'solid 1px rgb(0,0,0,0.3)',
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 100,

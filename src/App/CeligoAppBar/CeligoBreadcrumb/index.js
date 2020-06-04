@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
@@ -143,6 +144,12 @@ const routes = [
     ],
   },
   {
+    path: '/pg/templates/:integrationAppName/:integrationId',
+    breadcrumb: IntegrationCrumb,
+  },
+  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
+  {
     path: '/pg/connectors/:integrationId/settings',
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
@@ -215,7 +222,7 @@ const routes = [
       { path: '/transfers', breadcrumb: () => 'Transfers' },
     ],
   },
-  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+
   { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
   // Dev tools
   { path: '/pg/resources', breadcrumb: () => 'Resources' },

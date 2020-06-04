@@ -5,7 +5,7 @@ export default {
     '/assistant': 'outreach',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.outreach.io`,
+    '/http/baseURI': 'https://api.outreach.io',
     '/http/auth/oauth/authURI': 'https://api.outreach.io/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.outreach.io/oauth/token',
     '/http/auth/oauth/scopeDelimiter': '+',

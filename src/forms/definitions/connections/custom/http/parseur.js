@@ -5,7 +5,7 @@ export default {
     '/assistant': 'parseur',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.parseur.com`,
+    '/http/baseURI': 'https://api.parseur.com',
     '/http/ping/relativeURI': '/parser',
     '/http/ping/method': 'GET',
     '/http/headers': [

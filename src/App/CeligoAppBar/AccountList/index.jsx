@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -132,8 +132,7 @@ export default function AccountList() {
       handleClose();
       confirmDialog({
         title: 'Leave Account',
-        // eslint-disable-next-line prettier/prettier
-      message: `By leaving the account "${account.company}", 
+        message: `By leaving the account "${account.company}", 
         you will no longer have access to the account or any of the integrations within the account.`,
         buttons: [
           {
@@ -169,7 +168,7 @@ export default function AccountList() {
   const selectedAccount = accounts.find(a => a.selected);
 
   return (
-    <Fragment>
+    <>
       <IconTextButton
         onClick={handleMenu}
         variant="text"
@@ -222,6 +221,6 @@ export default function AccountList() {
           ))}
         </List>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

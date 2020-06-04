@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { withStyles, Typography } from '@material-ui/core';
 import ReactDiffViewer from 'react-diff-viewer';
 import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../constants/resource';

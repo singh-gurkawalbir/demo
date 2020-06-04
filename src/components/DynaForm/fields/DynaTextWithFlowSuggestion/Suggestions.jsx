@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch/lib/core';
-import { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -79,8 +79,8 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsItemBtn: {
     marginLeft: -15,
-    width: `calc(100% + 30px)`,
-    height: `calc(100% + 20px)`,
+    width: 'calc(100% + 30px)',
+    height: 'calc(100% + 20px)',
     marginTop: -10,
     borderRadius: 0,
     padding: '0px 15px',
@@ -273,7 +273,6 @@ export default function Suggestions(props) {
             fieldId={id}
             showDynamicLookupOnly
             onSave={handleLookupAdd}
-            onSavelabel="Add new lookup"
             options={options}
           />
         </li>

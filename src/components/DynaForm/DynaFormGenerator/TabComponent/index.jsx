@@ -1,5 +1,5 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import React, { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
@@ -96,7 +96,7 @@ function FormWithSave(props) {
   return (
     <FormContext.Consumer>
       {form => (
-        <Fragment>
+        <>
           <FormGenerator {...props} />
           <IntegrationSettingsSaveButton
             {...rest}
@@ -109,7 +109,7 @@ function FormWithSave(props) {
             )}
             postProcessValuesFn={postProcessValuesFn}
           />
-        </Fragment>
+        </>
       )}
     </FormContext.Consumer>
   );
@@ -125,10 +125,10 @@ export function TabIAComponent(props) {
 
 function TabWithCompleteSave(props) {
   return (
-    <Fragment>
+    <>
       <FormGenerator {...props} />
       <IntegrationSettingsSaveButton {...props} />
-    </Fragment>
+    </>
   );
 }
 
