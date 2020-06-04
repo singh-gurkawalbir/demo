@@ -175,18 +175,18 @@ export const getUsedActionsMapForResource = (
   return usedActions;
 };
 
-export const isImportMappingAvailable = resource => {
-  if (!resource) return false;
-  // For Blob imports mapping shouldnot be shown.(IO-11865)
-
-  if (isBlobTypeResource(resource)) {
+export const isImportMappingAvailable = importResource => {
+  if (!importResource) return false;
+  // For Blob imports mapping should not be shown.(IO-11865)
+  if (isBlobTypeResource(importResource)) {
     return false;
   }
 
-  const { adaptorType, rdbms = {} } = resource;
+  const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
-
-  // if apptype is mongodb then mapping shouldnot be shown
+  // For FTP XML Imports, no support for import mapping
+  if (appType === 'ftp' && file.type === 'xml') return false;
+  // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
 
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
