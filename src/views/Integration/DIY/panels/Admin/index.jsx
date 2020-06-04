@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Route,
   Switch,
@@ -6,6 +7,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';

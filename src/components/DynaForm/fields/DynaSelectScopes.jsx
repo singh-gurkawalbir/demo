@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { FormControl, Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ModalDialog from '../../ModalDialog';
@@ -45,7 +45,7 @@ const TransferListModal = props => {
       <div>Scopes Editor</div>
 
       <TransferList {...transferListProps} />
-      <Fragment>
+      <>
         <Button
           data-test="saveSelectedScopes"
           variant="outlined"
@@ -56,7 +56,7 @@ const TransferListModal = props => {
           }}>
           Save
         </Button>
-      </Fragment>
+      </>
     </ModalDialog>
   );
 };
@@ -68,7 +68,7 @@ export default function DynaSelectScopesDialog(props) {
   const defaultAvailableScopes = excludeSelectedScopes(scopes, selectedScopes);
 
   return (
-    <Fragment>
+    <>
       {showScopesModal && (
         <TransferListModal
           id={id}
@@ -98,6 +98,6 @@ export default function DynaSelectScopesDialog(props) {
 
         <ErroredMessageComponent {...props} />
       </FormControl>
-    </Fragment>
+    </>
   );
 }

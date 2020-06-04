@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import {
   Route,
@@ -6,6 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
@@ -71,7 +73,7 @@ export default function AdminPanel({ integrationId, ...sectionProps }) {
   const availableSections = showAPITokens
     ? allSections
     : // remove api token (last) section;
-      allSections.slice(0, allSections.length - 1);
+    allSections.slice(0, allSections.length - 1);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CeligoTable from '../../../../components/CeligoTable';
 import * as selectors from '../../../../reducers';
@@ -87,7 +87,7 @@ export default function Invite(props) {
 
   // TODO: Ashok, There is  no description in the new mock please check.
   return (
-    <Fragment>
+    <>
       <IconTextButton
         onClick={backToTransferClick}
         variant="outlined"
@@ -109,16 +109,16 @@ export default function Invite(props) {
       <DynaForm fieldMeta={fieldMeta} render>
         <DynaSubmit onClick={handleSubmit}>Next</DynaSubmit>
       </DynaForm>
-      {!!error && <Fragment> {error} </Fragment>}
+      {!!error && <> {error} </>}
       {response && response.length && (
-        <Fragment>
-          <Fragment>
+        <>
+          <>
             <CeligoTable
               resourceType="transfers"
               data={response}
               {...metadata}
             />
-          </Fragment>
+          </>
           <Button
             data-test="invite"
             variant="outlined"
@@ -126,8 +126,8 @@ export default function Invite(props) {
             onClick={initiateTransferClick}>
             Initiate Transfer
           </Button>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

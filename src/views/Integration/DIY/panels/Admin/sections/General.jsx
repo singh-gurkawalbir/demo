@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
@@ -93,7 +93,7 @@ export default function GeneralSection({ integrationId }) {
   );
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="General" />
 
       <div className={classes.form}>
@@ -109,6 +109,6 @@ export default function GeneralSection({ integrationId }) {
           </DynaSubmit>
         </DynaForm>
       </div>
-    </Fragment>
+    </>
   );
 }

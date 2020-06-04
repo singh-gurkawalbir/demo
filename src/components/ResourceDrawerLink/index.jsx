@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 
@@ -23,7 +23,7 @@ export default function ResourceDrawerLink({
   if (disabled) return linkLabel;
 
   return (
-    <Fragment>
+    <>
       <Link
         onClick={onClick}
         // if a user clicks to open a resource drawer (when the drawer is already opened),
@@ -38,6 +38,6 @@ export default function ResourceDrawerLink({
         {linkLabel}
       </Link>
       {resource.shared && <Typography>Shared</Typography>}
-    </Fragment>
+    </>
   );
 }

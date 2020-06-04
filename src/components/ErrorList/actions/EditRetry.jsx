@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import Icon from '../../icons/EditIcon';
@@ -14,11 +14,11 @@ export default {
     }, [errorId, history, match.url]);
 
     return (
-      <Fragment>
+      <>
         <IconButton data-test="editRetry" size="small" onClick={handleClick}>
           <Icon />
         </IconButton>
-      </Fragment>
+      </>
     );
   },
 };

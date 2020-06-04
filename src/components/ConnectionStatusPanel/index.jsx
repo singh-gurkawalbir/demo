@@ -1,4 +1,5 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
@@ -38,12 +39,12 @@ const getStatusVariantAndMessage = ({
       message:
         'Your test was not successful. Check your information and try again',
     };
-  } else if (testStatus === PING_STATES.SUCCESS) {
+  } if (testStatus === PING_STATES.SUCCESS) {
     return {
       variant: 'success',
       message: 'Your connection is working great! Nice Job!',
     };
-  } else if (!testStatus && showOfflineMsg) {
+  } if (!testStatus && showOfflineMsg) {
     return {
       variant: 'error',
       message: isConnectionFix

@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -235,7 +235,7 @@ export default function ProfileComponent() {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Profile" />
       <DynaForm formState={formState} fieldMeta={fieldMeta}>
         <DynaSubmit
@@ -264,7 +264,7 @@ export default function ProfileComponent() {
                   <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
-            )}
+          )}
           {preferences &&
             preferences.auth_type_google &&
             preferences.auth_type_google.id && (
@@ -279,9 +279,9 @@ export default function ProfileComponent() {
                   <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
-            )}
+          )}
         </div>
       )}
-    </Fragment>
+    </>
   );
 }

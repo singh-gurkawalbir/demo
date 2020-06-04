@@ -1,5 +1,5 @@
 import { Typography, Button } from '@material-ui/core';
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -12,7 +12,7 @@ const contentWrapper = {
   minWidth: 432,
 };
 const ExpiredSessionContent = () => (
-  <Fragment>
+  <>
     <DialogTitle>
       <Typography>Your Session has Expired</Typography>
       <br />
@@ -21,13 +21,13 @@ const ExpiredSessionContent = () => (
     <DialogContent style={contentWrapper}>
       <SignInForm dialogOpen />
     </DialogContent>
-  </Fragment>
+  </>
 );
 const WarningSessionContent = () => {
   const dispatch = useDispatch();
 
   return (
-    <Fragment>
+    <>
       <DialogTitle>
         <Typography>Your session is about to expire</Typography>
         <br />
@@ -46,7 +46,7 @@ const WarningSessionContent = () => {
           Resume working
         </Button>
       </DialogContent>
-    </Fragment>
+    </>
   );
 };
 

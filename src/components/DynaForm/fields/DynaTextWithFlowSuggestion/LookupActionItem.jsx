@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-/** 
+/**
 lookup consist of dynamic lookup and static lookup. To show only dynamic lookup
 pass showDynamicLookupOnly = true
 */
@@ -63,7 +63,7 @@ export default function LookupActionItem({
   };
 
   return (
-    <Fragment>
+    <>
       {showLookup && (
         <ManageLookupDialog
           value={value}
@@ -95,6 +95,6 @@ export default function LookupActionItem({
           {label}
         </Button>
       </div>
-    </Fragment>
+    </>
   );
 }

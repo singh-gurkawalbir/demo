@@ -1,6 +1,8 @@
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { IconButton, Typography } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import CopyIcon from '../icons/CopyIcon';
@@ -39,8 +41,7 @@ export default function AgentToken({ agentId }) {
             enqueueSnackbar({
               message: 'Token copied to clipboard.',
               variant: 'success',
-            })
-          }>
+            })}>
           <IconButton
             data-test="copyToClipboard"
             title="Copy to clipboard"

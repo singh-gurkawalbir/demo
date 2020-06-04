@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -80,7 +80,7 @@ export default function ProfileMenuButton() {
   if (!hasProfile || !hasPreferences) return null;
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="profileMenu"
         size="small"
@@ -109,10 +109,10 @@ export default function ProfileMenuButton() {
             </Typography>
             <Typography className={classes.email}>
               {accountOwnerEmail && (
-                <Fragment>
+                <>
                   Account owner
                   {!isAccountOwner && `: ${accountOwnerEmail}`}
-                </Fragment>
+                </>
               )}
             </Typography>
           </Grid>
@@ -136,6 +136,6 @@ export default function ProfileMenuButton() {
           </Button>
         </div>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

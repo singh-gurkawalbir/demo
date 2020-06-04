@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -51,7 +51,7 @@ export default {
     }, [deleteResouce]);
 
     return (
-      <Fragment>
+      <>
         {showRef && resourceReferences && resourceReferences.length > 0 && (
           <ResourceReferences
             // TODO: this is a horrible pattern.
@@ -67,7 +67,7 @@ export default {
             onClose={handleResourceReferenceClose}
           />
         )}
-      </Fragment>
+      </>
     );
   },
 };

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -6,7 +6,7 @@ import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../../../DynaForm';
+import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
@@ -14,7 +14,7 @@ import ActionButton from '../../../ActionButton';
 
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'flex-start',
   },
   editIconRefrencedField: {

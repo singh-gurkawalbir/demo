@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import RadioGroup from '../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
-import ResourceFormWithStatusPanel from '../../components/ResourceFormWithStatusPanel';
-import DynaForm from '../../components/DynaForm';
+import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
+import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
+import DynaForm from '../DynaForm';
 import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
-import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
