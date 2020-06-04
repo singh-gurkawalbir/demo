@@ -96,10 +96,9 @@ export default function DynaCsvParse(props) {
           'file.csv.rowsPerRecord',
           !!(keyColumns && keyColumns.length)
         );
-
+        // On change of rules, trigger sample data update
+        // It calls processor on final rules to parse csv file
         if (keyColumns) {
-          // On change of rules, trigger sample data update
-          // It calls processor on final rules to parse csv file
           dispatch(
             actions.sampleData.request(
               resourceId,
@@ -150,7 +149,9 @@ export default function DynaCsvParse(props) {
             resourceType={resourceType}
             onFieldChange={onFieldChange}
             options="csv"
+            placeholder="Sample file (that would be exported)"
             id={uploadSampleDataFieldName}
+            persistData
           />
         );
       }

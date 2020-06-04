@@ -24,7 +24,7 @@ export default function ScheduleCell(props) {
         <CalendarIcon />
       </IconButton>
       {showSchedule && (
-        <ModalDialog show maxWidth={false}>
+        <ModalDialog show minWidth="md" onClose={handleClick}>
           <div>Flow schedule</div>
           <div>
             <FlowSchedule flow={props} onClose={handleClick} />

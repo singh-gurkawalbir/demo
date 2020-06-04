@@ -1,5 +1,5 @@
-import { withStyles } from '@material-ui/core/styles';
 import React, { useEffect } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';

@@ -20,10 +20,27 @@ const useStyles = makeStyles(theme => ({
   },
   helpTextButton: {
     float: 'right',
-    padding: theme.spacing(1),
+    padding: 0,
+    position: 'relative',
+    marginRight: theme.spacing(2),
+    '&:after': {
+      content: '""',
+      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+      height: '100%',
+      width: 1,
+      position: 'absolute',
+      right: theme.spacing(-1),
+    },
+  },
+  closeButtonTitleBar: {
+    padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.secondary.dark,
+    },
   },
   closeIcon: {
-    padding: 0,
+    fontSize: 18,
   },
 }));
 
@@ -69,9 +86,9 @@ export default function DrawerTitleBar({
       <IconButton
         data-test="closeFlowSchedule"
         aria-label="Close"
-        className={classes.closeIcon}
+        className={classes.closeButtonTitleBar}
         onClick={handleClick}>
-        <CloseIcon />
+        <CloseIcon className={classes.closeIcon} />
       </IconButton>
     </div>
   );
