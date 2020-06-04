@@ -613,7 +613,6 @@ function JobErrorTable({
                       label: 'Edit Retry Data',
                       component: function EditRetryData() {
                         useEffect(() => {
-                          console.log('hi 1')
                           handleEditRetryDataClick(r._retryId);
                         }, []);
                         return null;
