@@ -16,6 +16,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -111,6 +112,7 @@ export default function FlowsPanel({ integrationId }) {
         />
       )}
       <MappingDrawer integrationId={integrationId} />
+      <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
         {permission.create && (
