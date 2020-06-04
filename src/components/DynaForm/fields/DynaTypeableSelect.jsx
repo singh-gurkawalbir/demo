@@ -178,6 +178,7 @@ export default function DynaTypeableSelect(props) {
           : theme.palette.background.paper,
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       minHeight: 38,
+      wordBreak: 'break-word',
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,

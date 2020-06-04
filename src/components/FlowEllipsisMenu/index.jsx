@@ -192,9 +192,13 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  if (integrationId && permission.detach) availableActions.push(allActions.detach);
+  if (integrationId && permission.detach) {
+    availableActions.push(allActions.detach);
+  }
 
-  if (!flowDetails._connectorId || flowDetails.showMapping) availableActions.push(allActions.mapping);
+  if (!flowDetails._connectorId || flowDetails.showMapping) {
+    availableActions.push(allActions.mapping);
+  }
 
   if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
@@ -7,6 +7,8 @@ import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
 import { preSaveValidate } from '../../AFE/EditorDialog/util';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+
+let saveTriggered = false;
 
 export default function EditorSaveButton(props) {
   const {
@@ -18,7 +20,6 @@ export default function EditorSaveButton(props) {
     dataTest,
     onClose,
   } = props;
-  const [saveTriggered, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const editor = useSelector(state => selectors.editor(state, id));
   const { resourceType } = editor;
@@ -34,12 +35,12 @@ export default function EditorSaveButton(props) {
   useEffect(() => {
     if (saveTriggered && saveCompleted && onClose) {
       onClose();
-      setSaveTriggered(false);
+      saveTriggered = false;
     }
-  }, [onClose, saveCompleted, saveTerminated, saveTriggered]);
+  }, [onClose, saveCompleted, saveTerminated]);
   const onSave = useCallback(() => {
     dispatch(actions.editor.save(id));
-    setSaveTriggered(true);
+    saveTriggered = true;
   }, [dispatch, id]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,

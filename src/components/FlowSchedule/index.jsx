@@ -20,9 +20,6 @@ const exportFilterConfig = { type: 'exports' };
 const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowSchedule({
-  integrationId,
-  resourceType,
-  resourceId,
   flow,
   onClose,
   className,
