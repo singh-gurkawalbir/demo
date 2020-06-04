@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
   },
   dynaSalesforceQualifierWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   textField: {
     width: '100%',

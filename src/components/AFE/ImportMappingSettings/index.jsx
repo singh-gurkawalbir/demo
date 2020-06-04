@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     '& > div:first-child': {
-      height: `calc(100vh - 180px)`,
+      height: 'calc(100vh - 180px)',
     },
   },
 }));

@@ -1,4 +1,4 @@
-import { useCallback, Fragment, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
@@ -78,7 +78,7 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
   }, [connection.type]);
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="openActionsMenu"
         aria-label="more"
@@ -106,6 +106,6 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
           </MenuItem>
         ))}
       </Menu>
-    </Fragment>
+    </>
   );
 }

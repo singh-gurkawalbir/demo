@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { components } from 'react-select';
 import { Tooltip } from '@material-ui/core';
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
   },
   mappingsBody: {
-    height: `calc(100% - 32px)`,
+    height: 'calc(100% - 32px)',
     overflow: 'visible',
   },
   childRow: {
@@ -109,7 +109,7 @@ const useStyles = makeStyles(theme => ({
         minWidth: 0,
       },
       '& >:nth-child(2)': {
-        minHeight: `16px !important`,
+        minHeight: '16px !important',
         wordBreak: 'break-word',
       },
     },
@@ -346,8 +346,8 @@ export default function ImportMapping(props) {
       generateField.options &&
       generateField.options.length ? (
       // TODO: @Azhar should be replaced by a ListIcon
-      <KnowledgeBaseIcon />
-    ) : null;
+        <KnowledgeBaseIcon />
+      ) : null;
   };
 
   const ValueContainer = ({ children, ...props }) => {

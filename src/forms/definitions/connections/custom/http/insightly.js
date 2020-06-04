@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/v2.1/Contacts',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.insight.ly`,
+    '/http/baseURI': 'https://api.insight.ly',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

@@ -6,7 +6,7 @@ import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
 import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import Spinner from '../../components/Spinner';
+import Spinner from '../Spinner';
 
 export default {
   label: 'Off/On',

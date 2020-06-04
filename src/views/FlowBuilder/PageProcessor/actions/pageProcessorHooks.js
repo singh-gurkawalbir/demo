@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     width: 600,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {

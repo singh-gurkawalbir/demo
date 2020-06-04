@@ -1,5 +1,6 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
@@ -63,7 +64,7 @@ export default function ReadmeSection({ integrationId }) {
     'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Readme" infoText={infoTextReadme} />
       <div className={classes.root}>
         <div className={classes.editorContainer}>
@@ -88,6 +89,6 @@ export default function ReadmeSection({ integrationId }) {
           Save
         </Button>
       </div>
-    </Fragment>
+    </>
   );
 }

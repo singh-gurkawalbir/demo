@@ -117,7 +117,7 @@ export function convertIOFilterExpression(filterExpression = []) {
               } else if (tempExp[1][0] === 'settings') {
                 temp.field = `settings.${temp.field}`;
               } else if (tempExp[1][0] === 'context') {
-                temp.field = temp.field;
+                // temp.field = temp.field;
               }
 
               if (i === 1) {

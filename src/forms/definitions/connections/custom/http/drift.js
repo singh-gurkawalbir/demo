@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/accounts',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://driftapi.com`,
+    '/http/baseURI': 'https://driftapi.com',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',

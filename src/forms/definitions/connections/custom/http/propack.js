@@ -19,7 +19,7 @@ export default {
           : 'https://webservices.p3pl.com'
       }`,
       '/http/ping/relativeURI': '/WSOrderinfo.asmx',
-      '/http/ping/successPath': `/*[local-name()='Envelope']/*[local-name()='Body']/*[local-name()='GetOrdersByDateRangeResponse']/*[local-name()='GetOrdersByDateRangeResult']/*[local-name()='Result']/text()`,
+      '/http/ping/successPath': '/*[local-name()=\'Envelope\']/*[local-name()=\'Body\']/*[local-name()=\'GetOrdersByDateRangeResponse\']/*[local-name()=\'GetOrdersByDateRangeResult\']/*[local-name()=\'Result\']/text()',
       '/http/ping/successValues': ['OK', 'Warning'],
       '/http/ping/errorPath': '',
       '/http/ping/body':
@@ -30,9 +30,9 @@ export default {
           '<P3PLPassword>{{{connection.http.encrypted.p3plUserPassword}}}</P3PLPassword> ' +
           '<FromDate>'}${dateString}</FromDate> ` +
         `<ToDate>${dateString}</ToDate> ` +
-        `</GetOrdersByDateRange> ` +
-        `</soap12:Body> ` +
-        `</soap12:Envelope>`,
+        '</GetOrdersByDateRange> ' +
+        '</soap12:Body> ' +
+        '</soap12:Envelope>',
       '/http/ping/method': 'POST',
       '/http/headers': [
         { name: 'Content-Type', value: 'application/soap+xml' },

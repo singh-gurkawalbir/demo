@@ -5,7 +5,7 @@ export default {
     '/assistant': 'practicepanther',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://app.practicepanther.com/`,
+    '/http/baseURI': 'https://app.practicepanther.com/',
     '/http/auth/oauth/authURI':
       'https://app.practicepanther.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://app.practicepanther.com/oauth/token',

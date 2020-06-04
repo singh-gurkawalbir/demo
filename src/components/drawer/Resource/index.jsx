@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -9,7 +9,7 @@ import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
+    boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
     padding: 0,
     zIndex: theme.zIndex.drawer + 1,
   },

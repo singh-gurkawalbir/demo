@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
@@ -6,7 +6,7 @@ import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
@@ -15,7 +15,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   sqlContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -242,7 +242,7 @@ export default function DynaSQLQueryBuilder(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.sqlContainer}>
         {showEditor && (
           <SqlQueryBuilderEditorDialog
@@ -267,9 +267,9 @@ export default function DynaSQLQueryBuilder(props) {
           data-test={id}
           variant="outlined"
           onClick={handleEditorClick}>
-          {'Launch'}
+          Launch
         </Button>
       </div>
-    </Fragment>
+    </>
   );
 }

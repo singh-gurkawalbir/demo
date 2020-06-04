@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
 import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
 import { isIntegrationApp } from '../../../../utils/flows';
@@ -18,9 +18,9 @@ function ResponseMapping(props) {
   const disabled = isIAFlow ? false : isViewMode;
 
   return (
-    <Fragment>
+    <>
       {open && <ResponseMappingDialog disabled={disabled} {...props} />}
-    </Fragment>
+    </>
   );
 }
 

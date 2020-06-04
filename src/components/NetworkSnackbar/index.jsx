@@ -1,6 +1,6 @@
 import { Button, Snackbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useCallback } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -27,18 +27,18 @@ const Dismiss = props =>
 export const ErroredMessageList = ({ messages }) =>
   messages && messages.length > 0
     ? messages.map((msg, index) => (
-        <Fragment key={msg}>
-          {
+      <Fragment key={msg}>
+        {
             // Check if the message contains html elements, render it as html
           }
-          {/<\/?[a-z][\s\S]*>/i.test(msg) ? (
-            <RawHtml html={msg} />
-          ) : (
-            <Typography color="error">{msg}</Typography>
-          )}
-          {index > 0 && <br />}
-        </Fragment>
-      ))
+        {/<\/?[a-z][\s\S]*>/i.test(msg) ? (
+          <RawHtml html={msg} />
+        ) : (
+          <Typography color="error">{msg}</Typography>
+        )}
+        {index > 0 && <br />}
+      </Fragment>
+    ))
     : null;
 const LOADING_MSG = 'Loading...';
 const RETRY_MSG = 'Retrying… please hold.';

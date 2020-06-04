@@ -1,4 +1,4 @@
-import { useRef, useMemo, Fragment, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -71,6 +71,9 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
+  );
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (
@@ -189,6 +192,13 @@ const PageProcessor = ({
           path: '/_connectionId',
           value: pp._connectionId,
         },
+        // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+        // used to populate the same when user opens resource form
+        {
+          op: 'add',
+          path: '/rdbmsAppType',
+          value: rdbmsAppType,
+        },
       ];
 
       // console.log('patchSet: ', patchSet);
@@ -212,6 +222,7 @@ const PageProcessor = ({
     match.url,
     pending,
     pp._connectionId,
+    rdbmsAppType,
     resource,
     resourceId,
     resourceType,
@@ -241,31 +252,31 @@ const PageProcessor = ({
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap[`fb.pp.exports.hooks`],
+            helpText: helpTextMap['fb.pp.exports.hooks'],
           }
         );
       } else {
         processorActions.push(
           ...(isImportMappingAvailable(resource)
             ? [
-                {
-                  ...importMappingAction,
-                  isUsed: usedActions[actionsMap.importMapping],
-                },
-              ]
+              {
+                ...importMappingAction,
+                isUsed: usedActions[actionsMap.importMapping],
+              },
+            ]
             : []),
           ...(!isLast
             ? [
-                {
-                  ...responseTransformationAction,
-                  isUsed: usedActions[actionsMap.responseTransformation],
-                },
-              ]
+              {
+                ...responseTransformationAction,
+                isUsed: usedActions[actionsMap.responseTransformation],
+              },
+            ]
             : []),
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap[`fb.pp.imports.hooks`],
+            helpText: helpTextMap['fb.pp.imports.hooks'],
           }
         );
       }
@@ -300,7 +311,7 @@ const PageProcessor = ({
   const handleDelete = useCallback(onDelete(name), [onDelete]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.ppContainer}>
         {index === 0 && (
           /* Initial left line connecting Source Apps */
@@ -339,7 +350,7 @@ const PageProcessor = ({
           />
         )}
       </div>
-    </Fragment>
+    </>
   );
 };
 

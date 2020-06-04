@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import AuditLog from './Actions/AuditLog';
@@ -23,7 +23,7 @@ export default function FlowConnections({ flowId, integrationId }) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.container}>
         {connections.map(connection => (
           <ConnectionRow
@@ -53,6 +53,6 @@ export default function FlowConnections({ flowId, integrationId }) {
         title="Connection Debugger">
         <References />
       </RightDrawer>
-    </Fragment>
+    </>
   );
 }

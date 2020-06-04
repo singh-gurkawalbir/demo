@@ -1,5 +1,5 @@
 import { Typography } from '@material-ui/core';
-import { Fragment } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -45,7 +45,7 @@ export default function AccessTokenList(props) {
   };
 
   return (
-    <Fragment>
+    <>
       <CheckPermissions
         permission={
           PERMISSIONS &&
@@ -78,7 +78,7 @@ export default function AccessTokenList(props) {
             ) : (
               <Typography>
                 {list.total === 0
-                  ? `You don't have any API tokens.`
+                  ? "You don't have any API tokens."
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             )}
@@ -90,6 +90,6 @@ export default function AccessTokenList(props) {
           maxCount={list.filtered}
         />
       </CheckPermissions>
-    </Fragment>
+    </>
   );
 }

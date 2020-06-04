@@ -229,9 +229,7 @@ export const optionsMapFromMetadata = (
     data: {
       optionsMap: [
         { ...optionsMap[0] },
-        Object.assign({}, optionsMap[1], {
-          options: options.data || optionsMap[1].options || [],
-        }),
+        { ...optionsMap[1], options: options.data || optionsMap[1].options || [], },
       ],
     },
   };

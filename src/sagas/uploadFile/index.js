@@ -97,9 +97,10 @@ function configureFileReader(file, fileType) {
  * Reads and processes the uploaded file based on file type and saves fileContent/error on state
  * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
  * For JSON file, content should be parsed from String to JSON
+ * @param fileProps contains any additional properties needed to be passed related to the uploaded file
  */
-function* processFile({ fileId, file, fileType }) {
-  const { error } = getUploadedFileStatus(file, fileType);
+function* processFile({ fileId, file, fileType, fileProps = {} }) {
+  const { error } = getUploadedFileStatus(file, fileType, fileProps);
   const { name, size } = file;
 
   if (error) {

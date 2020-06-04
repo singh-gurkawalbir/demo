@@ -1,5 +1,5 @@
 import { FormContext } from 'react-forms-processor/dist';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';

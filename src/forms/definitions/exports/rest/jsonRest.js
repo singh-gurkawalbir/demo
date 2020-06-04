@@ -161,8 +161,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -272,8 +271,7 @@ export default {
           {
             collapsed: true,
             label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-                return 'What would you like to transfer?';
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
               return 'What would you like to export?';
             },

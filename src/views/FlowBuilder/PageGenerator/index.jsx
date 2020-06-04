@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag } from 'react-dnd-cjs';
@@ -21,8 +21,8 @@ import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
 import { actionsMap } from '../../../utils/flows';
 
-/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
-   We use the block const across several components and thus is a maintenance issue to 
+/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
+   We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
 const blockHeight = 170;
 const lineHeightOffset = 63;
@@ -71,6 +71,9 @@ const PageGenerator = ({
     !resourceId
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
+  );
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
@@ -128,11 +131,20 @@ const PageGenerator = ({
         }
 
         if (pg._connectionId) {
-          patchSet.push({
-            op: 'add',
-            path: '/_connectionId',
-            value: pg._connectionId,
-          });
+          // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+          // used to populate the same when user opens resource form
+          patchSet.push(
+            {
+              op: 'add',
+              path: '/_connectionId',
+              value: pg._connectionId,
+            },
+            {
+              op: 'add',
+              path: '/rdbmsAppType',
+              value: rdbmsAppType,
+            }
+          );
         }
       }
 
@@ -163,6 +175,7 @@ const PageGenerator = ({
     pg._exportId,
     pg.application,
     pg.webhookOnly,
+    rdbmsAppType,
     resource,
   ]);
   const getApplication = useCallback(() => {

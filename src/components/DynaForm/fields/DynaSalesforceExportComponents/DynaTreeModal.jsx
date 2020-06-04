@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { Fragment, useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
@@ -64,7 +64,7 @@ export default function DynaTreeModal(props) {
   const { referenceTo, relationshipName } = options;
 
   return (
-    <Fragment>
+    <>
       <DynaText
         id={id}
         onFieldChange={onFieldChange}
@@ -84,6 +84,6 @@ export default function DynaTreeModal(props) {
           handleClose={toggle}
         />
       ) : null}
-    </Fragment>
+    </>
   );
 }

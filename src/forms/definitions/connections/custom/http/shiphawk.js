@@ -5,7 +5,7 @@ export default {
     '/assistant': 'shiphawk',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://shiphawk.com/api`,
+    '/http/baseURI': 'https://shiphawk.com/api',
     '/http/ping/relativeURI': '/v4/orders/',
     '/http/ping/method': 'GET',
     '/http/headers': [

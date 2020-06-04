@@ -95,8 +95,7 @@ export default {
           ];
         }
 
-        if (retValues['/rest/bodyCreate'])
-          retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
+        if (retValues['/rest/bodyCreate']) retValues['/rest/body'] = [retValues['/rest/bodyCreate']];
         else {
           delete retValues['/rest/body'];
         }
@@ -198,8 +197,7 @@ export default {
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      )
-        return 'Sample Data must be a valid JSON';
+      ) return 'Sample Data must be a valid JSON';
     }
   },
   fieldMap: {
@@ -851,7 +849,8 @@ export default {
 
         if (r.rest.ignoreLookupName) {
           return r.rest.ignoreLookupName;
-        } else if (r.rest.ignoreExtract) {
+        }
+        if (r.rest.ignoreExtract) {
           return r.rest.ignoreExtract;
         }
 
@@ -885,7 +884,8 @@ export default {
 
         if (r.rest.ignoreLookupName) {
           return r.rest.ignoreLookupName;
-        } else if (r.rest.ignoreExtract) {
+        }
+        if (r.rest.ignoreExtract) {
           return r.rest.ignoreExtract;
         }
 
@@ -990,6 +990,11 @@ export default {
             ],
           },
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Do you have a sample destination record?',
+        fields: ['sampleData'],
       },
       {
         collapsed: true,

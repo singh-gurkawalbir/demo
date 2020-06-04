@@ -174,6 +174,7 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
+    title: 'Build paging post body',
     label: 'Build paging post body',
     required: true,
     visibleWhenAll: [

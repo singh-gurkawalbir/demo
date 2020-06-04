@@ -11,7 +11,7 @@ import Paper from '@material-ui/core/Paper';
 const styles = theme => ({
   root: {
     display: 'grid',
-    gridTemplateColumns: `1fr 100px 1fr`,
+    gridTemplateColumns: '1fr 100px 1fr',
   },
   paper: {
     height: 300,

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../../../IconTextButton';
@@ -71,11 +71,9 @@ export default function PreviewInfo(props) {
   const classes = useStyles();
   // ShowSampleDataStatus Fn shows Preview Status
   const sampleDataStatus = useMemo(() => {
-    if (resourceSampleData.status === 'requested')
-      return <Typography variant="body2"> Testing </Typography>;
+    if (resourceSampleData.status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (resourceSampleData.status === 'received')
-      return <Typography variant="body2"> Success! </Typography>;
+    if (resourceSampleData.status === 'received') return <Typography variant="body2"> Success! </Typography>;
   }, [resourceSampleData.status]);
   // showSampleDataOverview Fn Used to show Preview Info
   const sampleDataOverview = useMemo(() => {

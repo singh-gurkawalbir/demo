@@ -323,7 +323,8 @@ export default {
           wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
         },
       };
-    } else if (
+    }
+    if (
       fieldId === 'http.body' ||
       fieldId === 'http.bodyCreate' ||
       fieldId === 'http.bodyUpdate'
@@ -1320,7 +1321,8 @@ export default {
 
         if (r.http.ignoreLookupName) {
           return r.http.ignoreLookupName;
-        } else if (r.http.ignoreExtract) {
+        }
+        if (r.http.ignoreExtract) {
           return r.http.ignoreExtract;
         }
 
@@ -1359,7 +1361,8 @@ export default {
 
         if (r.http.ignoreLookupName) {
           return r.http.ignoreLookupName;
-        } else if (r.http.ignoreExtract) {
+        }
+        if (r.http.ignoreExtract) {
           return r.http.ignoreExtract;
         }
 

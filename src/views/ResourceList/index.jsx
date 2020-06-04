@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -96,7 +96,8 @@ export default function ResourceList(props) {
         PERMISSIONS[resourceType].view
       }>
       {// This is where we will be adding all Right drawers to Celigo Table
-      resourceType === 'stacks' && <StackShareDrawer />}
+      resourceType === 'stacks' && <StackShareDrawer />
+      }
       <ResourceDrawer {...props} />
       <CeligoPageBar
         title={`${resourceName}s`}

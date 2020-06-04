@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   loading: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     alignItems: 'center',
     padding: theme.spacing(1, 0),
   },
@@ -115,7 +115,7 @@ export default function DynaNetSuiteLookupFilters(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
         Click{' '}
         <Button
@@ -136,6 +136,6 @@ export default function DynaNetSuiteLookupFilters(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

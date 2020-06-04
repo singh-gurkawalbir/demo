@@ -1,3 +1,4 @@
+import React from 'react';
 import DynaText from '../DynaText';
 
 const getTriggerCode = sObjectType => {

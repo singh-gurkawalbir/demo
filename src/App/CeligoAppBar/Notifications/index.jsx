@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     '& > span': {
       height: 15,
       minWidth: 15,
-      transform: `scale(1) translate(33%, -20%)`,
+      transform: 'scale(1) translate(33%, -20%)',
       color: theme.palette.background.paper,
     },
   },
@@ -76,7 +76,7 @@ export default function Notifications() {
   }
 
   return (
-    <Fragment>
+    <>
       <IconButton size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
@@ -115,6 +115,6 @@ export default function Notifications() {
           ))}
         </div>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

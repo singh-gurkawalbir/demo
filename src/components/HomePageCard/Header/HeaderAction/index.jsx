@@ -2,6 +2,7 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import EllipsisIconVertical from '../../../icons/EllipsisVerticalIcon';
 import NotificationsIcon from '../../../icons/NotificationsIcon';
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     whiteSpace: 'normal',
     fontSize: 15,
-    transition: `all .4s ease`,
+    transition: 'all .4s ease',
     padding: '8px 10px',
     fontFamily: 'source sans pro',
     minHeight: 'unset',

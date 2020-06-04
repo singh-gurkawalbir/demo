@@ -1,12 +1,42 @@
 // make sure the dictionary key matches the "model plural" name.
 export default {
-  exports: `Exports are used to extract data from an application. You can create and configure exports here or when you are building your flow. You can even invoke a stand-alone export using the integrator.io API to pull data in real-time into your own app.`,
-  imports: `Imports are used to insert data into an application. You can create and configure exports here or when you are building your flow. You can even invoke a stand-alone import using the integrator.io API to insert data in real-time into an application from your own app.`,
-  agents: `Agents are small applications that you can install on your computers to connect to data that is behind your firewall if you don't want to whitelist integrator.io's IP addresses. Each agent has an access token associated with it that should be used when installing the software on your computer. The installed agents connect to integrator.io and establish a reverse SSH tunnel allowing secure communication through your firewall without any need of whitelisting IPs in your firewall settings.`,
-  connections: `Connections store credentials and other information needed to access an application via its API. When you share an integration with other integrator.io users, they are able to create, edit, or run a flow using the connection resource that you specified within the shared integration. <br />Check out our <a href='https://celigosuccess.zendesk.com/hc/en-us/categories/360002670492' target='_blank'>Connector solutions articles</a> for information on connecting each supported app.`,
-  recycleBin: `All deleted items will be kept in the Recycle bin for up to 30 days before being automatically purged. All Flows in Recycle bin are deactivated and will no longer run. You can restore any of the items listed in Recycle bin, or purge them manually via Actions.`,
-  scripts: `You can write scripts in JavaScript to customize your integrations, enabling you to implement hooks, filters, transforms, and more. You can organize your scripts however you’d like, such as having just one script record with all of your code or splitting your code across multiple script records, even if different users are responsible for them. Scripts can be used by any number of resources in your integrator.io account, so use caution when modifying a script.`,
-  stacks: `You can use stacks to host code for hooks, wrappers, connector installers and settings pages. Stacks are simple server environments which can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks, and can optionally choose to share a stack with other integrator.io users.`,
+  exports: `Exports are used to extract data from an application. 
+    You can create and configure exports here or when you are building your flow. 
+    You can even invoke a stand-alone export using the integrator.io API to pull data 
+    in real-time into your own app.`,
+  imports: `Imports are used to insert data into an application. You can create and 
+    configure exports here or when you are building your flow. You can even invoke a 
+    stand-alone import using the integrator.io API to insert data in real-time into an 
+    application from your own app.`,
+  agents: `Agents are small applications that you can install on your computers to 
+    connect to data that is behind your firewall if you don't want to whitelist 
+    integrator.io's IP addresses. Each agent has an access token associated with it 
+    that should be used when installing the software on your computer. The installed
+     agents connect to integrator.io and establish a reverse SSH tunnel allowing 
+     secure communication through your firewall without any need of whitelisting 
+     IPs in your firewall settings.`,
+  connections: `Connections store credentials and other information needed to 
+    access an application via its API. When you share an integration with other 
+    integrator.io users, they are able to create, edit, or run a flow using the 
+    connection resource that you specified within the shared integration. <br />
+    Check out our <a href='https://celigosuccess.zendesk.com/hc/en-us/categories/360002670492' target='_blank'>Connector solutions articles</a> 
+    for information on connecting each supported app.`,
+  recycleBin: `All deleted items will be kept in the Recycle bin for up to 30 days 
+    before being automatically purged. All Flows in Recycle bin are deactivated and 
+    will no longer run. You can restore any of the items listed in Recycle bin, or 
+    purge them manually via Actions.`,
+  scripts: `You can write scripts in JavaScript to customize your integrations, 
+    enabling you to implement hooks, filters, transforms, and more. You can organize 
+    your scripts however you’d like, such as having just one script record with all 
+    of your code or splitting your code across multiple script records, even if 
+    different users are responsible for them. Scripts can be used by any number of 
+    resources in your integrator.io account, so use caution when modifying a script.`,
+  stacks: `You can use stacks to host code for hooks, wrappers, connector installers 
+    and settings pages. Stacks are simple server environments which can be implemented 
+    in any coding language and are always invoked via HTTP. Every stack is assigned 
+    a system token that should be used to authenticate HTTP requests. You own the IP 
+    for all of your stacks, and can optionally choose to share a stack with other 
+    integrator.io users.`,
   templates: `
     This is a special page enabled only for select partners. 
     Please use this page to publish templates to the integration marketplace. 

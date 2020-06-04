@@ -16,8 +16,7 @@ export default {
     const generateSystemToken = useCallback(() => {
       if (resourceType === 'agents') {
         dispatch(actions.agent.changeToken(resourceId));
-      } else if (resourceType === 'stacks')
-        dispatch(actions.stack.generateToken(resourceId));
+      } else if (resourceType === 'stacks') dispatch(actions.stack.generateToken(resourceId));
     }, [dispatch, resourceId, resourceType]);
     const confirmGenerateToken = useCallback(() => {
       confirmDialog({

@@ -24,15 +24,15 @@ export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+      actions.user.org.accounts.requestLicenses('Retrieving licenses')
     ),
     call(
       getResourceCollection,
-      actions.user.org.users.requestCollection(`Retrieving org users`)
+      actions.user.org.users.requestCollection('Retrieving org users')
     ),
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestCollection(`Retrieving user's accounts`)
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
   ]);
 }
