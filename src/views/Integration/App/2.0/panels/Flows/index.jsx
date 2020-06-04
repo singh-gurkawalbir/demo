@@ -1,6 +1,6 @@
-import { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import FlowCard from '../../../../common/FlowCard';

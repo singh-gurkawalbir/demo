@@ -8,7 +8,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
@@ -95,7 +95,7 @@ export default function AdminPanel({
   }
 
   const availableSections = allSections.filter(sec =>
-    filterTabs.includes(sec.id)
+    !filterTabs.includes(sec.id)
   );
 
   // if someone arrives at this view without requesting a section, then we

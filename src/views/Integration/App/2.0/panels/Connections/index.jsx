@@ -1,8 +1,8 @@
-import { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import shortid from 'shortid';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import RegisterConnections from '../../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../../components/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
@@ -65,7 +65,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       )}
 
       <PanelHeader title="Connections">
-        <Fragment>
+        <>
           {permission.create && (
             <IconTextButton
               component={Link}
@@ -80,7 +80,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
               <ConnectionsIcon /> Register connections
             </IconTextButton>
           )}
-        </Fragment>
+        </>
       </PanelHeader>
 
       <LoadResources required resources="connections,flows,exports,imports">

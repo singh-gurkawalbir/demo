@@ -34,12 +34,6 @@ import integrationAppUtil from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
-  {
-    path: 'settings',
-    label: 'Settings',
-    Icon: SettingsIcon,
-    Panel: AdminPanel,
-  },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -70,6 +64,12 @@ const allTabs = [
     label: 'Audit log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
+  },
+  {
+    path: 'admin',
+    label: 'Admin',
+    Icon: SettingsIcon,
+    Panel: AdminPanel,
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
