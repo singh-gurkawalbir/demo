@@ -101,7 +101,6 @@ function DynaWebhookTokenGenerator(props) {
       onFieldChange('webhook.url', whURL, true);
       setUrl(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
 
   return (
