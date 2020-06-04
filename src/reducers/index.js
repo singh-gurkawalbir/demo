@@ -1941,18 +1941,27 @@ export function integrationInstallSteps(state, integrationId) {
   });
 }
 
-export function integrationUninstallSteps(state, integrationId) {
-  const uninstallData = fromSession.uninstallData(
+const emptyStepsArr = [];
+export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  ) : fromSession.uninstallData(
     state && state.session,
     integrationId
   );
-  const { steps: uninstallSteps, error } = uninstallData;
+  const { init, steps: uninstallSteps, error, isFetched } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
   }
 
-  const modifiedSteps = produce(uninstallSteps, draft => {
+  const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+  if (visibleSteps.length === 0) {
+    return { init, steps: emptyStepsArr, error, isFetched };
+  }
+
+  const modifiedSteps = produce(visibleSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -1960,7 +1969,7 @@ export function integrationUninstallSteps(state, integrationId) {
     }
   });
 
-  return { steps: modifiedSteps, error };
+  return { init, steps: modifiedSteps, error, isFetched };
 }
 
 export function addNewStoreSteps(state, integrationId) {

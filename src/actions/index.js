@@ -848,6 +848,40 @@ const integrationApp = {
         integrationId,
       }),
   },
+  uninstaller2: {
+    init: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
+        id: integrationId,
+      }),
+    failed: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED, {
+        id: integrationId,
+        error,
+      }),
+    receivedSteps: (integrationId, uninstallSteps) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS, {
+        id: integrationId,
+        uninstallSteps,
+      }),
+    requestSteps: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
+        id: integrationId,
+      }),
+    updateStep: (integrationId, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE, {
+        id: integrationId,
+        update,
+      }),
+    uninstallStep: (integrationId, formVal) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, {
+        id: integrationId,
+        formVal,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
+        id: integrationId,
+      }),
+  },
   store: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),

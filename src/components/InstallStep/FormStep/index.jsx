@@ -6,7 +6,7 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import RightDrawer from '../../drawer/Right';
 
-export default function FormStep({ integrationId, formMeta, title, index }) {
+export default function FormStep({ integrationId, formMeta, title, index, formSubmitHandler, formCloseHandler, path }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [formState, setFormState] = useState({
@@ -40,15 +40,15 @@ export default function FormStep({ integrationId, formMeta, title, index }) {
 
   return (
     <RightDrawer
-      path={`form-${index}`}
+      path={path || `form-${index}`}
       height="tall"
       width="large"
       title={title}
       variant="temporary"
-      onClose={onClose}>
+      onClose={formCloseHandler || onClose}>
       <DynaForm fieldMeta={formMeta} formState={formState}>
         <DynaSubmit
-          onClick={handleSubmit}
+          onClick={formSubmitHandler || handleSubmit}
           showCustomFormValidations={showCustomFormValidations}>
           Submit
         </DynaSubmit>
