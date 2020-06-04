@@ -883,8 +883,8 @@ export function flowDetails(state, id) {
 }
 
 /* ***********************************************************************
-  This is the beginning of refactoring the above selector. There is just WAY to 
-  much data returned above and in most cased a component only needs a small slice 
+  This is the beginning of refactoring the above selector. There is just WAY to
+  much data returned above and in most cased a component only needs a small slice
   of the above. */
 export function isDataLoader(state, flowId) {
   const flow = resource(state, 'flows', flowId);
@@ -946,7 +946,7 @@ export function isFlowEnableLocked(state, flowId) {
 export function flowAllowsScheduling(state, id) {
   const flow = resource(state, 'flows', id);
 
-  if (!flow) return emptyObject;
+  if (!flow) return false;
   const integration = resource(state, 'integrations', flow._integrationId);
   const isApp = flow._connectorId;
   const allExports = state && state.data && state.data.resources.exports;
@@ -957,6 +957,35 @@ export function flowAllowsScheduling(state, id) {
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
   return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function flowUsesUtilityMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  if (!isApp) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showUtilityMapping;
+}
+
+export function flowSupportsMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+
+  const isApp = flow._connectorId;
+
+  if (!isApp) return true;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showMapping;
 }
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of

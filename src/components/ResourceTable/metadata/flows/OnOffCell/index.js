@@ -1,11 +1,11 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import OnOffSwitch from '../../../../SwitchToggle';
 import Spinner from '../../../../Spinner';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import useConfirmDialog from '../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer

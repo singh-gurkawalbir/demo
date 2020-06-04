@@ -1,6 +1,6 @@
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
-import { useState, Fragment, useCallback } from 'react';
 import FlowSchedule from '../../../../FlowSchedule';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import ModalDialog from '../../../../ModalDialog';
@@ -18,7 +18,7 @@ export default function ScheduleCell(props) {
   if (!allowSchedule) return null;
 
   return (
-    <Fragment>
+    <>
       <IconButton onClick={handleClick}>
         <CalendarIcon />
       </IconButton>
@@ -30,6 +30,6 @@ export default function ScheduleCell(props) {
           </div>
         </ModalDialog>
       )}
-    </Fragment>
+    </>
   );
 }

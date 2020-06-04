@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Tooltip } from '@material-ui/core';
@@ -79,7 +79,9 @@ export default function RunCell({
 
   return (
     <Tooltip title="Run now" placement="bottom">
-      <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
+      <div>
+        <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
+      </div>
     </Tooltip>
   );
 }

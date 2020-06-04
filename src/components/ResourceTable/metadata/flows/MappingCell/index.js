@@ -1,28 +1,31 @@
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
-import { useState, Fragment, useCallback } from 'react';
-// import FlowSchedule from '../../../../FlowSchedule';
 import MapDataIcon from '../../../../icons/MapDataIcon';
-// import ModalDialog from '../../../../ModalDialog';
 import * as selectors from '../../../../../reducers';
 
-export default function MappingCell(props) {
-  const [showMapping, setShowMapping] = useState(false);
-  const handleClick = useCallback(() => {
-    setShowMapping(!showMapping);
-  }, [showMapping]);
-  const allowSchedule = useSelector(state =>
-    selectors.flowAllowsScheduling(state, props._id)
+export default function MappingCell({flowId}) {
+  const history = useHistory();
+  const showMapping = useSelector(state =>
+    selectors.flowSupportsMapping(state, flowId)
   );
+  const showUtilityMapping = useSelector(state =>
+    selectors.flowUsesUtilityMapping(state, flowId)
+  );
+  const handleClick = useCallback(() => {
+    if (showUtilityMapping) {
+      history.push(
+        `${history.location.pathname}/${flowId}/utilityMapping/commonAttributes`
+      );
+    } else history.push(`${history.location.pathname}/${flowId}/mapping`);
+  }, [history, showUtilityMapping, flowId]);
 
-  if (!allowSchedule) return null;
+  if (!showMapping) return null;
 
   return (
-    <Fragment>
       <IconButton onClick={handleClick}>
         <MapDataIcon />
       </IconButton>
-      {showMapping && 'on'}
-    </Fragment>
   );
 }

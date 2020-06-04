@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect, Fragment } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -90,13 +90,13 @@ export default function FlowsPanel({ integrationId }) {
       <span>
         Integration flows
         {totalErrors ? (
-          <Fragment>
+          <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
               {totalErrors} errors
             </span>
-          </Fragment>
+          </>
         ) : null}
       </span>
     ),
@@ -108,7 +108,7 @@ export default function FlowsPanel({ integrationId }) {
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
-          onClose={() => setShowDialog(false)}
+          onClose={setShowDialog}
         />
       )}
       <MappingDrawer integrationId={integrationId} />

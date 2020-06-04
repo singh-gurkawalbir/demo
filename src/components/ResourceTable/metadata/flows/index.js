@@ -1,5 +1,9 @@
+import React from 'react';
 import { formatLastModified } from '../../../CeligoTable/util';
+import Detach from '../../actions/Flows/Detach';
 import AuditLogs from '../../actions/AuditLogs';
+import Clone from '../../actions/Clone';
+import Download from '../../actions/Download';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import NameCell from './NameCell';
@@ -41,9 +45,14 @@ export default {
         orderBy: 'lastModified',
       },
       {
+        heading: 'Last run',
+        value: r => r.lastExecutedAt && formatLastModified(r.lastExecutedAt),
+        orderBy: 'lastExecutedAt',
+      },
+      {
         heading: 'Mapping',
         value: function Mapping(r) {
-          return <MappingCell {...r} />;
+          return <MappingCell flowId={r._id} />;
         },
       },
       {
@@ -51,11 +60,6 @@ export default {
         value: function Schedule(r) {
           return <ScheduleCell {...r} />;
         },
-      },
-      {
-        heading: 'Last run',
-        value: r => r.lastExecutedAt && formatLastModified(r.lastExecutedAt),
-        orderBy: 'lastExecutedAt',
       },
       {
         heading: 'Run',
@@ -90,13 +94,19 @@ export default {
 
     return columns;
   },
-  // Mixed, Scheduled, Realtime, or Data loader
-  rowActions: (/* r, actionProps */) => {
-    const actionsToReturn = [AuditLogs, References, Delete];
 
-    // if (actionProps.type === 'flowBuilder') {
-    // }
+  rowActions: (r, /* actionProps */) => {
+    // all possible: detach, clone, audit, references, download, delete
+    const isIntegrationApp = !!r._connectorId;
+    const isStandalone = !r._integrationId;
+    let actions = [];
 
-    return actionsToReturn;
+    if (!isIntegrationApp && !isStandalone) {
+      actions.push(Detach);
+    }
+
+    actions = [...actions, Clone, AuditLogs, References, Download, Delete];
+
+    return actions;
   },
 };
