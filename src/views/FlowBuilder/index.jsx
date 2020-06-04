@@ -30,7 +30,7 @@ import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
-import SwitchOnOff from '../../components/OnOff';
+import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
@@ -575,8 +575,7 @@ function FlowBuilder() {
             </IconButton>
           )}
           {!isDataLoaderFlow && (
-            // eslint-disable-next-line react/jsx-pascal-case
-            <SwitchOnOff.component
+            <FlowToggle
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}
