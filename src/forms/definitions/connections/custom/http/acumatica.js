@@ -8,7 +8,6 @@ export default {
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
-      retValues['/http/mediaType'] = 'json';
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
       retValues['/http/auth/cookie/uri'] = `${
@@ -58,6 +57,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'acumatica',
+      '/http/mediaType': 'json'
     };
   },
   fieldMap: {

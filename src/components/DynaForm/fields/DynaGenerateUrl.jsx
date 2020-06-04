@@ -71,7 +71,6 @@ function GenerateUrl(props) {
         setUrl(false);
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalResourceId, options, id, onFieldChange, url]);
 
   return (
