@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import MapDataIcon from '../../../../icons/MapDataIcon';
 import * as selectors from '../../../../../reducers';
+import RemoveMargin from '../RemoveMargin';
 
 export default function MappingCell({flowId}) {
   const history = useHistory();
@@ -24,8 +25,10 @@ export default function MappingCell({flowId}) {
   if (!showMapping) return null;
 
   return (
+    <RemoveMargin>
       <IconButton onClick={handleClick}>
         <MapDataIcon />
       </IconButton>
+    </RemoveMargin>
   );
 }

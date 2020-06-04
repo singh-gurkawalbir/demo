@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import * as selectors from '../../../reducers';
@@ -99,12 +99,11 @@ export default function Integration({ history, match }) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const {
-    id,
     name,
     description,
     sandbox,
     templateId,
-    integration,
+    hasIntegration,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -114,17 +113,17 @@ export default function Integration({ history, match }) {
 
     if (integration) {
       return {
-        integration: true,
+        hasIntegration: true,
         templateId: integration._templateId,
         name: integration.name,
         description: integration.description,
         sandbox: integration.sandbox,
-        id: integration._id,
       };
     }
 
     return emptyObj;
-  });
+  }, shallowEqual);
+
   const { pEdit, pClone, pDelete } = useSelector(state => {
     const permission = selectors.resourcePermissions(
       state,
@@ -233,7 +232,7 @@ export default function Integration({ history, match }) {
     [patchIntegration]
   );
 
-  if (!integration && isDeleting) {
+  if (!hasIntegration && isDeleting) {
     ['integrations', 'tiles', 'scripts'].forEach(resource =>
       dispatch(actions.resource.requestCollection(resource))
     );
@@ -243,7 +242,7 @@ export default function Integration({ history, match }) {
   }
 
   // If this integration does not belong to this environment, then switch the environment.
-  if (integration && !!sandbox !== (currentEnvironment === 'sandbox')) {
+  if (hasIntegration && !!sandbox !== (currentEnvironment === 'sandbox')) {
     dispatch(
       actions.user.preferences.update({
         environment: sandbox ? 'sandbox' : 'production',
@@ -269,7 +268,7 @@ export default function Integration({ history, match }) {
       <LoadResources required resources="integrations,marketplacetemplates">
         <CeligoPageBar
           title={
-            integration ? (
+            hasIntegration ? (
               <EditableText
                 text={name}
                 disabled={!pEdit}
@@ -286,7 +285,7 @@ export default function Integration({ history, match }) {
             )
           }
           infoText={
-            integration ? (
+            hasIntegration ? (
               <EditableText
                 multiline
                 allowOverflow
@@ -298,17 +297,17 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {pClone && integration && (
+          {pClone && hasIntegration && (
             <IconTextButton
               component={Link}
-              to={getRoutePath(`/clone/integrations/${id}/preview`)}
+              to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
               variant="text"
               data-test="cloneIntegration">
               <CopyIcon /> Clone integration
             </IconTextButton>
           )}
 
-          {pDelete && integration && (
+          {pDelete && hasIntegration && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"
