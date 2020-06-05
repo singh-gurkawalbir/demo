@@ -12,10 +12,11 @@ import OnOffCell from './OnOffCell';
 import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
 import MappingCell from './MappingCell';
+import SettingsCell from './SettingsCell';
 
 export default {
   columns: (empty, actionProps) => {
-    const columns = [
+    let columns = [
       {
         heading: 'Name',
         value: function Name(r) {
@@ -58,9 +59,24 @@ export default {
       {
         heading: 'Schedule',
         value: function Schedule(r) {
-          return <ScheduleCell {...r} />;
+          return <ScheduleCell flowId={r._id} name={r.name} />;
         },
-      },
+      }
+    ];
+
+    if (actionProps.isIntegrationApp) {
+      columns.push(
+        {
+          heading: 'Settings',
+          value: function Settings(r) {
+            return <SettingsCell flowId={r._id} name={r.name} />;
+          }
+        }
+      );
+    }
+
+    columns = [
+      ...columns,
       {
         heading: 'Run',
         value: function Name(r) {
@@ -89,7 +105,7 @@ export default {
             />
           );
         },
-      },
+      }
     ];
 
     return columns;
