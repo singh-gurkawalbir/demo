@@ -36,7 +36,7 @@ import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
+import { getIntegrationAppUrlName, getAvailableTabs } from '../../../utils/integrationApps';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -185,21 +185,8 @@ export default function Integration({ history, match }) {
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
-  const filterTabs = [];
   const isParent = childId === integrationId;
-  if (isIntegrationApp) {
-    filterTabs.push('users')
-    if (!hasAddOns) {
-      filterTabs.push('addons')
-    }
-  } else {
-    filterTabs.push('addons')
-  }
-  if (isParent) {
-    filterTabs.push('flows')
-    filterTabs.push('dashboard')
-  }
-  const availableTabs = tabs.filter(tab => !filterTabs.includes(tab.id))
+  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns});
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {

@@ -15,6 +15,23 @@ export const getIntegrationAppUrlName = (
   );
 };
 
+export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, hasAddOns}) => {
+  const tabs = []
+  if (isIntegrationApp) {
+    tabs.push('users')
+    if (!hasAddOns) {
+      tabs.push('addons')
+    }
+  } else {
+    tabs.push('addons')
+  }
+  if (isParent) {
+    tabs.push('flows')
+    tabs.push('dashboard')
+  }
+  return allTabs.filter(tab => !tabs.includes(tab.id))
+}
+
 const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
   const integrationAppId = {

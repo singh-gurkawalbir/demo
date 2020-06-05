@@ -10,9 +10,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
-import SubscriptionSection from './sections/Subscription';
-import UninstallSection from './sections/Uninstall';
-import ApiTokensSection from './sections/ApiTokens';
+import GeneralSection from './sections/General';
+import CustomSettings from './sections/Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,22 +43,16 @@ const useStyles = makeStyles(theme => ({
 }));
 const allSections = [
   {
-    path: 'apitoken',
-    label: 'API tokens',
-    Section: ApiTokensSection,
-    id: 'apitoken',
+    path: 'general',
+    label: 'General',
+    Section: GeneralSection,
+    id: 'general',
   },
   {
-    path: 'subscription',
-    label: 'Subscription',
-    Section: SubscriptionSection,
-    id: 'subscription',
-  },
-  {
-    path: 'uninstall',
-    label: 'Uninstall',
-    Section: UninstallSection,
-    id: 'uninstall',
+    path: 'settings',
+    label: 'Settings',
+    Section: CustomSettings,
+    id: 'settings',
   },
 ];
 
@@ -70,13 +63,13 @@ export default function AdminPanel({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const showAPITokens = useSelector(
-    state => selectors.resourcePermissions(state, 'accesstokens').view
+  const hideGeneralTab = useSelector(
+    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
   const filterTabs = [];
 
-  if (!showAPITokens) {
-    filterTabs.push('apitoken');
+  if (hideGeneralTab) {
+    filterTabs.push('general');
   }
 
   const availableSections = allSections.filter(sec =>

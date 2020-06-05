@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isObject } from 'lodash';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import { SCOPES } from '../../../../../sagas/resourceForm';
-import actions from '../../../../../actions';
-import DynaForm from '../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
-import PanelHeader from '../../../../../components/PanelHeader';
+import * as selectors from '../../../../../../reducers';
+import { SCOPES } from '../../../../../../sagas/resourceForm';
+import actions from '../../../../../../actions';
+import DynaForm from '../../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
+import PanelHeader from '../../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {
