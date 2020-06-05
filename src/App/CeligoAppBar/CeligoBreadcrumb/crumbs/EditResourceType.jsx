@@ -19,6 +19,9 @@ export default function EditResourceTypeCrumb({
     })
   );
   const action = isNewId(resourceId) ? 'Add' : 'Edit';
+  if (resourceType === 'accesstokens') {
+    return `${action} ${resourceLabel}`;
+  }
 
-  return `${action} ${resourceLabel}`;
+  return `${action} ${resourceLabel.toLowerCase()}`;
 }

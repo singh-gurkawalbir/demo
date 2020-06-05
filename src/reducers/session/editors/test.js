@@ -264,7 +264,7 @@ describe('editor selectors', () => {
         },
         invalid: {
           initOpts: { data: '' },
-          violations: { dataError: 'Unexpected end of JSON input' },
+          violations: { dataError: 'Must provide some sample data.' },
         },
       },
       {

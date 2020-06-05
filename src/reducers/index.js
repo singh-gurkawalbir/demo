@@ -1852,7 +1852,6 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   } else {
     requiredFlows = map(selectedSection.flows, '_id');
   }
-
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -1912,26 +1911,27 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
     );
 
     if (store) {
-      return map(
-        allIntegrationFlows.filter(f => {
-          // TODO: this is not reliable way to extract store flows. With current integration json,
-          // there is no good way to extract this
-          // Extract store from the flow name. (Regex extracts store label from flow name)
-          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-          const flowStore = /\s\[(.*)\]$/.test(f.name)
-            ? /\s\[(.*)\]$/.exec(f.name)[1]
-            : null;
+      const storeFlows = allIntegrationFlows.filter(f => {
+        // TODO: this is not reliable way to extract store flows. With current integration json,
+        // there is no good way to extract this
+        // Extract store from the flow name. (Regex extracts store label from flow name)
+        // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+        const flowStore = /\s\[(.*)\]$/.test(f.name)
+          ? /\s\[(.*)\]$/.exec(f.name)[1]
+          : null;
 
-          return flowStore
-            ? flowStore === store.label
-            : flows.indexOf(f._id) > -1;
-        }),
+        return flowStore
+          ? flowStore === store.label
+          : flows.indexOf(f._id) > -1;
+      })
+      return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
     }
 
     return map(flows, '_id');
   }
+
 
   return map(allIntegrationFlows, '_id');
 }
@@ -1951,7 +1951,9 @@ export function integrationInstallSteps(state, integrationId) {
     integrationId
   );
 
-  return integrationInstallSteps.map(step => {
+  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+
+  return visibleSteps.map(step => {
     if (step.isCurrentStep) {
       return { ...step, ...installStatus };
     }
@@ -1960,18 +1962,27 @@ export function integrationInstallSteps(state, integrationId) {
   });
 }
 
-export function integrationUninstallSteps(state, integrationId) {
-  const uninstallData = fromSession.uninstallData(
+const emptyStepsArr = [];
+export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  ) : fromSession.uninstallData(
     state && state.session,
     integrationId
   );
-  const { steps: uninstallSteps, error } = uninstallData;
+  const { steps: uninstallSteps, error, isFetched } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
   }
 
-  const modifiedSteps = produce(uninstallSteps, draft => {
+  const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+  if (visibleSteps.length === 0) {
+    return { steps: emptyStepsArr, error, isFetched };
+  }
+
+  const modifiedSteps = produce(visibleSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -1979,7 +1990,7 @@ export function integrationUninstallSteps(state, integrationId) {
     }
   });
 
-  return { steps: modifiedSteps, error };
+  return { steps: modifiedSteps, error, isFetched };
 }
 
 export function addNewStoreSteps(state, integrationId) {

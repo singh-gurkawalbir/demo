@@ -9,6 +9,7 @@ import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
+import CsvConfigEditorDialog from '../../AFE/CsvConfigEditor/Dialog';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
@@ -83,7 +84,7 @@ const DynaEditorWithFlowSampleData = ({
 
   return (
     <>
-      {editorType === 'httpRequestBody' ? (
+      {editorType === 'httpRequestBody' && (
         <HttpRequestBodyEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
@@ -94,7 +95,8 @@ const DynaEditorWithFlowSampleData = ({
           editorVersion={templateVersion}
           onVersionToggle={handleEditorVersionToggle}
         />
-      ) : (
+      )}
+      {editorType === 'uri' && (
         <UrlEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
@@ -105,6 +107,23 @@ const DynaEditorWithFlowSampleData = ({
           editorVersion={templateVersion}
           onVersionToggle={handleEditorVersionToggle}
         />
+      )}
+      {editorType === 'csvGenerate' && (
+        <CsvConfigEditorDialog
+          {...props}
+          /** rule to be passed as json */
+          rule={formattedRule}
+          title="CSV generator helper"
+          id={`${resourceId}-${fieldId}`}
+          mode="csv"
+          data={JSON.stringify(sampleData, null, 2)}
+          resourceType={resourceType}
+          csvEditorType="generate"
+          showVersionToggle={isEditorV2Supported}
+          isSampleDataLoading={sampleDataRequestStatus === 'requested'}
+          editorVersion={templateVersion}
+          onVersionToggle={handleEditorVersionToggle}
+      />
       )}
     </>
   );

@@ -215,6 +215,11 @@ export default (state = {}, action) => {
       };
     case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
       return getIntegrationAppsNextState(state, action);
+    case actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS:
+      return produce(state, draft => {
+        const integration = draft.integrations.find(i => i._id === id);
+        integration.isUninstallTriggered = true;
+      });
     case actionTypes.STACK.USER_SHARING_TOGGLED:
       resourceIndex = state.sshares.findIndex(user => user._id === id);
 
