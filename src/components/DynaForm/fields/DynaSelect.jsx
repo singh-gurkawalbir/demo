@@ -23,9 +23,11 @@ const optionSearch = (search) => ({label, optionSearch}) => search && (
  (typeof label === 'string' && label.toLowerCase().startsWith(search)))
 const useAutoScrollOption = (items, open, listRef) => {
   const [search, setSearch] = useState('');
+  const [scrolIndex, setScrolIndex] = useState(-1);
 
   useEffect(() => {
-    setSearch('')
+    setSearch('');
+    setScrolIndex(-1);
   }, [open])
 
   useEffect(() => {
@@ -39,6 +41,16 @@ const useAutoScrollOption = (items, open, listRef) => {
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
     }
+    if (e.keyCode === 38) {
+      if (scrolIndex <= 0) { return; }
+      setScrolIndex(index => index - 1);
+      return;
+    }
+    if (e.keyCode === 40) {
+      if (scrolIndex >= items.length) { return; }
+      setScrolIndex(index => index + 1);
+      return;
+    }
     if (e.key) {
       setSearch(str => {
         const tmp = str + e.key;
@@ -47,9 +59,16 @@ const useAutoScrollOption = (items, open, listRef) => {
         return tmp;
       })
     }
-  }, [])
-  const matchingIndex = items.findIndex(optionSearch(search));
+  }, [items.length, scrolIndex])
 
+  useEffect(() => {
+    const matchingIndex = items.findIndex(optionSearch(search));
+
+    if (matchingIndex > 0) {
+      setScrolIndex(matchingIndex)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
   // console.log('matchingIndex ', matchingIndex);
 
   useEffect(() => {
@@ -60,12 +79,12 @@ const useAutoScrollOption = (items, open, listRef) => {
   }, [keydownListener, open]);
 
   useEffect(() => {
-    if (matchingIndex > 0) {
-      if (matchingIndex) listRef && listRef.current && listRef.current.scrollToItem(matchingIndex);
+    if (scrolIndex > 0) {
+      listRef && listRef.current && listRef.current.scrollToItem(scrolIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchingIndex])
-  return matchingIndex;
+  }, [scrolIndex])
+  return scrolIndex;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -152,12 +171,7 @@ export default function DynaSelect(props) {
 
     return items;
   }, [isSubHeader, options, placeholder]);
-  // specifically for Qa we are generating this list...to enable support to access options after virtualizing the options list
-  const optionsDataSetQa = useMemo(() => items.map(({label, value, optionSearch}) => ({
 
-    label: optionSearch || label,
-    value
-  })), [items])
   const matchMenuIndex = useAutoScrollOption(items, open, listRef);
   let finalTextValue;
 
@@ -216,7 +230,6 @@ export default function DynaSelect(props) {
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={id}
-          data-test-items={JSON.stringify(optionsDataSetQa)}
           value={finalTextValue}
           disableUnderline
           displayEmpty
