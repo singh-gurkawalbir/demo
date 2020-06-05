@@ -9,9 +9,14 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import * as selectors from '../../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
+import ApiTokensSection from './sections/ApiTokens';
+import SubscriptionSection from './sections/Subscription';
+import UninstallSection from './sections/Uninstall';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,18 +59,54 @@ const allSections = [
     path: 'readme',
     label: 'Readme',
     Section: ReadmeSection,
-    id: 'readMe',
+    id: 'readme',
+  },
+  {
+    path: 'apitoken',
+    label: 'API tokens',
+    Section: ApiTokensSection,
+    id: 'apitoken',
+  },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Section: SubscriptionSection,
+    id: 'subscription',
+  },
+  {
+    path: 'uninstall',
+    label: 'Uninstall',
+    Section: UninstallSection,
+    id: 'uninstall',
   }
 ];
 
-export default function AdminPanel({ integrationId }) {
+export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const isParent = !childId || (childId === integrationId);
+  const isIntegrationApp = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', integrationId);
+    return !!(integration && integration._connectorId)
+  })
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readMe');
+    sectionsToHide.push('readme');
   }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall')
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    }
+  }
+
 
   const availableSections = allSections.filter(
     sec => !sectionsToHide.includes(sec.id)
