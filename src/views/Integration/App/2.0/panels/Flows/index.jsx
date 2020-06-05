@@ -1,11 +1,8 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
-import FlowCard from '../../../../common/FlowCard';
-import MappingDrawer from '../../../../common/FlowCard/MappingDrawer';
-import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
@@ -28,20 +25,12 @@ const useStyles = makeStyles(theme => ({
     margin: 5,
   },
 }));
-const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowsPanel({ integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const allFlows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
-  const flows = useMemo(
-    () => allFlows && allFlows.filter(f => f._integrationId === integrationId),
-    [allFlows, integrationId]
-  );
-  const { status, data: integrationErrorsMap = {} } = useSelector(state =>
+
+  const { status } = useSelector(state =>
     selectors.errorMap(state, integrationId)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -58,18 +47,8 @@ export default function FlowsPanel({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <MappingDrawer integrationId={integrationId} />
 
-      <LoadResources required resources="flows,exports">
-        {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['schedule']}
-            errorCount={integrationErrorsMap[f._id] || 0}
-          />
-        ))}
-      </LoadResources>
+      <LoadResources required resources="flows,exports" />
     </div>
   );
 }

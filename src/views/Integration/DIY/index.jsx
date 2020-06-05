@@ -351,7 +351,6 @@ export default function Integration({ history, match }) {
           {/* Sravan needs to move add store functionality to integrationApps */}
           { addNewStore && (
             <IconTextButton
-              component={Link}
               onClick={handleAddNewStore}
               variant="text"
               data-test="addNewStore">
