@@ -50,6 +50,7 @@ export default {
             fieldId: `wrapper.encrypted.${fld.id}`,
             type: 'text',
             required: !!fld.required,
+            inputType: 'password',
           }
         })
       })
