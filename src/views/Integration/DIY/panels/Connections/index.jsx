@@ -35,7 +35,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const filterKey = `${_integrationId}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
-    selectors.integrationConnectionList(state, _integrationId, tableConfig)
+    selectors.integrationConnectionList(state, integrationId, childId, tableConfig)
   );
   const permission = useSelector(state =>
     selectors.resourcePermissions(

@@ -164,7 +164,7 @@ export default function Integration({ history, match }) {
     };
   });
   const children = useSelector(
-    state => selectors.integrationAppChildren(state, integrationId),
+    state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
   const currentStoreMode = useSelector(state => {

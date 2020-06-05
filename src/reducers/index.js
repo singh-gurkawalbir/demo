@@ -1298,21 +1298,38 @@ export function isOnOffInProgress(state, flowId) {
   return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
-export function integrationConnectionList(state, integrationId, tableConfig) {
+export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
+  // eslint-disable-next-line no-use-before-define
+  const childIntegrations = map(integrationChildren(state, integrationId), 'value');
   let { resources = [] } = resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
-    const registeredConnections = integration._registeredConnectionIds;
+    let registeredConnections = [];
+    if (!childId) {
+      childIntegrations.forEach(intId => {
+        const integration = resource(state, 'integrations', intId)
+        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds)
+      })
+    } else {
+      const parentIntegration = resource(state, 'integrations', integrationId);
+      const childIntegration = resource(state, 'integrations', childId);
+      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections)
+    }
 
     if (registeredConnections) {
       resources = resources.filter(c => registeredConnections.includes(c._id));
     }
   } else if (integration._connectorId) {
-    resources = resources.filter(conn => conn._integrationId === integrationId);
+    resources = resources.filter(conn => {
+      if (childId) {
+        return [integrationId, childId].includes(conn._integrationId)
+      }
+      return childIntegrations.includes(conn._integrationId)
+    });
   }
 
   return resources;
@@ -1679,7 +1696,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   };
 }
 
-export function integrationAppChildren(state, integrationId) {
+export function integrationChildren(state, integrationId) {
   if (!state) return null;
   const children = [];
   const integration = resource(state, 'integrations', integrationId) || {};

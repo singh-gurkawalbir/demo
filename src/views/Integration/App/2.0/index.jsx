@@ -120,7 +120,7 @@ export default function IntegrationApp({ match, history }) {
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
   const stores = useSelector(
-    state => selectors.integrationAppChildren(state, integrationId),
+    state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
   const defaultStoreId = (stores.find(s => s.value !== integrationId) || {})
