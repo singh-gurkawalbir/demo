@@ -112,10 +112,10 @@ export default function StandaloneMapping(props) {
   }, [extractStatus, flowSampleDataLoaded]);
 
   useEffect(() => {
-    if (!extractFields) {
+    if (!extractStatus) {
       requestSampleData(false);
     }
-  }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
+  }, [requestSampleData, extractStatus]);
 
   if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
     dispatch(actions.mapping.updateFlowData(id, extractFields));
