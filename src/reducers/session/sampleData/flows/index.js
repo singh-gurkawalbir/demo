@@ -23,13 +23,13 @@ export default function (state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW_DATA.INIT: {
-        const { pageGenerators = [], pageProcessors = [], _id } = flow;
+        const { pageGenerators = [], pageProcessors = [], _id, refresh } = flow;
 
         if (!draft[_id]) {
-          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {} };
+          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {}, refresh };
         }
 
-        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors };
+        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh };
 
         break;
       }
