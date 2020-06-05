@@ -13,6 +13,7 @@ describe('integrationApps reducer test cases', () => {
       uninstaller: {},
       addStore: {},
       settings: {},
+      uninstaller2: {},
     });
   });
   describe('intetgrationApps installer reducer', () => {
@@ -34,6 +35,7 @@ describe('integrationApps reducer test cases', () => {
           uninstaller: {},
           settings: {},
           addStore: {},
+          uninstaller2: {},
         });
       });
 
@@ -64,6 +66,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
     });
@@ -86,6 +89,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
 
@@ -116,6 +120,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
     });
@@ -140,6 +145,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
 
@@ -170,6 +176,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
     });
@@ -194,6 +201,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
 
@@ -223,6 +231,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
     });
@@ -263,6 +272,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
       test('should try to find the integrationId reference inside uninstaller reducer state and reset it if any data present', () => {
@@ -281,6 +291,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           addon: {},
           clone: {},
+          uninstaller2: {},
         });
       });
     });
@@ -320,6 +331,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -360,6 +372,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -426,6 +439,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -468,6 +482,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -509,6 +524,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -576,6 +592,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -618,6 +635,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -659,6 +677,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -726,6 +745,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -768,6 +788,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -809,6 +830,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -876,6 +898,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -918,6 +941,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -975,6 +999,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1014,6 +1039,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1056,6 +1082,7 @@ describe('integrationApps reducer test cases', () => {
               steps: undefined,
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1074,6 +1101,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1091,6 +1119,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1131,6 +1160,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1166,6 +1196,7 @@ describe('integrationApps reducer test cases', () => {
               ],
             },
           },
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1225,6 +1256,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1265,6 +1297,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1331,6 +1364,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1373,6 +1407,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1414,6 +1449,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1481,6 +1517,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1523,6 +1560,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1564,6 +1602,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1625,6 +1664,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1667,6 +1707,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1706,6 +1747,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           uninstaller: {},
           settings: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1773,6 +1815,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1814,6 +1857,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1870,6 +1914,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1908,6 +1953,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1946,6 +1992,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1964,6 +2011,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -1981,6 +2029,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2021,6 +2070,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2056,6 +2106,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2086,6 +2137,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId-flowId': { submitComplete: false },
           },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2110,6 +2162,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId-flowId': { submitComplete: false },
           },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2135,6 +2188,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId-flowId': { submitComplete: true },
           },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2156,6 +2210,7 @@ describe('integrationApps reducer test cases', () => {
             'integrationId-flowId': { submitComplete: true },
           },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2182,6 +2237,7 @@ describe('integrationApps reducer test cases', () => {
             '1-2': { submitComplete: true },
           },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2198,6 +2254,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);
@@ -2218,6 +2275,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: { 'integrationId-flowId': { submitComplete: true } },
           uninstaller: {},
+          uninstaller2: {},
         };
 
         expect(state).toEqual(expectedValue);

@@ -4,7 +4,7 @@ import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
-import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall';
+import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';

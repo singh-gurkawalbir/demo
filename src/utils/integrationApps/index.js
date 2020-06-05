@@ -106,11 +106,11 @@ export default {
       step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
-        stepText = 'Configured';
+        stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = 'Click to Configure';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
       }
     } else if (step.installURL || step.uninstallURL) {
       if (step.completed) {
