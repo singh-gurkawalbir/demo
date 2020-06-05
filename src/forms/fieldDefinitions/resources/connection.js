@@ -2432,6 +2432,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2439,6 +2440,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
