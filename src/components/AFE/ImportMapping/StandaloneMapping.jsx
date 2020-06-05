@@ -86,17 +86,21 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
-  const requestSampleData = useCallback(() => {
+  const requestSampleData = useCallback((refresh = false) => {
     dispatch(
       actions.flowData.requestSampleData(
         flowId,
         resourceId,
         'imports',
         'importMappingExtract',
-        true
+        refresh
       )
     );
   }, [dispatch, flowId, resourceId]);
+
+  const refreshExtractFields = useCallback(
+    () => requestSampleData(true), [requestSampleData]
+  )
 
   useEffect(() => {
     if (
@@ -413,7 +417,7 @@ export default function StandaloneMapping(props) {
   const optionalHandler = {
     fetchSalesforceSObjectMetadata,
     refreshGenerateFields: requestImportSampleData,
-    refreshExtractFields: requestSampleData,
+    refreshExtractFields,
   };
   const isGenerateRefreshSupported =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||
