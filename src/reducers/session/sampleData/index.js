@@ -52,7 +52,7 @@ export default function (state = {}, action) {
 
       case actionTypes.SAMPLEDATA.UPDATE:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'updated';
+        draft[resourceId].status = 'received';
         draft[resourceId].data = draft[resourceId].data || {};
         // For all the parsers , data is an array
         // Only incase of structuredFileParser it is an object
