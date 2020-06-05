@@ -53,7 +53,7 @@ export default function DynaURI(props) {
             title={editorTitle}
             fieldId={id}
             onClose={handleClose}
-            editorType="url"
+            editorType="uri"
             flowId={flowId}
             resourceId={resourceId}
             resourceType={resourceType}
