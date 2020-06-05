@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowsPanel({ integrationId }) {
+export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -62,9 +62,9 @@ export default function FlowsPanel({ integrationId }) {
           f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : integrationId)
+            : (childId || integrationId))
       ),
-    [allFlows, integrationId]
+    [allFlows, childId, integrationId]
   );
   const {
     status,

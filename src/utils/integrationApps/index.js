@@ -29,7 +29,7 @@ export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, has
     tabs.push('flows')
     tabs.push('dashboard')
   }
-  return allTabs.filter(tab => !tabs.includes(tab.id))
+  return allTabs.filter(tab => !tabs.includes(tab.path))
 }
 
 const getIntegrationApp = ({ _connectorId, name }) => {

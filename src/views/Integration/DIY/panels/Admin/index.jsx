@@ -6,15 +6,12 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
-import CustomSettings from './sections/CustomSettings';
-import * as selectors from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,36 +55,16 @@ const allSections = [
     label: 'Readme',
     Section: ReadmeSection,
     id: 'readMe',
-  },
-  {
-    path: 'customSettings',
-    label: 'Custom',
-    Section: CustomSettings,
-    id: 'customSettings',
-  },
+  }
 ];
 
 export default function AdminPanel({ integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
-  );
-  const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, 'integrations', integrationId)
-  );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
     sectionsToHide.push('readMe');
-    sectionsToHide.push('customSettings');
-  }
-
-  if ((!isDeveloper || isViewMode) && !hasSettingsForm) {
-    sectionsToHide.push('customSettings');
   }
 
   const availableSections = allSections.filter(
