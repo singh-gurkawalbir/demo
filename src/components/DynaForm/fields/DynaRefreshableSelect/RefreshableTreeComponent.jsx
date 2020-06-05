@@ -9,7 +9,8 @@ import ChevronRightIcon from '../../../icons/ArrowRightIcon';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
-
+// TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
+// refreshCache=true should be appended with api call when refresh button clicked.
 const fieldToOption = field => ({
   label: field.label,
   value: field.value,
@@ -204,7 +205,8 @@ export default function RefreshableTreeComponent(props) {
         dispatch(
           actions.metadata.refresh(
             connectionId,
-            `${metaBasePath}${referenceTo}`
+            `${metaBasePath}${referenceTo}`,
+            {refreshCache: true}
           )
         );
       }
@@ -223,7 +225,7 @@ export default function RefreshableTreeComponent(props) {
       dispatch(
         actions.metadata.refresh(
           connectionId,
-          `${metaBasePath}${selectedReferenceTo}`
+          `${metaBasePath}${selectedReferenceTo}`, {refreshCache: true}
         )
       );
     }
