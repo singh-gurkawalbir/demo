@@ -33,7 +33,6 @@ function DynaTextFtpPort(props) {
     disabled,
   } = props;
   const classes = useStyle();
-  let result;
   const ftptype = fields.find(obj => obj.key === 'ftp.type').value;
 
   useEffect(() => {
@@ -43,11 +42,6 @@ function DynaTextFtpPort(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ftptype]);
 
-  if ([21, 22, 990].includes(value) && options) {
-    result = options;
-  } else {
-    result = value;
-  }
 
   const handleFieldChange = useCallback(
     event => {
@@ -78,7 +72,7 @@ function DynaTextFtpPort(props) {
           data-test={id}
           placeholder={placeholder}
           disabled={disabled}
-          value={result}
+          value={value}
           variant="filled"
           onChange={handleFieldChange}
           className={classes.dynaTextFtpFied}
