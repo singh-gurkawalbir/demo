@@ -6,12 +6,7 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import RightDrawer from '../../drawer/Right';
 
-export default function FormViewStep({
-  integrationId,
-  formMeta,
-  title,
-  index,
-}) {
+export default function FormStep({ integrationId, formMeta, title, index }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [formState, setFormState] = useState({
@@ -45,7 +40,7 @@ export default function FormViewStep({
 
   return (
     <RightDrawer
-      path={index}
+      path={`form-${index}`}
       height="tall"
       width="large"
       title={title}

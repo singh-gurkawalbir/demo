@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyObj = {};
 export default function CustomSettings({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -24,7 +25,7 @@ export default function CustomSettings({ integrationId }) {
   const settings = useSelector(state => {
     const resource = selectors.resource(state, 'integrations', integrationId);
 
-    return resource ? resource.settings : {};
+    return resource ? resource.settings : emptyObj;
   });
   const canEditIntegration = useSelector(
     state =>

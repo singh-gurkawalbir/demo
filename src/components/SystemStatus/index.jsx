@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     margin: theme.spacing(1),
+    wordBreak: 'break-word',
   },
   wrapper: {
     padding: theme.spacing(2),
@@ -24,15 +25,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SystemStatus(props) {
-  const { children } = props;
+function SystemStatus({ children, isLoading }) {
   const classes = useStyles();
 
   return (
     <div className={classes.systemStatusWrapper}>
       <Paper className={classes.wrapper}>
         {children}
-        <LinearProgress color="primary" className={classes.progressBar} />
+        {isLoading && (
+          <LinearProgress color="primary" className={classes.progressBar} />
+        )}
       </Paper>
     </div>
   );
