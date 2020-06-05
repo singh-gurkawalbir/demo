@@ -116,6 +116,7 @@ export default function Integration({ history, match }) {
     templateId,
     hasIntegration,
     supportsChild,
+    mode,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -127,6 +128,7 @@ export default function Integration({ history, match }) {
       return {
         hasIntegration: true,
         templateId: integration._templateId,
+        mode: integration.mode,
         name: integration.name,
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
@@ -165,6 +167,11 @@ export default function Integration({ history, match }) {
     state => selectors.integrationAppChildren(state, integrationId),
     shallowEqual
   );
+  const currentStoreMode = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', childId);
+
+    return integration && integration.mode;
+  });
   const defaultChild = (children.find(s => s.value !== integrationId) || {})
     .value;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -396,6 +403,30 @@ export default function Integration({ history, match }) {
         to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
       />
     );
+  }
+  let redirectToPage;
+  if (currentStoreMode === 'install') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
+    );
+  } else if (currentStoreMode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
+    );
+  } else if (mode === 'install') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/setup`
+    );
+  } else if (mode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall${
+        childId ? `/${childId}` : ''
+      }`
+    );
+  }
+
+  if (redirectToPage) {
+    return <Redirect push={false} to={redirectToPage} />;
   }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage

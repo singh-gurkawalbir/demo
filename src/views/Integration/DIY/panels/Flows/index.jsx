@@ -47,6 +47,10 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = { ...flowFilter, type: 'flows' };
+  const isIntegrationApp = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', integrationId);
+    return !!(integration && integration._connectorId)
+  })
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -115,7 +119,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {permission.create && (
+        {permission.create && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -123,7 +127,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-        {permission.attach && !isStandalone && (
+        {permission.attach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
@@ -131,7 +135,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </IconTextButton>
         )}
         {/* check if this condition is correct */}
-        {permission.edit && (
+        {permission.edit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"
