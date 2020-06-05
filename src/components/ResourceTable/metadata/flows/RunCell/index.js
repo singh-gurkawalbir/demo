@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Tooltip } from '@material-ui/core';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import * as selectors from '../../../../../reducers';
 import RunFlowButton from '../../../../RunFlowButton';
+import RemoveMargin from '../RemoveMargin';
 
 export default function RunCell({
   flowId,
@@ -78,10 +78,7 @@ export default function RunCell({
   ]);
 
   return (
-    <Tooltip title="Run now" placement="bottom">
-      <div>
-        <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
-      </div>
-    </Tooltip>
-  );
+    <RemoveMargin>
+      <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
+    </RemoveMargin>);
 }

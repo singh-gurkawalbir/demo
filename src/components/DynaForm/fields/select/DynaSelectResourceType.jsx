@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaSelect from '../DynaSelect';
 import { sourceOptions, destinationOptions } from '../../../../forms/utils';
-import { flowDetails } from '../../../../reducers';
+import * as selectors from '../../../../reducers';
 
 const webhookAssistantOptions = [
   {
@@ -68,11 +68,7 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
 export default function DynaSelectResourceType(props) {
   const { options = {}, mode, flowId, ...rest } = props;
   const { id, onFieldChange } = rest;
-  const isDataloader = useSelector(state => {
-    const flowInfo = flowDetails(state, flowId) || {};
-
-    return flowInfo.isSimpleImport;
-  });
+  const isDataloader = useSelector(state => selectors.isDataloader(state, flowId));
   const availableOptions = useMemo(
     () =>
       getAvailableResourceTypeOptions(

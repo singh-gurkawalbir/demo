@@ -1,35 +1,29 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton } from '@material-ui/core';
-import FlowSchedule from '../../../../FlowSchedule';
+import { useHistory } from 'react-router-dom';
 import CalendarIcon from '../../../../icons/CalendarIcon';
-import ModalDialog from '../../../../ModalDialog';
 import * as selectors from '../../../../../reducers';
+import RemoveMargin from '../RemoveMargin';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
-export default function ScheduleCell(props) {
-  const [showSchedule, setShowSchedule] = useState(false);
+export default function ScheduleCell({_id: flowId}) {
+  const history = useHistory();
   const handleClick = useCallback(() => {
-    setShowSchedule(!showSchedule);
-  }, [showSchedule]);
+    history.push(`flows/${flowId}/schedule`);
+  }, [flowId, history]);
   const allowSchedule = useSelector(state =>
-    selectors.flowAllowsScheduling(state, props._id)
+    selectors.flowAllowsScheduling(state, flowId)
   );
 
   if (!allowSchedule) return null;
 
   return (
-    <>
-      <IconButton onClick={handleClick}>
+    <RemoveMargin>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Change schedule', placement: 'bottom'}}
+        onClick={handleClick}>
         <CalendarIcon />
-      </IconButton>
-      {showSchedule && (
-        <ModalDialog show minWidth="md" onClose={handleClick}>
-          <div>Flow schedule</div>
-          <div>
-            <FlowSchedule flow={props} onClose={handleClick} />
-          </div>
-        </ModalDialog>
-      )}
-    </>
+      </IconButtonWithTooltip>
+    </RemoveMargin>
   );
 }
