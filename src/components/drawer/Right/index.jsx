@@ -119,7 +119,17 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
-  const fullPath = `${match.url}/${path}`;
+
+  let fullPath;
+  if (typeof path === 'string') {
+    fullPath = `${match.url}/${path}`;
+  } else if (Array.isArray(path)) {
+    fullPath = path.map(p => `${match.url}/${p}`);
+  } else {
+    // bad path datatype... don't know what do do.. render nothing.
+    return null;
+  }
+
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 

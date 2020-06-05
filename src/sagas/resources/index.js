@@ -375,7 +375,7 @@ export function* updateIntegrationSettings({
       if (response.success) {
         // eslint-disable-next-line no-use-before-define
         yield call(getResource, { resourceType: 'flows', id: flowId });
-        const flowDetails = yield select(selectors.resource, 'flows', flowId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const patchSet = [
           {
             op: 'replace',
@@ -385,7 +385,7 @@ export function* updateIntegrationSettings({
           },
         ];
 
-        if (flowDetails.disabled !== values['/disabled']) {
+        if (flow.disabled !== values['/disabled']) {
           yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
 
           yield put(actions.resource.commitStaged('flows', flowId, 'value'));

@@ -1,29 +1,27 @@
-import React from 'react';
+import { useEffect } from 'react';
 import DeleteIcon from '../../../../icons/TrashIcon';
 import EditIcon from '../../../../icons/EditIcon';
 
 const Delete = {
   label: 'Delete',
-  component({ handleDeleteItem, resource }) {
-    return (
-      <DeleteIcon
-        onClick={() => {
-          handleDeleteItem(resource.index);
-        }}
-      />
-    );
+  icon: DeleteIcon,
+  component: function Delete({ handleDeleteItem, rowData }) {
+    useEffect(() => {
+      handleDeleteItem(rowData.index);
+    }, [handleDeleteItem, rowData.index]);
+
+    return null;
   },
 };
 const Edit = {
   label: 'Edit',
-  component({ handleEditItem, resource }) {
-    return (
-      <EditIcon
-        onClick={() => {
-          handleEditItem(resource.index);
-        }}
-      />
-    );
+  icon: EditIcon,
+  component: function Edit({ handleEditItem, rowData }) {
+    useEffect(() => {
+      handleEditItem(rowData.index);
+    }, [handleEditItem, rowData.index]);
+
+    return null;
   },
 };
 
@@ -31,12 +29,12 @@ export default {
   columns: [
     {
       heading: 'Relationship',
-      value: r => r && r.relationshipName,
+      value: (r) => r && r.relationshipName,
     },
 
     {
       heading: 'Child SObject',
-      value: r => r && r.sObjectType,
+      value: (r) => r && r.sObjectType,
     },
     {
       heading: 'Referenced Fields',
