@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -103,17 +103,18 @@ const emptyObj = {};
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
-  const { integrationId, templateName, childId } = match.params;
+  const { integrationId, templateName, childId, tab } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const {
     name,
     description,
+    isIntegrationApp,
     sandbox,
     templateId,
     hasIntegration,
-    addNewStore,
+    supportsChild,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -126,10 +127,11 @@ export default function Integration({ history, match }) {
         hasIntegration: true,
         templateId: integration._templateId,
         name: integration.name,
+        isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
         // addNewStore: integration && integration.initChild && integration.initChild.function
-        addNewStore: integration?.initChild?.function
+        supportsChild: integration?.initChild?.function,
       };
     }
 
@@ -157,6 +159,12 @@ export default function Integration({ history, match }) {
       pDelete: permission.delete,
     };
   });
+  const children = useSelector(
+    state => selectors.integrationAppChildren(state, integrationId),
+    shallowEqual
+  );
+  const defaultChild = (children.find(s => s.value !== integrationId) || {})
+    .value;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
@@ -300,6 +308,25 @@ export default function Integration({ history, match }) {
     }
   }, [dispatch, history, childIntegration, integrationChildAppName]);
 
+  if (supportsChild && isIntegrationApp) {
+    if (!childId) {
+      return (
+        <Redirect
+          push={false}
+          to={`/pg/integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+            'settings'}`}
+        />
+      );
+    }
+  } else if (!tab && isIntegrationApp) {
+    return (
+      <Redirect
+        push={false}
+        to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
+      />
+    );
+  }
+
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
@@ -349,12 +376,12 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
           {/* Sravan needs to move add store functionality to integrationApps */}
-          { addNewStore && (
+          { supportsChild && (
             <IconTextButton
               onClick={handleAddNewStore}
               variant="text"
               data-test="addNewStore">
-              <CopyIcon /> Add new store
+              <CopyIcon /> Add new child
             </IconTextButton>
           )}
 
