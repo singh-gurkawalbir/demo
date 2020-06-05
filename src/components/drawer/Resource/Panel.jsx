@@ -101,6 +101,9 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
     return 'Fix offline connection';
   }
+  if (resourceType === 'accesstokens') {
+    return `${opTitle} ${resourceLabel}`;
+  }
 
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
