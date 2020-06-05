@@ -19,7 +19,7 @@ const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 
 const optionSearch = (search) => ({label, optionSearch}) => search && (
-  (typeof optionSearch === 'string' && label.toLowerCase().startsWith(search)) ||
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
  (typeof label === 'string' && label.toLowerCase().startsWith(search)))
 const useAutoScrollOption = (items, open, listRef) => {
   const [search, setSearch] = useState('');
@@ -152,7 +152,12 @@ export default function DynaSelect(props) {
 
     return items;
   }, [isSubHeader, options, placeholder]);
+  // specifically for Qa we are generating this list...to enable support to access options after virtualizing the options list
+  const optionsDataSetQa = useMemo(() => items.map(({label, value, optionSearch}) => ({
 
+    label: optionSearch || label,
+    value
+  })), [items])
   const matchMenuIndex = useAutoScrollOption(items, open, listRef);
   let finalTextValue;
 
@@ -196,7 +201,6 @@ export default function DynaSelect(props) {
     );
   };
 
-
   return (
     <div className={classes.dynaSelectWrapper}>
       <div className={classes.fieldWrapper}>
@@ -212,7 +216,7 @@ export default function DynaSelect(props) {
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
           data-test={id}
-          data-test-items={items}
+          data-test-items={JSON.stringify(optionsDataSetQa)}
           value={finalTextValue}
           disableUnderline
           displayEmpty
