@@ -1904,7 +1904,6 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   } else {
     requiredFlows = map(selectedSection.flows, '_id');
   }
-
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -1964,26 +1963,27 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
     );
 
     if (store) {
-      return map(
-        allIntegrationFlows.filter(f => {
-          // TODO: this is not reliable way to extract store flows. With current integration json,
-          // there is no good way to extract this
-          // Extract store from the flow name. (Regex extracts store label from flow name)
-          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-          const flowStore = /\s\[(.*)\]$/.test(f.name)
-            ? /\s\[(.*)\]$/.exec(f.name)[1]
-            : null;
+      const storeFlows = allIntegrationFlows.filter(f => {
+        // TODO: this is not reliable way to extract store flows. With current integration json,
+        // there is no good way to extract this
+        // Extract store from the flow name. (Regex extracts store label from flow name)
+        // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+        const flowStore = /\s\[(.*)\]$/.test(f.name)
+          ? /\s\[(.*)\]$/.exec(f.name)[1]
+          : null;
 
-          return flowStore
-            ? flowStore === store.label
-            : flows.indexOf(f._id) > -1;
-        }),
+        return flowStore
+          ? flowStore === store.label
+          : flows.indexOf(f._id) > -1;
+      })
+      return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
     }
 
     return map(flows, '_id');
   }
+
 
   return map(allIntegrationFlows, '_id');
 }
