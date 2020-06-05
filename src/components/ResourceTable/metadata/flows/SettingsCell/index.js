@@ -1,33 +1,31 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
-import CalendarIcon from '../../../../icons/CalendarIcon';
+import SettingsIcon from '../../../../icons/SettingsIcon';
 import * as selectors from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
-export default function ScheduleCell({flowId, name}) {
+export default function SettingsCell({flowId, name}) {
   const history = useHistory();
-  const allowSchedule = useSelector(state =>
-    selectors.flowAllowsScheduling(state, flowId)
+  const showSettings = useSelector(state =>
+    selectors.flowSupportsSettings(state, flowId)
   );
 
-  console.log('history.location.pathname:', history.location.pathname);
-
-  if (!allowSchedule) return null;
+  if (!showSettings) return null;
 
   return (
     <RemoveMargin>
       <IconButtonWithTooltip
         tooltipProps={{
-          title: 'Change schedule',
+          title: 'Configure settings',
           placement: 'bottom',
         }}
-        // disabled={!allowSchedule}
+        // disabled={!showSettings}
         component={Link}
-        data-test={`flowSchedule-${name}`}
-        to={`${history.location.pathname}/${flowId}/schedule`}>
-        <CalendarIcon />
+        data-test={`flowSettings-${name}`}
+        to={`${history.location.pathname}/${flowId}/settings`}>
+        <SettingsIcon />
       </IconButtonWithTooltip>
     </RemoveMargin>
   );
