@@ -95,6 +95,13 @@ function ActionsFooter(props) {
   )
 }
 
+/**
+ * Drawer opens for the editor based on passed editorProps
+ * saveProps - Props needed to enable saving the resource with the patchKey passed
+ * Actions: Done, Close -- Incase of a new resource
+ * Save, Save&Close, Close -- Incase of an existing resource
+ * Used for scriptContent now. Once we get proper use cases, this need to be refactored
+ */
 export default function EditorDrawer(props) {
   const { handleClose, label, editorProps, saveProps } = props;
   const { id, value, mode, disabled, handleUpdateOnDrawerSave, handleUpdate } = editorProps;
@@ -142,6 +149,9 @@ export default function EditorDrawer(props) {
         handleClose();
         setCloseOnSave(false)
       }
+      setDisableSave(false);
+    }
+    if (resourceCommStatus === 'error') {
       setDisableSave(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
