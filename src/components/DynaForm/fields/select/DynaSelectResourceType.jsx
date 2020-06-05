@@ -68,7 +68,7 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
 export default function DynaSelectResourceType(props) {
   const { options = {}, mode, flowId, ...rest } = props;
   const { id, onFieldChange } = rest;
-  const isDataloader = useSelector(state => selectors.isDataloader(state, flowId));
+  const isDataloader = useSelector(state => selectors.isDataLoader(state, flowId));
   const availableOptions = useMemo(
     () =>
       getAvailableResourceTypeOptions(
