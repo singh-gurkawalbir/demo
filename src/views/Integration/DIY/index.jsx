@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, Select, MenuItem } from '@material-ui/core';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, generatePath } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -76,12 +76,6 @@ const tabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'users',
-    label: 'Users',
-    Icon: UsersIcon,
-    Panel: UsersPanel,
-  },
-  {
     path: 'notifications',
     label: 'Notifications',
     Icon: NotificationsIcon,
@@ -92,6 +86,12 @@ const tabs = [
     label: 'Audit log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
+  },
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: UsersIcon,
+    Panel: UsersPanel,
   },
   {
     path: 'admin',
@@ -144,6 +144,7 @@ export default function Integration({ history, match }) {
 
     return id && selectors.resource(state, 'integrations', id);
   });
+  const integrationAppName = getIntegrationAppUrlName(name);
   const integrationChildAppName =
     childIntegration &&
     getIntegrationAppUrlName(childIntegration && childIntegration.name);
@@ -170,10 +171,33 @@ export default function Integration({ history, match }) {
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
+  const redirectTo = useSelector(state =>
+    selectors.shouldRedirect(state, integrationId)
+  );
+  const {addOnStatus, hasAddOns} = useSelector(state => {
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId)
+    return {addOnStatus: addOnState.status,
+      hasAddOns: addOnState &&
+      addOnState.addOns &&
+      addOnState.addOns.addOnMetaData &&
+      addOnState.addOns.addOnMetaData.length > 0}
+  }, shallowEqual);
+  const integrationAppMetadata = useSelector(state =>
+    selectors.integrationAppMappingMetadata(state, integrationId)
+  );
   const filterTabs = [];
   const isParent = childId === integrationId;
+  if (isIntegrationApp) {
+    filterTabs.push('users')
+    if (!hasAddOns) {
+      filterTabs.push('addons')
+    }
+  } else {
+    filterTabs.push('addons')
+  }
   if (isParent) {
     filterTabs.push('flows')
+    filterTabs.push('dashboard')
   }
   const availableTabs = tabs.filter(tab => !filterTabs.includes(tab.id))
   const [isDeleting, setIsDeleting] = useState(false);
@@ -306,6 +330,47 @@ export default function Integration({ history, match }) {
     );
   }
 
+
+  useEffect(() => {
+    if (isIntegrationApp && !addOnStatus) {
+      dispatch(
+        actions.integrationApp.settings.requestAddOnLicenseMetadata(
+          integrationId
+        )
+      );
+    }
+  }, [addOnStatus, isIntegrationApp, dispatch, integrationId]);
+
+  useEffect(() => {
+    if (isIntegrationApp && !integrationAppMetadata.status) {
+      dispatch(
+        actions.integrationApp.settings.requestMappingMetadata(integrationId)
+      );
+    }
+  }, [dispatch, isIntegrationApp, integrationAppMetadata, integrationId]);
+
+  useEffect(() => {
+    if (redirectTo) {
+      const path = generatePath(match.path, {
+        integrationId,
+        integrationAppName,
+        childId,
+        tab: redirectTo,
+      });
+
+      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      history.push(path);
+    }
+  }, [
+    dispatch,
+    history,
+    integrationAppName,
+    integrationId,
+    match.path,
+    redirectTo,
+    childId,
+  ]);
+
   useEffect(() => {
     if (templateUrlName && !templateName) {
       history.push(
@@ -423,7 +488,7 @@ export default function Integration({ history, match }) {
             </>
           )}
 
-          {pDelete && hasIntegration && (
+          {pDelete && hasIntegration && !isIntegrationApp && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"
