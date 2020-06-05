@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
 import MapDataIcon from '../../../../icons/MapDataIcon';
 import * as selectors from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
+import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default function MappingCell({flowId}) {
   const history = useHistory();
@@ -26,9 +26,11 @@ export default function MappingCell({flowId}) {
 
   return (
     <RemoveMargin>
-      <IconButton onClick={handleClick}>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
+        onClick={handleClick}>
         <MapDataIcon />
-      </IconButton>
+      </IconButtonWithTooltip>
     </RemoveMargin>
   );
 }
