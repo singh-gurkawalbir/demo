@@ -136,7 +136,7 @@ export default function Integration({ history, match }) {
   const integrationChildAppName =
     childIntegration &&
     getIntegrationAppUrlName(childIntegration && childIntegration.name);
-  const { pEdit, pClone, pDelete } = useSelector(state => {
+  const { canEdit, canClone, canDelete } = useSelector(state => {
     const permission = selectors.resourcePermissions(
       state,
       'integrations',
@@ -299,7 +299,7 @@ export default function Integration({ history, match }) {
             hasIntegration ? (
               <EditableText
                 text={name}
-                disabled={!pEdit}
+                disabled={!canEdit}
                 defaultText="Unnamed integration: Click to add name"
                 onChange={handleTitleChange}
                 inputClassName={
@@ -325,7 +325,7 @@ export default function Integration({ history, match }) {
               undefined
             )
           }>
-          {pClone && hasIntegration && (
+          {canClone && hasIntegration && (
             <IconTextButton
               component={Link}
               to={getRoutePath(`/clone/integrations/${integrationId}/preview`)}
@@ -345,7 +345,7 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
 
-          {pDelete && hasIntegration && (
+          {canDelete && hasIntegration && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"

@@ -1932,7 +1932,9 @@ export function integrationInstallSteps(state, integrationId) {
     integrationId
   );
 
-  return integrationInstallSteps.map(step => {
+  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+
+  return visibleSteps.map(step => {
     if (step.isCurrentStep) {
       return { ...step, ...installStatus };
     }
