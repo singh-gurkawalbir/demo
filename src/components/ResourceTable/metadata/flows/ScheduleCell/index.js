@@ -12,8 +12,6 @@ export default function ScheduleCell({flowId, name}) {
     selectors.flowAllowsScheduling(state, flowId)
   );
 
-  console.log('history.location.pathname:', history.location.pathname);
-
   if (!allowSchedule) return null;
 
   return (
