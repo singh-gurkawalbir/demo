@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import getRoutePath from '../../../../../utils/routePaths';
-import Uninstaller from './Uninstall';
+import Uninstaller1 from './Uninstall1.0';
 import Uninstaller2 from './Uninstall2.0';
 
 export default function IntegrationAppUninstallation({ match, history }) {
@@ -26,5 +26,5 @@ export default function IntegrationAppUninstallation({ match, history }) {
         integration.uninstallSteps.length) ||
     isCloned;
   if (isFrameWork2) return <Uninstaller2 integration={integration} integrationId={integrationId} />;
-  return <Uninstaller integration={integration} integrationId={integrationId} storeId={storeId} />
+  return <Uninstaller1 integration={integration} integrationId={integrationId} storeId={storeId} />
 }

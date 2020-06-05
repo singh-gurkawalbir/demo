@@ -119,7 +119,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   const formCloseHandler = useCallback(() => {
     history.goBack();
     dispatch(
-      actions.integrationApp.installer.updateStep(integrationId, 'reset')
+      actions.integrationApp.uninstaller2.updateStep(integrationId, 'reset')
     );
   }, [dispatch, history, integrationId]);
   const formSubmitHandler = useCallback(
