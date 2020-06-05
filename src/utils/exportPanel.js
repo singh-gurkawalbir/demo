@@ -93,7 +93,9 @@ const formatPreviewData = records => {
   if (!records) return { page_of_records };
 
   if (Array.isArray(records)) {
-    records.forEach(record => page_of_records.push({ record }));
+    const rows = []
+    records.forEach(record => rows.push(record));
+    page_of_records.push({rows})
   } else {
     page_of_records.push({ record: records });
   }

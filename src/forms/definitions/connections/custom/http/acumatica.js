@@ -8,7 +8,6 @@ export default {
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
-      retValues['/http/mediaType'] = 'json';
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
       retValues['/http/auth/cookie/uri'] = `${
@@ -31,7 +30,7 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
@@ -58,6 +57,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'acumatica',
+      '/http/mediaType': 'json'
     };
   },
   fieldMap: {

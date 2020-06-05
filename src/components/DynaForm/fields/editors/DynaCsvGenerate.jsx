@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, } from 'react';
 import { FormLabel, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
-import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
 import FieldHelp from '../../FieldHelp';
+import DynaEditorWithFlowSampleData from '../DynaEditorWithFlowSampleData';
 
 const useStyles = makeStyles(theme => ({
   dynaCsvGenerateWrapper: {
@@ -39,44 +36,10 @@ export default function DynaCsvGenerate(props) {
   } = props;
   const { fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
-  const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  const dispatch = useDispatch();
-  /*
-   * Fetches Raw data - CSV file to be parsed based on the rules
-   */
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    })
-  );
-  const fetchSampleData = useCallback(() => {
-    dispatch(
-      actions.flowData.requestSampleData(
-        flowId,
-        resourceId,
-        resourceType,
-        'flowInput'
-      )
-    );
-  }, [dispatch, flowId, resourceId, resourceType]);
-
-  useEffect(() => {
-    if (!sampleDataLoaded) {
-      fetchSampleData();
-    }
-  }, [fetchSampleData, sampleDataLoaded]);
-  useEffect(() => {
-    if (!sampleDataLoaded && sampleData) {
-      setSampleDataLoaded(true);
-    }
-  }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       Object.keys(fields).forEach(key => {
@@ -87,26 +50,25 @@ export default function DynaCsvGenerate(props) {
     handleEditorClick();
   };
 
-  const stringifiedSampleData = sampleData
-    ? JSON.stringify(sampleData, null, 2)
-    : '';
-
   return (
     <>
       {showEditor && (
-        <CsvConfigEditorDialog
-          key={sampleDataLoaded}
+        <DynaEditorWithFlowSampleData
           title="CSV generator helper"
           id={id + resourceId}
           mode="csv"
-          data={stringifiedSampleData}
-          resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
           rule={fields}
           onClose={handleClose}
           disabled={disabled}
+          flowId={flowId}
+          editorType="csvGenerate"
+          resourceId={resourceId}
+          resourceType={resourceType}
+          fieldId="file.csv"
         />
+
       )}
       <div className={classes.dynaCsvGenerateWrapper}>
         <FormLabel className={classes.dynaCsvLabel}>{label}</FormLabel>

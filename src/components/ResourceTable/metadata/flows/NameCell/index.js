@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography, Chip } from '@material-ui/core';
+import { makeStyles, Chip } from '@material-ui/core';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import * as selectors from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
@@ -57,14 +57,7 @@ export default function NameCell({
 
   return (
     <div className={classes.root}>
-      <Link to={flowBuilderTo}>
-        <Typography
-          data-test={flowName}
-          color="primary"
-          className={classes.flowLink}>
-          {flowName}
-        </Typography>
-      </Link>
+      <Link to={flowBuilderTo}>{flowName}</Link>
 
       <InfoIconButton info={description} size="xs" />
 

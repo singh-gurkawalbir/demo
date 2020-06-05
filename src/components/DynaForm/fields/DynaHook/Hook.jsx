@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -20,7 +21,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
-    alignItems: 'flex-start',
   },
   label: {
     minWidth: 100,
@@ -30,9 +30,21 @@ const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
+    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
+    '&:last-child': {
+      paddingRight: 0,
+    },
+  },
+  hookActionBtnAdd: {
+    marginLeft: 0,
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+  },
+  hookActionBtnEdit: {
+    marginLeft: theme.spacing(1),
   },
 }));
 /*
@@ -265,6 +277,7 @@ export default function DynaHook(props) {
               <ActionButton
                 onClick={handleCreateScriptClick}
                 disabled={disabled}
+                className={classes.hookActionBtnAdd}
                 data-test={id}>
                 <AddIcon />
               </ActionButton>
@@ -274,6 +287,10 @@ export default function DynaHook(props) {
             <ActionButton
               onClick={handleEditorClick}
               disabled={disabled || !value._scriptId}
+              className={clsx(
+                classes.hookActionBtnAdd,
+                classes.hookActionBtnEdit
+              )}
               data-test={id}>
               <EditIcon />
             </ActionButton>

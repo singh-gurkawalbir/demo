@@ -15,7 +15,9 @@ const requestBody = editor => ({
   data: [JSON.parse(editor.data)],
 });
 const validate = editor => ({
-  dataError: util.validateJsonString(editor.data),
+  dataError: !editor.data
+    ? 'Must provide some sample data.'
+    : util.validateJsonString(editor.data),
 });
 const dirty = editor => {
   const { initRule } = editor || {};

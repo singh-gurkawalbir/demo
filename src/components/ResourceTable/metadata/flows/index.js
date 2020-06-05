@@ -96,12 +96,20 @@ export default {
   },
 
   rowActions: (r, /* actionProps */) => {
-    // all possible: detach, clone, audit, references, download, delete
     const isIntegrationApp = !!r._connectorId;
     const isStandalone = !r._integrationId;
+    // all possible: detach, clone, audit, references, download, delete
+
+    // IAs should exclude these:
+    // 'detach','clone','delete','references','download',
+
+    if (isIntegrationApp) {
+      return [AuditLogs];
+    }
+
     let actions = [];
 
-    if (!isIntegrationApp && !isStandalone) {
+    if (!isStandalone) {
       actions.push(Detach);
     }
 
