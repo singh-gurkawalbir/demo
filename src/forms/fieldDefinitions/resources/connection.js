@@ -1251,11 +1251,11 @@ export default {
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
-    label: 'SSL client key',
+    placeholder: 'SSL client key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
-    label: 'SSL passphrase',
+    placeholder: 'SSL passphrase',
   },
   // #endregion http
   // #region ftp
@@ -1352,6 +1352,10 @@ export default {
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
     label: 'User directory is root',
+  },
+  'ftp.tradingPartner': {
+    type: 'checkbox',
+    label: 'External trading partner?',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
@@ -1467,7 +1471,7 @@ export default {
   },
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
-    label: 'MDN signature verification',
+    label: 'Partner requires MDN signature verification',
   },
   'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
