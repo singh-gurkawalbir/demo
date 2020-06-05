@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Select, MenuItem } from '@material-ui/core';
 import { Link, Redirect } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -37,6 +37,7 @@ import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/Queued
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -262,6 +263,24 @@ export default function Integration({ history, match }) {
     integrationId,
     name,
   ]);
+  const handleStoreChange = useCallback(
+    e => {
+      const newChildId = e.target.value;
+      let newTab = tab;
+
+      if (!availableTabs.find(tab => tab.path === tab)) {
+        newTab = 'settings';
+      }
+
+      // Redirect to current tab of new store
+      history.push(
+        getRoutePath(
+          `integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
+        )
+      );
+    },
+    [availableTabs, history, name, integrationId, tab]
+  );
   const handleDescriptionChange = useCallback(
     description => {
       patchIntegration('/description', description);
@@ -377,12 +396,31 @@ export default function Integration({ history, match }) {
           )}
           {/* Sravan needs to move add store functionality to integrationApps */}
           { supportsChild && (
-            <IconTextButton
-              onClick={handleAddNewStore}
-              variant="text"
-              data-test="addNewStore">
-              <CopyIcon /> Add new child
-            </IconTextButton>
+            <>
+              <IconTextButton
+                onClick={handleAddNewStore}
+                variant="text"
+                data-test="addNewStore">
+                <CopyIcon /> Add new child
+              </IconTextButton>
+              <Select
+                displayEmpty
+                data-test="select Child"
+                className={classes.storeSelect}
+                onChange={handleStoreChange}
+                IconComponent={ArrowDownIcon}
+                value={childId}>
+                <MenuItem disabled value="">
+                  Select Child
+                </MenuItem>
+
+                {children.map(s => (
+                  <MenuItem key={s.value} value={s.value}>
+                    {s.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </>
           )}
 
           {pDelete && hasIntegration && (
