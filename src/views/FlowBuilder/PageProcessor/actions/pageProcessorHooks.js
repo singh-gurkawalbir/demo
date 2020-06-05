@@ -14,6 +14,7 @@ import {
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
+    paddingBottom: theme.appBarHeight,
     width: 600,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
@@ -21,8 +22,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(0, 0, 0, 3),
+    padding: theme.spacing(0, 3, 0, 2),
     width: '100%',
     display: 'flex',
   },
