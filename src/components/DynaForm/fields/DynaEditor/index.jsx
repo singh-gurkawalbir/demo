@@ -43,6 +43,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaEditor({
   id,
+  resourceId,
+  resourceType,
+  patchKey,
   mode,
   expandMode = 'modal',
   options,
@@ -64,7 +67,7 @@ export default function DynaEditor({
     setShowEditor(!showEditor);
   }, [showEditor]);
   const handleUpdate = useCallback(
-    editorVal => {
+    (editorVal, isTouched = false) => {
       let sanitizedVal = editorVal;
 
       // convert to json if form value is an object
@@ -74,7 +77,7 @@ export default function DynaEditor({
       ) {
         // user trying to remove the json. Handle removing the value during presave
         if (editorVal === '') {
-          onFieldChange(id, '');
+          onFieldChange(id, '', isTouched);
 
           return;
         }
@@ -86,10 +89,13 @@ export default function DynaEditor({
         }
       }
 
-      onFieldChange(id, sanitizedVal);
+      onFieldChange(id, sanitizedVal, isTouched);
     },
     [id, mode, onFieldChange, saveMode, value]
   );
+  const handleUpdateOnDrawerSave = useCallback(
+    editorVal => handleUpdate(editorVal, true),
+    [handleUpdate]);
   // Options handler would return the selected file type we would use that
   // and inject it as the mode of the editor so that syntax formating would work
   // according to the file format
@@ -114,6 +120,7 @@ export default function DynaEditor({
       <div className={classes.dynaEditorWrapper}>
         {/* Below Component deals with showing editor in Modal/Drawer mode when user clicks on expand icon */}
         <ExpandModeEditor
+          saveProps={{resourceId, resourceType, patchKey}}
           expandMode={expandMode}
           show={showEditor}
           handleClose={handleEditorClick}
@@ -124,6 +131,7 @@ export default function DynaEditor({
             mode: resultantMode,
             disabled,
             handleUpdate,
+            handleUpdateOnDrawerSave
           }}
         />
         <div className={classes.dynaEditorTextLabelWrapper}>

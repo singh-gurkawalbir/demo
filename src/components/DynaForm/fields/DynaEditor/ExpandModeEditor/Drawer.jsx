@@ -1,12 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
+import { isNewId } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   editorContainer: {
@@ -32,26 +34,118 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// Drawer to show full view of editor with actions - Save, Save&Close and close as per new design
-// Unlike existing modal behavior, content gets saved only when user clicks on Save/Save&Close
-// Save, Save&Close buttons are disabled until user makes any change
-export default function EditorDrawer(props) {
-  const { handleClose, label, editorProps } = props;
-  const { id, value, mode, disabled, handleUpdate } = editorProps;
+function ActionsFooter(props) {
+  const {
+    showDone,
+    handleDone,
+    handleSave,
+    handleSaveAndClose,
+    handleClose,
+    disabled,
+    isLoading,
+    closeOnSave,
+  } = props
   const classes = useStyles();
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  return (
+    <>
+      {
+        showDone ? (
+          <Button
+            data-test="saveContent"
+            disabled={disabled}
+            className={classes.action}
+            onClick={handleDone}
+            variant="outlined"
+            color="primary">
+            Done
+          </Button>
+        ) : (
+          <>
+            <Button
+              data-test="saveContent"
+              disabled={disabled}
+              className={classes.action}
+              onClick={handleSave}
+              variant="outlined"
+              color="primary">
+              {(isLoading && !closeOnSave) ? 'Saving' : 'Save'}
+            </Button>
+            <Button
+              data-test="saveAndCloseContent"
+              className={classes.action}
+              disabled={disabled}
+              onClick={handleSaveAndClose}
+              variant="outlined"
+              color="secondary">
+              {(isLoading && closeOnSave) ? 'Saving' : 'Save & close'}
+            </Button>
+          </>
+        )
+      }
+      <Button
+        data-test="closeContent"
+        className={classes.action}
+        onClick={handleClose}
+        variant="text"
+        color="primary">
+        close
+      </Button>
+    </>
+  )
+}
+
+export default function EditorDrawer(props) {
+  const { handleClose, label, editorProps, saveProps } = props;
+  const { id, value, mode, disabled, handleUpdateOnDrawerSave, handleUpdate } = editorProps;
+  const { resourceId, resourceType, patchKey} = saveProps
+  const isNewResource = isNewId(resourceId);
+  // Hooks used
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  // Local state variables
   const [content, setContent] = useState();
+  const [closeOnSave, setCloseOnSave] = useState(false);
+  const [disableSave, setDisableSave] = useState(false);
   const isContentChanged = content !== undefined;
-  // #region methods
+  // Selectors
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const resourceCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/${resourceType}/${resourceId}`, 'put'));
+  // Methods
   const handleSave = useCallback(() => {
-    handleUpdate(content);
-  }, [content, handleUpdate]);
+    setDisableSave(true);
+    const patchSet = [
+      {
+        op: 'replace',
+        path: patchKey,
+        value: content,
+      },
+    ];
+
+    dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+    dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value'));
+    handleUpdateOnDrawerSave(content);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, handleUpdateOnDrawerSave]);
   const handleSaveAndClose = useCallback(() => {
     handleSave();
+    setCloseOnSave(true);
+  }, [handleSave]);
+  const handleDone = useCallback(() => {
+    handleUpdate(content);
     handleClose();
-  }, [handleClose, handleSave]);
-
-  // #endregion methods
+  }, [handleUpdate, handleClose, content])
+  // useEffect
+  useEffect(() => {
+    if (resourceCommStatus === 'success') {
+      if (closeOnSave) {
+        handleClose();
+        setCloseOnSave(false)
+      }
+      setDisableSave(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceCommStatus])
   return (
     <Drawer
       anchor="right"
@@ -73,32 +167,19 @@ export default function EditorDrawer(props) {
         />
       </div>
       <div className={classes.footer}>
-        <Button
-          data-test="saveContent"
-          disabled={!isContentChanged}
-          className={classes.action}
-          onClick={handleSave}
-          variant="outlined"
-          color="primary">
-          Save
-        </Button>
-        <Button
-          data-test="saveAndCloseContent"
-          className={classes.action}
-          disabled={!isContentChanged}
-          onClick={handleSaveAndClose}
-          variant="outlined"
-          color="secondary">
-          Save &amp; close
-        </Button>
-        <Button
-          data-test="closeContent"
-          className={classes.action}
-          onClick={handleClose}
-          variant="text"
-          color="primary">
-          close
-        </Button>
+        {/* ActionsFooter takes care of the actions to show to save/close */}
+        <ActionsFooter
+          showDone={isNewResource}
+          handleDone={handleDone}
+          handleSave={handleSave}
+          handleSaveAndClose={handleSaveAndClose}
+          handleClose={handleClose}
+          isLoading={resourceCommStatus === 'loading'}
+          closeOnSave={closeOnSave}
+          disabled={isNewResource ?
+            !isContentChanged :
+            !isContentChanged || disableSave}
+          />
       </div>
     </Drawer>
   );
