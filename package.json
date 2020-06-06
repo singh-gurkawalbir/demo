@@ -13,8 +13,8 @@
     "build": "env NODE_ENV=production webpack --mode=production",
     "build-analyze": "env NODE_ENV=analyze webpack --mode=production",
     "lint": "eslint --ext .js --ext .jsx ./src",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "env NODE_ENV=test jest",
+    "coverage": "env NODE_ENV=test jest --coverage",
     "styleguide": "env NODE_ENV=styleguide styleguidist server",
     "styleguide-build": "env NODE_ENV=styleguide styleguidist build"
   },

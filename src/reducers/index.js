@@ -936,7 +936,7 @@ export function isFlowEnableLocked(state, flowId) {
 
   // strange flow setting name to indicate that flows can not be
   // enabled/disabled by a user...
-  return !flowSettings.disableSlider;
+  return flowSettings.disableSlider;
 }
 
 // Possible refactor! If we need both canSchedule (flow has ability to schedule),
@@ -986,6 +986,25 @@ export function flowSupportsMapping(state, id) {
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
   return !!flowSettings.showMapping;
+}
+
+export function flowSupportsSettings(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+
+  const isApp = flow._connectorId;
+
+  if (!isApp) return false;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!(
+    (flowSettings.settings && flowSettings.settings.length) ||
+    (flowSettings.sections && flowSettings.sections.length)
+  );
 }
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of
@@ -2014,18 +2033,27 @@ export function integrationInstallSteps(state, integrationId) {
   });
 }
 
-export function integrationUninstallSteps(state, integrationId) {
-  const uninstallData = fromSession.uninstallData(
+const emptyStepsArr = [];
+export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  ) : fromSession.uninstallData(
     state && state.session,
     integrationId
   );
-  const { steps: uninstallSteps, error } = uninstallData;
+  const { steps: uninstallSteps, error, isFetched } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
   }
 
-  const modifiedSteps = produce(uninstallSteps, draft => {
+  const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+  if (visibleSteps.length === 0) {
+    return { steps: emptyStepsArr, error, isFetched };
+  }
+
+  const modifiedSteps = produce(visibleSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -2033,7 +2061,7 @@ export function integrationUninstallSteps(state, integrationId) {
     }
   });
 
-  return { steps: modifiedSteps, error };
+  return { steps: modifiedSteps, error, isFetched };
 }
 
 export function addNewStoreSteps(state, integrationId) {

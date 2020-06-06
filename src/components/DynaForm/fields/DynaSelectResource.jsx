@@ -293,6 +293,7 @@ function DynaSelectResource(props) {
           {i.label}
         </div>
       ),
+      optionSearch: i.label,
       value: i.value,
     }));
 

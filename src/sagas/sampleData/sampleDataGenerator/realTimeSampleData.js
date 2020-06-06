@@ -18,6 +18,7 @@ function* attachRelatedLists({
   relatedLists = [],
   connectionId,
   childRelationships = [],
+  refresh,
 }) {
   let mergedMetadata = metadata;
 
@@ -28,6 +29,7 @@ function* attachRelatedLists({
     const { data: sfMetadata = {} } = yield call(fetchMetadata, {
       connectionId,
       commMetaPath,
+      refresh,
     });
     const relatedListMetadata = {
       ...getSalesforceRealTimeSampleData(sfMetadata),
@@ -47,7 +49,7 @@ function* attachRelatedLists({
   return mergedMetadata;
 }
 
-export default function* requestRealTimeMetadata({ resource }) {
+export default function* requestRealTimeMetadata({ resource, refresh }) {
   const { adaptorType } = resource;
 
   if (adaptorType) {
@@ -62,6 +64,7 @@ export default function* requestRealTimeMetadata({ resource }) {
         const nsMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
+          refresh,
         });
         const { data: metadata } = nsMetadata;
 
@@ -80,6 +83,7 @@ export default function* requestRealTimeMetadata({ resource }) {
         const sfMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
+          refresh,
         });
         let { data: metadata } = sfMetadata;
         const { childRelationships } = metadata;
@@ -92,6 +96,7 @@ export default function* requestRealTimeMetadata({ resource }) {
           relatedLists: relatedLists || [],
           childRelationships,
           connectionId,
+          refresh,
         });
       }
 
