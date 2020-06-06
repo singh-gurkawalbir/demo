@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { makeStyles, Select, MenuItem } from '@material-ui/core';
+import { Link, Redirect, generatePath } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -9,6 +9,7 @@ import TrashIcon from '../../../components/icons/TrashIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
+import CustomSettingsIcon from '../../../components/icons/CustomSettingsIcon';
 import UsersIcon from '../../../components/icons/InviteUsersIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
@@ -18,7 +19,8 @@ import ResourceDrawer from '../../../components/drawer/Resource';
 import EditableText from '../../../components/EditableText';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
-import SettingsPanel from './panels/Admin';
+import SettingsPanel from './panels/Settings';
+import AdminPanel from './panels/Admin';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
@@ -34,7 +36,8 @@ import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
+import { getIntegrationAppUrlName, getAvailableTabs } from '../../../utils/integrationApps';
+import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -53,6 +56,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const tabs = [
+  {
+    path: 'settings',
+    label: 'Settings',
+    Icon: CustomSettingsIcon,
+    Panel: SettingsPanel,
+  },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -67,12 +76,6 @@ const tabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'users',
-    label: 'Users',
-    Icon: UsersIcon,
-    Panel: UsersPanel,
-  },
-  {
     path: 'notifications',
     label: 'Notifications',
     Icon: NotificationsIcon,
@@ -85,27 +88,35 @@ const tabs = [
     Panel: AuditLogPanel,
   },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'users',
+    label: 'Users',
+    Icon: UsersIcon,
+    Panel: UsersPanel,
+  },
+  {
+    path: 'admin',
+    label: 'Admin',
     Icon: SettingsIcon,
-    Panel: SettingsPanel,
+    Panel: AdminPanel,
   },
 ];
 const emptyObj = {};
 
 export default function Integration({ history, match }) {
   const classes = useStyles();
-  const { integrationId, templateName } = match.params;
+  const { integrationId, templateName, childId, tab } = match.params;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const {
     name,
     description,
+    isIntegrationApp,
     sandbox,
     templateId,
     hasIntegration,
-    addNewStore,
+    supportsChild,
+    mode,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -117,11 +128,13 @@ export default function Integration({ history, match }) {
       return {
         hasIntegration: true,
         templateId: integration._templateId,
+        mode: integration.mode,
         name: integration.name,
+        isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
         // addNewStore: integration && integration.initChild && integration.initChild.function
-        addNewStore: integration?.initChild?.function
+        supportsChild: integration?.initChild?.function,
       };
     }
 
@@ -133,6 +146,7 @@ export default function Integration({ history, match }) {
 
     return id && selectors.resource(state, 'integrations', id);
   });
+  const integrationAppName = getIntegrationAppUrlName(name);
   const integrationChildAppName =
     childIntegration &&
     getIntegrationAppUrlName(childIntegration && childIntegration.name);
@@ -149,10 +163,37 @@ export default function Integration({ history, match }) {
       pDelete: permission.delete,
     };
   });
+  const children = useSelector(
+    state => selectors.integrationChildren(state, integrationId),
+    shallowEqual
+  );
+  const currentStoreMode = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', childId);
+
+    return integration && integration.mode;
+  });
+  const defaultChild = (children.find(s => s.value !== integrationId) || {})
+    .value;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
+  const redirectTo = useSelector(state =>
+    selectors.shouldRedirect(state, integrationId)
+  );
+  const {addOnStatus, hasAddOns} = useSelector(state => {
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId)
+    return {addOnStatus: addOnState.status,
+      hasAddOns: addOnState &&
+      addOnState.addOns &&
+      addOnState.addOns.addOnMetaData &&
+      addOnState.addOns.addOnMetaData.length > 0}
+  }, shallowEqual);
+  const integrationAppMetadata = useSelector(state =>
+    selectors.integrationAppMappingMetadata(state, integrationId)
+  );
+  const isParent = childId === integrationId;
+  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns});
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
@@ -240,6 +281,24 @@ export default function Integration({ history, match }) {
     integrationId,
     name,
   ]);
+  const handleStoreChange = useCallback(
+    e => {
+      const newChildId = e.target.value;
+      let newTab = tab;
+
+      if (!availableTabs.find(tab => tab.path === tab)) {
+        newTab = 'settings';
+      }
+
+      // Redirect to current tab of new store
+      history.push(
+        getRoutePath(
+          `integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
+        )
+      );
+    },
+    [availableTabs, history, name, integrationId, tab]
+  );
   const handleDescriptionChange = useCallback(
     description => {
       patchIntegration('/description', description);
@@ -265,6 +324,47 @@ export default function Integration({ history, match }) {
     );
   }
 
+
+  useEffect(() => {
+    if (isIntegrationApp && !addOnStatus) {
+      dispatch(
+        actions.integrationApp.settings.requestAddOnLicenseMetadata(
+          integrationId
+        )
+      );
+    }
+  }, [addOnStatus, isIntegrationApp, dispatch, integrationId]);
+
+  useEffect(() => {
+    if (isIntegrationApp && !integrationAppMetadata.status) {
+      dispatch(
+        actions.integrationApp.settings.requestMappingMetadata(integrationId)
+      );
+    }
+  }, [dispatch, isIntegrationApp, integrationAppMetadata, integrationId]);
+
+  useEffect(() => {
+    if (redirectTo) {
+      const path = generatePath(match.path, {
+        integrationId,
+        integrationAppName,
+        childId,
+        tab: redirectTo,
+      });
+
+      dispatch(actions.integrationApp.settings.clearRedirect(integrationId));
+      history.push(path);
+    }
+  }, [
+    dispatch,
+    history,
+    integrationAppName,
+    integrationId,
+    match.path,
+    redirectTo,
+    childId,
+  ]);
+
   useEffect(() => {
     if (templateUrlName && !templateName) {
       history.push(
@@ -285,6 +385,49 @@ export default function Integration({ history, match }) {
       );
     }
   }, [dispatch, history, childIntegration, integrationChildAppName]);
+
+  if (supportsChild && isIntegrationApp) {
+    if (!childId) {
+      return (
+        <Redirect
+          push={false}
+          to={`/pg/integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+            'settings'}`}
+        />
+      );
+    }
+  } else if (!tab && isIntegrationApp) {
+    return (
+      <Redirect
+        push={false}
+        to={`${match.url}/${childId === integrationId ? 'settings' : 'flows'}`}
+      />
+    );
+  }
+  let redirectToPage;
+  if (currentStoreMode === 'install') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
+    );
+  } else if (currentStoreMode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
+    );
+  } else if (mode === 'install') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/setup`
+    );
+  } else if (mode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall${
+        childId ? `/${childId}` : ''
+      }`
+    );
+  }
+
+  if (redirectToPage) {
+    return <Redirect push={false} to={redirectToPage} />;
+  }
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
   // of the 'useRouteMatch' hook now available in react-router-dom to break
@@ -335,17 +478,35 @@ export default function Integration({ history, match }) {
             </IconTextButton>
           )}
           {/* Sravan needs to move add store functionality to integrationApps */}
-          { addNewStore && (
-            <IconTextButton
-              component={Link}
-              onClick={handleAddNewStore}
-              variant="text"
-              data-test="addNewStore">
-              <CopyIcon /> Add new store
-            </IconTextButton>
+          { supportsChild && (
+            <>
+              <IconTextButton
+                onClick={handleAddNewStore}
+                variant="text"
+                data-test="addNewStore">
+                <CopyIcon /> Add new child
+              </IconTextButton>
+              <Select
+                displayEmpty
+                data-test="select Child"
+                className={classes.storeSelect}
+                onChange={handleStoreChange}
+                IconComponent={ArrowDownIcon}
+                value={childId}>
+                <MenuItem disabled value="">
+                  Select Child
+                </MenuItem>
+
+                {children.map(s => (
+                  <MenuItem key={s.value} value={s.value}>
+                    {s.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </>
           )}
 
-          {canDelete && hasIntegration && (
+          {canDelete && hasIntegration && !isIntegrationApp && (
             <IconTextButton
               variant="text"
               data-test="deleteIntegration"
@@ -356,7 +517,7 @@ export default function Integration({ history, match }) {
         </CeligoPageBar>
 
         <IntegrationTabs
-          tabs={tabs}
+          tabs={availableTabs}
           match={match}
           className={classes.PageWrapper}
         />

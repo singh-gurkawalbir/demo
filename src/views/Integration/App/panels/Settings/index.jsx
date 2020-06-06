@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Route,
   Switch,
@@ -6,24 +7,18 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
-import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
-import ApiTokensSection from './sections/ApiTokens';
-import SubscriptionSection from './sections/Subscription';
-import UninstallSection from './sections/Uninstall';
+import CustomSettings from './sections/Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
-    backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    backgroundColor: theme.palette.common.white,
   },
   container: {
     display: 'flex',
@@ -31,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(2),
   },
   content: {
     width: '100%',
@@ -44,9 +40,6 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
   },
-  icon: {
-    marginRight: 5,
-  },
 }));
 const allSections = [
   {
@@ -56,60 +49,31 @@ const allSections = [
     id: 'general',
   },
   {
-    path: 'readme',
-    label: 'Readme',
-    Section: ReadmeSection,
-    id: 'readme',
+    path: 'settings',
+    label: 'Settings',
+    Section: CustomSettings,
+    id: 'settings',
   },
-  {
-    path: 'apitoken',
-    label: 'API tokens',
-    Section: ApiTokensSection,
-    id: 'apitoken',
-  },
-  {
-    path: 'subscription',
-    label: 'Subscription',
-    Section: SubscriptionSection,
-    id: 'subscription',
-  },
-  {
-    path: 'uninstall',
-    label: 'Uninstall',
-    Section: UninstallSection,
-    id: 'uninstall',
-  }
 ];
 
-export default function AdminPanel({ integrationId, childId }) {
+export default function AdminPanel({
+  integrationId,
+  storeId,
+  ...sectionProps
+}) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isParent = !childId || (childId === integrationId);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-    return !!(integration && integration._connectorId)
-  })
-  const sectionsToHide = [];
+  const hideGeneralTab = useSelector(
+    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
+  );
+  const filterTabs = [];
 
-  if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readme');
-  }
-  if (!isIntegrationApp) {
-    sectionsToHide.push('subscription');
-    sectionsToHide.push('apitoken');
-    sectionsToHide.push('uninstall')
-  } else {
-    sectionsToHide.push('readme');
-    sectionsToHide.push('general')
-    if (!isParent) {
-      sectionsToHide.push('subscription');
-      sectionsToHide.push('apitoken');
-    }
+  if (hideGeneralTab) {
+    filterTabs.push('general');
   }
 
-
-  const availableSections = allSections.filter(
-    sec => !sectionsToHide.includes(sec.id)
+  const availableSections = allSections.filter(sec =>
+    !filterTabs.includes(sec.id)
   );
 
   // if someone arrives at this view without requesting a section, then we
@@ -145,7 +109,11 @@ export default function AdminPanel({ integrationId, childId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section
+                  integrationId={integrationId}
+                  storeId={storeId}
+                  {...sectionProps}
+                />
               </Route>
             ))}
           </Switch>
