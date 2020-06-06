@@ -74,11 +74,10 @@ export default function DynaTrueFixedWidthColmnMapper({
   const onRowChange = (state, field, newValue) =>
     produce(state, draft => {
       if (
-        optionsMap.find(f => f.id === field && f.type === 'number') &&
-        // eslint-disable-next-line no-restricted-globals
-        !isNaN(newValue)
+        optionsMap.find(f => f.id === field && f.type === 'number')
       ) {
-        draft[field] = parseInt(newValue, 10);
+        // eslint-disable-next-line no-restricted-globals
+        draft[field] = isNaN(newValue) ? null : parseInt(newValue, 10);
       } else draft[field] = newValue;
 
       if (['startPosition', 'endPosition'].includes(field)) {
@@ -92,8 +91,8 @@ export default function DynaTrueFixedWidthColmnMapper({
         val.map(
           ({ fieldName, startPosition, endPosition, regexExpression }) => ({
             fieldName,
-            startPosition,
-            endPosition,
+            startPosition: parseInt(startPosition, 10) === 'NaN' ? null : parseInt(startPosition, 10),
+            endPosition: parseInt(endPosition, 10) === 'NaN' ? null : parseInt(endPosition, 10),
             regexExpression,
           })
         )
