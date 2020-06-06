@@ -167,7 +167,7 @@ export default function Integration({ history, match }) {
     state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
-  const currentStoreMode = useSelector(state => {
+  const currentChildMode = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', childId);
 
     return integration && integration.mode;
@@ -181,6 +181,8 @@ export default function Integration({ history, match }) {
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
+  // Addons are currently not supported in 2.0.
+  // This piece of code works when addon structure is introduced and may require minor changes.
   const {addOnStatus, hasAddOns} = useSelector(state => {
     const addOnState = selectors.integrationAppAddOnState(state, integrationId)
     return {addOnStatus: addOnState.status,
@@ -405,11 +407,12 @@ export default function Integration({ history, match }) {
     );
   }
   let redirectToPage;
-  if (currentStoreMode === 'install') {
+  if (currentChildMode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
     );
-  } else if (currentStoreMode === 'uninstall') {
+  } else if (currentChildMode === 'uninstall') {
+    // TODO: update the uninstall route to point to v2 route
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
@@ -494,7 +497,7 @@ export default function Integration({ history, match }) {
                 IconComponent={ArrowDownIcon}
                 value={childId}>
                 <MenuItem disabled value="">
-                  Select Child
+                  Select child
                 </MenuItem>
 
                 {children.map(s => (
