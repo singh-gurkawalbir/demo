@@ -11,8 +11,8 @@ import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
-import { isRealTimeOrDistributedResource } from '../../utils/resource';
-
+import { isRealTimeOrDistributedResource, isFileAdaptor } from '../../utils/resource';
+import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -47,13 +47,6 @@ export function* constructResourceFromFormValues({
 
   return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
     .newDocument;
-}
-
-function getRulesFromResourceFormValues(formValues = {}) {
-  if (!formValues['/transform']) return [];
-  const transformRules = formValues['/transform'].rules;
-
-  return transformRules && transformRules.length ? transformRules : [];
 }
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
@@ -140,28 +133,14 @@ function* processData({ resourceId, processorData, stage }) {
   }
 }
 
-function* transformData({ resourceId, values, stage }) {
-  const { data } = yield select(
-    getResourceSampleDataWithStatus,
-    resourceId,
-    stage
-  );
-  const processorData = values || {};
-
-  processorData.data = data;
-  processorData.processor = stage;
-
-  yield call(processData, { resourceId, processorData, stage });
-}
-
-function* processRawData({ resourceId, resourceType, values = {}, stage }) {
-  if (stage === 'transform') {
-    return yield call(transformData, { resourceId, values, stage });
-  }
-
+function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
   let { file } = values;
-
+  const { file: fileProps} = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
   // Add file type and file body as part of the state with a 'rawFile'
   yield put(
     actions.sampleData.update(
@@ -178,10 +157,11 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
   // JSON file does not need parsing
   if (type === 'json') {
     // Update the parsed JSON file in parse stage
+    const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
     yield put(
       actions.sampleData.update(
         resourceId,
-        { data: [{ body: processJsonSampleData(file) }] },
+        { data: [{ body: processJsonSampleData(file, options) }] },
         'parse'
       )
     );
@@ -210,22 +190,55 @@ function* processRawData({ resourceId, resourceType, values = {}, stage }) {
 
   const processorData = deepClone(values.editorValues || {});
 
+  if (type === 'xml') {
+    processorData.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
+  }
+
   processorData.data = file;
   processorData.processor = processorData.processor || PARSERS[type];
   yield call(processData, { resourceId, processorData, stage: 'parse' });
-  // Call Transform processor if rules exist for this resource
-  const transformRules = getRulesFromResourceFormValues(formValues);
+}
 
-  if (transformRules.length) {
-    yield put(
-      actions.sampleData.request(
-        resourceId,
-        resourceType,
-        transformRules,
-        'transform'
-      )
-    );
+function* fetchExportPreviewData({
+  resourceId,
+  resourceType,
+  values,
+  runOffline,
+}) {
+  const body = yield call(constructResourceFromFormValues, {
+    formValues: values,
+    resourceId,
+    resourceType,
+  });
+  if (isFileAdaptor(body)) {
+    const fileType = body.file.type;
+    // extract all details needed for a file sampledata
+    const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
+    const fileProps = {
+      type: fileDetails.type,
+      file: fileDetails.body,
+      formValues: values,
+      editorValues: generateFileParserOptionsFromResource(body, fileType),
+    }
+    if (!fileDetails.body) {
+      // when no file uploaded , try fetching sampleData on resource
+      return yield put(
+        actions.sampleData.receivedError(resourceId, 'parsedError')
+      );
+    }
+    return yield call(processRawData, {
+      resourceId,
+      resourceType,
+      values: fileProps
+    })
   }
+  // For all other adaptors, go make preview api call for the sampleData
+  yield call(getPreviewData, {
+    resourceId,
+    resourceType,
+    values,
+    runOffline,
+  });
 }
 
 function* requestSampleData({
@@ -243,7 +256,7 @@ function* requestSampleData({
       stage,
     });
   } else {
-    yield call(getPreviewData, {
+    yield call(fetchExportPreviewData, {
       resourceId,
       resourceType,
       values,

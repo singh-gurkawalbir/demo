@@ -45,7 +45,8 @@ export const getAvailablePreviewStages = resource => {
     case 'ftp':
     case 's3':
       return [
-        { label: 'Parsed output', value: 'parse' },
+        { label: 'FTP File', value: 'raw' },
+        { label: 'Parsed output', value: 'preview' },
       ];
     case 'mongodb':
     case 'dynamodb':

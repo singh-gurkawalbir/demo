@@ -103,12 +103,10 @@ function getSampleData(resourceData, stage) {
     : resourceData.transform || resourceData.parse || DEFAULT_VALUE;
 }
 
-function getTransformData(resourceData) {
-  return (
-    resourceData.parse ||
-    (resourceData.raw && resourceData.raw.body) ||
+function getPreviewData(resourceData) {
+  return resourceData.parse ?
+    (resourceData.parse.body || resourceData.parse) :
     DEFAULT_VALUE
-  );
 }
 
 export function getResourceSampleData(state, resourceId, stage) {
@@ -125,12 +123,12 @@ export function getResourceSampleData(state, resourceId, stage) {
       return getRawFileData(resourceData);
     case 'parse':
       return getParsedData(resourceData);
+    case 'preview':
+      return getPreviewData(resourceData);
     case 'csv':
       return getSampleData(resourceData, 'csv');
     case 'sample':
       return getSampleData(resourceData);
-    case 'transform':
-      return getTransformData(resourceData);
     case 'request':
       return resourceData.request || DEFAULT_VALUE;
     default:

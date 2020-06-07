@@ -396,10 +396,6 @@ export const processJsonSampleData = (sampleData, options = {}) => {
   const { resourcePath } = options;
   let processedSampleData = sampleData;
 
-  if (Array.isArray(sampleData)) {
-    processedSampleData = getUnionObject(sampleData);
-  }
-
   // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
   if (resourcePath && resourcePath !== '*') {
     // Extract sample data at resource
@@ -412,6 +408,10 @@ export const processJsonSampleData = (sampleData, options = {}) => {
     if (Array.isArray(processedSampleData)) {
       processedSampleData = getUnionObject(processedSampleData);
     }
+  } else if (Array.isArray(sampleData)) {
+    // If there is no resourcePath, check if the sampleData is an array,
+    // so that we can merge the objects inside
+    processedSampleData = getUnionObject(sampleData);
   }
 
   return processedSampleData;
