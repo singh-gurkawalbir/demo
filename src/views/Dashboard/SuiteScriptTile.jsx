@@ -110,6 +110,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     },
     [isNotYetSupported]
   );
+  // IO-13418
+  const getApplication = application =>
+    application === 'magento' ? 'magento1' : application;
   // #region Drag&Drop related
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
@@ -162,11 +165,15 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
                 <ApplicationImages>
-                  <ApplicationImg type={tile.connector.applications[0]} />
+                  <ApplicationImg
+                    type={getApplication(tile.connector.applications[0])}
+                  />
                   <span>
                     <AddIcon />
                   </span>
-                  <ApplicationImg type={tile.connector.applications[1]} />
+                  <ApplicationImg
+                    type={getApplication(tile.connector.applications[1])}
+                  />
                 </ApplicationImages>
             )}
           </Content>

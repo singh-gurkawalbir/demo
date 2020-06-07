@@ -101,8 +101,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       integration.installSteps &&
       integration.installSteps.length
     ) {
-      urlToIntegrationSettings = `/integrations/${integration._id}`;
-      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
+      urlToIntegrationSettings = `/integrationapps/v2/${integrationAppTileName}/${integration._id}`;
+      urlToIntegrationUsers = `/integrationapps/v2/${integrationAppTileName}/${tile._integrationId}/users`;
     } else {
       urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
       urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;

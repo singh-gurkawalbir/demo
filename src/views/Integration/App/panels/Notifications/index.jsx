@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NotificationsSection({ integrationId }) {
+export default function NotificationsSection({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
@@ -36,7 +36,7 @@ export default function NotificationsSection({ integrationId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, integrationId)
+      selectors.integrationResources(state, integrationId, storeId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');

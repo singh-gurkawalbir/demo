@@ -20,6 +20,7 @@ import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
@@ -101,6 +102,7 @@ function FlowList({ integrationId, storeId }) {
 
   return (
     <LoadResources required resources="flows,exports">
+      <ScheduleDrawer />
       <ConfigureDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -153,7 +155,7 @@ function FlowList({ integrationId, storeId }) {
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
-        actionProps={{ storeId, resourceType: 'flows' }}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
         />
     </LoadResources>
   );

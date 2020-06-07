@@ -495,6 +495,13 @@ export function uninstallData(state, id, storeId) {
   );
 }
 
+export function uninstall2Data(state, id) {
+  return fromIntegrationApps.uninstall2Data(
+    state && state.integrationApps,
+    id,
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
