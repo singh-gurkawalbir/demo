@@ -19,9 +19,9 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 0,
   },
   toolbarContainer: {
-    margin: theme.spacing(0, 1),
-    padding: theme.spacing(2),
     display: 'flex',
+    padding: theme.spacing(1, 2),
+    alignItems: 'center',
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -39,11 +39,11 @@ const useStyles = makeStyles(theme => ({
   },
   fullScreen: {
     marginLeft: theme.spacing(2),
+    border: 'none',
   },
   actions: {
-    marginRight: theme.spacing(3) - 2,
-    marginTop: 0,
-    marginBottom: theme.spacing(2),
+    justifyContent: 'flex-start',
+    padding: theme.spacing(2),
   },
 }));
 
@@ -89,7 +89,7 @@ export default function SearchCriteriaDialog(props) {
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
-          <Typography variant="h5">{title}</Typography>
+          <Typography variant="h3">{title}</Typography>
         </div>
         <div className={classes.toggleContainer}>
           <ToggleButton
@@ -114,19 +114,19 @@ export default function SearchCriteriaDialog(props) {
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          onClick={() => handleClose()}>
-          Cancel
-        </Button>
-        <Button
           variant="outlined"
           data-test="saveEditor"
           disabled={disabled}
           color="primary"
           onClick={() => handleClose(true)}>
           Save
+        </Button>
+        <Button
+          variant="text"
+          color="primary"
+          data-test="closeEditor"
+          onClick={() => handleClose()}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

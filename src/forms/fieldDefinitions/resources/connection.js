@@ -1384,6 +1384,8 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP encryption algorithm',
+    // Todo (surya) 15533 : helptext needed
+    helpText: 'helptext is useful to provide information about the field to users',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
