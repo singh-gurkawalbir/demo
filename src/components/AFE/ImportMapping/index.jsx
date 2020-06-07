@@ -85,6 +85,11 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: '16px 0px',
   },
+  importMappingButtons: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    width: '100%',
+    padding: '16px 0px',
+  }
 }));
 const emptyMappingRow = {};
 
@@ -459,7 +464,7 @@ export default function ImportMapping(props) {
           />
         </div>
         <ButtonGroup
-          className={clsx({
+          className={clsx(classes.importMappingButtons, {
             [classes.importMappingButtonGroup]: showPreviewPane,
           })}>
           {showPreviewPane && (

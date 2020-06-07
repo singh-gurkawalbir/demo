@@ -56,6 +56,7 @@ export default function RefreshGenericResource(props) {
     removeRefresh = false,
     urlToOpen,
   } = props;
+  console.log('Field Data is ++++++', fieldData);
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases
@@ -104,7 +105,7 @@ export default function RefreshGenericResource(props) {
     openExternalUrl({ url: urlToOpen });
   }, [urlToOpen]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
 
   return (
     <div>
@@ -112,6 +113,7 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.refreshGenericResourceWrapper}>
+
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
@@ -132,7 +134,7 @@ export default function RefreshGenericResource(props) {
               classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
-            <Spinner size={24} color="primary" />
+            <Spinner size={24} />
           </span>
         )}
         {urlToOpen && (

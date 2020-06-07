@@ -126,6 +126,7 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
+          label: 'Value field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
@@ -163,6 +164,7 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
+          // Todo (aditya) : help text is not visible
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
@@ -439,6 +441,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
+          helpText: 'only perform mapping helptext will come here',
           options: [
             {
               items: isProduction()
@@ -459,6 +462,8 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           type: 'selectlookup',
+          // Todo: Help text is needed here
+          helpText: 'conditional lookup helptext content should display here',
           flowId,
           resourceId,
           importType: 'salesforce',

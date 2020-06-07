@@ -1851,17 +1851,17 @@ export default {
   },
   requiremdnspartners: {
     type: 'labelvalue',
-    label: 'Require mdns from partners?',
+    label: 'Require MDNs from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
     type: 'labelvalue',
-    label: 'Require asynchronous mdns?',
+    label: 'Require asynchronous MDNs?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
-    label: 'Partner requires asynchronous mdns?',
+    label: 'Partner requires asynchronous MDNs?',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',

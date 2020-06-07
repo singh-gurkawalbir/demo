@@ -59,6 +59,8 @@ const FirstLevelModal = props => {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
         label: 'Parent SObject Type:',
+        // Todo (Surya) IO- jira 15533 : help text is needed
+        helpText: 'helptext is useful to give information to the users',
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
@@ -68,9 +70,12 @@ const FirstLevelModal = props => {
       referencedFields: {
         connectionId,
         id: 'referencedFields',
+        label: 'Refrenced fields:',
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
+        // Todo (Surya) : help text is needed
+        helpText: 'helptext is useful to give information to the users',
         errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
         defaultValue: props.value,
@@ -83,7 +88,7 @@ const FirstLevelModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <div>Referenced Fields</div>
+      <div>Referenced fields</div>
 
       <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
         <DynaSubmit
@@ -124,7 +129,7 @@ export default function DynaReferencedFields(props) {
         className={classes.refrencedFieldDynaText}
       />
       {status === 'refreshed' ? (
-        <Spinner />
+        <Spinner size={24} />
       ) : (
         <ActionButton
           data-test="editReferencedFields"
