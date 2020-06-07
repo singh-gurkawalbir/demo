@@ -56,8 +56,9 @@ export const generateFileParserOptionsFromResource = (resource, type) => {
     return {};
   }
   // If not the above ones, it is of type file definition
+  const fileDefinitionRules = resource.file.filedefinition && resource.file.filedefinition.rules;
   return {
-    rule: resource.file.filedefinition.rules,
+    rule: fileDefinitionRules,
   }
 }
 
