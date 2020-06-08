@@ -47,7 +47,6 @@ export default function DynaFileKeyColumn(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [editorInit, setEditorInit] = useState(false);
-  // const [sampleData, setSampleData] = useState(props.sampleData || '');
   const { data, status: csvParseStatus, result } = useSelector(state =>
     selectors.editor(state, id)
   );
@@ -60,10 +59,6 @@ export default function DynaFileKeyColumn(props) {
 
     return { data: rawData && rawData.data && rawData.data.body };
   });
-
-  // const { data: parsedData } = useSelector(state =>
-  //   selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse')
-  // );
 
   const multiSelectOptions = useMemo(() => {
     const options = getColumns(result);
