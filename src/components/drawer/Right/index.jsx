@@ -32,7 +32,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 3),
+    padding: '14px 0px',
+    margin: theme.spacing(0, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
