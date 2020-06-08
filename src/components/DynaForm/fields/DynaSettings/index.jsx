@@ -10,46 +10,14 @@ import * as selectors from '../../../../reducers';
 import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
-import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
+import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FieldHelp from '../../FieldHelp';
 
 const emptyObj = {};
-// TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
-// we move this to a common theme?
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
-  },
-  expPanelSummary: {
-    flexDirection: 'row-reverse',
-    paddingLeft: 0,
-    minHeight: 'unset',
-    height: 38,
-    display: 'inline-flex',
-    '& > .MuiExpansionPanelSummary-expandIcon': {
-      padding: 0,
-      margin: theme.spacing(-0.5, 0.5, 0, 0),
-      '&.Mui-expanded': {
-        transform: 'rotate(90deg)',
-      },
-    },
-    '&.Mui-expanded': {
-      minHeight: 0,
-    },
-    '& > .MuiExpansionPanelSummary-content': {
-      margin: 0,
-      '&.Mui-expanded': {
-        margin: 0,
-      },
-    },
-  },
-  expansionPanel: {
-    boxShadow: 'none',
-    background: 'none',
-  },
-  expDetails: {
-    padding: 0,
   },
   launchButton: {
     marginLeft: theme.spacing(2),
@@ -130,12 +98,10 @@ export default function DynaSettings(props) {
 
     <div className={classes.child}>
       <ExpansionPanel
-        className={classes.expansionPanel}
         // eslint-disable-next-line react/no-array-index-key
         expanded={shouldExpand}>
         <ExpansionPanelSummary
           data-test={settingsContainer.label}
-          className={classes.expPanelSummary}
           onClick={handleExpandClick}
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.label}>
@@ -160,7 +126,7 @@ export default function DynaSettings(props) {
             )}
           </Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expDetails}>
+        <ExpansionPanelDetails >
           {hasSettingsForm ? (
             <FormView
               resourceId={resourceId}

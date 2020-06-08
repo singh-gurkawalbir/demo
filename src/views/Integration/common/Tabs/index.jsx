@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
@@ -31,15 +31,14 @@ export default function IntegrationTabs({ tabs, className }) {
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;
-      const parts = match.url.split('/');
-
-      parts[parts.length - 1] = newTab;
-
-      const newUrl = parts.join('/');
-
-      history.push(newUrl);
+      history.push(
+        generatePath(match.path, {
+          ...match.params,
+          tab: newTab,
+        })
+      );
     },
-    [history, match.url, tabs]
+    [history, match.params, match.path, tabs]
   );
 
   return (

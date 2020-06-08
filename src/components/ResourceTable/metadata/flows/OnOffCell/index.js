@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import OnOffSwitch from '../../../../SwitchToggle';
 import Spinner from '../../../../Spinner';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import CeligoSwitch from '../../../../CeligoSwitch';
+import RemoveMargin from '../RemoveMargin';
 
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
@@ -118,17 +119,19 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner />;
+    return <Spinner size={24} />;
   }
 
   if (!isFlowEnableLocked) {
     return (
-      <OnOffSwitch
-        data-test={`toggleOnAndOffFlow${flowName}`}
-        disabled={accessLevel === 'monitor'}
-        on={!disabled}
-        onClick={handleDisableClick}
+      <RemoveMargin>
+        <CeligoSwitch
+          data-test={`toggleOnAndOffFlow${flowName}`}
+          disabled={accessLevel === 'monitor'}
+          enabled={!disabled}
+          onChange={handleDisableClick}
       />
+      </RemoveMargin>
     );
   }
 

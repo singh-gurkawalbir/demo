@@ -1,11 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Typography } from '@material-ui/core';
+import ModalDialog from '../ModalDialog';
+import ButtonGroup from '../ButtonGroup';
 
 const withStyles = makeStyles(() => ({
   contentContainer: {
@@ -28,32 +25,22 @@ export default function FormDialog(props) {
   const classes = withStyles();
 
   return (
-    <Dialog open onClose={onClose}>
-      <DialogTitle disableTypography>
-        <Typography variant="h6">{title}</Typography>
-      </DialogTitle>
-
-      <DialogContent>
-        <div className={classes.contentContainer}>{children}</div>
-      </DialogContent>
-
-      <DialogActions>
-        <Button
-          onClick={onClose}
-          variant="contained"
-          color="secondary"
-          size="small">
-          {cancelLabel}
-        </Button>
+    <ModalDialog show onClose={onClose}>
+      <div>{title}</div>
+      <div className={classes.contentContainer}>{children}</div>
+      <ButtonGroup>
         <Button
           onClick={onSubmit}
           disabled={!isValid}
-          variant="contained"
+          variant="outlined"
           size="small"
           color="primary">
           {submitLabel}
         </Button>
-      </DialogActions>
-    </Dialog>
+        <Button onClick={onClose} variant="text" color="primary" size="small">
+          {cancelLabel}
+        </Button>
+      </ButtonGroup>
+    </ModalDialog>
   );
 }

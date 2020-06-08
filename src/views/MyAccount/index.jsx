@@ -72,24 +72,24 @@ export default function MyAccount({ match }) {
   const permissions = useSelector(state => selectors.userPermissions(state));
 
   return (
-      <>
-        <CeligoPageBar
-          title={
+    <>
+      <CeligoPageBar
+        title={
             permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
               ? 'My account'
               : 'My profile'
           }
         />
-        {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
-          <div className={classes.wrapperProfile}>
-            <Profile />
-          </div>
-        ) : (
-          <>
-            <ResourceDrawer match={match} />
-            <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
-          </>
-        )}
-      </>
+      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+        <div className={classes.wrapperProfile}>
+          <Profile />
+        </div>
+      ) : (
+        <>
+          <ResourceDrawer match={match} />
+          <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
+        </>
+      )}
+    </>
   );
 }

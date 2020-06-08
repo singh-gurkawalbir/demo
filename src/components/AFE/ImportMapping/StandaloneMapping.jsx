@@ -31,12 +31,12 @@ export default function StandaloneMapping(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [initTriggered, setInitTriggered] = useState(false);
   const exportResource = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
     const _exportId =
-      flowDetails &&
-      flowDetails.pageGenerators &&
-      flowDetails.pageGenerators.length &&
-      flowDetails.pageGenerators[0]._exportId;
+      flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.length &&
+      flow.pageGenerators[0]._exportId;
 
     return selectors.resource(state, 'exports', _exportId) || undefined;
   });
@@ -86,17 +86,21 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
-  const requestSampleData = useCallback(() => {
+  const requestSampleData = useCallback((refresh = false) => {
     dispatch(
       actions.flowData.requestSampleData(
         flowId,
         resourceId,
         'imports',
         'importMappingExtract',
-        true
+        refresh
       )
     );
   }, [dispatch, flowId, resourceId]);
+
+  const refreshExtractFields = useCallback(
+    () => requestSampleData(true), [requestSampleData]
+  )
 
   useEffect(() => {
     if (
@@ -108,10 +112,10 @@ export default function StandaloneMapping(props) {
   }, [extractStatus, flowSampleDataLoaded]);
 
   useEffect(() => {
-    if (!extractFields) {
+    if (!extractStatus) {
       requestSampleData(false);
     }
-  }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
+  }, [requestSampleData, extractStatus]);
 
   if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
     dispatch(actions.mapping.updateFlowData(id, extractFields));
@@ -413,7 +417,7 @@ export default function StandaloneMapping(props) {
   const optionalHandler = {
     fetchSalesforceSObjectMetadata,
     refreshGenerateFields: requestImportSampleData,
-    refreshExtractFields: requestSampleData,
+    refreshExtractFields,
   };
   const isGenerateRefreshSupported =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||

@@ -6,7 +6,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
-import metadata from '../../../../../components/ResourceTable/metadata/flows';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
 import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
@@ -16,6 +16,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,14 +39,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowsPanel({ integrationId }) {
+export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
-  const filterKey = `${integrationId}+flows`;
+  const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = { ...flowFilter, type: 'flows' };
+  const isIntegrationApp = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', integrationId);
+    return !!(integration && integration._connectorId)
+  })
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -61,9 +66,9 @@ export default function FlowsPanel({ integrationId }) {
           f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : integrationId)
+            : (childId || integrationId))
       ),
-    [allFlows, integrationId]
+    [allFlows, childId, integrationId]
   );
   const {
     status,
@@ -111,9 +116,10 @@ export default function FlowsPanel({ integrationId }) {
         />
       )}
       <MappingDrawer integrationId={integrationId} />
+      <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {permission.create && (
+        {permission.create && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -121,7 +127,7 @@ export default function FlowsPanel({ integrationId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-        {permission.attach && !isStandalone && (
+        {permission.attach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
@@ -129,7 +135,7 @@ export default function FlowsPanel({ integrationId }) {
           </IconTextButton>
         )}
         {/* check if this condition is correct */}
-        {permission.edit && (
+        {permission.edit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"
@@ -143,7 +149,7 @@ export default function FlowsPanel({ integrationId }) {
         <CeligoTable
           data={flows}
           filterKey={filterKey}
-          {...metadata}
+          {...flowTableMeta}
           actionProps={{ resourceType: 'flows' }}
         />
       </LoadResources>

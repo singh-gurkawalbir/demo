@@ -1,10 +1,26 @@
 import Button from '@material-ui/core/Button';
 import React, { useCallback, useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core';
+
 import DynaText from '../DynaText';
 import AddIcon from '../../../icons/AddIcon';
 import RefreshableTreeComponent from '../DynaRefreshableSelect/RefreshableTreeComponent';
 import ModalDialog from '../../../ModalDialog';
-import IconTextButton from '../../../IconTextButton';
+import ActionButton from '../../../ActionButton';
+import ButtonGroup from '../../../ButtonGroup';
+
+
+const useStyles = makeStyles(theme => ({
+  refrencedFieldWrapper: {
+    flexDirection: 'row !important',
+  },
+  dynatreeAddBtn: {
+    minWidth: 'unset',
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+
+  },
+}));
 
 function extractValues(value) {
   // Specific case in handling referencedFields
@@ -21,7 +37,7 @@ export const ReferencedFieldsModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <div>Select Referenced Fields</div>
+      <div>Select referenced fields</div>
       <div>
         <RefreshableTreeComponent
           {...rest}
@@ -30,25 +46,28 @@ export const ReferencedFieldsModal = props => {
         />
       </div>
 
-      <div>
-        <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
-          Cancel
-        </Button>
+      <ButtonGroup>
         <Button
           data-test="addSelected"
+          variant="outlined"
+          color="primary"
           onClick={() => {
             onFieldChange(id, selectedValues);
             handleClose();
           }}>
           Add Selected
         </Button>
-      </div>
+        <Button data-test="closeReferencedFieldsDialog" onClick={handleClose}>
+          Cancel
+        </Button>
+      </ButtonGroup>
     </ModalDialog>
   );
 };
 
 export default function DynaTreeModal(props) {
-  const { id, onFieldChange, value, disabled, errorMsg, options } = props;
+  const classes = useStyles();
+  const { id, onFieldChange, value, label, helpText, disabled, errorMsg, options } = props;
   const [secondLevelModalOpen, setSecondLevelModalOpen] = useState(false);
   const [errorMsgTextField, setErrorMsgTextField] = useState(null);
 
@@ -65,17 +84,21 @@ export default function DynaTreeModal(props) {
 
   return (
     <>
-      <DynaText
-        id={id}
-        onFieldChange={onFieldChange}
-        value={value}
-        delimiter=","
-        isValid={!errorMsgTextField}
-        errorMessages={errorMsgTextField}
+      <div className={classes.refrencedFieldWrapper}>
+        <DynaText
+          id={id}
+          onFieldChange={onFieldChange}
+          value={value}
+          helpText={helpText}
+          label={label}
+          delimiter=","
+          isValid={!errorMsgTextField}
+          errorMessages={errorMsgTextField}
       />
-      <IconTextButton data-test="openReferencedFieldsDialog" onClick={toggle}>
-        <AddIcon />
-      </IconTextButton>
+        <ActionButton data-test="openReferencedFieldsDialog" onClick={toggle} className={classes.dynatreeAddBtn}>
+          <AddIcon />
+        </ActionButton>
+      </div>
       {secondLevelModalOpen ? (
         <ReferencedFieldsModal
           {...props}

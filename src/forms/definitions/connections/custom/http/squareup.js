@@ -30,6 +30,14 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      defaultValue: r =>
+        r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.scope
+          ? r.http.auth.oauth.scope
+          : ['MERCHANT_PROFILE_WRITE'],
       scopes: [
         'BANK_ACCOUNTS_READ',
         'CUSTOMERS_READ',
@@ -52,7 +60,6 @@ export default {
         'TIMECARDS_WRITE',
         'TIMECARDS_SETTINGS_READ',
         'TIMECARDS_SETTINGS_WRITE',
-        'MERCHANT_PROFILE_WRITE',
         'CASH_DRAWER_READ',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],

@@ -101,24 +101,22 @@ export default function Licenses(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources="connectorLicenses">
-          {list.count === 0 ? (
-            <Typography>
-              {list.total === 0
-                ? "You don't have any licenses."
-                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-            </Typography>
-          ) : (
-            <CeligoTable
-              data={list.resources}
-              {...metadata}
-              filterKey={sortFilterKey}
-              actionProps={{
-                resourceType: `connectors/${connectorId}/licenses`,
-              }}
-            />
-          )}
-        </LoadResources>
+        {list.count === 0 ? (
+          <Typography>
+            {list.total === 0
+              ? 'You don\'t have any licenses.'
+              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+          </Typography>
+        ) : (
+          <CeligoTable
+            data={list.resources}
+            {...metadata}
+            filterKey={sortFilterKey}
+            actionProps={{
+              resourceType: `connectors/${connectorId}/licenses`,
+            }}
+          />
+        )}
       </div>
       <ShowMoreDrawer
         filterKey="connectorLicenses"
