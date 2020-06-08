@@ -56,7 +56,6 @@ export default function RefreshGenericResource(props) {
     removeRefresh = false,
     urlToOpen,
   } = props;
-  console.log('Field Data is ++++++', fieldData);
   const classes = useStyles();
   const defaultValue = props.defaultValue || (multiselect ? [] : '');
   // component is in loading state in both request and refresh cases

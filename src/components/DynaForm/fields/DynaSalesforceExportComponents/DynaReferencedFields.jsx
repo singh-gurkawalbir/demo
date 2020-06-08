@@ -58,7 +58,7 @@ const FirstLevelModal = props => {
       parentSObjectType: {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
-        label: 'Parent SObject Type:',
+        label: 'Parent SObject type:',
         // Todo (Surya) IO- jira 15533 : help text is needed
         helpText: 'helptext is useful to give information to the users',
         type: 'refreshableselect',
@@ -70,7 +70,7 @@ const FirstLevelModal = props => {
       referencedFields: {
         connectionId,
         id: 'referencedFields',
-        label: 'Refrenced fields:',
+        label: 'Referenced fields:',
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
