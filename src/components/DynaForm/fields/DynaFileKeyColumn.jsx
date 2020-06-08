@@ -1,12 +1,32 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { FormControl, makeStyles } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import DynaMultiSelect from './DynaMultiSelect';
+import actions from '../../../actions';
+import Spinner from '../../Spinner';
 
-const getFileHeaderOptions = (fileData = {}) => {
-  const headers = typeof fileData === 'object' ? Object.keys(fileData) : [];
+const useStyles = makeStyles(theme => ({
+  keyColumnFormWrapper: {
+    display: 'flex',
+    flexDirection: 'row !important'
+  },
+  spinnerWrapper: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(4),
+    alignSelf: 'flex-start',
+  }
+}));
+const getColumns = result => {
+  if (!result || !result.data || !result.data.length) {
+    return [];
+  }
 
-  return headers.map(name => ({ label: name, value: name }));
+  const sampleRecord = Array.isArray(result.data[0])
+    ? result.data[0][0]
+    : result.data[0];
+
+  return Object.keys(sampleRecord).map(name => ({ label: name, value: name }));
 };
 
 export default function DynaFileKeyColumn(props) {
@@ -22,8 +42,15 @@ export default function DynaFileKeyColumn(props) {
     isValid,
     helpText,
     helpKey,
+    options = {},
   } = props;
-  const [sampleData, setSampleData] = useState(props.sampleData || '');
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const [editorInit, setEditorInit] = useState(false);
+  // const [sampleData, setSampleData] = useState(props.sampleData || '');
+  const { data, status: csvParseStatus, result } = useSelector(state =>
+    selectors.editor(state, id)
+  );
   const { data: csvData } = useSelector(state => {
     const rawData = selectors.getResourceSampleDataWithStatus(
       state,
@@ -33,20 +60,13 @@ export default function DynaFileKeyColumn(props) {
 
     return { data: rawData && rawData.data && rawData.data.body };
   });
-  const { data: parsedData } = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse')
-  );
 
-  useEffect(() => {
-    if (csvData && csvData !== sampleData) {
-      setSampleData(csvData);
-
-      onFieldChange(id, []);
-    }
-  }, [csvData, id, onFieldChange, sampleData]);
+  // const { data: parsedData } = useSelector(state =>
+  //   selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse')
+  // );
 
   const multiSelectOptions = useMemo(() => {
-    const options = getFileHeaderOptions(parsedData || sampleData);
+    const options = getColumns(result);
 
     if (Array.isArray(value)) {
       value.forEach(val => {
@@ -57,21 +77,58 @@ export default function DynaFileKeyColumn(props) {
     }
 
     return [{ items: options }];
-  }, [parsedData, sampleData, value]);
+  }, [result, value]);
+
+  const handleInit = useCallback(() => {
+    dispatch(actions.editor.init(id, 'csvParser', {
+      data: csvData,
+      rule: options,
+      autoEvaluate: true,
+    }));
+  }, [csvData, dispatch, id, options]);
+
+  useEffect(() => {
+    if (csvData && csvData !== data) {
+      dispatch(actions.editor.patch(id, { data: csvData }));
+
+      onFieldChange(id, []);
+    }
+  }, [csvData, data, dispatch, id, onFieldChange]);
+
+
+  useEffect(() => {
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [editorInit, handleInit]);
+
+  useEffect(() => {
+    if (editorInit) {
+      dispatch(actions.editor.patch(id, { ...options }));
+    }
+  }, [dispatch, editorInit, id, options]);
+
 
   return (
-    <DynaMultiSelect
+    <FormControl
+      key={id}
       disabled={disabled}
-      id={id}
-      label={label}
-      value={value}
-      helpText={helpText}
-      helpKey={helpKey}
-      isValid={isValid}
-      name={name}
-      options={multiSelectOptions}
-      required={required}
-      onFieldChange={onFieldChange}
+      className={classes.keyColumnFormWrapper}>
+      <DynaMultiSelect
+        disabled={disabled}
+        id={id}
+        label={label}
+        value={value}
+        helpText={helpText}
+        helpKey={helpKey}
+        isValid={isValid}
+        name={name}
+        options={multiSelectOptions}
+        required={required}
+        onFieldChange={onFieldChange}
     />
+      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={16} />)}
+    </FormControl>
   );
 }
