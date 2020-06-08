@@ -394,7 +394,9 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&.Mui-disabled': {
-          backgroundColor: colors.celigoNeutral2,
+          backgroundColor: colors.celigoNeutral5,
+          color: fade(colors.celigoNeutral6, 0.8),
+
         },
       },
       input: {
@@ -411,6 +413,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -438,6 +441,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
         },
       },
       inputMultiline: {
@@ -490,8 +494,8 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: '15px',
         '&$disabled': {
-          background: colors.celigoNeutral2,
-          color: colors.celigoNeutral4,
+          backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
           '& >.MuiSelect-icon': {
             display: 'none',
           },

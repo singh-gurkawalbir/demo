@@ -115,6 +115,7 @@ function EditListItemModal(props) {
       childRelationship: {
         id: 'childRelationship',
         name: 'childRelationship',
+        // Todo (Surya) 15533: helptext is needed
         helpText: 'helpText is useful to provide details to the user about the field',
         label: 'Child SObject Type',
         type: 'refreshableselect',
@@ -126,6 +127,7 @@ function EditListItemModal(props) {
       referencedFields: {
         connectionId,
         label: 'Referenced fields',
+        // Todo (Surya) 15533: helptext is needed
         helpText: 'helpText is useful to provide details to the user about the field',
         id: 'referencedFields',
         name: 'referencedFields',
@@ -139,6 +141,7 @@ function EditListItemModal(props) {
       filterExpression: {
         label: 'Filter expression',
         id: 'filter',
+        // Todo (Surya) 15533: helptext is needed
         helpText: 'helpText is useful to provide details to the user about the field',
         name: 'filter',
         type: 'text',
@@ -147,6 +150,7 @@ function EditListItemModal(props) {
       },
       orderBy: {
         label: 'Order by',
+        // Todo (Surya) 15533: helptext is needed
         helpText: 'helpText is useful to provide details to the user about the field',
         id: 'orderBy',
         name: 'orderBy',
