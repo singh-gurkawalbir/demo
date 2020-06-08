@@ -298,6 +298,7 @@ export default function ConnectorInstallation(props) {
       type,
       sourceConnection,
       completed,
+      url,
     } = step;
 
     if (completed) {
@@ -331,7 +332,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -350,7 +351,7 @@ export default function ConnectorInstallation(props) {
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
       }
-    } else if (installURL) {
+    } else if (installURL || url) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -359,7 +360,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL });
+        openExternalUrl({ url: installURL || url });
       } else {
         if (step.verifying) {
           return false;

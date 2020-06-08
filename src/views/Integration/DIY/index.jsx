@@ -133,8 +133,7 @@ export default function Integration({ history, match }) {
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
-        // addNewStore: integration && integration.initChild && integration.initChild.function
-        supportsChild: integration?.initChild?.function,
+        supportsChild: integration && integration.initChild && integration.initChild.function
       };
     }
 

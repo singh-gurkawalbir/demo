@@ -58,6 +58,13 @@ const other = {
   celigoSuccess: colors.celigoSuccess,
   celigoWarning: colors.celigoWarning,
 };
+const sandbox = {
+  celigoSandbox1: colors.celigoSandbox1,
+  celigoSandbox2: colors.celigoSandbox2,
+  celigoSandbox3: colors.celigoSandbox3,
+  celigoSandbox4: colors.celigoSandbox4,
+  celigoSandbox5: colors.celigoSandbox5,
+}
 const accent = {
   celigoAccent1: colors.celigoAccent1,
   celigoAccent2: colors.celigoAccent2,
@@ -74,6 +81,7 @@ const neutral = {
   celigoNeutral7: colors.celigoNeutral7,
   celigoNeutral8: colors.celigoNeutral8,
   celigoNeutral9: colors.celigoNeutral9,
+
 };
 const Tiles = ({ colors }) =>
   Object.keys(colors).map(key => (
@@ -109,6 +117,12 @@ function ColorPalette() {
       </Typography>
       <div className={classes.root}>
         <Tiles colors={neutral} />
+      </div>
+      <Typography variant="h4" className={classes.title}>
+        Celigo Sandbox Colors
+      </Typography>
+      <div className={classes.root}>
+        <Tiles colors={sandbox} />
       </div>
       <Typography variant="h4" className={classes.title}>
         Celigo Other Colors
