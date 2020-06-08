@@ -245,6 +245,10 @@ export default {
           field: 'http.auth.type',
           is: ['cookie'],
         },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
       ],
     },
   ],
