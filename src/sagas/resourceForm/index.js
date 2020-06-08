@@ -451,9 +451,9 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     'flows',
     flowId
   );
-  // if its an existing resource and original flow document does have any references to newly created PG or PP
+  // if its an existing resource and original flow document does not have any references to newly created PG or PP
   // then we can go ahead and update it...if it has existing references no point creating additional create patches
-  // this was specifically created to support webhooks where in generating url we have to create the a new PG...
+  // this was specifically created to support webhooks where in generating url we have to create a new PG...
 
   if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
     return [];
