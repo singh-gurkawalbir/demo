@@ -566,7 +566,7 @@ export function* skipRetriesPatches(
   );
   // if the export is a lookup then no patches should be applied
 
-  if (createdResource.isLookup) return null;
+  if (createdResource.isLookup) return [];
 
   const { merged: flow } = yield select(
     selectors.resourceData,
@@ -579,8 +579,12 @@ export function* skipRetriesPatches(
       pg => pg._exportId === (createdId || resourceId)
     );
 
-  if (index === -1) {
-    return null;
+  if (index === null || index === -1) {
+    return [];
+  }
+  // if its same value no point patching...return
+  if (flow.pageGenerators[index].skipRetries === skipRetries) {
+    return [];
   }
 
   const opDetermination =
