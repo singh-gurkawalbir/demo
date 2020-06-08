@@ -10,8 +10,10 @@ export default function DynaCsvHasHeaderRow({
   const { id } = props;
   const handleFieldChange = useCallback(
     (_id, newVal) => {
-      if (fieldToReset) onFieldChange(fieldToReset, fieldResetValue);
       onFieldChange(id, newVal);
+      setTimeout(() => {
+        if (fieldToReset) onFieldChange(fieldToReset, fieldResetValue);
+      }, 500)
     },
     [fieldResetValue, fieldToReset, id, onFieldChange]
   );

@@ -39,6 +39,7 @@ export default function DynaFileKeyColumn(props) {
     label,
     required,
     resourceId,
+    resourceType,
     isValid,
     helpText,
     helpKey,
@@ -50,14 +51,27 @@ export default function DynaFileKeyColumn(props) {
   const { data, status: csvParseStatus, result } = useSelector(state =>
     selectors.editor(state, id)
   );
-  const { data: csvData } = useSelector(state => {
-    const rawData = selectors.getResourceSampleDataWithStatus(
+  /*
+   * Fetches Raw data - CSV file to be parsed based on the rules
+   */
+  const { csvData } = useSelector(state => {
+    const { data: rawData, status } = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
-      'csv'
+      'raw'
     );
 
-    return { data: rawData && rawData.data && rawData.data.body };
+    if (!status) {
+      // Incase of resource edit and no file uploaded, show the csv content uploaded last time ( sampleData )
+      const resource = selectors.resource(state, resourceType, resourceId);
+
+      // If the file type is csv before , only then retrieve its content sampleData to show in the editor
+      if (resource && resource.file && resource.file.type === 'csv') {
+        return { csvData: resource.sampleData };
+      }
+    }
+
+    return { csvData: rawData && rawData.body };
   });
 
   const multiSelectOptions = useMemo(() => {
@@ -82,14 +96,6 @@ export default function DynaFileKeyColumn(props) {
     }));
   }, [csvData, dispatch, id, options]);
 
-  useEffect(() => {
-    if (csvData && csvData !== data) {
-      dispatch(actions.editor.patch(id, { data: csvData }));
-
-      onFieldChange(id, []);
-    }
-  }, [csvData, data, dispatch, id, onFieldChange]);
-
 
   useEffect(() => {
     if (!editorInit) {
@@ -97,6 +103,14 @@ export default function DynaFileKeyColumn(props) {
       setEditorInit(true);
     }
   }, [editorInit, handleInit]);
+
+  useEffect(() => {
+    if (editorInit && csvData && csvData !== data) {
+      dispatch(actions.editor.patch(id, { data: csvData }));
+
+      onFieldChange(id, []);
+    }
+  }, [csvData, data, dispatch, editorInit, id, onFieldChange]);
 
   useEffect(() => {
     if (editorInit) {
@@ -123,7 +137,7 @@ export default function DynaFileKeyColumn(props) {
         required={required}
         onFieldChange={onFieldChange}
     />
-      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={16} />)}
+      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={24} />)}
     </FormControl>
   );
 }
