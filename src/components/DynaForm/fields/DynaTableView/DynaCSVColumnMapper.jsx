@@ -20,7 +20,7 @@ export default function DynaCSVColumnMapper(props) {
 
   if (maxNumberOfColumns) {
     columnOptions = [...Array(maxNumberOfColumns).keys()].map(a => ({
-      id: `${a + 1}`,
+      id: a + 1,
       text: `${a + 1}`,
     }));
   }
