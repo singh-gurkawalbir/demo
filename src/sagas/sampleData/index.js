@@ -224,8 +224,9 @@ function* fetchExportPreviewData({
       if (parsedData) {
         return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
       }
-      // If no sample data on resource too? then throw an error
-      // Figure out what to show in this case
+      // If no sample data on resource too.... Show empty data representing no data is being passed
+      // TODO @Raghu: Handle case where user selects not to transfer data
+      // In that case, show empty data also not save any sampleData on resource save
       return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
     }
     return yield call(processRawData, {
