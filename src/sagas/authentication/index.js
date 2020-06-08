@@ -104,7 +104,7 @@ export function* retrievingAssistantDetails() {
     });
     assistantConnectors.push({
       id: 'financialforce',
-      name: 'Financial Force',
+      name: 'FinancialForce',
       type: 'salesforce',
       assistant: 'financialforce',
       export: true,
