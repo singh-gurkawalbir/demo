@@ -433,6 +433,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.csv.rowsToSkip',
     'file.compressionFormat',
     'file.skipDelete',
+    'file.csvHelper'
   ],
   imports: [
     'lookups',
