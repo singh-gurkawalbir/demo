@@ -18,7 +18,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
-import { isIntegrationApp } from '../../utils/flows';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -434,29 +434,39 @@ export function* submitFormValues({
   );
 }
 
-export function* getFlowUpdatePatchesOnPGorPPSave(
+
+// this saga specifically creates new PG or PP updates to a flow document
+export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
   tempResourceId,
   flowId
 ) {
   if (
     !['exports', 'imports'].includes(resourceType) ||
-    !flowId ||
-    !isNewId(tempResourceId)
-  ) return [];
+    !flowId) return [];
 
   // is pageGenerator or pageProcessor
-  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const { merged: flowDoc, master: origFlowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  // if its an existing resource and original flow document does have any references to newly created PG or PP
+  // then we can go ahead and update it...if it has existing references no point creating additional create patches
+  // this was specifically created to support webhooks where in generating url we have to create the a new PG...
+
+  if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
+    return [];
+  }
+
+  const createdId = isNewId(tempResourceId) ?
+    yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(
     selectors.resource,
     resourceType,
     createdId
   );
-  const { merged: flowDoc } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+
   const addIndexPP =
     (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
   const addIndexPG =
@@ -611,7 +621,7 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
     resourceId,
   });
   const flowPatches = yield call(
-    getFlowUpdatePatchesOnPGorPPSave,
+    getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
     resourceId,
     flowId
