@@ -29,6 +29,12 @@ export default function OnOffCell({
   const onOffInProgress = useSelector(
     state => selectors.isOnOffInProgress(state, flowId).onOffInProgress
   );
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
+  );
+  const istwoDotZeroFrameWork = integration && integration.installSteps &&
+  integration.installSteps.length;
+
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
@@ -62,7 +68,7 @@ export default function OnOffCell({
     defaultConfirmDialog(
       `${disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
-        if (isIntegrationApp) {
+        if (isIntegrationApp && !istwoDotZeroFrameWork) {
           dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
           setOnOffInProgressStatus(true);
           dispatch(
@@ -110,6 +116,7 @@ export default function OnOffCell({
     isLicenseValidToEnableFlow.message,
     patchFlow,
     storeId,
+    istwoDotZeroFrameWork,
   ]);
 
   useEffect(() => {

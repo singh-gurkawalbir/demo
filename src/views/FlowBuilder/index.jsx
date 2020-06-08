@@ -576,6 +576,7 @@ function FlowBuilder() {
           )}
           {!isDataLoaderFlow && (
             <FlowToggle
+              integrationId={integrationId}
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}
