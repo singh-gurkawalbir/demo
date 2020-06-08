@@ -272,7 +272,25 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            if (
+            if (isFrameWork2) {
+              const {url} = match;
+              const urlExtractFields = url.split('/');
+              const index = urlExtractFields.findIndex(
+                element => element === 'child'
+              );
+
+              // REVIEW: @ashu, review with Dave once
+              // if url contains '/child/xxx' use that id as store id
+              if (index === -1) {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                );
+              } else {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
+                );
+              }
+            } else if (
               integration.settings &&
               integration.settings.supportsMultiStore
             ) {
@@ -290,7 +308,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = (step, connection, index) => {
+  const handleStepClick = (step) => {
     const {
       _connectionId,
       installURL,
@@ -345,7 +363,7 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/form-${index}`);
+        // history.push(`${match.url}/form/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
