@@ -12,6 +12,7 @@ import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import PageGenerator from './PageGenerator';
 import PageProcessor from './PageProcessor';
 import ResourceDrawer from '../../../components/SuiteScript/drawer/Resource';
+import BottomDrawer from './drawers/BottomDrawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -106,6 +107,7 @@ function FlowBuilder() {
   const isNewFlow = false;
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
+  const [tabValue, setTabValue] = useState(0);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const flow = useSelector(
     state =>
@@ -245,6 +247,14 @@ function FlowBuilder() {
               />
             )}
             {/* CANVAS END */}
+            <BottomDrawer
+              ssLinkedConnectionId={ssLinkedConnectionId}
+              flow={flow}
+              size={bottomDrawerSize}
+              setSize={setBottomDrawerSize}
+              tabValue={tabValue}
+              setTabValue={setTabValue}
+            />
           </div>
         </div>
       )}

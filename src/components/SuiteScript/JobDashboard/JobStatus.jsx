@@ -25,8 +25,10 @@ const useStyles = makeStyles(theme => ({
 export default function JobStatus({ job }) {
   const classes = useStyles();
   const jobStatusDetails = getJobStatusDetails(job);
-  const isJobInQueuedStatus =
-    job.status === 'queued' || job.status === 'running';
+
+  if (job._id === '3087511') {
+    console.log(`jobStatusDetails`, jobStatusDetails);
+  }
 
   if (jobStatusDetails.showStatusTag) {
     return (
@@ -45,7 +47,7 @@ export default function JobStatus({ job }) {
           <div className={classes.spinnerWrapper}>
             <Spinner size={24} color="primary" />
           </div>
-          {!isJobInQueuedStatus && jobStatusDetails.status}
+          {jobStatusDetails.status}
         </div>
       </Fragment>
     );

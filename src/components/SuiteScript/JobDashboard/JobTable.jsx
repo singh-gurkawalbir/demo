@@ -90,11 +90,11 @@ export default function JobTable({
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
       [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
-        j.uiStatus
+        j.status
       ) && j.numError > 0
   );
   const selectableJobIdsInCurrentPage = selectableJobsInCurrentPage.map(
-    j => j._id
+    j => `${j.type}-${j._id}`
   );
   const selectedJobIds = Object.keys(selectedJobs).filter(
     jobId => selectedJobs[jobId] && selectedJobs[jobId].selected
@@ -103,8 +103,8 @@ export default function JobTable({
     selectableJobIdsInCurrentPage.length > 0 &&
     difference(selectableJobIdsInCurrentPage, selectedJobIds).length === 0;
 
-  function handleSelectChange(job, jobId) {
-    const jobIds = { ...selectedJobs, [jobId]: job };
+  function handleSelectChange(job, jobId, jobType) {
+    const jobIds = { ...selectedJobs, [`${jobType}-${jobId}`]: job };
 
     onSelectChange(jobIds);
   }
@@ -117,10 +117,6 @@ export default function JobTable({
       const job = jobIds[jobId] || {};
 
       job.selected = checked;
-
-      if (!checked) {
-        job.selectedChildJobIds = [];
-      }
 
       jobIds[jobId] = job;
     });

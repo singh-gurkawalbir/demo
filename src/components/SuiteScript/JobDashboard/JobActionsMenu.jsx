@@ -25,7 +25,6 @@ const useStyle = makeStyles({
 
 export default function JobActionsMenu({
   job,
-  onActionClick,
   isFlowBuilderView,
   ssLinkedConnectionId,
   integrationId,
@@ -37,13 +36,13 @@ export default function JobActionsMenu({
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionsToMonitor, setActionsToMonitor] = useState({});
   const isJobInProgress = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
-    job.uiStatus
+    job.status
   );
   const isJobCompleted = [
     JOB_STATUS.COMPLETED,
     JOB_STATUS.CANCELED,
     JOB_STATUS.FAILED,
-  ].includes(job.uiStatus);
+  ].includes(job.status);
   const flowDetails = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',
@@ -65,9 +64,9 @@ export default function JobActionsMenu({
   }
 
   if (!isJobInProgress) {
-    if (flowDetails && flowDetails.isRunnable) {
-      menuOptions.push({ label: 'Run flow', action: 'runFlow' });
-    }
+    // if (flowDetails && flowDetails.isRunnable) {
+    menuOptions.push({ label: 'Run flow', action: 'runFlow' });
+    // }
 
     if (job.log && (job.status === JOB_STATUS.FAILED || job.numError > 0)) {
       menuOptions.push({
@@ -144,8 +143,16 @@ export default function JobActionsMenu({
     } else if (action === 'resolveJob') {
       closeSnackbar();
       dispatch(
-        actions.job.resolveSelected({
-          jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+        actions.suiteScript.job.resolveSelected({
+          integrationId,
+          ssLinkedConnectionId,
+          jobs: [
+            {
+              jobId: job._id,
+              jobType: job.type,
+              log: job.log,
+            },
+          ],
         })
       );
       enqueueSnackbar({
@@ -155,16 +162,22 @@ export default function JobActionsMenu({
         handleClose(event, reason) {
           if (reason === 'undo') {
             return dispatch(
-              actions.job.resolveUndo({
-                childJobId: job._flowJobId ? job._id : null,
-                parentJobId: job._flowJobId || job._id,
+              actions.suiteScript.job.resolveUndo({
+                jobId: job._id,
+                jobType: job.type,
               })
             );
           }
 
           dispatch(
-            actions.job.resolveCommit({
-              jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+            actions.suiteScript.job.resolveCommit({
+              jobs: [
+                {
+                  jobId: job._id,
+                  jobType: job.type,
+                  log: job.log,
+                },
+              ],
             })
           );
         },
@@ -177,8 +190,16 @@ export default function JobActionsMenu({
             flowDetails._id}`
         )
       );
-    } else {
-      onActionClick(action);
+    } else if (action === 'runFlow') {
+      dispatch(
+        actions.suiteScript.flow.run({
+          ssLinkedConnectionId,
+          integrationId,
+          flowId: flowDetails._flowId,
+          _id: flowDetails._id,
+        })
+      );
+      handleRunStart();
     }
   }
 
@@ -193,21 +214,15 @@ export default function JobActionsMenu({
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}>
-        {menuOptions.map(opt => {
-          if (opt.action === 'runFlow') {
-            return <span>Run</span>;
-          }
-
-          return (
-            <MenuItem
-              key={opt.action}
-              onClick={() => {
-                handleActionClick(opt.action);
-              }}>
-              {opt.label}
-            </MenuItem>
-          );
-        })}
+        {menuOptions.map(opt => (
+          <MenuItem
+            key={opt.action}
+            onClick={() => {
+              handleActionClick(opt.action);
+            }}>
+            {opt.label}
+          </MenuItem>
+        ))}
       </Menu>
       <IconButton
         data-test="moreJobActionsMenu"

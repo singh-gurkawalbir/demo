@@ -209,15 +209,14 @@ export default function JobDashboard({
     const jobsToResolve = [];
 
     Object.keys(selectedJobs).forEach(jobId => {
-      if (
-        selectedJobs[jobId].selectedChildJobIds &&
-        selectedJobs[jobId].selectedChildJobIds.length > 0
-      ) {
-        selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
-          jobsToResolve.push({ _flowJobId: jobId, _id: cJobId });
+      if (selectedJobs[jobId].selected) {
+        const [type, _id] = jobId.split('-');
+
+        jobsToResolve.push({
+          jobId: _id,
+          jobType: type,
+          log: selectedJobs[jobId].log,
         });
-      } else if (selectedJobs[jobId].selected) {
-        jobsToResolve.push({ _id: jobId });
       }
     });
 
@@ -227,7 +226,13 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
+    dispatch(
+      actions.suiteScript.job.resolveSelected({
+        integrationId,
+        ssLinkedConnectionId,
+        jobs: jobsToResolve,
+      })
+    );
     enqueueSnackbar({
       message: `${numJobsSelected} jobs marked as resolved.`,
       showUndo: true,
@@ -235,139 +240,28 @@ export default function JobDashboard({
       handleClose(event, reason) {
         if (reason === 'undo') {
           jobsToResolve.forEach(job =>
-            dispatch(
-              actions.job.resolveUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
-              })
-            )
+            dispatch(actions.suiteScript.job.resolveUndo(job))
           );
 
           return false;
         }
 
         dispatch(
-          actions.job.resolveCommit({
+          actions.suiteScript.job.resolveCommit({
             jobs: jobsToResolve,
           })
         );
-      },
-    });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, numJobsSelected, selectedJobs]);
-  const retryAllJobs = useCallback(() => {
-    const selectedFlowId = flowId || filters.flowId;
-    const numberOfJobsToRetry = jobs
-      .filter(job => {
-        if (!selectedFlowId) {
-          return true;
-        }
-
-        return job._flowId === selectedFlowId;
-      })
-      .reduce((total, job) => {
-        if (job.numError > 0) {
-          // eslint-disable-next-line no-param-reassign
-          total += 1;
-        }
-
-        if (job.children && job.children.length > 0) {
-          job.children.forEach(cJob => {
-            if (cJob.retriable) {
-              // eslint-disable-next-line no-param-reassign
-              total += 1;
-            }
-          });
-        }
-
-        return total;
-      }, 0);
-
-    setSelectedJobs({});
-    closeSnackbar();
-    dispatch(actions.job.retryAll({ flowId: selectedFlowId, integrationId }));
-    enqueueSnackbar({
-      message: `${numberOfJobsToRetry} jobs retried.`,
-      showUndo: true,
-      autoHideDuration: UNDO_TIME.RETRY,
-      handleClose(event, reason) {
-        if (reason === 'undo') {
-          return dispatch(actions.job.retryAllUndo());
-        }
-
-        dispatch(
-          actions.job.retryAllCommit({
-            flowId: selectedFlowId,
-            integrationId,
-          })
-        );
-        setActionsToMonitor({
-          retryAll: {
-            action: flowId
-              ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
-              : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
-            resourceId: flowId || integrationId,
-          },
-        });
       },
     });
   }, [
     closeSnackbar,
     dispatch,
     enqueueSnackbar,
-    filters.flowId,
-    flowId,
     integrationId,
-    jobs,
+    numJobsSelected,
+    selectedJobs,
+    ssLinkedConnectionId,
   ]);
-  const retrySelectedJobs = useCallback(() => {
-    const jobsToRetry = [];
-
-    Object.keys(selectedJobs).forEach(jobId => {
-      if (
-        selectedJobs[jobId].selectedChildJobIds &&
-        selectedJobs[jobId].selectedChildJobIds.length > 0
-      ) {
-        selectedJobs[jobId].selectedChildJobIds.forEach(cJobId => {
-          jobsToRetry.push({ _flowJobId: jobId, _id: cJobId });
-        });
-      } else if (selectedJobs[jobId].selected) {
-        jobsToRetry.push({ _id: jobId });
-      }
-    });
-
-    if (jobsToRetry.length === 0) {
-      return false;
-    }
-
-    setSelectedJobs({});
-    closeSnackbar();
-    dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
-    enqueueSnackbar({
-      message: `${numJobsSelected} jobs retried.`,
-      showUndo: true,
-      autoHideDuration: UNDO_TIME.RETRY,
-      handleClose(event, reason) {
-        if (reason === 'undo') {
-          jobsToRetry.forEach(job =>
-            dispatch(
-              actions.job.retryUndo({
-                parentJobId: job._flowJobId || job._id,
-                childJobId: job._flowJobId ? job._id : null,
-              })
-            )
-          );
-
-          return false;
-        }
-
-        dispatch(
-          actions.job.retryCommit({
-            jobs: jobsToRetry,
-          })
-        );
-      },
-    });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, numJobsSelected, selectedJobs]);
   const handleActionClick = useCallback(
     action => {
       if (action === 'resolveAll') {

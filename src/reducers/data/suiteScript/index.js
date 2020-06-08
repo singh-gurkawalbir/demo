@@ -562,6 +562,10 @@ export function jobErrors(state, { jobId, jobType }) {
     return undefined;
   }
 
+  if (state.jobErrors.length === 0) {
+    return state.jobErrors;
+  }
+
   if (
     state.jobErrors[0]._jobId === jobId &&
     state.jobErrors[0].type === jobType

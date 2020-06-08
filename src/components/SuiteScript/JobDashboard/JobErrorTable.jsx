@@ -88,16 +88,20 @@ function JobErrorTable({
   const selectedErrorIds = Object.keys(selectedErrors).filter(
     jobErrorId => !!selectedErrors[jobErrorId]
   );
-  const hasUnresolvedErrors = jobErrors && jobErrors.filter(je => !je.resolved).length > 0;
-  const jobErrorsInCurrentPage = jobErrors ? jobErrors.slice(
-    currentPage * rowsPerPage,
-    (currentPage + 1) * rowsPerPage
-  ) : [];
+  const hasUnresolvedErrors =
+    jobErrors && jobErrors.filter(je => !je.resolved).length > 0;
+  const jobErrorsInCurrentPage = jobErrors
+    ? jobErrors.slice(
+        currentPage * rowsPerPage,
+        (currentPage + 1) * rowsPerPage
+      )
+    : [];
   const hasUnresolvedErrorsInCurrentPage =
     jobErrorsInCurrentPage.filter(je => !je.resolved).length > 0;
-  const numSelectedResolvableErrors = jobErrors ? jobErrors.filter(
-    je => selectedErrorIds.includes(je._id) && !je.resolved
-  ).length : 0;
+  const numSelectedResolvableErrors = jobErrors
+    ? jobErrors.filter(je => selectedErrorIds.includes(je._id) && !je.resolved)
+        .length
+    : 0;
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
@@ -128,9 +132,7 @@ function JobErrorTable({
         handleClose(event, reason) {
           if (reason === 'undo') {
             jobsToResolve.forEach(job =>
-              dispatch(
-                actions.suiteScript.job.resolveUndo(job)
-              )
+              dispatch(actions.suiteScript.job.resolveUndo(job))
             );
 
             return false;

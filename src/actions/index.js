@@ -2089,6 +2089,15 @@ const suiteScript = {
         }),
     },
   },
+  flow: {
+    run: ({ ssLinkedConnectionId, integrationId, flowId, _id }) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RUN, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        _id,
+      }),
+  },
 };
 const editorSampleData = {
   request: ({

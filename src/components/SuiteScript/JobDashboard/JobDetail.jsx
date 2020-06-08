@@ -37,15 +37,9 @@ const useStyles = makeStyles(theme => ({
   checkAction: {
     listStyle: 'none',
     padding: 0,
-    margin: 0,
+    margin: '0 0 0 24px',
     display: 'flex',
     justifyContent: 'flex-start',
-    '& li': {
-      float: 'left',
-      '&:empty': {
-        marginLeft: 22,
-      },
-    },
   },
   moreIcon: {
     padding: 0,
@@ -123,7 +117,8 @@ export default function JobDetail({
   const classes = useStyles();
   const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
   const isSelected = !!(
-    selectedJobs[job._id] && selectedJobs[job._id].selected
+    selectedJobs[`${job.type}-${job._id}`] &&
+    selectedJobs[`${job.type}-${job._id}`].selected
   );
   const isJobInProgress = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
     job.status
@@ -132,11 +127,12 @@ export default function JobDetail({
   function handleSelectChange(event) {
     const { checked } = event.target;
     const jobIds = { ...selectedJobs };
-    const currJob = jobIds[job._id] || {};
+    const currJob = jobIds[`${job.type}-${job._id}`] || {};
 
     currJob.selected = checked;
+    currJob.log = job.log;
 
-    onSelectChange(currJob, job._id);
+    onSelectChange(currJob, job._id, job.type);
   }
 
   function handleViewErrorsClick() {
