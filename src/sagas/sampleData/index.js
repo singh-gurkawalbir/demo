@@ -114,89 +114,85 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   }
 }
 
-function* processData({ resourceId, processorData, stage }) {
+function* getProcessorOutput({ processorData }) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
-    yield put(actions.sampleData.update(resourceId, processedData, stage));
+    return { data: processedData };
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 
-      yield put(
-        actions.sampleData.receivedError(resourceId, parsedError, stage)
-      );
+      return {error: parsedError}
     }
+  }
+}
+
+function* updateDataForStages({resourceId, dataForEachStageMap }) {
+  const stages = Object.keys(dataForEachStageMap);
+  for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
+    const stage = stages[stageIndex];
+    const stageData = dataForEachStageMap[stage];
+    yield put(actions.sampleData.update(resourceId, stageData, stage));
   }
 }
 
 function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
-  let { file } = values;
+  const { file } = values;
   const { file: fileProps} = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
     resourceType,
   });
-  // Add file type and file body as part of the state with a 'rawFile'
-  yield put(
-    actions.sampleData.update(
-      resourceId,
-      { data: [{ body: file, type }] },
-      'rawFile'
-    )
-  );
-  // Update Raw Data with the file uploaded before parsing
-  yield put(
-    actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')
-  );
+  const dataForEachStageMap = {
+    rawFile: { data: [{ body: file, type }] },
+    raw: { data: [{ body: file }] },
+  };
+  const processorData = deepClone(values.editorValues || {});
 
-  // JSON file does not need parsing
   if (type === 'json') {
-    // Update the parsed JSON file in parse stage
+    // For JSON, no need of processor call, the below util takes care of parsing json file as per options
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
-    yield put(
-      actions.sampleData.update(
-        resourceId,
-        { data: [{ body: processJsonSampleData(file, options) }] },
-        'parse'
-      )
-    );
-
+    dataForEachStageMap.parse = { data: [{ body: processJsonSampleData(file, options) }] }
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     return;
+  }
+  // For all other file types processor call gives us the JSON format based on the options user configured
+  if (type === 'xlsx') {
+    const { result } = getCsvFromXlsx(file);
+    dataForEachStageMap.csv = { data: [{ body: result }] }
+    // save csv content of xlsx file uploaded to be 'data' for the processor call
+    processorData.data = result;
   }
 
   if (type === 'csv') {
-    // Saving csv file content for csv in sample data for future use
-    yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
-    );
+    dataForEachStageMap.csv = { data: [{ body: file }] }
   }
-
-  // For xlsx file , content gets converted to 'csv' before parsing
-  if (type === 'xlsx') {
-    const { result } = getCsvFromXlsx(file);
-
-    file = result;
-    // Saving csv file content for xlsx in sample data for future use
-    // Incase of FTP Imports, sampleData field in resource expects 'csvContent' for xlsx file upload to be saved
-    yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
-    );
-  }
-
-  const processorData = deepClone(values.editorValues || {});
 
   if (type === 'xml') {
     processorData.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
   }
-
-  processorData.data = file;
+  if (type !== 'xlsx') {
+    // 'data' here represents the source file content (based on file type) against which processor runs to get JSON data
+    // Only exception is xlsx, where 'data' is 'csv' content as we use csv processor
+    processorData.data = file;
+  }
   processorData.processor = processorData.processor || PARSERS[type];
-  yield call(processData, { resourceId, processorData, stage: 'parse' });
+  const processorOutput = yield call(getProcessorOutput, { processorData });
+  if (processorOutput.data) {
+    dataForEachStageMap.parse = processorOutput.data;
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
+  }
+  if (processorOutput.error) {
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
+    yield put(
+      actions.sampleData.receivedError(resourceId, processorOutput.error, 'parse')
+    );
+  }
 }
 
 function* fetchExportPreviewData({
