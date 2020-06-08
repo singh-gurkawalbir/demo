@@ -394,7 +394,7 @@ export default {
           borderColor: colors.celigoAccent2,
         },
         '&.Mui-disabled': {
-          backgroundColor: colors.celigoNeutral5,
+          backgroundColor: colors.celigoNeutral2,
           color: fade(colors.celigoNeutral6, 0.8),
 
         },
