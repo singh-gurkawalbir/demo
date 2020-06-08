@@ -194,7 +194,7 @@ export default function Integration({ history, match }) {
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const isParent = childId === integrationId;
-  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns});
+  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns, isStandalone: integrationId === STANDALONE_INTEGRATION.id});
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {

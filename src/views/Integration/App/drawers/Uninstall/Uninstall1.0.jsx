@@ -51,11 +51,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Uninstaller({ integration, integrationId, storeId }) {
+export default function Uninstaller1({ integration, integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const {_id, mode, name, stores} = integration;
+  const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
     selectors.isUninstallComplete(state, { integrationId, storeId })
   );
@@ -75,19 +76,19 @@ export default function Uninstaller({ integration, integrationId, storeId }) {
     if (
       uninstallSteps &&
       uninstallSteps.removeIntegration &&
-      integration.mode === 'uninstall'
+      mode === 'uninstall'
     ) {
       dispatch(
         actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
       );
       history.push(getRoutePath('dashboard'));
     }
-  }, [dispatch, history, integration.mode, integrationId, uninstallSteps]);
+  }, [dispatch, history, mode, integrationId, uninstallSteps]);
 
   useEffect(() => {
     if (isUninstallComplete) {
       // redirect to integration Settings
-      if (integration.mode !== 'uninstall') {
+      if (mode !== 'uninstall') {
         dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
         history.push(
           `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
@@ -102,13 +103,13 @@ export default function Uninstaller({ integration, integrationId, storeId }) {
   }, [
     dispatch,
     history,
-    integration.mode,
+    mode,
     integrationAppName,
     integrationId,
     isUninstallComplete,
   ]);
 
-  if (!integration || !integration._id) {
+  if (!integration || !_id) {
     return <LoadResources required resources="integrations" />;
   }
 
@@ -129,8 +130,8 @@ export default function Uninstaller({ integration, integrationId, storeId }) {
     return <Loader open>Uninstalling</Loader>;
   }
 
-  const storeName = integration.stores
-    ? (integration.stores.find(s => s.value === storeId) || {}).label
+  const storeName = stores
+    ? (stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
     // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
@@ -208,7 +209,7 @@ export default function Uninstaller({ integration, integrationId, storeId }) {
                 separator={<ArrowRightIcon />}
                 aria-label="breadcrumb">
                 <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">{integration.name}</Typography>
+                <Typography color="textPrimary">{name}</Typography>
                 <Typography color="textPrimary">{storeName}</Typography>
               </Breadcrumbs>
             </Paper>

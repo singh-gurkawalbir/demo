@@ -24,7 +24,7 @@ import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import AdminPanel from './panels/Admin';
-import CustomSettingsPanel from './panels/Settings';
+import SettingsPanel from './panels/Settings';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
@@ -36,7 +36,7 @@ import integrationAppUtil from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
-  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: CustomSettingsPanel},
+  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',

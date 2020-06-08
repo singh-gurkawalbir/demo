@@ -1,30 +1,39 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import getRoutePath from '../../../../../utils/routePaths';
 import Uninstaller1 from './Uninstall1.0';
 import Uninstaller2 from './Uninstall2.0';
 
-export default function IntegrationAppUninstallation({ match, history }) {
+const emptyobj = {}
+export default function IntegrationAppUninstallation({ match }) {
   const { integrationId, storeId } = match.params;
   const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
+    useSelector(state => {
+      const i = selectors.integrationAppSettings(state, integrationId);
+      if (i) {
+        return {isIntegration: true, mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
+      }
+      return emptyobj
+    }, shallowEqual
     )
-  if (!integration) {
-    history.replace(getRoutePath('dashboard'));
-    return null;
+  const storeIntegration =
+  useSelector(state => {
+    const i = selectors.integrationAppSettings(state, storeId);
+    if (i) {
+      return {isIntegration: true, mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
+    }
+    return emptyobj
+  }, shallowEqual
+  )
+
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
+  if (!integration.isIntegration) {
+    return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />
   }
-  const isCloned =
-    integration.install &&
-    integration.install.find(step => step.isClone);
-  const isFrameWork2 =
-    (
-      integration.installSteps &&
-      integration.installSteps.length) || (
-      integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
-    isCloned;
-  if (isFrameWork2) return <Uninstaller2 integration={integration} integrationId={integrationId} />;
+  if (isFrameWork2 && storeId && !storeIntegration.isIntegration) {
+    return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />
+  }
+
+  if (isFrameWork2) return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />;
   return <Uninstaller1 integration={integration} integrationId={integrationId} storeId={storeId} />
 }
