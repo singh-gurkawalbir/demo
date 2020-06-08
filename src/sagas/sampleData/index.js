@@ -7,6 +7,7 @@ import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
+import requestFileAdaptorSampleData from './sampleDataGenerator/fileAdaptorSampleData'
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
@@ -218,9 +219,14 @@ function* fetchExportPreviewData({
     }
     if (!fileDetails.body) {
       // when no file uploaded , try fetching sampleData on resource
-      return yield put(
-        actions.sampleData.receivedError(resourceId, 'parsedError')
-      );
+      const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
+
+      if (parsedData) {
+        return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
+      }
+      // If no sample data on resource too? then throw an error
+      // Figure out what to show in this case
+      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
     }
     return yield call(processRawData, {
       resourceId,

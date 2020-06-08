@@ -11,7 +11,6 @@ export default function* requestFileAdaptorSampleData({ resource }) {
       sampleData,
       resource,
     });
-
     return Array.isArray(fileSampleData) ? fileSampleData[0] : fileSampleData;
   }
 
@@ -19,7 +18,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
     return processJsonSampleData(sampleData, file[type]);
   }
 
-  if (type === 'filedefinition') {
+  if (['filedefinition', 'fixed', 'delimited/edifact'].includes(type)) {
     const { data: fileDefinitionSampleData } = yield call(parseFileDefinition, {
       sampleData,
       resource,
