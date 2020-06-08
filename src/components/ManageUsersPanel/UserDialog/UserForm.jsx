@@ -120,7 +120,7 @@ export default function UserForm({
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),
@@ -149,7 +149,7 @@ export default function UserForm({
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),

@@ -523,9 +523,40 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
+    MuiExpansionPanel: {
+      root: {
+        background: 'none',
+        boxShadow: 'none',
+      },
+
+
+    },
+    MuiExpansionPanelDetails: {
+      root: {
+        padding: 0,
+      },
+    },
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
+        height: 38,
+        display: 'inline-flex',
+        minHeight: 'unset',
+        paddingLeft: 0,
+        flexDirection: 'row-reverse',
+        '&.Mui-expanded': {
+          minHeight: 0,
+        },
+      },
+      content: {
+        margin: 0,
+        '&.Mui-expanded': {
+          margin: 0,
+        },
+      },
+      expandIcon: {
+        padding: 0,
+        margin: [[-4, 4, 0, 0]],
       },
     },
     MuiChip: {

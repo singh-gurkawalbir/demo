@@ -33,7 +33,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
       onClose={onClose}
       data-test="closeRegisterConnectionsDialog"
       maxWidth="xl">
-      <div>Register Connections</div>
+      <div>Register connections</div>
       <div>
         <LoadResources required resources="connections">
           <CeligoTable
