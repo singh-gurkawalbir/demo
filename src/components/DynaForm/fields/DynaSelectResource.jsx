@@ -272,6 +272,14 @@ function DynaSelectResource(props) {
         },
       ];
 
+      if (statusExport) {
+        patchSet.push({
+          op: 'add',
+          path: '/statusExport',
+          value: true
+        })
+      }
+
       // this not an actual value we would like to commit...this is just to load the right form
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
