@@ -104,9 +104,7 @@ function getSampleData(resourceData, stage) {
 }
 
 function getPreviewData(resourceData) {
-  return resourceData.parse ?
-    (resourceData.parse.body || resourceData.parse) :
-    DEFAULT_VALUE
+  return resourceData.parse || DEFAULT_VALUE;
 }
 
 export function getResourceSampleData(state, resourceId, stage) {

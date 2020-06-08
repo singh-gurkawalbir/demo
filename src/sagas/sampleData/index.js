@@ -158,7 +158,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
-    dataForEachStageMap.parse = { data: [{ body: processJsonSampleData(file, options) }] }
+    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] }
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     return;
   }
@@ -244,7 +244,7 @@ function* fetchExportPreviewData({
   });
 }
 
-function* requestSampleData({
+export function* requestExportSampleData({
   resourceId,
   resourceType,
   values,
@@ -314,6 +314,6 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
 }
 
 export default [
-  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData),
+  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestExportSampleData),
   takeLatest(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, requestLookupSampleData),
 ];
