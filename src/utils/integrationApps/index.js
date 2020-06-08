@@ -129,7 +129,7 @@ export default {
       } else {
         stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
