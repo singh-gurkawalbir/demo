@@ -58,6 +58,7 @@ export default function DynaEditor({
   saveMode,
   description,
   errorMessages,
+  required,
   isValid,
   helpKey,
 }) {
@@ -135,7 +136,7 @@ export default function DynaEditor({
           }}
         />
         <div className={classes.dynaEditorTextLabelWrapper}>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel required={required} error={!isValid} >{label}</FormLabel>
           {helpKey && <FieldHelp helpKey={helpKey} />}
         </div>
 

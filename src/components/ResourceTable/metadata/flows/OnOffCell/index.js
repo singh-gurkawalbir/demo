@@ -119,7 +119,7 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner />;
+    return <Spinner size={24} />;
   }
 
   if (!isFlowEnableLocked) {
