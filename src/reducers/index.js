@@ -1344,7 +1344,7 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
     }
   } else if (integration._connectorId) {
     resources = resources.filter(conn => {
-      if (childId) {
+      if (childId && childId !== integrationId) {
         return [integrationId, childId].includes(conn._integrationId)
       }
       return childIntegrations.includes(conn._integrationId)
