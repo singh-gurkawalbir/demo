@@ -34,10 +34,10 @@ const useStyle = makeStyles(theme => ({
 
 const TabLabel = ({layout, fieldMap, label, tabType }) => (
   <FormContext.Consumer>
-  {form => (
-    tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error">{label}</Typography> : label
+    {form => (
+      tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error">{label}</Typography> : label
 
-  )}
+    )}
   </FormContext.Consumer>
 )
 
