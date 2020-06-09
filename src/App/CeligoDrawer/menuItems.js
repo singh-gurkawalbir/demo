@@ -2,7 +2,6 @@ import HomeIcon from '../../components/icons/HomeIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
 import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
-import SupportIcon from '../../components/icons/SupportIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
@@ -14,7 +13,6 @@ import AgentsIcon from '../../components/icons/AgentsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
-import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
@@ -22,6 +20,8 @@ import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
+import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
+import HelpIcon from '../../components/icons/HelpIcon';
 
 export default function menuItems(
   userProfile,
@@ -101,25 +101,14 @@ export default function menuItems(
       ],
     },
     {
-      label: 'Marketplace',
-      Icon: MarketplaceIcon,
-      path: '/marketplace',
-    },
-    {
-      label: 'Support',
-      Icon: SupportIcon,
+      label: 'Help',
+      Icon: HelpIcon,
       children: [
         {
-          label: 'Knowledge base',
-          Icon: KnowledgeBaseIcon,
+          label: 'Help center',
+          Icon: HelpCenterIcon,
           component: 'a',
           href: getHelpUrl(integrations, marketplaceConnectors),
-        },
-        {
-          label: 'Submit ticket',
-          Icon: TicketTagIcon,
-          component: 'a',
-          href: SUBMIT_TICKET_URL,
         },
         {
           label: "What's New",
@@ -128,12 +117,23 @@ export default function menuItems(
           href: WHATS_NEW_URL,
         },
         {
-          label: 'University',
-          Icon: UniversityIcon,
+          label: 'Submit ticket',
+          Icon: TicketTagIcon,
           component: 'a',
-          href: getUniversityUrl(),
+          href: SUBMIT_TICKET_URL,
         },
       ],
+    },
+    {
+      label: 'Celigo University',
+      Icon: UniversityIcon,
+      href: getUniversityUrl,
+      component: 'a'
+    },
+    {
+      label: 'Marketplace',
+      Icon: MarketplaceIcon,
+      path: '/marketplace',
     },
   ];
 

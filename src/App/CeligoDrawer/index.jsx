@@ -286,7 +286,7 @@ export default function CeligoDrawer() {
               accessLevel,
               integrations,
               marketplaceConnectors
-            ).map(({ label, Icon, path, routeProps, children }) => (
+            ).map(({ label, Icon, path, routeProps, children, href, component }) => (
               <Fragment key={label}>
                 <ListItem
                   button
@@ -295,8 +295,10 @@ export default function CeligoDrawer() {
                       expand !== label &&
                       matchPath(location.pathname, routeProps || `/pg${path}`),
                   })}
-                  component={children ? undefined : Link}
-                  to={getRoutePath(path)}
+                  component={children ? undefined : component || Link}
+                  target={href && '_blank'}
+                  href={href}
+                  to={!href ? getRoutePath(path) : undefined}
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
