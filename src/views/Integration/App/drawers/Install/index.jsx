@@ -234,9 +234,15 @@ export default function ConnectorInstallation(props) {
           dispatch(
             actions.resource.clearChildIntegration()
           );
-          props.history.push(
-            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-          );
+          if (integration && integration.installSteps && integration.installSteps.length > 0) {
+            props.history.push(
+              `/pg/integrationapps/v2/${integrationAppName}/${integrationId}`
+            );
+          } else {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+            );
+          }
         }
       }
     }
