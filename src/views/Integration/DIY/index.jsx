@@ -293,12 +293,20 @@ export default function Integration({ history, match }) {
       const newChildId = e.target.value;
       let newTab = tab;
       const childIntegration = integrations.find(i => i._id === newChildId);
-      if (childIntegration && childIntegration.mode === 'install') {
-        return history.push(
-          getRoutePath(
-            `integrationapps/v2/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
-          )
-        );
+      if (childIntegration) {
+        if (childIntegration.mode === 'install') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/v2/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
+            )
+          );
+        } if (childIntegration.mode === 'uninstall') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/uninstall`
+            )
+          );
+        }
       }
 
       if (!availableTabs.find(tab => tab.path === tab)) {
