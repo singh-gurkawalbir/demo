@@ -183,6 +183,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+function getHrefProps(href, path) {
+  return {
+    target: href && '_blank',
+    href,
+    to: !href ? getRoutePath(path) : undefined
+  }
+}
+
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
@@ -296,9 +305,7 @@ export default function CeligoDrawer() {
                       matchPath(location.pathname, routeProps || `/pg${path}`),
                   })}
                   component={children ? undefined : component || Link}
-                  target={href && '_blank'}
-                  href={href}
-                  to={!href ? getRoutePath(path) : undefined}
+                  {...getHrefProps(href, path)}
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
@@ -344,9 +351,7 @@ export default function CeligoDrawer() {
                             data-test={label}
                             key={label}
                             component={component || Link}
-                            target={href && '_blank'}
-                            href={href}
-                            to={!href ? getRoutePath(path) : undefined}
+                            {...getHrefProps(href, path)}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
