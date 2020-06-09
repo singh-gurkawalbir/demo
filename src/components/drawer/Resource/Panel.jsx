@@ -5,7 +5,8 @@ import {
   useLocation,
   generatePath,
   useHistory,
-  useRouteMatch,
+  matchPath,
+  useRouteMatch
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
@@ -14,9 +15,15 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
+import Back from '../../icons/BackArrowIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 
+const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+const isNestedDrawer = (url) => !!matchPath(url, {
+  path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
+  exact: true,
+  strict: false})
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
@@ -27,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 660 : 150;
+      return props.match.isExact ? 660 : 0;
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
@@ -41,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     padding: '14px 0px',
     margin: theme.spacing(0, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -63,9 +70,21 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
+
+  backButton: {
+    position: 'absolute',
+    left: theme.spacing(2),
+    top: theme.spacing(2),
+    padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.secondary.dark,
+    },
+  },
   closeIcon: {
     fontSize: 18,
   },
+
 }));
 const determineRequiredResources = type => {
   const resourceType = [];
@@ -349,6 +368,14 @@ export default function Panel(props) {
     <>
       <div className={classes.root}>
         <div className={classes.title}>
+          {isNestedDrawer(location.pathname) &&
+          <IconButton
+            data-test="closeFlowSchedule"
+            aria-label="Close"
+            className={classes.backButton}
+            onClick={onClose}>
+            <Back className={classes.closeIcon} />
+          </IconButton>}
           <Typography variant="h3" className={classes.titleText}>
             {title}
           </Typography>
@@ -385,7 +412,7 @@ export default function Panel(props) {
       </div>
 
       <Route
-        path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
+        path={`${match.url}${DRAWER_PATH}`}
         render={props => (
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}

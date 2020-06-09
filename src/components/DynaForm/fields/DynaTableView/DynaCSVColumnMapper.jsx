@@ -15,7 +15,7 @@ export default function DynaCSVColumnMapper(props) {
     v.column = v.column &&
     // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
     // eslint-disable-next-line no-restricted-globals
-    !isNaN(parseInt(v.column, 10)) ? parseInt(v.column, 10) : v.column
+    !isNaN(v.column) ? parseInt(v.column, 10) : v.column
     return v
   })
   if (value && !maxNumberOfColumns) {
