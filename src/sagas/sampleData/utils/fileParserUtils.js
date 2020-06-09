@@ -32,9 +32,9 @@ export const generateFileParserOptions = (options = {}, type) => {
  * metadata field Ids for that resource
  * as we infer props on resource form while editing
  */
-export const generateFileParserOptionsFromResource = (resource, type) => {
-  const { type: fileType } = resource.file;
-  const fields = resource.file[fileType];
+export const generateFileParserOptionsFromResource = (resource = {}, type) => {
+  const { type: fileType } = resource.file || {};
+  const fields = (resource.file && resource.file[fileType]) || {};
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(type)) {

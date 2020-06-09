@@ -122,6 +122,8 @@ export function getResourceSampleData(state, resourceId, stage) {
     case 'parse':
       return getParsedData(resourceData);
     case 'preview':
+    // Added a new stage to handle preview mode for File adaptors
+    // TODO @Raghu: Go through existing stages , refactor as there are multiple stages - can lead to ambiguity
       return getPreviewData(resourceData);
     case 'csv':
       return getSampleData(resourceData, 'csv');

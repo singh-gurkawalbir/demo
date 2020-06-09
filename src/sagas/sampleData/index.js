@@ -131,7 +131,10 @@ function* getProcessorOutput({ processorData }) {
     }
   }
 }
-
+/**
+ * Given list of stages mapped with data to be saved against it
+ * Triggers action that saves each stage with data on resource's sample data
+ */
 function* updateDataForStages({resourceId, dataForEachStageMap }) {
   const stages = Object.keys(dataForEachStageMap);
   for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
@@ -207,6 +210,7 @@ function* fetchExportPreviewData({
     resourceId,
     resourceType,
   });
+  // If it is a file adaptor , follows a different approach to fetch sample data
   if (isFileAdaptor(body)) {
     const fileType = body.file.type;
     // extract all details needed for a file sampledata
