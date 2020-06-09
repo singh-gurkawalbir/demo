@@ -61,7 +61,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     selectors.isUninstallComplete(state, { integrationId, storeId })
   );
   const { steps: uninstallSteps, error } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, integrationId)
+    selectors.integrationUninstallSteps(state, { integrationId })
   );
 
   useEffect(() => {
