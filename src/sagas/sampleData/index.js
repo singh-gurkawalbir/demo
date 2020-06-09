@@ -224,9 +224,12 @@ function* fetchExportPreviewData({
       if (parsedData) {
         return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
       }
-      // If no sample data on resource too.... Show empty data representing no data is being passed
-      // TODO @Raghu: Handle case where user selects not to transfer data
-      // In that case, show empty data also not save any sampleData on resource save
+      // If no sample data on resource too...
+      // Show empty data representing no data is being passed
+      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+    }
+    if (body.file.output === 'blobKeys') {
+      // If the output mode is 'blob' , no data is passed so show empty data
       return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
     }
     return yield call(processRawData, {

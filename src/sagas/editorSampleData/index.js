@@ -45,7 +45,7 @@ export function* requestEditorSampleData({
       const parsedData = yield select(
         selectors.getResourceSampleDataWithStatus,
         resourceId,
-        'parse'
+        'preview'
       );
       if (parsedData && parsedData.data) {
         sampleData = parsedData.data;
