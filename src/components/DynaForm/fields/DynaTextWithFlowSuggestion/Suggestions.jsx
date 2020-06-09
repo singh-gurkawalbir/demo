@@ -127,6 +127,7 @@ export default function Suggestions(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     options,
+    showLookupModal,
   } = props;
   const classes = useStyles();
   const sampleData = useSelector(
@@ -234,23 +235,29 @@ export default function Suggestions(props) {
     [adaptorType, handleLookupSelect, lookups, onFieldChange]
   );
   const handleLookupEdit = useCallback(
-    (lookup = {}) => {
-      const lookupIndex = lookups.findIndex(item => item.name === lookup.name);
+    (newLookup = {}, oldLookup = {}) => {
+      const lookupIndex = lookups.findIndex(item => item.name === oldLookup.name);
 
-      if (lookupIndex !== -1) {
+      if (lookupIndex === -1) {
         return;
       }
 
       const modifiedLookups = [...lookups];
 
       modifiedLookups.splice(lookupIndex, 1);
-      modifiedLookups.splice(lookupIndex, 0, lookup);
+      modifiedLookups.splice(lookupIndex, 0, newLookup);
       const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
       onFieldChange(lookupFieldId, modifiedLookups);
     },
     [adaptorType, lookups, onFieldChange]
   );
+  const handleLookupEditorShown = useCallback(
+    (val) => {
+      showLookupModal(val)
+    },
+    [showLookupModal],
+  )
   const showSuggestion =
     !hide &&
     (showSuggestionsWithoutHandlebar ||
@@ -274,6 +281,7 @@ export default function Suggestions(props) {
             showDynamicLookupOnly
             onSave={handleLookupAdd}
             options={options}
+            showLookupDialog={handleLookupEditorShown}
           />
         </li>
       )}
@@ -293,6 +301,7 @@ export default function Suggestions(props) {
               showDynamicLookupOnly
               value={lookup}
               options={options}
+              showLookupDialog={handleLookupEditorShown}
             />
           </li>
         ))}
