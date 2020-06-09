@@ -9,7 +9,7 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
@@ -84,11 +84,15 @@ const allSections = [
 export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isParent = !childId || (childId === integrationId);
+  const isParent = !childId || (childId === 'undefined') || (childId === integrationId);
   const isIntegrationApp = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', integrationId);
     return !!(integration && integration._connectorId)
   })
+  const children = useSelector(
+    state => selectors.integrationChildren(state, integrationId),
+    shallowEqual
+  );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
@@ -104,6 +108,8 @@ export default function AdminPanel({ integrationId, childId }) {
     if (!isParent) {
       sectionsToHide.push('subscription');
       sectionsToHide.push('apitoken');
+    } else if (children && children.length > 1) {
+      sectionsToHide.push('uninstall');
     }
   }
 
