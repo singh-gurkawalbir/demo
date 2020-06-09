@@ -21,6 +21,11 @@ export default {
     const { connectionId, flowId, resourceId } = options;
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
+    let picklistOptions = [];
+
+    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
+      picklistOptions = selectedGenerateObj.options;
+    }
     const fieldMeta = {
       fieldMap: {
         immutable: {
@@ -154,6 +159,7 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
+          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
