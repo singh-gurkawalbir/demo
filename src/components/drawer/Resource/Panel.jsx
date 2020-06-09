@@ -370,8 +370,7 @@ export default function Panel(props) {
         <div className={classes.title}>
           {isNestedDrawer(location.pathname) &&
           <IconButton
-            data-test="closeFlowSchedule"
-            aria-label="Close"
+            data-test="goBackDrawer"
             className={classes.backButton}
             onClick={onClose}>
             <Back className={classes.closeIcon} />
@@ -388,8 +387,7 @@ export default function Panel(props) {
             />
           )}
           <IconButton
-            data-test="closeFlowSchedule"
-            aria-label="Close"
+            data-test="closeDrawer"
             className={classes.closeButton}
             onClick={onClose}>
             <Close className={classes.closeIcon} />
