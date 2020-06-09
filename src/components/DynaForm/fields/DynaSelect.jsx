@@ -19,8 +19,8 @@ const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 
 const optionSearch = (search) => ({label, optionSearch}) => search && (
-  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
- (typeof label === 'string' && label.toLowerCase().startsWith(search)))
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().includes(search)) ||
+ (typeof label === 'string' && label.toLowerCase().includes(search)))
 const useAutoScrollOption = (items, open, listRef) => {
   const [search, setSearch] = useState('');
   const [scrolIndex, setScrolIndex] = useState(-1);
