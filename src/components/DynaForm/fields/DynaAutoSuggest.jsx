@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   suggestion: {
     display: 'block',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderTop: 'none',
   },
   suggestionsList: {
     margin: 0,

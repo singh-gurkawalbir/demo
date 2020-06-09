@@ -17,6 +17,8 @@ export default function getFormFieldMetadata(
       fieldId: {
         id: 'fieldId',
         name: 'fieldId',
+        // TODO: helpText is needed
+        helpText: 'Sample helptext for the subrecord set',
         type: 'select',
         label: `Which ${recordLabel} field should this subrecord set?`,
         options: [

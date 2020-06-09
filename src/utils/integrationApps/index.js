@@ -15,7 +15,7 @@ export const getIntegrationAppUrlName = (
   );
 };
 
-export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, hasAddOns}) => {
+export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, hasAddOns, isStandalone}) => {
   const tabs = []
   if (isIntegrationApp) {
     tabs.push('users')
@@ -28,6 +28,9 @@ export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, has
   if (isParent) {
     tabs.push('flows')
     tabs.push('dashboard')
+  }
+  if (isStandalone) {
+    tabs.push('settings')
   }
   return allTabs.filter(tab => !tabs.includes(tab.path))
 }
@@ -129,7 +132,7 @@ export default {
       } else {
         stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {

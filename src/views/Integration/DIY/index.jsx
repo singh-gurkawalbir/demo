@@ -133,8 +133,7 @@ export default function Integration({ history, match }) {
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
-        // addNewStore: integration && integration.initChild && integration.initChild.function
-        supportsChild: integration?.initChild?.function,
+        supportsChild: integration && integration.initChild && integration.initChild.function
       };
     }
 
@@ -195,7 +194,7 @@ export default function Integration({ history, match }) {
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const isParent = childId === integrationId;
-  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns});
+  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns, isStandalone: integrationId === STANDALONE_INTEGRATION.id});
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {

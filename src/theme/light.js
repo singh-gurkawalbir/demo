@@ -395,6 +395,8 @@ export default {
         },
         '&.Mui-disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
+
         },
       },
       input: {
@@ -411,6 +413,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -438,6 +441,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
         },
       },
       inputMultiline: {
@@ -490,8 +494,8 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: '15px',
         '&$disabled': {
-          background: colors.celigoNeutral2,
-          color: colors.celigoNeutral4,
+          backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
           '& >.MuiSelect-icon': {
             display: 'none',
           },
@@ -523,9 +527,40 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
+    MuiExpansionPanel: {
+      root: {
+        background: 'none',
+        boxShadow: 'none',
+      },
+
+
+    },
+    MuiExpansionPanelDetails: {
+      root: {
+        padding: 0,
+      },
+    },
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
+        height: 38,
+        display: 'inline-flex',
+        minHeight: 'unset',
+        paddingLeft: 0,
+        flexDirection: 'row-reverse',
+        '&.Mui-expanded': {
+          minHeight: 0,
+        },
+      },
+      content: {
+        margin: 0,
+        '&.Mui-expanded': {
+          margin: 0,
+        },
+      },
+      expandIcon: {
+        padding: 0,
+        margin: [[-4, 4, 0, 0]],
       },
     },
     MuiChip: {
