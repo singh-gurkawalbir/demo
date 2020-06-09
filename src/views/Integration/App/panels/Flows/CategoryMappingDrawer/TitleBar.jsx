@@ -10,6 +10,8 @@ import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';
 import IconTextButton from '../../../../../../components/IconTextButton';
 import Help from '../../../../../../components/Help';
+import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
+
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
@@ -17,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     padding: '14px 24px',
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   title: {
     flexGrow: 1,
@@ -56,6 +59,7 @@ export default function DrawerTitleBar({
   onClose,
   title,
   addCategory,
+  backToParent,
   parentUrl,
   help,
   className,
@@ -83,6 +87,15 @@ export default function DrawerTitleBar({
     <div className={clsx(classes.titleBar, className)}>
       <LoadResources required resources="flows">
         <Typography variant="h3" className={classes.title}>
+          {backToParent && (
+          <IconButton
+            data-test="backToCateogryMapping"
+            aria-label="back"
+            onClick={handleClose}
+            className={classes.arrowLeft}>
+            <BackArrowIcon />
+          </IconButton>
+          )}
           {title ||
             `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
               flowName.length > 40

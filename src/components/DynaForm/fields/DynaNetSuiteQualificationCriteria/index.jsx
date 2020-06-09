@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   loaderRecord: {
+    display: 'flex',
     flexDirection: 'row !important',
   },
   loaderRecordMetaDataText: {
