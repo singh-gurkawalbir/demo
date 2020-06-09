@@ -370,7 +370,7 @@ export default function Panel(props) {
         <div className={classes.title}>
           {isNestedDrawer(location.pathname) &&
           <IconButton
-            data-test="goBackDrawer"
+            data-test="backDrawer"
             className={classes.backButton}
             onClick={onClose}>
             <Back className={classes.closeIcon} />
