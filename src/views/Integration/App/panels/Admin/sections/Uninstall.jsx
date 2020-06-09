@@ -61,7 +61,7 @@ export default function UninstallSection({ storeId, integrationId }) {
               );
 
               // REVIEW: @ashu, review with Dave once
-              if (index === -1) {
+              if (index === -1 || urlExtractFields[index + 1] === 'undefined') {
                 history.push(
                   `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
                 );
