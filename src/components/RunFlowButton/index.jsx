@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
   },
   runNowIcon: {
     marginLeft: theme.spacing(-1),
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.primary.main,
+    }
   },
 }));
 
@@ -34,6 +38,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
       return (
         <IconButton
           data-test="runFlow"
+          className={classes.runNowIcon}
           disabled>
           <RunIcon />
         </IconButton>
