@@ -139,6 +139,12 @@ export default function Integration({ history, match }) {
 
     return emptyObj;
   }, shallowEqual);
+  const integrationsFilterConfig = { type: 'integrations' };
+
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
 
   const childIntegration = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
@@ -286,6 +292,22 @@ export default function Integration({ history, match }) {
     e => {
       const newChildId = e.target.value;
       let newTab = tab;
+      const childIntegration = integrations.find(i => i._id === newChildId);
+      if (childIntegration) {
+        if (childIntegration.mode === 'install') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/v2/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
+            )
+          );
+        } if (childIntegration.mode === 'uninstall') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/uninstall`
+            )
+          );
+        }
+      }
 
       if (!availableTabs.find(tab => tab.path === tab)) {
         newTab = 'settings';
@@ -298,7 +320,7 @@ export default function Integration({ history, match }) {
         )
       );
     },
-    [availableTabs, history, name, integrationId, tab]
+    [availableTabs, history, name, integrationId, tab, integrations]
   );
   const handleDescriptionChange = useCallback(
     description => {
