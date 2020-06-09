@@ -31,13 +31,18 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
     resourceObj && resourceObj._connectionId
   );
 
+  const isBlobModeFileAdaptor =
+    isFileAdaptor(resourceObj) && resourceObj.file.output === 'blobKeys';
+
   // Raw data need not be updated on save for real time resources
   // Covers - NS/SF/Webhooks
   // Also for Blob type resources ,no need to update as its a sample blob key as sample data
+  // Even for file adaptors with blob output mode, no sampledata is saved
   if (
     (!isAS2Resource(resourceObj) &&
       isRealTimeOrDistributedResource(resourceObj)) ||
-    isBlobTypeResource(resourceObj)
+    isBlobTypeResource(resourceObj) ||
+    isBlobModeFileAdaptor
   ) return;
 
   // For file adaptors and AS2 resource , raw data is fetched from uploaded file stored in state

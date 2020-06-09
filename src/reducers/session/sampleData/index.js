@@ -52,7 +52,7 @@ export default function (state = {}, action) {
 
       case actionTypes.SAMPLEDATA.UPDATE:
         draft[resourceId] = draft[resourceId] || {};
-        draft[resourceId].status = 'updated';
+        draft[resourceId].status = 'received';
         draft[resourceId].data = draft[resourceId].data || {};
         // For all the parsers , data is an array
         // Only incase of structuredFileParser it is an object
@@ -103,12 +103,8 @@ function getSampleData(resourceData, stage) {
     : resourceData.transform || resourceData.parse || DEFAULT_VALUE;
 }
 
-function getTransformData(resourceData) {
-  return (
-    resourceData.parse ||
-    (resourceData.raw && resourceData.raw.body) ||
-    DEFAULT_VALUE
-  );
+function getPreviewData(resourceData) {
+  return resourceData.parse || DEFAULT_VALUE;
 }
 
 export function getResourceSampleData(state, resourceId, stage) {
@@ -125,12 +121,14 @@ export function getResourceSampleData(state, resourceId, stage) {
       return getRawFileData(resourceData);
     case 'parse':
       return getParsedData(resourceData);
+    case 'preview':
+    // Added a new stage to handle preview mode for File adaptors
+    // TODO @Raghu: Go through existing stages , refactor as there are multiple stages - can lead to ambiguity
+      return getPreviewData(resourceData);
     case 'csv':
       return getSampleData(resourceData, 'csv');
     case 'sample':
       return getSampleData(resourceData);
-    case 'transform':
-      return getTransformData(resourceData);
     case 'request':
       return resourceData.request || DEFAULT_VALUE;
     default:
