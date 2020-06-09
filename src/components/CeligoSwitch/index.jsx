@@ -69,6 +69,7 @@ export default function CeligoSwitch({
   enabled = false,
   disabled,
   onChange,
+  className,
   ...props
 }) {
   const classes = useStyles();
@@ -76,7 +77,7 @@ export default function CeligoSwitch({
   return (
     <Toggle
       {...props}
-      className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: enabled})}
+      className={clsx(classes.customSwitch, className, {[classes.customSwitchChecked]: enabled})}
       disabled={disabled}
       onChange={onChange}
       checked={enabled}

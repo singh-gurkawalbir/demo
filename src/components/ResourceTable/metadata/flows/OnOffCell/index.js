@@ -1,3 +1,4 @@
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from '../../../../Spinner';
@@ -8,6 +9,14 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import RemoveMargin from '../RemoveMargin';
 
+const useStyles = makeStyles((theme) => ({
+  celigoSwitchOnOff: {
+    marginTop: theme.spacing(1),
+  },
+  spinnerOnOff: {
+    marginLeft: 12,
+  },
+}));
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
 // with a saga controlling the async parts, and a simple status selector created
@@ -21,6 +30,7 @@ export default function OnOffCell({
   isIntegrationApp,
   storeId,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { defaultConfirmDialog } = useConfirmDialog();
@@ -126,13 +136,14 @@ export default function OnOffCell({
   }, [onOffInProgress]);
 
   if (onOffInProgressStatus) {
-    return <Spinner size={24} />;
+    return <Spinner size={24} className={classes.spinnerOnOff} />;
   }
 
   if (!isFlowEnableLocked) {
     return (
       <RemoveMargin>
         <CeligoSwitch
+          className={classes.celigoSwitchOnOff}
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
           enabled={!disabled}

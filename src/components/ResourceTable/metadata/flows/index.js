@@ -91,7 +91,7 @@ export default {
         },
       },
       {
-        heading: 'On/off',
+        heading: 'Off/On',
         value: function Type(r) {
           return (
             <OnOffCell
