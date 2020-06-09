@@ -228,7 +228,7 @@ export default function ConnectorInstallation(props) {
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+            `/pg/integrationapps/v2/${integrationChildAppName}/${childIntegration._id}/setup`
           );
         } else {
           dispatch(
