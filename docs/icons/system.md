@@ -57,6 +57,7 @@ const HelpIcon = require('../../src/components/icons/HelpIcon').default;
 const HideContentIcon = require('../../src/components/icons/HideContentIcon').default;
 const HomeIcon = require('../../src/components/icons/HomeIcon').default;
 const HookIcon = require('../../src/components/icons/HookIcon').default;
+const HelpCenterIcon = require('../../src/components/icons/HelpCenterIcon').default;
 const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InviteUsersIcon = require('../../src/components/icons/InviteUsersIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
@@ -372,6 +373,10 @@ const icon = {
     <div style={wrapper}>
       <HookIcon style={icon} />
       <p>Hook</p>
+    </div>
+     <div style={wrapper}>
+      <HelpCenterIcon style={icon} />
+      <p>HelpCenter</p>
     </div>
     <div style={wrapper}>
       <InfoIcon style={icon} />
