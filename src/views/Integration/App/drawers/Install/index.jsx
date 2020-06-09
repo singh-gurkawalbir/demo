@@ -228,15 +228,21 @@ export default function ConnectorInstallation(props) {
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+            `/pg/integrationapps/v2/${integrationChildAppName}/${childIntegration._id}/setup`
           );
         } else {
           dispatch(
             actions.resource.clearChildIntegration()
           );
-          props.history.push(
-            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-          );
+          if (integration && integration.installSteps && integration.installSteps.length > 0) {
+            props.history.push(
+              `/pg/integrationapps/v2/${integrationAppName}/${integrationId}`
+            );
+          } else {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+            );
+          }
         }
       }
     }

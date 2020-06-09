@@ -128,7 +128,9 @@ export default class AppRouting extends Component {
         />
 
         <Route
-          path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
+          path={['/pg/integrationapps/:integrationAppName/:integrationId/setup',
+            '/pg/integrationapps/v2/:integrationAppName/:integrationId/setup'
+          ]}
           component={IntegrationAppInstallation}
         />
         <Route
