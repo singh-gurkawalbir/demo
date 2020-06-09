@@ -307,6 +307,9 @@ export default {
       const replaceTabWithSpaceField = fields.find(
         field => field.id === 'file.csv.replaceTabWithSpace'
       );
+      const truncateLastRowDelimiterField = fields.find(
+        field => field.id === 'file.csv.truncateLastRowDelimiter'
+      );
       const wrapWithQuotesField = fields.find(
         field => field.id === 'file.csv.wrapWithQuotes'
       );
@@ -320,6 +323,7 @@ export default {
             replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
           replaceTabWithSpace:
             replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          truncateLastRowDelimiter: truncateLastRowDelimiterField && truncateLastRowDelimiterField,
           wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
         },
       };
@@ -1445,6 +1449,16 @@ export default {
         },
       ],
     },
+    'file.csv.truncateLastRowDelimiter': {
+      fieldId: 'file.csv.truncateLastRowDelimiter',
+      visibleWhenAll: [
+        { field: 'http.requestMediaType', is: ['csv'] },
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'file.csv.wrapWithQuotes': {
       fieldId: 'file.csv.wrapWithQuotes',
       visibleWhenAll: [
@@ -1523,6 +1537,7 @@ export default {
           'file.csv.rowDelimiter',
           'file.csv.replaceNewlineWithSpace',
           'file.csv.replaceTabWithSpace',
+          'file.csv.truncateLastRowDelimiter',
           'file.csv.wrapWithQuotes',
           'file.csv.customHeaderRows',
           'file.csvHelper',

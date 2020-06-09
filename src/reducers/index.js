@@ -2086,6 +2086,42 @@ export function addNewStoreSteps(state, integrationId) {
   return { steps: modifiedSteps };
 }
 
+export function isIAV2UninstallComplete(state, { integrationId }) {
+  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  if (!integration) return true;
+  if (integration.mode !== 'uninstall') return false;
+
+  const uninstallData = fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  );
+
+  const { steps: uninstallSteps, isFetched } = uninstallData;
+  if (isFetched) {
+    if (!uninstallSteps || uninstallSteps.length === 0) return true;
+    return !(uninstallSteps.find(s =>
+      !s.completed
+    ))
+  }
+  return false;
+}
+
+export function isIntegrationAppVersion2(state, integrationId) {
+  const integration = resource(state, 'integrations', integrationId);
+  if (!integration) return false;
+  const isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  const isFrameWork2 =
+    (
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length) ||
+    isCloned;
+  return isFrameWork2;
+}
+
 // #end integrationApps Region
 
 export function resourceReferences(state) {
