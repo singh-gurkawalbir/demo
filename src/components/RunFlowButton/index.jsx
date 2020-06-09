@@ -20,9 +20,13 @@ const useStyles = makeStyles(theme => ({
   blockButton: {
     marginRight: theme.spacing(2),
   },
+  runNowIcon: {
+    marginLeft: theme.spacing(-1),
+  },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+  const classes = useStyles();
   if (isRequested) return <Spinner size={20} />;
 
   if (variant === 'icon') {
@@ -38,13 +42,14 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
 
     return (
       <IconButtonWithTooltip
-      // size="small"
+        className={classes.runNowIcon}
         tooltipProps={{
           title: 'Run now',
           placement: 'bottom',
         }}
         disabled={disabled}
         data-test="runFlow"
+
         onClick={onRunClick}>
         <RunIcon />
       </IconButtonWithTooltip>
