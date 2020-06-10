@@ -1419,18 +1419,19 @@ export function integrationAppResourceList(
   }
 
   const flows = [];
+  const flowIds = [];
   const connections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
-    flows.push(...map(sec.flows, '_id'));
+    flowIds.push(...map(sec.flows, '_id'));
   });
 
-  flows.forEach(f => {
-    const flow = resource(state, 'flows', f) || {};
-
+  flowIds.forEach(fid => {
+    const flow = resource(state, 'flows', fid) || {};
+    flows.push({_id: flow._id, name: flow.name});
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));

@@ -187,11 +187,11 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   }
   processorData.processor = processorData.processor || PARSERS[type];
   const processorOutput = yield call(getProcessorOutput, { processorData });
-  if (processorOutput.data) {
+  if (processorOutput && processorOutput.data) {
     dataForEachStageMap.parse = processorOutput.data;
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
   }
-  if (processorOutput.error) {
+  if (processorOutput && processorOutput.error) {
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     yield put(
       actions.sampleData.receivedError(resourceId, processorOutput.error, 'parse')
