@@ -84,7 +84,7 @@ const allSections = [
 export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isParent = !childId || (childId === 'undefined') || (childId === integrationId);
+  const isParent = !childId || (childId === integrationId);
   const isIntegrationApp = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', integrationId);
     return !!(integration && integration._connectorId)
