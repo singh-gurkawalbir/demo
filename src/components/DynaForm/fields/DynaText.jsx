@@ -50,6 +50,11 @@ const useStyles = makeStyles(theme => ({
   startAdornmentWrapper: {
     marginTop: '0px !important',
   },
+  textAreaField: {
+    '& > .MuiFilledInput-multiline': {
+      paddingRight: theme.spacing(4),
+    },
+  },
 }));
 
 function DynaText(props) {
@@ -170,7 +175,7 @@ function DynaText(props) {
         value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
-        className={clsx(classes.formField, className)}
+        className={clsx(classes.formField, {[classes.textAreaField]: multiline }, className)}
       />
       <ErroredMessageComponent
         isValid={isValid}

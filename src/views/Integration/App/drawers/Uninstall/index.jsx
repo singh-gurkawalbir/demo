@@ -26,7 +26,7 @@ export default function IntegrationAppUninstallation({ match }) {
   }, shallowEqual
   )
 
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const uninstaller2Integration = storeId ? storeIntegration : integration;
 
   if (isFrameWork2 || !uninstaller2Integration._id) {

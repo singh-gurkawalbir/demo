@@ -1419,18 +1419,19 @@ export function integrationAppResourceList(
   }
 
   const flows = [];
+  const flowIds = [];
   const connections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
-    flows.push(...map(sec.flows, '_id'));
+    flowIds.push(...map(sec.flows, '_id'));
   });
 
-  flows.forEach(f => {
-    const flow = resource(state, 'flows', f) || {};
-
+  flowIds.forEach(fid => {
+    const flow = resource(state, 'flows', fid) || {};
+    flows.push({_id: flow._id, name: flow.name});
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
@@ -2106,12 +2107,16 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   return false;
 }
 
-export function isIntegrationAppVersion2(state, integrationId) {
+export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
   const integration = resource(state, 'integrations', integrationId);
   if (!integration) return false;
-  const isCloned =
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
     integration.install &&
     integration.install.find(step => step.isClone);
+  }
   const isFrameWork2 =
     (
       integration.installSteps &&
