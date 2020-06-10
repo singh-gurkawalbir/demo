@@ -1,9 +1,10 @@
+import React from 'react';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import StackShares from '../../actions/StackShares';
-import StackSystemToken from '../../../../components/StackSystemToken';
+import StackSystemToken from '../../../StackSystemToken';
 import { formatLastModified } from '../../../CeligoTable/util';
 import GenerateToken from '../../actions/GenerateToken';
 
@@ -32,7 +33,7 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: `Updated on`,
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

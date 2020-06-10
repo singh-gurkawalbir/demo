@@ -6,7 +6,7 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
-import { initSettingsForm } from './';
+import { initSettingsForm } from '.';
 import { apiCallWithRetry } from '../index';
 
 describe('initSettingsForm saga', () => {

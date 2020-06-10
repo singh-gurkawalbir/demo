@@ -1,20 +1,22 @@
-import { useState, useMemo, useEffect, Fragment } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
+import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,13 +38,15 @@ const useStyles = makeStyles(theme => ({
     margin: 5,
   },
 }));
-const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowsPanel({ integrationId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
+  const filterKey = `${integrationId}-flows`;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = { ...flowFilter, type: 'flows' };
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -64,7 +68,7 @@ export default function FlowsPanel({ integrationId }) {
   );
   const {
     status,
-    data: integrationErrorsMap = {},
+    // data: integrationErrorsMap = {},
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -86,13 +90,13 @@ export default function FlowsPanel({ integrationId }) {
       <span>
         Integration flows
         {totalErrors ? (
-          <Fragment>
+          <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
               {totalErrors} errors
             </span>
-          </Fragment>
+          </>
         ) : null}
       </span>
     ),
@@ -104,10 +108,11 @@ export default function FlowsPanel({ integrationId }) {
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
-          onClose={() => setShowDialog(false)}
+          onClose={setShowDialog}
         />
       )}
       <MappingDrawer integrationId={integrationId} />
+      <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
         {permission.create && (
@@ -136,15 +141,13 @@ export default function FlowsPanel({ integrationId }) {
         )}
       </PanelHeader>
 
-      <LoadResources required resources="flows,exports">
-        {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['schedule']}
-            errorCount={integrationErrorsMap[f._id] || 0}
-          />
-        ))}
+      <LoadResources required resources="flows, exports">
+        <CeligoTable
+          data={flows}
+          filterKey={filterKey}
+          {...flowTableMeta}
+          actionProps={{ resourceType: 'flows' }}
+        />
       </LoadResources>
     </div>
   );

@@ -4,6 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
@@ -118,6 +119,7 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,

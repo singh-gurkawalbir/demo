@@ -12,8 +12,8 @@ import {
   evaluateProcessor,
   refreshHelperFunctions,
   saveProcessor,
-} from './';
-import { commitStagedChanges, getResource } from '../../sagas/resources';
+} from '.';
+import { commitStagedChanges, getResource } from '../resources';
 import { apiCallWithRetry } from '../index';
 import { APIException } from '../api';
 
@@ -219,11 +219,14 @@ describe('autoEvaluateProcessor saga', () => {
 
 describe('refreshHelperFunctions saga', () => {
   process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 1;
-  window.localStorage = {};
+  const localStorage = {
+    setItem: jest.fn(),
+    getItem: jest.fn()
+  };
+  Object.defineProperty(window, 'localStorage', { value: localStorage });
 
-  test(`should create a new helperFunction instance when there isn't any in the local storage `, () => {
+  test('should create a new helperFunction instance when there isn\'t any in the local storage ', () => {
     localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
-    localStorage.setItem = jest.fn();
     const someDateEpoch = 1234;
 
     advanceTo(someDateEpoch); // reset to date time.
@@ -252,7 +255,7 @@ describe('refreshHelperFunctions saga', () => {
     clear();
   });
 
-  test(`should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is larger `, () => {
+  test('should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is larger ', () => {
     const recentDateEpoch = 1100;
     const olderDateEpoch = 1000;
     const mockHelperFunctions = ['add', 'substract'];
@@ -266,7 +269,6 @@ describe('refreshHelperFunctions saga', () => {
         helperFunctions: mockHelperFunctions,
       })
     );
-    localStorage.setItem = jest.fn();
     // advance the time to be less than the interval
     advanceTo(recentDateEpoch);
 
@@ -279,7 +281,7 @@ describe('refreshHelperFunctions saga', () => {
     clear();
   });
 
-  test(`should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is smaller `, () => {
+  test('should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is smaller ', () => {
     const recentDateEpoch = 1100;
     const olderDateEpoch = 1000;
     const mockHelperFunctions = ['add', 'substract'];
@@ -293,7 +295,6 @@ describe('refreshHelperFunctions saga', () => {
         helperFunctions: mockHelperFunctions,
       })
     );
-    localStorage.setItem = jest.fn();
 
     // advance the time to sufficiently exceed the interval
     advanceTo(recentDateEpoch);
@@ -321,9 +322,8 @@ describe('refreshHelperFunctions saga', () => {
     );
     clear();
   });
-  test(`should exit gracefully when the getResource api call fails and should not alter localStorage Helperfunctions as well`, () => {
+  test('should exit gracefully when the getResource api call fails and should not alter localStorage Helperfunctions as well', () => {
     localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
-    localStorage.setItem = jest.fn();
 
     const saga = refreshHelperFunctions();
     const getResourceEffect = saga.next(undefined).value;

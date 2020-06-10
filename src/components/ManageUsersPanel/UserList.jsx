@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Table,
@@ -87,7 +87,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
 
   const statusHandler = useCallback(
     ({ status, message }) => {
-      enquesnackbar(message, {
+      enquesnackbar({
+        message,
         variant: status,
         anchorOrigin: {
           vertical: 'top',
@@ -114,7 +115,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
     permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
   return (
-    <Fragment>
+    <>
       <div className={classes.root}>
         <Table className={classes.table}>
           <TableHead>
@@ -140,7 +141,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
                 />
               </TableCell>
               {isAccountOwner && (
-                <Fragment>
+                <>
                   {!integrationId && (
                     <TableCell>
                       Enable user
@@ -161,7 +162,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
                       className={classes.helpIcon}
                     />
                   </TableCell>
-                </Fragment>
+                </>
               )}
             </TableRow>
           </TableHead>
@@ -180,6 +181,6 @@ export default function UserList({ integrationId, onEditUserClick }) {
           </TableBody>
         </Table>
       </div>
-    </Fragment>
+    </>
   );
 }

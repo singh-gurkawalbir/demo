@@ -1,4 +1,5 @@
 // import { useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, Typography } from '@material-ui/core';
 // import actions from '../../../actions';
@@ -73,7 +74,7 @@ export default function WelcomeBanner() {
           component="a"
           href="/"
           variant="outlined">
-          Take me back <ArrowRightIcon />
+          Take me back{' '}<ArrowRightIcon />
         </IconTextButton>
         {/*
         <IconButton onClick={handleClose} className={classes.textColor}>

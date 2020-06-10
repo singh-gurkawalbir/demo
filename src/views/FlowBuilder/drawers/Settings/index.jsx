@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -93,12 +93,12 @@ export default function SettingsDrawer({
               items: nextDataFlows.length
                 ? nextDataFlows.map(i => ({ label: i.name, value: i._id }))
                 : [
-                    {
-                      label: "You don't have any other active flows",
-                      disabled: true,
-                      value: '',
-                    },
-                  ],
+                  {
+                    label: "You don't have any other active flows",
+                    disabled: true,
+                    value: '',
+                  },
+                ],
             },
           ],
         },
@@ -121,8 +121,9 @@ export default function SettingsDrawer({
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      )
+      ) {
         return 'Settings must be a valid JSON';
+      }
     }
   };
 

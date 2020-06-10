@@ -8,13 +8,15 @@ export default {
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
+      retValues['/http/ping/method'] = 'GET';
+      retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
       retValues['/http/auth/cookie/uri'] = `${
         formValues['/instanceURI']
       }/entity/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
-        formValues[`/http/unencrypted/username`]
-      }","password": "${formValues[`/http/encrypted/password`]}","company": "${
-        formValues[`/http/unencrypted/company`]
+        formValues['/http/unencrypted/username']
+      }","password": "${formValues['/http/encrypted/password']}","company": "${
+        formValues['/http/unencrypted/company']
       }"}`;
       retValues['/http/encrypted/cookieString'] = '';
       retValues['/http/auth/token/token'] = '';
@@ -28,7 +30,7 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
@@ -55,9 +57,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'acumatica',
-      '/http/mediaType': 'json',
-      '/http/ping/method': 'GET',
-      '/http/ping/relativeURI': '/FinancialPeriod',
+      '/http/mediaType': 'json'
     };
   },
   fieldMap: {

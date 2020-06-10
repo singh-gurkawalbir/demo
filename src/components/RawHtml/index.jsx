@@ -1,11 +1,12 @@
+import React from 'react';
 import getDomPurify from '../../utils/domPurify';
 
 export default function RawHtml({ html, options = {}, ...props }) {
   const { sanitize } = getDomPurify(options);
   const sanitizedHtml = options.allowedTags
     ? sanitize(html, {
-        ALLOWED_TAGS: options.allowedTags,
-      })
+      ALLOWED_TAGS: options.allowedTags,
+    })
     : sanitize(html);
 
   return (

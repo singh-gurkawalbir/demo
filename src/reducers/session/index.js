@@ -519,6 +519,10 @@ export function integratorLicenseActionMessage(state) {
   return fromResource.integratorLicenseActionMessage(state && state.resource);
 }
 
+export function getChildIntegrationId(state, parentId) {
+  return fromResource.getChildIntegrationId(state && state.resource, parentId);
+}
+
 export function resourceReferences(state) {
   return fromResource.resourceReferences(state && state.resource);
 }

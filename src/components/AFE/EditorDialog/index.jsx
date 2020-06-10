@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, cloneElement } from 'react';
+import React, { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -134,7 +134,7 @@ export default function EditorDialog(props) {
     if (isEditorDirty) {
       confirmDialog({
         title: 'Confirm',
-        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        message: 'You have made changes in the editor. Are you sure you want to discard them?',
         buttons: [
           {
             label: 'No',
@@ -187,6 +187,7 @@ export default function EditorDialog(props) {
           <Typography variant="h5">{title}</Typography>
           <DynaCheckbox
             disabled={disabled}
+            hideLabelSpacing
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}
             label="Enable auto-preview"
@@ -230,7 +231,8 @@ export default function EditorDialog(props) {
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
-        children && cloneElement(children, { layout })}
+        children && cloneElement(children, { layout })
+}
       </DialogContent>
       <DialogActions className={classes.actions}>
         {showPreviewAction && (
@@ -238,7 +240,7 @@ export default function EditorDialog(props) {
             data-test="previewEditorResult"
             variant="outlined"
             onClick={handlePreview}>
-            Run
+            Preview
           </Button>
         )}
         {patchOnSave ? (

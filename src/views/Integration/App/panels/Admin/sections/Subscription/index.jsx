@@ -1,7 +1,8 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
@@ -153,7 +154,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
         <div className={classes.content}>
@@ -222,7 +223,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           </div>
         )}
         {hasAddOns && hasSubscribedAddOns && (
-          <Fragment>
+          <>
             <div className={classes.header}>
               <Typography variant="h4" className={classes.heading}>
                 Add-Ons
@@ -235,9 +236,9 @@ export default function SubscriptionSection({ storeId, integrationId }) {
             </div>
 
             <CeligoTable data={subscribedAddOns} {...metadata} />
-          </Fragment>
+          </>
         )}
       </div>
-    </Fragment>
+    </>
   );
 }

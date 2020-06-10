@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useState } from 'react';
+import React, { useMemo, useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
@@ -31,12 +31,12 @@ export default function StandaloneMapping(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [initTriggered, setInitTriggered] = useState(false);
   const exportResource = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
     const _exportId =
-      flowDetails &&
-      flowDetails.pageGenerators &&
-      flowDetails.pageGenerators.length &&
-      flowDetails.pageGenerators[0]._exportId;
+      flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.length &&
+      flow.pageGenerators[0]._exportId;
 
     return selectors.resource(state, 'exports', _exportId) || undefined;
   });
@@ -71,9 +71,9 @@ export default function StandaloneMapping(props) {
     () =>
       subRecordMappingId
         ? mappingUtil.getSubRecordRecordTypeAndJsonPath(
-            resourceData,
-            subRecordMappingId
-          )
+          resourceData,
+          subRecordMappingId
+        )
         : {},
     [resourceData, subRecordMappingId]
   );
@@ -127,8 +127,7 @@ export default function StandaloneMapping(props) {
   const { data: importSampleData, status: generateStatus } =
     importSampleDataObj || {};
   const salesforceMasterRecordTypeInfo = useSelector(state => {
-    if (isSalesforce)
-      return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+    if (isSalesforce) return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
   });
   const requestImportSampleData = useCallback(
     (refreshCache = true) => {

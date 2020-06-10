@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 
 export default function DynaCsvHasHeaderRow({
@@ -9,7 +9,7 @@ export default function DynaCsvHasHeaderRow({
 }) {
   const { id } = props;
   const handleFieldChange = useCallback(
-    newVal => {
+    (_id, newVal) => {
       if (fieldToReset) onFieldChange(fieldToReset, fieldResetValue);
       onFieldChange(id, newVal);
     },

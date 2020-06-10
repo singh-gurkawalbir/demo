@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function CeligoLogo() {
   return (
     <svg viewBox="0 0 100 34">

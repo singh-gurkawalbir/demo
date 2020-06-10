@@ -336,9 +336,10 @@ export const getPathSegments = path => {
 
     if (char === '\\') escaped = true;
 
-    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral))
+    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral)) {
       // eslint-disable-next-line no-continue
       continue;
+    }
 
     if (!inLiteral && char === '[' && buffer.length === 0) {
       inLiteral = true;
@@ -380,7 +381,7 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   let processedSampleData = sampleData;
 
   // Segments : Array of level wiser paths to drill down the sample data
-  segments.forEach(path => (processedSampleData = processedSampleData[path]));
+  segments.forEach(path => { processedSampleData = processedSampleData[path] });
 
   return processedSampleData;
 };
@@ -439,7 +440,7 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
 };
 
 /*
- * Expected : path provided should lead to a property which is an array 
+ * Expected : path provided should lead to a property which is an array
  * Sample Data :{
     "a": 5,
     "c": { "d": 7 },
@@ -471,9 +472,9 @@ const isValidPathToMany = (sampleData, pathSegments) => {
     "c": { "d": 7 },
     "e": { "check": { "f": [ { "a": 1} ]} }
     }
-  * pathToMany : "e.check.f" to point to "f" attribute 
+  * pathToMany : "e.check.f" to point to "f" attribute
   * Output: { ( all Props other than path are under _PARENT level)
-  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } } 
+  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } }
       "a": 1 ( properties inside "f" attribute are on to the main level )
   * }
  */

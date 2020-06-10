@@ -1,3 +1,4 @@
+import React from 'react';
 import ManageLookup from './index';
 import ModalDialog from '../../ModalDialog';
 

@@ -18,11 +18,6 @@ export default {
 
     newValues['/netsuite/type'] = netsuiteType;
 
-    if (newValues['/outputMode'] === 'blob') {
-      newValues['/type'] = 'blob';
-      newValues['/netsuite/type'] = undefined;
-    }
-
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
@@ -115,6 +110,11 @@ export default {
       }
     }
 
+    if (newValues['/netsuite/internalId']) {
+      newValues['/type'] = 'blob';
+      delete newValues['/netsuite/type'];
+    }
+
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
         newValues['/netsuite/distributed/qualifier']
@@ -153,8 +153,7 @@ export default {
       required: true,
       visible: false,
       defaultValue: r => {
-        if (r.resourceType === 'realtime' || r.type === 'distributed')
-          return 'distributed';
+        if (r.resourceType === 'realtime' || r.type === 'distributed') return 'distributed';
 
         return 'scheduled';
       },
@@ -181,8 +180,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -504,7 +502,8 @@ export default {
             label: r => {
               if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
                 return 'What would you like to transfer?';
-              } else if (
+              }
+              if (
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {

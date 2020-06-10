@@ -1,14 +1,14 @@
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
 import actions from '../../actions';
 import DynaSubmit from '../DynaForm/DynaSubmit';
-import DynaForm from '../../components/DynaForm';
+import DynaForm from '../DynaForm';
 
 const useStyles = makeStyles(() => ({
   fieldContainer: {
-    height: `calc(100vh - 202px)`,
+    height: 'calc(100vh - 202px)',
   },
 }));
 const fieldMeta = {
@@ -56,7 +56,7 @@ export default function InviteUser() {
         data-test="saveInviteUser"
         id="saveInviteUser"
         onClick={handleInviteUser}>
-        {`Invite user & close`}
+        Invite user & close
       </DynaSubmit>
       <Button
         variant="text"

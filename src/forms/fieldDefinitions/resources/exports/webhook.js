@@ -22,8 +22,7 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {
@@ -113,6 +112,7 @@ export default {
   'webhook.url': {
     type: 'generateurl',
     label: 'Public URL',
+    provider: r => r && r.webhook && r.webhook.provider,
     buttonLabel: 'Generate URL',
   },
   'webhook.username': {
@@ -154,6 +154,7 @@ export default {
     type: 'webhooktokengenerator',
     label: 'Custom URL token',
     buttonLabel: 'Generate new token',
+    provider: r => r && r.webhook && r.webhook.provider,
     setFieldIds: ['webhook.url'],
     visible: true,
     visibleWhen: r => {
@@ -180,8 +181,7 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {
@@ -194,6 +194,7 @@ export default {
   'webhook.generateToken': {
     type: 'webhooktokengenerator',
     label: 'Token',
+    provider: r => r && r.webhook && r.webhook.provider,
     buttonLabel: 'Generate new token',
     setFieldIds: ['webhook.url'],
     helpKey: 'export.webhook.token',

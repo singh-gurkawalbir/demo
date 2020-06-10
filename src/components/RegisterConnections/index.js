@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import actions from '../../actions';
-import LoadResources from '../../components/LoadResources';
-import CeligoTable from '../../components/CeligoTable';
+import LoadResources from '../LoadResources';
+import CeligoTable from '../CeligoTable';
 import * as selectors from '../../reducers';
 import metadata from './metadata';
-import ModalDialog from '../../components/ModalDialog';
+import ModalDialog from '../ModalDialog';
 
 export default function RegisterConnections({ onClose, integrationId }) {
   const connectionsToReg = useSelector(state =>

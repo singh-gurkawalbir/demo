@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -30,7 +30,7 @@ import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
-import SwitchOnOff from '../../components/OnOff';
+import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
@@ -43,7 +43,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 
 // #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
-/* 
+/*
   var FlowSchema = new Schema({
  _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
   schedule: {type: String, cLocked: false, template: true, patch: true},
@@ -519,12 +519,7 @@ function FlowBuilder() {
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flowId={flowId} />
       <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
@@ -554,14 +549,14 @@ function FlowBuilder() {
           />
         }
         subtitle={
-          <Fragment>
+          <>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
               <DateTimeDisplay dateTime={flow.lastModified} />
             )}
-          </Fragment>
+          </>
         }
         infoText={flow.description}>
         {totalErrors ? (
@@ -580,7 +575,7 @@ function FlowBuilder() {
             </IconButton>
           )}
           {!isDataLoaderFlow && (
-            <SwitchOnOff.component
+            <FlowToggle
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}
@@ -619,7 +614,7 @@ function FlowBuilder() {
             />
           )}
           {isUserInErrMgtTwoDotZero ? (
-            <Fragment>
+            <>
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
@@ -633,7 +628,7 @@ function FlowBuilder() {
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>
-            </Fragment>
+            </>
           ) : null}
         </div>
       </CeligoPageBar>
@@ -761,7 +756,7 @@ function FlowBuilder() {
                     You can add a destination application once you complete the
                     configuration of your data loader.
                   </Typography>
-                )}
+              )}
             </div>
           </div>
         </div>

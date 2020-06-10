@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -98,7 +98,7 @@ export default function DynaSalesforceLookup(props) {
   }, [dispatch, extractFields, flowId, resourceId]);
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SalesforceLookupFilterEditorDialog
           title="Where Clause"
@@ -144,6 +144,6 @@ export default function DynaSalesforceLookup(props) {
           </ActionButton>
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

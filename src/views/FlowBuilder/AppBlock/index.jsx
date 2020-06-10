@@ -17,7 +17,7 @@ import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status/';
+import Status from '../../../components/Status';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 
@@ -128,7 +128,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   deleteButton: {
-    position: `absolute`,
+    position: 'absolute',
     right: -theme.spacing(0.5),
     top: -theme.spacing(0.5),
     zIndex: 1,
@@ -184,15 +184,7 @@ function AppBlock({
      */
 
     if (resource._connectionId) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        resource._connectionId
-      );
-
-      if (!connection || !connection.rdbms || !connection.rdbms.type) return;
-
-      return connection.rdbms.type;
+      return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
@@ -200,8 +192,7 @@ function AppBlock({
     }
   });
   const connAssistant = useSelector(state => {
-    if (blockType === 'dataLoader' || !resource || !resource._connectionId)
-      return;
+    if (blockType === 'dataLoader' || !resource || !resource._connectionId) return;
 
     const connection = selectors.resource(
       state,

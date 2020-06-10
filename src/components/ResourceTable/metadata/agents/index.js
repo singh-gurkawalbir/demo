@@ -1,3 +1,4 @@
+import React from 'react';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
@@ -33,7 +34,7 @@ export default {
       },
     },
     {
-      heading: 'Updated on',
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

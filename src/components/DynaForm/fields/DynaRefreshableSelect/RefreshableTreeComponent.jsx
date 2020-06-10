@@ -1,4 +1,4 @@
-import { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -9,7 +9,8 @@ import ChevronRightIcon from '../../../icons/ArrowRightIcon';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
-
+// TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
+// refreshCache=true should be appended with api call when refresh button clicked.
 const fieldToOption = field => ({
   label: field.label,
   value: field.value,
@@ -77,7 +78,7 @@ const RefreshTreeElement = props => {
       {expanded.includes(nodeId) ? (
         <TreeViewComponent {...props} key={label} />
       ) : (
-        <Fragment />
+        <></>
       )}
     </TreeItem>
   );
@@ -124,7 +125,7 @@ function TreeViewComponent(props) {
   const skipNonReferencedFields = skipFirstLevelFields && level === 1;
 
   return (
-    <Fragment>
+    <>
       {status === 'refreshed' ? (
         <Spinner />
       ) : (
@@ -171,7 +172,7 @@ function TreeViewComponent(props) {
           );
         })) ||
         null}
-    </Fragment>
+    </>
   );
 }
 
@@ -200,30 +201,34 @@ export default function RefreshableTreeComponent(props) {
     const { status } = statusSelector(referenceTo);
 
     if (expanded) {
-      if (status !== 'received')
+      if (status !== 'received') {
         dispatch(
           actions.metadata.refresh(
             connectionId,
-            `${metaBasePath}${referenceTo}`
+            `${metaBasePath}${referenceTo}`,
+            {refreshCache: true}
           )
         );
+      }
       setExpanded(openNodes => [...openNodes, nodeId]);
-    } else
+    } else {
       setExpanded(openNodes =>
         openNodes.filter(openNode => openNode !== nodeId)
       );
+    }
   };
 
   const [hasCalled, setHasCalled] = useState(false);
 
   useEffect(() => {
-    if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received')
+    if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received') {
       dispatch(
         actions.metadata.refresh(
           connectionId,
-          `${metaBasePath}${selectedReferenceTo}`
+          `${metaBasePath}${selectedReferenceTo}`, {refreshCache: true}
         )
       );
+    }
     setHasCalled(true);
   }, [
     dispatch,

@@ -4,12 +4,12 @@ import { resourceConflictResolution } from './index';
 describe('resourceConflictResolution', () => {
   /*
     Some background to these test cases:
-      
+
     master: this refers to the local unaltered copy of a record
     origin: this refers to the latest copy of that record from the server
     merged: this refers to local changes on top of master
-  
-  
+
+
     */
 
   const master = {

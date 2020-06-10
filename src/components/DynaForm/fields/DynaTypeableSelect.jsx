@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
         paddingTop: theme.spacing(0.5),
       },
       '& >:nth-child(2)': {
-        minHeight: `16px !important`,
+        minHeight: '16px !important',
         wordBreak: 'break-word',
       },
     },
@@ -157,8 +157,7 @@ export default function DynaTypeableSelect(props) {
   };
 
   const handleInputChange = (newVal, event) => {
-    if (event.action === 'input-change')
-      setInputState({ filter: true, isFocus: true, inputValue: newVal });
+    if (event.action === 'input-change') setInputState({ filter: true, isFocus: true, inputValue: newVal });
   };
 
   const selectedValue =
@@ -179,6 +178,7 @@ export default function DynaTypeableSelect(props) {
           : theme.palette.background.paper,
       borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
       minHeight: 38,
+      wordBreak: 'break-word',
       '&:active': {
         backgroundColor: theme.palette.background.paper,
         color: theme.palette.secondary.light,
@@ -201,7 +201,7 @@ export default function DynaTypeableSelect(props) {
       position: 'relative',
       boxSizing: 'borderBox',
       transition: 'all 100ms ease 0s',
-      outline: `0px !important`,
+      outline: '0px !important',
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
@@ -213,7 +213,7 @@ export default function DynaTypeableSelect(props) {
       position: 'absolute',
       backgroundColor: theme.palette.background.paper,
       width: '100%',
-      boxShadow: `0px 3px 5px rgba(0,0,0,0.2)`,
+      boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
       borderRadius: theme.spacing(0, 0, 0.5, 0.5),
     }),
     input: () => ({

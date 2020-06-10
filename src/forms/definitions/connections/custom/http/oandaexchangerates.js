@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v2/currencies.json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://web-services.oanda.com/rates/api`,
+    '/http/baseURI': 'https://web-services.oanda.com/rates/api',
   }),
   fieldMap: {
     name: { fieldId: 'name' },

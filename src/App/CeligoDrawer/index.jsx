@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, Collapse, ButtonBase, Chip } from '@material-ui/core';
+import { List, Collapse, ButtonBase, Chip, Tooltip } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -204,7 +204,7 @@ export default function CeligoDrawer() {
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const [expand, setExpand] = React.useState(null);
+  const expand = useSelector(state => selectors.expandSelected(state));
   const isSandbox = environment === 'sandbox';
   const marketplaceConnectors = useSelectorMemo(
     selectors.makeMarketPlaceConnectorsSelector,
@@ -212,15 +212,23 @@ export default function CeligoDrawer() {
     isSandbox
   );
   const handleDrawerToggle = useCallback(() => {
-    dispatch(actions.toggleDrawer());
-  }, [dispatch]);
+    dispatch(
+      actions.user.preferences.update({
+        drawerOpened: !drawerOpened,
+      })
+    );
+  }, [dispatch, drawerOpened]);
   const handleExpandClick = useCallback(
     label => () => {
-      setExpand(label === expand ? null : label);
+      const selectedExpandValue = label === expand ? null : label;
 
-      if (!drawerOpened) handleDrawerToggle();
+      dispatch(
+        actions.user.preferences.update({
+          expand: selectedExpandValue,
+        })
+      );
     },
-    [drawerOpened, expand, handleDrawerToggle]
+    [dispatch, expand]
   );
 
   // what is the active item? does it have a parent
@@ -292,7 +300,12 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
+                    {drawerOpened ? <Icon /> :
+                    <Tooltip placement="right-end" enterDelay={500} title={label}>
+                      <div>
+                        <Icon />
+                      </div>
+                    </Tooltip>}
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{
@@ -335,7 +348,12 @@ export default function CeligoDrawer() {
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                              {<Icon />}
+                              {drawerOpened ? <Icon /> :
+                              <Tooltip placement="right-end" enterDelay={500} title={label}>
+                                <div>
+                                  <Icon />
+                                </div>
+                              </Tooltip>}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}

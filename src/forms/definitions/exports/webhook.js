@@ -1,14 +1,10 @@
 export default {
   optionsHandler: (fieldId, fields) => {
-    const webHookProviderField =
-      fields.find(field => field.id === 'webhook.provider') || {};
-
     if (fieldId === 'sampleData') {
       const webHookUrlField = fields.find(field => field.id === 'webhook.url');
 
       return {
         webHookUrl: webHookUrlField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
@@ -19,13 +15,9 @@ export default {
 
       return {
         webHookToken: webHookTokenField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
-    if (fieldId === 'webhook.token') {
-      return { webHookProvider: webHookProviderField.value };
-    }
 
     return null;
   },

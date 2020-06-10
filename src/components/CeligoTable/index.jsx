@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import produce from 'immer';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionCell: {
-    padding: `0 !important`,
+    padding: '0 !important',
     textAlign: 'center',
   },
   actionContainer: {
@@ -200,8 +200,7 @@ export default function CeligoTable({
                     active={orderBy === col.orderBy}
                     direction={order}
                     onClick={() =>
-                      handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)
-                    }>
+                      handleSort(order === 'asc' ? 'desc' : 'asc', col.orderBy)}>
                     {col.headerValue
                       ? col.headerValue('', actionProps)
                       : col.heading}
@@ -285,6 +284,11 @@ export default function CeligoTable({
                       : rowActions
                     ).map(({ icon, label, hasAccess, component: Action }) => ({
                       icon:
+                        // TODO: @Adi, we can not use this same pattern for Icon as we do for label.
+                        // remember that an Icon is a component, which is a function. So the typeof
+                        // will always be true. here we this inject the Icon component with rowData
+                        // and cause runtime warnings in the console...
+                        // do we need this feature at all? do we have icons that change for some actions?
                         typeof icon === 'function'
                           ? icon(rowData, actionProps)
                           : icon,

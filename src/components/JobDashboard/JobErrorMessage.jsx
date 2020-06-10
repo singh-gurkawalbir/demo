@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import openExternalUrl from '../../utils/window';
 import RawHtml from '../RawHtml';
@@ -38,7 +38,7 @@ export default function JobErrorMessage({
   }
 
   return (
-    <Fragment>
+    <>
       <RawHtml html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {exportRecordLink && (
@@ -64,6 +64,6 @@ export default function JobErrorMessage({
         )}
         {importRecordText}
       </div>
-    </Fragment>
+    </>
   );
 }

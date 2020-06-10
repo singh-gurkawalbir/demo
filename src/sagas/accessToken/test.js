@@ -1,8 +1,8 @@
 /* global describe, test, expect */
 import { call, put, delay } from 'redux-saga/effects';
 import actions from '../../actions';
-import { displayToken, generateToken } from './';
-import { apiCallWithRetry } from '../';
+import { displayToken, generateToken } from '.';
+import { apiCallWithRetry } from '..';
 import getRequestOptions from '../../utils/requestOptions';
 import actionTypes from '../../actions/types';
 

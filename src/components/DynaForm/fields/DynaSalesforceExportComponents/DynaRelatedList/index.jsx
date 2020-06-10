@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,7 @@ import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
+import FieldHelp from '../../../FieldHelp';
 import DynaForm from '../../..';
 import DynaSubmit from '../../../DynaSubmit';
 import * as selectors from '../../../../../reducers';
@@ -176,15 +177,15 @@ function RelatedListView(props) {
   );
   const updatedValue = value
     ? value.map((eachValue, index) => {
-        const { parentField, sObjectType } = eachValue;
-        const relationshipName = getRelationShipName(
-          options,
-          parentField,
-          sObjectType
-        );
+      const { parentField, sObjectType } = eachValue;
+      const relationshipName = getRelationShipName(
+        options,
+        parentField,
+        sObjectType
+      );
 
-        return { index, relationshipName, ...eachValue };
-      })
+      return { index, relationshipName, ...eachValue };
+    })
     : [];
 
   return (
@@ -223,7 +224,7 @@ function FirstLevelModal(props) {
       <div>Related Lists</div>
       <div>
         {!editListItemModelOpen ? (
-          <Fragment>
+          <>
             <IconTextButton
               data-test="addOrEditNewRelatedList"
               onClick={() => {
@@ -241,9 +242,9 @@ function FirstLevelModal(props) {
               handleEditItem={handleEditItem}
               handleDeleteItem={handleDeleteItem}
             />
-          </Fragment>
+          </>
         ) : (
-          <Fragment>
+          <>
             <IconTextButton>
               <ArrowLeftIcon
                 onClick={() => {
@@ -260,7 +261,7 @@ function FirstLevelModal(props) {
               selectedElement={selectedElement}
               handleClose={toggleListItemModelOpen}
             />
-          </Fragment>
+          </>
         )}
       </div>
       {!editListItemModelOpen && (
@@ -298,7 +299,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   wrapperEditorContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   label: {
     margin: 5,
@@ -341,7 +342,7 @@ export default function DynaRelatedList(props) {
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
-    <Fragment>
+    <>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggleFirstLevelModalOpen} />
       ) : null}
@@ -359,15 +360,18 @@ export default function DynaRelatedList(props) {
           {status === 'refreshed' ? (
             <Spinner />
           ) : (
-            <ActionButton
-              data-test="editRelatedList"
-              onClick={toggleFirstLevelModalOpen}
-              disabled={disabled}>
-              <EditIcon />
-            </ActionButton>
+            <>
+              <ActionButton
+                data-test="editRelatedList"
+                onClick={toggleFirstLevelModalOpen}
+                disabled={disabled}>
+                <EditIcon />
+              </ActionButton>
+              <FieldHelp {...props} />
+            </>
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }

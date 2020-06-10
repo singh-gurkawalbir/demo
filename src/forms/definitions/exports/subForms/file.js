@@ -7,12 +7,12 @@ export default {
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
-    } else if (fieldId === 'file.filedefinition.rules') {
+    }
+    if (fieldId === 'file.filedefinition.rules') {
       let definitionFieldId;
 
       // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
+      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
@@ -27,7 +27,8 @@ export default {
         definitionId: definition && definition.value,
         resourcePath: resourcePath && resourcePath.value,
       };
-    } else if (fieldId === 'file.csvHelper') {
+    }
+    if (fieldId === 'file.csvHelper') {
       const keyColumnsField = fields.find(
         field => field.id === 'file.csv.keyColumns'
       );
@@ -58,7 +59,8 @@ export default {
         },
         uploadSampleDataFieldName: 'uploadFile',
       };
-    } else if (fieldId === 'file.csv.keyColumns') {
+    }
+    if (fieldId === 'file.csv.keyColumns') {
       const columnDelimiterField = fields.find(
         field => field.id === 'file.csv.columnDelimiter'
       );

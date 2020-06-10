@@ -162,6 +162,9 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  updateChildIntegration: (parentId, childId) =>
+    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
@@ -765,6 +768,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+      id: integrationId,
+    }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
@@ -772,23 +778,35 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
+    scriptInstallStep: (
+      integrationId,
+      connectionId,
+      connectionDoc,
+      formSubmission
+    ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
+        formSubmission,
       }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        formMeta,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
+      }),
+    getCurrentStep: (integrationId, step) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP, {
+        id: integrationId,
+        step,
       }),
   },
   uninstaller: {
@@ -951,11 +969,12 @@ const file = {
       fileType,
       file,
     }),
-  processFile: ({ fileId, file, fileType }) =>
+  processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
       fileId,
       file,
       fileType,
+      fileProps,
     }),
   processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {

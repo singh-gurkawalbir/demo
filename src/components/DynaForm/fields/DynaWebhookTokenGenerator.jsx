@@ -1,9 +1,10 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
 import { FormContext } from 'react-forms-processor/dist';
-import uuid from 'uuid';
+import {v4} from 'uuid';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
@@ -14,7 +15,7 @@ import { getWebhookUrl } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   dynaWebhookTokenField: {
     flex: 1,
@@ -31,11 +32,11 @@ function DynaWebhookTokenGenerator(props) {
     resourceId,
     id,
     value,
-    options = {},
     buttonLabel,
     setFieldIds = [],
     formContext,
     name,
+    provider: webHookProvider
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -47,7 +48,7 @@ function DynaWebhookTokenGenerator(props) {
     selectors.createdResourceId(state, resourceId)
   );
   const handleGenerateClick = () => {
-    const tokenValue = uuid.v4().replace(/-/g, '');
+    const tokenValue = v4().replace(/-/g, '');
 
     setToken(tokenValue);
     onFieldChange(id, tokenValue);
@@ -91,7 +92,6 @@ function DynaWebhookTokenGenerator(props) {
 
   useEffect(() => {
     if (url) {
-      const { webHookProvider } = options;
       const whURL = getWebhookUrl(
         { webHookProvider, webHookToken: value },
         resourceId
@@ -100,10 +100,10 @@ function DynaWebhookTokenGenerator(props) {
       onFieldChange('webhook.url', whURL, true);
       setUrl(false);
     }
-  }, [finalResourceId, id, onFieldChange, options, resourceId, url, value]);
+  }, [finalResourceId, id, onFieldChange, webHookProvider, resourceId, url, value]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.dynaWebhookTokenWrapper}>
         <DynaTextForSetFields
           {...props}
@@ -113,15 +113,14 @@ function DynaWebhookTokenGenerator(props) {
           setFieldIds={setFieldIds}
         />
         <div className={classes.dynaWebhookTokenbtn}>
-          {value.match(/^[A-Za-z0-9]/) ? (
+          {value && value.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
               text={value}
               onCopy={() =>
                 enqueueSnackbar({
                   message: 'Token copied to clipboard.',
                   variant: 'success',
-                })
-              }>
+                })}>
               <Button
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
@@ -140,7 +139,7 @@ function DynaWebhookTokenGenerator(props) {
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState, useCallback } from 'react';
+import React, { useReducer, useEffect, useState, useCallback } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -133,8 +133,7 @@ export const DynaTable = props => {
         let allRequiredFieldsPresent = true;
 
         optionsMap.forEach(op => {
-          if (op.required)
-            allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
+          if (op.required) allRequiredFieldsPresent = allRequiredFieldsPresent && !!val[op.id];
         });
 
         return allRequiredFieldsPresent;
@@ -209,10 +208,10 @@ export const DynaTable = props => {
         const options =
           op.type === 'select'
             ? [
-                {
-                  items,
-                },
-              ]
+              {
+                items,
+              },
+            ]
             : items;
 
         modifiedOptions = {
@@ -345,9 +344,11 @@ export const DynaTable = props => {
                             defaultValue={r.value || 0}
                             disabled={r.readOnly}
                             helperText={
-                              r.value === '' && TYPE_TO_ERROR_MESSAGE[r.type]
+                              r.required &&
+                              r.value === '' &&
+                              TYPE_TO_ERROR_MESSAGE[r.type]
                             }
-                            error={r.value === ''}
+                            error={r.required && r.value === ''}
                             type={r.type}
                             options={r.options}
                             onBlur={evt => {

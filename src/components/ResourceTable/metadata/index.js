@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useGetConnectorName } from '../../CeligoTable/util';
 import accesstokens from './accesstokens';
 import agents from './agents';
@@ -11,7 +11,7 @@ import scripts from './scripts';
 import stacks from './stacks';
 
 export const ConnectorNameComp = ({ r }) => (
-  <Fragment>{useGetConnectorName(r)}</Fragment>
+  <>{useGetConnectorName(r)}</>
 );
 
 const metadata = {
@@ -25,6 +25,6 @@ const metadata = {
   accesstokens,
 };
 
-export default function(resourceType) {
+export default function (resourceType) {
   return metadata[resourceType] || defaultResource(resourceType);
 }

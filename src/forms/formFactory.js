@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import produce from 'immer';
-import masterFieldHash from '../forms/fieldDefinitions';
+import masterFieldHash from './fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 import { REST_ASSISTANTS, RDBMS_TYPES } from '../utils/constants';
@@ -12,7 +12,7 @@ const getAllOptionsHandlerSubForms = (
   optionsHandler
 ) => {
   fieldMap &&
-    Object.keys(fieldMap).forEach(field => {
+    Object.keys(fieldMap).forEach((field) => {
       const { formId } = fieldMap[field];
 
       if (formId) {
@@ -43,7 +43,7 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
     const finalRes =
       allOptionsHandler &&
       allOptionsHandler
-        .map(indvOptionsHandler => {
+        .map((indvOptionsHandler) => {
           if (indvOptionsHandler) {
             const res = indvOptionsHandler(fieldId, fields);
 
@@ -66,7 +66,7 @@ const applyCustomSettings = ({
   preSave,
   validationHandler,
 }) => {
-  const newLayout = produce(layout, draft => {
+  const newLayout = produce(layout, (draft) => {
     if (draft && draft.containers && draft.containers.length > 0) {
       if (draft.type === 'column') {
         const firstContainer = draft.containers[0];
@@ -95,7 +95,7 @@ const applyCustomSettings = ({
       draft.fields.push('settings');
     }
   });
-  const newFieldMap = produce(fieldMap, draft => {
+  const newFieldMap = produce(fieldMap, (draft) => {
     if (draft) {
       draft.settings = { fieldId: 'settings' };
     }
@@ -103,7 +103,7 @@ const applyCustomSettings = ({
   const preSaveProxy = (values, resource) => {
     const newValues = preSave ? preSave(values, resource) : values;
 
-    return produce(newValues, draft => {
+    return produce(newValues, (draft) => {
       if (Object.hasOwnProperty.call(draft, '/settings')) {
         let settings = draft['/settings'];
 
@@ -122,7 +122,7 @@ const applyCustomSettings = ({
   // formFactory.. this needs to be within the form meta (validWhen rules) or
   // just JS within the Dyna[Input] component mapped to manage the value.
   // This will be easiest after refactor of react-forms-processor to use redux.
-  const validationHandlerProxy = field => {
+  const validationHandlerProxy = (field) => {
     // Handles validity for settings field (when in string form)
     // Incase of other fields call the existing validationHandler
     if (field.id === 'settings') {
@@ -245,10 +245,8 @@ const getResourceFormAssets = ({
         if (meta) {
           if (isNew) {
             meta = meta.new;
-          }
-
-          // get edit form meta branch
-          else if (type === 'netsuite') {
+          } else if (type === 'netsuite') {
+            // get edit form meta branch
             meta = meta.netsuiteDistributed;
           } else if (
             type === 'salesforce' &&
@@ -417,13 +415,14 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
     formMeta[resourceType].subForms[f.formId].fieldMap;
 
   // todo: cannot support visibleWhen rule....there is no point propogating that rule
-  if (f.visibleWhen && f.visibleWhenAll)
+  if (f.visibleWhen && f.visibleWhenAll) {
     throw new Error(
       'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
     );
+  }
 
   const transformedFieldMap = Object.keys(fieldMapFromSubForm)
-    .map(key => {
+    .map((key) => {
       let field = fieldMapFromSubForm[key];
       const masterFields = masterFieldHash[resourceType]
         ? masterFieldHash[resourceType][field.fieldId]
@@ -431,11 +430,12 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       field = { ...masterFields, ...field };
 
-      if (field.visibleWhen && field.visibleWhenAll)
+      if (field.visibleWhen && field.visibleWhenAll) {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
-      const fieldCopy = produce(field, draft => {
+      }
+      const fieldCopy = produce(field, (draft) => {
         if (f.visibleWhen) {
           draft.visibleWhen = draft.visibleWhen || [];
           draft.visibleWhen.push(...f.visibleWhen);
@@ -469,7 +469,7 @@ const applyingMissedOutFieldMetaProperties = (
   const field = incompleteField;
 
   if (!ignoreFunctionTransformations) {
-    Object.keys(field).forEach(key => {
+    Object.keys(field).forEach((key) => {
       if (typeof field[key] === 'function') {
         field[key] = field[key](resource);
       }
@@ -499,12 +499,13 @@ const applyingMissedOutFieldMetaProperties = (
     field.helpKey = `${singularResourceType}.${field.id}`;
   }
 
-  if (!field.id || !field.name)
+  if (!field.id || !field.name) {
     throw new Error(
       `Id and name must be provided for a field ${JSON.stringify(
         incompleteField
       )}`
     );
+  }
 
   return field;
 };
@@ -525,7 +526,7 @@ const flattenedFieldMap = (
   } = opts;
 
   fields &&
-    fields.forEach(fieldReferenceName => {
+    fields.forEach((fieldReferenceName) => {
       const f = fieldMap[fieldReferenceName];
 
       if (f && f.formId) {
@@ -549,8 +550,6 @@ const flattenedFieldMap = (
           }
         );
       }
-
-      window.debug_masterFieldHash = masterFieldHash;
 
       const masterFields = masterFieldHash[resourceType]
         ? masterFieldHash[resourceType][f.fieldId]
@@ -600,7 +599,7 @@ const setDefaultsToLayout = (
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
     containers &&
-    containers.map(container => {
+    containers.map((container) => {
       const {
         transformedLayout: transformedLayoutRes,
         transformedFieldMap: transfieldMap,
@@ -672,10 +671,10 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
   });
   const { fieldMap: transformedFieldMap } = transformedMeta;
   const extractedInitFunctions = Object.keys(transformedFieldMap)
-    .map(key => {
+    .map((key) => {
       const field = transformedFieldMap[key];
       const fieldReferenceWithFunc = Object.keys(field)
-        .filter(key => typeof field[key] === 'function')
+        .filter((key) => typeof field[key] === 'function')
         .reduce((acc, key) => {
           if (field[key]) acc[key] = field[key];
 
@@ -684,7 +683,7 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
 
       return { key, value: fieldReferenceWithFunc };
     })
-    .filter(val => Object.keys(val.value).length !== 0)
+    .filter((val) => Object.keys(val.value).length !== 0)
     .reduce((acc, curr) => {
       const { key, value } = curr;
 
@@ -695,10 +694,10 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
       return acc;
     }, {});
   const transformedFieldMapWithoutFuncs = Object.keys(transformedFieldMap)
-    .map(key => {
+    .map((key) => {
       const field = transformedFieldMap[key];
       const fieldReferenceWithoutFunc = Object.keys(field)
-        .filter(key => typeof field[key] !== 'function')
+        .filter((key) => typeof field[key] !== 'function')
         .reduce((acc, key) => {
           acc[key] = field[key];
 

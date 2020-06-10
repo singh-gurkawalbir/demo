@@ -97,8 +97,6 @@ export function* apiCallWithRetry(args) {
     const { data } = apiResp.response;
 
     return data;
-  } catch (error) {
-    throw error;
   } finally {
     if (yield cancelled()) {
       // yield cancelled is true when the saga gets cancelled
@@ -108,8 +106,7 @@ export function* apiCallWithRetry(args) {
       const status = yield select(selectors.commStatusPerPath, path, method);
 
       // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS)
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
+      if (status !== COMM_STATES.SUCCESS) yield put(actions.api.complete(path, method, 'Request Aborted'));
     }
   }
 }

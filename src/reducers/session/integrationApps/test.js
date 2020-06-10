@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer from './';
+import reducer from '.';
 import actions from '../../../actions';
 
 describe('integrationApps reducer test cases', () => {
@@ -16,7 +16,7 @@ describe('integrationApps reducer test cases', () => {
     });
   });
   describe('intetgrationApps installer reducer', () => {
-    describe(`integrationApps received installer install_inProgress action`, () => {
+    describe('integrationApps received installer install_inProgress action', () => {
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
           {},
@@ -28,7 +28,7 @@ describe('integrationApps reducer test cases', () => {
         );
 
         expect(state).toEqual({
-          installer: { '1': { isTriggered: true } },
+          installer: { 1: { isTriggered: true } },
           addon: {},
           clone: {},
           uninstaller: {},
@@ -68,7 +68,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps installer install_verify action`, () => {
+    describe('integrationApps installer install_verify action', () => {
       test('should find the integration with id and set isTriggered and verifying flag to true', () => {
         const state = reducer(
           {},
@@ -80,7 +80,7 @@ describe('integrationApps reducer test cases', () => {
         );
 
         expect(state).toEqual({
-          installer: { '1': { isTriggered: true, verifying: true } },
+          installer: { 1: { isTriggered: true, verifying: true } },
           uninstaller: {},
           settings: {},
           addStore: {},
@@ -108,8 +108,8 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: {
-            '1': { isTriggered: true, verifying: true },
-            '2': { isTriggered: true },
+            1: { isTriggered: true, verifying: true },
+            2: { isTriggered: true },
           },
           uninstaller: {},
           settings: {},
@@ -120,11 +120,11 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps installer install_failed action`, () => {
+    describe('integrationApps installer install_failed action', () => {
       test('should find the integration with id and set isTriggered flag to true', () => {
         const state = reducer(
           {
-            installer: { '1': { isTriggered: true } },
+            installer: { 1: { isTriggered: true } },
           },
           actions.integrationApp.installer.updateStep(
             1,
@@ -134,7 +134,7 @@ describe('integrationApps reducer test cases', () => {
         );
 
         expect(state).toEqual({
-          installer: { '1': { isTriggered: false, verifying: false } },
+          installer: { 1: { isTriggered: false, verifying: false } },
           uninstaller: {},
           settings: {},
           addStore: {},
@@ -162,8 +162,8 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: {
-            '1': { isTriggered: false, verifying: false },
-            '2': { isTriggered: true },
+            1: { isTriggered: false, verifying: false },
+            2: { isTriggered: true },
           },
           uninstaller: {},
           settings: {},
@@ -174,11 +174,11 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps installer install_complete action`, () => {
+    describe('integrationApps installer install_complete action', () => {
       test('should find the integration with id and reset the value', () => {
         const state = reducer(
           {
-            installer: { '1': { isTriggered: true } },
+            installer: { 1: { isTriggered: true } },
           },
           actions.integrationApp.installer.completedStepInstall(
             { response: 's' },
@@ -188,7 +188,7 @@ describe('integrationApps reducer test cases', () => {
         );
 
         expect(state).toEqual({
-          installer: { '1': {} },
+          installer: { 1: {} },
           uninstaller: {},
           settings: {},
           addStore: {},
@@ -215,8 +215,8 @@ describe('integrationApps reducer test cases', () => {
 
         expect(state).toEqual({
           installer: {
-            '1': {},
-            '2': { isTriggered: true },
+            1: {},
+            2: { isTriggered: true },
           },
           uninstaller: {},
           settings: {},
@@ -246,7 +246,7 @@ describe('integrationApps reducer test cases', () => {
       },
     ];
 
-    describe(`integrationApps preUninstall steps`, () => {
+    describe('integrationApps preUninstall steps', () => {
       test('should create an integrationId reference inside uninstaller state object', () => {
         const state = reducer(
           undefined,
@@ -284,7 +284,7 @@ describe('integrationApps reducer test cases', () => {
         });
       });
     });
-    describe(`integrationApps uninstaller install_inProgress action`, () => {
+    describe('integrationApps uninstaller install_inProgress action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: { steps: uninstallSteps } } },
@@ -301,7 +301,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -340,7 +340,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -388,7 +388,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -407,7 +407,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -432,7 +432,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps uninstaller uninstall step verify action`, () => {
+    describe('integrationApps uninstaller uninstall step verify action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: { steps: uninstallSteps } } },
@@ -449,7 +449,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -488,7 +488,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -537,7 +537,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -557,7 +557,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -582,7 +582,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps uninstaller uninstall_step failed action`, () => {
+    describe('integrationApps uninstaller uninstall_step failed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: { steps: uninstallSteps } } },
@@ -599,7 +599,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -638,7 +638,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -687,7 +687,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -707,7 +707,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -732,7 +732,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps uninstaller uninstall_step completed action`, () => {
+    describe('integrationApps uninstaller uninstall_step completed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { uninstaller: { 1: { steps: uninstallSteps } } },
@@ -749,7 +749,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -788,7 +788,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: true,
@@ -837,7 +837,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: true,
@@ -857,7 +857,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -882,7 +882,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps uninstaller - received uninstaller steps reducer`, () => {
+    describe('integrationApps uninstaller - received uninstaller steps reducer', () => {
       test('should update the uninstaller state to include the step received', () => {
         const state = reducer(
           undefined,
@@ -899,7 +899,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -938,7 +938,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -956,7 +956,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -995,7 +995,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1034,7 +1034,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1061,7 +1061,7 @@ describe('integrationApps reducer test cases', () => {
         expect(state).toEqual(expectedValue);
       });
     });
-    describe(`integrationApps uninstaller - clear steps reducer`, () => {
+    describe('integrationApps uninstaller - clear steps reducer', () => {
       test('should update the uninstaller state and remove the integrationId if found', () => {
         const state = reducer(
           undefined,
@@ -1112,7 +1112,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1147,7 +1147,7 @@ describe('integrationApps reducer test cases', () => {
           settings: {},
           installer: {},
           uninstaller: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1191,7 +1191,7 @@ describe('integrationApps reducer test cases', () => {
       },
     ];
 
-    describe(`integrationApps addNewStore install_inProgress action`, () => {
+    describe('integrationApps addNewStore install_inProgress action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: addNewStoreSteps } },
@@ -1205,7 +1205,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': [
+            1: [
               {
                 completed: false,
                 description: 'Install the bank in CAM',
@@ -1242,7 +1242,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1290,7 +1290,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1309,7 +1309,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -1337,7 +1337,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps addNewStore install step verify action`, () => {
+    describe('integrationApps addNewStore install step verify action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: { steps: addNewStoreSteps } } },
@@ -1351,7 +1351,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1390,7 +1390,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1439,7 +1439,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1459,7 +1459,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -1487,7 +1487,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps addNewStore install_step failed action`, () => {
+    describe('integrationApps addNewStore install_step failed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: { steps: addNewStoreSteps } } },
@@ -1501,7 +1501,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1540,7 +1540,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1589,7 +1589,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': [
+            1: [
               {
                 completed: false,
                 description: 'Install the bank in CAM',
@@ -1605,7 +1605,7 @@ describe('integrationApps reducer test cases', () => {
                 name: 'Install Bundle in NetSuite',
               },
             ],
-            '2': [
+            2: [
               {
                 completed: false,
                 description: 'Install the bank in CAM',
@@ -1631,7 +1631,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps addNewStore install step completed action`, () => {
+    describe('integrationApps addNewStore install step completed action', () => {
       test('should not affect the existing state when incorrect function name is passed', () => {
         const state = reducer(
           { addStore: { 1: { steps: addNewStoreSteps } } },
@@ -1645,7 +1645,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1684,7 +1684,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1731,7 +1731,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: true,
@@ -1751,7 +1751,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -1779,7 +1779,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps addNewStore - received install steps reducer`, () => {
+    describe('integrationApps addNewStore - received install steps reducer', () => {
       test('should update the addStore state to include the step received', () => {
         const state = reducer(
           undefined,
@@ -1792,7 +1792,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -1830,7 +1830,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1848,7 +1848,7 @@ describe('integrationApps reducer test cases', () => {
                 },
               ],
             },
-            '2': {
+            2: {
               steps: [
                 {
                   completed: false,
@@ -1886,7 +1886,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1924,7 +1924,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -1951,7 +1951,7 @@ describe('integrationApps reducer test cases', () => {
         expect(state).toEqual(expectedValue);
       });
     });
-    describe(`integrationApps addNewStore - clear steps reducer`, () => {
+    describe('integrationApps addNewStore - clear steps reducer', () => {
       test('should initialise the addStore state and remove the integrationId if found', () => {
         const state = reducer(
           undefined,
@@ -1999,7 +1999,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -2034,7 +2034,7 @@ describe('integrationApps reducer test cases', () => {
           addon: {},
           clone: {},
           addStore: {
-            '1': {
+            1: {
               steps: [
                 {
                   completed: false,
@@ -2064,7 +2064,7 @@ describe('integrationApps reducer test cases', () => {
   });
 
   describe('intetgrationApps settings reducer', () => {
-    describe(`integrationApps settings update action`, () => {
+    describe('integrationApps settings update action', () => {
       test('should not affect the existing state when  update function  is called', () => {
         const state = reducer(
           { settings: { '1-2': { submitComplete: true } } },
@@ -2116,7 +2116,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps settings submitComplete action`, () => {
+    describe('integrationApps settings submitComplete action', () => {
       test('should not affect the existing state when  update function  is called', () => {
         const state = reducer(
           { settings: { '1-2': { submitComplete: false } } },
@@ -2162,7 +2162,7 @@ describe('integrationApps reducer test cases', () => {
       });
     });
 
-    describe(`integrationApps settings clear action`, () => {
+    describe('integrationApps settings clear action', () => {
       test('should not affect the existing state when  update function  is called', () => {
         const state = reducer(
           {

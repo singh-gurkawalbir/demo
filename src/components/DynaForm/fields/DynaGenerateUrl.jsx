@@ -1,7 +1,8 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
@@ -15,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaGenerateUrlWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
 
   dynaGenerateTokenbtn: {
@@ -26,15 +27,17 @@ const useStyles = makeStyles(theme => ({
 
 function GenerateUrl(props) {
   const {
+    options = {},
     onFieldChange,
     resourceId,
     id,
     value,
-    options = {},
     buttonLabel,
     formContext,
     flowId,
+    provider: webHookProvider
   } = props;
+  const { webHookToken } = options;
   const { value: formValues } = formContext;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -63,16 +66,15 @@ function GenerateUrl(props) {
       // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
       // TODO @Raghu : Fix this a better way
       setTimeout(() => {
-        const whURL = getWebhookUrl(options, finalResourceId);
-
+        const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
         onFieldChange(id, whURL);
         setUrl(false);
       });
     }
-  }, [finalResourceId, options, id, onFieldChange, url]);
+  }, [finalResourceId, webHookProvider, webHookToken, id, onFieldChange, url]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.dynaGenerateUrlWrapper}>
         <DynaText
           {...props}
@@ -89,8 +91,7 @@ function GenerateUrl(props) {
                 enqueueSnackbar({
                   message: 'URL copied to clipboard.',
                   variant: 'success',
-                })
-              }>
+                })}>
               <Button
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
@@ -110,7 +111,7 @@ function GenerateUrl(props) {
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import DynaCheckbox from './DynaCheckbox';
 
 export default function DynaCheckboxForResetFields(props) {

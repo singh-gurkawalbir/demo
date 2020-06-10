@@ -1,4 +1,4 @@
-import { useEffect, useState, cloneElement, useCallback } from 'react';
+import React, { useEffect, useState, cloneElement, useCallback } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
     display: 'flex',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',

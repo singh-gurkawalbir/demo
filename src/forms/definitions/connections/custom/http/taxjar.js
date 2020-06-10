@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v2/categories',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.taxjar.com`,
+    '/http/baseURI': 'https://api.taxjar.com',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',

@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useEffect, useCallback } from 'react';
+import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
@@ -36,12 +36,12 @@ const useStyles = makeStyles({
 
 function NonSigninHeaderComponents(props) {
   return (
-    <Fragment>
+    <>
       <CeligoAppBar {...props} />
       <AppErroredModal {...props} />
       <AuthDialog {...props} />
       <CeligoDrawer {...props} />
-    </Fragment>
+    </>
   );
 }
 
