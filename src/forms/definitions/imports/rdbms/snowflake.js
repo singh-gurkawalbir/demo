@@ -52,6 +52,7 @@ export default {
     'rdbms.bulkInsert.tableName': {
       fieldId: 'rdbms.bulkInsert.tableName',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.queryType': {
       id: 'rdbms.queryType',
       type: 'radiogroup',
@@ -86,7 +87,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['rdbms.bulkInsert.batchSize'],
+        fields: ['rdbms.bulkInsert.batchSize', 'apiIdentifier'],
       },
     ],
   },
