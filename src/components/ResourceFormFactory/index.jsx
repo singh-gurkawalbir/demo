@@ -86,7 +86,7 @@ actions.map(action => {
   // remove form disabled prop...
   // they dont necessary apply to action button
   const { disabled, ...rest } = formProps;
-  return <Action key={action.id} {...rest} {...action} />;
+  return <Action key={action.id} dataTest={action.id} {...rest} {...action} />;
 });
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
