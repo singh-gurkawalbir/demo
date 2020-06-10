@@ -81,9 +81,7 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     fontSize: 18,
   },
-  nestedDrawer: {
-    background: 'lightblue',
-  },
+
   nestedDrawerTitleText: {
     maxWidth: '90%',
   },
@@ -375,7 +373,7 @@ export default function Panel(props) {
   return (
     <>
       <div className={classes.root}>
-        <div className={clsx(classes.title, {[classes.nestedDrawer]: isNestedDrawer(location.pathname)})}>
+        <div className={classes.title}>
           {isNestedDrawer(location.pathname) &&
           <IconButton
             data-test="closeFlowSchedule"
