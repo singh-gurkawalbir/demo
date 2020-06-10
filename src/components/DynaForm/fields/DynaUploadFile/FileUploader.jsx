@@ -63,7 +63,7 @@ function FileUploader(props) {
     <FormControl>
       <div className={classes.fileUploadLabelWrapper}>
         <FormLabel required={required}>
-          {fileName}
+          {label}
         </FormLabel>
         {/* TODO: surya we need to add the helptext for the upload file */}
         <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
@@ -88,8 +88,7 @@ function FileUploader(props) {
           className={classes.fileInput}
           onChange={handleFileChosen}
         />
-        {/* Todo (Ashok) : please make it dynamic */}
-        <p className={classes.fileValue}> I Will be the value for the file choosen !!</p>
+        <p className={classes.fileValue}> {fileName}</p>
 
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
