@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import {
   Route,
   useLocation,
@@ -48,7 +49,6 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    justifyContent: 'center',
     padding: '14px 0px',
     margin: theme.spacing(0, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -56,7 +56,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
   },
   titleText: {
-    maxWidth: '80%',
     wordBreak: 'break-word',
   },
 
@@ -72,9 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   backButton: {
-    position: 'absolute',
-    left: theme.spacing(2),
-    top: theme.spacing(2),
+    marginRight: theme.spacing(1),
     padding: 0,
     '&:hover': {
       backgroundColor: 'transparent',
@@ -83,6 +80,17 @@ const useStyles = makeStyles(theme => ({
   },
   closeIcon: {
     fontSize: 18,
+  },
+  nestedDrawer: {
+    background: 'lightblue',
+  },
+  nestedDrawerTitleText: {
+    maxWidth: '90%',
+  },
+  titleImgBlock: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 
 }));
@@ -367,7 +375,7 @@ export default function Panel(props) {
   return (
     <>
       <div className={classes.root}>
-        <div className={classes.title}>
+        <div className={clsx(classes.title, {[classes.nestedDrawer]: isNestedDrawer(location.pathname)})}>
           {isNestedDrawer(location.pathname) &&
           <IconButton
             data-test="closeFlowSchedule"
@@ -376,17 +384,19 @@ export default function Panel(props) {
             onClick={onClose}>
             <Back className={classes.closeIcon} />
           </IconButton>}
-          <Typography variant="h3" className={classes.titleText}>
-            {title}
-          </Typography>
-          {showApplicationLogo && (
+          <div className={classes.titleImgBlock}>
+            <Typography variant="h3" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
+              {title}
+            </Typography>
+            {showApplicationLogo && (
             <ApplicationImg
               className={classes.appLogo}
               size="small"
               type={applicationType}
               alt={applicationType || 'Application image'}
             />
-          )}
+            )}
+          </div>
           <IconButton
             data-test="closeFlowSchedule"
             aria-label="Close"
