@@ -287,7 +287,7 @@ export default function ConnectorInstallation(props) {
 
               // REVIEW: @ashu, review with Dave once
               // if url contains '/child/xxx' use that id as store id
-              if (index === -1 || urlExtractFields[index + 1] === 'undefined') {
+              if (index === -1) {
                 history.push(
                   `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
                 );
