@@ -32,7 +32,7 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   );
 
   const isBlobModeFileAdaptor =
-    isFileAdaptor(resourceObj) && resourceObj.file.output === 'blobKeys';
+    isFileAdaptor(resourceObj) && resourceObj && resourceObj.file && resourceObj.file.output === 'blobKeys';
 
   // Raw data need not be updated on save for real time resources
   // Covers - NS/SF/Webhooks
