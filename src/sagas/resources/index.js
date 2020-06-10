@@ -84,7 +84,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   if (!patch || !patch.length) return; // nothing to do.
 
   // For accesstokens and connections within an integration for edit case
-  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
+  if (resourceType.indexOf('integrations/') >= 0) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
   }
