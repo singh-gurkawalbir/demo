@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-import helpTextMap from '../../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -32,11 +31,9 @@ function FileUploader(props) {
     errorMessages,
     name,
     required,
-    label,
     handleFileChosen,
     fileName,
     uploadError,
-    helpKey,
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -69,7 +66,7 @@ function FileUploader(props) {
           onChange={handleFileChosen}
         />
         {/* TODO: surya we need to add the helptext for the upload file */}
-        <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
+        <FieldHelp {...props} />
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
       {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}

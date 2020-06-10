@@ -157,6 +157,7 @@ export default {
       filterKey: 'salesforce-soqlQuery',
       required: true,
       multiline: true,
+      helpKey: 'export.salesforce.soql.query',
       connectionId: r => r && r._connectionId,
       defaultValue: r => r && r.salesforce && r.salesforce.soql,
       refreshOptionsOnChangesTo: ['delta.dateField', 'once.booleanField'],

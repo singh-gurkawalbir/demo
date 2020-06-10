@@ -94,7 +94,7 @@ export default function DynaSoqlQuery(props) {
           {label}
         </FormLabel>
         {/* Todo (surya): fieldhelp needs helptext */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <TextField
         autoComplete="off"
