@@ -256,6 +256,7 @@ export default (state = {}, action) => {
             variation,
             isVariationAttributes,
             netsuiteRecordType,
+            generateFields: _generateFields,
             ...additionalOptions
           } = options;
 
@@ -309,7 +310,7 @@ export default (state = {}, action) => {
             application,
             resource: resourceData,
             adaptorType,
-            generateFields,
+            generateFields: _generateFields,
             staged,
             visible: true,
             isGroupedSampleData,

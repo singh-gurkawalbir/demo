@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select } from 'redux-saga/effects';
+import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
@@ -14,20 +14,23 @@ export function* saveMappings({ id }) {
   const patch = [];
   const {
     mappings,
-    generateFields,
     application,
     isGroupedSampleData,
     lookups,
     flowSampleData,
     adaptorType,
     resource,
+    importSampleData,
     netsuiteRecordType,
     subRecordMappingId,
   } = yield select(selectors.mapping, id);
   let _mappings = mappings.map(
     ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
   );
-
+  const generateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,
     generateFields,
@@ -88,8 +91,8 @@ export function* saveMappings({ id }) {
 export function* previewMappings({ id }) {
   const {
     mappings,
-    generateFields,
     application,
+    importSampleData,
     isGroupedSampleData,
     lookups,
     resource,
@@ -97,6 +100,10 @@ export function* previewMappings({ id }) {
     subRecordMappingId,
     netsuiteRecordType,
   } = yield select(selectors.mapping, id);
+  const generateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
   let resourceCopy = deepClone(resource);
   let _mappings = mappings
     .filter(mapping => !!mapping.generate)
@@ -186,8 +193,103 @@ export function* previewMappings({ id }) {
     yield put(actions.mapping.previewFailed(id));
   }
 }
+export function* refreshGenerates({ id, isInit = false }) {
+  const {
+    application,
+    mappings = [],
+    resource = {},
+    netsuiteRecordType,
+  } = yield select(selectors.mapping, id);
+  const { _id: resourceId, } = resource
+  if (application === adaptorTypeMap.SalesforceImport) {
+    const { _connectionId, salesforce } = resource
+    const { sObjectType } = salesforce;
+    const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
+      {
+        connectionId: _connectionId,
+        commMetaPath: `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
+        filterKey: 'salesforce-sObjects-childReferenceTo',
+      })
+    // no need to check if data doesnt exist and fetch it.
+    // during init, no need to call parent sObject again
+    const sObjectlist = isInit ? [] : [sObjectType];
+    mappings.forEach(({generate}) => {
+      if (generate && generate.indexOf('[*].') !== -1) {
+        const generateName = generate.split('[*].')[0]
+        const childRelationshipObject = childRelationshipFields.find(field => field.value === generateName)
+        if (sObjectlist.indexOf(childRelationshipObject.childSObject) === -1) {
+          sObjectlist.push(childRelationshipObject.childSObject)
+        }
+      }
+    })
+    // sObjectlist
+    yield put(actions.importSampleData.request(
+      resourceId,
+      {sObjects: sObjectlist},
+      !isInit
+    ))
+    // in case of salesforce import, fetch all child sObject reference
+  } else {
+    yield put(actions.importSampleData.request(
+      resourceId,
+      {recordType: netsuiteRecordType},
+      !isInit
+    )
+    );
+  }
+}
 
+
+export function* mappingInit({ id }) {
+  const {
+    application,
+  } = yield select(selectors.mapping, id);
+  if (application !== adaptorTypeMap.SalesforceImport) {
+    return;
+  }
+  // load all sObjects used in mapping list
+  yield call(refreshGenerates, {id, isInit: true })
+}
+export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value}) {
+  const {
+    resource,
+    application,
+    importSampleData,
+    mappings = [],
+  } = yield select(selectors.mapping, id);
+  const {_id: resourceId} = resource;
+  if (application !== adaptorTypeMap.SalesforceImport || field !== 'generate') {
+    return;
+  }
+  const generateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
+  const mappingObj = mappings.find(_mapping => _mapping.generate === value);
+  // while adding new row in mapping, key is generated in MAPPING.PATCH_FIELD reducer
+  const {key} = mappingObj
+  const childRelationshipField =
+          generateFields && generateFields.find(field => field.id === value);
+  if (childRelationshipField) {
+    const { childSObject, relationshipName } = childRelationshipField;
+
+    yield put(actions.mapping.patchIncompleteGenerates(
+      id,
+      key,
+      relationshipName
+    )
+    );
+    yield put(actions.importSampleData.request(
+      resourceId,
+      {sObjects: [childSObject]}
+    ))
+  }
+}
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.SAVE, saveMappings),
   takeEvery(actionTypes.MAPPING.PREVIEW_REQUESTED, previewMappings),
+  takeLatest(actionTypes.MAPPING.REFRESH_GENERATES, refreshGenerates),
+  takeLatest(actionTypes.MAPPING.INIT, mappingInit),
+  takeLatest(actionTypes.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
+
 ];
