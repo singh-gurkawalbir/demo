@@ -53,12 +53,13 @@ export default function DynaFileKeyColumn(props) {
   );
   /*
    * Fetches Raw data - CSV file to be parsed based on the rules
+   * This field is supported by Csv/Xlsx file types
    */
   const { csvData } = useSelector(state => {
     const { data: rawData, status } = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
-      'raw'
+      'csv'
     );
 
     if (!status) {
