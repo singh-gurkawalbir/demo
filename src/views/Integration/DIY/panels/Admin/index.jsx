@@ -80,17 +80,37 @@ const allSections = [
     id: 'uninstall',
   }
 ];
+const emptyObj = {};
 
 export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const isParent = !childId || (childId === integrationId);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-    return !!(integration && integration._connectorId)
-  })
+  const {
+    isIntegrationApp,
+    supportsChild,
+  } = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration) {
+      return {
+        isIntegrationApp: !!integration._connectorId,
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+      };
+    }
+
+    return emptyObj;
+  }, shallowEqual);
   const children = useSelector(
-    state => selectors.integrationChildren(state, integrationId),
+    state => {
+      // As result includes parent integration, remove it from result.
+      const resources = selectors.integrationChildren(state, integrationId);
+      return resources.filter(r => r.value !== integrationId)
+    },
     shallowEqual
   );
   const sectionsToHide = [];
@@ -108,7 +128,7 @@ export default function AdminPanel({ integrationId, childId }) {
     if (!isParent) {
       sectionsToHide.push('subscription');
       sectionsToHide.push('apitoken');
-    } else if (children && children.length > 1) {
+    } else if (supportsChild && children && children.length) {
       sectionsToHide.push('uninstall');
     }
   }
@@ -151,7 +171,7 @@ export default function AdminPanel({ integrationId, childId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section integrationId={integrationId} childId={childId} />
               </Route>
             ))}
           </Switch>
