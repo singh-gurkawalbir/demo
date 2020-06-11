@@ -90,11 +90,18 @@ export default function FlowSchedule({
               ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
               : '/_keepDeltaBehindExportId',
           value:
-            pg && pg._exportId && formVal && formVal._keepDeltaBehindFlowId
+            formVal && formVal._keepDeltaBehindExportId
               ? formVal._keepDeltaBehindExportId
               : undefined,
         },
       ];
+      if (formVal.timeZone) {
+        patchSet.push({
+          op: 'replace',
+          path: '/timezone',
+          value: formVal.timeZone
+        })
+      }
       const sanitized = sanitizePatchSet({
         patchSet,
         flow,
@@ -105,10 +112,11 @@ export default function FlowSchedule({
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
       onClose();
     },
-    [dispatch, enqueueSnackbar, flow, index, onClose, pg, scheduleStartMinute]
+    [dispatch, onClose, enqueueSnackbar, flow, index, pg, scheduleStartMinute]
   );
 
-  resource = setValues(resource, schedule, scheduleStartMinute);
+  const resourceIdentifier = pg && pg._exportId ? 'pagegenerator' : 'flow';
+  resource = setValues(resource, schedule, scheduleStartMinute, flow, index, resourceIdentifier);
 
   if (resource && !resource.frequency) {
     resource.frequency = '';
@@ -125,6 +133,7 @@ export default function FlowSchedule({
     pg,
     flows,
     scheduleStartMinute,
+    resourceIdentifier,
   });
 
   return (
