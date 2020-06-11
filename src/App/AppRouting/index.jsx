@@ -192,6 +192,15 @@ export default class AppRouting extends Component {
           render={({ history }) => history.replace('/pg/accesstokens')}
         />
         <Route
+          path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId"
+          exact
+          render={({ history, match }) => {
+            history.replace(
+              `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`
+            )
+          }}
+        />
+        <Route
           path={[
             '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId',
           ]}>

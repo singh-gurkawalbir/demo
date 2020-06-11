@@ -1,8 +1,7 @@
 import clsx from 'clsx';
-import cronstrue from 'cronstrue';
 import { useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, IconButton } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import FlowEllipsisMenu from '../../../../../components/FlowEllipsisMenu';
@@ -87,29 +86,12 @@ export default function FlowCard({
       ssLinkedConnectionId,
     });
 
-    return integrationApp.name;
+    return integrationApp && integrationApp.name;
   });
   const flowName = flowDetails.name || flowDetails._id;
   const { ioFlowName, name } = flowDetails;
   // TODO: set status based on flow criteria...
   const status = 'success';
-  // TODO: this property was copied from the old flow list page... i don't know what its for...
-
-  // TODO: This function needs to be enhanced to handle all
-  // the various cases.. realtime, scheduled, cron, not scheduled, etc...
-  function getRunLabel() {
-    if (flowDetails.isRealtime) return `Realtime`;
-
-    if (flowDetails.schedule)
-      return `Runs ${cronstrue.toString(
-        flowDetails.schedule.replace(/^\?/g, '0')
-      )}`;
-
-    if (isDataloader) return 'Manual Run';
-
-    return 'Never Runs';
-  }
-
   const isIntegrationApp = !!flowDetails._connectorId;
   const flowBuilderPathName = isDataloader ? 'dataLoader' : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
@@ -132,9 +114,6 @@ export default function FlowCard({
               </Typography>
             </Link>
           </div>
-          <Typography variant="caption" component="span">
-            {getRunLabel()}
-          </Typography>
         </Grid>
         <Grid container item xs={4} justify="flex-end" alignItems="center">
           {isDataloader && (

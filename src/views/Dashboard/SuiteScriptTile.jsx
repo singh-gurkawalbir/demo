@@ -63,14 +63,14 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     tile.integration.permissions.accessLevel;
   const integrationAppName = getIntegrationAppUrlName(tile.name, true);
   const status = tileStatus(tile);
-  let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/settings`;
+  let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/flows`;
   }
 
   const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(

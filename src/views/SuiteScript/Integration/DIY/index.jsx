@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../reducers';
@@ -9,7 +9,7 @@ import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
 import EditableText from '../../../../components/EditableText';
-import SettingsPanel from './panels/Admin';
+import AdminPanel from './panels/Admin';
 import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
@@ -48,10 +48,10 @@ const tabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'admin',
+    label: 'Admin',
     Icon: SettingsIcon,
-    Panel: SettingsPanel,
+    Panel: AdminPanel,
   },
 ];
 
@@ -71,7 +71,7 @@ export default function Integration({ match }) {
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
   return (
-    <Fragment>
+    <>
       <ResourceDrawer match={match} />
 
       <LoadSuiteScriptResources
@@ -101,6 +101,6 @@ export default function Integration({ match }) {
           className={classes.PageWrapper}
         />
       </LoadSuiteScriptResources>
-    </Fragment>
+    </>
   );
 }

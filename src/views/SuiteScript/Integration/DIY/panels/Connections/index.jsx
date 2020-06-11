@@ -1,4 +1,5 @@
-import { makeStyles } from '@material-ui/styles';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Link, useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../../../../reducers';
