@@ -1,8 +1,8 @@
-import React, { useReducer, useEffect, useState, useCallback } from 'react';
+import React, { useReducer, useEffect, useState, useCallback, Fragment, } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, TextField } from '@material-ui/core';
+import { Typography, TextField } from '@material-ui/core';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import DynaSelect from '../DynaSelect';
@@ -39,10 +39,12 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   tableBody: {
-    paddingLeft: 7,
     marginBottom: 6,
   },
   root: {
+    display: 'flex',
+  },
+  camBigRow: {
     flexGrow: 1,
   },
   input: {
@@ -60,9 +62,20 @@ const useStyles = makeStyles(theme => ({
   label: {
     paddingRight: theme.spacing(1),
   },
+  bodyRow: {
+    display: 'flex',
+  },
   dynaTableActions: {
     alignSelf: 'flex-start',
     marginTop: theme.spacing(1),
+  },
+  camBodyFieldsWrapper: {
+    width: '95%',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    overflow: 'hidden',
+    gridGap: '8px',
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -281,42 +294,35 @@ export const DynaTable = props => {
   return (
     <div className={clsx(classes.container, className)}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
-      <Grid data-test={id} container className={classes.root} spacing={2}>
-        {!hideHeaders && (
-          <Grid item xs={12}>
-            <Grid container spacing={2}>
-              {optionsMap.map(r => (
-                <Grid key={r.id} item xs={r.space || true}>
-                  <div className={classes.header}>
-                    <span className={classes.label}>{r.label || r.name}</span>
-                    {r.supportsRefresh && !isLoading && (
-                      <RefreshIcon onClick={onFetchResource(r.id)} />
-                    )}
-                    {r.supportsRefresh && isLoading === r.id && (
-                      <Spinner size={24} />
-                    )}
-                  </div>
-                </Grid>
-              ))}
-              <Grid key="delete_button_header" item />
-            </Grid>
-          </Grid>
-        )}
-        <Grid
-          container
-          spacing={2}
-          key={changeIdentifier}
-          className={classes.tableBody}
-          direction="column">
-          {tableData.map((arr, rowIndex, rowCollection) => (
-            <Grid item className={classes.rowContainer} key={arr.row}>
-              <Grid container direction="row" spacing={2}>
-                {arr.values.map((r, index) => (
-                  <Grid
-                    item
-                    key={`${r.readOnly ? r.value || r.id : r.id}`}
-                    xs={r.space || true}>
-                    {r.type === 'select' && (
+      <div data-test={id} className={classes.root} >
+        <div className={classes.camBigRow}>
+
+          {!hideHeaders && (
+          <div className={classes.camBodyFieldsWrapper}>
+            {optionsMap.map(r => (
+              <div className={classes.header} key={r.id}>
+                <span className={classes.label}>{r.label || r.name}</span>
+                {!r.supportsRefresh && isLoading && (
+                  <RefreshIcon onClick={onFetchResource(r.id)} />
+                )}
+                {!r.supportsRefresh && !isLoading === r.id && (
+                  <Spinner size={24} />
+                )}
+              </div>
+            ))}
+
+          </div>
+          )}
+          <Fragment key={changeIdentifier}>
+            {tableData.map((arr, rowIndex, rowCollection) => (
+
+              <div key={arr.row} className={classes.bodyRow}>
+                <div className={classes.camBodyFieldsWrapper}>
+                  {arr.values.map((r, index) => (
+                    <div
+                      key={`${r.readOnly ? r.value || r.id : r.id}`}
+                  >
+                      {r.type === 'select' && (
                       <DynaSelect
                         id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
@@ -330,10 +336,10 @@ export const DynaTable = props => {
                         }}
                         className={classes.root}
                       />
-                    )}
-                    {['input', 'number', 'text', 'autosuggest'].includes(
-                      r.type
-                    ) && (
+                      )}
+                      {['input', 'number', 'text', 'autosuggest'].includes(
+                        r.type
+                      ) && (
                       <div
                         className={clsx(classes.childHeader, classes.childRow)}>
                         {r.type === 'number' ? (
@@ -379,13 +385,14 @@ export const DynaTable = props => {
                           />
                         )}
                       </div>
-                    )}
-                  </Grid>
-                ))}
-                <Grid
-                  item
+                      )}
+                    </div>
+                  ))}
+
+                </div>
+
+                <div
                   key="delete_button"
-                  xs={1}
                   className={classes.dynaTableActions}>
                   <ActionButton
                     data-test={`deleteTableRow-${arr.row}`}
@@ -394,12 +401,13 @@ export const DynaTable = props => {
                     className={classes.margin}>
                     <DeleteIcon fontSize="small" />
                   </ActionButton>
-                </Grid>
-              </Grid>
-            </Grid>
-          ))}
-        </Grid>
-      </Grid>
+                </div>
+              </div>
+            ))}
+          </Fragment>
+        </div>
+
+      </div>
     </div>
   );
 };
