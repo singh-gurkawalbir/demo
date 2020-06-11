@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles, Button, Divider } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,7 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FieldHelp from '../../FieldHelp';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -22,6 +23,10 @@ const useStyles = makeStyles(theme => ({
   launchButton: {
     marginLeft: theme.spacing(2),
   },
+  divider: {
+    marginTop: '20px',
+    marginBottom: '10px',
+  }
 }));
 
 export default function DynaSettings(props) {
@@ -53,8 +58,16 @@ export default function DynaSettings(props) {
 
     return (resource && resource.settingsForm) || emptyObj;
   });
+  const isIAResource = useSelector(state => {
+    const r = selectors.resource(state, resourceType, resourceId);
+    return !!(r && r._connectorId);
+  });
+
   const isDeveloper = useSelector(
     state => selectors.userProfile(state).developer
+  );
+  const canPublish = useSelector(
+    state => selectors.userProfile(state).allowedToPublish
   );
   const hasSettingsForm = useSelector(state =>
     selectors.hasSettingsForm(state, resourceType, resourceId)
@@ -87,9 +100,31 @@ export default function DynaSettings(props) {
   ]);
   const handleEditClose = useCallback(() => history.goBack(), [history]);
 
+  // if its an IA resource and cannot publish, then
+  // we only show the form view
+  let visibleForUser = true;
+  if (isIAResource && !canPublish) {
+    visibleForUser = false;
+  }
+
   // only developers can see/edit raw settings!
-  // thus, if there is no metadata and the user is not a dev, render nothing.
-  if ((!isDeveloper || isViewMode) && !hasSettingsForm) return null;
+  // thus, if there is no metadata and the user is not a dev, render custom text.
+  if ((!isDeveloper || isViewMode || !visibleForUser) && !hasSettingsForm) {
+    if (resourceType === 'integrations') {
+      return (
+        <div>
+          <Typography>
+            {settingsContainer.label}
+          </Typography>
+          <Divider className={classes.divider} />
+          <span>
+            {`You don't have any custom settings for this ${MODEL_PLURAL_TO_LABEL[resourceType]}`}.
+          </span>
+        </div>
+      );
+    }
+    return null;
+  }
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
@@ -106,7 +141,7 @@ export default function DynaSettings(props) {
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.label}>
             {settingsContainer.label}
-            {isDeveloper && !isViewMode && (
+            {isDeveloper && !isViewMode && visibleForUser && (
               <>
                 <Button
                   data-test="form-editor-action"
@@ -139,7 +174,7 @@ export default function DynaSettings(props) {
           )}
         </ExpansionPanelDetails>
       </ExpansionPanel>
-      {isDeveloper && !isViewMode && (
+      {isDeveloper && !isViewMode && visibleForUser && (
         <EditDrawer
           key={drawerKey}
           editorId={id}
