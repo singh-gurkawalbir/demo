@@ -178,8 +178,8 @@ export default function Integration(props) {
 
     return integration && integration.mode;
   });
-  const defaultChild = (children.find(s => s.value !== integrationId) || {})
-    .value;
+  const defaultChild = ((children.find(s => s.value !== integrationId) || {})
+    .value) || integrationId;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)

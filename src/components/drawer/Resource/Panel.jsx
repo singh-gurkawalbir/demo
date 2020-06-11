@@ -380,7 +380,7 @@ export default function Panel(props) {
             aria-label="Close"
             className={classes.backButton}
             onClick={onClose}>
-            <Back className={classes.closeIcon} />
+            <Back />
           </IconButton>}
           <div className={classes.titleImgBlock}>
             <Typography variant="h3" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
