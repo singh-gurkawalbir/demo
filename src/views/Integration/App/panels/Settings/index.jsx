@@ -8,10 +8,10 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem } from '@material-ui/core';
+import { List, ListItem, Divider } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import * as selectors from '../../../../../reducers';
 import GeneralSection from './sections/General';
-import CustomSettings from './sections/Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,6 +40,11 @@ const useStyles = makeStyles(theme => ({
   activeListItem: {
     color: theme.palette.primary.main,
   },
+  divider: {
+    marginRight: theme.spacing(1),
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
 }));
 const allSections = [
   {
@@ -47,12 +52,6 @@ const allSections = [
     label: 'General',
     Section: GeneralSection,
     id: 'general',
-  },
-  {
-    path: 'customsettings',
-    label: 'Custom settings',
-    Section: CustomSettings,
-    id: 'settings',
   },
 ];
 
@@ -71,10 +70,6 @@ export default function SettingsPanel({
   if (hideGeneralTab) {
     filterTabs.push('general');
   }
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
-  if (!isFrameWork2) {
-    filterTabs.push('settings');
-  }
 
   const availableSections = allSections.filter(sec =>
     !filterTabs.includes(sec.id)
@@ -87,7 +82,20 @@ export default function SettingsPanel({
   if (match.isExact) {
     // no section provided.
     if (availableSections.length === 0) {
-      return null;
+      return (
+        <div className={classes.root}>
+          <div className={classes.container}>
+            <Typography variant="h4">
+              Settings
+            </Typography>
+          </div>
+          <Divider className={classes.divider} />
+          <div className={classes.content}>
+            <span>
+              You don&apos;t have any custom settings for this integration.
+            </span>
+          </div>
+        </div>);
     }
     return (
       <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />

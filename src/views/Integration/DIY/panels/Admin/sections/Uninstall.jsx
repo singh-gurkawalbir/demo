@@ -40,7 +40,7 @@ export default function UninstallSection({ storeId, integrationId }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({

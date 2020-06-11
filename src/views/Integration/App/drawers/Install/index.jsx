@@ -278,7 +278,8 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            if (isFrameWork2) {
+            // for old cloned IAs, uninstall should happen the old way
+            if (isFrameWork2 && !isCloned) {
               const {url} = match;
               const urlExtractFields = url.split('/');
               const index = urlExtractFields.findIndex(
