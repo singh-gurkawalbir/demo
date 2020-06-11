@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath, Link } from 'react-router-dom';
+import { Redirect, generatePath, Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -24,7 +24,7 @@ import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import AdminPanel from './panels/Admin';
-import CustomSettingsPanel from './panels/Settings';
+import SettingsPanel from './panels/Settings';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
@@ -36,7 +36,7 @@ import integrationAppUtil from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
-  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: CustomSettingsPanel},
+  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -109,10 +109,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationApp({ match, history }) {
+export default function IntegrationApp(props) {
   const classes = useStyles();
+  const history = useHistory()
   const dispatch = useDispatch();
-  const { integrationAppName, integrationId, storeId, tab } = match.params;
+  const { integrationAppName, integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>

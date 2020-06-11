@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, Select, MenuItem } from '@material-ui/core';
-import { Link, Redirect, generatePath } from 'react-router-dom';
+import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -102,9 +102,10 @@ const tabs = [
 ];
 const emptyObj = {};
 
-export default function Integration({ history, match }) {
+export default function Integration(props) {
   const classes = useStyles();
-  const { integrationId, templateName, childId, tab } = match.params;
+  const history = useHistory();
+  const { integrationId, templateName, childId, tab, match } = props;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -139,6 +140,12 @@ export default function Integration({ history, match }) {
 
     return emptyObj;
   }, shallowEqual);
+  const integrationsFilterConfig = { type: 'integrations' };
+
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
 
   const childIntegration = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
@@ -171,8 +178,8 @@ export default function Integration({ history, match }) {
 
     return integration && integration.mode;
   });
-  const defaultChild = (children.find(s => s.value !== integrationId) || {})
-    .value;
+  const defaultChild = ((children.find(s => s.value !== integrationId) || {})
+    .value) || integrationId;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
@@ -194,7 +201,7 @@ export default function Integration({ history, match }) {
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const isParent = childId === integrationId;
-  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns});
+  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns, isStandalone: integrationId === STANDALONE_INTEGRATION.id});
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
@@ -286,6 +293,22 @@ export default function Integration({ history, match }) {
     e => {
       const newChildId = e.target.value;
       let newTab = tab;
+      const childIntegration = integrations.find(i => i._id === newChildId);
+      if (childIntegration) {
+        if (childIntegration.mode === 'install') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
+            )
+          );
+        } if (childIntegration.mode === 'uninstall') {
+          return history.push(
+            getRoutePath(
+              `integrationapps/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/uninstall`
+            )
+          );
+        }
+      }
 
       if (!availableTabs.find(tab => tab.path === tab)) {
         newTab = 'settings';
@@ -294,11 +317,11 @@ export default function Integration({ history, match }) {
       // Redirect to current tab of new store
       history.push(
         getRoutePath(
-          `integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
+          `integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
         )
       );
     },
-    [availableTabs, history, name, integrationId, tab]
+    [availableTabs, history, name, integrationId, tab, integrations]
   );
   const handleDescriptionChange = useCallback(
     description => {
@@ -392,7 +415,7 @@ export default function Integration({ history, match }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+          to={`/pg/integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
             'settings'}`}
         />
       );

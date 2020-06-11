@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, useHistory, useRouteMatch } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
@@ -48,52 +48,37 @@ const useStyles = makeStyles(theme => ({
 export default function Uninstaller2({ integration, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
-  const match = useRouteMatch();
   const dispatch = useDispatch();
-  const mode = integration && integration.mode;
+  const {_id, mode, name} = integration;
   const { steps: uninstallSteps, isFetched, error } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })
   );
 
+  const isIAUninstallComplete = useSelector(state =>
+    selectors.isIAV2UninstallComplete(state, { integrationId })
+  );
+  const currentStep = useMemo(() => uninstallSteps && uninstallSteps.find(s => s.isCurrentStep), [
+    uninstallSteps,
+  ]);
   useEffect(() => {
     // we only want to do init, if mode is yet not uninstall
-    if (mode !== 'uninstall') {
+    if (mode && mode !== 'uninstall') {
       dispatch(
         actions.integrationApp.uninstaller2.init(integrationId)
       );
     }
   }, [dispatch, mode, integrationId]);
-  const currentStep = useMemo(() => uninstallSteps && uninstallSteps.find(s => s.isCurrentStep), [
-    uninstallSteps,
-  ]);
-  const currStepIndex = useMemo(() => uninstallSteps && uninstallSteps.indexOf(currentStep), [
-    currentStep,
-    uninstallSteps,
-  ]);
 
   useEffect(() => {
-    // request steps should be triggered only if session state is empty
-    // isUninstallTriggered check is added to stop this from running when state is cleared after uninstall is complete
-    // REVIEW: better way to do this?
-    if (mode === 'uninstall' && !integration.isUninstallTriggered && !isFetched && (!uninstallSteps || uninstallSteps.length === 0)) {
+    // if steps were never fetched , then we request steps
+    if (mode === 'uninstall' && !isFetched && !isIAUninstallComplete) {
       dispatch(
         actions.integrationApp.uninstaller2.requestSteps(integrationId)
       );
     }
-  }, [dispatch, mode, integrationId, uninstallSteps, isFetched, integration.isUninstallTriggered]);
+  }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode])
 
-  useEffect(() => {
-    // if there are 0 uninstall steps, simply call uninstall route and BE will take care of rest
-    if (isFetched && (!uninstallSteps || uninstallSteps.length === 0)) {
-      dispatch(
-        actions.integrationApp.uninstaller2.uninstallStep(
-          integrationId,
-        )
-      );
-    }
-  }, [dispatch, integrationId, isFetched, uninstallSteps])
-
-  const handleStepClick = useCallback((step, connection, index) => {
+  const handleStepClick = useCallback((step) => {
     const { type, isTriggered, form } = step;
 
     if (!isTriggered) {
@@ -103,10 +88,7 @@ export default function Uninstaller2({ integration, integrationId }) {
           'inProgress',
         )
       );
-      if (type === UNINSTALL_STEP_TYPES.FORM && form) {
-        // TODO: ask Dave about this hack
-        history.push(`${match.url}/form/${index}`);
-      } else {
+      if ((type !== UNINSTALL_STEP_TYPES.FORM || !form)) {
         dispatch(
           actions.integrationApp.uninstaller2.uninstallStep(
             integrationId,
@@ -114,14 +96,14 @@ export default function Uninstaller2({ integration, integrationId }) {
         );
       }
     }
-  }, [dispatch, history, integrationId, match.url]);
+  }, [dispatch, integrationId]);
 
   const formCloseHandler = useCallback(() => {
-    history.goBack();
+    // history.goBack();
     dispatch(
       actions.integrationApp.uninstaller2.updateStep(integrationId, 'reset')
     );
-  }, [dispatch, history, integrationId]);
+  }, [dispatch, integrationId]);
   const formSubmitHandler = useCallback(
     formVal => {
       dispatch(
@@ -130,24 +112,33 @@ export default function Uninstaller2({ integration, integrationId }) {
           formVal
         )
       );
-      history.goBack();
+      // history.goBack();
     },
-    [dispatch, history, integrationId]
+    [dispatch, integrationId]
   );
 
   const handleBackClick = () => {
     history.replace(getRoutePath('dashboard'));
   };
 
+  if (!_id) {
+    dispatch(
+      actions.integrationApp.uninstaller2.clearSteps(
+        integrationId
+      )
+    );
+    history.replace(getRoutePath('dashboard'));
+    return null;
+  }
+  if (error) {
+    return <Redirect push={false} to={getRoutePath('dashboard')} />;
+  }
   if (!uninstallSteps || uninstallSteps.length === 0) {
     return (
       <SpinnerWrapper>
         <Spinner />
       </SpinnerWrapper>
     );
-  }
-  if (error) {
-    return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }
 
   return (
@@ -168,7 +159,7 @@ export default function Uninstaller2({ integration, integrationId }) {
                 separator={<ArrowRightIcon />}
                 aria-label="breadcrumb">
                 <Typography color="textPrimary">Uninstall</Typography>
-                <Typography color="textPrimary">{integration.name}</Typography>
+                <Typography color="textPrimary">{name}</Typography>
               </Breadcrumbs>
             </Paper>
           </Grid>
@@ -179,10 +170,10 @@ export default function Uninstaller2({ integration, integrationId }) {
             integrationId={integrationId}
             formMeta={currentStep.form}
             title={currentStep.name}
-            index={currStepIndex + 1}
+            // index={currStepIndex + 1}
             formCloseHandler={formCloseHandler}
             formSubmitHandler={formSubmitHandler}
-            path={currStepIndex + 1}
+            // path={`form/${currStepIndex + 1}`}
         />
           )}
           {(uninstallSteps || []).map((step, index) => (

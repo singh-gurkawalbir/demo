@@ -49,14 +49,14 @@ const allSections = [
     id: 'general',
   },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'customsettings',
+    label: 'Custom settings',
     Section: CustomSettings,
     id: 'settings',
   },
 ];
 
-export default function AdminPanel({
+export default function SettingsPanel({
   integrationId,
   storeId,
   ...sectionProps
@@ -71,6 +71,10 @@ export default function AdminPanel({
   if (hideGeneralTab) {
     filterTabs.push('general');
   }
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
+  if (!isFrameWork2) {
+    filterTabs.push('settings');
+  }
 
   const availableSections = allSections.filter(sec =>
     !filterTabs.includes(sec.id)
@@ -82,6 +86,9 @@ export default function AdminPanel({
   // sections.
   if (match.isExact) {
     // no section provided.
+    if (availableSections.length === 0) {
+      return null;
+    }
     return (
       <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />
     );

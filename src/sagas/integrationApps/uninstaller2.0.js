@@ -3,37 +3,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 
-export function* requestSteps({ id }) {
-  const path = `/integrations/${id}/uninstallSteps`;
-  let uninstallSteps;
-
-  try {
-    uninstallSteps = yield call(apiCallWithRetry, {
-      path,
-      timeout: 5 * 60 * 1000,
-      opts: { method: 'GET' },
-      message: 'Fetching uninstall steps',
-    })
-  } catch (error) {
-    yield put(actions.api.failure(path, 'GET', error && error.message, false));
-    yield put(
-      actions.integrationApp.uninstaller2.failed(
-        id,
-        error.message || 'Failed to get uninstall steps'
-      )
-    );
-
-    return undefined;
-  }
-
-  return yield put(
-    actions.integrationApp.uninstaller2.receivedSteps(
-      id,
-      uninstallSteps,
-    )
-  );
-}
-
 export function* initUninstall({ id }) {
   const path = `/integrations/${id}/initUninstall`;
 
@@ -83,22 +52,56 @@ export function* uninstallStep({ id, formVal }) {
   }
 
   if (!stepCompleteResponse) {
-    // to clear session state
     yield put(
-      actions.integrationApp.uninstaller2.clearSteps(
-        id
+      actions.integrationApp.uninstaller2.updateStep(
+        id,
+        'completed'
+      )
+    );
+    return yield put(actions.resource.requestCollection('integrations'));
+  }
+  yield put(
+    actions.integrationApp.uninstaller2.receivedSteps(
+      id,
+      stepCompleteResponse,
+    )
+  );
+}
+
+export function* requestSteps({ id }) {
+  const path = `/integrations/${id}/uninstallSteps`;
+  let uninstallSteps;
+
+  try {
+    uninstallSteps = yield call(apiCallWithRetry, {
+      path,
+      timeout: 5 * 60 * 1000,
+      opts: { method: 'GET' },
+      message: 'Fetching uninstall steps',
+    })
+  } catch (error) {
+    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(
+      actions.integrationApp.uninstaller2.failed(
+        id,
+        error.message || 'Failed to get uninstall steps'
       )
     );
 
-    return yield put(actions.resource.requestCollection('integrations'));
+    return undefined;
   }
 
   yield put(
-    actions.integrationApp.uninstaller2.updateStep(
+    actions.integrationApp.uninstaller2.receivedSteps(
       id,
-      'completed'
+      uninstallSteps,
     )
   );
+
+  const visibleSteps = uninstallSteps.filter(s => !s.completed)
+  if (!visibleSteps || visibleSteps.length === 0) {
+    return yield call(uninstallStep, { id })
+  }
 }
 
 export default [
@@ -106,6 +109,6 @@ export default [
     actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT,
     initUninstall
   ),
-  takeEvery(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, requestSteps),
+  takeLatest(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, requestSteps),
   takeEvery(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, uninstallStep),
 ];

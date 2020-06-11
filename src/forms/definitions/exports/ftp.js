@@ -1,6 +1,16 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   preSave: formValues => {
     const newValues = { ...formValues };
 
@@ -172,32 +182,43 @@ export default {
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'outputMode'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How would you like to parse files?',
-        fields: ['file'],
-      },
-      {
-        collapsed: true,
-        label: 'Where would you like to transfer from?',
-        fields: [
-          'ftp.directoryPath',
-          'ftp.fileNameStartsWith',
-          'ftp.fileNameEndsWith',
-          'ftp.leaveFile',
+        fields: ['common', 'outputMode'],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            fields: ['file'],
+          },
+          {
+            collapsed: true,
+            label: 'Where would you like to transfer from?',
+            fields: [
+              'ftp.directoryPath',
+              'ftp.fileNameStartsWith',
+              'ftp.fileNameEndsWith',
+              'ftp.leaveFile',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['fileAdvancedSettings'],
+          },
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['fileAdvancedSettings'],
-      },
-    ],
+        fields: ['exportPanel'],
+      }
+    ]
   },
   actions: [
     {

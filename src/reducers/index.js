@@ -1419,18 +1419,19 @@ export function integrationAppResourceList(
   }
 
   const flows = [];
+  const flowIds = [];
   const connections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
-    flows.push(...map(sec.flows, '_id'));
+    flowIds.push(...map(sec.flows, '_id'));
   });
 
-  flows.forEach(f => {
-    const flow = resource(state, 'flows', f) || {};
-
+  flowIds.forEach(fid => {
+    const flow = resource(state, 'flows', fid) || {};
+    flows.push({_id: flow._id, name: flow.name});
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
@@ -2084,6 +2085,46 @@ export function addNewStoreSteps(state, integrationId) {
   });
 
   return { steps: modifiedSteps };
+}
+
+export function isIAV2UninstallComplete(state, { integrationId }) {
+  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  if (!integration) return true;
+  if (integration.mode !== 'uninstall') return false;
+
+  const uninstallData = fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  );
+
+  const { steps: uninstallSteps, isFetched } = uninstallData;
+  if (isFetched) {
+    if (!uninstallSteps || uninstallSteps.length === 0) return true;
+    return !(uninstallSteps.find(s =>
+      !s.completed
+    ))
+  }
+  return false;
+}
+
+export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
+  const integration = resource(state, 'integrations', integrationId);
+  if (!integration) return false;
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  }
+  const isFrameWork2 =
+    (
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length) ||
+    isCloned;
+  return isFrameWork2;
 }
 
 // #end integrationApps Region
@@ -2955,7 +2996,6 @@ export function tiles(state) {
   let status;
 
   return tiles
-    .filter(t => !t._parentId)
     .map(t => {
       integration = integrations.find(i => i._id === t._integrationId) || {};
 

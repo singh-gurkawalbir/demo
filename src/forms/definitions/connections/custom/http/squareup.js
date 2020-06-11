@@ -37,7 +37,8 @@ export default {
       r.http.auth.oauth &&
       r.http.auth.oauth.scope
           ? r.http.auth.oauth.scope
-          : ['MERCHANT_PROFILE_WRITE'],
+          : ['MERCHANT_PROFILE_WRITE',
+            'MERCHANT_PROFILE_READ'],
       scopes: [
         'BANK_ACCOUNTS_READ',
         'CUSTOMERS_READ',
@@ -48,7 +49,6 @@ export default {
         'INVENTORY_WRITE',
         'ITEMS_READ',
         'ITEMS_WRITE',
-        'MERCHANT_PROFILE_READ',
         'ORDERS_READ',
         'ORDERS_WRITE',
         'PAYMENTS_READ',
