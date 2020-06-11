@@ -39,9 +39,6 @@ const TemplateList = loadable(() =>
 const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
-const DIYIntegration = loadable(() =>
-  import(/* webpackChunkName: 'Integration' */ '../../views/Integration/DIY')
-);
 const Integration = loadable(() =>
   import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration')
 );
@@ -116,11 +113,6 @@ export default class AppRouting extends Component {
         </Route>
 
         <Route
-          path="/pg/integrations/:integrationId/:tab"
-          component={DIYIntegration}
-        />
-
-        <Route
           path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
           component={IntegrationAppInstallation}
         />
@@ -142,6 +134,7 @@ export default class AppRouting extends Component {
             '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId',
+            '/pg/integrations/:integrationId/:tab'
           ]}
           component={Integration}
         />
