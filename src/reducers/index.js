@@ -2107,6 +2107,8 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   return false;
 }
 
+// FIXME: @ashu, we can refactor this later and completely remove
+// the clone check once the functionality is clear and tested for all scenarios
 export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
   const integration = resource(state, 'integrations', integrationId);
   if (!integration) return false;
@@ -2996,7 +2998,6 @@ export function tiles(state) {
   let status;
 
   return tiles
-    .filter(t => !t._parentId)
     .map(t => {
       integration = integrations.find(i => i._id === t._integrationId) || {};
 

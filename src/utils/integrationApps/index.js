@@ -31,6 +31,7 @@ export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, has
   }
   if (isStandalone) {
     tabs.push('settings')
+    tabs.push('admin')
   }
   return allTabs.filter(tab => !tabs.includes(tab.path))
 }

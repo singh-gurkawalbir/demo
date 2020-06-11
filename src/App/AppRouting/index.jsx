@@ -40,10 +40,7 @@ const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
 const Integration = loadable(() =>
-  import(/* webpackChunkName: 'Integration' */ '../../views/Integration/DIY')
-);
-const IntegrationApp = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration/App')
+  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration')
 );
 const AccessTokenList = loadable(() =>
   import(
@@ -106,11 +103,9 @@ export default class AppRouting extends Component {
         <Route
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId/flowBuilder/:flowId',
             '/pg/integrations/:integrationId/flowBuilder/:flowId',
             '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
             '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId/dataLoader/:flowId',
             '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
             '/pg/integrations/:integrationId/dataLoader/:flowId',
           ]}>
@@ -118,19 +113,7 @@ export default class AppRouting extends Component {
         </Route>
 
         <Route
-          path={[
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId/child/:childId/:tab',
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId/:tab',
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId',
-            '/pg/integrations/:integrationId/:tab',
-          ]}
-          component={Integration}
-        />
-
-        <Route
-          path={['/pg/integrationapps/:integrationAppName/:integrationId/setup',
-            '/pg/integrationapps/v2/:integrationAppName/:integrationId/setup'
-          ]}
+          path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
           component={IntegrationAppInstallation}
         />
         <Route
@@ -151,8 +134,9 @@ export default class AppRouting extends Component {
             '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId',
+            '/pg/integrations/:integrationId/:tab'
           ]}
-          component={IntegrationApp}
+          component={Integration}
         />
         <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
