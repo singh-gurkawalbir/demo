@@ -35,11 +35,12 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 3),
+    padding: theme.spacing(3, 3, 1, 3),
     overflowX: 'scroll',
   },
   subRecordDynaForm: {
     minHeight: 'calc(100% - 56px)',
+    padding: '0px !important',
   },
 }));
 
@@ -162,6 +163,7 @@ function SubRecordDrawer(props) {
       onClose={handleClose}>
       <DrawerTitleBar
         title={fieldId ? 'Edit subrecord import' : 'Add subrecord import'}
+        backToParent
       />
 
       <div className={classes.container}>

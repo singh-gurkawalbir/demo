@@ -506,7 +506,7 @@ describe('intetgrationApps installer reducer', () => {
           install: [
             {
               a: 1,
-              name: 'installerFunction',
+              installerFunction: 'installerFunction',
             },
           ],
         },
@@ -531,7 +531,7 @@ describe('intetgrationApps installer reducer', () => {
       ).install;
 
       expect(installStepsAfterAction).toEqual([
-        { a: 1, name: 'installerFunction' },
+        { a: 1, installerFunction: 'installerFunction' },
       ]);
     });
     test('should not throw any exception when wrong/incorrect/deleted integrationid is passed', () => {

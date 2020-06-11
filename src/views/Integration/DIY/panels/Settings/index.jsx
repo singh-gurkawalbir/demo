@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
-import actions from '../../../../../../actions';
-import DynaForm from '../../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import { isJsonString } from '../../../../../../utils/string';
+import * as selectors from '../../../../../reducers';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import actions from '../../../../../actions';
+import DynaForm from '../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import { isJsonString } from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -14,6 +14,11 @@ const useStyles = makeStyles(theme => ({
     '& > div': {
       padding: theme.spacing(3, 0),
     },
+  },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -39,7 +44,7 @@ export default function CustomSettings({ integrationId }) {
           helpKey: 'integration.settings',
           name: 'settings',
           type: 'settings',
-          label: 'Custom',
+          label: 'Settings',
           defaultValue: settings,
           collapsed: false,
         },
@@ -71,7 +76,7 @@ export default function CustomSettings({ integrationId }) {
   const handleSubmit = useCallback(
     formVal => {
       // dont submit the form if there is validation error
-      // REVIEW: re-visit once Surya's form PR is merged
+      // REVIEW: @ashu, re-visit once Surya's form PR is merged
       if (formVal && formVal.settings && formVal.settings.__invalid) return;
       const patchSet = [
         {
@@ -97,7 +102,7 @@ export default function CustomSettings({ integrationId }) {
   );
 
   return (
-    <>
+    <div className={classes.root}>
       <div className={classes.form}>
         <DynaForm
           disabled={!canEditIntegration}
@@ -115,6 +120,6 @@ export default function CustomSettings({ integrationId }) {
           </DynaSubmit>
         </DynaForm>
       </div>
-    </>
+    </div>
   );
 }

@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: '16px 0px',
   },
+
 }));
 const emptyMappingRow = {};
 
@@ -459,9 +460,7 @@ export default function ImportMapping(props) {
           />
         </div>
         <ButtonGroup
-          className={clsx({
-            [classes.importMappingButtonGroup]: showPreviewPane,
-          })}>
+          className={classes.importMappingButtonGroup}>
           {showPreviewPane && (
             <Button
               variant="outlined"

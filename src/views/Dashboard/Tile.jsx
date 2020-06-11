@@ -95,18 +95,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
-    if (
-      integration &&
-      integration.installSteps &&
-      integration.installSteps.length
-    ) {
-      urlToIntegrationSettings = `/integrations/${integration._id}`;
-      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
-    } else {
-      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-    }
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
   let app1;

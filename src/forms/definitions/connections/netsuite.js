@@ -224,6 +224,10 @@ export default {
           field: 'netsuite.authType',
           is: ['basic'],
         },
+        {
+          field: 'netsuite.authType',
+          is: [''],
+        },
       ],
     },
     {

@@ -43,7 +43,7 @@ export function connectors(state, application, sandbox, licenses) {
         if (
           !hasLicense &&
           moment(l.expires) - moment() > 0 &&
-          l.type === 'connector' &&
+          ((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) &&
           l._connectorId === conn._id &&
           !l._integrationId &&
           !!l.sandbox === sandbox

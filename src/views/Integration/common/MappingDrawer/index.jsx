@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    padding: theme.spacing(0, 0, 0, 3),
+    padding: theme.spacing(2, 3),
     display: 'flex',
   },
 

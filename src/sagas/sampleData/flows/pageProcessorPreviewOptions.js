@@ -20,7 +20,7 @@ import {
 import * as selectors from '../../../reducers';
 import { isIntegrationApp } from '../../../utils/flows';
 
-function* getUIDataForResource({ resource, connection, flow }) {
+function* getUIDataForResource({ resource, connection, flow, refresh }) {
   const { adaptorType, type, sampleData } = resource;
   const isDataLoader = type === 'simple';
 
@@ -37,7 +37,7 @@ function* getUIDataForResource({ resource, connection, flow }) {
         // Incase of other NS/SF exports -
         // Non IAs : pageProcessorPreview call fetches sampleData
         // IAs: If there is sampledata on resource, returns it as uiData below at line:60
-        if (isRealTimeOrDistributedResource(resource)) return yield call(requestRealTimeMetadata, { resource });
+        if (isRealTimeOrDistributedResource(resource)) return yield call(requestRealTimeMetadata, { resource, refresh });
         break;
       case 'FTPExport':
       case 'S3Export':
@@ -58,14 +58,14 @@ function* getUIDataForResource({ resource, connection, flow }) {
   if (isIntegrationApp(flow) && sampleData) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow }) {
+export default function* getPreviewOptionsForResource({ resource, flow, refresh }) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource && resource._connectionId
   );
   const uiData = isUIDataExpectedForResource(resource, connection, flow)
-    ? yield call(getUIDataForResource, { resource, connection, flow })
+    ? yield call(getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
     lastExportDateTime: getLastExportDateTime(),

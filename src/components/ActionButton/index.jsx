@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.hint,
     cursor: 'pointer',
     '&:hover': {
-      background: theme.palette.background.paper,
+      background: 'transparent',
       '& > span': {
         color: theme.palette.primary.main,
       },

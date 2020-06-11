@@ -14,17 +14,17 @@ import {
   Paper,
   Breadcrumbs,
 } from '@material-ui/core';
-import ArrowBackIcon from '../../../../components/icons/ArrowLeftIcon';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
-import LoadResources from '../../../../components/LoadResources';
-import openExternalUrl from '../../../../utils/window';
-import ArrowRightIcon from '../../../../components/icons/ArrowRightIcon';
-import InstallationStep from '../../../../components/InstallStep';
-import getRoutePath from '../../../../utils/routePaths';
-import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
-import Loader from '../../../../components/Loader';
-import Spinner from '../../../../components/Spinner';
+import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
+import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
+import LoadResources from '../../../../../components/LoadResources';
+import openExternalUrl from '../../../../../utils/window';
+import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
+import InstallationStep from '../../../../../components/InstallStep';
+import getRoutePath from '../../../../../utils/routePaths';
+import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import Loader from '../../../../../components/Loader';
+import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,21 +51,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationAppUninstaller({ match }) {
+export default function Uninstaller1({ integration, integrationId, storeId }) {
   const classes = useStyles();
   const history = useHistory();
-  const { integrationId, storeId } = match.params;
   const dispatch = useDispatch();
-  const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
-    ) || {};
-  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const {_id, mode, name, stores} = integration;
+  const integrationAppName = getIntegrationAppUrlName(name);
   const isUninstallComplete = useSelector(state =>
     selectors.isUninstallComplete(state, { integrationId, storeId })
   );
   const { steps: uninstallSteps, error } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, integrationId)
+    selectors.integrationUninstallSteps(state, { integrationId })
   );
 
   useEffect(() => {
@@ -80,20 +76,19 @@ export default function IntegrationAppUninstaller({ match }) {
     if (
       uninstallSteps &&
       uninstallSteps.removeIntegration &&
-      integration &&
-      integration.mode === 'uninstall'
+      mode === 'uninstall'
     ) {
       dispatch(
         actions.integrationApp.uninstaller.uninstallIntegration(integrationId)
       );
       history.push(getRoutePath('dashboard'));
     }
-  }, [dispatch, history, integration, integrationId, uninstallSteps]);
+  }, [dispatch, history, mode, integrationId, uninstallSteps]);
 
   useEffect(() => {
     if (isUninstallComplete) {
       // redirect to integration Settings
-      if (integration.mode !== 'uninstall') {
+      if (mode !== 'uninstall') {
         dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
         history.push(
           `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
@@ -108,13 +103,13 @@ export default function IntegrationAppUninstaller({ match }) {
   }, [
     dispatch,
     history,
-    integration.mode,
+    mode,
     integrationAppName,
     integrationId,
     isUninstallComplete,
   ]);
 
-  if (!integration || !integration._id) {
+  if (!integration || !_id) {
     return <LoadResources required resources="integrations" />;
   }
 
@@ -135,8 +130,8 @@ export default function IntegrationAppUninstaller({ match }) {
     return <Loader open>Uninstalling</Loader>;
   }
 
-  const storeName = integration.stores
-    ? (integration.stores.find(s => s.value === storeId) || {}).label
+  const storeName = stores
+    ? (stores.find(s => s.value === storeId) || {}).label
     : undefined;
   const handleStepClick = step => {
     // TODO: installURL should eventually changed to uninstallURL. Currently it is left as installURL to support shopify uninstall.
@@ -214,7 +209,7 @@ export default function IntegrationAppUninstaller({ match }) {
                 separator={<ArrowRightIcon />}
                 aria-label="breadcrumb">
                 <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">{integration.name}</Typography>
+                <Typography color="textPrimary">{name}</Typography>
                 <Typography color="textPrimary">{storeName}</Typography>
               </Breadcrumbs>
             </Paper>
