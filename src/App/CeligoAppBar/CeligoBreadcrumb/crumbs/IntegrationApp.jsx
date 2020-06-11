@@ -1,6 +1,5 @@
 import React from 'react';
-import { isEmpty } from 'lodash';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 
@@ -17,19 +16,24 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 };
 
 export const StoreCrumb = ({ integrationId, storeId }) => {
-  const integrationResource = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId, storeId)
+  const store = useSelector(state => {
+    const integration = selectors.integrationAppSettings(state, integrationId, storeId);
+    if (integration && integration.stores) {
+      return integration.stores.find(s => s.value === storeId)
+    }
+
+    return null;
+  }, shallowEqual
   );
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  const childName = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', storeId);
+    return integration && integration.name;
+  })
 
-  if (
-    isEmpty(integrationResource) ||
-    (integrationResource.settings &&
-      !integrationResource.settings.supportsMultiStore)
-  ) {
-    return storeId;
+  if (isFrameWork2) {
+    return childName || storeId;
   }
-
-  const store = integrationResource.stores.find(s => s.value === storeId);
 
   return (
     <LoadResources resources="integrations">
