@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath, Link } from 'react-router-dom';
+import { Redirect, generatePath, Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -109,10 +109,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationApp({ match, history }) {
+export default function IntegrationApp(props) {
   const classes = useStyles();
+  const history = useHistory()
   const dispatch = useDispatch();
-  const { integrationAppName, integrationId, storeId, tab } = match.params;
+  const { integrationAppName, integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>

@@ -228,7 +228,7 @@ export default function ConnectorInstallation(props) {
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/v2/${integrationChildAppName}/${childIntegration._id}/setup`
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
           );
         } else {
           dispatch(
@@ -236,7 +236,7 @@ export default function ConnectorInstallation(props) {
           );
           if (integration && integration.installSteps && integration.installSteps.length > 0) {
             props.history.push(
-              `/pg/integrationapps/v2/${integrationAppName}/${integrationId}`
+              `/pg/integrationapps/${integrationAppName}/${integrationId}`
             );
           } else {
             props.history.push(

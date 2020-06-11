@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, Select, MenuItem } from '@material-ui/core';
-import { Link, Redirect, generatePath } from 'react-router-dom';
+import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -102,9 +102,10 @@ const tabs = [
 ];
 const emptyObj = {};
 
-export default function Integration({ history, match }) {
+export default function Integration(props) {
   const classes = useStyles();
-  const { integrationId, templateName, childId, tab } = match.params;
+  const history = useHistory();
+  const { integrationId, templateName, childId, tab, match } = props;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -297,7 +298,7 @@ export default function Integration({ history, match }) {
         if (childIntegration.mode === 'install') {
           return history.push(
             getRoutePath(
-              `integrationapps/v2/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
+              `integrationapps/${getIntegrationAppUrlName(childIntegration.name)}/${childIntegration._id}/setup`
             )
           );
         } if (childIntegration.mode === 'uninstall') {
@@ -316,7 +317,7 @@ export default function Integration({ history, match }) {
       // Redirect to current tab of new store
       history.push(
         getRoutePath(
-          `integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
+          `integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${newChildId}/${newTab}`
         )
       );
     },
@@ -414,7 +415,7 @@ export default function Integration({ history, match }) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/v2/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+          to={`/pg/integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
             'settings'}`}
         />
       );

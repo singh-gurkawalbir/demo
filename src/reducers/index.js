@@ -2992,7 +2992,6 @@ export function tiles(state) {
   let status;
 
   return tiles
-    .filter(t => !t._parentId)
     .map(t => {
       integration = integrations.find(i => i._id === t._integrationId) || {};
 
