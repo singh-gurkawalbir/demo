@@ -59,11 +59,10 @@ export function* uninstallStep({ id, formVal }) {
       )
     );
     yield put(actions.resource.requestCollection('integrations'));
-    // once all steps are done, redirect to home page
+    // once all steps are done, mark state as complete
     return yield put(
-      actions.integrationApp.uninstaller2.redirectTo(
-        id,
-        'dashboard'
+      actions.integrationApp.uninstaller2.complete(
+        id
       )
     );
   }

@@ -50,7 +50,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const {mode, name} = integration;
-  const { steps: uninstallSteps, isFetched, error, redirectTo } = useSelector(state =>
+  const { steps: uninstallSteps, isFetched, error, isComplete } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true }), shallowEqual
   );
 
@@ -79,15 +79,15 @@ export default function Uninstaller2({ integration, integrationId }) {
   }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode])
 
   useEffect(() => {
-    if (redirectTo) {
+    if (isComplete) {
       dispatch(
         actions.integrationApp.uninstaller2.clearSteps(
           integrationId
         )
       );
-      history.replace(getRoutePath(redirectTo));
+      history.replace(getRoutePath('dashboard'));
     }
-  }, [dispatch, history, integrationId, redirectTo])
+  }, [dispatch, history, integrationId, isComplete])
 
   const handleStepClick = useCallback((step) => {
     const { type, isTriggered, form } = step;
