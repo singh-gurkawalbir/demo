@@ -165,6 +165,10 @@ export default {
           field: 'http.auth.type',
           is: ['token'],
         },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
       ],
     },
   ],

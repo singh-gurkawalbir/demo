@@ -1,6 +1,6 @@
 import React from 'react';
 import UrlEditor from '.';
-import HandlebarEditorDialog from '../HandlebarEditorDialog';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function UrlEditorDialog(props) {
   const {
@@ -20,7 +20,7 @@ export default function UrlEditorDialog(props) {
   };
 
   return (
-    <HandlebarEditorDialog
+    <AFE2EditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -34,6 +34,6 @@ export default function UrlEditorDialog(props) {
         data={data}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </HandlebarEditorDialog>
+    </AFE2EditorDialog>
   );
 }

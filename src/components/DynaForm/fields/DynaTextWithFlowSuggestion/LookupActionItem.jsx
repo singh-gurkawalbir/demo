@@ -41,7 +41,7 @@ export default function LookupActionItem({
   showDynamicLookupOnly = false,
   value = {},
   options = {},
-  onClick,
+  showLookupDialog,
   resourceId,
   resourceType,
   flowId,
@@ -49,12 +49,12 @@ export default function LookupActionItem({
   const [showLookup, setShowLookup] = useState(false);
   const classes = useStyles();
   const handleEditorClick = () => {
-    if (onClick) onClick(!showLookup);
+    if (showLookupDialog) showLookupDialog(!showLookup);
     setShowLookup(!showLookup);
   };
 
   const handleSave = (id, lookup) => {
-    onSave(lookup);
+    onSave(lookup, value);
     handleEditorClick();
   };
 

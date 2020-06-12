@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath, Link } from 'react-router-dom';
+import { Redirect, generatePath, Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import * as selectors from '../../../reducers';
@@ -11,7 +11,6 @@ import FlowsIcon from '../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
-import GeneralIcon from '../../../components/icons/GeneralIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
@@ -20,11 +19,12 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import GeneralPanel from './panels/General';
+import CustomSettingsIcon from '../../../components/icons/CustomSettingsIcon';
 import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
 import AdminPanel from './panels/Admin';
+import SettingsPanel from './panels/Settings';
 import UsersPanel from '../../../components/ManageUsersPanel';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
@@ -36,7 +36,7 @@ import integrationAppUtil from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
-  { path: 'general', label: 'General', Icon: GeneralIcon, Panel: GeneralPanel },
+  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -68,13 +68,13 @@ const allTabs = [
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
   },
-  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
   {
-    path: 'settings',
-    label: 'Settings',
+    path: 'admin',
+    label: 'Admin',
     Icon: SettingsIcon,
     Panel: AdminPanel,
   },
+  { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -109,10 +109,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function IntegrationApp({ match, history }) {
+export default function IntegrationApp(props) {
   const classes = useStyles();
+  const history = useHistory()
   const dispatch = useDispatch();
-  const { integrationAppName, integrationId, storeId, tab } = match.params;
+  const { integrationAppName, integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
@@ -135,9 +136,6 @@ export default function IntegrationApp({ match, history }) {
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
-  const hideGeneralTab = useSelector(
-    state => !selectors.hasGeneralSettings(state, integrationId, storeId)
-  );
   const accessLevel = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
@@ -149,44 +147,24 @@ export default function IntegrationApp({ match, history }) {
       integration._connectorId,
       integration.name
     );
-  //
-  //
-  // TODO: All the code below should be moved into the data layer.
-  // the addonState selector should return a status to indicted if there
-  // is a pending request in progress. This would be used to dispatch
-  // a request instead of all these useEffects and local state management.
-  const [requestLicense, setRequestLicense] = useState(false);
-  const [requestMappingMetadata, setRequestMappingMetadata] = useState(false);
 
   useEffect(() => {
-    if (addOnState && !addOnState.addOns && !requestLicense) {
+    if (!addOnState || !addOnState.status) {
       dispatch(
         actions.integrationApp.settings.requestAddOnLicenseMetadata(
           integrationId
         )
       );
-      setRequestLicense(true);
     }
-  }, [addOnState, dispatch, integrationId, requestLicense]);
+  }, [addOnState, dispatch, integrationId]);
 
   useEffect(() => {
-    if (
-      integrationAppMetadata &&
-      !integrationAppMetadata.mappingMetadata &&
-      !requestMappingMetadata
-    ) {
+    if (!integrationAppMetadata.status) {
       dispatch(
         actions.integrationApp.settings.requestMappingMetadata(integrationId)
       );
-      setRequestMappingMetadata(true);
     }
-  }, [
-    addOnState,
-    dispatch,
-    integrationAppMetadata,
-    integrationId,
-    requestMappingMetadata,
-  ]);
+  }, [dispatch, integrationAppMetadata, integrationId]);
 
   useEffect(() => {
     if (redirectTo) {
@@ -218,23 +196,13 @@ export default function IntegrationApp({ match, history }) {
   // All the code ABOVE this comment should be moved from this component to the data-layer.
   //
   //
-  let availableTabs = allTabs;
+  const filterTabs = [];
 
   if (!hasAddOns) {
-    const addOnTabIndex = availableTabs.findIndex(tab => tab.path === 'addons');
-
-    if (addOnTabIndex !== -1) {
-      availableTabs = [
-        ...availableTabs.slice(0, addOnTabIndex),
-        ...availableTabs.slice(addOnTabIndex + 1),
-      ];
-    }
+    filterTabs.push('addons');
   }
 
-  if (hideGeneralTab) {
-    availableTabs = availableTabs.slice(1);
-  }
-
+  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
@@ -291,19 +259,6 @@ export default function IntegrationApp({ match, history }) {
     }
   } else if (!tab) {
     return <Redirect push={false} to={`${match.url}/flows`} />;
-  }
-
-  if (tab === 'general' && hideGeneralTab) {
-    return (
-      <Redirect
-        push={false}
-        to={
-          supportsMultiStore
-            ? `/pg/integrationapps/${integrationAppName}/${integrationId}/child/${storeId}/flows`
-            : `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-        }
-      />
-    );
   }
 
   let redirectToPage;

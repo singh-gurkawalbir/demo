@@ -4,7 +4,7 @@ import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
-import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall';
+import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
@@ -40,10 +40,7 @@ const MyAccount = loadable(() =>
   import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
 );
 const Integration = loadable(() =>
-  import(/* webpackChunkName: 'Integration' */ '../../views/Integration/DIY')
-);
-const IntegrationApp = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration/App')
+  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration')
 );
 const AccessTokenList = loadable(() =>
   import(
@@ -116,10 +113,6 @@ export default class AppRouting extends Component {
         </Route>
 
         <Route
-          path="/pg/integrations/:integrationId/:tab"
-          component={Integration}
-        />
-        <Route
           path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
           component={IntegrationAppInstallation}
         />
@@ -134,13 +127,16 @@ export default class AppRouting extends Component {
           ]}
           component={IntegrationAppUninstallation}
         />
+
+
         <Route
           path={[
             '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
             '/pg/integrationapps/:integrationAppName/:integrationId',
+            '/pg/integrations/:integrationId/:tab'
           ]}
-          component={IntegrationApp}
+          component={Integration}
         />
         <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name

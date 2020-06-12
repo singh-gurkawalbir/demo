@@ -1,6 +1,6 @@
 import React from 'react';
 import HttpRequestBodyEditor from '.';
-import HandlebarEditorDialog from '../HandlebarEditorDialog';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function HttpRequestBodyDialog(props) {
   const {
@@ -22,7 +22,7 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <HandlebarEditorDialog
+    <AFE2EditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -37,6 +37,6 @@ export default function HttpRequestBodyDialog(props) {
         isSampleDataLoading={isSampleDataLoading}
         disabled={disabled}
       />
-    </HandlebarEditorDialog>
+    </AFE2EditorDialog>
   );
 }

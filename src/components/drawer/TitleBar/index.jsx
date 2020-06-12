@@ -65,7 +65,7 @@ export default function DrawerTitleBar({
     <div className={classes.titleBar}>
       {backToParent && (
         <IconButton
-          data-test="backToDashboard"
+          data-test="back"
           aria-label="back"
           onClick={handleClick}
           className={classes.arrowLeft}>

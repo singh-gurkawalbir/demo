@@ -39,7 +39,7 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
   );
 };
 
-export default function HandlebarEditorDialog({
+export default function AFE2EditorDialog({
   showVersionToggle,
   onVersionToggle,
   editorVersion,

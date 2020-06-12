@@ -91,6 +91,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         name: 'category',
         type: 'select',
         label: 'Choose Category',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: true,
         defaultValue: '',
         options: [
@@ -106,6 +108,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'childCategory',
         name: 'childCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: uiAssistant !== 'jet',
         defaultValue: '',
         label: 'Choose Sub-category',
@@ -116,6 +120,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'grandchildCategory',
         name: 'grandchildCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: false,
         visible: false,
         label: 'Choose nested-category',

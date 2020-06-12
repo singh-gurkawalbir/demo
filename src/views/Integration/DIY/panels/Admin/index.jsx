@@ -6,15 +6,17 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
+import { useSelector, shallowEqual } from 'react-redux';
+import * as selectors from '../../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
-import CustomSettings from './sections/CustomSettings';
-import * as selectors from '../../../../../reducers';
+import ApiTokensSection from './sections/ApiTokens';
+import SubscriptionSection from './sections/Subscription';
+import UninstallSection from './sections/Uninstall';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,38 +59,80 @@ const allSections = [
     path: 'readme',
     label: 'Readme',
     Section: ReadmeSection,
-    id: 'readMe',
+    id: 'readme',
   },
   {
-    path: 'customSettings',
-    label: 'Custom',
-    Section: CustomSettings,
-    id: 'customSettings',
+    path: 'apitoken',
+    label: 'API tokens',
+    Section: ApiTokensSection,
+    id: 'apitoken',
   },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Section: SubscriptionSection,
+    id: 'subscription',
+  },
+  {
+    path: 'uninstall',
+    label: 'Uninstall',
+    Section: UninstallSection,
+    id: 'uninstall',
+  }
 ];
+const emptyObj = {};
 
-export default function AdminPanel({ integrationId }) {
+export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
-  );
-  const hasSettingsForm = useSelector(state =>
-    selectors.hasSettingsForm(state, 'integrations', integrationId)
+  const isParent = !childId || (childId === integrationId);
+  const {
+    isIntegrationApp,
+    supportsChild,
+  } = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration) {
+      return {
+        isIntegrationApp: !!integration._connectorId,
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+      };
+    }
+
+    return emptyObj;
+  }, shallowEqual);
+  const children = useSelector(
+    state => {
+      // As result includes parent integration, remove it from result.
+      const resources = selectors.integrationChildren(state, integrationId);
+      return resources.filter(r => r.value !== integrationId)
+    },
+    shallowEqual
   );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readMe');
-    sectionsToHide.push('customSettings');
+    sectionsToHide.push('readme');
+  }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall')
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length) {
+      sectionsToHide.push('uninstall');
+    }
   }
 
-  if ((!isDeveloper || isViewMode) && !hasSettingsForm) {
-    sectionsToHide.push('customSettings');
-  }
 
   const availableSections = allSections.filter(
     sec => !sectionsToHide.includes(sec.id)
@@ -127,7 +171,7 @@ export default function AdminPanel({ integrationId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section integrationId={integrationId} childId={childId} />
               </Route>
             ))}
           </Switch>

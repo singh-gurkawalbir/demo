@@ -1,6 +1,16 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   preSave: formValues => {
     const newValues = { ...formValues };
 
@@ -67,6 +77,23 @@ export default {
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+    } else {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -169,33 +196,44 @@ export default {
       ],
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'outputMode'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How would you like to parse files?',
-        fields: ['file'],
-      },
-      {
-        collapsed: true,
-        label: 'Where would you like to transfer from?',
-        fields: [
-          's3.region',
-          's3.bucket',
-          's3.keyStartsWith',
-          's3.keyEndsWith',
-          'ftp.leaveFile',
+        fields: ['common', 'outputMode'],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            fields: ['file'],
+          },
+          {
+            collapsed: true,
+            label: 'Where would you like to transfer from?',
+            fields: [
+              's3.region',
+              's3.bucket',
+              's3.keyStartsWith',
+              's3.keyEndsWith',
+              'ftp.leaveFile',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['fileAdvancedSettings'],
+          },
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['fileAdvancedSettings'],
-      },
-    ],
+        fields: ['exportPanel'],
+      }
+    ]
   },
   actions: [
     {

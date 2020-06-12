@@ -15,6 +15,27 @@ export const getIntegrationAppUrlName = (
   );
 };
 
+export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, hasAddOns, isStandalone}) => {
+  const tabs = []
+  if (isIntegrationApp) {
+    tabs.push('users')
+    if (!hasAddOns) {
+      tabs.push('addons')
+    }
+  } else {
+    tabs.push('addons')
+  }
+  if (isParent) {
+    tabs.push('flows')
+    tabs.push('dashboard')
+  }
+  if (isStandalone) {
+    tabs.push('settings')
+    tabs.push('admin')
+  }
+  return allTabs.filter(tab => !tabs.includes(tab.path))
+}
+
 const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
   const integrationAppId = {
@@ -106,13 +127,13 @@ export default {
       step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
-        stepText = 'Configured';
+        stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = 'Click to Configure';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {

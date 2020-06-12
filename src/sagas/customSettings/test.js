@@ -35,7 +35,7 @@ describe('initSettingsForm saga', () => {
     const resourceState = {
       settingsForm: {
         form: { fieldMap: { store: { name: 'store' } } },
-        init: { _scriptId: '55' },
+        init: { function: 'main'},
       },
       settings: { store: 'test', currency: 'us' },
     };
@@ -70,7 +70,7 @@ describe('initSettingsForm saga', () => {
     const resourceState = {
       settingsForm: {
         form: { fieldMap: { store: { name: 'store' } } },
-        init: { _scriptId: '55' },
+        init: { function: 'main', _scriptId: '55' },
       },
       settings: { store: 'test', currency: 'us' },
     };

@@ -1384,6 +1384,8 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP encryption algorithm',
+    // Todo (surya) 15533 : helptext needed
+    helpText: 'helptext is useful to provide information about the field to users',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1851,17 +1853,17 @@ export default {
   },
   requiremdnspartners: {
     type: 'labelvalue',
-    label: 'Require mdns from partners?',
+    label: 'Require MDNs from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
     type: 'labelvalue',
-    label: 'Require asynchronous mdns?',
+    label: 'Require asynchronous MDNs?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
-    label: 'Partner requires asynchronous mdns?',
+    label: 'Partner requires asynchronous MDNs?',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',
@@ -2134,7 +2136,6 @@ export default {
   'netsuite.tokenEnvironment': {
     type: 'select',
     label: 'Environment',
-    required: true,
     defaultValue: r => r && r.netsuite && r.netsuite.environment,
     options: [
       {
@@ -2432,6 +2433,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2439,6 +2441,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
