@@ -59,27 +59,15 @@ const Notifications = ({ allLoadingOrErrored }) => {
 
   const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r)
 
-  if (consolidatedNotificationMsgs.length === 1) {
-    return <Typography>{consolidatedNotificationMsgs[0].message}</Typography>
-  }
-  return (
-    <ul>
-      {consolidatedNotificationMsgs.map(({name, status, message}) => {
-        if (status === COMM_STATES.ERROR) {
-          return (
-            <li key={name}>
-              {message && <ErroredMessageList messages={message} />}
-            </li>);
-        }
 
-        return (
-          <li key={name}>
-            <Typography>{message}</Typography>
-          </li>
-        )
-      })}
-    </ul>
-  );
+  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR ? (<ErroredMessageList messages={message} />) : <Typography>{message}</Typography>
+
+  if (consolidatedNotificationMsgs.length === 1) { return <NotificationMsg {...consolidatedNotificationMsgs[0]} /> }
+  const notificationMsgs = consolidatedNotificationMsgs.map(({name, status, message}) => (
+    <li key={name}>
+      <NotificationMsg status={status} message={message} />
+    </li>))
+  return <ul>{notificationMsgs}</ul>;
 };
 
 export default function NetworkSnackbar() {
