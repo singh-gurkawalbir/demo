@@ -147,11 +147,18 @@ function* updateDataForStages({resourceId, dataForEachStageMap }) {
 function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
   const { file } = values;
-  const { file: fileProps} = yield call(constructResourceFromFormValues, {
+  const body = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
     resourceType,
   });
+  const { file: fileProps} = body || {};
+  // If there are no editorValues passed from the editor,
+  // parse the resourceBody and construct props to process file content
+  if (!values.editorValues) {
+    // eslint-disable-next-line no-param-reassign
+    values.editorValues = generateFileParserOptionsFromResource(body, type);
+  }
   const dataForEachStageMap = {
     rawFile: { data: [{ body: file, type }] },
     raw: { data: [{ body: file }] },
@@ -212,14 +219,12 @@ function* fetchExportPreviewData({
   });
   // If it is a file adaptor , follows a different approach to fetch sample data
   if (isFileAdaptor(body)) {
-    const fileType = body.file.type;
     // extract all details needed for a file sampledata
     const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
     const fileProps = {
       type: fileDetails.type,
       file: fileDetails.body,
       formValues: values,
-      editorValues: generateFileParserOptionsFromResource(body, fileType),
     }
     if (!fileDetails.body) {
       // when no file uploaded , try fetching sampleData on resource

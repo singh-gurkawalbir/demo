@@ -310,7 +310,7 @@ export default function CeligoDrawer() {
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
                     {drawerOpened ? <Icon /> :
-                    <Tooltip placement="right-end" enterDelay={500} title={label}>
+                    <Tooltip placement="right-end" enterDelay={0} title={label}>
                       <div>
                         <Icon />
                       </div>
@@ -356,7 +356,7 @@ export default function CeligoDrawer() {
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
                               {drawerOpened ? <Icon /> :
-                              <Tooltip placement="right-end" enterDelay={500} title={label}>
+                              <Tooltip placement="right-end" enterDelay={0} title={label}>
                                 <div>
                                   <Icon />
                                 </div>

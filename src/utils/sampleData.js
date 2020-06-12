@@ -319,7 +319,7 @@ export const getPathSegments = path => {
   let wasLiteral = false;
   let i;
 
-  if (!path) return [];
+  if (!path || path === '*') return [];
 
   for (i = 0; i < path.length; i += 1) {
     const char = path[i];
@@ -377,13 +377,16 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   if (!resourcePath) return sampleData;
 
   if (typeof resourcePath !== 'string') return;
-  const segments = getPathSegments(resourcePath);
+  const segments = getPathSegments(resourcePath.replace(/\.?\*$/, ''));
   let processedSampleData = sampleData;
 
   // Segments : Array of level wiser paths to drill down the sample data
-  segments.forEach(path => { processedSampleData = processedSampleData[path] });
-
-  return processedSampleData;
+  try {
+    segments.forEach(path => { processedSampleData = processedSampleData[path] });
+    return processedSampleData;
+  } catch (e) {
+    return {}
+  }
 };
 
 /*

@@ -164,9 +164,9 @@ export default function Integration(props) {
     );
 
     return {
-      pEdit: permission.edit,
-      pClone: permission.clone,
-      pDelete: permission.delete,
+      canEdit: permission.edit,
+      canClone: permission.clone,
+      canDelete: permission.delete,
     };
   });
   const children = useSelector(

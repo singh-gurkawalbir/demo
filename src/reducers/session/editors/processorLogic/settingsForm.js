@@ -52,7 +52,8 @@ export default {
         parsedData.resource.settingsForm.form;
     }
 
-    if (!isEqual(parsedData, editor.initData)) {
+    // added JSON.stringify check to consider the object keys' order as well
+    if (!isEqual(parsedData, editor.initData) || (JSON.stringify(parsedData) !== JSON.stringify(editor.initData))) {
       return true;
     }
 

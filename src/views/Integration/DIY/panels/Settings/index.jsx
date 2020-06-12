@@ -23,18 +23,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
-export default function CustomSettings({ integrationId }) {
+export default function CustomSettings({ integrationId, childId }) {
+  const _integrationId = childId || integrationId;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
   const settings = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', integrationId);
+    const resource = selectors.resource(state, 'integrations', _integrationId);
 
     return resource ? resource.settings : emptyObj;
   });
   const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId).edit
+      selectors.resourcePermissions(state, 'integrations', _integrationId).edit
   );
   const fieldMeta = useMemo(
     () => ({
@@ -87,18 +88,18 @@ export default function CustomSettings({ integrationId }) {
       ];
 
       dispatch(
-        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
+        actions.resource.patchStaged(_integrationId, patchSet, SCOPES.VALUE)
       );
       dispatch(
         actions.resource.commitStaged(
           'integrations',
-          integrationId,
+          _integrationId,
           SCOPES.VALUE
         )
       );
       setFormKey(formKey => formKey + 1);
     },
-    [dispatch, integrationId]
+    [dispatch, _integrationId]
   );
 
   return (
@@ -108,12 +109,12 @@ export default function CustomSettings({ integrationId }) {
           disabled={!canEditIntegration}
           fieldMeta={fieldMeta}
           resourceType="integrations"
-          resourceId={integrationId}
+          resourceId={_integrationId}
           validationHandler={validationHandler}
           key={formKey}>
           <DynaSubmit
             resourceType="integrations"
-            resourceId={integrationId}
+            resourceId={_integrationId}
             disabled={!canEditIntegration}
             onClick={handleSubmit}>
             Save
