@@ -17,7 +17,6 @@ import {
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -65,12 +64,12 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   );
 
   useEffect(() => {
-    if (!error && !uninstallSteps) {
+    if (_id && !error && !uninstallSteps) {
       dispatch(
         actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
     }
-  }, [dispatch, error, integrationId, storeId, uninstallSteps]);
+  }, [_id, dispatch, error, integrationId, storeId, uninstallSteps]);
 
   useEffect(() => {
     if (
@@ -109,11 +108,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     isUninstallComplete,
   ]);
 
-  if (!integration || !_id) {
-    return <LoadResources required resources="integrations" />;
-  }
-
-  if (error) {
+  if (!_id || error) {
     return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }
 
