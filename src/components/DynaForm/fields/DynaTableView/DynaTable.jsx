@@ -316,11 +316,12 @@ export const DynaTable = props => {
           <Fragment key={changeIdentifier}>
             {tableData.map((arr, rowIndex, rowCollection) => (
 
-              <div key={arr.row} className={classes.bodyElementsWrapper}>
+              <div key={arr.row} className={classes.bodyElementsWrapper} data-test={`row-${rowIndex}`}>
                 <div className={classes.columnsWrapper}>
                   {arr.values.map((r, index) => (
                     <div
                       key={`${r.readOnly ? r.value || r.id : r.id}`}
+                      data-test={`col-${index}`}
                   >
                       {r.type === 'select' && (
                       <DynaSelect
