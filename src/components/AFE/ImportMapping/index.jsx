@@ -196,7 +196,6 @@ export default function ImportMapping(props) {
   ]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
-      console.log('_mapping', _mapping, field, value)
       const { key, generate = '', extract = '' } = _mapping;
 
       if (value === '') {
