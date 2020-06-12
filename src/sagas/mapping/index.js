@@ -198,9 +198,14 @@ export function* refreshGenerates({ id, isInit = false }) {
     application,
     mappings = [],
     resource = {},
+    importSampleData,
     subRecordMappingId,
     netsuiteRecordType,
   } = yield select(selectors.mapping, id);
+  const generateFields = mappingUtil.getFormattedGenerateData(
+    importSampleData,
+    application
+  );
   const { _id: resourceId, } = resource
   if (application === adaptorTypeMap.SalesforceImport) {
     // salesforce Import could have sub objects as well
@@ -216,10 +221,20 @@ export function* refreshGenerates({ id, isInit = false }) {
     // during init, parent sObject metadata is already fetched.
     const sObjectList = isInit ? [] : [sObjectType];
     // check for each mapping sublist if it relates to childSObject
+    generateFields.forEach(({id}) => {
+      if (id.indexOf('[*].') !== -1) {
+        const childObjectName = id.split('[*].')[0]
+        const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName)
+        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+          sObjectList.push(childRelationshipObject.childSObject)
+        }
+      }
+    })
+    // check for child sObject in mappings.
     mappings.forEach(({generate}) => {
       if (generate && generate.indexOf('[*].') !== -1) {
-        const generateName = generate.split('[*].')[0]
-        const childRelationshipObject = childRelationshipFields.find(field => field.value === generateName)
+        const subListName = generate.split('[*].')[0]
+        const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName)
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject)
         }
