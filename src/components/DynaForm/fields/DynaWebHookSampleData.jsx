@@ -2,10 +2,13 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import { isJsonString } from '../../../utils/string';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -25,7 +28,16 @@ export default function DynaWebHookSampleData(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { label, id, onFieldChange, options, resourceId } = props;
+  const {
+    label,
+    id,
+    onFieldChange,
+    options,
+    resourceId,
+    errorMessages,
+    description,
+    isValid,
+  } = props;
   const [manualEnter, setManualEnter] = useState(false);
   const sampleData = useSelector(state => {
     const resource = selectors.resource(state, 'exports', resourceId) || {};
@@ -54,15 +66,19 @@ export default function DynaWebHookSampleData(props) {
   }, []);
   const handleSampleDataChange = useCallback(
     value => {
-      onFieldChange(id, value);
+      if (isJsonString(value)) {
+        onFieldChange(id, JSON.parse(value));
+      } else {
+        onFieldChange(id, value);
+      }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id]
+    [id, onFieldChange]
   );
 
   return (
     <div>
-      <Typography>{label}</Typography>
+      <FormLabel error={!isValid} >{label}</FormLabel>
+
       <div className={classes.container}>
         <CodeEditor
           name="sampleData"
@@ -72,6 +88,11 @@ export default function DynaWebHookSampleData(props) {
           onChange={handleSampleDataChange}
         />
       </div>
+      <ErroredMessageComponent
+        description={description}
+        errorMessages={errorMessages}
+        isValid={isValid}
+        />
       <div className={classes.actions}>
         <Button
           variant="outlined"
