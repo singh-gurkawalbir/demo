@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
   },
-  camBigRow: {
+  fieldsContentColumn: {
     flexGrow: 1,
   },
   input: {
@@ -62,14 +62,14 @@ const useStyles = makeStyles(theme => ({
   label: {
     paddingRight: theme.spacing(1),
   },
-  bodyRow: {
+  bodyElementsWrapper: {
     display: 'flex',
   },
   dynaTableActions: {
     alignSelf: 'flex-start',
     marginTop: theme.spacing(1),
   },
-  camBodyFieldsWrapper: {
+  columnsWrapper: {
     width: '95%',
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
@@ -295,17 +295,17 @@ export const DynaTable = props => {
     <div className={clsx(classes.container, className)}>
       {!hideLabel && <Typography variant="h6">{label}</Typography>}
       <div data-test={id} className={classes.root} >
-        <div className={classes.camBigRow}>
+        <div className={classes.fieldsContentColumn}>
 
           {!hideHeaders && (
-          <div className={classes.camBodyFieldsWrapper}>
+          <div className={classes.columnsWrapper}>
             {optionsMap.map(r => (
               <div className={classes.header} key={r.id}>
                 <span className={classes.label}>{r.label || r.name}</span>
-                {!r.supportsRefresh && isLoading && (
+                {r.supportsRefresh && !isLoading && (
                   <RefreshIcon onClick={onFetchResource(r.id)} />
                 )}
-                {!r.supportsRefresh && !isLoading === r.id && (
+                {r.supportsRefresh && isLoading === r.id && (
                   <Spinner size={24} />
                 )}
               </div>
@@ -316,8 +316,8 @@ export const DynaTable = props => {
           <Fragment key={changeIdentifier}>
             {tableData.map((arr, rowIndex, rowCollection) => (
 
-              <div key={arr.row} className={classes.bodyRow}>
-                <div className={classes.camBodyFieldsWrapper}>
+              <div key={arr.row} className={classes.bodyElementsWrapper}>
+                <div className={classes.columnsWrapper}>
                   {arr.values.map((r, index) => (
                     <div
                       key={`${r.readOnly ? r.value || r.id : r.id}`}
