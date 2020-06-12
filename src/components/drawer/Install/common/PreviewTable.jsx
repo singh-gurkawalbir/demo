@@ -5,6 +5,7 @@ import * as selectors from '../../../../reducers';
 import CeligoTable from '../../../CeligoTable';
 import Spinner from '../../../Spinner';
 import InfoIconButton from '../../../InfoIconButton';
+
 const columns = [
   {
     heading: 'Name',
