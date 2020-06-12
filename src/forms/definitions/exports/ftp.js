@@ -16,6 +16,10 @@ export default {
 
     delete newValues['/file/csvHelper'];
 
+    const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+    if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
+      newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
+    }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];

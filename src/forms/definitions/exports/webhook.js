@@ -1,4 +1,17 @@
+import { isJsonString } from '../../../utils/string';
+
 export default {
+  validationHandler: field => {
+    // Used to validate sampleData field
+    // Incase of invalid json throws error to be shown on the field
+    if (field && field.id === 'sampleData') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      ) return 'Sample Data must be a valid JSON';
+    }
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'sampleData') {
       const webHookUrlField = fields.find(field => field.id === 'webhook.url');

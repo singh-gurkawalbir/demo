@@ -90,7 +90,7 @@ export default {
   },
   'file.json.resourcePath': {
     label: 'Resource path',
-    type: 'text',
+    type: 'jsonresourcepath',
     visibleWhen: [
       {
         field: 'file.type',
