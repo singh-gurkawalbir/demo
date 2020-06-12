@@ -888,6 +888,10 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
         id: integrationId,
       }),
+    complete: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
+        id: integrationId,
+      }),
   },
   store: {
     addNew: integrationId =>

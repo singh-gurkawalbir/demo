@@ -2043,7 +2043,7 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
     state && state.session,
     integrationId
   );
-  const { steps: uninstallSteps, error, isFetched } = uninstallData;
+  const { steps: uninstallSteps, error, isFetched, isComplete } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
@@ -2051,7 +2051,7 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
 
   const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
   if (visibleSteps.length === 0) {
-    return { steps: emptyStepsArr, error, isFetched };
+    return { steps: emptyStepsArr, error, isFetched, isComplete };
   }
 
   const modifiedSteps = produce(visibleSteps, draft => {
@@ -2062,7 +2062,7 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
     }
   });
 
-  return { steps: modifiedSteps, error, isFetched };
+  return { steps: modifiedSteps, error, isFetched, isComplete };
 }
 
 export function addNewStoreSteps(state, integrationId) {
