@@ -1,4 +1,4 @@
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -33,7 +33,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
 
   return (
     <div className={classes.root}>
-      {token && (
+      {token ? (
         <>
           <Typography variant="caption">
             {token || <AccessToken count="23" />}
@@ -49,16 +49,15 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
             </IconButton>
           </CopyToClipboard>
         </>
-      )}
-      {!token && (
-        <Typography
-          data-test={showTokenTestAttr || 'showToken'}
-          className={classes.showToken}
-          onClick={onShowToken}
-          variant="caption">
-          Show Token
-        </Typography>
-      )}
+      )
+        : (
+          <Button
+            data-test={showTokenTestAttr || 'showToken'}
+            className={classes.showToken}
+            onClick={onShowToken}>
+            Show Token
+          </Button>
+        )}
     </div>
   );
 }
