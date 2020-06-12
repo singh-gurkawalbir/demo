@@ -23,7 +23,7 @@ export default function IntegrationTabs({ tabs, className }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { tab } = match.params;
+  const { tab, storeId: childId } = match.params;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
 
   // if you cant find tab index default it to zero
@@ -71,7 +71,7 @@ export default function IntegrationTabs({ tabs, className }) {
           className={classes.tabPanel}
           id={`tabpanel-${i}`}
           aria-labelledby={`tab-${i}`}>
-          <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
+          <div>{currentTabIndex === i && <Panel {...match.params} childId={childId} />}</div>
         </div>
       ))}
     </div>

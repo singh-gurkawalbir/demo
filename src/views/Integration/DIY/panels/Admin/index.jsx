@@ -9,7 +9,7 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
@@ -80,15 +80,39 @@ const allSections = [
     id: 'uninstall',
   }
 ];
+const emptyObj = {};
 
 export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const isParent = !childId || (childId === integrationId);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-    return !!(integration && integration._connectorId)
-  })
+  const {
+    isIntegrationApp,
+    supportsChild,
+  } = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
+
+    if (integration) {
+      return {
+        isIntegrationApp: !!integration._connectorId,
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+      };
+    }
+
+    return emptyObj;
+  }, shallowEqual);
+  const children = useSelector(
+    state => {
+      // As result includes parent integration, remove it from result.
+      const resources = selectors.integrationChildren(state, integrationId);
+      return resources.filter(r => r.value !== integrationId)
+    },
+    shallowEqual
+  );
   const sectionsToHide = [];
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
@@ -104,6 +128,8 @@ export default function AdminPanel({ integrationId, childId }) {
     if (!isParent) {
       sectionsToHide.push('subscription');
       sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length) {
+      sectionsToHide.push('uninstall');
     }
   }
 
@@ -145,7 +171,7 @@ export default function AdminPanel({ integrationId, childId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section integrationId={integrationId} childId={childId} />
               </Route>
             ))}
           </Switch>

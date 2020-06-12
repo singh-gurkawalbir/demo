@@ -2,7 +2,6 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const emptyObject = {};
-const emptyArray = [];
 
 export default (state = {}, action) => {
   const {
@@ -69,14 +68,6 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function uninstall2Steps(state, id) {
-  if (!state || !state[id]) {
-    return emptyArray;
-  }
-
-  return state[id].steps;
-}
-
 export function uninstall2Data(state, id) {
   if (!state || !state[id]) {
     return emptyObject;

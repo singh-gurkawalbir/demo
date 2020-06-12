@@ -228,7 +228,7 @@ export default function ConnectorInstallation(props) {
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/v2/${integrationChildAppName}/${childIntegration._id}/setup`
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
           );
         } else {
           dispatch(
@@ -236,7 +236,7 @@ export default function ConnectorInstallation(props) {
           );
           if (integration && integration.installSteps && integration.installSteps.length > 0) {
             props.history.push(
-              `/pg/integrationapps/v2/${integrationAppName}/${integrationId}`
+              `/pg/integrationapps/${integrationAppName}/${integrationId}`
             );
           } else {
             props.history.push(
@@ -278,7 +278,8 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            if (isFrameWork2) {
+            // for old cloned IAs, uninstall should happen the old way
+            if (isFrameWork2 && !isCloned) {
               const {url} = match;
               const urlExtractFields = url.split('/');
               const index = urlExtractFields.findIndex(

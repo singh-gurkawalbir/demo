@@ -11,7 +11,7 @@ export default function IntegrationAppUninstallation({ match }) {
     useSelector(state => {
       const i = selectors.integrationAppSettings(state, integrationId);
       if (i) {
-        return {isIntegration: true, mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
+        return {mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
       }
       return emptyobj
     }, shallowEqual
@@ -20,20 +20,15 @@ export default function IntegrationAppUninstallation({ match }) {
   useSelector(state => {
     const i = selectors.integrationAppSettings(state, storeId);
     if (i) {
-      return {isIntegration: true, mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
+      return {mode: i.mode, name: i.name, _id: i._id, stores: i.stores, install: i.install, installSteps: i.installSteps, uninstallSteps: i.uninstallSteps}
     }
     return emptyobj
   }, shallowEqual
   )
-
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
-  if (!integration.isIntegration) {
-    return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />
-  }
-  if (isFrameWork2 && storeId && !storeIntegration.isIntegration) {
-    return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  if (isFrameWork2) {
+    return <Uninstaller2 integration={storeId ? storeIntegration : integration} integrationId={storeId || integrationId} />
   }
 
-  if (isFrameWork2) return <Uninstaller2 integration={integration} storeIntegration={storeIntegration} integrationId={integrationId} storeId={storeId} />;
   return <Uninstaller1 integration={integration} integrationId={integrationId} storeId={storeId} />
 }

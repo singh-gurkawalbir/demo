@@ -45,19 +45,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Uninstaller2({ integration, storeIntegration, integrationId, storeId }) {
+export default function Uninstaller2({ integration, integrationId }) {
   const classes = useStyles();
-  const resourceId = storeId || integrationId;
-  const resource = storeId ? storeIntegration : integration;
   const history = useHistory();
   const dispatch = useDispatch();
-  const {mode, isIntegration, name} = resource;
+  const {_id, mode, name} = integration;
   const { steps: uninstallSteps, isFetched, error } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, { integrationId: resourceId, isFrameWork2: true })
+    selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })
   );
 
   const isIAUninstallComplete = useSelector(state =>
-    selectors.isIAV2UninstallComplete(state, { integrationId: resourceId })
+    selectors.isIAV2UninstallComplete(state, { integrationId })
   );
   const currentStep = useMemo(() => uninstallSteps && uninstallSteps.find(s => s.isCurrentStep), [
     uninstallSteps,
@@ -66,19 +64,19 @@ export default function Uninstaller2({ integration, storeIntegration, integratio
     // we only want to do init, if mode is yet not uninstall
     if (mode && mode !== 'uninstall') {
       dispatch(
-        actions.integrationApp.uninstaller2.init(resourceId)
+        actions.integrationApp.uninstaller2.init(integrationId)
       );
     }
-  }, [dispatch, mode, resourceId]);
+  }, [dispatch, mode, integrationId]);
 
   useEffect(() => {
     // if steps were never fetched , then we request steps
     if (mode === 'uninstall' && !isFetched && !isIAUninstallComplete) {
       dispatch(
-        actions.integrationApp.uninstaller2.requestSteps(resourceId)
+        actions.integrationApp.uninstaller2.requestSteps(integrationId)
       );
     }
-  }, [dispatch, resourceId, isFetched, isIAUninstallComplete, mode])
+  }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode])
 
   const handleStepClick = useCallback((step) => {
     const { type, isTriggered, form } = step;
@@ -86,47 +84,47 @@ export default function Uninstaller2({ integration, storeIntegration, integratio
     if (!isTriggered) {
       dispatch(
         actions.integrationApp.uninstaller2.updateStep(
-          resourceId,
+          integrationId,
           'inProgress',
         )
       );
       if ((type !== UNINSTALL_STEP_TYPES.FORM || !form)) {
         dispatch(
           actions.integrationApp.uninstaller2.uninstallStep(
-            resourceId,
+            integrationId,
           )
         );
       }
     }
-  }, [dispatch, resourceId]);
+  }, [dispatch, integrationId]);
 
   const formCloseHandler = useCallback(() => {
     // history.goBack();
     dispatch(
-      actions.integrationApp.uninstaller2.updateStep(resourceId, 'reset')
+      actions.integrationApp.uninstaller2.updateStep(integrationId, 'reset')
     );
-  }, [dispatch, resourceId]);
+  }, [dispatch, integrationId]);
   const formSubmitHandler = useCallback(
     formVal => {
       dispatch(
         actions.integrationApp.uninstaller2.uninstallStep(
-          resourceId,
+          integrationId,
           formVal
         )
       );
       // history.goBack();
     },
-    [dispatch, resourceId]
+    [dispatch, integrationId]
   );
 
   const handleBackClick = () => {
     history.replace(getRoutePath('dashboard'));
   };
 
-  if (!isIntegration) {
+  if (!_id) {
     dispatch(
       actions.integrationApp.uninstaller2.clearSteps(
-        resourceId
+        integrationId
       )
     );
     history.replace(getRoutePath('dashboard'));
@@ -169,7 +167,7 @@ export default function Uninstaller2({ integration, storeIntegration, integratio
         <Grid container spacing={3} className={classes.stepTable}>
           {currentStep && currentStep.isTriggered && currentStep.form && (
           <FormStepDrawer
-            integrationId={resourceId}
+            integrationId={integrationId}
             formMeta={currentStep.form}
             title={currentStep.name}
             // index={currStepIndex + 1}

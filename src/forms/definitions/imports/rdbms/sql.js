@@ -112,6 +112,7 @@ export default {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.query': {
       fieldId: 'rdbms.query',
       defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
@@ -185,6 +186,11 @@ export default {
           'rdbms.queryInsert',
           'rdbms.queryUpdate',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
       },
     ],
   },

@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    flexDirection: 'row !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
   loading: {
     display: 'flex',
+    flexDirection: 'row !important',
     alignItems: 'center',
     padding: theme.spacing(1, 0),
   },

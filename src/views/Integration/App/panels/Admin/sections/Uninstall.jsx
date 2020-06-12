@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../components/PanelHeader';
@@ -34,8 +34,6 @@ const useStyles = makeStyles(theme => ({
 export default function UninstallSection({ storeId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
-  const match = useRouteMatch();
-  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId));
   const { confirmDialog } = useConfirmDialog();
   const integration =
     useSelector(state =>
@@ -53,24 +51,7 @@ export default function UninstallSection({ storeId, integrationId }) {
         {
           label: 'Yes',
           onClick: () => {
-            if (isFrameWork2) {
-              const {url} = match;
-              const urlExtractFields = url.split('/');
-              const index = urlExtractFields.findIndex(
-                element => element === 'child'
-              );
-
-              // REVIEW: @ashu, review with Dave once
-              if (index === -1) {
-                history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
-                );
-              } else {
-                history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
-                );
-              }
-            } else if (
+            if (
               integration.settings &&
               integration.settings.supportsMultiStore
             ) {
