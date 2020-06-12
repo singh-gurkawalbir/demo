@@ -17,6 +17,7 @@ import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import InfoIconButton from '../../components/InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,11 +124,17 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: r => r.doc.name || r.doc._id,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && (r.doc.name || r.doc._id)}
+            <InfoIconButton info={r.doc.description} size="xs" />
+          </>
+        );
+      },
       orderBy: 'name',
     },
     { heading: 'Type', value: r => r.model },
-    { heading: 'Description', value: r => r.doc.description },
   ];
 
   useEffect(() => {
