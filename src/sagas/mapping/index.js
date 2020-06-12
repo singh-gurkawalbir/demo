@@ -214,21 +214,20 @@ export function* refreshGenerates({ id, isInit = false }) {
         filterKey: 'salesforce-sObjects-childReferenceTo',
       })
     // during init, parent sObject metadata is already fetched.
-    const sObjectlist = isInit ? [] : [sObjectType];
+    const sObjectList = isInit ? [] : [sObjectType];
     // check for each mapping sublist if it relates to childSObject
     mappings.forEach(({generate}) => {
       if (generate && generate.indexOf('[*].') !== -1) {
         const generateName = generate.split('[*].')[0]
         const childRelationshipObject = childRelationshipFields.find(field => field.value === generateName)
-        if (sObjectlist.indexOf(childRelationshipObject.childSObject) === -1) {
-          sObjectlist.push(childRelationshipObject.childSObject)
+        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+          sObjectList.push(childRelationshipObject.childSObject)
         }
       }
     })
-    // sObjectlist
     yield put(actions.importSampleData.request(
       resourceId,
-      {sObjects: sObjectlist},
+      {sObjects: sObjectList},
       !isInit
     ))
     // in case of salesforce import, fetch all child sObject reference
