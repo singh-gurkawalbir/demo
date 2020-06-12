@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = { take: 10 };
+const defaultFilter = { take: 100 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {
     // add connections

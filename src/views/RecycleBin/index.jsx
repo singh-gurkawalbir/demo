@@ -37,7 +37,7 @@ const LoadingMask = () => (
 export default function RecycleBin(props) {
   const history = useHistory();
   const defaultFilter = useMemo(
-    () => ({ take: 10, sort: { orderBy: 'doc.name', order: 'asc' } }),
+    () => ({ take: 100, sort: { orderBy: 'doc.name', order: 'asc' } }),
     []
   );
   const classes = useStyles();

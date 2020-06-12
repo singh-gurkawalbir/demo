@@ -27,7 +27,7 @@ const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
 export default function InstallBase(props) {
   const defaultFilter = useMemo(
     () => ({
-      take: 10,
+      take: 100,
       searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
     }),
     []

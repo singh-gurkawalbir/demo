@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 export default function Licenses(props) {
   const defaultFilter = useMemo(
     () => ({
-      take: 10,
+      take: 100,
       searchBy: [
         'user.email',
         '_integrationId',

@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function TemplateList(props) {
   const { location } = props;
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
+  const defaultFilter = useMemo(() => ({ take: 100 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
