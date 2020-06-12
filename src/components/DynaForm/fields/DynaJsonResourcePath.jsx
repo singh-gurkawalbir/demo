@@ -13,7 +13,7 @@ import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
  * 3. If we want to point to any particular resource in the file, set explicitly (end the json path with .* if array of objects, else just a json path)
  * To achieve above cases, we have 2 properties on this field
  * resourcePathToShow - that is visible for the user without any * appended
- * resourcePathToSave - that is used while saving - optional handler extracts this values and passes through
+ * resourcePathToSave - that is used while saving - preSave extracts this values and passes through
  */
 export default function DynaJsonResourcePath(props) {
   const { id, onFieldChange, value, label, resourceId, resourceType} = props;
