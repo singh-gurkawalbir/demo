@@ -405,17 +405,7 @@ export default function StandaloneMapping(props) {
     );
   }
 
-  const fetchSalesforceSObjectMetadata = sObject => {
-    dispatch(
-      actions.metadata.request(
-        connectionId,
-        `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObject}`
-      )
-    );
-  };
-
   const optionalHandler = {
-    fetchSalesforceSObjectMetadata,
     refreshGenerateFields: requestImportSampleData,
     refreshExtractFields,
   };
