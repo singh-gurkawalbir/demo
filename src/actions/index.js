@@ -888,6 +888,11 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
         id: integrationId,
       }),
+    redirectTo: (integrationId, route) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REDIRECT, {
+        id: integrationId,
+        route,
+      }),
   },
   store: {
     addNew: integrationId =>

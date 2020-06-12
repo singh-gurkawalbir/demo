@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -49,9 +49,9 @@ export default function Uninstaller2({ integration, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const {_id, mode, name} = integration;
-  const { steps: uninstallSteps, isFetched, error } = useSelector(state =>
-    selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true })
+  const {mode, name} = integration;
+  const { steps: uninstallSteps, isFetched, error, redirectTo } = useSelector(state =>
+    selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true }), shallowEqual
   );
 
   const isIAUninstallComplete = useSelector(state =>
@@ -77,6 +77,17 @@ export default function Uninstaller2({ integration, integrationId }) {
       );
     }
   }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode])
+
+  useEffect(() => {
+    if (redirectTo) {
+      dispatch(
+        actions.integrationApp.uninstaller2.clearSteps(
+          integrationId
+        )
+      );
+      history.replace(getRoutePath(redirectTo));
+    }
+  }, [dispatch, history, integrationId, redirectTo])
 
   const handleStepClick = useCallback((step) => {
     const { type, isTriggered, form } = step;
@@ -121,15 +132,6 @@ export default function Uninstaller2({ integration, integrationId }) {
     history.replace(getRoutePath('dashboard'));
   };
 
-  if (!_id) {
-    dispatch(
-      actions.integrationApp.uninstaller2.clearSteps(
-        integrationId
-      )
-    );
-    history.replace(getRoutePath('dashboard'));
-    return null;
-  }
   if (error) {
     return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }

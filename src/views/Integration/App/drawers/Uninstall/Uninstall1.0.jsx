@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
+import LoadResources from '../../../../../components/LoadResources';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
@@ -64,7 +65,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   );
 
   useEffect(() => {
-    if (_id && !error && !uninstallSteps) {
+    if (!error && !uninstallSteps) {
       dispatch(
         actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
@@ -108,7 +109,11 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     isUninstallComplete,
   ]);
 
-  if (!_id || error) {
+  if (!integration || !integration._id) {
+    return <LoadResources required resources="integrations" />;
+  }
+
+  if (error) {
     return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }
 

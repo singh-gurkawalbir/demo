@@ -10,6 +10,7 @@ export default (state = {}, action) => {
     error,
     uninstallSteps,
     update,
+    route,
   } = action;
   let step;
 
@@ -42,6 +43,12 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS:
         delete draft[id];
+        break;
+      case actionTypes.INTEGRATION_APPS.UNINSTALLER2.REDIRECT:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
+        draft[id].redirectTo = route;
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE:
         if (draft[id] && draft[id].steps) {

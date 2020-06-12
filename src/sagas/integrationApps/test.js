@@ -132,6 +132,12 @@ describe('uninstaller2.0 saga', () => {
         )
       )
       .put(actions.resource.requestCollection('integrations'))
+      .put(
+        actions.integrationApp.uninstaller2.redirectTo(
+          id,
+          'dashboard'
+        )
+      )
       .not.put(
         actions.integrationApp.uninstaller2.receivedSteps(
           id,
