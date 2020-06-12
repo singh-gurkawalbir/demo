@@ -10,12 +10,20 @@ import actions from '../../../../../../../actions';
 import * as selectors from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
+import InfoIconButton from '../../../../../../../components/InfoIconButton';
 
 const metadata = {
   columns: [
     {
       heading: 'Name',
-      value: r => r && r.name,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && (r.name || r._id)}
+            <InfoIconButton info={r.description} size="xs" />
+          </>
+        );
+      },
     },
     {
       heading: 'Description',
