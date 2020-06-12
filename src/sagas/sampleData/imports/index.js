@@ -201,14 +201,27 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
 
       case 'SalesforceImport': {
         const { _connectionId: connectionId, salesforce } = resource;
+        const {sObjects} = options
+        if (sObjects && Array.isArray(sObjects)) {
+          for (let i = 0; i < sObjects.length; i += 1) {
+            yield put(
+              actions.metadata.request(
+                connectionId,
+                `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjects[i]}`,
+                { refreshCache }
+              )
+            );
+          }
+        } else {
+          yield put(
+            actions.metadata.request(
+              connectionId,
+              `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
+              { refreshCache }
+            )
+          );
+        }
 
-        yield put(
-          actions.metadata.request(
-            connectionId,
-            `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-            { refreshCache }
-          )
-        );
 
         return;
       }

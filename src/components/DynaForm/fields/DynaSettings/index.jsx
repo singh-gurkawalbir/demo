@@ -13,7 +13,6 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FieldHelp from '../../FieldHelp';
-import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -118,7 +117,7 @@ export default function DynaSettings(props) {
           </Typography>
           <Divider className={classes.divider} />
           <span>
-            {`You don't have any custom settings for this ${MODEL_PLURAL_TO_LABEL[resourceType]}`}.
+            You don&apos;t have any custom settings for this integration.
           </span>
         </div>
       );

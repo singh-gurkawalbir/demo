@@ -18,10 +18,6 @@ export default {
       orderBy: 'name',
     },
     {
-      heading: 'Description',
-      value: r => r.description,
-    },
-    {
       heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
