@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaText from './DynaText';
@@ -18,6 +18,7 @@ import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
 export default function DynaJsonResourcePath(props) {
   const { id, onFieldChange, value, label, resourceId, resourceType} = props;
   const jsonContent = useSelector(state => {
+    // TODO: @Raghu Can be refactored to make a generic selector to get a fileType's data
     const { data: uploadedData } = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
@@ -40,12 +41,34 @@ export default function DynaJsonResourcePath(props) {
     });
   }
 
+  useEffect(() => {
+    // To handle whenever user uploads a new file, resourcePath should get updated
+    // If it parses an array, .* gets appended
+    if (jsonContent && value && typeof value === 'object') {
+      const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, value.resourcePathToShow);
+      let resourcePathToSave = value.resourcePathToShow;
+      if (Array.isArray(parsedJsonContent)) {
+        if (!resourcePathToSave) {
+          resourcePathToSave = '*'
+        } else {
+          resourcePathToSave = `${resourcePathToSave}.*`;
+        }
+      }
+      onFieldChange(id, { ...value, resourcePathToSave })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jsonContent])
+
   const handleOnResourcePathChange = useCallback((id, newValue) => {
     const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, newValue);
     let resourcePathToSave;
-    if (Array.isArray(parsedJsonContent)) {
+    // If user gives * itself, we don't make any modifications as it is a valid one
+    // In other cases, if parsed content is array, resourcePathToSave adds .* to save
+    if (Array.isArray(parsedJsonContent) && newValue !== '*') {
       if (newValue === '') resourcePathToSave = '*';
-      else resourcePathToSave = `${newValue}.*`
+      else resourcePathToSave = `${newValue}.*`;
+    } else {
+      resourcePathToSave = newValue;
     }
     onFieldChange(id, {
       resourcePathToShow: newValue,
@@ -56,7 +79,7 @@ export default function DynaJsonResourcePath(props) {
   return <DynaText
     id={id}
     onFieldChange={handleOnResourcePathChange}
-    value={typeof value === 'string' ? value : value.resourcePathToShow}
+    value={value && value.resourcePathToShow}
     label={label}
 />
 }
