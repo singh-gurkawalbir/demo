@@ -69,7 +69,9 @@ export default {
       sampleData: r => r && r.sampleData,
       refreshOptionsOnChangesTo: ['webhook.url', 'webhook.provider'],
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
     fields: ['common'],
@@ -97,7 +99,7 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries'] },
     ],
   },
 };
