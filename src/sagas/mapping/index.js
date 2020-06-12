@@ -198,21 +198,24 @@ export function* refreshGenerates({ id, isInit = false }) {
     application,
     mappings = [],
     resource = {},
+    subRecordMappingId,
     netsuiteRecordType,
   } = yield select(selectors.mapping, id);
   const { _id: resourceId, } = resource
   if (application === adaptorTypeMap.SalesforceImport) {
+    // salesforce Import could have sub objects as well
     const { _connectionId, salesforce } = resource
     const { sObjectType } = salesforce;
+    // getting all childRelationshipFields of parent sObject
     const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
       {
         connectionId: _connectionId,
         commMetaPath: `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
       })
-    // no need to check if data doesnt exist and fetch it.
-    // during init, no need to call parent sObject again
+    // during init, parent sObject metadata is already fetched.
     const sObjectlist = isInit ? [] : [sObjectType];
+    // check for each mapping sublist if it relates to childSObject
     mappings.forEach(({generate}) => {
       if (generate && generate.indexOf('[*].') !== -1) {
         const generateName = generate.split('[*].')[0]
@@ -230,9 +233,13 @@ export function* refreshGenerates({ id, isInit = false }) {
     ))
     // in case of salesforce import, fetch all child sObject reference
   } else {
+    const opts = {};
+    if (application === adaptorTypeMap.NetSuiteImport && subRecordMappingId) {
+      opts.recordType = netsuiteRecordType;
+    }
     yield put(actions.importSampleData.request(
       resourceId,
-      {recordType: netsuiteRecordType},
+      opts,
       !isInit
     )
     );
