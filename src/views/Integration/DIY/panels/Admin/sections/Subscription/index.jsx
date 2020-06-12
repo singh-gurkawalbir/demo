@@ -19,15 +19,11 @@ const metadata = {
       value: function NameWithInfoicon(r) {
         return (
           <>
-            {r && (r.name || r._id)}
+            {r && r.name}
             <InfoIconButton info={r.description} size="xs" />
           </>
         );
       },
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
     },
     {
       heading: 'Installed On',
