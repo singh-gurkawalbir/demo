@@ -15,6 +15,6 @@ export default function AgentToken({ agentId }) {
   }, [agentId, dispatch]);
 
   return (
-    <ClipboardCopy onShowToken={displayAgentToken} token={accessToken} testAttr="displayAgentToken" />
+    <ClipboardCopy onShowToken={displayAgentToken} token={accessToken} showTokenTestAttr="displayAgentToken" />
   );
 }

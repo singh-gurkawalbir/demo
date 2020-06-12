@@ -35,7 +35,7 @@ export default function Display({ accessToken }) {
       ) : (
         <>
           {accessToken.permissions.displayToken && (
-            <ClipboardCopy onShowToken={handleDisplayClick} token={token} testAttr="copyTokenToClipboard" />
+            <ClipboardCopy onShowToken={handleDisplayClick} token={token} showTokenTestAttr="displayTokenStatus" />
           )}
         </>
       )}

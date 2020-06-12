@@ -17,6 +17,6 @@ export default function StackSystemToken({ stackId }) {
 
 
   return (
-    <ClipboardCopy onShowToken={displaySystemToken} token={systemToken} testAttr="copyStackSystemToken" />
+    <ClipboardCopy onShowToken={displaySystemToken} token={systemToken} showTokenTestAttr="copyStackSystemToken" />
   );
 }

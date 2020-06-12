@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ClipboardCopy({ onShowToken, token, testAttr }) {
+export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr }) {
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
@@ -42,7 +42,7 @@ export default function ClipboardCopy({ onShowToken, token, testAttr }) {
             text={token}
             onCopy={copyToClipboard}>
             <IconButton
-              data-test={testAttr || 'copyToken'}
+              data-test="copyToken"
               title="Copy to clipboard"
               size="small">
               <CopyIcon />
@@ -52,6 +52,7 @@ export default function ClipboardCopy({ onShowToken, token, testAttr }) {
       )}
       {!token && (
         <Typography
+          data-test={showTokenTestAttr || 'showToken'}
           className={classes.showToken}
           onClick={onShowToken}
           variant="caption">
