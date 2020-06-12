@@ -28,7 +28,6 @@ const metadata = {
     },
     {
       heading: 'Action',
-
       value: function Installer(r) {
         return <AddonInstallerButton resource={r} />;
       },
