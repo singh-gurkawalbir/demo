@@ -148,7 +148,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -181,9 +180,7 @@ export default {
         return output ? 'records' : 'blob';
       },
     },
-
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
@@ -222,7 +219,6 @@ export default {
               'ftp.directoryPath',
               'ftp.fileNameStartsWith',
               'ftp.fileNameEndsWith',
-              'ftp.leaveFile',
             ],
           },
           {

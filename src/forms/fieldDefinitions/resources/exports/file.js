@@ -69,27 +69,9 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
-
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'ftp.leaveFile': {
-    type: 'checkbox',
-    label: 'Leave file on server',
-    defaultValue: r => r && r.file && r.file.skipDelete,
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
   },
   'file.compressionFormat': {
     type: 'select',
