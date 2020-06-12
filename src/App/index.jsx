@@ -22,7 +22,7 @@ import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
-import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
+import ConflictAlertDialog from '../components/ConflictAlertDialog';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of

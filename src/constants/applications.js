@@ -130,7 +130,7 @@ const connectors = [
   },
   {
     id: 'mysql',
-    name: 'My SQL',
+    name: 'MySQL',
     type: 'mysql',
     keywords: 'database,rdbms,db',
     group: 'db',

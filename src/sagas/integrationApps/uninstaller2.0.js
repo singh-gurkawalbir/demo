@@ -58,7 +58,13 @@ export function* uninstallStep({ id, formVal }) {
         'completed'
       )
     );
-    return yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('integrations'));
+    // once all steps are done, mark state as complete
+    return yield put(
+      actions.integrationApp.uninstaller2.complete(
+        id
+      )
+    );
   }
   yield put(
     actions.integrationApp.uninstaller2.receivedSteps(

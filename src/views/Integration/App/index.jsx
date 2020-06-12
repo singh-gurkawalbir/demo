@@ -32,7 +32,7 @@ import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import integrationAppUtil from '../../../utils/integrationApps';
+import integrationAppUtil, { getAdminLevelTabs } from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
@@ -201,7 +201,16 @@ export default function IntegrationApp(props) {
   if (!hasAddOns) {
     filterTabs.push('addons');
   }
-
+  const showAdminTab = getAdminLevelTabs({
+    integrationId,
+    isIntegrationApp: true,
+    isParent: true,
+    supportsChild: !!(integration && integration.settings && integration.settings.supportsMultiStore),
+    isMonitorLevelUser: accessLevel === 'monitor',
+  }).length
+  if (!showAdminTab) {
+    filterTabs.push('admin')
+  }
   const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(
     tag => {

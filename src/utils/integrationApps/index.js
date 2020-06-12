@@ -1,4 +1,4 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 import { isProduction } from '../../forms/utils';
 
 export const getIntegrationAppUrlName = (
@@ -15,8 +15,49 @@ export const getIntegrationAppUrlName = (
   );
 };
 
-export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, hasAddOns, isStandalone}) => {
-  const tabs = []
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+  const tabs = [
+    'general',
+    'readme',
+    'apitoken',
+    'subscription',
+    'uninstall'
+  ];
+  const sectionsToHide = [];
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+  }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall')
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length > 1) {
+      sectionsToHide.push('uninstall');
+    }
+  }
+  if (isMonitorLevelUser) {
+    sectionsToHide.push('uninstall')
+    sectionsToHide.push('apitoken')
+  }
+
+  return tabs.filter(
+    sec => !sectionsToHide.includes(sec)
+  );
+}
+
+export const getTopLevelTabs = (options = {}) => {
+  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId} = options;
+  const tabs = [];
+  const showAdminTabs = !!getAdminLevelTabs(options).length
+  const isStandalone = STANDALONE_INTEGRATION.id === integrationId
   if (isIntegrationApp) {
     tabs.push('users')
     if (!hasAddOns) {
@@ -33,6 +74,10 @@ export const getAvailableTabs = ({tabs: allTabs, isIntegrationApp, isParent, has
     tabs.push('settings')
     tabs.push('admin')
   }
+  if (!showAdminTabs) {
+    tabs.push('admin')
+  }
+
   return allTabs.filter(tab => !tabs.includes(tab.path))
 }
 

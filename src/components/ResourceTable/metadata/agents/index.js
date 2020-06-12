@@ -23,11 +23,6 @@ export default {
       orderBy: 'name',
     },
     {
-      heading: 'Description',
-      value: r => r.description,
-      orderBy: 'description',
-    },
-    {
       heading: 'Status',
       value(r) {
         return <AgentStatus agentId={r._id} />;
