@@ -224,6 +224,7 @@ export default {
       {
         collapsed: true,
         label: 'How would you like the records imported?',
+        type: 'indent',
         fields: [
           'distributed',
           'file.type',
@@ -233,19 +234,20 @@ export default {
           'as2.fileNameTemplate',
           'as2.messageIdTemplate',
           'file.xml.body',
+          'file.xlsx.includeHeader',
+          'file.filedefinition.rules',
+          'as2.headers',
+          'file.lookups',
+        ],
+        containers: [{fields: [
+          'file.csvHelper',
           'file.csv.includeHeader',
           'file.csv.columnDelimiter',
           'file.csv.rowDelimiter',
           'file.csv.replaceNewlineWithSpace',
           'file.csv.replaceTabWithSpace',
           'file.csv.truncateLastRowDelimiter',
-          'file.csv.wrapWithQuotes',
-          'file.csvHelper',
-          'file.xlsx.includeHeader',
-          'file.filedefinition.rules',
-          'as2.headers',
-          'file.lookups',
-        ],
+          'file.csv.wrapWithQuotes']}]
       },
       {
         collapsed: true,
