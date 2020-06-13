@@ -1,9 +1,12 @@
-import { makeStyles } from '@material-ui/styles';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../../reducers';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
-import FlowCard from '../../../common/FlowCard';
+import CeligoTable from '../../../../../../components/CeligoTable';
+import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,15 +36,11 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         resources="flows">
-        {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            integrationId={integrationId}
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            excludeActions={['schedule']}
-          />
-        ))}
+        <CeligoTable
+          data={flows}
+          {...metadata}
+          actionProps={{ ssLinkedConnectionId, integrationId }}
+        />
       </LoadSuiteScriptResources>
     </div>
   );

@@ -78,12 +78,12 @@ export default function Integration({ match }) {
         required
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
-        resources="flows,connections">
+        resources="tiles,flows,connections">
         <CeligoPageBar
           title={
             integration && (
               <EditableText
-                text={integration.name}
+                text={integration.displayName}
                 // onChange={handleTitleChange}
                 inputClassName={
                   drawerOpened

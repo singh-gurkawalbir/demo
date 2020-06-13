@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Breadcrumbs, Typography } from '@material-ui/core';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
@@ -54,6 +53,10 @@ const flowBuilderRoutes = [
     childRoutes: [
       { path: '/schedule', breadcrumb: () => 'Schedule' },
       { path: '/settings', breadcrumb: () => 'Settings' },
+      {
+        path: '/edit/:resourceType/:id',
+        breadcrumb: EditResourceTypeCrumb,
+      },
     ],
   },
 ];
@@ -76,6 +79,24 @@ const suiteScriptRoutes = [
       { path: '/connections', breadcrumb: () => 'Connections' },
       ...flowBuilderRoutes,
     ],
+  },
+  {
+    path: '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId',
+    breadcrumb: IntegrationCrumb,
+    childRoutes: [
+      {
+        path: '/admin',
+        breadcrumb: () => 'Admin',
+        childRoutes: [
+          { path: '/general', breadcrumb: () => 'General' },
+          { path: '/legacy', breadcrumb: () => 'Legacy' },
+        ],
+      },
+      { path: '/flows', breadcrumb: () => 'Flows' },
+      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+      { path: '/connections', breadcrumb: () => 'Connections' },
+      ...flowBuilderRoutes,
+    ],
   }
 ];
 
@@ -83,12 +104,7 @@ const suiteScriptRoutes = [
 const routes = [
   ...suiteScriptRoutes,
 ];
-const commonChildRoutes = [
-  {
-    path: '/edit/:resourceType/:id',
-    breadcrumb: EditResourceTypeCrumb,
-  },
-];
+const commonChildRoutes = [];
 
 function parseUrl(pathname, routes, url = '', params = {}) {
   let crumbs = [];

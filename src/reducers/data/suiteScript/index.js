@@ -1,8 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
-import { SUITESCRIPT_CONNECTORS, emptyObject } from '../../../utils/constants';
-import { parseJobs } from './util';
-import { actionChannel } from 'redux-saga-test-plan/matchers';
+import { emptyObject } from '../../../utils/constants';
+import { parseTiles, parseJobs } from './util';
 
 const emptyList = [];
 
@@ -132,40 +131,28 @@ export default (
             }
 
             if (resourceType.endsWith('/tiles')) {
-              draft[ssLinkedConnectionId].tiles = collection.map(tile => {
-                const connector = SUITESCRIPT_CONNECTORS.find(c =>
-                  [c.name, c.ssName].includes(tile.name)
-                );
-                const t = {
-                  ...tile,
-                  ssLinkedConnectionId,
-                };
-
-                if (connector) {
-                  t.name = connector.name;
-                  t._connectorId = connector._id;
-                }
-
-                return t;
-              });
+              const tiles = parseTiles(collection);
+              draft[ssLinkedConnectionId].tiles = tiles.map(tile => ({
+                ...tile,
+                ssLinkedConnectionId,
+              }));
 
               if (!draft[ssLinkedConnectionId].integrations) {
                 draft[ssLinkedConnectionId].integrations = [];
               }
 
-              collection.forEach(tile => {
-                const connector = SUITESCRIPT_CONNECTORS.find(c =>
-                  [c.name, c.ssName].includes(tile.name)
-                );
+              tiles.forEach(tile => {
                 const integration = {
                   _id: tile._integrationId,
                   name: tile.name,
+                  displayName: tile.displayName,
+                  isNotEditable: tile.isNotEditable || (tile.name !== tile.displayName)
                 };
 
-                if (connector) {
-                  // integration.name = connector.name;
-                  integration._connectorId = connector._id;
+                if (tile._connectorId) {
+                  integration._connectorId = tile._connectorId;
                   integration.mode = tile.mode;
+                  integration.urlName = tile.urlName;
                 }
 
                 const index = draft[
@@ -200,9 +187,6 @@ export default (
               }
 
               collection.forEach(flow => {
-                const index = draft[ssLinkedConnectionId].flows.findIndex(
-                  f => f.type === flow.type && f._id === flow._id
-                );
                 const flowId = `${
                   {
                     EXPORT: 'e',
@@ -211,6 +195,9 @@ export default (
                     REALTIME_IMPORT: 'ri',
                   }[flow.type]
                 }${flow._id}`;
+                const index = draft[ssLinkedConnectionId].flows.findIndex(
+                  f => f.type === flow.type && f._id === flowId
+                );
 
                 if (index === -1) {
                   draft[ssLinkedConnectionId].flows.push({
@@ -242,19 +229,29 @@ export default (
             let index;
 
             if (resourceType === 'flows') {
+              const flowId = `${
+                {
+                  EXPORT: 'e',
+                  IMPORT: 'i',
+                  REALTIME_EXPORT: 're',
+                  REALTIME_IMPORT: 'ri',
+                }[resource.type]
+              }${resource._id}`;
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
                 r =>
-                  r._id === resource._id &&
+                  r._id === flowId &&
                   r._integrationId === resource._integrationId
               );
+              if (index > -1) {
+                draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId};
+              }
             } else {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
                 r => r._id === resource._id
               );
-            }
-
-            if (index > -1) {
-              draft[ssLinkedConnectionId][resourceType][index] = resource;
+              if (index > -1) {
+                draft[ssLinkedConnectionId][resourceType][index] = resource;
+              }
             }
           }
         }

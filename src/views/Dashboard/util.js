@@ -53,36 +53,6 @@ export function tileStatus(tile) {
   return { label, variant };
 }
 
-export function suiteScriptTileName(tile) {
-  let name;
-
-  if (tile.name && tile.name.indexOf('Amazon') === 0) {
-    name = `${tile.name} - NetSuite Connector`;
-  } else {
-    switch (tile.name) {
-      case 'Salesforce Connector':
-        name = 'Salesforce - NetSuite Connector';
-        break;
-      case 'SVB Connector':
-        name = 'SVB - NetSuite Connector';
-        break;
-      case 'eBay':
-      case 'Google Shopping':
-      case 'Magento':
-      case 'Newegg':
-      case 'Nextag':
-      case 'Rakuten':
-      case 'Sears':
-        name = `${tile.name} - NetSuite Connector`;
-        break;
-      default:
-        ({ name } = tile);
-    }
-  }
-
-  return name;
-}
-
 /*
  * The below utils dragTileConfig and dropTileConfig are used for Tile, SuiteScript Tile Components
  * It supplies required config to support drag and drop functionality among tiles

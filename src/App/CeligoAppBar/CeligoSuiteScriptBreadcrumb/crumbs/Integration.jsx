@@ -13,7 +13,7 @@ export default function IntegrationCrumb({ ssLinkedConnectionId, integrationId }
   // integration -yet- exists in the state.
   return (
     <LoadResources ssLinkedConnectionId={ssLinkedConnectionId} resources="integrations">
-      {integration ? integration.name : 'Integration'}
+      {integration ? integration.displayName : 'Integration'}
     </LoadResources>
   );
 }

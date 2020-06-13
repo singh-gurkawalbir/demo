@@ -201,13 +201,27 @@ export default class AppRouting extends Component {
           }}
         />
         <Route
+          path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId"
+          exact
+          render={({ history, match }) => {
+            history.replace(
+              `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`
+            )
+          }}
+        />
+        <Route
           path={[
             '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId',
+            '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
           ]}>
           <SuiteScriptFlowBuilder />
         </Route>
         <Route
           path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab"
+          component={SuiteScriptIntegration}
+        />
+        <Route
+          path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab"
           component={SuiteScriptIntegration}
         />
         <Route path="/pg/:resourceType" component={ResourceList} />

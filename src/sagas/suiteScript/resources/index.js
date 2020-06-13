@@ -119,5 +119,5 @@ export function* commitStagedChanges({
 }
 
 export const resourceSagas = [
-  takeEvery(actionTypes.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, commitStagedChanges),
 ];

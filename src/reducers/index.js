@@ -60,7 +60,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
-import { suiteScriptResourceKey } from '../utils/suiteScript';
+import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
@@ -4460,22 +4460,18 @@ export function suiteScriptIntegrationConnectionList(
 
   if (integrationId && flows) {
     flows.forEach(f => {
-      if (f.export._connectionId) {
+      if (f.export && f.export._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);
       }
-
-      if (f.import._connectionId) {
+      if (f.import && f.import._connectionId) {
         connectionIdsInUse.push(f.import._connectionId);
       }
-
-      // TODO: Shiva
-      if (f.isJavaFlow) {
+      if (isJavaFlow(f)) {
         connectionIdsInUse.push('CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
       }
     });
   }
 
-  // return connections;
   return connections.filter(
     c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
   );
@@ -4735,3 +4731,7 @@ export const rdbmsConnectionType = (state, connectionId) => {
 
   return connection.rdbms && connection.rdbms.type;
 };
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
+}

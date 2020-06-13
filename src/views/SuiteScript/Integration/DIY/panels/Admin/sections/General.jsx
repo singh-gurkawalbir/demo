@@ -1,7 +1,10 @@
-import { Fragment } from 'react';
-import { makeStyles } from '@material-ui/core';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import ResourceForm from '../../../../../../../components/SuiteScript/ResourceFormFactory';
+import * as selectors from '../../../../../../../reducers';
+
 
 const useStyles = makeStyles(theme => ({
   formContainer: {
@@ -22,8 +25,17 @@ export default function GeneralSection({
 }) {
   const classes = useStyles();
 
+  const integration = useSelector(
+    state =>
+      selectors.suiteScriptResource(state, {
+        resourceType: 'integrations',
+        id: integrationId,
+        ssLinkedConnectionId,
+      })
+  );
+
   return (
-    <Fragment>
+    <>
       <PanelHeader title="General" />
       <div className={classes.formContainer}>
         <ResourceForm
@@ -33,11 +45,9 @@ export default function GeneralSection({
           resourceType="integrations"
           resourceId={integrationId}
           submitButtonLabel="Save"
-          // onSubmitComplete={handleSubmitComplete}
-          // onCancel={abortAndClose}
-          // {...props}
+          disabled={integration && integration.isNotEditable}
         />
       </div>
-    </Fragment>
+    </>
   );
 }

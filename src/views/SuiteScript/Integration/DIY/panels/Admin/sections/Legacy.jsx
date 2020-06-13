@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import ResourceForm from '../../../../../../../components/SuiteScript/ResourceFormFactory';
@@ -16,11 +16,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function GeneralSection({ ssLinkedConnectionId }) {
+export default function LegacySection({ ssLinkedConnectionId }) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Legacy Control Panel" />
       <div className={classes.formContainer}>
         <ResourceForm
@@ -35,6 +35,6 @@ export default function GeneralSection({ ssLinkedConnectionId }) {
           // {...props}
         />
       </div>
-    </Fragment>
+    </>
   );
 }

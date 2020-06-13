@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import flowData, * as fromFlowData from './sampleData/flows';
+import flows, * as fromFlows from './flows';
 
 export default combineReducers({
   resourceForm,
   flowData,
+  flows,
 });
 
 export function resourceFormState(
@@ -63,5 +65,12 @@ export function getFlowDataState(state, flowId, resourceId) {
     state && state.flowData,
     flowId,
     resourceId
+  );
+}
+
+export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromFlows.isOnOffInProgress(
+    state && state.flows,
+    { ssLinkedConnectionId, _id }
   );
 }

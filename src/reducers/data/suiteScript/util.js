@@ -1,4 +1,50 @@
 import moment from 'moment';
+import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+
+export function tileDisplayName(tile) {
+  let name;
+
+  if (tile.name && tile.name.indexOf('Amazon') === 0) {
+    name = `${tile.name} - NetSuite Connector`;
+  } else {
+    switch (tile.name) {
+      case 'Salesforce Connector':
+        name = 'Salesforce - NetSuite Connector';
+        break;
+      case 'SVB Connector':
+        name = 'SVB - NetSuite Connector';
+        break;
+      case 'eBay':
+      case 'Google Shopping':
+      case 'Magento':
+      case 'Newegg':
+      case 'Nextag':
+      case 'Rakuten':
+      case 'Sears':
+        name = `${tile.name} - NetSuite Connector`;
+        break;
+      default:
+        ({ name } = tile);
+    }
+  }
+
+  return name;
+}
+
+export function parseTiles(tiles) {
+  return tiles.map(tile => {
+    const displayName = tileDisplayName(tile);
+    const connector = SUITESCRIPT_CONNECTORS.find(c =>
+      [c.name, c.ssName].includes(displayName)
+    );
+    return {
+      ...tile,
+      displayName,
+      _connectorId: connector && connector._id,
+      urlName: connector && connector.urlName,
+    };
+  });
+}
 
 export function getJobDuration(job) {
   if (job.startedAt && job.endedAt) {

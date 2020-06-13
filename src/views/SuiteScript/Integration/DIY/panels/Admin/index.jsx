@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Route,
   Switch,
@@ -5,13 +6,13 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';
 import * as selectors from '../../../../../../reducers';
-import trim from '../../../../../../utils/trim';
+import {isJavaFlow} from '../../../../../../utils/suiteScript';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -69,11 +70,8 @@ export default function AdminPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId,
       })
       .filter(
-        f =>
-          (f.locationQualifier && trim(f.locationQualifier).length > 0) ||
-          (['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(f.type) &&
-            !f.hasConfiguration)
-      )
+        f => isJavaFlow(f)
+      ).length > 0
   );
   const sectionsToHide = [!hasJavaFlows ? 'legacy' : ''];
   const availableSections = allSections.filter(

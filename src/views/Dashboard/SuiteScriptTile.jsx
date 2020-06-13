@@ -21,7 +21,6 @@ import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIco
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
 import {
   tileStatus,
-  suiteScriptTileName,
   dragTileConfig,
   dropTileConfig,
 } from './util';
@@ -61,7 +60,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     tile.integration &&
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
-  const integrationAppName = getIntegrationAppUrlName(tile.name, true);
+  const integrationAppName = tile.urlName;
   const status = tileStatus(tile);
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
@@ -184,7 +183,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   to={getRoutePath(urlToIntegrationSettings)}
                   className={classes.tileName}
                   onClick={handleLinkClick}>
-                  {suiteScriptTileName(tile)}
+                  {tile.displayName}
                 </Link>
               </Typography>
             </CardTitle>

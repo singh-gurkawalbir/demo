@@ -683,3 +683,10 @@ export function suiteScriptResourceFormSaveProcessTerminated(
     }
   );
 }
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSuiteScript.isFlowOnOffInProgress(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, _id }
+  );
+}

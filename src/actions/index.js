@@ -2116,6 +2116,21 @@ const suiteScript = {
         flowId,
         _id,
       }),
+    enable: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.ENABLE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
+    disable: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.DISABLE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
+    isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
+        { onOffInProgress, ssLinkedConnectionId, _id }),
   },
 };
 const editorSampleData = {
