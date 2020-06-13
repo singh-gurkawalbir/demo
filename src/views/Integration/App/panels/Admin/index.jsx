@@ -73,10 +73,14 @@ export default function AdminPanel({
   const showAPITokens = useSelector(
     state => selectors.resourcePermissions(state, 'accesstokens').view
   );
+  const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, integrationId));
   const filterTabs = [];
 
   if (!showAPITokens) {
     filterTabs.push('apitoken');
+  }
+  if (!canUninstall) {
+    filterTabs.push('uninstall')
   }
 
   const availableSections = allSections.filter(sec =>

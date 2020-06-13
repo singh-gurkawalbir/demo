@@ -11,12 +11,12 @@ import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
 import ApiTokensSection from './sections/ApiTokens';
 import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
+import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -86,6 +86,7 @@ export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const isParent = !childId || (childId === integrationId);
+  const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const {
     isIntegrationApp,
     supportsChild,
@@ -106,36 +107,20 @@ export default function AdminPanel({ integrationId, childId }) {
     return emptyObj;
   }, shallowEqual);
   const children = useSelector(
-    state => {
-      // As result includes parent integration, remove it from result.
-      const resources = selectors.integrationChildren(state, integrationId);
-      return resources.filter(r => r.value !== integrationId)
-    },
+    state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
-  const sectionsToHide = [];
-
-  if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readme');
-  }
-  if (!isIntegrationApp) {
-    sectionsToHide.push('subscription');
-    sectionsToHide.push('apitoken');
-    sectionsToHide.push('uninstall')
-  } else {
-    sectionsToHide.push('readme');
-    sectionsToHide.push('general')
-    if (!isParent) {
-      sectionsToHide.push('subscription');
-      sectionsToHide.push('apitoken');
-    } else if (supportsChild && children && children.length) {
-      sectionsToHide.push('uninstall');
-    }
-  }
-
+  const sectionsToShow = getAdminLevelTabs({
+    integrationId,
+    children,
+    isIntegrationApp,
+    isParent,
+    supportsChild,
+    isMonitorLevelUser
+  });
 
   const availableSections = allSections.filter(
-    sec => !sectionsToHide.includes(sec.id)
+    sec => sectionsToShow.includes(sec.id)
   );
 
   // if someone arrives at this view without requesting a section, then we

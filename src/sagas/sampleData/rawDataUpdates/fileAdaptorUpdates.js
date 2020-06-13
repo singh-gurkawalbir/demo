@@ -25,6 +25,11 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     // For xlsx file type csv content is stored in 'csv' stage of sample data
     stage = 'csv';
   }
+  if (resourceObj.file.type === 'json' && type === 'imports') {
+    // For json file, in imports we expect data to be parsed before saving - as in Ampersand
+    // TODO @Raghu: Revisit this after release, as ampersand app is going to be deprecated
+    stage = 'parse';
+  }
 
   const { data: rawData } = yield select(
     getResourceSampleDataWithStatus,
@@ -41,7 +46,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
       : fileDefinitionData;
   }
 
-  return rawData && rawData.body;
+  return stage === 'parse' ? rawData : rawData && rawData.body;
 }
 
 export default function* saveRawDataForFileAdaptors({

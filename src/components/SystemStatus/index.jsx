@@ -12,9 +12,10 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   wrapper: {
-    padding: theme.spacing(2),
-    maxWidth: '319px',
+    padding: 12,
+    maxWidth: 324,
     display: 'flex',
+    fontSize: 14,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',

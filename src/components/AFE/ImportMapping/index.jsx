@@ -7,7 +7,6 @@ import actions from '../../../actions';
 import mappingUtil from '../../../utils/mapping';
 import * as selectors from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
-import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import ButtonGroup from '../../ButtonGroup';
@@ -109,8 +108,6 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
-    fetchSalesforceSObjectMetadata,
-    refreshGenerateFields,
     refreshExtractFields,
   } = optionalHanlder;
   const {
@@ -159,6 +156,16 @@ export default function ImportMapping(props) {
   });
   const { localMappings, localChangeIdentifier } = state;
 
+  const handleRefreshGenerates = useCallback(
+    () => {
+      dispatch(
+        actions.mapping.refreshGenerates(
+          editorId
+        )
+      );
+    },
+    [dispatch, editorId],
+  )
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier) {
@@ -204,38 +211,9 @@ export default function ImportMapping(props) {
         }
       }
 
-      if (
-        field === 'generate' &&
-        application === adaptorTypeMap.SalesforceImport &&
-        value &&
-        value.indexOf('_child_') > -1
-      ) {
-        const childRelationshipField =
-          generateFields && generateFields.find(field => field.id === value);
-
-        if (childRelationshipField) {
-          const { childSObject, relationshipName } = childRelationshipField;
-
-          dispatch(
-            actions.mapping.patchIncompleteGenerates(
-              editorId,
-              key,
-              relationshipName
-            )
-          );
-          fetchSalesforceSObjectMetadata(childSObject);
-        }
-      }
-
       dispatch(actions.mapping.patchField(editorId, field, key, value));
     },
-    [
-      application,
-      dispatch,
-      editorId,
-      fetchSalesforceSObjectMetadata,
-      generateFields,
-    ]
+    [dispatch, editorId]
   );
   const patchSettings = useCallback(
     (key, settings) => {
@@ -407,7 +385,7 @@ export default function ImportMapping(props) {
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
                 disabled={disabled}
-                onClick={refreshGenerateFields}
+                onClick={handleRefreshGenerates}
                 data-test="refreshGenerates"
               />
             )}

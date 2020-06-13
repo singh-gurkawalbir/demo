@@ -888,6 +888,10 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
         id: integrationId,
       }),
+    complete: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
+        id: integrationId,
+      }),
   },
   store: {
     addNew: integrationId =>
@@ -1292,6 +1296,8 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+
 };
 const searchCriteria = {
   init: (id, value) =>

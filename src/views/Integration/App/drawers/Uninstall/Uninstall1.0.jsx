@@ -16,8 +16,8 @@ import {
 } from '@material-ui/core';
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
-import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
+import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -70,7 +70,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
         actions.integrationApp.uninstaller.preUninstall(storeId, integrationId)
       );
     }
-  }, [dispatch, error, integrationId, storeId, uninstallSteps]);
+  }, [_id, dispatch, error, integrationId, storeId, uninstallSteps]);
 
   useEffect(() => {
     if (
@@ -109,7 +109,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     isUninstallComplete,
   ]);
 
-  if (!integration || !_id) {
+  if (!integration || !integration._id) {
     return <LoadResources required resources="integrations" />;
   }
 

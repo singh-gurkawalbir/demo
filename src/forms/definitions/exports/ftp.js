@@ -16,6 +16,10 @@ export default {
 
     delete newValues['/file/csvHelper'];
 
+    const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+    if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
+      newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
+    }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -148,7 +152,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -181,9 +184,7 @@ export default {
         return output ? 'records' : 'blob';
       },
     },
-
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
-
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
@@ -222,7 +223,6 @@ export default {
               'ftp.directoryPath',
               'ftp.fileNameStartsWith',
               'ftp.fileNameEndsWith',
-              'ftp.leaveFile',
             ],
           },
           {

@@ -515,7 +515,6 @@ function FlowBuilder() {
     <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
-        disabled={isViewMode}
         integrationId={integrationId}
       />
 
