@@ -2,22 +2,30 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, Divider } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import { getNetSuiteSubrecordImports } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(2),
+    width: '100%'
   },
   button: {
     // color: theme.palette.primary.main,
-    width: `calc(100% - ${theme.spacing(3)}px)`,
+    width: '100%',
     display: 'block',
   },
   text: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
   },
+  stepTitle: {
+    margin: theme.spacing(2, 0),
+    fontWeight: 'bold',
+  },
+  divider: {
+    margin: theme.spacing(1, 0),
+  }
 }));
 
 export default function SelectImport({ flowId }) {
@@ -32,16 +40,14 @@ export default function SelectImport({ flowId }) {
   const [importId, setImportId] = useState();
 
   useEffect(() => {
-    let srImports;
-
     if (imports) {
+      let srImports;
+
       imports.forEach(imp => {
         const currentImportSubrecords = getNetSuiteSubrecordImports(imp);
 
         if (currentImportSubrecords && currentImportSubrecords.length > 0) {
-          if (!srImports) {
-            srImports = {};
-          }
+          if (!srImports) srImports = {};
 
           srImports[imp._id] = currentImportSubrecords.map(sr => ({
             ...sr,
@@ -70,37 +76,38 @@ export default function SelectImport({ flowId }) {
 
   const flowName = flow.name || flow._id;
 
-  if (!imports.length === 0) {
-    return <Typography>The {flowName} flow contains no imports.</Typography>;
+  if (imports.length === 0) {
+    // eslint-disable-next-line react/no-unescaped-entities
+    return <Typography>The flow "{flowName}", contains no imports.</Typography>;
   }
 
   // Finally, render a table of imports to choose from...
   return (
     <div className={classes.root}>
       <Typography className={classes.text} variant="h5">
-        This flow contains several imports, each of which have mapping.
+        Select the mapping you would like to edit.
       </Typography>
-      <Typography className={classes.text} variant="h5">
-        Select which import you would like to edit the mapping for.
+      <Typography className={classes.stepTitle} variant="h5">
+        Step Name
       </Typography>
-      {imports.map(i => (
+
+      {imports.map((i, index) => (
         <Fragment key={i._id}>
-          <div key={i._id}>
-            <Button
-              data-key="mapping"
-              className={classes.button}
-              component={Link}
-              to={`${match.url}/${i._id}`}>
-              <Typography variant="h6" color="primary">
-                {i.name || i._id}
-              </Typography>
-              {i.description && <Typography>{i.description}</Typography>}
-            </Button>
-          </div>
+          <Button
+            data-key="mapping"
+            className={classes.button}
+            component={Link}
+            to={`${match.url}/${i._id}`}>
+            <Typography variant="h6" color="primary">
+              {i.name || i._id}
+            </Typography>
+          </Button>
+          {(index < imports.length - 1) && <Divider className={classes.divider} />}
           {subrecordImports &&
             subrecordImports[i._id] &&
             subrecordImports[i._id].map((sr, index) => (
-              <div key={`${i._id}-${sr.fieldId}`}>
+              <Fragment key={`${i._id}-${sr.fieldId}`}>
+                <Divider className={classes.divider} />
                 <Button
                   data-test={`subrecordMapping-${index}`}
                   className={classes.button}
@@ -110,7 +117,7 @@ export default function SelectImport({ flowId }) {
                     {sr.name}
                   </Typography>
                 </Button>
-              </div>
+              </Fragment>
             ))}
         </Fragment>
       ))}
