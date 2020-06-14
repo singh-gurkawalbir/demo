@@ -190,14 +190,60 @@ export default {
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
-    file: {
-      formId: 'file',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
+    'file.type': { fieldId: 'file.type' },
+    uploadFile: {
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: 'file.type',
+      placeholder: 'Sample file (that would be parsed):',
+    },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
+    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
+    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
+    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
+    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
+    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
+    'file.xlsx.rowsPerRecord': {
+      fieldId: 'file.xlsx.rowsPerRecord',
+      disabledWhenAll: r => {
+        if (isNewId(r._id)) {
+          return [{ field: 'uploadfile', is: [''] }];
+        }
+
+        return [];
+      },
+    },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
+    'file.xml.resourcePath': {
+      fieldId: 'file.xml.resourcePath',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^/',
+          message: "Resource Path should start with '/'",
         },
+      },
+    },
+    'file.json.resourcePath': {
+      fieldId: 'file.json.resourcePath',
+    },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
+    'file.filedefinition.rules': {
+      fieldId: 'file.filedefinition.rules',
+      refreshOptionsOnChangesTo: [
+        'edix12.format',
+        'fixed.format',
+        'edifact.format',
+        'file.fileDefinition.resourcePath',
+        'file.type',
       ],
+      required: true,
+    },
+    'file.fileDefinition.resourcePath': {
+      fieldId: 'file.fileDefinition.resourcePath',
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
     exportPanel: {
@@ -214,7 +260,28 @@ export default {
           {
             collapsed: true,
             label: 'How would you like to parse files?',
-            fields: ['file'],
+            fields: [
+              'file.type',
+              'uploadFile',
+              'file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns',
+              'edix12.format',
+              'fixed.format',
+              'edifact.format',
+              'file.filedefinition.rules'],
+            type: 'indent',
+            containers: [{fields: [
+              'file.csvHelper',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns']}]
           },
           {
             collapsed: true,

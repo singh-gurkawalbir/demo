@@ -1377,9 +1377,10 @@ export default {
     blobKeyPath: { fieldId: 'blobKeyPath' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     uploadFile: {
-      id: 'uploadFile',
-      type: 'uploadfile',
-      label: 'Sample file (that would be imported)',
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: ['file.type'],
+      placeholder: 'Sample file (that would be parsed):',
+      helpKey: 'import.uploadFile',
       mode: r => r && r.file && r.file.type,
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },
@@ -1532,49 +1533,61 @@ export default {
           'http.batchSize',
           'http.body',
           'uploadFile',
-          'file.csv.includeHeader',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.replaceNewlineWithSpace',
-          'file.csv.replaceTabWithSpace',
-          'file.csv.truncateLastRowDelimiter',
-          'file.csv.wrapWithQuotes',
-          'file.csv.customHeaderRows',
-          'file.csvHelper',
           'blobKeyPath',
         ],
-        type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'Create new data',
-            fields: [
-              'http.compositeMethodCreate',
-              'http.relativeURICreate',
-              'http.requestTypeCreate',
-              'http.bodyCreate',
+          {type: 'indent',
+            containers: [
+              {
+                fields:
+                [
+                  'file.csvHelper',
+                  'file.csv.includeHeader',
+                  'file.csv.columnDelimiter',
+                  'file.csv.rowDelimiter',
+                  'file.csv.replaceNewlineWithSpace',
+                  'file.csv.replaceTabWithSpace',
+                  'file.csv.truncateLastRowDelimiter',
+                  'file.csv.wrapWithQuotes',
+                  'file.csv.customHeaderRows'
+                ]
+              }
+            ]
+          },
+          {type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                label: 'Create new data',
+                fields: [
+                  'http.compositeMethodCreate',
+                  'http.relativeURICreate',
+                  'http.requestTypeCreate',
+                  'http.bodyCreate',
+                ],
+              },
+              {
+                collapsed: true,
+                label: 'Ignore existing records',
+                fields: ['http.existingDataId'],
+              },
+              {
+                collapsed: true,
+                label: 'Ignore new data',
+                fields: ['http.update.existingDataId'],
+              },
+              {
+                collapsed: true,
+                label: 'Update existing data',
+                fields: [
+                  'http.compositeMethodUpdate',
+                  'http.relativeURIUpdate',
+                  'http.requestTypeUpdate',
+                  'http.bodyUpdate',
+                ],
+              },
             ],
-          },
-          {
-            collapsed: true,
-            label: 'Ignore existing records',
-            fields: ['http.existingDataId'],
-          },
-          {
-            collapsed: true,
-            label: 'Ignore new data',
-            fields: ['http.update.existingDataId'],
-          },
-          {
-            collapsed: true,
-            label: 'Update existing data',
-            fields: [
-              'http.compositeMethodUpdate',
-              'http.relativeURIUpdate',
-              'http.requestTypeUpdate',
-              'http.bodyUpdate',
-            ],
-          },
+          }
         ],
       },
       {

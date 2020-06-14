@@ -218,16 +218,9 @@ export default {
       {
         collapsed: true,
         label: 'How would you like to parse files?',
+        type: 'indent',
         fields: [
           'file.type',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.trimSpaces',
-          'file.csv.rowsToSkip',
-          'file.csv.hasHeaderRow',
-          'file.csv.rowsPerRecord',
-          'file.csv.keyColumns',
-          'file.csvHelper',
           'file.xml.resourcePath',
           'file.json.resourcePath',
           'file.xlsx.hasHeaderRow',
@@ -238,6 +231,15 @@ export default {
           'edifact.format',
           'file.filedefinition.rules',
         ],
+        containers: [{fields: [
+          'file.csvHelper',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.trimSpaces',
+          'file.csv.rowsToSkip',
+          'file.csv.hasHeaderRow',
+          'file.csv.rowsPerRecord',
+          'file.csv.keyColumns']}]
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

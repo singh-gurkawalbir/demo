@@ -46,27 +46,28 @@ const Notifications = ({ allLoadingOrErrored }) => {
   if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
   const loadingMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && !r.retryCount
-  ) && (
-    <li key={LOADING_MSG}>
-      <Typography>{LOADING_MSG}</Typography>
-    </li>
-  );
+  ) && ({name: LOADING_MSG, message: LOADING_MSG})
+
   const retryMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && r.retryCount
-  ) && (
-    <li key={RETRY_MSG}>
-      <Typography>{RETRY_MSG}</Typography>
-    </li>
-  );
+  ) && ({name: RETRY_MSG, message: RETRY_MSG})
+
   const errored = allLoadingOrErrored
     .filter(r => r.status === COMM_STATES.ERROR)
-    .map(r => (
-      <li key={r.name}>
-        {r.message && <ErroredMessageList messages={r.message} />}
-      </li>
+    .map(({name, status, message }) => ({name, message, status }
     ));
 
-  return [loadingMessage, retryMessage, ...errored].filter(r => r);
+  const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r)
+
+
+  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR ? (<ErroredMessageList messages={message} />) : <Typography>{message}</Typography>
+
+  if (consolidatedNotificationMsgs.length === 1) { return <NotificationMsg {...consolidatedNotificationMsgs[0]} /> }
+  const notificationMsgs = consolidatedNotificationMsgs.map(({name, status, message}) => (
+    <li key={name}>
+      <NotificationMsg status={status} message={message} />
+    </li>))
+  return <ul>{notificationMsgs}</ul>;
 };
 
 export default function NetworkSnackbar() {
@@ -107,9 +108,7 @@ export default function NetworkSnackbar() {
       // message={msg}
       className={classes.snackbarWrapper}>
       <SystemStatus isLoading={isLoadingAnyResource}>
-        <ul>
-          <Notifications allLoadingOrErrored={allLoadingOrErrored} />
-        </ul>
+        <Notifications allLoadingOrErrored={allLoadingOrErrored} />
 
         <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
       </SystemStatus>

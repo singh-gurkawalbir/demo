@@ -27,21 +27,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultFilter = {
+  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  searchBy: [
+    'user.email',
+    '_integrationId',
+    'user._id',
+    'user.name',
+    'user.company',
+    'environment',
+  ],
+};
+
 export default function Licenses(props) {
-  const defaultFilter = useMemo(
-    () => ({
-      take: 10,
-      searchBy: [
-        'user.email',
-        '_integrationId',
-        'user._id',
-        'user.name',
-        'user.company',
-        'environment',
-      ],
-    }),
-    []
-  );
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
@@ -53,9 +51,10 @@ export default function Licenses(props) {
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...{ ...defaultFilter, ...filter },
+      ...defaultFilter,
+      ...filter,
     }),
-    [defaultFilter, filter]
+    [filter]
   );
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
