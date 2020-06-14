@@ -180,6 +180,12 @@ export default (state = {}, action) => {
         });
       }
 
+      if (resourceType === 'recycleBinTTL' && collection && collection.length) {
+        return produce(state, draft => {
+          draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
+        });
+      }
+
       // TODO: Raghu, we should move all this code into the "produce" function. Lets talk
       // about it when you have time to refactor.
       if (resourceType === 'flows') {

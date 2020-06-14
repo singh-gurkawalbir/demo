@@ -145,12 +145,10 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   innerListItems: {
-    backgroundColor: theme.palette.background.drawer3,
-    // backgroundColor: 'rgb(255,255,255,0.1)',
+    // Todo (Azhar): confirm the color from UX team and add to the palette
+    backgroundColor: '#0B0C0E',
     '&:hover': {
-      backgroundColor: theme.palette.background.drawer3,
-      // backgroundColor: theme.palette.background.drawerActive,
-    },
+      backgroundColor: theme.palette.background.drawer3, },
   },
   logoContainer: {
     alignItems: 'center',
@@ -181,6 +179,9 @@ const useStyles = makeStyles(theme => ({
     '& span': {
       padding: [[0, 5]],
     },
+  },
+  collapsedArrowIcon: {
+    width: 18,
   },
 }));
 
@@ -256,7 +257,7 @@ export default function CeligoDrawer() {
           [classes.drawerClose]: !drawerOpened,
         }),
       }}
-      open={drawerOpened}>
+      open={!drawerOpened}>
       <div
         className={clsx(classes.menuContainer, {
           [classes.menuContainerSandbox]: isSandbox,
@@ -315,6 +316,10 @@ export default function CeligoDrawer() {
                         <Icon />
                       </div>
                     </Tooltip>}
+
+                    {(!drawerOpened && children) &&
+                    (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
+
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{

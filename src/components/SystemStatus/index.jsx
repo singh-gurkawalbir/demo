@@ -15,10 +15,13 @@ const useStyles = makeStyles(theme => ({
     padding: 12,
     maxWidth: 324,
     display: 'flex',
-    fontSize: 14,
+
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '& > p': {
+      fontSize: 14,
+    }
   },
   progressBar: {
     marginTop: theme.spacing(1.5),

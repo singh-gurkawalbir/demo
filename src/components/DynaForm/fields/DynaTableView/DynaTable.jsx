@@ -77,6 +77,15 @@ const useStyles = makeStyles(theme => ({
     gridGap: '8px',
     marginBottom: theme.spacing(1),
   },
+  menuItemsWrapper: {
+    minWidth: 300,
+    '& > div': {
+      '& >.MuiMenuItem-root': {
+        wordWrap: 'break-word',
+        whiteSpace: 'normal',
+      },
+    },
+  }
 }));
 
 function reducer(state, action) {
@@ -335,7 +344,7 @@ export const DynaTable = props => {
                         onFieldChange={(id, value) => {
                           handleUpdate(arr.row, value, r.id);
                         }}
-                        className={classes.root}
+                        className={clsx(classes.root, classes.menuItemsWrapper)}
                       />
                       )}
                       {['input', 'number', 'text', 'autosuggest'].includes(

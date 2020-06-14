@@ -114,6 +114,7 @@ export default function DynaSelect(props) {
     defaultValue = '',
     placeholder,
     required,
+    className,
     label,
     onFieldChange,
   } = props;
@@ -248,6 +249,7 @@ export default function DynaSelect(props) {
           disabled={disabled}
           input={<Input name={name} id={id} />}>
           <FixedSizeList
+            className={className}
             ref={listRef}
             itemSize={ITEM_SIZE}
             // if there are fewer options the view port height then let height scale per number of options

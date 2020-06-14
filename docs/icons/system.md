@@ -74,6 +74,7 @@ const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MappingConnectorIcon = require('../../src/components/icons/MappingConnectorIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
+const MyAPIIcon = require('../../src/components/icons/MyAPIIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
 const OptionalIcon = require('../../src/components/icons/OptionalIcon').default;
@@ -442,6 +443,10 @@ const icon = {
     <div style={wrapper}>
       <MarketplaceIcon style={icon} />
       <p>Marketplace</p>
+    </div>
+    <div style={wrapper}>
+      <MyAPIIcon style={icon} />
+      <p>My API</p>
     </div>
     <div style={wrapper}>
       <NotificationsIcon style={icon} />
