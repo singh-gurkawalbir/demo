@@ -84,15 +84,15 @@ export default function UserForm({
           {
             items: [
               {
-                label: 'Manage All (including future) Integrations',
+                label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
               },
               {
-                label: 'Monitor All (including future) Integrations',
+                label: 'Monitor all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
               },
               {
-                label: 'Manage/Monitor Selected Integrations',
+                label: 'Manage/monitor select integrations',
                 value: USER_ACCESS_LEVELS.TILE,
               },
             ],

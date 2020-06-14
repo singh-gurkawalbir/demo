@@ -36,7 +36,7 @@ import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { getIntegrationAppUrlName, getAvailableTabs } from '../../../utils/integrationApps';
+import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integrationApps';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -164,9 +164,9 @@ export default function Integration(props) {
     );
 
     return {
-      pEdit: permission.edit,
-      pClone: permission.clone,
-      pDelete: permission.delete,
+      canEdit: permission.edit,
+      canClone: permission.clone,
+      canDelete: permission.delete,
     };
   });
   const children = useSelector(
@@ -184,6 +184,7 @@ export default function Integration(props) {
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
+  const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
@@ -201,7 +202,16 @@ export default function Integration(props) {
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const isParent = childId === integrationId;
-  const availableTabs = getAvailableTabs({tabs, isIntegrationApp, isParent, hasAddOns, isStandalone: integrationId === STANDALONE_INTEGRATION.id});
+  const availableTabs = getTopLevelTabs({
+    tabs,
+    isIntegrationApp,
+    isParent,
+    integrationId,
+    hasAddOns,
+    supportsChild,
+    children,
+    isMonitorLevelUser,
+  });
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
