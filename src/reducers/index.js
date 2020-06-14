@@ -4069,11 +4069,29 @@ export function transferListWithMetadata(state) {
   return { resources: transfers };
 }
 
+export function isDataLoaderExport(state, resourceId, flowId) {
+  if (isNewId(resourceId)) {
+    if (!flowId) return false;
+    const { merged: flowObj = {} } = resourceData(state, 'flows', flowId, 'value');
+    return !!(flowObj.pageGenerators &&
+              flowObj.pageGenerators[0] &&
+              flowObj.pageGenerators[0].application === 'dataLoader');
+  }
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    'exports',
+    resourceId,
+    'value'
+  );
+  return resourceObj.type === 'simple';
+}
+
 // Gives back supported stages of data flow based on resource type
 export function getAvailableResourcePreviewStages(
   state,
   resourceId,
-  resourceType
+  resourceType,
+  flowId
 ) {
   const { merged: resourceObj } = resourceData(
     state,
@@ -4082,7 +4100,9 @@ export function getAvailableResourcePreviewStages(
     'value'
   );
 
-  return getAvailablePreviewStages(resourceObj);
+  const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
+
+  return getAvailablePreviewStages(resourceObj, isDataLoader);
 }
 
 /*
@@ -4208,7 +4228,9 @@ export function isPreviewPanelAvailableForResource(
     'connections',
     resourceObj._connectionId
   );
-
+  if (isDataLoaderExport(state, resourceId, flowId)) {
+    return true;
+  }
   // Preview panel is not shown for lookups
   if (
     resourceObj.isLookup ||

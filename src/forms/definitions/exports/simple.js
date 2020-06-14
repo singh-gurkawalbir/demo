@@ -1,3 +1,5 @@
+import { MAX_DATA_LOADER_FILE_SIZE } from '../../../utils/constants';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -189,11 +191,16 @@ export default {
       id: 'uploadFile',
       name: '/uploadFile',
       type: 'uploadfile',
-      label: 'Upload the file to use',
-      mode: r => r && r.file && r.file.type,
+      placeholder: 'Sample file (that would be parsed):',
       required: r => !r.rawData,
       refreshOptionsOnChangesTo: 'file.type',
+      maxSize: MAX_DATA_LOADER_FILE_SIZE,
       helpKey: 'export.uploadFile',
+      visibleWhen: {
+        field: 'file.type',
+        isNot: [''],
+      },
+
     },
     'file.csvHelper': {
       fieldId: 'file.csvHelper',
@@ -222,35 +229,46 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'file.type',
-      'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.rowDelimiter',
-      'file.csv.trimSpaces',
-      'file.csv.rowsToSkip',
-      'file.csv.hasHeaderRow',
-      'file.csv.rowsPerRecord',
-      'file.csv.keyColumns',
-      'file.csvHelper',
-      'file.xml.resourcePath',
-      'file.json.resourcePath',
-      'file.xlsx.hasHeaderRow',
-      'file.xlsx.rowsPerRecord',
-      'file.xlsx.keyColumns',
-    ],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+        fields: [
+          'name',
+          'file.type',
+          'uploadFile',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.trimSpaces',
+          'file.csv.rowsToSkip',
+          'file.csv.hasHeaderRow',
+          'file.csv.rowsPerRecord',
+          'file.csv.keyColumns',
+          'file.csvHelper',
+          'file.xml.resourcePath',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+        ],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+          },
+        ],
       },
-    ],
-  },
+      {
+        fields: ['exportPanel'],
+      }
+    ]
+  }
 };
 
 /*

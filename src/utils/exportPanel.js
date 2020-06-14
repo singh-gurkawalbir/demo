@@ -16,13 +16,20 @@ const applicationsWithPreviewPanel = [
   'netsuite',
   'salesforce',
   'ftp',
-  's3'
+  's3',
+  'simple',
 ];
 const emptyList = [];
 
-export const getAvailablePreviewStages = resource => {
+export const getAvailablePreviewStages = (resource, isDataLoader) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
+
+  if (isDataLoader) {
+    return [
+      { label: 'Parsed output', value: 'preview' },
+    ];
+  }
 
   if (!appType) return emptyList;
 

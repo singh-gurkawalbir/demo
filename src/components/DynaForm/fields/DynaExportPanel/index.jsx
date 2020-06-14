@@ -61,7 +61,7 @@ function DynaExportPanel(props) {
     isPageGenerator(state, flowId, resourceId)
   );
   const availablePreviewStages = useSelector(state =>
-    getAvailableResourcePreviewStages(state, resourceId, resourceType)
+    getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId)
   );
   const [panelType, setPanelType] = useState(
     availablePreviewStages.length && availablePreviewStages[0].value
