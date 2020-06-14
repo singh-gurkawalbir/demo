@@ -175,7 +175,7 @@ export default {
       name: '/file/type',
       type: 'select',
       label: 'File type',
-      defaultValue: r => r && r.file && r.file.type,
+      defaultValue: r => (r && r.file && r.file.type) || '',
       options: [
         {
           items: [
@@ -196,11 +196,10 @@ export default {
       refreshOptionsOnChangesTo: 'file.type',
       maxSize: MAX_DATA_LOADER_FILE_SIZE,
       helpKey: 'export.uploadFile',
-      visibleWhen: {
+      visibleWhen: [{
         field: 'file.type',
         isNot: [''],
-      },
-
+      }],
     },
     'file.csvHelper': {
       fieldId: 'file.csvHelper',
