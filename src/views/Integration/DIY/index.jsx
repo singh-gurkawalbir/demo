@@ -101,6 +101,7 @@ const tabs = [
   },
 ];
 const emptyObj = {};
+const integrationsFilterConfig = { type: 'integrations' };
 
 export default function Integration(props) {
   const classes = useStyles();
@@ -140,7 +141,6 @@ export default function Integration(props) {
 
     return emptyObj;
   }, shallowEqual);
-  const integrationsFilterConfig = { type: 'integrations' };
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -168,7 +168,7 @@ export default function Integration(props) {
       canClone: permission.clone,
       canDelete: permission.delete,
     };
-  });
+  }, shallowEqual);
   const children = useSelector(
     state => selectors.integrationChildren(state, integrationId),
     shallowEqual
@@ -202,7 +202,7 @@ export default function Integration(props) {
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
   const isParent = childId === integrationId;
-  const availableTabs = getTopLevelTabs({
+  const availableTabs = useMemo(() => getTopLevelTabs({
     tabs,
     isIntegrationApp,
     isParent,
@@ -211,7 +211,7 @@ export default function Integration(props) {
     supportsChild,
     children,
     isMonitorLevelUser,
-  });
+  }), [children, hasAddOns, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
