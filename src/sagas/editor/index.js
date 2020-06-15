@@ -56,8 +56,15 @@ export function* evaluateProcessor({ id }) {
     }
   }
 
-  const processResult = processorLogic.processResult(editor);
-  const finalResult = processResult ? processResult(editor, result) : result;
+  let finalResult;
+
+  try {
+    const processResult = processorLogic.processResult(editor);
+
+    finalResult = processResult ? processResult(editor, result) : result;
+  } catch (e) {
+    return yield put(actions.editor.evaluateFailure(id, e.message));
+  }
 
   return yield put(actions.editor.evaluateResponse(id, finalResult));
 }
@@ -115,7 +122,7 @@ export function* saveProcessor({ id }) {
         resourceType: ${resourceType},
         resourceId: ${resourceId},
      },
-    
+
         patch: [{ op: 'replace', path:${path}, value: ${value} }],
         resourceType: ${resourceType},
         resourceId: ${resourceId},

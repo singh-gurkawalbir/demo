@@ -1,4 +1,5 @@
 import { isNewId } from '../../../../utils/resource';
+import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 
 export default {
   // TODO: why helpKey is it named csv file id like to change it to
@@ -42,11 +43,11 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [
-          { label: 'CSV', value: 'csv' },
+          { label: 'CSV (or any delimited text file)', value: 'csv' },
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },
@@ -68,27 +69,9 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
-
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'ftp.leaveFile': {
-    type: 'checkbox',
-    label: 'Leave file on server',
-    defaultValue: r => r && r.file && r.file.skipDelete,
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
   },
   'file.compressionFormat': {
     type: 'select',
@@ -107,7 +90,7 @@ export default {
   },
   'file.json.resourcePath': {
     label: 'Resource path',
-    type: 'text',
+    type: 'jsonresourcepath',
     visibleWhen: [
       {
         field: 'file.type',
@@ -174,7 +157,8 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File definition rules ',
+    label: 'File parser helper',
+    helpkey: 'export.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -194,23 +178,132 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
     sampleData: r => r && r.sampleData,
   },
-  'file.csv': {
+  'file.csvHelper': {
     type: 'csvparse',
-    label: 'Configure CSV parse options',
-    defaultValue: r =>
-      (r.file && r.file.csv) || {
-        rowsToSkip: 0,
-        trimSpaces: true,
-        columnDelimiter: ',',
-        hasHeaderRow: false,
-        rowDelimiter: '\n',
-      },
+    label: 'CSV parser helper:',
+    helpKey: 'file.csvParse',
+    refreshOptionsOnChangesTo: [
+      'file.csv.keyColumns',
+      'file.csv.columnDelimiter',
+      'file.csv.rowDelimiter',
+      'file.csv.trimSpaces',
+      'file.csv.rowsToSkip',
+      'file.csv.hasHeaderRow',
+      'file.csv.keyColumns',
+    ],
     visibleWhenAll: [
       {
         field: 'file.type',
         is: ['csv'],
       },
     ],
+  },
+  'file.csv.columnDelimiter': {
+    id: 'file.csv.columnDelimiter',
+    type: 'selectwithinput',
+    label: 'Column delimiter',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    options: csvOptions.ColumnDelimiterOptions,
+    defaultValue: r =>
+      (r && r.file && r.file.csv && r.file.csv.columnDelimiter) || ',',
+  },
+  'file.csv.rowDelimiter': {
+    id: 'file.csv.rowDelimiter',
+    type: 'select',
+    label: 'Row delimiter',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    options: [
+      {
+        items: csvOptions.RowDelimiterOptions,
+      },
+    ],
+    defaultValue: r =>
+      (r && r.file && r.file.csv && r.file.csv.rowDelimiter) || '\n',
+  },
+  'file.csv.trimSpaces': {
+    id: 'file.csv.trimSpaces',
+    type: 'checkbox',
+    label: 'Trim spaces',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    defaultValue: r => !!(r && r.file && r.file.csv && r.file.csv.trimSpaces),
+  },
+  'file.csv.rowsToSkip': {
+    id: 'file.csv.rowsToSkip',
+    type: 'text',
+    inputType: 'number',
+    label: 'Number of rows to skip',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    defaultValue: r =>
+      (r && r.file && r.file.csv && r.file.csv.rowsToSkip) || 0,
+  },
+  'file.csv.hasHeaderRow': {
+    id: 'file.csv.hasHeaderRow',
+    type: 'csvhasheaderrow',
+    fieldToReset: 'file.csv.keyColumns',
+    fieldResetValue: [],
+    label: 'File has header',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    defaultValue: r => !!(r && r.file && r.file.csv && r.file.csv.hasHeaderRow),
+  },
+  'file.csv.rowsPerRecord': {
+    id: 'file.csv.rowsPerRecord',
+    type: 'checkbox',
+    label: 'Multiple rows per record',
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+    defaultValue: r => !!(r && r.file && r.file.csv && r.file.csv.keyColumns),
+  },
+  'file.csv.keyColumns': {
+    id: 'file.csv.keyColumns',
+    type: 'filekeycolumn',
+    label: 'Key columns',
+    refreshOptionsOnChangesTo: [
+      'file.csv.hasHeaderRow',
+      'file.csv.columnDelimiter',
+      'file.csv.rowDelimiter',
+      'file.csv.trimSpaces',
+      'file.csv.rowsToSkip',
+      'file.csv.rowsPerRecord',
+    ],
+    sampleData: r => r && r.sampleData,
+    visibleWhenAll: [
+      { field: 'file.type', is: ['csv'] },
+      {
+        field: 'file.csv.rowsPerRecord',
+        is: [true],
+      },
+    ],
+    defaultValue: r =>
+      (r && r.file && r.file.csv && r.file.csv.keyColumns) || [],
   },
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',

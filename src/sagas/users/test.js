@@ -26,7 +26,7 @@ import {
   disableUser,
   makeOwner,
   requestTrialLicense,
-} from './';
+} from '.';
 import { APIException } from '../api/index';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS } from '../../utils/constants';
 import getRequestOptions from '../../utils/requestOptions';
@@ -52,7 +52,7 @@ describe('all modal sagas', () => {
           opts: { ...changePasswordParams.opts, body: updatedPassword },
           message: "Changing user's password",
           hidden: true,
-        })
+        }),
       );
 
       expect(saga.next().value).toEqual(
@@ -60,9 +60,9 @@ describe('all modal sagas', () => {
           actions.api.complete(
             changePasswordParams.path,
             changePasswordParams.opts.method,
-            'Success!! Changed user password'
-          )
-        )
+            'Success!! Changed user password',
+          ),
+        ),
       );
     });
 
@@ -80,7 +80,7 @@ describe('all modal sagas', () => {
           opts: { ...changePasswordParams.opts, body: updatedPassword },
           message: "Changing user's password",
           hidden: true,
-        })
+        }),
       );
 
       expect(saga.throw(new Error()).value).toEqual(
@@ -88,9 +88,9 @@ describe('all modal sagas', () => {
           actions.api.failure(
             changePasswordParams.path,
             changePasswordParams.opts.method,
-            'Invalid credentials provided.  Please try again.'
-          )
-        )
+            'Invalid credentials provided.  Please try again.',
+          ),
+        ),
       );
     });
   });
@@ -108,16 +108,16 @@ describe('all modal sagas', () => {
           opts: { ...changeEmailParams.opts, body: updatedEmail },
           message: "Changing user's Email",
           hidden: true,
-        })
+        }),
       );
       expect(saga.next().value).toEqual(
         put(
           actions.api.complete(
             changeEmailParams.path,
             changeEmailParams.opts.method,
-            'Success!! Sent user change Email setup to you email'
-          )
-        )
+            'Success!! Sent user change Email setup to you email',
+          ),
+        ),
       );
     });
 
@@ -134,7 +134,7 @@ describe('all modal sagas', () => {
           opts: { ...changeEmailParams.opts, body: updatedEmail },
           message: "Changing user's Email",
           hidden: true,
-        })
+        }),
       );
 
       expect(saga.throw(status403).value).toEqual(
@@ -142,9 +142,9 @@ describe('all modal sagas', () => {
           actions.api.failure(
             changeEmailParams.path,
             changeEmailParams.opts.method,
-            'Existing email provided, Please try again.'
-          )
-        )
+            'Existing email provided, Please try again.',
+          ),
+        ),
       );
     });
 
@@ -161,7 +161,7 @@ describe('all modal sagas', () => {
           opts: { ...changeEmailParams.opts, body: updatedEmail },
           message: "Changing user's Email",
           hidden: true,
-        })
+        }),
       );
 
       expect(saga.throw(new Error()).value).toEqual(
@@ -169,9 +169,9 @@ describe('all modal sagas', () => {
           actions.api.failure(
             changeEmailParams.path,
             changeEmailParams.opts.method,
-            'Cannot change user Email , Please try again.'
-          )
-        )
+            'Cannot change user Email , Please try again.',
+          ),
+        ),
       );
     });
   });
@@ -184,14 +184,14 @@ describe('all modal sagas', () => {
         const saga = updatePreferences({ preferences });
 
         expect(saga.next(preferences).value).toEqual(
-          select(selectors.userOwnPreferences)
+          select(selectors.userOwnPreferences),
         );
         expect(saga.next(preferences).value).toEqual(
           call(apiCallWithRetry, {
             path: updatePreferencesParams.path,
             opts: { ...updatePreferencesParams.opts, body: preferences },
             message: "Updating user's info",
-          })
+          }),
         );
       });
 
@@ -212,7 +212,7 @@ describe('all modal sagas', () => {
             path: updatePreferencesParams.path,
             opts: payload,
             message: "Updating user's info",
-          })
+          }),
         );
 
         expect(saga.throw(new Error()).value).toEqual(
@@ -220,9 +220,9 @@ describe('all modal sagas', () => {
             actions.api.failure(
               updatePreferencesParams.path,
               updatePreferencesParams.opts.method,
-              'Could not update user Preferences'
-            )
-          )
+              'Could not update user Preferences',
+            ),
+          ),
         );
       });
     });
@@ -240,7 +240,7 @@ describe('all modal sagas', () => {
             path: updateProfileParams.path,
             opts: { ...updateProfileParams.opts, body: someProfile },
             message: "Updating user's info",
-          })
+          }),
         );
       });
 
@@ -257,16 +257,16 @@ describe('all modal sagas', () => {
             path: updateProfileParams.path,
             opts: { ...updateProfileParams.opts, body: someProfile },
             message: "Updating user's info",
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(
           put(
             actions.api.failure(
               updateProfileParams.path,
               updateProfileParams.opts.method,
-              'Could not update user Profile'
-            )
-          )
+              'Could not update user Profile',
+            ),
+          ),
         );
       });
     });
@@ -283,11 +283,11 @@ describe('all modal sagas', () => {
             path: `/ashares/${aShare.id}/accept`,
             opts: { method: 'PUT', body: {} },
             message: 'Accepting account share invite',
-          })
+          }),
         );
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
         expect(
-          saga.next({ defaultAShareId: 'SomeSharedAccount' }).value
+          saga.next({ defaultAShareId: 'SomeSharedAccount' }).value,
         ).toEqual(put(actions.resource.requestCollection('shared/ashares')));
         expect(saga.next().done).toEqual(true);
       });
@@ -303,11 +303,11 @@ describe('all modal sagas', () => {
             path: `/ashares/${aShare.id}/accept`,
             opts: { method: 'PUT', body: {} },
             message: 'Accepting account share invite',
-          })
+          }),
         );
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
         expect(saga.next({ defaultAShareId: ACCOUNT_IDS.OWN }).value).toEqual(
-          put(actions.auth.clearStore())
+          put(actions.auth.clearStore()),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
@@ -323,7 +323,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Accepting account share invite',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
@@ -342,10 +342,10 @@ describe('all modal sagas', () => {
             path: `/ashares/${aShare.id}/dismiss`,
             opts: { method: 'PUT', body: {} },
             message: 'Rejecting account share invite',
-          })
+          }),
         );
         expect(saga.next().value).toEqual(
-          put(actions.resource.requestCollection('shared/ashares'))
+          put(actions.resource.requestCollection('shared/ashares')),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -360,16 +360,16 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Rejecting account share invite',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(
           put(
             actions.api.failure(
               path,
               opts.method,
-              'Could not reject account share invite'
-            )
-          )
+              'Could not reject account share invite',
+            ),
+          ),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -390,8 +390,8 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
-              })
-            )
+              }),
+            ),
           );
           expect(saga.next().done).toEqual(true);
         });
@@ -407,8 +407,8 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
-              })
-            )
+              }),
+            ),
           );
           expect(saga.next().done).toEqual(true);
         });
@@ -426,8 +426,8 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
-              })
-            )
+              }),
+            ),
           );
 
           expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
@@ -446,8 +446,8 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
-              })
-            )
+              }),
+            ),
           );
 
           expect(saga.next().value).toEqual(put(actions.auth.clearStore()));
@@ -468,17 +468,17 @@ describe('all modal sagas', () => {
               actions.user.preferences.update({
                 defaultAShareId: aShare.id,
                 environment: 'production',
-              })
-            )
+              }),
+            ),
           );
           expect(saga.throw(new Error()).value).toEqual(
             put(
               actions.api.failure(
                 'switch account',
                 'PUT',
-                'Could not switch account'
-              )
-            )
+                'Could not switch account',
+              ),
+            ),
           );
           expect(saga.next().done).toEqual(true);
         });
@@ -498,13 +498,13 @@ describe('all modal sagas', () => {
             path: `/shared/ashares/${aShare.id}`,
             opts: { method: 'DELETE', body: {} },
             message: 'Leaving account',
-          })
+          }),
         );
 
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
 
         expect(saga.next({ defaultAShareId }).value).toEqual(
-          put(actions.auth.clearStore())
+          put(actions.auth.clearStore()),
         );
         expect(saga.next().value).toEqual(put(actions.auth.initSession()));
         expect(saga.next().done).toEqual(true);
@@ -521,13 +521,13 @@ describe('all modal sagas', () => {
             path: `/shared/ashares/${aShare.id}`,
             opts: { method: 'DELETE', body: {} },
             message: 'Leaving account',
-          })
+          }),
         );
 
         expect(saga.next().value).toEqual(select(selectors.userPreferences));
 
         expect(saga.next({ defaultAShareId }).value).toEqual(
-          put(actions.resource.requestCollection('shared/ashares'))
+          put(actions.resource.requestCollection('shared/ashares')),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -544,10 +544,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Leaving account',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(
-          put(actions.api.failure(path, opts.method, 'Could not leave account'))
+          put(actions.api.failure(path, opts.method, 'Could not leave account')),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -556,7 +556,7 @@ describe('all modal sagas', () => {
       test('should start trial successfully', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST
+          actionTypes.LICENSE_TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
@@ -565,7 +565,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting trial license',
-          })
+          }),
         );
         const response = {
           _id: 'something',
@@ -573,14 +573,14 @@ describe('all modal sagas', () => {
         };
 
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.accounts.trialLicenseIssued(response))
+          put(actions.user.org.accounts.trialLicenseIssued(response)),
         );
         expect(saga.next().done).toEqual(true);
       });
       test('should handle api error properly while starting license trial', () => {
         const saga = requestTrialLicense();
         const requestOptions = getRequestOptions(
-          actionTypes.LICENSE_TRIAL_REQUEST
+          actionTypes.LICENSE_TRIAL_REQUEST,
         );
         const { path, opts } = requestOptions;
 
@@ -589,7 +589,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting trial license',
-          })
+          }),
         );
 
         expect(saga.throw(new Error()).value).toEqual(true);
@@ -614,10 +614,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Inviting User',
-          })
+          }),
         );
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.users.created(response))
+          put(actions.user.org.users.created(response)),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -637,7 +637,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Inviting User',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
@@ -664,10 +664,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Updating User',
-          })
+          }),
         );
         expect(saga.next(response).value).toEqual(
-          put(actions.user.org.users.updated({ ...user, _id: userId }))
+          put(actions.user.org.users.updated({ ...user, _id: userId })),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -690,7 +690,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Updating User',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
@@ -710,10 +710,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
-          })
+          }),
         );
         expect(saga.next({}).value).toEqual(
-          put(actions.user.org.users.deleted(userId))
+          put(actions.user.org.users.deleted(userId)),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -730,7 +730,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
@@ -751,10 +751,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Disabling User',
-          })
+          }),
         );
         expect(saga.next({}).value).toEqual(
-          put(actions.user.org.users.disabled(userId))
+          put(actions.user.org.users.disabled(userId)),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -772,10 +772,10 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Enabling User',
-          })
+          }),
         );
         expect(saga.next({}).value).toEqual(
-          put(actions.user.org.users.disabled(userId))
+          put(actions.user.org.users.disabled(userId)),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -793,7 +793,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Disabling User',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);
@@ -813,7 +813,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
-          })
+          }),
         );
         expect(saga.next().done).toEqual(true);
       });
@@ -830,7 +830,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
-          })
+          }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
         expect(saga.next().done).toEqual(true);

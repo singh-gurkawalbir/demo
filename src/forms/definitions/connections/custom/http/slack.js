@@ -37,7 +37,7 @@ export default {
       '/type': 'http',
       '/assistant': 'slack',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `https://slack.com/api`,
+      '/http/baseURI': 'https://slack.com/api',
       '/http/ping/relativeURI': 'api.test',
       '/http/ping/method': 'GET',
       '/http/ping/successPath': 'ok',
@@ -164,6 +164,10 @@ export default {
         {
           field: 'http.auth.type',
           is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
         },
       ],
     },

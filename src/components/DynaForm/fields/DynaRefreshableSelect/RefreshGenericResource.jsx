@@ -1,7 +1,6 @@
-import { useEffect, useState, cloneElement, useCallback } from 'react';
+import React, { useEffect, useState, cloneElement, useCallback } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import clsx from 'clsx';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -10,11 +9,12 @@ import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
     display: 'flex',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
@@ -104,7 +104,7 @@ export default function RefreshGenericResource(props) {
     openExternalUrl({ url: urlToOpen });
   }, [urlToOpen]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
 
   return (
     <div>
@@ -112,6 +112,7 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.refreshGenericResourceWrapper}>
+
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
@@ -132,7 +133,7 @@ export default function RefreshGenericResource(props) {
               classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
-            <Spinner size={24} color="primary" />
+            <Spinner size={24} />
           </span>
         )}
         {urlToOpen && (
@@ -143,9 +144,9 @@ export default function RefreshGenericResource(props) {
             <ExitIcon />
           </ActionButton>
         )}
-        {description && <FormHelperText>{description}</FormHelperText>}
-        {fieldError && <FormHelperText error>{fieldError}</FormHelperText>}
       </FormControl>
+      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
+      {description && <ErroredMessageComponent description={description} />}
     </div>
   );
 }

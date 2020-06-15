@@ -1,3 +1,4 @@
+import React from 'react';
 import DynaURI from './DynaURI';
 
 export default function DynaDataURITemplate(props) {

@@ -1,4 +1,4 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS } from '../constants';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 import { isProduction } from '../../forms/utils';
 
 export const getIntegrationAppUrlName = (
@@ -14,6 +14,72 @@ export const getIntegrationAppUrlName = (
     (isV2Integration ? 'V2' : '')
   );
 };
+
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+  const tabs = [
+    'general',
+    'readme',
+    'apitoken',
+    'subscription',
+    'uninstall'
+  ];
+  const sectionsToHide = [];
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+  }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall')
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general')
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length > 1) {
+      sectionsToHide.push('uninstall');
+    }
+  }
+  if (isMonitorLevelUser) {
+    sectionsToHide.push('uninstall')
+    sectionsToHide.push('apitoken')
+  }
+
+  return tabs.filter(
+    sec => !sectionsToHide.includes(sec)
+  );
+}
+
+export const getTopLevelTabs = (options = {}) => {
+  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId} = options;
+  const tabs = [];
+  const showAdminTabs = !!getAdminLevelTabs(options).length
+  const isStandalone = STANDALONE_INTEGRATION.id === integrationId
+  if (isIntegrationApp) {
+    tabs.push('users')
+    if (!hasAddOns) {
+      tabs.push('addons')
+    }
+  } else {
+    tabs.push('addons')
+  }
+  if (isParent) {
+    tabs.push('flows')
+    tabs.push('dashboard')
+  }
+  if (isStandalone) {
+    tabs.push('settings')
+    tabs.push('admin')
+  }
+  if (!showAdminTabs) {
+    tabs.push('admin')
+  }
+
+  return allTabs.filter(tab => !tabs.includes(tab.path))
+}
 
 const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');
@@ -102,16 +168,17 @@ export default {
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
-      step.sourceConnection
+      step.sourceConnection ||
+      step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
-        stepText = 'Configured';
+        stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = 'Click to Configure';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {

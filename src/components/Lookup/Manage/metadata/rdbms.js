@@ -24,6 +24,7 @@ export default {
           name: '_query',
           type: 'query',
           label: 'Query',
+          required: true,
           helpText: 'The query that fetches records to be exported.',
           sampleData,
           defaultValue: lookup.query,
@@ -39,6 +40,7 @@ export default {
           name: '_extract',
           type: 'text',
           label: 'Column',
+          required: true,
           helpText:
             'When integrator.io runs this lookup it will read the column named in this field from the SQL result set and return that single value as the result of the lookup. Please make sure this field contains a valid column name from your database table.',
           defaultValue: lookup.extract,
@@ -71,6 +73,7 @@ export default {
           name: '_name',
           type: 'text',
           label: 'Name',
+          required: true,
           defaultValue: lookup.name,
           placeholder: 'Alphanumeric characters only please',
           helpText:
@@ -135,17 +138,15 @@ export default {
     };
 
     if (showDynamicLookupOnly) {
-      const { query, extract } = fieldMeta.fieldMap;
+      const { fieldMap, layout } = fieldMeta;
 
-      delete query.visibleWhenAll;
-      delete extract.visibleWhen;
-
-      // body.visibleWhen = [
-      //   {
-      //     field: 'method',
-      //     is: ['POST'],
-      //   },
-      // ];
+      delete fieldMap._mode;
+      delete fieldMap._mapList;
+      delete fieldMap._query.visibleWhen;
+      delete fieldMap._extract.visibleWhen;
+      layout.fields = layout.fields.filter(
+        el => el !== '_mode' && el !== '_mapList'
+      );
     }
 
     return fieldMeta;

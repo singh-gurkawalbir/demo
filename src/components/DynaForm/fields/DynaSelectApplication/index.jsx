@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
   inputLabel: {
     transform: 'unset',
     position: 'static',
-    marginBottom: theme.spacing(1),
   },
   img: {
     maxWidth: '100%',
@@ -68,16 +67,16 @@ export default function SelectApplication(props) {
     onFieldChange,
   } = props;
   // Custom styles for Select Control
-  const flowDetails = useSelector(state =>
-    selectors.flowDetails(state, flowId)
+  const isDataLoader = useSelector(state =>
+    selectors.isDataLoader(state, flowId)
   );
   const groupedApps = useMemo(
     () =>
       groupApplications(resourceType, {
         appType: appType || (fieldOptions && fieldOptions.appType),
-        isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
+        isSimpleImport: isDataLoader,
       }),
-    [appType, fieldOptions, flowDetails, resourceType]
+    [appType, fieldOptions, isDataLoader, resourceType]
   );
   const classes = useStyles();
   const theme = useTheme();
@@ -115,7 +114,7 @@ export default function SelectApplication(props) {
       position: 'relative',
       boxSizing: 'borderBox',
       transition: 'all 100ms ease 0s',
-      outline: `0px !important`,
+      outline: '0px !important',
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
@@ -226,9 +225,9 @@ export default function SelectApplication(props) {
     !value || isMulti
       ? ''
       : {
-          value,
-          label: applications.find(a => a.id === value).name,
-        };
+        value,
+        label: applications.find(a => a.id === value).name,
+      };
 
   function handleChange(e) {
     if (onFieldChange) {

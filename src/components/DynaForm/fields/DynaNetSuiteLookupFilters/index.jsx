@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,6 +8,8 @@ import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
+import RefreshIcon from '../../../icons/RefreshIcon';
+
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -16,13 +18,16 @@ const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    flexDirection: 'row !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
+    marginLeft: theme.spacing(1),
   },
   loading: {
-    flexDirection: `row !important`,
+    display: 'flex',
+    flexDirection: 'row !important',
     alignItems: 'center',
     padding: theme.spacing(1, 0),
   },
@@ -109,24 +114,23 @@ export default function DynaNetSuiteLookupFilters(props) {
         <Typography className={classes.heading}>
           Loading search filters.
         </Typography>
-        <Spinner size={24} color="primary" />
+        <Spinner size={24} />
       </div>
     );
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
-        Click{' '}
+        Refresh  search filters
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          here
-        </Button>{' '}
-        to refresh search filters.
+          <RefreshIcon />
+        </Button>
       </div>
       <FilterPanel
         id={id}
@@ -136,6 +140,6 @@ export default function DynaNetSuiteLookupFilters(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

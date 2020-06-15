@@ -21,11 +21,6 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'rdbms.bulkInsert.batchSize': {
       id: 'rdbms.bulkInsert.batchSize',
       type: 'text',
@@ -44,7 +39,7 @@ export default {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
       arrayIndex: 0,
-      label: 'Launch Query Builder',
+      label: 'Query builder',
       title: 'SQL Query Builder',
       refreshOptionsOnChangesTo: ['rdbms.queryType', 'modelMetadata'],
       visibleWhen: [
@@ -57,6 +52,7 @@ export default {
     'rdbms.bulkInsert.tableName': {
       fieldId: 'rdbms.bulkInsert.tableName',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.queryType': {
       id: 'rdbms.queryType',
       type: 'radiogroup',
@@ -76,21 +72,22 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: [
-      'common',
-      'modelMetadata',
-      'importData',
-      'rdbms.queryType',
-      'rdbms.bulkInsert.tableName',
-      'rdbms.query',
-      'dataMappings',
-    ],
+    fields: ['common', 'dataMappings', 'modelMetadata'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
+        label: 'How would you like the records imported?',
+        fields: [
+          'rdbms.queryType',
+          'rdbms.bulkInsert.tableName',
+          'rdbms.query',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
-        fields: ['rdbms.bulkInsert.batchSize'],
+        fields: ['rdbms.bulkInsert.batchSize', 'apiIdentifier'],
       },
     ],
   },

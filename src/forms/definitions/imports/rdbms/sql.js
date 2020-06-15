@@ -111,12 +111,8 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.query': {
       fieldId: 'rdbms.query',
       defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
@@ -173,22 +169,29 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: [
-      'common',
-      'modelMetadata',
-      'importData',
-      'rdbms.queryType',
-      'ignoreExisting',
-      'ignoreMissing',
-      'rdbms.ignoreExtract',
-      'rdbms.updateExtract',
-      'rdbms.lookups',
-      'rdbms.query',
-      'rdbms.queryInsert',
-      'rdbms.queryUpdate',
-      'dataMappings',
-    ],
+    fields: ['common', 'dataMappings', 'modelMetadata'],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
+        fields: [
+          'rdbms.queryType',
+          'ignoreExisting',
+          'ignoreMissing',
+          'rdbms.ignoreExtract',
+          'rdbms.updateExtract',
+          'rdbms.lookups',
+          'rdbms.query',
+          'rdbms.queryInsert',
+          'rdbms.queryUpdate',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
+      },
+    ],
   },
 };

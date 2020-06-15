@@ -19,6 +19,7 @@ export function* pageProcessorPreview({
   resourceType = 'exports',
   hidden = false,
   throwOnError = false,
+  refresh = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -31,6 +32,7 @@ export function* pageProcessorPreview({
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
+    refresh,
   });
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,
@@ -88,7 +90,7 @@ export function* pageProcessorPreview({
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
-      message: `Fetching flows Preview`,
+      message: 'Fetching flows Preview',
       hidden,
     });
 
@@ -131,13 +133,13 @@ export function* exportPreview({
     delete body.rawData;
   }
 
-  const path = `/exports/preview`;
+  const path = '/exports/preview';
 
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
-      message: `Fetching Exports Preview`,
+      message: 'Fetching Exports Preview',
       hidden,
     });
 

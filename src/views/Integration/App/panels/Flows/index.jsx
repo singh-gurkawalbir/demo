@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Route,
   Link,
@@ -7,20 +7,21 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import { Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import SettingsIcon from '../../../../../components/icons/SettingsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
+import CeligoTable from '../../../../../components/CeligoTable';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
 import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
+import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 
@@ -97,11 +98,11 @@ function FlowList({ integrationId, storeId }) {
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
-
-  // console.log('render: <Flow Settings>');
+  const filterKey = `${integrationId}-flows`;
 
   return (
     <LoadResources required resources="flows,exports">
+      <ScheduleDrawer />
       <ConfigureDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -149,20 +150,13 @@ function FlowList({ integrationId, storeId }) {
           </IconTextButton>
         )}
       </PanelHeader>
-      {flows.map(f => (
-        <FlowCard
-          key={f._id}
-          storeId={storeId}
-          flowId={f._id}
-          excludeActions={[
-            'detach',
-            'clone',
-            'delete',
-            'references',
-            'download',
-          ]}
+
+      <CeligoTable
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
         />
-      ))}
     </LoadResources>
   );
 }

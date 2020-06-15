@@ -3,7 +3,7 @@ import actionTypes from '../../../../actions/types';
 import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const {
     type,
     flowId,
@@ -23,13 +23,13 @@ export default function(state = {}, action) {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.FLOW_DATA.INIT: {
-        const { pageGenerators = [], pageProcessors = [], _id } = flow;
+        const { pageGenerators = [], pageProcessors = [], _id, refresh } = flow;
 
         if (!draft[_id]) {
-          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {} };
+          draft[_id] = { pageGeneratorsMap: {}, pageProcessorsMap: {}, refresh };
         }
 
-        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors };
+        draft[_id] = { ...draft[_id], pageGenerators, pageProcessors, refresh };
 
         break;
       }

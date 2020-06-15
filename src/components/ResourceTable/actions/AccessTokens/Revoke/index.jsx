@@ -1,15 +1,15 @@
-import { Fragment } from 'react';
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import Icon from '../../../../../components/icons/RevokeTokenIcon';
+import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 
 export default {
   label: 'Revoke token',
-  component: function AccessTokens({ resourceType, resource }) {
+  icon: RevokeTokenIcon,
+  component: function RevokeAccessToken({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
-
-    function handleRevokeClick() {
+    const revokeAccessToken = useCallback(() => {
       const patchSet = [
         {
           op: 'replace',
@@ -18,21 +18,16 @@ export default {
         },
       ];
 
-      dispatch(actions.resource.patchStaged(resource._id, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(
-        actions.resource.commitStaged(resourceType, resource._id, 'value')
+        actions.resource.commitStaged(resourceType, resourceId, 'value')
       );
-    }
+    }, [dispatch, resourceId, resourceType]);
 
-    return (
-      <Fragment>
-        <IconButton
-          data-test="revokeAccessToken"
-          size="small"
-          onClick={() => handleRevokeClick()}>
-          <Icon />
-        </IconButton>
-      </Fragment>
-    );
+    useEffect(() => {
+      revokeAccessToken();
+    }, [revokeAccessToken]);
+
+    return null;
   },
 };

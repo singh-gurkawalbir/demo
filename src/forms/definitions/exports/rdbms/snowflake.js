@@ -34,11 +34,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportRdbmsData: {
-      fieldId: 'exportRdbmsData',
-      type: 'labeltitle',
-      label: 'What would you like to export from?',
-    },
     'rdbms.query': { fieldId: 'rdbms.query' },
     type: {
       id: 'type',
@@ -59,6 +54,8 @@ export default {
           items: [
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
           ],
         },
       ],
@@ -78,16 +75,19 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'exportOneToMany',
-          'exportRdbmsData',
-          'rdbms.query',
-          'type',
-          'rdbms.once.query',
-        ],
+        fields: ['common', 'exportOneToMany'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'What would you like to export?',
+            fields: ['rdbms.query'],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: ['type', 'rdbms.once.query'],
+          },
           {
             collapsed: true,
             label: 'Advanced',

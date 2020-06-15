@@ -1,18 +1,25 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import CeligoTable from '../../../CeligoTable';
 import Spinner from '../../../Spinner';
+import InfoIconButton from '../../../InfoIconButton';
 
 const columns = [
   {
     heading: 'Name',
-    value: r => r.doc.name,
+    value: function NameWithInfoicon(r) {
+      return (
+        <>
+          {r && r.doc.name}
+          <InfoIconButton info={r.doc.description} size="xs" />
+        </>
+      );
+    },
     orderBy: 'name',
   },
   { heading: 'Type', value: r => r.model },
-  { heading: 'Description', value: r => r.doc.description },
 ];
 
 export default function PreviewTable({ templateId }) {

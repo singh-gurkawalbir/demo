@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';

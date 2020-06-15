@@ -249,6 +249,10 @@ export default {
           field: 'http.auth.type',
           is: ['basic'],
         },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
       ],
     },
   ],

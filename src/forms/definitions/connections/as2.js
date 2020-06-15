@@ -1,3 +1,4 @@
+import React from 'react';
 import { isNewId } from '../../../utils/resource';
 
 export default {
@@ -199,25 +200,6 @@ export default {
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureTokenRefresh', is: [true] }],
     },
-    configureApiRateLimits: {
-      id: 'configureApiRateLimits',
-      type: 'checkbox',
-      label: 'Configure API rate limits',
-      defaultValue: r =>
-        !!(
-          r &&
-          r.as2 &&
-          r.as2.partnerStationInfo &&
-          r.as2.partnerStationInfo.rateLimit &&
-          r.as2.partnerStationInfo.rateLimit.limit
-        ),
-    },
-    apiRateLimits: {
-      id: 'apiRateLimits',
-      label: 'API rate limits',
-      type: 'labeltitle',
-      visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
-    },
     'as2.partnerStationInfo.auth.token.refreshToken': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshToken',
     },
@@ -316,7 +298,6 @@ export default {
           'as2.partnerStationInfo.auth.token.scheme',
           'as2.partnerStationInfo.auth.token.paramName',
           'configureTokenRefresh',
-          'configureApiRateLimits',
           'refreshTokenHeader',
           'as2.partnerStationInfo.auth.token.refreshToken',
           'as2.partnerStationInfo.auth.token.refreshRelativeURI',
@@ -325,7 +306,12 @@ export default {
           'as2.partnerStationInfo.auth.token.refreshBody',
           'as2.partnerStationInfo.auth.token.refreshTokenPath',
           'as2.partnerStationInfo.auth.token.refreshHeaders',
-          'apiRateLimits',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'API Rate Limits',
+        fields: [
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
           'as2.partnerStationInfo.rateLimit.failPath',
@@ -334,7 +320,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Routing Rules',
+        label: 'Configure routing for shared connection',
         fields: ['as2.contentBasedFlowRouter'],
       },
       {

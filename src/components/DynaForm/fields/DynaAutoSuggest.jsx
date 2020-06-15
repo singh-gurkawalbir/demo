@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  FormLabel,
+  Paper,
+  MenuItem,
+  TextField,
+  FormControl,
+  InputAdornment,
+} from '@material-ui/core';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { Paper, MenuItem, TextField, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
-// TODO (Azhar) : to work on styling
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -15,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsContainerOpen: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: 2000,
     left: 0,
     right: 0,
     maxHeight: 300,
@@ -31,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   suggestion: {
     display: 'block',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderTop: 'none',
   },
   suggestionsList: {
     margin: 0,
@@ -44,9 +56,20 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  dynaAutoSuggestLabelWrapper: {
+    display: 'flex',
+  },
   divider: {
     height: theme.spacing(2),
   },
+  autoSuggestDropdown: {
+    position: 'absolute',
+    top: 4,
+    right: 0,
+    marginTop: '0px !important',
+    color: theme.palette.secondary.light,
+    pointerEvents: 'none'
+  }
 }));
 
 function renderInputComponent(inputProps) {
@@ -62,6 +85,7 @@ function renderInputComponent(inputProps) {
           ref(node);
           inputRef(node);
         },
+        endAdornment: (<InputAdornment className={classes.autoSuggestDropdown} position="start"><ArrowDownIcon /></InputAdornment>),
       }}
       {...other}
     />
@@ -100,8 +124,8 @@ function getSuggestions(val, suggestions, showAllSuggestions) {
   return inputLength === 0
     ? suggestions
     : suggestions.filter(
-        suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
-      );
+      suggestion => suggestion.label.toLowerCase().indexOf(inputValue) !== -1
+    );
 }
 
 function getSuggestionValue(suggestion) {
@@ -161,20 +185,23 @@ export default function DynaAutoSuggest(props) {
 
   return (
     <FormControl disabled={disabled} className={classes.root}>
+      <div className={classes.dynaAutoSuggestLabelWrapper}>
+        <FormLabel required={required} error={!isValid}>
+          {label}
+        </FormLabel>
+        {/* Todo: helpText is needed here */}
+        <FieldHelp {...props} helpText={label} />
+      </div>
       <div className={classes.root}>
         <Autosuggest
           {...autosuggestProps}
           inputProps={{
             classes,
             id,
-            label,
             placeholder,
             autoFocus,
             value,
             disabled,
-            error: !isValid,
-            helperText: isValid ? description : errorMessages,
-            required,
             onChange: handleChange,
           }}
           theme={{
@@ -188,6 +215,11 @@ export default function DynaAutoSuggest(props) {
               {options.children}
             </Paper>
           )}
+        />
+        <ErroredMessageComponent
+          description={description}
+          errorMessages={errorMessages}
+          isValid={isValid}
         />
       </div>
     </FormControl>

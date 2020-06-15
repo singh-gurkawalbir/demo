@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -44,10 +44,10 @@ import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    width: `60%`,
+    width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
     overflowX: 'hidden',
@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px',
     borderColor: theme.palette.background.default,
     marginTop: theme.spacing(1),
+    background: theme.palette.background.paper,
   },
   saveButtonGroup: {
     margin: '10px 10px 10px 24px',
@@ -64,6 +65,7 @@ const useStyles = makeStyles(theme => ({
   },
   fullWidth: {
     width: '100%',
+    padding: 12,
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -84,6 +86,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    height: '100%',
   },
   childExpansionPanel: {
     background: theme.palette.background.default,
@@ -114,17 +117,19 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 3, 3, 0),
   },
   header: {
-    background: theme.palette.primary.main,
+    // background: theme.palette.primary.main,
   },
   default: {
     marginBottom: 10,
   },
   categoryMapWrapper: {
     display: 'flex',
+    minHeight: '100%',
   },
   rootExpansionPanel: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    padding: 12,
   },
   innerContentHeader: {
     width: '100%',
@@ -137,6 +142,10 @@ const useStyles = makeStyles(theme => ({
   },
   expCollBtn: {
     marginRight: -30,
+  },
+  categoryMappingExpPanelSummary: {
+    padding: '0px 12px',
+    width: '100%',
   },
 }));
 
@@ -257,7 +266,7 @@ function CategoryMappings({
 
   if (!generateFields) {
     return (
-      <Loader open>
+      <Loader open hideBackDrop>
         {`Loading ${sectionId}  metadata`}
         <Spinner />
       </Loader>
@@ -275,6 +284,7 @@ function CategoryMappings({
         }>
         <ExpansionPanelSummary
           aria-controls="panel1bh-content"
+          className={classes.categoryMappingExpPanelSummary}
           id="panel1bh-header">
           <div className={classes.innerContentHeader}>
             <div className={classes.title}>
@@ -460,7 +470,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     if (mappingSaveStatus === 'saved' || mappingSaveStatus === 'close') {
       enqueueSnackbar({
         variant: 'success',
-        message: `Your mapping settings have been saved.`,
+        message: 'Your mapping settings have been saved.',
         persist: false,
       });
     }
@@ -509,7 +519,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     );
     enqueueSnackbar({
       variant: 'info',
-      message: `Saving your mapping settings.`,
+      message: 'Saving your mapping settings.',
       persist: false,
     });
   }, [dispatch, enqueueSnackbar, flowId, integrationId]);
@@ -523,7 +533,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     );
     enqueueSnackbar({
       variant: 'info',
-      message: `Saving your mapping settings.`,
+      message: 'Saving your mapping settings.',
       persist: false,
     });
   }, [dispatch, enqueueSnackbar, flowId, integrationId]);
@@ -549,7 +559,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   }
 
   return (
-    <Fragment>
+    <>
       <Drawer
         anchor="right"
         open={!!match}
@@ -644,13 +654,13 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
             </div>
           </div>
         ) : (
-          <Loader open>
+          <Loader open hideBackDrop>
             Loading Mappings.
             <Spinner />
           </Loader>
         )}
       </Drawer>
-    </Fragment>
+    </>
   );
 }
 

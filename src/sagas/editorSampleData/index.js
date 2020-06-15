@@ -4,9 +4,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import * as selectors from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { constructResourceFromFormValues } from '../sampleData';
+import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
 import { isNewId, isFileAdaptor, isAS2Resource } from '../../utils/resource';
-import requestFileAdaptorSampleData from '../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 
 export function* requestEditorSampleData({
   flowId,
@@ -42,16 +41,14 @@ export function* requestEditorSampleData({
       isAS2Resource(resource) ||
       isRestCsvMediaType
     ) {
+      yield call(requestExportSampleData, { resourceId, resourceType, values: formValues })
       const parsedData = yield select(
         selectors.getResourceSampleDataWithStatus,
         resourceId,
-        'parse'
+        'preview'
       );
-
-      if (parsedData && parsedData.data && parsedData.data.body) {
-        sampleData = parsedData.data.body;
-      } else {
-        sampleData = yield call(requestFileAdaptorSampleData, { resource });
+      if (parsedData && parsedData.data) {
+        sampleData = parsedData.data;
       }
     }
   } else {
@@ -131,7 +128,7 @@ export function* requestEditorSampleData({
     const response = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: `Fetching editor sample data`,
+      message: 'Fetching editor sample data',
       hidden: false,
     });
 
@@ -168,8 +165,8 @@ export function* clearEditorSampleData({ resourceType, id }) {
         resourceType === 'flows'
           ? { flowId: id }
           : {
-              resourceId: id,
-            };
+            resourceId: id,
+          };
 
       yield put(actions.editorSampleData.clear(options));
     }

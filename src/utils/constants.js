@@ -18,6 +18,11 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   CONNECTION: 'Connection',
   INSTALL_PACKAGE: 'installPackage',
   STACK: 'Stack',
+  FORM: 'form',
+});
+export const UNINSTALL_STEP_TYPES = Object.freeze({
+  FORM: 'form',
+  HIDDEN: 'hidden',
 });
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',
@@ -414,6 +419,21 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'dayToRunOn',
     '_keepDeltaBehindFlowId',
     '_keepDeltaBehindExportId',
+    'uploadFile',
+    'ftp.directoryPath',
+    'ftp.fileNameStartsWith',
+    'ftp.fileNameEndsWith',
+    'sampleData',
+    'file.csv.columnDelimiter',
+    'file.csv.rowDelimiter',
+    'file.csv.rowsPerRecord',
+    'file.csv.keyColumns',
+    'file.csv.hasHeaderRow',
+    'file.csv.trimSpaces',
+    'file.csv.rowsToSkip',
+    'file.compressionFormat',
+    'file.skipDelete',
+    'file.csvHelper'
   ],
   imports: [
     'lookups',

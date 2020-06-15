@@ -1,3 +1,4 @@
+import React from 'react';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import AuditLogs from '../../actions/AuditLogs';
@@ -18,10 +19,6 @@ export default {
         return <ResourceDrawerLink resourceType="accesstokens" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
     },
     {
       // TODO add permission checks

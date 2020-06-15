@@ -1,10 +1,9 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import EditIcon from '../icons/EditIcon';
@@ -18,8 +17,10 @@ import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
-import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
+import MoreHorizIcon from '../icons/EllipsisHorizontalIcon';
+import CeligoSwitch from '../CeligoSwitch';
 
+// TODO: Refactor this component
 export default function UserDetail(props) {
   const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -75,11 +76,15 @@ export default function UserDetail(props) {
       case 'makeOwner':
         confirmDialog({
           title: 'Transfer Account Ownership',
-          message: [
-            `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`,
-            'All owner privileges will be transferred to this user, and your account will be converted to Manager.',
-            'Please click Confirm to proceed with this change.',
-          ].join('<br/>'),
+          isHtml: true,
+          message: `${
+            user.sharedWithUser.name
+              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
+              : `<b>${user.sharedWithUser.email}</b>`
+          } <br/> 
+          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
+          Please click Confirm to proceed with this change.
+          `,
           buttons: [
             {
               label: 'Cancel',
@@ -180,7 +185,7 @@ export default function UserDetail(props) {
   const { user, integrationId, isAccountOwner } = props;
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           disable: { action: actionTypes.USER_DISABLE, resourceId: user._id },
@@ -194,8 +199,10 @@ export default function UserDetail(props) {
       />
       <TableRow key={user._id}>
         <TableCell>
-          <div>{user.sharedWithUser.name}</div>
           <div>{user.sharedWithUser.email}</div>
+        </TableCell>
+        <TableCell>
+          <div>{user.sharedWithUser.name}</div>
         </TableCell>
         <TableCell>
           {!integrationId &&
@@ -213,23 +220,23 @@ export default function UserDetail(props) {
         </TableCell>
         <TableCell>
           {!integrationId && (
-            <Fragment>
+            <>
               {user.accepted && 'Accepted'}
               {user.dismissed && 'Dismissed'}
               {!user.accepted && !user.dismissed && 'Pending'}
-            </Fragment>
+            </>
           )}
           {integrationId && (
-            <Fragment>
+            <>
               {user.disabled && 'Disabled'}
               {!user.disabled && user.accepted && 'Accepted'}
               {!user.disabled && user.dismissed && 'Dismissed'}
               {!user.disabled && !user.accepted && !user.dismissed && 'Pending'}
-            </Fragment>
+            </>
           )}
         </TableCell>
         {isAccountOwner && (
-          <Fragment>
+          <>
             {integrationId && user._id !== ACCOUNT_IDS.OWN && (
               <TableCell>
                 <IconButton
@@ -243,12 +250,12 @@ export default function UserDetail(props) {
             )}
 
             {!integrationId && (
-              <Fragment>
+              <>
                 <TableCell>
-                  <Switch
+                  <CeligoSwitch
                     data-test="disableUser"
-                    checked={!user.disabled}
-                    onClick={() => {
+                    enabled={!user.disabled}
+                    onChange={() => {
                       handleActionClick('disable');
                     }}
                   />
@@ -288,11 +295,11 @@ export default function UserDetail(props) {
                     <MoreHorizIcon />
                   </IconButton>
                 </TableCell>
-              </Fragment>
+              </>
             )}
-          </Fragment>
+          </>
         )}
       </TableRow>
-    </Fragment>
+    </>
   );
 }

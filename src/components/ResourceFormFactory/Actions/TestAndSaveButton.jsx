@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback, useReducer } from 'react';
+import React, { useEffect, useCallback, useReducer } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const ConfirmDialog = props => {
   const { confirmDialog } = useConfirmDialog();
 
   useEffect(() => {
-    if (commErrorMessage)
+    if (commErrorMessage) {
       confirmDialog({
         title: 'Confirm',
         message: `Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`,
@@ -51,7 +51,7 @@ const ConfirmDialog = props => {
           },
         ],
       });
-    else confirmDialog(null);
+    } else confirmDialog(null);
   }, [
     commErrorMessage,
     confirmDialog,
@@ -93,8 +93,8 @@ const TestAndSaveButton = props => {
       dispatch(actions.resourceForm.submit(resourceType, resourceId, values)),
     [dispatch, resourceId, resourceType]
   );
-  const handleTestConnection = values =>
-    dispatch(actions.resource.connections.test(resourceId, values));
+  const handleTestConnection = useCallback(values =>
+    dispatch(actions.resource.connections.test(resourceId, values)), [dispatch, resourceId]);
   const testClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId, true)),
     [dispatch, resourceId]
@@ -150,20 +150,22 @@ const TestAndSaveButton = props => {
   useEffect(() => {
     if (saveTerminated) dispatchLocalAction({ type: 'saveCompleted' });
   }, [saveTerminated]);
+  const handleCloseAndClearForm = useCallback(() => {
+    dispatchLocalAction({
+      type: 'clearFormData',
+    });
+  }, []);
+
+  const handleSaveCompleted = useCallback(() =>
+    dispatchLocalAction({ type: 'saveCompleted' }), [])
 
   return (
-    <Fragment>
+    <>
       <ConfirmDialog
         commErrorMessage={erroredMessage}
         formValues={formValues}
-        handleCloseAndClearForm={() =>
-          dispatchLocalAction({
-            type: 'clearFormData',
-          })
-        }
-        handleSaveCompleted={() =>
-          dispatchLocalAction({ type: 'saveCompleted' })
-        }
+        handleCloseAndClearForm={handleCloseAndClearForm}
+        handleSaveCompleted={handleSaveCompleted}
         handleSubmit={handleSubmitForm}
       />
       {/* Test button which hides the test button and shows the ping snackbar */}
@@ -183,7 +185,7 @@ const TestAndSaveButton = props => {
         color="primary">
         {label || 'Save'}
       </DynaAction>
-    </Fragment>
+    </>
   );
 };
 

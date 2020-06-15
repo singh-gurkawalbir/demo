@@ -1,14 +1,15 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/label-has-for */
-import { Fragment } from 'react';
+import React from 'react';
 import TextArea from './TextArea';
 
 export default function Field({ fieldMeta, onClick, value, isMapped }) {
   if (!fieldMeta || !fieldMeta.details) {
     return (
-      <Fragment>
+      <>
         <td />
         <td />
-      </Fragment>
+      </>
     );
   }
 
@@ -77,7 +78,7 @@ export default function Field({ fieldMeta, onClick, value, isMapped }) {
   }
 
   return (
-    <Fragment>
+    <>
       <td className="labelCol">
         <label>{fieldMeta.details.label}</label>
       </td>
@@ -91,10 +92,10 @@ export default function Field({ fieldMeta, onClick, value, isMapped }) {
             (fieldMeta.details.type !== 'reference' ||
               fieldMeta.details.referenceTo.indexOf('User') === -1) && (
               <div className="requiredBlock" />
-            )}
+          )}
           {input}
         </div>
       </td>
-    </Fragment>
+    </>
   );
 }

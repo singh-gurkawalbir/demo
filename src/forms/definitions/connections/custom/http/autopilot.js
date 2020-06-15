@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': 'v1/contacts',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api2.autopilothq.com/`,
+    '/http/baseURI': 'https://api2.autopilothq.com/',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'autopilotapikey',
     '/http/auth/token/scheme': ' ',

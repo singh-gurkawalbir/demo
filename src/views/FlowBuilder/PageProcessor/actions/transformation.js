@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -75,7 +75,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
 function Transformation(props) {
   const { open } = props;
 
-  return <Fragment>{open && <TransformationDialog {...props} />}</Fragment>;
+  return <>{open && <TransformationDialog {...props} />}</>;
 }
 
 export default {

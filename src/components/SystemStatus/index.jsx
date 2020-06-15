@@ -1,3 +1,5 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Paper from '@material-ui/core/Paper';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -7,14 +9,19 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     margin: theme.spacing(1),
+    wordBreak: 'break-word',
   },
   wrapper: {
-    padding: theme.spacing(2),
-    maxWidth: '319px',
+    padding: 12,
+    maxWidth: 324,
     display: 'flex',
+
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '& > p': {
+      fontSize: 14,
+    }
   },
   progressBar: {
     marginTop: theme.spacing(1.5),
@@ -22,15 +29,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function SystemStatus(props) {
-  const { children } = props;
+function SystemStatus({ children, isLoading }) {
   const classes = useStyles();
 
   return (
     <div className={classes.systemStatusWrapper}>
       <Paper className={classes.wrapper}>
         {children}
-        <LinearProgress color="primary" className={classes.progressBar} />
+        {isLoading && (
+          <LinearProgress color="primary" className={classes.progressBar} />
+        )}
       </Paper>
     </div>
   );

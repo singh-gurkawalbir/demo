@@ -15,25 +15,30 @@ import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSamp
 import {
   isBlobTypeResource,
   isRestCsvMediaTypeExport,
+  isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import { isIntegrationApp } from '../../../utils/flows';
 
-function* getUIDataForResource({ resource, connection, flow }) {
+function* getUIDataForResource({ resource, connection, flow, refresh }) {
   const { adaptorType, type, sampleData } = resource;
   const isDataLoader = type === 'simple';
 
   if (isBlobTypeResource(resource)) return getBlobResourceSampleData();
 
   // Incase of Data Loader/ Rest CSV Exports, flow is same as File Adaptors
-  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader)
-    return yield call(requestFileAdaptorSampleData, { resource });
+  if (isRestCsvMediaTypeExport(resource, connection) || isDataLoader) return yield call(requestFileAdaptorSampleData, { resource });
 
   if (adaptorType) {
     switch (adaptorType) {
       case 'NetSuiteExport':
       case 'SalesforceExport':
-        return yield call(requestRealTimeMetadata, { resource });
+        // Only incase of real time resources, this 'requestRealTimeMetadata' saga is called
+        // Incase of other NS/SF exports -
+        // Non IAs : pageProcessorPreview call fetches sampleData
+        // IAs: If there is sampledata on resource, returns it as uiData below at line:60
+        if (isRealTimeOrDistributedResource(resource)) return yield call(requestRealTimeMetadata, { resource, refresh });
+        break;
       case 'FTPExport':
       case 'S3Export':
       case 'AS2Export': {
@@ -53,14 +58,14 @@ function* getUIDataForResource({ resource, connection, flow }) {
   if (isIntegrationApp(flow) && sampleData) return sampleData;
 }
 
-export default function* getPreviewOptionsForResource({ resource, flow }) {
+export default function* getPreviewOptionsForResource({ resource, flow, refresh }) {
   const connection = yield select(
     selectors.resource,
     'connections',
     resource && resource._connectionId
   );
   const uiData = isUIDataExpectedForResource(resource, connection, flow)
-    ? yield call(getUIDataForResource, { resource, connection, flow })
+    ? yield call(getUIDataForResource, { resource, connection, flow, refresh })
     : undefined;
   const postData = {
     lastExportDateTime: getLastExportDateTime(),

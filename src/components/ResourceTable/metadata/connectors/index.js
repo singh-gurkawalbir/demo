@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from '@material-ui/core/Link';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
@@ -15,10 +16,6 @@ export default {
         return <ResourceDrawerLink resourceType="connectors" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
     },
     {
       heading: 'Last updated',

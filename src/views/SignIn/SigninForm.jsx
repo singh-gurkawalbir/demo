@@ -1,7 +1,6 @@
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
-import { Component } from 'react';
-import { hot } from 'react-hot-loader';
+import React, { Component } from 'react';
 import { Typography, Button, Link, FormLabel } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
@@ -30,7 +29,6 @@ const mapDispatchToProps = dispatch => ({
 });
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
-@hot(module)
 @withStyles(theme => ({
   snackbar: {
     margin: theme.spacing(1),
@@ -120,10 +118,12 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     display: 'flex',
   },
 }))
+
 class SignIn extends Component {
   state = {
     email: '',
   };
+
   componentDidMount() {
     if (
       process.env.AUTO_LOGIN === 'true' &&
@@ -148,6 +148,7 @@ class SignIn extends Component {
   handleOnChangeEmail = e => {
     this.setState({ email: e.target.value });
   };
+
   handleOnSubmit = e => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -155,6 +156,7 @@ class SignIn extends Component {
 
     this.props.handleAuthentication(email, password);
   };
+
   handleSignInWithGoogle = e => {
     e.preventDefault();
 
@@ -184,7 +186,7 @@ class SignIn extends Component {
       location && location.state && location.state.attemptedRoute;
 
     if (error) {
-      error = 'Oops! Something went wrong. Try again.';
+      error = 'Sign in failed. Please try again.';
     } else if (window.signInError) {
       error = window.signInError;
     }

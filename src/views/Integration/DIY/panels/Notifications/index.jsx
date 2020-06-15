@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
@@ -22,10 +22,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NotificationsSection({ integrationId }) {
+export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
+  const _integrationId = childId || integrationId;
   const {
     connections = [],
     flows = [],
@@ -33,7 +34,7 @@ export default function NotificationsSection({ integrationId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, integrationId)
+      selectors.integrationResources(state, _integrationId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
@@ -76,12 +77,12 @@ export default function NotificationsSection({ integrationId }) {
     const notifications = [];
 
     notifications.push({
-      _integrationId: integrationId,
-      subscribed: flowList.includes(integrationId),
+      _integrationId,
+      subscribed: flowList.includes(_integrationId),
     });
 
     flows
-      .filter(f => f._id !== integrationId)
+      .filter(f => f._id !== _integrationId)
       .forEach(flow => {
         notifications.push({
           _flowId: flow._id,

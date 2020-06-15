@@ -15,7 +15,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/headers': [
       {
-        name: 'authorization',
+        name: 'Authorization',
         value:
           'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
       },
@@ -25,7 +25,7 @@ export default {
       },
       {
         name: 'wm_qos.correlation_id',
-        value: `{{{dateFormat 'X'}}}`,
+        value: "{{{dateFormat 'X'}}}",
       },
     ],
     '/http/auth/token/refreshMethod': 'POST',
@@ -43,6 +43,19 @@ export default {
       {
         name: 'Content-Type',
         value: 'application/x-www-form-urlencoded',
+      },
+      {
+        name: 'Authorization',
+        value:
+          'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
+      },
+      {
+        name: 'wm_svc.name',
+        value: 'Walmart Marketplace',
+      },
+      {
+        name: 'wm_qos.correlation_id',
+        value: "{{{dateFormat 'X'}}}",
       },
     ],
   }),

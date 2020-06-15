@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './components/EditRetryData';
 import ViewErrorDetails from './components/ViewErrorDetails';
 import { resourceError } from '../../../reducers';
+import { safeParse } from '../../../utils/string';
 import ErrorActions from './components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
@@ -45,16 +46,21 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
   const [recordMode, setRecordMode] = useState(mode);
-  const errorDoc = useSelector(state =>
-    resourceError(state, { flowId, resourceId, errorId })
-  );
-  const { retryDataKey: retryId, ...details } = errorDoc || {};
+  const retryId = useSelector(state => {
+    const errorDoc =
+      resourceError(state, { flowId, resourceId, errorId }) || {};
+
+    return errorDoc.retryDataKey;
+  });
   const handleModeChange = useCallback((event, newMode) => {
     setRecordMode(newMode);
   }, []);
-  const onRetryDataChange = useCallback(data => {
-    setRetryData(data);
-  }, []);
+  const onRetryDataChange = useCallback(
+    data =>
+      // Editor onChange returns string format, so parse it to get updated retryData
+      setRetryData(safeParse(data)),
+    []
+  );
 
   return (
     <div className={classes.wrapper}>
@@ -89,11 +95,21 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
           )}
         </Tabs>
         <div className={classes.tabContent}>
-          {!retryId && <ViewErrorDetails details={details} />}
+          {!retryId && (
+            <ViewErrorDetails
+              errorId={errorId}
+              flowId={flowId}
+              resourceId={resourceId}
+            />
+          )}
 
           {retryId &&
             (recordMode === 'view' ? (
-              <ViewErrorDetails details={details} />
+              <ViewErrorDetails
+                errorId={errorId}
+                flowId={flowId}
+                resourceId={resourceId}
+              />
             ) : (
               <EditRetryData
                 retryId={retryId}

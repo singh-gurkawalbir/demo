@@ -7,6 +7,7 @@ import Suggestions from './Suggestions';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -43,6 +44,7 @@ const DynaTextWithFlowSuggestion = props => {
   } = props;
   const ref = useRef(null);
   const dispatch = useDispatch();
+  const [lookupModalShown, setLookupModalShown] = useState(false);
   const [state, setState] = useState({
     hideSuggestion: true,
     textInsertPosition: 0,
@@ -65,7 +67,7 @@ const DynaTextWithFlowSuggestion = props => {
       onFieldChange(id, newValue);
       setState({
         textInsertPosition: 0,
-        hideSuggestion: false,
+        hideSuggestion: true,
       });
     },
     [id, onFieldChange]
@@ -84,9 +86,15 @@ const DynaTextWithFlowSuggestion = props => {
     onFieldChange(id, inpValue);
   };
 
+  const handleLookupModalShown = useCallback(
+    (val) => {
+      setLookupModalShown(val)
+    },
+    [setLookupModalShown],
+  )
   // close suggestions when clicked outside
   const handleClickOutside = event => {
-    if (ref.current && !ref.current.contains(event.target)) {
+    if (!lookupModalShown && ref.current && !ref.current.contains(event.target)) {
       setState({
         ...state,
         hideSuggestion: true,
@@ -132,12 +140,9 @@ const DynaTextWithFlowSuggestion = props => {
           name={name}
           className={classes.dynaTextWithFlowFormControl}
           placeholder={placeholder}
-          helperText={isValid ? description : errorMessages}
           disabled={disabled}
           multiline={multiline}
-          error={!isValid}
           onChange={handleFieldChange}
-          required={required}
           value={value}
           onClick={handleCursorChange}
           onKeyUp={handleCursorChange}
@@ -159,8 +164,14 @@ const DynaTextWithFlowSuggestion = props => {
             onValueUpdate={handleUpdateAfterSuggestionInsert}
             showSuggestionsWithoutHandlebar={showSuggestionsWithoutHandlebar}
             skipExtractWrapOnSpecialChar={skipExtractWrapOnSpecialChar}
+            showLookupModal={handleLookupModalShown}
           />
         )}
+        <ErroredMessageComponent
+          isValid={isValid}
+          description={description}
+          errorMessages={errorMessages}
+        />
       </div>
     </FormControl>
   );

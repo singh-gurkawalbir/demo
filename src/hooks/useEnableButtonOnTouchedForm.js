@@ -30,7 +30,7 @@ const useEnableButtonOnTouchedForm = ({
     value => {
       if (showCustomFormValidations) {
         showCustomFormValidations();
-      } else if (isIAForm)
+      } else if (isIAForm) {
         dispatch(
           actions.integrationApp.settings.showFormValidations(
             integrationId,
@@ -38,10 +38,11 @@ const useEnableButtonOnTouchedForm = ({
             sectionId
           )
         );
-      else
+      } else {
         dispatch(
           actions.resourceForm.showFormValidations(resourceType, resourceId)
         );
+      }
 
       // Util user resolves form validation do we allow the onClick to take place ...
       if (formIsValid) onClick(value);

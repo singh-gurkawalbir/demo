@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from '@material-ui/core/Link';
 import Delete from '../../components/ResourceTable/actions/Delete';
 import UploadZipFile from '../../components/ResourceTable/actions/UploadZipFile';
@@ -14,11 +15,6 @@ export default {
         return <ResourceDrawerLink resourceType="templates" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
-      orderBy: 'description',
     },
     {
       heading: 'Last updated',

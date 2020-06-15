@@ -1,25 +1,32 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import CodeEditor from '../../../../components/CodeEditor';
-import { jobErrorRetryObject } from '../../../../reducers';
-// import actions from '../../../../actions';
+import CodeEditor from '../../../CodeEditor';
+import actions from '../../../../actions';
+import { retryDataContext } from '../../../../reducers';
 
-export default function EditRetryData({ retryId, onChange }) {
+export default function EditRetryData({
+  retryId,
+  flowId,
+  resourceId,
+  onChange,
+}) {
   const dispatch = useDispatch();
-  const retryObject = useSelector(state => jobErrorRetryObject(state, retryId));
-  const [isRequested, setIsRequested] = useState(false);
+  const { status, data: retryData = {} } = useSelector(state =>
+    retryDataContext(state, retryId)
+  );
 
   useEffect(() => {
-    if (!isRequested && retryId) {
-      // dispatch(actions.job.requestRetryData({ retryId }));
-      setIsRequested(true);
+    if (!status && retryId) {
+      dispatch(
+        actions.errorManager.retryData.request({ flowId, resourceId, retryId })
+      );
     }
-  }, [dispatch, isRequested, retryId]);
+  }, [dispatch, flowId, resourceId, retryId, status]);
 
   return (
     <CodeEditor
       name={`${retryId}-edit`}
-      value={retryObject}
+      value={retryData}
       mode="json"
       onChange={onChange}
     />

@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch, generatePath } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 
 // TODO: Azhar check tab panels are working fine or not without these styles everywhere
@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(3),
-    overflow: 'scroll',
+    overflow: 'visible',
   },
   tab: {
     minWidth: theme.spacing(13.75),
@@ -23,7 +23,7 @@ export default function IntegrationTabs({ tabs, className }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { tab } = match.params;
+  const { tab, storeId: childId } = match.params;
   let currentTabIndex = tabs.findIndex(t => t.path === tab);
 
   // if you cant find tab index default it to zero
@@ -31,15 +31,14 @@ export default function IntegrationTabs({ tabs, className }) {
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;
-      const parts = match.url.split('/');
-
-      parts[parts.length - 1] = newTab;
-
-      const newUrl = parts.join('/');
-
-      history.push(newUrl);
+      history.push(
+        generatePath(match.path, {
+          ...match.params,
+          tab: newTab,
+        })
+      );
     },
-    [history, match.url, tabs]
+    [history, match.params, match.path, tabs]
   );
 
   return (
@@ -72,7 +71,7 @@ export default function IntegrationTabs({ tabs, className }) {
           className={classes.tabPanel}
           id={`tabpanel-${i}`}
           aria-labelledby={`tab-${i}`}>
-          <div>{currentTabIndex === i && <Panel {...match.params} />}</div>
+          <div>{currentTabIndex === i && <Panel {...match.params} childId={childId} />}</div>
         </div>
       ))}
     </div>

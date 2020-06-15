@@ -1,16 +1,23 @@
+import React from 'react';
 import DynaTableView from './DynaTable';
 
 export default function DynaCSVColumnMapper(props) {
   const {
-    value,
     maxNumberOfColumns,
     extractFieldHeader,
     generateFieldHeader,
   } = props;
+  let {value } = props
   let columnOptions = [];
 
-  // console.log(props);
-
+  value = value.map(v => {
+    // eslint-disable-next-line no-param-reassign
+    v.column = v.column &&
+    // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
+    // eslint-disable-next-line no-restricted-globals
+    !isNaN(v.column) ? parseInt(v.column, 10) : v.column
+    return v
+  })
   if (value && !maxNumberOfColumns) {
     columnOptions = value
       .filter(el => el.column)
@@ -19,7 +26,7 @@ export default function DynaCSVColumnMapper(props) {
 
   if (maxNumberOfColumns) {
     columnOptions = [...Array(maxNumberOfColumns).keys()].map(a => ({
-      id: `${a + 1}`,
+      id: a + 1,
       text: `${a + 1}`,
     }));
   }

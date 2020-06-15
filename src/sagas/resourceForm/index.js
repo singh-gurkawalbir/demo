@@ -12,13 +12,13 @@ import {
 import factory from '../../forms/formFactory';
 import processorLogic from '../../reducers/session/editors/processorLogic/javascript';
 import { getResource, commitStagedChanges } from '../resources';
-import connectionSagas, { createPayload } from '../resourceForm/connections';
+import connectionSagas, { createPayload } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
-import patchTransformationRulesForXMLResource from '../sampleData/utils/xmlTransformationRulesGenerator';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -104,7 +104,7 @@ export function* runHook({ hook, data }) {
     code = origin.content;
   }
 
-  const path = `/processors/javascript`;
+  const path = '/processors/javascript';
   const opts = {
     method: 'post',
     body: processorLogic.requestBody({
@@ -247,7 +247,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
     SCOPES.VALUE
   );
 
-  if (resource && resource.useParentForm)
+  if (resource && resource.useParentForm) {
     yield put(
       actions.resource.patchStaged(
         resourceId,
@@ -255,6 +255,7 @@ function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
         SCOPES.VALUE
       )
     );
+  }
   yield put(
     actions.resource.patchStaged(
       resourceId,
@@ -373,11 +374,6 @@ export function* submitFormValues({
     );
   }
 
-  // fetch all possible pending patches.
-  if (resourceType === 'exports' && isNewId(resourceId)) {
-    yield call(patchTransformationRulesForXMLResource, { resourceId });
-  }
-
   const { patch } = yield select(
     selectors.stagedResource,
     resourceId,
@@ -438,30 +434,39 @@ export function* submitFormValues({
   );
 }
 
-export function* getFlowUpdatePatchesOnPGorPPSave(
+
+// this saga specifically creates new PG or PP updates to a flow document
+export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
   tempResourceId,
   flowId
 ) {
   if (
     !['exports', 'imports'].includes(resourceType) ||
-    !flowId ||
-    !isNewId(tempResourceId)
-  )
-    return [];
+    !flowId) return [];
 
   // is pageGenerator or pageProcessor
-  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const { merged: flowDoc, master: origFlowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  // if its an existing resource and original flow document does not have any references to newly created PG or PP
+  // then we can go ahead and update it...if it has existing references no point creating additional create patches
+  // this was specifically created to support webhooks where in generating url we have to create a new PG...
+
+  if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
+    return [];
+  }
+
+  const createdId = isNewId(tempResourceId) ?
+    yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(
     selectors.resource,
     resourceType,
     createdId
   );
-  const { merged: flowDoc } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+
   const addIndexPP =
     (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
   const addIndexPG =
@@ -492,7 +497,7 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
         flowPatches = [
           {
             op: 'replace',
-            path: `/pageGenerators/0`,
+            path: '/pageGenerators/0',
             value: { _exportId: createdId },
           },
         ];
@@ -522,25 +527,26 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
 
   let missingPatches = [];
 
-  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators)
+  if (flowPatches[0].path.includes('pageGenerators') && !flowDoc.pageGenerators) {
     missingPatches = [
       {
         op: 'add',
-        path: `/pageGenerators`,
+        path: '/pageGenerators',
         value: [],
       },
     ];
-  else if (
+  } else if (
     flowPatches[0].path.includes('pageProcessors') &&
     !flowDoc.pageProcessors
-  )
+  ) {
     missingPatches = [
       {
         op: 'add',
-        path: `/pageProcessors`,
+        path: '/pageProcessors',
         value: [],
       },
     ];
+  }
 
   return [...missingPatches, ...flowPatches];
 }
@@ -560,7 +566,7 @@ export function* skipRetriesPatches(
   );
   // if the export is a lookup then no patches should be applied
 
-  if (createdResource.isLookup) return null;
+  if (createdResource.isLookup) return [];
 
   const { merged: flow } = yield select(
     selectors.resourceData,
@@ -572,6 +578,15 @@ export function* skipRetriesPatches(
     flow.pageGenerators.findIndex(
       pg => pg._exportId === (createdId || resourceId)
     );
+
+  if (index === null || index === -1) {
+    return [];
+  }
+  // if its same value no point patching...return
+  if (flow.pageGenerators[index].skipRetries === skipRetries) {
+    return [];
+  }
+
   const opDetermination =
     flow.pageGenerators[index].skipRetries === undefined ? 'add' : 'replace';
 
@@ -610,7 +625,7 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
     resourceId,
   });
   const flowPatches = yield call(
-    getFlowUpdatePatchesOnPGorPPSave,
+    getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
     resourceId,
     flowId
@@ -667,6 +682,15 @@ export function* submitResourceForm(params) {
 
   // if it fails return
   if (submitFailed || !flowId) return;
+
+  const { merged: flow } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+
+  // do not update the flow when its an IA
+  if (isIntegrationApp(flow)) return;
 
   // when there is nothing to commit there is no reason to update the flow doc..hence we return
   // however there is a usecase where we create a resource from an existing resource and that
@@ -826,54 +850,60 @@ export function* initFormValues({
     );
   }
 
-  const defaultFormAssets = factory.getResourceFormAssets({
-    resourceType,
-    resource,
-    isNew,
-    assistantData,
-    connection,
-  });
-  const { customForm } = resource;
-  const form =
-    customForm && customForm.form
-      ? customForm.form
-      : defaultFormAssets.fieldMeta;
-  //
-  const fieldMeta = factory.getFieldsWithDefaults(
-    form,
-    resourceType,
-    resource,
-    { developerMode, flowId }
-  );
-  let finalFieldMeta = fieldMeta;
-
-  if (customForm && customForm.init) {
-    // pre-save-resource
-    // this resource has an embedded custom form.
-    // TODO: if there is an error here we should show that message
-    // in the UI.....and point them to the link to edit the
-    // script or maybe prevent them from saving the script
-    finalFieldMeta = yield call(runHook, {
-      hook: customForm.init,
-      data: fieldMeta,
-    });
-  } else if (typeof defaultFormAssets.init === 'function') {
-    // standard form init fn...
-
-    finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
-  }
-
-  // console.log('finalFieldMeta', finalFieldMeta);
-  yield put(
-    actions.resourceForm.initComplete(
+  try {
+    const defaultFormAssets = factory.getResourceFormAssets({
       resourceType,
-      resourceId,
-      finalFieldMeta,
+      resource,
       isNew,
-      skipCommit,
-      flowId
-    )
-  );
+      assistantData,
+      connection,
+    });
+    const { customForm } = resource;
+    const form =
+      customForm && customForm.form
+        ? customForm.form
+        : defaultFormAssets.fieldMeta;
+    //
+    const fieldMeta = factory.getFieldsWithDefaults(
+      form,
+      resourceType,
+      resource,
+      { developerMode, flowId }
+    );
+    let finalFieldMeta = fieldMeta;
+
+    if (customForm && customForm.init) {
+      // pre-save-resource
+      // this resource has an embedded custom form.
+      // TODO: if there is an error here we should show that message
+      // in the UI.....and point them to the link to edit the
+      // script or maybe prevent them from saving the script
+      finalFieldMeta = yield call(runHook, {
+        hook: customForm.init,
+        data: fieldMeta,
+      });
+    } else if (typeof defaultFormAssets.init === 'function') {
+      // standard form init fn...
+
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, resource, flow);
+    }
+
+    // console.log('finalFieldMeta', finalFieldMeta);
+    yield put(
+      actions.resourceForm.initComplete(
+        resourceType,
+        resourceId,
+        finalFieldMeta,
+        isNew,
+        skipCommit,
+        flowId
+      )
+    );
+  } catch (e) {
+    yield put(actions.resourceForm.initFailed(resourceType, resourceId));
+    // eslint-disable-next-line no-console
+    console.warn(e);
+  }
 }
 
 // Maybe the session could be stale...and the pre-submit values might

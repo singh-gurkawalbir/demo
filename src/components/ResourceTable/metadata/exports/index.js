@@ -1,3 +1,4 @@
+import React from 'react';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import AuditLogs from '../../actions/AuditLogs';
@@ -16,7 +17,7 @@ export default {
       orderBy: 'name',
     },
     {
-      heading: 'Connector',
+      heading: 'Application',
       value: function ConnectorName(r) {
         return <ConnectorNameComp r={r} />;
       },

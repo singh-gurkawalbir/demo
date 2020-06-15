@@ -14,13 +14,14 @@ import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
+import Help from '../../Help';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   drawerPaper_default: {
@@ -31,7 +32,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 3),
+    padding: '14px 0px',
+    margin: theme.spacing(0, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -78,6 +80,9 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 300,
     overflowY: 'auto',
   },
+  helpTextButton: {
+    padding: 0,
+  },
 }));
 
 export default function RightDrawer({
@@ -92,6 +97,8 @@ export default function RightDrawer({
   infoText,
   actions,
   variant = 'persistent',
+  helpTitle,
+  helpKey,
   ...rest
 }) {
   const classes = useStyles();
@@ -113,7 +120,17 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
-  const fullPath = `${match.url}/${path}`;
+
+  let fullPath;
+  if (typeof path === 'string' || typeof path === 'number') {
+    fullPath = `${match.url}/${path}`;
+  } else if (Array.isArray(path)) {
+    fullPath = path.map(p => `${match.url}/${p}`);
+  } else {
+    // bad path datatype... don't know what do do.. render nothing.
+    return null;
+  }
+
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 
@@ -153,6 +170,14 @@ export default function RightDrawer({
             )}
             <Typography variant="h3" className={classes.title}>
               {title}
+              {helpKey && (
+                <Help
+                  title={helpTitle}
+                  className={classes.helpTextButton}
+                  helpKey={helpKey}
+                  fieldId={helpKey}
+                />
+              )}
               {infoText && <InfoIconButton info={infoText} />}
             </Typography>
             {actions}

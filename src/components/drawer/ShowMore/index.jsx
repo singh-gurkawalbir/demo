@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ShowMoreDrawer(props) {
-  const { count, maxCount, filterKey, pageSize = 10 } = props;
+  const { count, maxCount, filterKey, pageSize = 25 } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -58,9 +59,6 @@ export default function ShowMoreDrawer(props) {
 
   if (count >= maxCount) return null;
 
-  const nextPageSize =
-    count + pageSize <= maxCount ? pageSize : maxCount - count;
-
   return (
     <Paper
       elevation={0}
@@ -78,7 +76,7 @@ export default function ShowMoreDrawer(props) {
         color="primary"
         className={classes.button}>
         <RefreshIcon className={classes.icon} />
-        Load the next ({nextPageSize}) results
+        Load more
       </Button>
     </Paper>
   );

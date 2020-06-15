@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,7 +10,7 @@ import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaNSSearchCriteriaWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
   dynaFormLabel: {
     marginBottom: 0,
     marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 
@@ -29,7 +31,6 @@ export default function DynaNSSearchCriteria(props) {
     id,
     onFieldChange,
     value = [],
-    label,
     resourceId,
     connectionId,
 
@@ -69,10 +70,10 @@ export default function DynaNSSearchCriteria(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SearchCriteriaDialog
-          title="Search Criteria"
+          title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
           fieldOptions={{
@@ -86,7 +87,7 @@ export default function DynaNSSearchCriteria(props) {
       )}
       <div className={classes.dynaNSSearchCriteriaWrapper}>
         <FormLabel className={classes.dynaFormLabel}>
-          Define criteria:
+          Additional search criteria:
         </FormLabel>
         <Button
           data-test={id}
@@ -94,12 +95,12 @@ export default function DynaNSSearchCriteria(props) {
           color="secondary"
           className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
         {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
-    </Fragment>
+    </>
   );
 }

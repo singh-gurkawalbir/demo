@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,6 +19,7 @@ import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import StackShareDrawer from '../../components/StackShare/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = { take: 10 };
+const defaultFilter = { take: process.env.DEFAULT_TABLE_ROW_COUNT || 10 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {
     // add connections
@@ -94,6 +95,9 @@ export default function ResourceList(props) {
         PERMISSIONS[resourceType] &&
         PERMISSIONS[resourceType].view
       }>
+      {// This is where we will be adding all Right drawers to Celigo Table
+      resourceType === 'stacks' && <StackShareDrawer />
+      }
       <ResourceDrawer {...props} />
       <CeligoPageBar
         title={`${resourceName}s`}

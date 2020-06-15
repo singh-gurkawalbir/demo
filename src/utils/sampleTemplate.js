@@ -18,8 +18,7 @@ export default {
     if (
       application === adaptorTypeMap.AS2Import ||
       application === adaptorTypeMap.HTTPImport
-    )
-      return true;
+    ) return true;
 
     return false;
   },

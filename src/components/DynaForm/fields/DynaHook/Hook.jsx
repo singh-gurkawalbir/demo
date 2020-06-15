@@ -1,5 +1,6 @@
-import { useMemo, useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -9,7 +10,7 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
@@ -20,7 +21,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
-    alignItems: 'flex-start',
   },
   label: {
     minWidth: 100,
@@ -30,9 +30,21 @@ const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
+    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
+    '&:last-child': {
+      paddingRight: 0,
+    },
+  },
+  hookActionBtnAdd: {
+    marginLeft: 0,
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+  },
+  hookActionBtnEdit: {
+    marginLeft: theme.spacing(1),
   },
 }));
 /*
@@ -182,7 +194,7 @@ export default function DynaHook(props) {
   );
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <JavaScriptEditorDialog
           title="Script editor"
@@ -245,7 +257,7 @@ export default function DynaHook(props) {
             </div>
           )}
           {hookType === 'script' && (
-            <Fragment>
+            <>
               <div className={classes.field}>
                 <FormControl className={classes.select}>
                   <InputLabel htmlFor="scriptId">Script</InputLabel>
@@ -265,21 +277,26 @@ export default function DynaHook(props) {
               <ActionButton
                 onClick={handleCreateScriptClick}
                 disabled={disabled}
+                className={classes.hookActionBtnAdd}
                 data-test={id}>
                 <AddIcon />
               </ActionButton>
-            </Fragment>
+            </>
           )}
           {hookType === 'script' && (
             <ActionButton
               onClick={handleEditorClick}
               disabled={disabled || !value._scriptId}
+              className={clsx(
+                classes.hookActionBtnAdd,
+                classes.hookActionBtnEdit
+              )}
               data-test={id}>
               <EditIcon />
             </ActionButton>
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }

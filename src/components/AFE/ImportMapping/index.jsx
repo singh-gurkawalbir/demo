@@ -1,7 +1,5 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -9,7 +7,6 @@ import actions from '../../../actions';
 import mappingUtil from '../../../utils/mapping';
 import * as selectors from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
-import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import ButtonGroup from '../../ButtonGroup';
@@ -26,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   mappingContainer: {
-    height: `calc(100vh - 180px)`,
+    height: 'calc(100vh - 180px)',
     padding: theme.spacing(1, 0, 3),
     marginBottom: theme.spacing(1),
     maxWidth: '100%',
@@ -34,10 +31,10 @@ const useStyles = makeStyles(theme => ({
   },
   mapCont: {
     width: '0px',
-    flex: `1.1 1 0`,
+    flex: '1.1 1 0',
   },
   assistantContainer: {
-    flex: `1 1 0`,
+    flex: '1 1 0',
     width: '0px',
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
@@ -65,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mappingsBody: {
-    height: `calc(100% - 32px)`,
+    height: 'calc(100% - 32px)',
     overflow: 'auto',
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -82,6 +79,12 @@ const useStyles = makeStyles(theme => ({
   topHeading: {
     fontFamily: 'Roboto500',
   },
+  importMappingButtonGroup: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    width: '100%',
+    padding: '16px 0px',
+  },
+
 }));
 const emptyMappingRow = {};
 
@@ -105,8 +108,6 @@ export default function ImportMapping(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
-    fetchSalesforceSObjectMetadata,
-    refreshGenerateFields,
     refreshExtractFields,
   } = optionalHanlder;
   const {
@@ -155,13 +156,24 @@ export default function ImportMapping(props) {
   });
   const { localMappings, localChangeIdentifier } = state;
 
+  const handleRefreshGenerates = useCallback(
+    () => {
+      dispatch(
+        actions.mapping.refreshGenerates(
+          editorId
+        )
+      );
+    },
+    [dispatch, editorId],
+  )
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
-    if (localChangeIdentifier !== changeIdentifier)
+    if (localChangeIdentifier !== changeIdentifier) {
       setState({
         localMappings: mappings,
         localChangeIdentifier: changeIdentifier,
       });
+    }
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
   const tableData = useMemo(
@@ -199,38 +211,9 @@ export default function ImportMapping(props) {
         }
       }
 
-      if (
-        field === 'generate' &&
-        application === adaptorTypeMap.SalesforceImport &&
-        value &&
-        value.indexOf('_child_') > -1
-      ) {
-        const childRelationshipField =
-          generateFields && generateFields.find(field => field.id === value);
-
-        if (childRelationshipField) {
-          const { childSObject, relationshipName } = childRelationshipField;
-
-          dispatch(
-            actions.mapping.patchIncompleteGenerates(
-              editorId,
-              key,
-              relationshipName
-            )
-          );
-          fetchSalesforceSObjectMetadata(childSObject);
-        }
-      }
-
       dispatch(actions.mapping.patchField(editorId, field, key, value));
     },
-    [
-      application,
-      dispatch,
-      editorId,
-      fetchSalesforceSObjectMetadata,
-      generateFields,
-    ]
+    [dispatch, editorId]
   );
   const patchSettings = useCallback(
     (key, settings) => {
@@ -250,10 +233,10 @@ export default function ImportMapping(props) {
   );
   const extractLabel = exportResource._connectionId
     ? `Export field (${mappingUtil.getApplicationName(
-        exportResource,
-        exportConn
-      )})`
-    : `Source Record Field`;
+      exportResource,
+      exportConn
+    )})`
+    : 'Source Record Field';
   const generateLabel = `Import field (${mappingUtil.getApplicationName(
     resource,
     importConn
@@ -281,7 +264,7 @@ export default function ImportMapping(props) {
 
   const handleSalesforceAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedKey)
+      if (lastModifiedKey) {
         dispatch(
           actions.mapping.patchField(
             editorId,
@@ -290,12 +273,13 @@ export default function ImportMapping(props) {
             meta.id
           )
         );
+      }
     },
     [dispatch, editorId, lastModifiedKey]
   );
   const handleNetSuiteAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedKey)
+      if (lastModifiedKey) {
         dispatch(
           actions.mapping.patchField(
             editorId,
@@ -304,6 +288,7 @@ export default function ImportMapping(props) {
             meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
           )
         );
+      }
     },
     [dispatch, editorId, lastModifiedKey]
   );
@@ -400,7 +385,7 @@ export default function ImportMapping(props) {
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
                 disabled={disabled}
-                onClick={refreshGenerateFields}
+                onClick={handleRefreshGenerates}
                 data-test="refreshGenerates"
               />
             )}
@@ -413,30 +398,28 @@ export default function ImportMapping(props) {
         </div>
 
         <div className={classes.mappingsBody} key={`${editorId}`}>
-          <DndProvider backend={HTML5Backend}>
-            {tableData.map((mapping, index) => (
-              <MappingRow
-                index={index}
-                id={`${mapping.key}-${mapping.rowIdentifier}`}
+          {tableData.map((mapping, index) => (
+            <MappingRow
+              index={index}
+              id={`${mapping.key}-${mapping.rowIdentifier}`}
                 // eslint-disable-next-line react/no-array-index-key
-                key={`${mapping.key}-${mapping.rowIdentifier}`}
-                mapping={mapping}
-                extractFields={extractFields}
-                onFieldUpdate={handleFieldUpdate}
-                generateFields={generateFields}
-                disabled={disabled}
-                updateLookupHandler={updateLookupHandler}
-                patchSettings={patchSettings}
-                application={application}
-                options={options}
-                lookups={lookups}
-                onDelete={handleDelete}
-                onMove={handleMove}
-                onDrop={handleDrop}
-                isDraggable={!disabled}
+              key={`${mapping.key}-${mapping.rowIdentifier}`}
+              mapping={mapping}
+              extractFields={extractFields}
+              onFieldUpdate={handleFieldUpdate}
+              generateFields={generateFields}
+              disabled={disabled}
+              updateLookupHandler={updateLookupHandler}
+              patchSettings={patchSettings}
+              application={application}
+              options={options}
+              lookups={lookups}
+              onDelete={handleDelete}
+              onMove={handleMove}
+              onDrop={handleDrop}
+              isDraggable={!disabled}
               />
-            ))}
-          </DndProvider>
+          ))}
           <MappingRow
             key={`${emptyRowIndex}`}
             index={emptyRowIndex}
@@ -454,10 +437,12 @@ export default function ImportMapping(props) {
             isDraggable={false}
           />
         </div>
-        <ButtonGroup>
+        <ButtonGroup
+          className={classes.importMappingButtonGroup}>
           {showPreviewPane && (
             <Button
-              variant="text"
+              variant="outlined"
+              color="primary"
               data-test="preview"
               disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>

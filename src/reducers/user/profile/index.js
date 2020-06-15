@@ -17,8 +17,7 @@ export default (state = null, action) => {
       return { ...profile, auth_type_google: {} };
 
     case actionTypes.DELETE_PROFILE:
-      if (state && state.email)
-        return { email: state.email, auth_type_google: state.auth_type_google };
+      if (state && state.email) return { email: state.email, auth_type_google: state.auth_type_google };
 
       return {};
 
@@ -36,7 +35,5 @@ export function avatarUrl(state) {
 // #endregion PUBLIC SELECTORS
 
 export function isUserInErrMgtTwoDotZero(state) {
-  // hard coding true for useErrMgtTwoDotZero prop for testing purposes
-  // Need to be removed once BE exposes this prop
-  return true || !!(state && state.useErrMgtTwoDotZero);
+  return !!(state && state.useErrMgtTwoDotZero);
 }

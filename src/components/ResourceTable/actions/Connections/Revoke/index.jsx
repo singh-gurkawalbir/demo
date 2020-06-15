@@ -1,18 +1,23 @@
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/RevokeTokenIcon';
+import RevokeTokenIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
   label: 'Revoke',
-  component: function Revoke({ resource: connection }) {
+  icon: RevokeTokenIcon,
+  component: function Revoke({ rowData = {} }) {
+    const { _id: connectionId, name: connectionName } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleClick = () => {
+    const revokeConnection = useCallback(() => {
+      dispatch(actions.connection.requestRevoke(connectionId));
+    }, [connectionId, dispatch]);
+    const confirmRevoke = useCallback(() => {
       const message = [
         'Are you sure you want to revoke',
-        connection.name || connection._id,
+        connectionName || connectionId,
         'token?',
       ].join(' ');
 
@@ -25,18 +30,16 @@ export default {
           },
           {
             label: 'Yes',
-            onClick: () => {
-              dispatch(actions.connection.requestRevoke(connection._id));
-            },
+            onClick: revokeConnection,
           },
         ],
       });
-    };
+    }, [confirmDialog, connectionId, connectionName, revokeConnection]);
 
-    return (
-      <IconButton data-test="revoke" size="small" onClick={handleClick}>
-        <Icon />
-      </IconButton>
-    );
+    useEffect(() => {
+      confirmRevoke();
+    }, [confirmRevoke]);
+
+    return null;
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Route,
@@ -19,7 +19,7 @@ import IconTextButton from '../../components/IconTextButton';
 import ResourceDrawer from '../../components/drawer/Resource';
 import DownloadIntegrationDrawer from '../../components/drawer/DownloadIntegration';
 import InstallIntegrationDrawer from '../../components/drawer/Install/Integration';
-import UploadFileDialog from '../../views/InstallIntegration';
+import UploadFileDialog from '../InstallIntegration';
 import AddIcon from '../../components/icons/AddIcon';
 import ZipUpIcon from '../../components/icons/InstallIntegrationIcon';
 import ZipDownIcon from '../../components/icons/DownloadIntegrationIcon';
@@ -31,16 +31,16 @@ const useStyles = makeStyles(theme => ({
   container: {
     margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
     '& > div': {
       maxWidth: '100%',
     },
     [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
     },
     [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
 }));
@@ -104,7 +104,7 @@ function Dashboard() {
   );
 
   return (
-    <Fragment>
+    <>
       <Switch>
         <Route path={`${match.url}/installZip`}>
           <UploadFileDialog
@@ -165,7 +165,7 @@ function Dashboard() {
           <DashboardCard sortedTiles={sortedTiles} />
         </div>
       </LoadResources>
-    </Fragment>
+    </>
   );
 }
 

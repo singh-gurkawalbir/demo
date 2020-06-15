@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,7 @@ import IconTextButton from '../../../../IconTextButton';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
+import FieldHelp from '../../../FieldHelp';
 import DynaForm from '../../..';
 import DynaSubmit from '../../../DynaSubmit';
 import * as selectors from '../../../../../reducers';
@@ -17,6 +18,40 @@ import CodeEditor from '../../../../CodeEditor';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
+import ButtonGroup from '../../../../ButtonGroup';
+
+const useStyles = makeStyles(theme => ({
+  inlineEditorContainer: {
+    marginRight: theme.spacing(1),
+    height: theme.spacing(30),
+    overflow: 'hidden',
+    width: '100%',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  wrapperEditorContainer: {
+    display: 'flex',
+    // flexDirection: 'row !important',
+  },
+  dynaRelatedListCodeEditor: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  dynaRelatedListLabelWrapper: {
+    display: 'flex',
+  },
+  label: {
+    margin: 5,
+    display: 'flex',
+  },
+  relatedListBtn: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(1),
+  },
+  dynaRelatedListTable: {
+    background: 'black',
+  },
+}));
 
 const getRelationShipName = (options, parentField, childSObject) => {
   const { label: relationshipName } =
@@ -80,6 +115,8 @@ function EditListItemModal(props) {
       childRelationship: {
         id: 'childRelationship',
         name: 'childRelationship',
+        // Todo (Surya) 15533: helptext is needed
+        helpText: 'helpText is useful to provide details to the user about the field',
         label: 'Child SObject Type',
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-childReferenceTo',
@@ -89,7 +126,9 @@ function EditListItemModal(props) {
       },
       referencedFields: {
         connectionId,
-        label: 'Referenced Fields',
+        label: 'Referenced fields',
+        // Todo (Surya) 15533: helptext is needed
+        helpText: 'helpText is useful to provide details to the user about the field',
         id: 'referencedFields',
         name: 'referencedFields',
         refreshOptionsOnChangesTo: ['childRelationship'],
@@ -100,15 +139,19 @@ function EditListItemModal(props) {
         disabledWhen: [{ field: 'childRelationship', is: [''] }],
       },
       filterExpression: {
-        label: 'Filter Expression',
+        label: 'Filter expression',
         id: 'filter',
+        // Todo (Surya) 15533: helptext is needed
+        helpText: 'helpText is useful to provide details to the user about the field',
         name: 'filter',
         type: 'text',
         multiline: true,
         defaultValue: filter,
       },
       orderBy: {
-        label: 'Order By',
+        label: 'Order by',
+        // Todo (Surya) 15533: helptext is needed
+        helpText: 'helpText is useful to provide details to the user about the field',
         id: 'orderBy',
         name: 'orderBy',
         type: 'refreshableselect',
@@ -145,14 +188,15 @@ function EditListItemModal(props) {
           );
           handleClose();
         }}>
-        Add Selected
+        Add selected
       </DynaSubmit>
-      <Button onClick={handleClose}>Cancel</Button>
+      <Button variant="text" color="primary" onClick={handleClose}>Cancel</Button>
     </DynaForm>
   );
 }
 
 function RelatedListView(props) {
+  const classes = useStyles();
   const {
     value,
     options: selectedSObject,
@@ -176,28 +220,31 @@ function RelatedListView(props) {
   );
   const updatedValue = value
     ? value.map((eachValue, index) => {
-        const { parentField, sObjectType } = eachValue;
-        const relationshipName = getRelationShipName(
-          options,
-          parentField,
-          sObjectType
-        );
+      const { parentField, sObjectType } = eachValue;
+      const relationshipName = getRelationShipName(
+        options,
+        parentField,
+        sObjectType
+      );
 
-        return { index, relationshipName, ...eachValue };
-      })
+      return { index, relationshipName, ...eachValue };
+    })
     : [];
 
   return (
-    <CeligoTable
-      data={updatedValue}
-      key={count}
-      {...metadata}
-      actionProps={{ handleDeleteItem, handleEditItem }}
+    <div className={classes.dynaRelatedListTable}>
+      <CeligoTable
+        data={updatedValue}
+        key={count}
+        {...metadata}
+        actionProps={{ handleDeleteItem, handleEditItem }}
     />
+    </div>
   );
 }
 
 function FirstLevelModal(props) {
+  const classes = useStyles();
   const { handleClose, ...rest } = props;
   const [editListItemModelOpen, setEditListItemModelOpen] = useState(false);
   const toggleListItemModelOpen = useCallback(
@@ -220,18 +267,21 @@ function FirstLevelModal(props) {
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth="lg">
-      <div>Related Lists</div>
+      <div>Related lists</div>
       <div>
         {!editListItemModelOpen ? (
-          <Fragment>
+          <>
             <IconTextButton
+              variant="outlined"
+              color="secondary"
+              className={classes.relatedListBtn}
               data-test="addOrEditNewRelatedList"
               onClick={() => {
                 toggleListItemModelOpen();
                 setSelectedElement(null);
               }}>
               <AddIcon />
-              Add new Related List
+              Add new related list
             </IconTextButton>
 
             <RelatedListView
@@ -241,16 +291,18 @@ function FirstLevelModal(props) {
               handleEditItem={handleEditItem}
               handleDeleteItem={handleDeleteItem}
             />
-          </Fragment>
+          </>
         ) : (
-          <Fragment>
-            <IconTextButton>
-              <ArrowLeftIcon
-                onClick={() => {
-                  toggleListItemModelOpen();
-                }}
-              />
-              Back to related list
+          <>
+            <IconTextButton
+              variant="outlined"
+              color="secondary"
+              className={classes.relatedListBtn}
+              onClick={() => {
+                toggleListItemModelOpen();
+              }} >
+              <ArrowLeftIcon /> Back to related list
+
             </IconTextButton>
 
             <EditListItemModal
@@ -260,11 +312,11 @@ function FirstLevelModal(props) {
               selectedElement={selectedElement}
               handleClose={toggleListItemModelOpen}
             />
-          </Fragment>
+          </>
         )}
       </div>
       {!editListItemModelOpen && (
-        <div>
+        <ButtonGroup>
           <Button
             data-test="saveRelatedList"
             variant="outlined"
@@ -282,29 +334,12 @@ function FirstLevelModal(props) {
             color="primary">
             Cancel
           </Button>
-        </div>
+        </ButtonGroup>
       )}
     </ModalDialog>
   );
 }
 
-const useStyles = makeStyles(theme => ({
-  inlineEditorContainer: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    marginRight: theme.spacing(1),
-    height: theme.spacing(30),
-    overflow: 'hidden',
-    width: '100%',
-  },
-  wrapperEditorContainer: {
-    flexDirection: `row !important`,
-  },
-  label: {
-    margin: 5,
-    display: 'flex',
-  },
-}));
 
 export function useCallMetadataAndReturnStatus(props) {
   const { options: selectedSObject, connectionId } = props;
@@ -341,33 +376,42 @@ export default function DynaRelatedList(props) {
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
-    <Fragment>
+    <>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggleFirstLevelModalOpen} />
       ) : null}
-      <div className={classes.wrapperEditorContainer}>
-        <div className={classes.inlineEditorContainer}>
+      <div >
+        <div className={classes.dynaRelatedListLabelWrapper}>
           <span className={classes.label}>{props.label}</span>
-          <CodeEditor
-            {...props}
-            mode="json"
-            data-test={id || 'relatedListContent'}
-            readOnly
-          />
+          <FieldHelp {...props} />
         </div>
-        <div>
-          {status === 'refreshed' ? (
-            <Spinner />
-          ) : (
-            <ActionButton
-              data-test="editRelatedList"
-              onClick={toggleFirstLevelModalOpen}
-              disabled={disabled}>
-              <EditIcon />
-            </ActionButton>
-          )}
+        <div className={classes.wrapperEditorContainer}>
+          <div className={classes.inlineEditorContainer}>
+            <CodeEditor
+              {...props}
+              className={classes.dynaRelatedListCodeEditor}
+              mode="json"
+              data-test={id || 'relatedListContent'}
+              readOnly
+          />
+          </div>
+          <div>
+            {status === 'refreshed' ? (
+              <Spinner size={24} />
+            ) : (
+              <>
+                <ActionButton
+                  data-test="editRelatedList"
+                  onClick={toggleFirstLevelModalOpen}
+                  disabled={disabled}>
+                  <EditIcon />
+                </ActionButton>
+
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }

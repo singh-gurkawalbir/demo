@@ -22,8 +22,7 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {
@@ -32,6 +31,15 @@ export default {
         },
       ];
     },
+  },
+  'webhook.slackKey': {
+    type: 'textforsetfields',
+    label: 'Signing Secret (Slack App Credentials)',
+    inputType: 'password',
+    helpKey: 'export.webhook.key',
+    setFieldIds: ['webhook.url'],
+    defaultValue: r => r && r.webhook && r.webhook.key,
+    visible: r => r && r.webhook && r.webhook.provider === 'slack',
   },
   'webhook.verify': {
     type: 'selectforsetfields',
@@ -104,6 +112,7 @@ export default {
   'webhook.url': {
     type: 'generateurl',
     label: 'Public URL',
+    provider: r => r && r.webhook && r.webhook.provider,
     buttonLabel: 'Generate URL',
   },
   'webhook.username': {
@@ -145,12 +154,12 @@ export default {
     type: 'webhooktokengenerator',
     label: 'Custom URL token',
     buttonLabel: 'Generate new token',
+    provider: r => r && r.webhook && r.webhook.provider,
     setFieldIds: ['webhook.url'],
     visible: true,
     visibleWhen: r => {
       const providerList = [
         'travis',
-        'slack',
         'box',
         'stripe',
         'aha',
@@ -172,21 +181,36 @@ export default {
         r.webhook &&
         r.webhook.provider &&
         providerList.includes(r.webhook.provider)
-      )
-        return [];
+      ) return [];
 
       return [
         {
           field: 'webhook.verify',
-          is: ['secret_url', 'token'],
+          is: ['secret_url'],
         },
       ];
     },
+  },
+  'webhook.generateToken': {
+    type: 'webhooktokengenerator',
+    label: 'Token',
+    provider: r => r && r.webhook && r.webhook.provider,
+    buttonLabel: 'Generate new token',
+    setFieldIds: ['webhook.url'],
+    helpKey: 'export.webhook.token',
+    defaultValue: r => r && r.webhook && r.webhook.token,
+    visibleWhen: [
+      {
+        field: 'webhook.verify',
+        is: ['token'],
+      },
+    ],
   },
   'webhook.sampledata': {
     id: 'sampleData',
     name: '/sampleData',
     type: 'webhooksampledata',
+    helpKey: 'export.webhook.sampledata',
     label: 'Sample data',
   },
 };

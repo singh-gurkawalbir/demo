@@ -141,13 +141,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           12 * 60
         );
       }
@@ -165,13 +165,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           8 * 60
         );
       }
@@ -189,13 +189,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           6 * 60
         );
       }
@@ -213,13 +213,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           4 * 60
         );
       }
@@ -237,13 +237,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           2 * 60
         );
       }
@@ -261,13 +261,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           1 * 60
         );
       }
@@ -284,13 +284,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           0.5 * 60
         );
       }
@@ -307,13 +307,13 @@ export const getCronExpression = (data, scheduleStartMinute) => {
           data.startTime
             ? data.startTime
             : moment()
-                .startOf('day')
-                .format('LT'),
+              .startOf('day')
+              .format('LT'),
           data.endTime
             ? data.endTime
             : moment()
-                .endOf('day')
-                .format('LT'),
+              .endOf('day')
+              .format('LT'),
           0.25 * 60
         );
       }
@@ -629,6 +629,12 @@ export const getMetadata = ({
           flows,
           exports
         ),
+        requiredWhen: [
+          {
+            field: '_keepDeltaBehindFlowId',
+            isNot: [''],
+          },
+        ],
         visible: isDeltaFlowModel(pg, exp, flow, exports),
         refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
         defaultValue: resource && resource._keepDeltaBehindExportId,
@@ -665,7 +671,8 @@ export const getMetadata = ({
           flows,
           exports
         );
-      } else if (fieldId === 'endTime') {
+      }
+      if (fieldId === 'endTime') {
         const frequency = fields.find(field => field.id === 'frequency').value;
         let minutes = 0;
 
@@ -707,12 +714,12 @@ export const setValues = (data, schedule, scheduleStartMinute) => {
   const resource = { ...data };
   const value = schedule;
   const frequency = {
-    '1': 'every_hour',
-    '2': 'every_two_hours',
-    '4': 'every_four_hours',
-    '6': 'every_six_hours',
-    '8': 'every_eight_hours',
-    '12': 'twice_daily',
+    1: 'every_hour',
+    2: 'every_two_hours',
+    4: 'every_four_hours',
+    6: 'every_six_hours',
+    8: 'every_eight_hours',
+    12: 'twice_daily',
   };
   let hours;
 

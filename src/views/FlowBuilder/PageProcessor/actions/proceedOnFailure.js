@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import { Fragment } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
@@ -13,7 +13,14 @@ const emptyObject = {};
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
-  const { open, onClose, flowId, resourceIndex, isViewMode } = props;
+  const {
+    open,
+    onClose,
+    flowId,
+    resourceIndex,
+    isViewMode,
+    resourceType,
+  } = props;
   const { merged: flow = emptyObject } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -24,6 +31,9 @@ function ProceedOnFailureDialog(props) {
     pageProcessors[resourceIndex] &&
     pageProcessors[resourceIndex].proceedOnFailure
   );
+  const title = `What should happen to a record if the ${
+    resourceType === 'exports' ? 'lookup' : 'import'
+  } fails?`;
   const fieldMeta = {
     fieldMap: {
       proceedOnFailure: {
@@ -70,7 +80,11 @@ function ProceedOnFailureDialog(props) {
 
   return (
     <ModalDialog show={open} onClose={onClose}>
-      <div> What should happen to a record if the lookup fails?</div>
+      <div>
+        {' '}
+        {title}
+        {' '}
+      </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <DynaSubmit
@@ -91,7 +105,7 @@ function ProceedOnFailureDialog(props) {
 function ProceedOnFailure(props) {
   const { open } = props;
 
-  return <Fragment>{open && <ProceedOnFailureDialog {...props} />}</Fragment>;
+  return <>{open && <ProceedOnFailureDialog {...props} />}</>;
 }
 
 export default {

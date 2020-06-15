@@ -146,16 +146,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'What would you like to transfer?';
-
-        return 'What would you like to export?';
-      },
-    },
     outputMode: {
       id: 'outputMode',
       type: 'radiogroup',
@@ -171,8 +161,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -270,35 +259,38 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'exportData',
-          'rest.method',
-          'rest.blobMethod',
-          'rest.headers',
-          'rest.relativeURI',
-          'rest.postBody',
-          'rest.resourcePath',
-          'rest.successPath',
-          'rest.successValues',
-          'type',
-          'delta.dateFormat',
-          'delta.lagOffset',
-          'rest.blobFormat',
-        ],
+        fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
         type: 'collapse',
         containers: [
           {
             collapsed: true,
-            label: 'Configure Once',
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+
+              return 'What would you like to export?';
+            },
             fields: [
+              'rest.method',
+              'rest.blobMethod',
+              'rest.headers',
+              'rest.relativeURI',
+              'rest.postBody',
+              'rest.blobFormat',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: [
+              'type',
+              'delta.dateFormat',
+              'delta.lagOffset',
               'once.booleanField',
               'rest.once.relativeURI',
               'rest.once.method',
@@ -321,6 +313,15 @@ export default {
               'rest.lastPageStatusCode',
               'rest.lastPagePath',
               'rest.lastPageValue',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Non-standard API response patterns',
+            fields: [
+              'rest.resourcePath',
+              'rest.successPath',
+              'rest.successValues',
             ],
           },
           {

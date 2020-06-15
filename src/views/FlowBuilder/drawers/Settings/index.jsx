@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
-import { isObject } from 'lodash';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -38,139 +38,141 @@ export default function SettingsDrawer({
     selectors.nextDataFlowsForFlow(state, flow)
   );
   const handleClose = useCallback(() => history.goBack(), [history]);
-  const fieldMeta = {
-    fieldMap: {
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        helpKey: 'flow.name',
-        label: 'Name',
-        defaultValue: flow && flow.name,
-      },
-      description: {
-        id: 'description',
-        name: 'description',
-        type: 'text',
-        helpKey: 'flow.description',
-        label: 'Description',
-        multiline: true,
-        defaultValue: flow && flow.description,
-      },
-      _integrationId: {
-        id: '_integrationId',
-        name: '_integrationId',
-        type: 'select',
-        helpKey: 'flow._integrationId',
-        label: 'Integration',
-        placeholder: 'Standalone Flows',
-        defaultValue: flow && flow._integrationId,
-        options: [
-          {
-            items:
-              (integrations &&
-                integrations.map(integration => ({
-                  label: integration.name,
-                  value: integration._id,
-                }))) ||
-              [],
-          },
-        ],
-        defaultDisabled: true,
-      },
-      _runNextFlowIds: {
-        id: '_runNextFlowIds',
-        name: '_runNextFlowIds',
-        type: 'multiselect',
-        placeholder: 'Please select flow',
-        helpKey: 'flow._runNextFlowIds',
-        label: 'Next data flow:',
-        displayEmpty: true,
-        defaultValue: (flow && flow._runNextFlowIds) || [],
-        options: [
-          {
-            items: nextDataFlows.length
-              ? nextDataFlows.map(i => ({ label: i.name, value: i._id }))
-              : [
+  const fieldMeta = useMemo(
+    () => ({
+      fieldMap: {
+        name: {
+          id: 'name',
+          name: 'name',
+          type: 'text',
+          helpKey: 'flow.name',
+          label: 'Name',
+          defaultValue: flow && flow.name,
+        },
+        description: {
+          id: 'description',
+          name: 'description',
+          type: 'text',
+          helpKey: 'flow.description',
+          label: 'Description',
+          multiline: true,
+          defaultValue: flow && flow.description,
+        },
+        _integrationId: {
+          id: '_integrationId',
+          name: '_integrationId',
+          type: 'select',
+          helpKey: 'flow._integrationId',
+          label: 'Integration',
+          placeholder: 'Standalone Flows',
+          defaultValue: flow && flow._integrationId,
+          options: [
+            {
+              items:
+                (integrations &&
+                  integrations.map(integration => ({
+                    label: integration.name,
+                    value: integration._id,
+                  }))) ||
+                [],
+            },
+          ],
+          defaultDisabled: true,
+        },
+        _runNextFlowIds: {
+          id: '_runNextFlowIds',
+          name: '_runNextFlowIds',
+          type: 'multiselect',
+          placeholder: 'Please select flow',
+          helpKey: 'flow._runNextFlowIds',
+          label: 'Next data flow:',
+          displayEmpty: true,
+          defaultValue: (flow && flow._runNextFlowIds) || [],
+          options: [
+            {
+              items: nextDataFlows.length
+                ? nextDataFlows.map(i => ({ label: i.name, value: i._id }))
+                : [
                   {
                     label: "You don't have any other active flows",
                     disabled: true,
                     value: '',
                   },
                 ],
-          },
-        ],
+            },
+          ],
+        },
+        settings: {
+          id: 'settings',
+          name: 'settings',
+          type: 'settings',
+          label: 'Custom',
+          defaultValue: flow && flow.settings,
+        },
       },
-      settings: {
-        id: 'settings',
-        name: 'settings',
-        type: 'settings',
-        defaultValue: flow && flow.settings,
-      },
-    },
-    layout: {
-      fields: [
-        'name',
-        'description',
-        '_integrationId',
-        '_runNextFlowIds',
-        'settings',
-      ],
-    },
+    }),
+    [flow, integrations, nextDataFlows]
+  );
+  const validationHandler = field => {
+    // Incase of invalid json throws error to be shown on the field
+
+    if (field && field.id === 'settings') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      ) {
+        return 'Settings must be a valid JSON';
+      }
+    }
   };
-  const handleSubmit = formVal => {
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
-      },
-      {
-        op: 'replace',
-        path: '/_integrationId',
-        value: formVal._integrationId,
-      },
-      {
-        op: 'replace',
-        path: '/_runNextFlowIds',
-        value: formVal._runNextFlowIds,
-      },
-    ];
 
-    if (Object.hasOwnProperty.call(formVal, 'settings')) {
-      let settings;
+  const handleSubmit = useCallback(
+    formVal => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/name',
+          value: formVal.name,
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: formVal.description,
+        },
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: formVal._integrationId,
+        },
+        {
+          op: 'replace',
+          path: '/_runNextFlowIds',
+          value: formVal._runNextFlowIds,
+        },
+      ];
 
-      if (isObject(formVal.settings)) {
-        ({ settings } = formVal);
+      if (Object.hasOwnProperty.call(formVal, 'settings')) {
+        // dont submit the form if there is validation error
+        // REVIEW: re-visit once Surya's form PR is merged
+        if (formVal && formVal.settings && formVal.settings.__invalid) return;
+        patchSet.push({
+          op: 'replace',
+          path: '/settings',
+          value: formVal && formVal.settings,
+        });
       }
 
-      patchSet.push({
-        op: 'replace',
-        path: '/settings',
-        value: settings,
-      });
-    }
-
-    dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-    dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-    history.goBack();
-  };
-
-  const infoTextSettings = `You can enable or disable flow error notifications, 
-    known as job errors.  If you have these notifications enabled or disabled for 
-    the integration containing this flow, this flow-level setting will override 
-    the integration-level setting.`;
-
+      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      history.goBack();
+    },
+    [dispatch, flow._id, history]
+  );
   return (
     <RightDrawer
       path="settings"
       title="Settings"
-      infoText={infoTextSettings}
       width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm
@@ -178,8 +180,14 @@ export default function SettingsDrawer({
           resourceType={resourceType}
           resourceId={resourceId}
           fieldMeta={fieldMeta}
+          validationHandler={validationHandler}
           render>
-          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
+          <DynaSubmit
+            resourceType={resourceType}
+            resourceId={resourceId}
+            onClick={handleSubmit}
+            color="primary"
+            variant="outlined">
             Save
           </DynaSubmit>
           <Button onClick={handleClose} variant="text" color="primary">

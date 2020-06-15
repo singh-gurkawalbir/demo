@@ -319,7 +319,7 @@ export const getPathSegments = path => {
   let wasLiteral = false;
   let i;
 
-  if (!path) return [];
+  if (!path || path === '*') return [];
 
   for (i = 0; i < path.length; i += 1) {
     const char = path[i];
@@ -336,9 +336,10 @@ export const getPathSegments = path => {
 
     if (char === '\\') escaped = true;
 
-    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral))
+    if (!inLiteral && char === ' ' && (buffer.length === 0 || wasLiteral)) {
       // eslint-disable-next-line no-continue
       continue;
+    }
 
     if (!inLiteral && char === '[' && buffer.length === 0) {
       inLiteral = true;
@@ -376,13 +377,16 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   if (!resourcePath) return sampleData;
 
   if (typeof resourcePath !== 'string') return;
-  const segments = getPathSegments(resourcePath);
+  const segments = getPathSegments(resourcePath.replace(/\.?\*$/, ''));
   let processedSampleData = sampleData;
 
   // Segments : Array of level wiser paths to drill down the sample data
-  segments.forEach(path => (processedSampleData = processedSampleData[path]));
-
-  return processedSampleData;
+  try {
+    segments.forEach(path => { processedSampleData = processedSampleData[path] });
+    return processedSampleData;
+  } catch (e) {
+    return {}
+  }
 };
 
 /*
@@ -394,10 +398,6 @@ export const processJsonSampleData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
   const { resourcePath } = options;
   let processedSampleData = sampleData;
-
-  if (Array.isArray(sampleData)) {
-    processedSampleData = getUnionObject(sampleData);
-  }
 
   // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
   if (resourcePath && resourcePath !== '*') {
@@ -411,6 +411,10 @@ export const processJsonSampleData = (sampleData, options = {}) => {
     if (Array.isArray(processedSampleData)) {
       processedSampleData = getUnionObject(processedSampleData);
     }
+  } else if (Array.isArray(sampleData)) {
+    // If there is no resourcePath, check if the sampleData is an array,
+    // so that we can merge the objects inside
+    processedSampleData = getUnionObject(sampleData);
   }
 
   return processedSampleData;
@@ -439,7 +443,7 @@ export const generateTransformationRulesOnXMLData = xmlJsonData => {
 };
 
 /*
- * Expected : path provided should lead to a property which is an array 
+ * Expected : path provided should lead to a property which is an array
  * Sample Data :{
     "a": 5,
     "c": { "d": 7 },
@@ -471,9 +475,9 @@ const isValidPathToMany = (sampleData, pathSegments) => {
     "c": { "d": 7 },
     "e": { "check": { "f": [ { "a": 1} ]} }
     }
-  * pathToMany : "e.check.f" to point to "f" attribute 
+  * pathToMany : "e.check.f" to point to "f" attribute
   * Output: { ( all Props other than path are under _PARENT level)
-  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } } 
+  *   _PARENT: { "a": 5, "c": { "d": 7}, "e": { "check": {} } }
       "a": 1 ( properties inside "f" attribute are on to the main level )
   * }
  */

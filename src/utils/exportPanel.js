@@ -15,6 +15,8 @@ const applicationsWithPreviewPanel = [
   'dynamodb',
   'netsuite',
   'salesforce',
+  'ftp',
+  's3'
 ];
 const emptyList = [];
 
@@ -33,22 +35,22 @@ export const getAvailablePreviewStages = resource => {
       ];
     case 'netsuite':
     case 'salesforce':
-      return [{ label: 'Parsed Output', value: 'parse' }];
+      return [{ label: 'Parsed output', value: 'parse' }];
     case 'rest':
       return [
         { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed Output', value: 'parse' },
+        { label: 'Parsed output', value: 'parse' },
       ];
     case 'ftp':
+    case 's3':
       return [
-        { label: 'Raw', value: 'raw' },
-        { label: 'Parsed Output', value: 'parse' },
+        { label: 'Parsed output', value: 'preview' },
       ];
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return [{ label: 'Parsed Output', value: 'parse' }];
+      return [{ label: 'Parsed output', value: 'parse' }];
     default:
       return emptyList;
   }
@@ -93,7 +95,9 @@ const formatPreviewData = records => {
   if (!records) return { page_of_records };
 
   if (Array.isArray(records)) {
-    records.forEach(record => page_of_records.push({ record }));
+    const rows = []
+    records.forEach(record => rows.push(record));
+    page_of_records.push({rows})
   } else {
     page_of_records.push({ record: records });
   }
@@ -167,8 +171,7 @@ export const getPreviewBodyTemplateType = (resource = {}, panelType) => {
   if (
     ['http', 'rest'].includes(appType) &&
     ['request', 'raw'].includes(panelType)
-  )
-    return 'tab';
+  ) return 'tab';
 
   return 'default';
 };

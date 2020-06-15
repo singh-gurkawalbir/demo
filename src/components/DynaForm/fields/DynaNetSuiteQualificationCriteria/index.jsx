@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -6,6 +6,8 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
+
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -19,6 +21,16 @@ const useStyles = makeStyles(theme => ({
     minWidth: 0,
     padding: 0,
   },
+  loaderRecord: {
+    display: 'flex',
+    flexDirection: 'row !important',
+  },
+  loaderRecordMetaDataText: {
+    marginRight: theme.spacing(2),
+  },
+  netsuiteQualificationFilterIcon: {
+    marginLeft: theme.spacing(1),
+  }
 }));
 
 export default function DynaNetSuiteQualificationCriteria(props) {
@@ -82,10 +94,12 @@ export default function DynaNetSuiteQualificationCriteria(props) {
 
   if (!filters) {
     return (
-      <Typography>
-        Loading record metadata.
-        <Spinner />
-      </Typography>
+      <div className={classes.loaderRecord}>
+        <Typography className={classes.loaderRecordMetaDataText}>
+          Loading record metadata.
+        </Typography>
+        <Spinner size={24} />
+      </div>
     );
   }
 
@@ -94,18 +108,19 @@ export default function DynaNetSuiteQualificationCriteria(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
-        Click{' '}
+        Refresh search filters
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          here
+          <RefreshIcon className={classes.netsuiteQualificationFilterIcon} />
+
         </Button>{' '}
-        to refresh search filters.
+
       </div>
       <FilterPanel
         id={id}
@@ -114,6 +129,6 @@ export default function DynaNetSuiteQualificationCriteria(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

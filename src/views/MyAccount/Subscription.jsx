@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, Drawer } from '@material-ui/core';
@@ -214,7 +214,7 @@ export default function Subscription() {
   }, []);
 
   return (
-    <Fragment>
+    <>
       <Drawer
         anchor="right"
         open={showStartFreeDialog}
@@ -320,7 +320,7 @@ export default function Subscription() {
             </div>
           )}
           {licenseActionDetails && (
-            <Fragment>
+            <>
               <Typography variant="h4" className={classes.heading}>
                 Subscription
               </Typography>
@@ -362,38 +362,38 @@ export default function Subscription() {
                     {licenseActionDetails.totalFlowsAvailable ===
                     Number.MAX_SAFE_INTEGER ? (
                       <div className={classes.bold}>Unlimited</div>
-                    ) : (
-                      <div>
-                        <div className={classes.itemsList}>
-                          <div>
-                            <span className={classes.bold}>
-                              {numEnabledPaidFlows} of{' '}
-                              {licenseActionDetails.totalFlowsAvailable} (
-                              <span className={classes.normal}>
-                                {licenseActionDetails.totalFlowsAvailable -
+                      ) : (
+                        <div>
+                          <div className={classes.itemsList}>
+                            <div>
+                              <span className={classes.bold}>
+                                {numEnabledPaidFlows} of{' '}
+                                {licenseActionDetails.totalFlowsAvailable} (
+                                <span className={classes.normal}>
+                                  {licenseActionDetails.totalFlowsAvailable -
                                   licenseActionDetails.numAddOnFlows}{' '}
-                                from subscription +{' '}
-                                {licenseActionDetails.numAddOnFlows} Add-on
-                                flows)
+                                  from subscription +{' '}
+                                  {licenseActionDetails.numAddOnFlows} Add-on
+                                  flows)
+                                </span>
                               </span>
-                            </span>
-                          </div>
-                          <span className={classes.bold}>
+                            </div>
+                            <span className={classes.bold}>
                             &nbsp;| {productionRemainingFlows}
-                          </span>
-                          <span> &nbsp;remaining</span>
-                        </div>
-                        <div className={classes.linearProgressWrapper}>
-                          <LinearProgress
-                            color="primary"
-                            value={productionConsumedFlowsPercentage}
-                            variant="determinate"
-                            thickness={10}
-                            className={classes.progressBar}
+                            </span>
+                            <span> &nbsp;remaining</span>
+                          </div>
+                          <div className={classes.linearProgressWrapper}>
+                            <LinearProgress
+                              color="primary"
+                              value={productionConsumedFlowsPercentage}
+                              variant="determinate"
+                              thickness={10}
+                              className={classes.progressBar}
                           />
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                   <div className={classes.wrapper}>
                     <Typography variant="h3">
@@ -490,11 +490,11 @@ export default function Subscription() {
                       </a>
                     </div>
                   </div>
-                )}
-            </Fragment>
+              )}
+            </>
           )}
         </div>
       )}
-    </Fragment>
+    </>
   );
 }

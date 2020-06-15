@@ -1,9 +1,5 @@
 import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
-// import CheckboxIcon from '../components/icons/CheckboxUnselectedIcon';
-// import CheckboxSelectedIcon from '../components/icons/CheckboxSelectedIcon';
-// import RadioBtnIcon from '../components/icons/RadioBtnUnselectedIcon';
-// import RadioBtnSelectedIcon from '../components/icons/RadioBtnSelectedIcon';
 
 const appBarHeight = 36;
 
@@ -198,7 +194,6 @@ export default {
       root: {
         minHeight: 42,
         fontSize: 'unset',
-
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
@@ -235,7 +230,7 @@ export default {
     MuiTypography: {
       root: {
         color: colors.celigoNeutral6,
-        fontFamily: `Roboto400, sans-serif`,
+        fontFamily: 'Roboto400, sans-serif',
       },
       body1: {
         fontSize: '17px',
@@ -323,7 +318,7 @@ export default {
       },
       head: {
         '&:hover': {
-          background: `white !important`,
+          background: 'white !important',
         },
       },
     },
@@ -400,6 +395,8 @@ export default {
         },
         '&.Mui-disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
+
         },
       },
       input: {
@@ -408,7 +405,7 @@ export default {
         borderColor: colors.celigoNeutral3,
         height: 38,
         fontSize: 15,
-        padding: '0px 12px',
+        padding: '0px 15px',
         boxSizing: 'border-box',
         borderRadius: 2,
         '&:hover': {
@@ -416,6 +413,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
           '&:hover': {
             borderColor: colors.celigoNeutral3,
           },
@@ -443,6 +441,7 @@ export default {
         },
         '&:disabled': {
           backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
         },
       },
       inputMultiline: {
@@ -495,10 +494,10 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: '15px',
         '&$disabled': {
-          background: colors.celigoNeutral2,
-          color: colors.celigoNeutral4,
-          '&hover': {
-            borderColor: '#cc0000',
+          backgroundColor: colors.celigoNeutral2,
+          color: fade(colors.celigoNeutral6, 0.8),
+          '& >.MuiSelect-icon': {
+            display: 'none',
           },
         },
       },
@@ -528,9 +527,40 @@ export default {
         background: colors.celigoNeutral1,
       },
     },
+    MuiExpansionPanel: {
+      root: {
+        background: 'none',
+        boxShadow: 'none',
+      },
+
+
+    },
+    MuiExpansionPanelDetails: {
+      root: {
+        padding: 0,
+      },
+    },
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
+        height: 38,
+        display: 'inline-flex',
+        minHeight: 'unset',
+        paddingLeft: 0,
+        flexDirection: 'row-reverse',
+        '&.Mui-expanded': {
+          minHeight: 0,
+        },
+      },
+      content: {
+        margin: 0,
+        '&.Mui-expanded': {
+          margin: 0,
+        },
+      },
+      expandIcon: {
+        padding: 0,
+        margin: [[-4, 4, 0, 0]],
       },
     },
     MuiChip: {
@@ -618,19 +648,6 @@ export default {
       },
     },
   },
-
-  // TODO: Dave It is giving an error in console
-
-  // props: {
-  //   MuiCheckbox: {
-  //     icon: <CheckboxIcon />,
-  //     checkedIcon: <CheckboxSelectedIcon />,
-  //   },
-  //   MuiRadio: {
-  //     icon: <RadioBtnIcon />,
-  //     checkedIcon: <RadioBtnSelectedIcon />,
-  //   },
-  // },
 
   props: {
     MuiCheckbox: {

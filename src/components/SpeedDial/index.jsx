@@ -1,56 +1,52 @@
-import { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MuiSpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import React, { useCallback, useState } from 'react';
 
 const isTouch =
   typeof document !== 'undefined' && 'ontouchstart' in document.documentElement;
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   speedDial: {
     position: 'absolute',
     bottom: theme.spacing(2),
     right: theme.spacing(3),
   },
 }))
-export default class SpeedDial extends Component {
-  state = {
-    open: false,
-  };
+export default function SpeedDial({children}) {
+  const classes = useStyles();
+  const [open, setOpen] = useState(false);
 
-  handleClick = () => {
-    this.setState({ open: !this.state.open });
-  };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  const handleClick = useCallback(() => {
+    setOpen(state => !state);
+  }, []);
 
-  handleOpen = () => {
-    this.setState({ open: true });
-  };
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
 
-  render() {
-    const { classes, children } = this.props;
-    const { open } = this.state;
+  const handleOpen = useCallback(() => {
+    setOpen(true);
+  }, []);
 
-    return (
-      <MuiSpeedDial
-        open={open}
-        ariaLabel="speed dial"
-        className={classes.speedDial}
-        icon={<SpeedDialIcon />}
-        ButtonProps={{
-          color: 'secondary',
-        }}
-        onBlur={this.handleClose}
-        onClick={this.handleClick}
-        onClose={this.handleClose}
-        onFocus={isTouch ? null : this.handleOpen}
-        onMouseEnter={isTouch ? null : this.handleOpen}
-        onMouseLeave={this.handleClose}>
-        {children}
-      </MuiSpeedDial>
-    );
-  }
+
+  return (
+    <MuiSpeedDial
+      open={open}
+      ariaLabel="speed dial"
+      className={classes.speedDial}
+      icon={<SpeedDialIcon />}
+      ButtonProps={{
+        color: 'secondary',
+      }}
+      onBlur={handleClose}
+      onClick={handleClick}
+      onClose={handleClose}
+      onFocus={isTouch ? null : handleOpen}
+      onMouseEnter={isTouch ? null : handleOpen}
+      onMouseLeave={handleClose}>
+      {children}
+    </MuiSpeedDial>
+  );
 }
