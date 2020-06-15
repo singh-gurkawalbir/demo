@@ -48,7 +48,7 @@ export default {
       id: 'http.encrypted.apiKey',
       required: true,
       type: 'text',
-      label: 'API Token',
+      label: 'API token',
       inputType: 'password',
       defaultValue: '',
       helpKey: 'joor.connection.http.encrypted.apiKey',
