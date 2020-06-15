@@ -200,9 +200,7 @@ export default function ImportMapping(props) {
 
       // check if value changes or user entered something in new row
       if ((!key && value) || (key && _mapping[field] !== value)) {
-        if (!key && value) {
-          // do nothing
-        } else if (value === '') {
+        if (key && value === '') {
           if (
             (field === 'extract' && generate === '') ||
             (field === 'generate' &&
