@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 660 : 0;
+      return props.match.isExact ? 824 : 0;
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
@@ -48,14 +48,14 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    padding: '14px 0px',
-    margin: theme.spacing(0, 3),
+    padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
+    background: theme.palette.background.default,
   },
   titleText: {
     wordBreak: 'break-word',
+    paddingRight: theme.spacing(2),
   },
 
   closeButton: {
@@ -76,9 +76,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
       color: theme.palette.secondary.dark,
     },
-  },
-  closeIcon: {
-    fontSize: 18,
   },
 
   nestedDrawerTitleText: {
@@ -369,7 +366,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>}
           <div className={classes.titleImgBlock}>
-            <Typography variant="h3" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
+            <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>
             {showApplicationLogo && (
@@ -385,7 +382,7 @@ export default function Panel(props) {
             data-test="closeDrawer"
             className={classes.closeButton}
             onClick={onClose}>
-            <Close className={classes.closeIcon} />
+            <Close />
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
