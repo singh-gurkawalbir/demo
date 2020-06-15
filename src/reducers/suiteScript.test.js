@@ -281,12 +281,12 @@ describe('suiteScriptIntegrations selector', () => {
   ];
   const state = reducer({}, 'some action');
   const tilesReceivedAction = actions.resource.receivedCollection(
-    `suitescript/connections/connection1/tiles`,
+    'suitescript/connections/connection1/tiles',
     data.connection1.tiles
   );
   const newState = reducer(state, tilesReceivedAction);
   const tilesReceivedAction2 = actions.resource.receivedCollection(
-    `suitescript/connections/connection2/tiles`,
+    'suitescript/connections/connection2/tiles',
     data.connection2.tiles
   );
   const newState2 = reducer(newState, tilesReceivedAction2);

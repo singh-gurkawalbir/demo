@@ -102,7 +102,7 @@ describe('tiles selector', () => {
 
     test('should return correct results for connection c1 [diy integrations only]', () => {
       const tilesReceivedAction = actions.resource.receivedCollection(
-        `suitescript/connections/c1/tiles`,
+        'suitescript/connections/c1/tiles',
         tiles.c1
       );
       const newState = reducer(state, tilesReceivedAction);
@@ -122,7 +122,7 @@ describe('tiles selector', () => {
     });
     test('should return correct results for connection c2 [diy + connector integrations]', () => {
       const tilesReceivedAction = actions.resource.receivedCollection(
-        `suitescript/connections/c2/tiles`,
+        'suitescript/connections/c2/tiles',
         tiles.c2
       );
       const newState = reducer(state, tilesReceivedAction);
@@ -194,7 +194,7 @@ describe('integrations selector', () => {
 
     test('should return correct results for connection c1 [diy integrations only]', () => {
       const tilesReceivedAction = actions.resource.receivedCollection(
-        `suitescript/connections/c1/tiles`,
+        'suitescript/connections/c1/tiles',
         tiles.c1
       );
       const newState = reducer(state, tilesReceivedAction);
@@ -212,7 +212,7 @@ describe('integrations selector', () => {
     });
     test('should return correct results for connection c2 [diy + connector integrations]', () => {
       const tilesReceivedAction = actions.resource.receivedCollection(
-        `suitescript/connections/c2/tiles`,
+        'suitescript/connections/c2/tiles',
         tiles.c2
       );
       const newState = reducer(state, tilesReceivedAction);
