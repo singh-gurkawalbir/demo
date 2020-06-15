@@ -1,9 +1,7 @@
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
-
     delete newValues['/file/csvHelper'];
-
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
@@ -12,13 +10,10 @@ export default {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
     }
-
     newValues['/file/output'] = 'records';
-
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -31,7 +26,6 @@ export default {
       delete newValues['/file/csv/hasHeaderRow'];
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
-
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
@@ -75,13 +69,10 @@ export default {
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
     }
-
     if (newValues['/file/decompressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
-
     delete newValues['/file/decompressFiles'];
-
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
@@ -92,20 +83,17 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
-
       // resetting key coloums when hasHeaderRow changes
       if (keyColoumnField.hasHeaderRow !== hasHeaderRowField.value) {
         keyColoumnField.value = [];
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
       }
-
       return {
         includeHeader: hasHeaderRowField.value,
       };
     }
     if (fieldId === 'uploadFile') {
       const fileType = fields.find(field => field.id === 'file.type');
-
       return fileType.value;
     }
     if (fieldId === 'file.csvHelper') {
@@ -127,7 +115,6 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.csv.hasHeaderRow'
       );
-
       return {
         fields: {
           columnDelimiter: columnDelimiterField && columnDelimiterField.value,
@@ -162,7 +149,6 @@ export default {
         rowsToSkip: rowsToSkipField && rowsToSkipField.value,
         hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
       };
-
       return options;
     }
   },
@@ -224,35 +210,49 @@ export default {
     dataURITemplate: { fieldId: 'dataURITemplate' },
   },
   layout: {
-    fields: [
-      'name',
-      'file.type',
-      'uploadFile',
-      'file.csv.columnDelimiter',
-      'file.csv.rowDelimiter',
-      'file.csv.trimSpaces',
-      'file.csv.rowsToSkip',
-      'file.csv.hasHeaderRow',
-      'file.csv.rowsPerRecord',
-      'file.csv.keyColumns',
-      'file.csvHelper',
-      'file.xml.resourcePath',
-      'file.json.resourcePath',
-      'file.xlsx.hasHeaderRow',
-      'file.xlsx.rowsPerRecord',
-      'file.xlsx.keyColumns',
-    ],
-    type: 'collapse',
     containers: [
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+        fields: [
+          'name',
+          'file.type',
+          'uploadFile',
+        ],
+      },
+      {
+        type: 'indent',
+        containers: [
+          {fields: [
+            'file.csv.columnDelimiter',
+            'file.csv.rowDelimiter',
+            'file.csv.trimSpaces',
+            'file.csv.rowsToSkip',
+            'file.csv.hasHeaderRow',
+            'file.csv.rowsPerRecord',
+            'file.csv.keyColumns',
+            'file.csvHelper',
+          ]}
+        ]
+      },
+      {
+        fields: ['file.xml.resourcePath',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns']
+      },
+      {
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+          },
+        ],
       },
     ],
   },
 };
-
 /*
 _id: "5dfa9a412f350e4437941144"
 createdAt: "2019-12-18T21:29:37.432Z"
