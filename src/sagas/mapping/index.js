@@ -271,8 +271,8 @@ export function* mappingInit({ id }) {
   // load all sObjects used in mapping list
   yield call(refreshGenerates, {id, isInit: true })
 }
-export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value}) {
-  if (value && value.indexOf('_child_') === -1) {
+export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' }) {
+  if (value.indexOf('_child_') === -1) {
     return;
   }
   const {
