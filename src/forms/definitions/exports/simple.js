@@ -222,6 +222,7 @@ export default {
         type: 'indent',
         containers: [
           {fields: [
+            'file.csvHelper',
             'file.csv.columnDelimiter',
             'file.csv.rowDelimiter',
             'file.csv.trimSpaces',
@@ -229,7 +230,6 @@ export default {
             'file.csv.hasHeaderRow',
             'file.csv.rowsPerRecord',
             'file.csv.keyColumns',
-            'file.csvHelper',
           ]}
         ]
       },
