@@ -74,9 +74,6 @@ function GenerateUrl(props) {
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
-      // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
-      // TODO @Raghu : Fix this a better way
-
       const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
       onFieldChange(id, whURL);
       setUrl(false);
