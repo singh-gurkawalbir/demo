@@ -16,7 +16,6 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   title: {
-    textTransform: 'capitalize',
     color: theme.palette.text.title,
   },
   content: {
