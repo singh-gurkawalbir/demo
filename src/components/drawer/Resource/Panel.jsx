@@ -12,7 +12,6 @@ import {
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
 import { isNewId } from '../../../utils/resource';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
@@ -162,7 +161,6 @@ export default function Panel(props) {
   const dispatch = useDispatch();
 
   useRedirectionToParentRoute(resourceType, id);
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles({
     ...props,
     occupyFullWidth,
@@ -316,12 +314,6 @@ export default function Panel(props) {
         if (!resourceId) {
           return props.history.replace(getEditUrl(id));
         }
-
-        // Take care of existing resource selection.
-        enqueueSnackbar({
-          message: `${resourceLabel} added`,
-          variant: 'success',
-        });
       }
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
@@ -344,12 +336,7 @@ export default function Panel(props) {
         return;
       }
 
-      if (newResourceId) {
-        enqueueSnackbar({
-          message: `${resourceLabel} created`,
-          variant: 'success',
-        });
-      }
+
       onClose();
     }
   }
