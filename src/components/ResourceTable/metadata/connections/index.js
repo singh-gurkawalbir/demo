@@ -49,11 +49,13 @@ export default {
         heading: 'Last updated',
         value: r => formatLastModified(r.lastModified),
         orderBy: 'lastModified',
+        width: 160,
       },
       {
         heading: 'Queue size',
         // align: 'right',
         value: r => r.queueSize || 0,
+        width: 120,
       },
     ];
 

@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     padding: 0,
     borderRadius: 2,
-    color: theme.palette.text.hint,
+    color: theme.palette.secondary.light,
     cursor: 'pointer',
     '&:hover': {
       background: 'transparent',
