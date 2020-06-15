@@ -17,7 +17,7 @@ import { emptyObject } from '../../../utils/constants';
 
 const emptyObj = {};
 const isParent = true;
-
+export const a = () => {};
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();
