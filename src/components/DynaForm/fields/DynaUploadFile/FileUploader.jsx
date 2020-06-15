@@ -63,7 +63,6 @@ function FileUploader(props) {
         <FormLabel required={required}>
           {label}
         </FormLabel>
-        {/* TODO: surya we need to add the helptext for the upload file */}
         <FieldHelp {...props} />
       </div>
       <div className={classes.uploadContainer}>

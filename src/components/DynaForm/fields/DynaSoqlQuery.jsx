@@ -93,7 +93,6 @@ export default function DynaSoqlQuery(props) {
         <FormLabel htmlFor={id} required={required}>
           {label}
         </FormLabel>
-        {/* Todo (surya): fieldhelp needs helptext */}
         <FieldHelp {...props} />
       </div>
       <TextField
