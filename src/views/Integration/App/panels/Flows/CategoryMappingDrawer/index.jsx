@@ -65,6 +65,7 @@ const useStyles = makeStyles(theme => ({
   },
   fullWidth: {
     width: '100%',
+    padding: 12,
   },
   mappingHeader: {
     padding: theme.spacing(1),
@@ -128,6 +129,7 @@ const useStyles = makeStyles(theme => ({
   rootExpansionPanel: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    padding: 12,
   },
   innerContentHeader: {
     width: '100%',
@@ -140,6 +142,10 @@ const useStyles = makeStyles(theme => ({
   },
   expCollBtn: {
     marginRight: -30,
+  },
+  categoryMappingExpPanelSummary: {
+    padding: '0px 12px',
+    width: '100%',
   },
 }));
 
@@ -278,6 +284,7 @@ function CategoryMappings({
         }>
         <ExpansionPanelSummary
           aria-controls="panel1bh-content"
+          className={classes.categoryMappingExpPanelSummary}
           id="panel1bh-header">
           <div className={classes.innerContentHeader}>
             <div className={classes.title}>

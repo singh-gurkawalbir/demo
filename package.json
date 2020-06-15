@@ -13,8 +13,8 @@
     "build": "env NODE_ENV=production webpack --mode=production",
     "build-analyze": "env NODE_ENV=analyze webpack --mode=production",
     "lint": "eslint --ext .js --ext .jsx ./src",
-    "test": "jest",
-    "coverage": "jest --coverage",
+    "test": "env NODE_ENV=test jest",
+    "coverage": "env NODE_ENV=test jest --coverage",
     "styleguide": "env NODE_ENV=styleguide styleguidist server",
     "styleguide-build": "env NODE_ENV=styleguide styleguidist build"
   },
@@ -129,12 +129,12 @@
     "lint-staged": "^10.2.4",
     "prettier-eslint": "8.8.2",
     "react-refresh": "^0.8.2",
-    "react-styleguidist": "^11.0.6",
+    "react-styleguidist": "^11.0.8",
     "redux-saga-test-plan": "^4.0.0-rc.3",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   }
 }

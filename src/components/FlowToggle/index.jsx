@@ -8,10 +8,12 @@ import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
 
+
 export default function FlowToggle({
   resource: flow,
   disabled,
   storeId,
+  integrationId,
 }) {
   // TODO: Connector specific things to be added for schedule drawer incase of !isDisabled && isIntegrationApp
   const { confirmDialog } = useConfirmDialog();
@@ -21,6 +23,12 @@ export default function FlowToggle({
     state => selectors.isOnOffInProgress(state, flow._id),
     (left, right) => left.onOffInProgress === right.onOffInProgress
   );
+  const integration = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)
+  );
+  const istwoDotZeroFrameWork = integration && integration.installSteps &&
+  integration.installSteps.length;
+
 
   useEffect(() => {
     if (!onOffInProgress) {
@@ -52,7 +60,7 @@ export default function FlowToggle({
         {
           label: 'Yes',
           onClick: () => {
-            if (flow._connectorId) {
+            if (flow._connectorId && !istwoDotZeroFrameWork) {
               dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));
               setOnOffInProgressStatus(true);
               dispatch(

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    padding: theme.spacing(0, 0, 0, 3),
+    padding: theme.spacing(2, 3),
     display: 'flex',
   },
 
@@ -38,17 +38,12 @@ function MappingDrawer() {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const flowName = flow ? flow.name : flowId;
   const mappingEditorId = `${importId}-${flowId}`;
-  const handleClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
-  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
-    state => selectors.mapping(state, mappingEditorId)
-  );
-  const showPreview = !!(
-    showSalesforceNetsuiteAssistant || httpAssistantPreview
+  const showPreview = useSelector(
+    state => {
+      const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = selectors.mapping(state, mappingEditorId);
+      return !!(showSalesforceNetsuiteAssistant || httpAssistantPreview);
+    }
   );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
@@ -63,8 +58,9 @@ function MappingDrawer() {
           [classes.fullWidthDrawerOpen]: drawerOpened && showPreview,
         }),
       }}
-      onClose={handleClose}>
-      <DrawerTitleBar title={`Edit mapping for flow ${flowName}`} />
+      // eslint-disable-next-line react/jsx-handler-names
+      onClose={history.goBack}>
+      <DrawerTitleBar title="Edit mapping" />
       <div className={classes.content}>
         <LoadResources
           required="true"
@@ -73,9 +69,10 @@ function MappingDrawer() {
             <>
               <StandaloneMapping
                 id={mappingEditorId}
-                onClose={handleClose}
+                // eslint-disable-next-line react/jsx-handler-names
+                onClose={history.goBack}
                 // why is this prop called resourceId? Is it possible to pass in
-                // any resourceID? I think now.. since it probably ONLY works with
+                // any resourceID? I think not.. since it probably ONLY works with
                 // am importId, this prop should be called as such.
                 resourceId={importId}
                 flowId={flowId}

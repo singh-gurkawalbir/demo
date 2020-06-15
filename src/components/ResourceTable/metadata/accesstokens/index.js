@@ -21,10 +21,6 @@ export default {
       orderBy: 'name',
     },
     {
-      heading: 'Description',
-      value: r => r.description,
-    },
-    {
       // TODO add permission checks
       heading: 'Token',
       value: r => getDisplayToken(r),

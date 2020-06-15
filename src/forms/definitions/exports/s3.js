@@ -1,11 +1,25 @@
 import { isNewId } from '../../../utils/resource';
+import { isLookupResource } from '../../../utils/flows';
 
 export default {
+  init: (fieldMeta, resource = {}, flow) => {
+    const exportPanelField = fieldMeta.fieldMap.exportPanel;
+
+    if (isLookupResource(flow, resource)) {
+      exportPanelField.visible = false;
+    }
+
+    return fieldMeta;
+  },
   preSave: formValues => {
     const newValues = { ...formValues };
 
     delete newValues['/file/csvHelper'];
 
+    const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+    if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
+      newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
+    }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -67,6 +81,23 @@ export default {
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
+    } else {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -159,43 +190,121 @@ export default {
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
     'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
-    file: {
-      formId: 'file',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
+    'file.type': { fieldId: 'file.type' },
+    uploadFile: {
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: 'file.type',
+      placeholder: 'Sample file (that would be parsed):',
+    },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
+    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
+    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
+    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
+    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
+    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
+    'file.xlsx.rowsPerRecord': {
+      fieldId: 'file.xlsx.rowsPerRecord',
+      disabledWhenAll: r => {
+        if (isNewId(r._id)) {
+          return [{ field: 'uploadfile', is: [''] }];
+        }
+
+        return [];
+      },
+    },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
+    'file.xml.resourcePath': {
+      fieldId: 'file.xml.resourcePath',
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^/',
+          message: "Resource Path should start with '/'",
         },
+      },
+    },
+    'file.json.resourcePath': {
+      fieldId: 'file.json.resourcePath',
+    },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
+    'file.filedefinition.rules': {
+      fieldId: 'file.filedefinition.rules',
+      refreshOptionsOnChangesTo: [
+        'edix12.format',
+        'fixed.format',
+        'edifact.format',
+        'file.fileDefinition.resourcePath',
+        'file.type',
       ],
+      required: true,
+    },
+    'file.fileDefinition.resourcePath': {
+      fieldId: 'file.fileDefinition.resourcePath',
     },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'outputMode'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How would you like to parse files?',
-        fields: ['file'],
-      },
-      {
-        collapsed: true,
-        label: 'Where would you like to transfer from?',
-        fields: [
-          's3.region',
-          's3.bucket',
-          's3.keyStartsWith',
-          's3.keyEndsWith',
-          'ftp.leaveFile',
+        fields: ['common', 'outputMode'],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            fields: [
+              'file.type',
+              'uploadFile',
+              'file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns',
+              'edix12.format',
+              'fixed.format',
+              'edifact.format',
+              'file.filedefinition.rules'],
+            type: 'indent',
+            containers: [{fields: [
+              'file.csvHelper',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns']}]
+          },
+          {
+            collapsed: true,
+            label: 'Where would you like to transfer from?',
+            fields: [
+              's3.region',
+              's3.bucket',
+              's3.keyStartsWith',
+              's3.keyEndsWith',
+              'ftp.leaveFile',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['fileAdvancedSettings'],
+          },
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
-        fields: ['fileAdvancedSettings'],
-      },
-    ],
+        fields: ['exportPanel'],
+      }
+    ]
   },
   actions: [
     {

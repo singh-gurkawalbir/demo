@@ -515,7 +515,6 @@ function FlowBuilder() {
     <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
-        disabled={isViewMode}
         integrationId={integrationId}
       />
 
@@ -566,7 +565,7 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
-          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+          {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
             <IconButton
               disabled={isNewFlow}
               data-test="charts"
@@ -576,6 +575,7 @@ function FlowBuilder() {
           )}
           {!isDataLoaderFlow && (
             <FlowToggle
+              integrationId={integrationId}
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}

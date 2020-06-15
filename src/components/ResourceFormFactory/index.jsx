@@ -80,53 +80,43 @@ const getConnectionType = resource => {
   return type;
 };
 
+const ActionButtons = ({actions, formProps}) => actions.length &&
+actions.map(action => {
+  const Action = consolidatedActions[action.id];
+  // remove form disabled prop...
+  // they dont necessary apply to action button
+  const { disabled, ...rest } = formProps;
+  return <Action key={action.id} dataTest={action.id} {...rest} {...action} />;
+});
+
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
-
+  const actionButtons = useMemo(() => {
+    // if props has defined actions return it
+    if (actions) return actions;
+    let actionButtons;
+    // When action button metadata isn't provided we infer the action buttons.
+    if (resourceType === 'connections' && !isNew) {
+      if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
+        actionButtons = ['oauth', 'cancel'];
+      } else {
+        actionButtons = ['test', 'testandsave', 'cancel'];
+      }
+    } else {
+      actionButtons = ['save', 'cancel'];
+    }
+    return actionButtons.map(id => ({id}));
+  }, [actions, connectionType, isNew, resourceType])
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
-
-  // When action buttons is provided in the metadata then we generate the action buttons for you
-  if (actions) {
-    const ActionButtons =
-      actions.length > 0 &&
-      actions.map(action => {
-        const Action = consolidatedActions[action.id];
-
-        return <Action key={action.id} {...props} {...action} />;
-      });
-
-    return <DynaForm {...props}>{ActionButtons}</DynaForm>;
-  }
-
-  let actionButtons;
-
-  // When action button metadata isn't provided we infer the action buttons.
-  if (resourceType === 'connections' && !isNew) {
-    if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-      actionButtons = ['oauth', 'cancel'];
-    } else {
-      actionButtons = ['test', 'testandsave', 'cancel'];
-    }
-  } else {
-    actionButtons = ['save', 'cancel'];
-  }
-
   return (
     <DynaForm {...props}>
-      {actionButtons.map(key => {
-        const Action = consolidatedActions[key];
-        // remove form disabled prop...
-        // they dont necessary apply to action button
-        const { disabled, ...rest } = props;
-
-        return <Action key={key} dataTest={key} {...rest} />;
-      })}
+      <ActionButtons actions={actionButtons} formProps={props} />
     </DynaForm>
   );
 }

@@ -124,8 +124,8 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample file (that would be exported)',
-      mode: r => r && r.file && r.file.type,
+      placeholder: 'Sample file (that would be parsed):',
+      options: 'csv',
       visibleWhen: [
         {
           field: 'outputMode',

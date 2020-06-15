@@ -169,16 +169,10 @@ export default function SettingsDrawer({
     },
     [dispatch, flow._id, history]
   );
-  const infoTextSettings = `You can enable or disable flow error notifications, 
-    known as job errors.  If you have these notifications enabled or disabled for 
-    the integration containing this flow, this flow-level setting will override 
-    the integration-level setting.`;
-
   return (
     <RightDrawer
       path="settings"
       title="Settings"
-      infoText={infoTextSettings}
       width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm

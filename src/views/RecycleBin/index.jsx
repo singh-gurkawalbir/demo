@@ -33,25 +33,25 @@ const LoadingMask = () => (
     <Spinner color="primary" />
   </Loader>
 );
+const defaultFilter = {
+  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  sort: { orderBy: 'doc.name', order: 'asc' }
+};
 
 export default function RecycleBin(props) {
   const history = useHistory();
-  const defaultFilter = useMemo(
-    () => ({ take: 10, sort: { orderBy: 'doc.name', order: 'asc' } }),
-    []
-  );
   const classes = useStyles();
   const dispatch = useDispatch();
   const filter =
-    useSelector(state => selectors.filter(state, 'recycleBinTTL')) ||
-    defaultFilter;
+    useSelector(state =>
+      selectors.filter(state, 'recycleBinTTL') || defaultFilter);
   const recycleBinFilterConfig = useMemo(
     () => ({
       type: 'recycleBinTTL',
       ...defaultFilter,
       ...filter,
     }),
-    [defaultFilter, filter]
+    [filter]
   );
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
