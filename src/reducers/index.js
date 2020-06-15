@@ -16,6 +16,22 @@ import auth, * as fromAuth from './authentication';
 import user, * as fromUser from './user';
 import actionTypes from '../actions/types';
 import {
+  isSimpleImportFlow,
+  showScheduleIcon,
+  isRealtimeFlow,
+  getExportIdsFromFlow,
+  getImportIdsFromFlow,
+  getUsedActionsMapForResource,
+  isPageGeneratorResource,
+  getImportsFromFlow,
+  getPageProcessorImportsFromFlow,
+  getFlowListWithMetadata,
+  getNextDataFlows,
+  getIAFlowSettings,
+  getFlowDetails,
+  getFlowReferencesForResource,
+} from '../utils/flows';
+import {
   PASSWORD_MASK,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -30,19 +46,6 @@ import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import { getFieldById } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
-import {
-  getExportIdsFromFlow,
-  getImportIdsFromFlow,
-  getUsedActionsMapForResource,
-  isPageGeneratorResource,
-  getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
-  getFlowListWithMetadata,
-  getNextDataFlows,
-  getIAFlowSettings,
-  getFlowDetails,
-  getFlowReferencesForResource,
-} from '../utils/flows';
 import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
@@ -199,6 +202,10 @@ export function resourceFormSaveProcessTerminated(
     resourceType,
     resourceId
   );
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromSession.getChildIntegrationId(state && state.session, parentId);
 }
 
 export function clonePreview(state, resourceType, resourceId) {
@@ -875,6 +882,135 @@ export function flowDetails(state, id) {
   return getFlowDetails(flow, integration, exports);
 }
 
+/* ***********************************************************************
+  This is the beginning of refactoring the above selector. There is just WAY to
+  much data returned above and in most cased a component only needs a small slice
+  of the above. */
+export function isDataLoader(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  // TODO: review with team... is this an ok pattern to access
+  // state directly? seems ok.
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return false;
+
+  return isSimpleImportFlow(flow, exports);
+}
+
+export function flowType(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow) return '';
+
+  const exports = state && state.data && state.data.resources.exports;
+
+  if (!exports) return '';
+
+  if (isSimpleImportFlow(flow, exports)) {
+    return 'Data loader';
+  }
+
+  if (isRealtimeFlow(flow, exports)) {
+    return 'Realtime';
+  }
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function isFlowEnableLocked(state, flowId) {
+  const flow = resource(state, 'flows', flowId);
+
+  if (!flow || !flow._connectorId) return false;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  if (!integration) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  // strange flow setting name to indicate that flows can not be
+  // enabled/disabled by a user...
+  return flowSettings.disableSlider;
+}
+
+// Possible refactor! If we need both canSchedule (flow has ability to schedule),
+// and if the IA allows for schedule overrides, then we can return a touple...
+// for the current purpose, we just need to know if a flow allows or doesn't allow
+// schedule editing.
+export function flowAllowsScheduling(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  const allExports = state && state.data && state.data.resources.exports;
+  const canSchedule = showScheduleIcon(flow, allExports);
+
+  if (!isApp) return canSchedule;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function flowUsesUtilityMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+  const integration = resource(state, 'integrations', flow._integrationId);
+  const isApp = flow._connectorId;
+  if (!isApp) return false;
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showUtilityMapping;
+}
+
+export function flowSupportsMapping(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+
+  const isApp = flow._connectorId;
+
+  if (!isApp) return true;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!flowSettings.showMapping;
+}
+
+export function flowSupportsSettings(state, id) {
+  const flow = resource(state, 'flows', id);
+
+  if (!flow) return false;
+
+  const isApp = flow._connectorId;
+
+  if (!isApp) return false;
+
+  const integration = resource(state, 'integrations', flow._integrationId);
+
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!(
+    (flowSettings.settings && flowSettings.settings.length) ||
+    (flowSettings.sections && flowSettings.sections.length)
+  );
+}
+
+/* End of refactoring of flowDetails selector.. Once all use is refactored of
+   the flowDetails, we should delete that selector.
+*********************************************************************** */
+
 export function flowListWithMetadata(state, options) {
   const flows = resourceList(state, options).resources || emptySet;
   const exports = resourceList(state, {
@@ -1181,24 +1317,78 @@ export function isOnOffInProgress(state, flowId) {
   return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
-export function integrationConnectionList(state, integrationId, tableConfig) {
+export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
+  // eslint-disable-next-line no-use-before-define
+  const childIntegrations = map(integrationChildren(state, integrationId), 'value');
   let { resources = [] } = resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
-    const registeredConnections = integration._registeredConnectionIds;
+    let registeredConnections = [];
+    if (!childId) {
+      childIntegrations.forEach(intId => {
+        const integration = resource(state, 'integrations', intId)
+        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds)
+      })
+    } else {
+      const parentIntegration = resource(state, 'integrations', integrationId);
+      const childIntegration = resource(state, 'integrations', childId);
+      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections)
+    }
 
     if (registeredConnections) {
       resources = resources.filter(c => registeredConnections.includes(c._id));
     }
   } else if (integration._connectorId) {
-    resources = resources.filter(conn => conn._integrationId === integrationId);
+    resources = resources.filter(conn => {
+      if (childId && childId !== integrationId) {
+        return [integrationId, childId].includes(conn._integrationId)
+      }
+      return childIntegrations.includes(conn._integrationId)
+    });
   }
 
   return resources;
+}
+
+export function integrationAppV2FlowList(state, integrationId, childId) {
+  if (!state) return null;
+
+  return resourceList(state, {
+    type: 'flows',
+    filter: { _integrationId: childId },
+  }).resources;
+}
+
+export function integrationAppV2ConnectionList(state, integrationId, childId) {
+  if (!state) return null;
+  const isParent = integrationId === childId;
+  let integrations;
+
+  if (isParent) {
+    const childIntegrations = resourceList(state, {
+      type: 'integrations',
+      filter: { _parentId: integrationId },
+    }).resources;
+
+    integrations = [integrationId, ...map(childIntegrations, '_id')];
+  } else {
+    integrations = [integrationId, childId];
+  }
+
+  const connections = resourceList(state, {
+    type: 'connections',
+    filter: {
+      $where() {
+        return integrations.includes(this._integrationId);
+      },
+    },
+  }).resources;
+
+  return connections;
 }
 
 export function integrationAppResourceList(
@@ -1229,18 +1419,19 @@ export function integrationAppResourceList(
   }
 
   const flows = [];
+  const flowIds = [];
   const connections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
 
   (selectedStore.sections || []).forEach(sec => {
-    flows.push(...map(sec.flows, '_id'));
+    flowIds.push(...map(sec.flows, '_id'));
   });
 
-  flows.forEach(f => {
-    const flow = resource(state, 'flows', f) || {};
-
+  flowIds.forEach(fid => {
+    const flow = resource(state, 'flows', fid) || {};
+    flows.push({_id: flow._id, name: flow.name});
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
@@ -1525,6 +1716,23 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   };
 }
 
+export function integrationChildren(state, integrationId) {
+  if (!state) return null;
+  const children = [];
+  const integration = resource(state, 'integrations', integrationId) || {};
+  const childIntegrations = resourceList(state, {
+    type: 'integrations',
+    filter: { _parentId: integrationId },
+  }).resources;
+
+  children.push({ value: integrationId, label: integration.name });
+  childIntegrations.forEach(ci => {
+    children.push({ value: ci._id, label: ci.name });
+  });
+
+  return children;
+}
+
 export function integrationAppSettings(state, id) {
   if (!state) return null;
 
@@ -1716,7 +1924,6 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   } else {
     requiredFlows = map(selectedSection.flows, '_id');
   }
-
   hasNSInternalIdLookup = some(
     selectedSection.flows,
     f => f.showNSInternalIdLookup
@@ -1776,26 +1983,27 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
     );
 
     if (store) {
-      return map(
-        allIntegrationFlows.filter(f => {
-          // TODO: this is not reliable way to extract store flows. With current integration json,
-          // there is no good way to extract this
-          // Extract store from the flow name. (Regex extracts store label from flow name)
-          // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
-          const flowStore = /\s\[(.*)\]$/.test(f.name)
-            ? /\s\[(.*)\]$/.exec(f.name)[1]
-            : null;
+      const storeFlows = allIntegrationFlows.filter(f => {
+        // TODO: this is not reliable way to extract store flows. With current integration json,
+        // there is no good way to extract this
+        // Extract store from the flow name. (Regex extracts store label from flow name)
+        // Flow name usually follows this format: <Flow Name> [<StoreLabel>]
+        const flowStore = /\s\[(.*)\]$/.test(f.name)
+          ? /\s\[(.*)\]$/.exec(f.name)[1]
+          : null;
 
-          return flowStore
-            ? flowStore === store.label
-            : flows.indexOf(f._id) > -1;
-        }),
+        return flowStore
+          ? flowStore === store.label
+          : flows.indexOf(f._id) > -1;
+      })
+      return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
     }
 
     return map(flows, '_id');
   }
+
 
   return map(allIntegrationFlows, '_id');
 }
@@ -1815,7 +2023,9 @@ export function integrationInstallSteps(state, integrationId) {
     integrationId
   );
 
-  return integrationInstallSteps.map(step => {
+  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+
+  return visibleSteps.map(step => {
     if (step.isCurrentStep) {
       return { ...step, ...installStatus };
     }
@@ -1824,18 +2034,27 @@ export function integrationInstallSteps(state, integrationId) {
   });
 }
 
-export function integrationUninstallSteps(state, integrationId) {
-  const uninstallData = fromSession.uninstallData(
+const emptyStepsArr = [];
+export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
+  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  ) : fromSession.uninstallData(
     state && state.session,
     integrationId
   );
-  const { steps: uninstallSteps, error } = uninstallData;
+  const { steps: uninstallSteps, error, isFetched, isComplete } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
   }
 
-  const modifiedSteps = produce(uninstallSteps, draft => {
+  const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+  if (visibleSteps.length === 0) {
+    return { steps: emptyStepsArr, error, isFetched, isComplete };
+  }
+
+  const modifiedSteps = produce(visibleSteps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -1843,7 +2062,7 @@ export function integrationUninstallSteps(state, integrationId) {
     }
   });
 
-  return { steps: modifiedSteps, error };
+  return { steps: modifiedSteps, error, isFetched, isComplete };
 }
 
 export function addNewStoreSteps(state, integrationId) {
@@ -1866,6 +2085,48 @@ export function addNewStoreSteps(state, integrationId) {
   });
 
   return { steps: modifiedSteps };
+}
+
+export function isIAV2UninstallComplete(state, { integrationId }) {
+  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  if (!integration) return true;
+  if (integration.mode !== 'uninstall') return false;
+
+  const uninstallData = fromSession.uninstall2Data(
+    state && state.session,
+    integrationId
+  );
+
+  const { steps: uninstallSteps, isFetched } = uninstallData;
+  if (isFetched) {
+    if (!uninstallSteps || uninstallSteps.length === 0) return true;
+    return !(uninstallSteps.find(s =>
+      !s.completed
+    ))
+  }
+  return false;
+}
+
+// FIXME: @ashu, we can refactor this later and completely remove
+// the clone check once the functionality is clear and tested for all scenarios
+export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
+  const integration = resource(state, 'integrations', integrationId);
+  if (!integration) return false;
+  let isCloned = false;
+
+  if (!skipCloneCheck) {
+    isCloned =
+    integration.install &&
+    integration.install.find(step => step.isClone);
+  }
+  const isFrameWork2 =
+    (
+      integration.installSteps &&
+      integration.installSteps.length) || (
+      integration.uninstallSteps &&
+        integration.uninstallSteps.length) ||
+    isCloned;
+  return isFrameWork2;
 }
 
 // #end integrationApps Region
@@ -2312,7 +2573,7 @@ export function userPermissionsOnConnection(state, connectionId) {
     const connection = resource(state, 'connections', connectionId);
 
     return (
-      (connection._connectorId
+      (connection && connection._connectorId
         ? permissions.integrations.connectors
         : permissions.integrations.all) || {}
     ).connections;
@@ -2736,51 +2997,52 @@ export function tiles(state) {
   let connector;
   let status;
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles
+    .map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        t._connectorId &&
+        integration.mode !== INTEGRATION_MODES.SETTINGS
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || {
-        user: {},
-      };
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
+
+        return {
+          ...t,
+          status,
+          integration: {
+            mode: integration.mode,
+            permissions: integration.permissions,
+          },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
+        };
+      }
 
       return {
         ...t,
         status,
         integration: {
-          mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
       };
-    }
-
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
+    });
 }
 // #endregion
 

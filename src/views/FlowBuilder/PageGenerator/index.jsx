@@ -298,14 +298,13 @@ const PageGenerator = ({
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');
-  const handleDelete = useCallback(onDelete(blockName), [onDelete]);
 
   return (
     <div className={classes.pgContainer}>
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={!isDataLoader && handleDelete}
+        onDelete={!isDataLoader && onDelete(blockName)}
         onErrors={onErrors}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}

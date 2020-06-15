@@ -27,21 +27,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultFilter = {
+  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  searchBy: [
+    'user.email',
+    '_integrationId',
+    'user._id',
+    'user.name',
+    'user.company',
+    'environment',
+  ],
+};
+
 export default function Licenses(props) {
-  const defaultFilter = useMemo(
-    () => ({
-      take: 10,
-      searchBy: [
-        'user.email',
-        '_integrationId',
-        'user._id',
-        'user.name',
-        'user.company',
-        'environment',
-      ],
-    }),
-    []
-  );
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
@@ -53,9 +51,10 @@ export default function Licenses(props) {
     () => ({
       ignoreEnvironmentFilter: true,
       type: 'connectorLicenses',
-      ...{ ...defaultFilter, ...filter },
+      ...defaultFilter,
+      ...filter,
     }),
-    [defaultFilter, filter]
+    [filter]
   );
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -101,24 +100,22 @@ export default function Licenses(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources="connectorLicenses">
-          {list.count === 0 ? (
-            <Typography>
-              {list.total === 0
-                ? "You don't have any licenses."
-                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-            </Typography>
-          ) : (
-            <CeligoTable
-              data={list.resources}
-              {...metadata}
-              filterKey={sortFilterKey}
-              actionProps={{
-                resourceType: `connectors/${connectorId}/licenses`,
-              }}
-            />
-          )}
-        </LoadResources>
+        {list.count === 0 ? (
+          <Typography>
+            {list.total === 0
+              ? 'You don\'t have any licenses.'
+              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+          </Typography>
+        ) : (
+          <CeligoTable
+            data={list.resources}
+            {...metadata}
+            filterKey={sortFilterKey}
+            actionProps={{
+              resourceType: `connectors/${connectorId}/licenses`,
+            }}
+          />
+        )}
       </div>
       <ShowMoreDrawer
         filterKey="connectorLicenses"

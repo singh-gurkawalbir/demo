@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -89,7 +89,22 @@ export default function CsvParsePanel(props) {
     setShowKeyColumnsOptions(!hasHeaderRowChanged);
   };
 
-  const allColumns = showKeyColumnsOptions ? getColumns(result) : [];
+  const allColumns = useMemo(() => {
+    if (!showKeyColumnsOptions) {
+      return [];
+    }
+    const options = getColumns(result);
+
+    if (Array.isArray(keyColumns)) {
+      keyColumns.forEach(val => {
+        if (!options.find(opt => opt === val)) {
+          options.push(val);
+        }
+      });
+    }
+
+    return options;
+  }, [keyColumns, result, showKeyColumnsOptions]);
 
   useEffect(() => {
     if (showKeyColumnsOptions === false && status !== 'requested') setShowKeyColumnsOptions(true);

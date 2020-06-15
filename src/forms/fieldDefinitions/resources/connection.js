@@ -1247,10 +1247,12 @@ export default {
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
+    placeholder: 'SSL certificate:',
     label: 'SSL certificate',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
+    placeholder: 'SSL client key:',
     label: 'SSL client key',
   },
   'http.clientCertificates.passphrase': {
@@ -1353,6 +1355,10 @@ export default {
     type: 'checkbox',
     label: 'User directory is root',
   },
+  'ftp.tradingPartner': {
+    type: 'checkbox',
+    label: 'External trading partner?',
+  },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
     label: 'Use implicit ftps',
@@ -1384,6 +1390,8 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP encryption algorithm',
+    // Todo (surya) 15533 : helptext needed
+    helpText: 'helptext is useful to provide information about the field to users',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1467,7 +1475,7 @@ export default {
   },
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
-    label: 'MDN signature verification',
+    label: 'Partner requires MDN signature verification',
   },
   'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
@@ -1851,17 +1859,17 @@ export default {
   },
   requiremdnspartners: {
     type: 'labelvalue',
-    label: 'Require mdns from partners?',
+    label: 'Require MDNs from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
     type: 'labelvalue',
-    label: 'Require asynchronous mdns?',
+    label: 'Require asynchronous MDNs?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
-    label: 'Partner requires asynchronous mdns?',
+    label: 'Partner requires asynchronous MDNs?',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',
@@ -2134,7 +2142,6 @@ export default {
   'netsuite.tokenEnvironment': {
     type: 'select',
     label: 'Environment',
-    required: true,
     defaultValue: r => r && r.netsuite && r.netsuite.environment,
     options: [
       {
@@ -2432,6 +2439,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2439,6 +2447,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

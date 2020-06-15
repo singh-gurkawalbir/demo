@@ -159,7 +159,6 @@ export default function NetSuiteMappingAssistant({
     !connection ||
     !connection.netsuite ||
     !connection.netsuite.account ||
-    !connection.netsuite.environment ||
     !connection.netsuite.dataCenterURLs ||
     !connection.netsuite.dataCenterURLs.systemDomain
   ) {

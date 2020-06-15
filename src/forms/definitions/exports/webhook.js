@@ -1,14 +1,23 @@
-export default {
-  optionsHandler: (fieldId, fields) => {
-    const webHookProviderField =
-      fields.find(field => field.id === 'webhook.provider') || {};
+import { isJsonString } from '../../../utils/string';
 
+export default {
+  validationHandler: field => {
+    // Used to validate sampleData field
+    // Incase of invalid json throws error to be shown on the field
+    if (field && field.id === 'sampleData') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      ) return 'Sample Data must be a valid JSON';
+    }
+  },
+  optionsHandler: (fieldId, fields) => {
     if (fieldId === 'sampleData') {
       const webHookUrlField = fields.find(field => field.id === 'webhook.url');
 
       return {
         webHookUrl: webHookUrlField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
@@ -19,13 +28,9 @@ export default {
 
       return {
         webHookToken: webHookTokenField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
-    if (fieldId === 'webhook.token') {
-      return { webHookProvider: webHookProviderField.value };
-    }
 
     return null;
   },
@@ -77,7 +82,9 @@ export default {
       sampleData: r => r && r.sampleData,
       refreshOptionsOnChangesTo: ['webhook.url', 'webhook.provider'],
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
     fields: ['common'],
@@ -105,7 +112,7 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries'] },
     ],
   },
 };

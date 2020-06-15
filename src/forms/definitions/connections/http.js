@@ -770,7 +770,11 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
         },
       ],
     },

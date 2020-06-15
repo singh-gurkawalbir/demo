@@ -19,6 +19,13 @@ import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
 import * as selectors from '../../reducers';
+import EditIcon from '../icons/EditIcon';
+import RunIcon from '../icons/RunIcon';
+import RefreshIcon from '../icons/RefreshIcon';
+import DownloadIntegrationIcon from '../icons/DownloadIntegrationIcon';
+import CheckmarkIcon from '../icons/CheckmarkIcon';
+import CancelIcon from '../icons/CancelIcon';
+import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -54,7 +61,7 @@ export default function JobActionsMenu({
   const menuOptions = [];
 
   if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
-    menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
+    menuOptions.push({ label: 'Cancel', action: 'cancelJob', icon: <CancelIcon /> });
   }
 
   const flowDetails = useSelector(
@@ -75,10 +82,14 @@ export default function JobActionsMenu({
         menuOptions.push({
           label: isFlowJob ? 'Retry all' : 'Retry',
           action: 'retryJob',
+          icon: <RefreshIcon />,
         });
       }
-
-      menuOptions.push({ label: 'Mark resolved', action: 'resolveJob' });
+      menuOptions.push({
+        label: 'Mark resolved',
+        action: 'resolveJob',
+        icon: <CheckmarkIcon />
+      });
     }
   }
 
@@ -90,19 +101,25 @@ export default function JobActionsMenu({
         flowDetails &&
         flowDetails.isRunnable
       ) {
-        menuOptions.push({ label: 'Run flow', action: 'runFlow' });
+        menuOptions.push({
+          label: 'Run flow',
+          action: 'runFlow',
+          icon: <RunIcon />
+        });
       }
 
       if (job.files && job.files.length > 0) {
         menuOptions.push({
           label: `${job.files.length > 1 ? 'Download files' : 'Download file'}`,
           action: 'downloadFiles',
+          icon: <DownloadIcon />
         });
       }
 
       menuOptions.push({
         label: 'Download diagnostics',
         action: 'downloadDiagnostics',
+        icon: <DownloadIntegrationIcon />,
       });
     }
 
@@ -111,7 +128,7 @@ export default function JobActionsMenu({
         userPermissionsOnIntegration.flows &&
         userPermissionsOnIntegration.flows.edit
       ) {
-        menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
+        menuOptions.push({ label: 'Edit flow', action: 'editFlow', icon: <EditIcon /> });
       } else {
         menuOptions.push({ label: 'View flow', action: 'viewFlow' });
       }
@@ -365,6 +382,7 @@ export default function JobActionsMenu({
           if (opt.action === 'runFlow') {
             return (
               <MenuItem key="runFlow">
+                <RunIcon />
                 <RunFlowButton
                   variant="text"
                   flowId={job._flowId}
@@ -380,7 +398,7 @@ export default function JobActionsMenu({
               onClick={() => {
                 handleActionClick(opt.action);
               }}>
-              {opt.label}
+              {opt.icon}{opt.label}
             </MenuItem>
           );
         })}

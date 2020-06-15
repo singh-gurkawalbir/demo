@@ -94,7 +94,10 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.name === step.name
+            s =>
+              (step.installerFunction &&
+                s.installerFunction === step.installerFunction) ||
+              (step.name && s.name === step.name)
           );
 
           if (stepIndex !== -1) {
@@ -174,6 +177,12 @@ export default (state = {}, action) => {
 
         return produce(state, draft => {
           draft.connectorLicenses = newCollection || [];
+        });
+      }
+
+      if (resourceType === 'recycleBinTTL' && collection && collection.length) {
+        return produce(state, draft => {
+          draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
         });
       }
 
@@ -508,7 +517,13 @@ export function defaultStoreId(state, id, store) {
       return store;
     }
 
-    return settings.stores[0].value;
+    // If the first store in the integration is in incomplete state or uninstall mode, on clicking the tile from dashboard
+    // user will be redirected directly to uninstall steps or install steps, which may confuse user.
+    // As done in ampersand, will select first "valid" store available as defaullt store.
+    return (
+      (settings.stores.find(s => s.mode === 'settings') || {}).value ||
+      settings.stores[0].value
+    );
   }
 
   return undefined;

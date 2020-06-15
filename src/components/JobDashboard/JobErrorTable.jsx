@@ -611,30 +611,25 @@ function JobErrorTable({
                     value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                 ]}
-                rowActions={r => [
-                  {
-                    label: 'Edit Retry Data',
-                    component: function EditRetryData() {
-                      return (
-                        <>
-                          {r.metadata &&
-                            r.metadata.isParent &&
-                            r.retryObject &&
-                            r.retryObject.isDataEditable && (
-                              <IconButton
-                                data-test="editRetryData"
-                                size="small"
-                                onClick={() => {
-                                  handleEditRetryDataClick(r._retryId);
-                                }}>
-                                <EditIcon />
-                              </IconButton>
-                          )}
-                        </>
-                      );
+                // TODO : @Raghu Need to refactor.. Move all this metadata stuff out of this JSX
+                rowActions={r => {
+                  if (!(r.metadata &&
+                    r.metadata.isParent &&
+                    r.retryObject &&
+                    r.retryObject.isDataEditable)) return [];
+                  return [
+                    {
+                      icon: <EditIcon />,
+                      label: 'Edit Retry Data',
+                      component: function EditRetryData() {
+                        useEffect(() => {
+                          handleEditRetryDataClick(r._retryId);
+                        }, []);
+                        return null;
+                      },
                     },
-                  },
-                ]}
+                  ]
+                }}
               />
             </>
           )}

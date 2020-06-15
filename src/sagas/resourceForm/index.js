@@ -18,7 +18,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
-import { isIntegrationApp } from '../../utils/flows';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -434,29 +434,39 @@ export function* submitFormValues({
   );
 }
 
-export function* getFlowUpdatePatchesOnPGorPPSave(
+
+// this saga specifically creates new PG or PP updates to a flow document
+export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
   tempResourceId,
   flowId
 ) {
   if (
     !['exports', 'imports'].includes(resourceType) ||
-    !flowId ||
-    !isNewId(tempResourceId)
-  ) return [];
+    !flowId) return [];
 
   // is pageGenerator or pageProcessor
-  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const { merged: flowDoc, master: origFlowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  // if its an existing resource and original flow document does not have any references to newly created PG or PP
+  // then we can go ahead and update it...if it has existing references no point creating additional create patches
+  // this was specifically created to support webhooks where in generating url we have to create a new PG...
+
+  if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
+    return [];
+  }
+
+  const createdId = isNewId(tempResourceId) ?
+    yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(
     selectors.resource,
     resourceType,
     createdId
   );
-  const { merged: flowDoc } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+
   const addIndexPP =
     (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
   const addIndexPG =
@@ -556,7 +566,7 @@ export function* skipRetriesPatches(
   );
   // if the export is a lookup then no patches should be applied
 
-  if (createdResource.isLookup) return null;
+  if (createdResource.isLookup) return [];
 
   const { merged: flow } = yield select(
     selectors.resourceData,
@@ -569,8 +579,12 @@ export function* skipRetriesPatches(
       pg => pg._exportId === (createdId || resourceId)
     );
 
-  if (index === -1) {
-    return null;
+  if (index === null || index === -1) {
+    return [];
+  }
+  // if its same value no point patching...return
+  if (flow.pageGenerators[index].skipRetries === skipRetries) {
+    return [];
   }
 
   const opDetermination =
@@ -611,7 +625,7 @@ function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
     resourceId,
   });
   const flowPatches = yield call(
-    getFlowUpdatePatchesOnPGorPPSave,
+    getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
     resourceId,
     flowId
