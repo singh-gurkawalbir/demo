@@ -484,10 +484,10 @@ function JobErrorTable({
               {numSelectedRetriableErrors > 1
                 ? `Retry ${numSelectedRetriableErrors} errors`
                 : `${
-                    numSelectedRetriableErrors === 1
-                      ? `Retry ${numSelectedRetriableErrors} error`
-                      : `${isJobInProgress ? 'Retrying' : 'Retry all'}`
-                  }`}
+                  numSelectedRetriableErrors === 1
+                    ? `Retry ${numSelectedRetriableErrors} error`
+                    : `${isJobInProgress ? 'Retrying' : 'Retry all'}`
+                }`}
             </Button>
             <Button
               data-test="markResolvedJobs"
@@ -498,10 +498,10 @@ function JobErrorTable({
               {numSelectedResolvableErrors > 1
                 ? `Mark resolved ${numSelectedResolvableErrors} errors`
                 : `${
-                    numSelectedResolvableErrors === 1
-                      ? `Mark resolved ${numSelectedResolvableErrors} error`
-                      : 'Mark resolved'
-                  }`}
+                  numSelectedResolvableErrors === 1
+                    ? `Mark resolved ${numSelectedResolvableErrors} error`
+                    : 'Mark resolved'
+                }`}
             </Button>
             <Button
               data-test="downloadAllErrors"
