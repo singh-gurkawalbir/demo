@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 6,
     color: theme.palette.text.hint,
   },
 
