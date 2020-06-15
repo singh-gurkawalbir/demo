@@ -85,6 +85,8 @@ export default function DynaTypeableSelect(props) {
     options = [],
     isValid,
     TextComponent,
+    // triggered when field is toucuhed.
+    triggerBlurOnTouch = false,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -135,7 +137,7 @@ export default function DynaTypeableSelect(props) {
   const handleBlur = () => {
     setShowDropdown(false);
 
-    if (value === inputValue) {
+    if (value === inputValue && !triggerBlurOnTouch) {
       return;
     }
 

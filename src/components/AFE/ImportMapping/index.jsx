@@ -115,7 +115,7 @@ export default function ImportMapping(props) {
     lookups,
     changeIdentifier,
     preview = {},
-    lastModifiedKey,
+    lastModifiedRowKey = '',
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
     importSampleData,
@@ -198,22 +198,31 @@ export default function ImportMapping(props) {
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
 
-      if (value === '') {
-        if (
-          (field === 'extract' && generate === '') ||
-          (field === 'generate' &&
-            extract === '' &&
-            !('hardCodedValue' in _mapping))
-        ) {
-          dispatch(actions.mapping.delete(editorId, key));
-
-          return;
+      // check if value changes or user entered something in new row
+      if ((!key && value) || (key && _mapping[field] !== value)) {
+        if (!key && value) {
+          // do nothing
+        } else if (value === '') {
+          if (
+            (field === 'extract' && generate === '') ||
+            (field === 'generate' &&
+              extract === '' &&
+              !('hardCodedValue' in _mapping))
+          ) {
+            dispatch(actions.mapping.delete(editorId, key));
+            return;
+          }
         }
+        dispatch(actions.mapping.patchField(editorId, field, key, value));
+        return;
       }
 
-      dispatch(actions.mapping.patchField(editorId, field, key, value));
+      if (lastModifiedRowKey !== key) {
+        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+        dispatch(actions.mapping.updateLastFieldTouched(editorId, _lastModifiedRowKey));
+      }
     },
-    [dispatch, editorId]
+    [dispatch, editorId, lastModifiedRowKey]
   );
   const patchSettings = useCallback(
     (key, settings) => {
@@ -262,36 +271,31 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
-  const handleSalesforceAssistantFieldClick = useCallback(
+  const handleSFNSAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedKey) {
+      if (disabled) {
+        return;
+      }
+      let value;
+      if (sObjectType) {
+        value = meta.id
+      } else if (recordType) {
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
+      }
+      if (lastModifiedRowKey && value) {
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedKey,
-            meta.id
+            lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
+            value
           )
         );
       }
     },
-    [dispatch, editorId, lastModifiedKey]
+    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType]
   );
-  const handleNetSuiteAssistantFieldClick = useCallback(
-    meta => {
-      if (lastModifiedKey) {
-        dispatch(
-          actions.mapping.patchField(
-            editorId,
-            'generate',
-            lastModifiedKey,
-            meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
-          )
-        );
-      }
-    },
-    [dispatch, editorId, lastModifiedKey]
-  );
+
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -301,6 +305,7 @@ export default function ImportMapping(props) {
   const handleDrop = useCallback(() => {
     dispatch(actions.mapping.changeOrder(editorId, localMappings));
   }, [dispatch, editorId, localMappings]);
+
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const mappingsCopy = [...localMappings];
@@ -487,7 +492,7 @@ export default function ImportMapping(props) {
               sObjectType={sObjectType}
               sObjectLabel={sObjectType}
               layoutId={salesforceMasterRecordTypeId}
-              onFieldClick={handleSalesforceAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
@@ -499,7 +504,7 @@ export default function ImportMapping(props) {
               }}
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
-              onFieldClick={handleNetSuiteAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
