@@ -163,8 +163,7 @@ export function* installScriptStep({
     stepCompleteResponse.find(
       temp =>
         temp.completed === false &&
-        temp._connectionId &&
-        temp.type === 'connection'
+        temp._connectionId
     );
 
   if (currentConnectionStep && isOauth(connectionDoc)) {

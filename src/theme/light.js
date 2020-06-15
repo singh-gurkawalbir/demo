@@ -264,8 +264,10 @@ export default {
       },
       h4: {
         fontSize: '20px',
-        lineHeight: '25px',
+        lineHeight: '24px',
         letterSpacing: 'normal',
+        fontFamily: 'source sans pro semibold',
+        fontWeight: 'normal',
       },
       h5: {
         fontSize: '17px',
@@ -529,24 +531,33 @@ export default {
     },
     MuiExpansionPanel: {
       root: {
-        background: 'none',
+        background: colors.celigoWhite,
+        border: '1px solid',
+        borderColor: colors.celigoNeutral3,
+        borderRadius: 4,
         boxShadow: 'none',
+        marginBottom: 24,
+        '&.Mui-expanded': {
+          '&:last-child': {
+            marginBottom: '24px !important',
+          },
+        },
+
       },
-
-
     },
     MuiExpansionPanelDetails: {
       root: {
-        padding: 0,
+        padding: [[10, 16, 0, 16]],
+        borderTop: `1px solid ${colors.celigoNeutral3}`,
       },
     },
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
-        height: 38,
+        height: 44,
         display: 'inline-flex',
         minHeight: 'unset',
-        paddingLeft: 0,
+        paddingLeft: 16,
         flexDirection: 'row-reverse',
         '&.Mui-expanded': {
           minHeight: 0,
@@ -613,7 +624,7 @@ export default {
     },
     MuiDrawer: {
       paper: {
-        background: colors.celigoWhite,
+        background: colors.celigoNeutral1,
       },
     },
     MuiTab: {

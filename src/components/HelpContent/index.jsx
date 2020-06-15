@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -91,27 +90,22 @@ function HelpContent(props) {
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
-  const [enquesnackbar] = useEnqueueSnackbar();
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
       if (helpful) {
         dispatch(actions.postFeedback(resourceType, fieldId, helpful));
-
-        enquesnackbar({ message: 'Feedback noted.Thanks!' });
       } else {
         setFeedbackText(true);
       }
     },
 
-    [dispatch, enquesnackbar, fieldId, resourceType]
+    [dispatch, fieldId, resourceType]
   );
   const handleSendFeedbackText = useCallback(() => {
     dispatch(
       actions.postFeedback(resourceType, fieldId, false, feedbackTextValue)
     );
-
-    enquesnackbar({ message: 'Feedback noted.Thanks!' });
-  }, [dispatch, enquesnackbar, feedbackTextValue, fieldId, resourceType]);
+  }, [dispatch, feedbackTextValue, fieldId, resourceType]);
   const onChange = useCallback(e => {
     setFeedbackTextValue(e.target.value);
   }, []);
