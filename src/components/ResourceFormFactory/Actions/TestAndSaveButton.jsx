@@ -93,8 +93,8 @@ const TestAndSaveButton = props => {
       dispatch(actions.resourceForm.submit(resourceType, resourceId, values)),
     [dispatch, resourceId, resourceType]
   );
-  const handleTestConnection = values =>
-    dispatch(actions.resource.connections.test(resourceId, values));
+  const handleTestConnection = useCallback(values =>
+    dispatch(actions.resource.connections.test(resourceId, values)), [dispatch, resourceId]);
   const testClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId, true)),
     [dispatch, resourceId]
@@ -150,18 +150,22 @@ const TestAndSaveButton = props => {
   useEffect(() => {
     if (saveTerminated) dispatchLocalAction({ type: 'saveCompleted' });
   }, [saveTerminated]);
+  const handleCloseAndClearForm = useCallback(() => {
+    dispatchLocalAction({
+      type: 'clearFormData',
+    });
+  }, []);
+
+  const handleSaveCompleted = useCallback(() =>
+    dispatchLocalAction({ type: 'saveCompleted' }), [])
 
   return (
     <>
       <ConfirmDialog
         commErrorMessage={erroredMessage}
         formValues={formValues}
-        handleCloseAndClearForm={() =>
-          dispatchLocalAction({
-            type: 'clearFormData',
-          })}
-        handleSaveCompleted={() =>
-          dispatchLocalAction({ type: 'saveCompleted' })}
+        handleCloseAndClearForm={handleCloseAndClearForm}
+        handleSaveCompleted={handleSaveCompleted}
         handleSubmit={handleSubmitForm}
       />
       {/* Test button which hides the test button and shows the ping snackbar */}

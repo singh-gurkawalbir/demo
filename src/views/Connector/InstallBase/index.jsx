@@ -23,15 +23,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
-
+const defaultFilter = {
+  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
+};
 export default function InstallBase(props) {
-  const defaultFilter = useMemo(
-    () => ({
-      take: 100,
-      searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
-    }),
-    []
-  );
   const { match, history } = props;
   const { connectorId } = match.params;
   const sortFilterKey = 'connectorInstallBase';
@@ -42,9 +38,10 @@ export default function InstallBase(props) {
   const connectorInstallBaseConfig = useMemo(
     () => ({
       type: 'connectorInstallBase',
-      ...{ ...defaultFilter, ...filter },
+      ...defaultFilter,
+      ...filter,
     }),
-    [defaultFilter, filter]
+    [filter]
   );
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
