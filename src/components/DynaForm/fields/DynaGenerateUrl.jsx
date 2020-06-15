@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -11,6 +11,9 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
+const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
+  field => !field.isValid || field.isDiscretelyInvalid
+)
 const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
@@ -25,6 +28,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const webookRequiredFields = ['webhook.password', 'webhook.username']
+
 function GenerateUrl(props) {
   const {
     options = {},
@@ -38,7 +43,7 @@ function GenerateUrl(props) {
     provider: webHookProvider
   } = props;
   const { webHookToken } = options;
-  const { value: formValues } = formContext;
+  const { value: formValues, fields: fieldStates } = formContext;
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [url, setUrl] = useState(true);
@@ -46,7 +51,13 @@ function GenerateUrl(props) {
   const finalResourceId =
     useSelector(state => selectors.createdResourceId(state, resourceId)) ||
     resourceId;
-  const handleGenerateUrl = () => {
+  const handleGenerateUrl = useCallback(() => {
+    if (inValidFields(webookRequiredFields, fieldStates)) {
+      webookRequiredFields.forEach(fieldId => {
+        onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+      })
+      return;
+    }
     dispatch(
       actions.resourceForm.submit(
         'exports',
@@ -59,17 +70,16 @@ function GenerateUrl(props) {
       )
     );
     setUrl(true);
-  };
+  }, [dispatch, fieldStates, finalResourceId, flowId, formValues, onFieldChange]);
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
       // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
       // TODO @Raghu : Fix this a better way
-      setTimeout(() => {
-        const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
-        onFieldChange(id, whURL);
-        setUrl(false);
-      });
+
+      const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+      onFieldChange(id, whURL);
+      setUrl(false);
     }
   }, [finalResourceId, webHookProvider, webHookToken, id, onFieldChange, url]);
 
