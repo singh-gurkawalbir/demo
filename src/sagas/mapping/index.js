@@ -272,6 +272,9 @@ export function* mappingInit({ id }) {
   yield call(refreshGenerates, {id, isInit: true })
 }
 export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value}) {
+  if (value.indexOf('_child_') === -1) {
+    return;
+  }
   const {
     resource,
     application,
@@ -291,7 +294,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value}) {
   const {key} = mappingObj
   const childRelationshipField =
           generateFields && generateFields.find(field => field.id === value);
-  if (childRelationshipField) {
+  if (childRelationshipField && childRelationshipField.childSObject) {
     const { childSObject, relationshipName } = childRelationshipField;
 
     yield put(actions.mapping.patchIncompleteGenerates(
