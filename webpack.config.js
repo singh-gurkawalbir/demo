@@ -146,6 +146,7 @@ module.exports = (env, argv) => {
       },
       proxy: {
         '/signin': proxyOpts,
+        '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
         '/link/google': proxyOpts,

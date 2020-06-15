@@ -67,16 +67,16 @@ export default function SelectApplication(props) {
     onFieldChange,
   } = props;
   // Custom styles for Select Control
-  const flowDetails = useSelector(state =>
-    selectors.flowDetails(state, flowId)
+  const isDataLoader = useSelector(state =>
+    selectors.isDataLoader(state, flowId)
   );
   const groupedApps = useMemo(
     () =>
       groupApplications(resourceType, {
         appType: appType || (fieldOptions && fieldOptions.appType),
-        isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
+        isSimpleImport: isDataLoader,
       }),
-    [appType, fieldOptions, flowDetails, resourceType]
+    [appType, fieldOptions, isDataLoader, resourceType]
   );
   const classes = useStyles();
   const theme = useTheme();

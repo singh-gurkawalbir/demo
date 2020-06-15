@@ -32,7 +32,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 3),
+    padding: '14px 0px',
+    margin: theme.spacing(0, 3),
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -119,7 +120,17 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
-  const fullPath = `${match.url}/${path}`;
+
+  let fullPath;
+  if (typeof path === 'string' || typeof path === 'number') {
+    fullPath = `${match.url}/${path}`;
+  } else if (Array.isArray(path)) {
+    fullPath = path.map(p => `${match.url}/${p}`);
+  } else {
+    // bad path datatype... don't know what do do.. render nothing.
+    return null;
+  }
+
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 

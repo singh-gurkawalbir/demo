@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
@@ -20,23 +20,48 @@ const useStyles = makeStyles(theme => ({
   blockButton: {
     marginRight: theme.spacing(2),
   },
+  runNowIcon: {
+    marginLeft: theme.spacing(-1),
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.primary.main,
+    }
+  },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+  const classes = useStyles();
   if (isRequested) return <Spinner size={20} />;
 
-  return variant === 'icon' ? (
-    <IconButtonWithTooltip
-      tooltipProps={{
-        title: 'Run now',
-        placement: 'bottom',
-      }}
-      disabled={disabled}
-      data-test="runFlow"
-      onClick={onRunClick}>
-      <RunIcon />
-    </IconButtonWithTooltip>
-  ) : (
+  if (variant === 'icon') {
+    if (disabled) {
+      return (
+        <IconButton
+          data-test="runFlow"
+          className={classes.runNowIcon}
+          disabled>
+          <RunIcon />
+        </IconButton>
+      );
+    }
+
+    return (
+      <IconButtonWithTooltip
+        className={classes.runNowIcon}
+        tooltipProps={{
+          title: 'Run now',
+          placement: 'bottom',
+        }}
+        disabled={disabled}
+        data-test="runFlow"
+
+        onClick={onRunClick}>
+        <RunIcon />
+      </IconButtonWithTooltip>
+    );
+  }
+
+  return (
     <span onClick={onRunClick} data-test="runFlow">
       Run flow
     </span>

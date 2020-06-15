@@ -7,8 +7,7 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
@@ -64,16 +63,29 @@ const allSections = [
   },
 ];
 
-export default function AdminPanel({ integrationId, ...sectionProps }) {
+export default function AdminPanel({
+  integrationId,
+  storeId,
+  ...sectionProps
+}) {
   const classes = useStyles();
   const match = useRouteMatch();
   const showAPITokens = useSelector(
     state => selectors.resourcePermissions(state, 'accesstokens').view
   );
-  const availableSections = showAPITokens
-    ? allSections
-    : // remove api token (last) section;
-    allSections.slice(0, allSections.length - 1);
+  const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, integrationId));
+  const filterTabs = [];
+
+  if (!showAPITokens) {
+    filterTabs.push('apitoken');
+  }
+  if (!canUninstall) {
+    filterTabs.push('uninstall')
+  }
+
+  const availableSections = allSections.filter(sec =>
+    !filterTabs.includes(sec.id)
+  );
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -108,7 +120,11 @@ export default function AdminPanel({ integrationId, ...sectionProps }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} {...sectionProps} />
+                <Section
+                  integrationId={integrationId}
+                  storeId={storeId}
+                  {...sectionProps}
+                />
               </Route>
             ))}
           </Switch>

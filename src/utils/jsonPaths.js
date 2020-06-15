@@ -78,10 +78,7 @@ export default function getJSONPaths(dataIn, prefix, options = {}) {
       type = Object.prototype.toString.apply(v);
 
       if (type === '[object Array]') {
-        if (
-          Object.prototype.toString.apply(v[0]) === '[object Object]' &&
-          !_.isEmpty(v[0])
-        ) {
+        if (!options.excludeArrayIndices && Object.prototype.toString.apply(v[0]) === '[object Object]' && !_.isEmpty(v[0])) {
           paths = paths.concat(
             getJSONPaths(
               getUnionObject(v),

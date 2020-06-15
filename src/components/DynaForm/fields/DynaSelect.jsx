@@ -1,15 +1,93 @@
-import React from 'react';
+import React, { useMemo, useState, useCallback, useEffect} from 'react';
 import { ListSubheader, FormLabel } from '@material-ui/core';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import { FixedSizeList } from 'react-window';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
 import { stringCompare } from '../../../utils/sort';
 
-const useStyles = makeStyles({
+const AUTO_CLEAR_SEARCH = 500;
+
+const NO_OF_OPTIONS = 6;
+const ITEM_SIZE = 48;
+const OPTIONS_VIEW_PORT_HEIGHT = 300;
+
+
+const optionSearch = (search) => ({label, optionSearch}) => search && (
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
+ (typeof label === 'string' && label.toLowerCase().startsWith(search)))
+const useAutoScrollOption = (items, open, listRef) => {
+  const [search, setSearch] = useState('');
+  const [scrolIndex, setScrolIndex] = useState(-1);
+
+  useEffect(() => {
+    setSearch('');
+    setScrolIndex(-1);
+  }, [open])
+
+  useEffect(() => {
+    // clear out search result after
+    const timerId = setTimeout(() => setSearch(''), AUTO_CLEAR_SEARCH)
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [search])
+  const keydownListener = useCallback((e) => {
+    if (e.keyCode < 32 || e.keyCode > 90) {
+      return;
+    }
+    if (e.keyCode === 38) {
+      if (scrolIndex <= 0) { return; }
+      setScrolIndex(index => index - 1);
+      return;
+    }
+    if (e.keyCode === 40) {
+      if (scrolIndex >= items.length) { return; }
+      setScrolIndex(index => index + 1);
+      return;
+    }
+    if (e.key) {
+      setSearch(str => {
+        const tmp = str + e.key;
+
+        // console.log('see ', tmp);
+        return tmp;
+      })
+    }
+  }, [items.length, scrolIndex])
+
+  useEffect(() => {
+    const matchingIndex = items.findIndex(optionSearch(search));
+
+    if (matchingIndex > 0) {
+      setScrolIndex(matchingIndex)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+  // console.log('matchingIndex ', matchingIndex);
+
+  useEffect(() => {
+    if (open) {
+      window.addEventListener('keydown', keydownListener, true);
+    }
+    return () => window.removeEventListener('keydown', keydownListener, true);
+  }, [keydownListener, open]);
+
+  useEffect(() => {
+    if (scrolIndex > 0) {
+      listRef && listRef.current && listRef.current.scrollToItem(scrolIndex);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrolIndex])
+  return scrolIndex;
+}
+
+const useStyles = makeStyles((theme) => ({
   fieldWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -17,7 +95,12 @@ const useStyles = makeStyles({
   dynaSelectWrapper: {
     width: '100%',
   },
-});
+  focusVisibleMenuItem: {
+    backgroundColor: theme.palette.secondary.lightest,
+    transition: 'all .8s ease',
+  }
+}));
+
 
 export default function DynaSelect(props) {
   const {
@@ -31,9 +114,14 @@ export default function DynaSelect(props) {
     defaultValue = '',
     placeholder,
     required,
+    className,
     label,
     onFieldChange,
   } = props;
+
+  const listRef = React.createRef();
+
+  const [open, setOpen] = useState(false);
   const classes = useStyles();
   const isSubHeader =
     options &&
@@ -45,52 +133,47 @@ export default function DynaSelect(props) {
         option.items.length &&
         option.items.some(item => item.subHeader)
     );
-  let items =
-    options &&
-    options.reduce(
-      (itemsSoFar, option) =>
-        itemsSoFar.concat(
-          option.items.map(item => {
-            let label;
-            let value;
+  const items = useMemo(() => {
+    let items =
+      options &&
+      options.reduce(
+        (itemsSoFar, option) =>
+          itemsSoFar.concat(
+            option.items.map(item => {
+              let label;
+              let value;
 
-            if (typeof item === 'string') {
-              label = item;
-              value = item;
-            } else {
-              ({ value } = item);
-              label = item.label || item.value;
-            }
+              if (typeof item === 'string') {
+                label = item;
+                value = item;
+              } else {
+                ({ value } = item);
+                label = item.label || item.value;
+              }
 
-            return typeof item === 'string'
-              ? { label, value }
-              : { ...item, label, value };
-          })
-        ),
-      []
-    );
-
-  if (!isSubHeader) {
-    items = items.sort(stringCompare('label'));
-  }
-
-  items = items.map(item => {
-    const { label, value, subHeader, disabled = false } = item;
-
-    if (subHeader) {
-      return (
-        <ListSubheader disableSticky key={subHeader}>
-          {subHeader}
-        </ListSubheader>
+              return typeof item === 'string'
+                ? { label, value }
+                : { ...item, label, value };
+            })
+          ),
+        []
       );
+
+    if (!isSubHeader) {
+      items = items.sort(stringCompare('label'));
     }
 
-    return (
-      <MenuItem key={value} value={value} disabled={disabled}>
-        {label}
-      </MenuItem>
-    );
-  });
+    const defaultItem = {
+      label: placeholder || 'Please select',
+      value: '',
+    };
+
+    items = [defaultItem, ...items];
+
+    return items;
+  }, [isSubHeader, options, placeholder]);
+
+  const matchMenuIndex = useAutoScrollOption(items, open, listRef);
   let finalTextValue;
 
   if (value === undefined || value === null) {
@@ -99,13 +182,39 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const defaultItem = (
-    <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please select'}
-    </MenuItem>
-  );
+  const Row = ({ index, style }) => {
+    const { label, value, subHeader, disabled = false } = items[index];
+    const classes = useStyles();
+    if (subHeader) {
+      return (
+        <ListSubheader disableSticky key={subHeader} style={style}>
+          {subHeader}
+        </ListSubheader>
+      );
+    }
 
-  items = [defaultItem, ...items];
+    return (
+      <MenuItem
+        key={value}
+        value={value}
+        data-value={value}
+        disabled={disabled}
+        className={clsx({
+          [classes.focusVisibleMenuItem]: matchMenuIndex === index,
+        })}
+        style={style}
+        selected={value === finalTextValue}
+        onClick={() => {
+          if (value !== undefined) {
+            onFieldChange(id, value);
+          }
+
+          setOpen(false);
+        }}>
+        {label}
+      </MenuItem>
+    );
+  };
 
   return (
     <div className={classes.dynaSelectWrapper}>
@@ -125,13 +234,33 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
-          disabled={disabled}
-          onChange={e => {
-            // if value is undefined could be a subHeader element since it does not have value property
-            if (e.target.value !== undefined) onFieldChange(id, e.target.value);
+          renderValue={selected => {
+            const item = items.find(item => item.value === selected);
+
+            return item && item.label;
           }}
+          open={open}
+          onOpen={() => {
+            setOpen(true);
+          }}
+          onClose={() => {
+            setOpen(false);
+          }}
+          disabled={disabled}
           input={<Input name={name} id={id} />}>
-          {items}
+          <FixedSizeList
+            className={className}
+            ref={listRef}
+            itemSize={ITEM_SIZE}
+            // if there are fewer options the view port height then let height scale per number of options
+            height={
+              items.length > NO_OF_OPTIONS
+                ? OPTIONS_VIEW_PORT_HEIGHT
+                : ITEM_SIZE * items.length
+            }
+            itemCount={items.length}>
+            {Row}
+          </FixedSizeList>
         </CeligoSelect>
       </FormControl>
 

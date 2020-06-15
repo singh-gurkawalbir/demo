@@ -495,6 +495,13 @@ export function uninstallData(state, id, storeId) {
   );
 }
 
+export function uninstall2Data(state, id) {
+  return fromIntegrationApps.uninstall2Data(
+    state && state.integrationApps,
+    id,
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
@@ -515,6 +522,10 @@ export function createdResourceId(state, tempId) {
 
 export function integratorLicenseActionMessage(state) {
   return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromResource.getChildIntegrationId(state && state.resource, parentId);
 }
 
 export function resourceReferences(state) {

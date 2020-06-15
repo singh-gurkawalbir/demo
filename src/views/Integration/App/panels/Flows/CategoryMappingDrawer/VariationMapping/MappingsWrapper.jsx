@@ -47,10 +47,10 @@ export default function VariationMappings(props) {
       return generatesMetadata;
     }) || {};
   const resourceId = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
 
-    if (flowDetails) {
-      const firstPP = flowDetails.pageProcessors.find(
+    if (flow) {
+      const firstPP = flow.pageProcessors.find(
         pp => pp.type === 'import'
       );
 

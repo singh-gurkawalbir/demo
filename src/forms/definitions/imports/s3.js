@@ -53,8 +53,24 @@ export default {
       delete newValues['/file/fileDefinition/resourcePath'];
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/xml/body'];
+    } else {
+      newValues['/file/json'] = undefined;
+      newValues['/file/xlsx'] = undefined;
+      newValues['/file/xml'] = undefined;
+      newValues['/file/csv'] = undefined;
+      delete newValues['/file/csv/rowsToSkip'];
+      delete newValues['/file/csv/trimSpaces'];
+      delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
+      delete newValues['/file/json/resourcePath'];
+      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/file/xlsx/hasHeaderRow'];
+      delete newValues['/file/xlsx/rowsPerRecord'];
+      delete newValues['/file/xlsx/keyColumns'];
     }
-
     if (newValues['/file/compressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
@@ -91,10 +107,63 @@ export default {
       }
     }
 
-    const fileType = fields.find(field => field.id === 'file.type');
+    if (fieldId === 'file.csvHelper') {
+      const includeHeaderField = fields.find(
+        field => field.id === 'file.csv.includeHeader'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const replaceNewlineWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceNewlineWithSpace'
+      );
+      const replaceTabWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceTabWithSpace'
+      );
+      const truncateLastRowDelimiterField = fields.find(
+        field => field.id === 'file.csv.truncateLastRowDelimiter'
+      );
+      const wrapWithQuotesField = fields.find(
+        field => field.id === 'file.csv.wrapWithQuotes'
+      );
 
+      return {
+        fields: {
+          includeHeader: includeHeaderField && includeHeaderField.value,
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          replaceNewlineWithSpace:
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
+          replaceTabWithSpace:
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          truncateLastRowDelimiter: truncateLastRowDelimiterField && truncateLastRowDelimiterField.value,
+          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
+        },
+      };
+    }
     if (fieldId === 'uploadFile') {
-      return fileType.value;
+      const uploadFileField = fields.find(
+        field => field.fieldId === 'uploadFile'
+      );
+      // if there is a uploadFileField in the form meta
+      // then provide the file type if not return null
+      // then the prevalent mode value will take over
+      const fileType = fields.find(field => field.id === 'file.type');
+
+      if (fieldId === 'uploadFile') {
+        return fileType.value;
+      }
+
+      if (uploadFileField) {
+        const fileTypeField = fields.find(
+          field => field.fieldId === 'file.type'
+        );
+
+        return fileTypeField.value.toLowerCase();
+      }
     }
 
     return null;
@@ -165,15 +234,23 @@ export default {
         },
       ],
     },
-    file: {
-      formId: 'file',
-      visibleWhenAll: [
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
+    uploadFile: {
+      fieldId: 'uploadFile',
+      refreshOptionsOnChangesTo: ['file.type'],
+      placeholder: 'Sample file (that would be generated):',
+      helpKey: 'import.uploadFile',
     },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.replaceNewlineWithSpace': {
+      fieldId: 'file.csv.replaceNewlineWithSpace',
+    },
+    'file.csv.replaceTabWithSpace': { fieldId: 'file.csv.replaceTabWithSpace' },
+    'file.csv.truncateLastRowDelimiter': { fieldId: 'file.csv.truncateLastRowDelimiter' },
+    'file.csv.wrapWithQuotes': { fieldId: 'file.csv.wrapWithQuotes' },
+    'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
     dataMappings: {
       formId: 'dataMappings',
       visibleWhenAll: [
@@ -216,7 +293,17 @@ export default {
       {
         collapsed: true,
         label: 'How would you like to generate files?',
-        fields: ['fileType', 'file'],
+        fields: ['fileType', 'uploadFile', 'file.xlsx.includeHeader'],
+        type: 'indent',
+        containers: [{fields: [
+          'file.csvHelper',
+          'file.csv.includeHeader',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.replaceNewlineWithSpace',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.truncateLastRowDelimiter',
+          'file.csv.wrapWithQuotes']}]
       },
       {
         collapsed: true,

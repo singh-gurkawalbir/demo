@@ -1,21 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
+import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,13 +38,19 @@ const useStyles = makeStyles(theme => ({
     margin: 5,
   },
 }));
-const flowsFilterConfig = { type: 'flows' };
 
-export default function FlowsPanel({ integrationId }) {
+export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
+  const filterKey = `${integrationId}-flows`;
+  const flowFilter = useSelector(state => selectors.filter(state, filterKey));
+  const flowsFilterConfig = { ...flowFilter, type: 'flows' };
+  const isIntegrationApp = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', integrationId);
+    return !!(integration && integration._connectorId)
+  })
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -59,13 +66,13 @@ export default function FlowsPanel({ integrationId }) {
           f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : integrationId)
+            : (childId || integrationId))
       ),
-    [allFlows, integrationId]
+    [allFlows, childId, integrationId]
   );
   const {
     status,
-    data: integrationErrorsMap = {},
+    // data: integrationErrorsMap = {},
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -105,13 +112,14 @@ export default function FlowsPanel({ integrationId }) {
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
-          onClose={() => setShowDialog(false)}
+          onClose={setShowDialog}
         />
       )}
       <MappingDrawer integrationId={integrationId} />
+      <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {permission.create && (
+        {permission.create && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -119,7 +127,7 @@ export default function FlowsPanel({ integrationId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-        {permission.attach && !isStandalone && (
+        {permission.attach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
@@ -127,7 +135,7 @@ export default function FlowsPanel({ integrationId }) {
           </IconTextButton>
         )}
         {/* check if this condition is correct */}
-        {permission.edit && (
+        {permission.edit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"
@@ -137,15 +145,13 @@ export default function FlowsPanel({ integrationId }) {
         )}
       </PanelHeader>
 
-      <LoadResources required resources="flows,exports">
-        {flows.map(f => (
-          <FlowCard
-            key={f._id}
-            flowId={f._id}
-            excludeActions={['schedule']}
-            errorCount={integrationErrorsMap[f._id] || 0}
-          />
-        ))}
+      <LoadResources required resources="flows, exports">
+        <CeligoTable
+          data={flows}
+          filterKey={filterKey}
+          {...flowTableMeta}
+          actionProps={{ resourceType: 'flows' }}
+        />
       </LoadResources>
     </div>
   );

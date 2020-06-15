@@ -23,18 +23,13 @@ export default {
       orderBy: 'name',
     },
     {
-      heading: 'Description',
-      value: r => r.description,
-      orderBy: 'description',
-    },
-    {
       heading: 'Status',
       value(r) {
         return <AgentStatus agentId={r._id} />;
       },
     },
     {
-      heading: 'Updated on',
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },

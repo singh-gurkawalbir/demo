@@ -33,7 +33,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
-import FormViewStepDrawer from '../../../../../components/InstallStep/FormViewStep';
+import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,6 +97,11 @@ export default function ConnectorInstallation(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
+  const childIntegration = useSelector(state => {
+    const id = selectors.getChildIntegrationId(state, integrationId);
+
+    return id && selectors.resource(state, 'integrations', id);
+  });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
   );
@@ -117,6 +122,9 @@ export default function ConnectorInstallation(props) {
   const integrationAppName = getIntegrationAppUrlName(
     integration && integration.name
   );
+  const integrationChildAppName =
+    childIntegration &&
+    getIntegrationAppUrlName(childIntegration && childIntegration.name);
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
@@ -211,9 +219,31 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('imports'));
 
       if (mode === 'settings') {
-        props.history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-        );
+        if (
+          integration &&
+          integration.initChild &&
+          integration.initChild.function &&
+          childIntegration &&
+          childIntegration.mode === 'install'
+        ) {
+          setIsSetupComplete(false);
+          props.history.push(
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+          );
+        } else {
+          dispatch(
+            actions.resource.clearChildIntegration()
+          );
+          if (integration && integration.installSteps && integration.installSteps.length > 0) {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}`
+            );
+          } else {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+            );
+          }
+        }
       }
     }
   }, [
@@ -223,6 +253,9 @@ export default function ConnectorInstallation(props) {
     integrationId,
     isSetupComplete,
     props.history,
+    integration,
+    childIntegration,
+    integrationChildAppName,
   ]);
 
   if (!installSteps || !integration || !integration._connectorId) {
@@ -245,7 +278,26 @@ export default function ConnectorInstallation(props) {
               ? integration.stores[0].value
               : undefined;
 
-            if (
+            // for old cloned IAs, uninstall should happen the old way
+            if (isFrameWork2 && !isCloned) {
+              const {url} = match;
+              const urlExtractFields = url.split('/');
+              const index = urlExtractFields.findIndex(
+                element => element === 'child'
+              );
+
+              // REVIEW: @ashu, review with Dave once
+              // if url contains '/child/xxx' use that id as store id
+              if (index === -1) {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                );
+              } else {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
+                );
+              }
+            } else if (
               integration.settings &&
               integration.settings.supportsMultiStore
             ) {
@@ -263,7 +315,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = (step, connection, index) => {
+  const handleStepClick = (step) => {
     const {
       _connectionId,
       installURL,
@@ -271,6 +323,7 @@ export default function ConnectorInstallation(props) {
       type,
       sourceConnection,
       completed,
+      url,
     } = step;
 
     if (completed) {
@@ -304,7 +357,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -317,13 +370,13 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/${index}`);
+        // history.push(`${match.url}/form/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
       }
-    } else if (installURL) {
+    } else if (installURL || url) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -332,7 +385,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL });
+        openExternalUrl({ url: installURL || url });
       } else {
         if (step.verifying) {
           return false;
@@ -402,7 +455,7 @@ export default function ConnectorInstallation(props) {
           />
         ))}
       {currentStep && currentStep.formMeta && (
-        <FormViewStepDrawer
+        <FormStepDrawer
           integrationId={integrationId}
           formMeta={currentStep.formMeta}
           title={currentStep.name}

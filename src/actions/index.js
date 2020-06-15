@@ -161,6 +161,9 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  updateChildIntegration: (parentId, childId) =>
+    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
@@ -721,6 +724,13 @@ const integrationApp = {
           response,
         }
       ),
+    addOnLicenseMetadataFailed: integrationId =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE,
+        {
+          integrationId,
+        }
+      ),
     requestMappingMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
@@ -764,6 +774,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+      id: integrationId,
+    }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
@@ -840,6 +853,44 @@ const integrationApp = {
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
+      }),
+  },
+  uninstaller2: {
+    init: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
+        id: integrationId,
+      }),
+    failed: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED, {
+        id: integrationId,
+        error,
+      }),
+    receivedSteps: (integrationId, uninstallSteps) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS, {
+        id: integrationId,
+        uninstallSteps,
+      }),
+    requestSteps: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
+        id: integrationId,
+      }),
+    updateStep: (integrationId, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE, {
+        id: integrationId,
+        update,
+      }),
+    uninstallStep: (integrationId, formVal) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, {
+        id: integrationId,
+        formVal,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
+        id: integrationId,
+      }),
+    complete: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
+        id: integrationId,
       }),
   },
   store: {
@@ -1245,6 +1296,8 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+
 };
 const searchCriteria = {
   init: (id, value) =>

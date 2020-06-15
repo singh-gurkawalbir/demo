@@ -83,8 +83,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (!patch || !patch.length) return; // nothing to do.
 
+  // integrations/<id>/connections for create and /connections for update
   // For accesstokens and connections within an integration for edit case
-  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
+  if (!isNew && resourceType.startsWith('integrations/')) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
   }
@@ -158,7 +159,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
   if (
-    resourceType === 'connections' &&
+    // if it matches integrations/<id>/connections when creating a connection
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
     merged.assistant &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
@@ -375,7 +377,7 @@ export function* updateIntegrationSettings({
       if (response.success) {
         // eslint-disable-next-line no-use-before-define
         yield call(getResource, { resourceType: 'flows', id: flowId });
-        const flowDetails = yield select(selectors.resource, 'flows', flowId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const patchSet = [
           {
             op: 'replace',
@@ -385,7 +387,7 @@ export function* updateIntegrationSettings({
           },
         ];
 
-        if (flowDetails.disabled !== values['/disabled']) {
+        if (flow.disabled !== values['/disabled']) {
           yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
 
           yield put(actions.resource.commitStaged('flows', flowId, 'value'));
@@ -561,7 +563,7 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       if (!collection) collection = invitedTransfers;
-      else collection = [...collection, ...invitedTransfers];
+      else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));

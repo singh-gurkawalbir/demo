@@ -30,7 +30,7 @@ import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import EditableText from '../../components/EditableText';
-import SwitchOnOff from '../../components/OnOff';
+import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
@@ -515,16 +515,10 @@ function FlowBuilder() {
     <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
-        disabled={isViewMode}
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flowId={flowId} />
       <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
@@ -571,7 +565,7 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
-          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+          {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
             <IconButton
               disabled={isNewFlow}
               data-test="charts"
@@ -580,8 +574,8 @@ function FlowBuilder() {
             </IconButton>
           )}
           {!isDataLoaderFlow && (
-            // eslint-disable-next-line react/jsx-pascal-case
-            <SwitchOnOff.component
+            <FlowToggle
+              integrationId={integrationId}
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}
