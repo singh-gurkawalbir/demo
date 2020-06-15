@@ -4069,6 +4069,21 @@ export function transferListWithMetadata(state) {
   return { resources: transfers };
 }
 
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resourceObj } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RESTExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
+
 export function isDataLoaderExport(state, resourceId, flowId) {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
@@ -4093,7 +4108,7 @@ export function getAvailableResourcePreviewStages(
   resourceType,
   flowId
 ) {
-  const { merged: resourceObj } = resourceData(
+  const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
     resourceId,
@@ -4101,8 +4116,9 @@ export function getAvailableResourcePreviewStages(
   );
 
   const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
+  const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
 
-  return getAvailablePreviewStages(resourceObj, isDataLoader);
+  return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
 
 /*
@@ -4447,21 +4463,6 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
-
-export function isRestCsvMediaTypeExport(state, resourceId) {
-  const { merged: resource } = resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resource || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RestExport') {
-    return false;
-  }
-
-  const connection = resource(state, 'connections', connectionId);
-
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
-}
 
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);

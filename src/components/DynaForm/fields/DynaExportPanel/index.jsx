@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormContext } from 'react-forms-processor/dist';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useState, useEffect, useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
 import actions from '../../../../actions';
@@ -61,7 +61,8 @@ function DynaExportPanel(props) {
     isPageGenerator(state, flowId, resourceId)
   );
   const availablePreviewStages = useSelector(state =>
-    getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId)
+    getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
+  shallowEqual
   );
   const [panelType, setPanelType] = useState(
     availablePreviewStages.length && availablePreviewStages[0].value
@@ -77,9 +78,10 @@ function DynaExportPanel(props) {
       });
 
     return stageData;
-  });
+  }, shallowEqual);
   const resourceSampleData = useSelector(state =>
-    getResourceSampleDataWithStatus(state, resourceId, 'raw')
+    getResourceSampleDataWithStatus(state, resourceId, 'raw'),
+  shallowEqual
   );
   const fetchExportPreviewData = useCallback(() => {
     // Just a fail safe condition not to request for sample data incase of not exports
