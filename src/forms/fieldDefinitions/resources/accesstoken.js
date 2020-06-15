@@ -73,7 +73,7 @@ export default {
       {
         items: [
           {
-            label: 'Full Access',
+            label: 'Full access',
             value: 'true',
           },
           {

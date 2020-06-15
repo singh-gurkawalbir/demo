@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
-import Button from '@material-ui/core/Button';
-import CodeEditor from '../../CodeEditor';
-import ActionButton from '../../ActionButton';
-import ExpandWindowIcon from '../../icons/ExpandWindowIcon';
-import ModalDialog from '../../ModalDialog';
-import ErroredMessageComponent from './ErroredMessageComponent';
-import FieldHelp from '../FieldHelp';
+import CodeEditor from '../../../CodeEditor';
+import ActionButton from '../../../ActionButton';
+import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
+import ErroredMessageComponent from '../ErroredMessageComponent';
+import FieldHelp from '../../FieldHelp';
+import ExpandModeEditor from './ExpandModeEditor';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -22,11 +21,6 @@ const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: theme.spacing(10),
-  },
-  editorContainer: {
-    border: '1px solid rgb(0,0,0,0.1)',
-    height: '50vh',
-    width: '65vh',
   },
   wrapper: {
     flexDirection: 'row !important',
@@ -49,7 +43,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaEditor({
   id,
+  resourceId,
+  resourceType,
+  patchKey,
   mode,
+  expandMode = 'modal',
   options,
   onFieldChange,
   value,
@@ -60,37 +58,45 @@ export default function DynaEditor({
   saveMode,
   description,
   errorMessages,
+  required,
   isValid,
   helpKey,
 }) {
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
-  const handleEditorClick = () => {
+  const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
-  };
+  }, [showEditor]);
+  const handleUpdate = useCallback(
+    (editorVal, isTouched = false) => {
+      let sanitizedVal = editorVal;
 
-  const handleUpdate = editorVal => {
-    let sanitizedVal = editorVal;
+      // convert to json if form value is an object
+      if (
+        saveMode === 'json' ||
+        (mode === 'json' && typeof value === 'object')
+      ) {
+        // user trying to remove the json. Handle removing the value during presave
+        if (editorVal === '') {
+          onFieldChange(id, '', isTouched);
 
-    // convert to json if form value is an object
-    if (saveMode === 'json' || (mode === 'json' && typeof value === 'object')) {
-      // user trying to remove the json. Handle removing the value during presave
-      if (editorVal === '') {
-        onFieldChange(id, '');
+          return;
+        }
 
-        return;
+        try {
+          sanitizedVal = JSON.parse(editorVal);
+        } catch (e) {
+          return;
+        }
       }
 
-      try {
-        sanitizedVal = JSON.parse(editorVal);
-      } catch (e) {
-        return;
-      }
-    }
-
-    onFieldChange(id, sanitizedVal);
-  };
-
+      onFieldChange(id, sanitizedVal, isTouched);
+    },
+    [id, mode, onFieldChange, saveMode, value]
+  );
+  const handleUpdateOnDrawerSave = useCallback(
+    editorVal => handleUpdate(editorVal, true),
+    [handleUpdate]);
   // Options handler would return the selected file type we would use that
   // and inject it as the mode of the editor so that syntax formating would work
   // according to the file format
@@ -110,39 +116,27 @@ export default function DynaEditor({
     resultantMode = modeFromFileOption;
   }
 
-  const editorDialog = (
-    <ModalDialog
-      show
-      handleClose={handleEditorClick}
-      aria-labelledby="form-dialog-title">
-      <div>{label}</div>
-      <div className={classes.editorContainer}>
-        <CodeEditor
-          name={id}
-          value={value}
-          mode={resultantMode}
-          readOnly={disabled}
-          onChange={handleUpdate}
-        />
-      </div>
-      <div>
-        <Button
-          data-test="showEditor"
-          onClick={handleEditorClick}
-          variant="outlined"
-          color="primary">
-          Done
-        </Button>
-      </div>
-    </ModalDialog>
-  );
-
   return (
     <div className={clsx(classes.wrapper, className)}>
       <div className={classes.dynaEditorWrapper}>
-        {showEditor && editorDialog}
+        {/* Below Component deals with showing editor in Modal/Drawer mode when user clicks on expand icon */}
+        <ExpandModeEditor
+          saveProps={{resourceId, resourceType, patchKey}}
+          expandMode={expandMode}
+          show={showEditor}
+          handleClose={handleEditorClick}
+          label={label}
+          editorProps={{
+            id,
+            value,
+            mode: resultantMode,
+            disabled,
+            handleUpdate,
+            handleUpdateOnDrawerSave
+          }}
+        />
         <div className={classes.dynaEditorTextLabelWrapper}>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel required={required} error={!isValid} >{label}</FormLabel>
           {helpKey && <FieldHelp helpKey={helpKey} />}
         </div>
 

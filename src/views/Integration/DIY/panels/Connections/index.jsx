@@ -24,23 +24,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionsPanel({ integrationId }) {
+export default function ConnectionsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
+  const _integrationId = childId || integrationId;
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
-  const filterKey = `${integrationId}+connections`;
+  const filterKey = `${_integrationId}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
-    selectors.integrationConnectionList(state, integrationId, tableConfig)
+    selectors.integrationConnectionList(state, integrationId, childId, tableConfig)
   );
   const permission = useSelector(state =>
     selectors.resourcePermissions(
       state,
       'integrations',
-      integrationId,
+      _integrationId,
       'connections'
     )
   );
@@ -52,28 +53,28 @@ export default function ConnectionsPanel({ integrationId }) {
   useEffect(() => {
     if (newResourceId) {
       dispatch(
-        actions.connection.requestRegister([newResourceId], integrationId)
+        actions.connection.requestRegister([newResourceId], _integrationId)
       );
     }
-  }, [dispatch, integrationId, newResourceId]);
+  }, [dispatch, _integrationId, newResourceId]);
 
   useEffect(() => {
-    dispatch(actions.resource.connections.refreshStatus(integrationId));
+    dispatch(actions.resource.connections.refreshStatus(_integrationId));
     // For connections resource table, we need to poll the connection status and queueSize
     const interval = setInterval(() => {
-      dispatch(actions.resource.connections.refreshStatus(integrationId));
+      dispatch(actions.resource.connections.refreshStatus(_integrationId));
     }, 10 * 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [dispatch, integrationId]);
+  }, [dispatch, _integrationId]);
 
   return (
     <div className={classes.root}>
       {showRegister && (
         <RegisterConnections
-          integrationId={integrationId}
+          integrationId={_integrationId}
           onClose={() => setShowRegister(false)}
         />
       )}
@@ -92,7 +93,7 @@ export default function ConnectionsPanel({ integrationId }) {
                   {
                     op: 'add',
                     path: '/_integrationId',
-                    value: integrationId,
+                    value: _integrationId,
                   },
                 ];
 
@@ -116,7 +117,7 @@ export default function ConnectionsPanel({ integrationId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId }}
+          actionProps={{ integrationId: _integrationId }}
         />
       </LoadResources>
     </div>

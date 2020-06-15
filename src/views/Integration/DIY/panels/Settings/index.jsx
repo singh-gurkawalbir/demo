@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
-import actions from '../../../../../../actions';
-import DynaForm from '../../../../../../components/DynaForm';
-import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
-import { isJsonString } from '../../../../../../utils/string';
+import * as selectors from '../../../../../reducers';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import actions from '../../../../../actions';
+import DynaForm from '../../../../../components/DynaForm';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import { isJsonString } from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -15,21 +15,27 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(3, 0),
     },
   },
+  root: {
+    backgroundColor: theme.palette.common.white,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
 }));
 
 const emptyObj = {};
-export default function CustomSettings({ integrationId }) {
+export default function CustomSettings({ integrationId, childId }) {
+  const _integrationId = childId || integrationId;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
   const settings = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', integrationId);
+    const resource = selectors.resource(state, 'integrations', _integrationId);
 
     return resource ? resource.settings : emptyObj;
   });
   const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', integrationId).edit
+      selectors.resourcePermissions(state, 'integrations', _integrationId).edit
   );
   const fieldMeta = useMemo(
     () => ({
@@ -39,7 +45,7 @@ export default function CustomSettings({ integrationId }) {
           helpKey: 'integration.settings',
           name: 'settings',
           type: 'settings',
-          label: 'Custom',
+          label: 'Settings',
           defaultValue: settings,
           collapsed: false,
         },
@@ -71,7 +77,7 @@ export default function CustomSettings({ integrationId }) {
   const handleSubmit = useCallback(
     formVal => {
       // dont submit the form if there is validation error
-      // REVIEW: re-visit once Surya's form PR is merged
+      // REVIEW: @ashu, re-visit once Surya's form PR is merged
       if (formVal && formVal.settings && formVal.settings.__invalid) return;
       const patchSet = [
         {
@@ -82,39 +88,39 @@ export default function CustomSettings({ integrationId }) {
       ];
 
       dispatch(
-        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
+        actions.resource.patchStaged(_integrationId, patchSet, SCOPES.VALUE)
       );
       dispatch(
         actions.resource.commitStaged(
           'integrations',
-          integrationId,
+          _integrationId,
           SCOPES.VALUE
         )
       );
       setFormKey(formKey => formKey + 1);
     },
-    [dispatch, integrationId]
+    [dispatch, _integrationId]
   );
 
   return (
-    <>
+    <div className={classes.root}>
       <div className={classes.form}>
         <DynaForm
           disabled={!canEditIntegration}
           fieldMeta={fieldMeta}
           resourceType="integrations"
-          resourceId={integrationId}
+          resourceId={_integrationId}
           validationHandler={validationHandler}
           key={formKey}>
           <DynaSubmit
             resourceType="integrations"
-            resourceId={integrationId}
+            resourceId={_integrationId}
             disabled={!canEditIntegration}
             onClick={handleSubmit}>
             Save
           </DynaSubmit>
         </DynaForm>
       </div>
-    </>
+    </div>
   );
 }

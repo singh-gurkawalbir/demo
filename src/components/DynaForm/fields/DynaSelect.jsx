@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback, useEffect} from 'react';
 import { ListSubheader, FormLabel } from '@material-ui/core';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,7 +11,83 @@ import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
 import { stringCompare } from '../../../utils/sort';
 
-const useStyles = makeStyles({
+const AUTO_CLEAR_SEARCH = 500;
+
+const NO_OF_OPTIONS = 6;
+const ITEM_SIZE = 48;
+const OPTIONS_VIEW_PORT_HEIGHT = 300;
+
+
+const optionSearch = (search) => ({label, optionSearch}) => search && (
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
+ (typeof label === 'string' && label.toLowerCase().startsWith(search)))
+const useAutoScrollOption = (items, open, listRef) => {
+  const [search, setSearch] = useState('');
+  const [scrolIndex, setScrolIndex] = useState(-1);
+
+  useEffect(() => {
+    setSearch('');
+    setScrolIndex(-1);
+  }, [open])
+
+  useEffect(() => {
+    // clear out search result after
+    const timerId = setTimeout(() => setSearch(''), AUTO_CLEAR_SEARCH)
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [search])
+  const keydownListener = useCallback((e) => {
+    if (e.keyCode < 32 || e.keyCode > 90) {
+      return;
+    }
+    if (e.keyCode === 38) {
+      if (scrolIndex <= 0) { return; }
+      setScrolIndex(index => index - 1);
+      return;
+    }
+    if (e.keyCode === 40) {
+      if (scrolIndex >= items.length) { return; }
+      setScrolIndex(index => index + 1);
+      return;
+    }
+    if (e.key) {
+      setSearch(str => {
+        const tmp = str + e.key;
+
+        // console.log('see ', tmp);
+        return tmp;
+      })
+    }
+  }, [items.length, scrolIndex])
+
+  useEffect(() => {
+    const matchingIndex = items.findIndex(optionSearch(search));
+
+    if (matchingIndex > 0) {
+      setScrolIndex(matchingIndex)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+  // console.log('matchingIndex ', matchingIndex);
+
+  useEffect(() => {
+    if (open) {
+      window.addEventListener('keydown', keydownListener, true);
+    }
+    return () => window.removeEventListener('keydown', keydownListener, true);
+  }, [keydownListener, open]);
+
+  useEffect(() => {
+    if (scrolIndex > 0) {
+      listRef && listRef.current && listRef.current.scrollToItem(scrolIndex);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrolIndex])
+  return scrolIndex;
+}
+
+const useStyles = makeStyles((theme) => ({
   fieldWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -18,10 +95,12 @@ const useStyles = makeStyles({
   dynaSelectWrapper: {
     width: '100%',
   },
-});
-const NO_OF_OPTIONS = 6;
-const ITEM_SIZE = 48;
-const OPTIONS_VIEW_PORT_HEIGHT = 300;
+  focusVisibleMenuItem: {
+    backgroundColor: theme.palette.secondary.lightest,
+    transition: 'all .8s ease',
+  }
+}));
+
 
 export default function DynaSelect(props) {
   const {
@@ -35,9 +114,13 @@ export default function DynaSelect(props) {
     defaultValue = '',
     placeholder,
     required,
+    className,
     label,
     onFieldChange,
   } = props;
+
+  const listRef = React.createRef();
+
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const isSubHeader =
@@ -89,6 +172,8 @@ export default function DynaSelect(props) {
 
     return items;
   }, [isSubHeader, options, placeholder]);
+
+  const matchMenuIndex = useAutoScrollOption(items, open, listRef);
   let finalTextValue;
 
   if (value === undefined || value === null) {
@@ -99,7 +184,7 @@ export default function DynaSelect(props) {
 
   const Row = ({ index, style }) => {
     const { label, value, subHeader, disabled = false } = items[index];
-
+    const classes = useStyles();
     if (subHeader) {
       return (
         <ListSubheader disableSticky key={subHeader} style={style}>
@@ -112,8 +197,13 @@ export default function DynaSelect(props) {
       <MenuItem
         key={value}
         value={value}
+        data-value={value}
         disabled={disabled}
+        className={clsx({
+          [classes.focusVisibleMenuItem]: matchMenuIndex === index,
+        })}
         style={style}
+        selected={value === finalTextValue}
         onClick={() => {
           if (value !== undefined) {
             onFieldChange(id, value);
@@ -159,6 +249,8 @@ export default function DynaSelect(props) {
           disabled={disabled}
           input={<Input name={name} id={id} />}>
           <FixedSizeList
+            className={className}
+            ref={listRef}
             itemSize={ITEM_SIZE}
             // if there are fewer options the view port height then let height scale per number of options
             height={

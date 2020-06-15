@@ -231,7 +231,7 @@ export default function CeligoTable({
         </TableHead>
         <TableBody>
           {data.map(rowData => (
-            <TableRow hover key={rowData._id} className={classes.row}>
+            <TableRow hover key={rowData.key || rowData._id} className={classes.row}>
               {selectableRows && (
                 <TableCell>
                   {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (

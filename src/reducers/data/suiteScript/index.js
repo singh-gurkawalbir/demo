@@ -86,7 +86,7 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.CLEAR:
         draft.jobs = emptyList;
         draft.paging.jobs.currentPage = 0;
-
+        draft.paging.jobs.totalJobs = 0;
         break;
 
       case actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR:

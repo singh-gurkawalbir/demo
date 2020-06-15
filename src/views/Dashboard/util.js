@@ -37,6 +37,10 @@ export function tileStatus(tile) {
       label = 'Continue setup';
       variant = 'warning';
       break;
+    case TILE_STATUS.UNINSTALL:
+      label = 'Continue uninstall';
+      variant = 'warning';
+      break;
     case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
       label = 'Connection down';
       variant = 'error';

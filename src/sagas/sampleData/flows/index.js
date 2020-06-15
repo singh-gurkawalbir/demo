@@ -14,6 +14,7 @@ import {
   resourceData,
   getSampleData,
   getScriptContext,
+  getFlowDataState,
 } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
@@ -58,7 +59,7 @@ import {
 } from '../../../utils/resource';
 import { isIntegrationApp } from '../../../utils/flows';
 
-function* initFlowData({ flowId, resourceId, resourceType }) {
+function* initFlowData({ flowId, resourceId, resourceType, refresh }) {
   const { merged: flow } = yield select(resourceData, 'flows', flowId);
   const clonedFlow = deepClone(flow);
 
@@ -89,6 +90,7 @@ function* initFlowData({ flowId, resourceId, resourceType }) {
       },
     ];
   }
+  clonedFlow.refresh = !!refresh;
 
   yield put(actions.flowData.init(clonedFlow));
 }
@@ -116,7 +118,7 @@ export function* requestSampleData({
 
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
-    yield call(initFlowData, { flowId, resourceId, resourceType });
+    yield call(initFlowData, { flowId, resourceId, resourceType, refresh });
   }
 
   if (refresh) {
@@ -171,10 +173,11 @@ export function* fetchPageProcessorPreview({
   _pageProcessorId,
   previewType,
   hidden,
+  refresh,
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-
+  const flowDataState = yield select(getFlowDataState, flowId) || {};
   let previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
@@ -182,6 +185,7 @@ export function* fetchPageProcessorPreview({
     resourceType,
     hidden,
     throwOnError: true,
+    refresh: refresh || flowDataState.refresh,
   });
   const { merged: resource = {} } = yield select(
     resourceData,

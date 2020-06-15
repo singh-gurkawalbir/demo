@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -180,7 +180,7 @@ export default function Filters({
           <RefreshIcon /> Refresh
         </IconTextButton>
         {maxPage > 0 && (
-          <Fragment>
+          <>
             <IconButton
               disabled={currentPage === 0}
               size="small"
@@ -203,7 +203,7 @@ export default function Filters({
               onClick={handlePageChange(1)}>
               <ArrowRightIcon />
             </IconButton>
-          </Fragment>
+          </>
         )}
       </div>
     </div>

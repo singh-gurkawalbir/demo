@@ -19,6 +19,7 @@ export function* pageProcessorPreview({
   resourceType = 'exports',
   hidden = false,
   throwOnError = false,
+  refresh = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -31,6 +32,7 @@ export function* pageProcessorPreview({
   const pageGeneratorMap = yield call(fetchFlowResources, {
     flow,
     type: 'pageGenerators',
+    refresh,
   });
   const pageProcessorMap = yield call(fetchFlowResources, {
     flow,

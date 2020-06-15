@@ -17,22 +17,21 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
-export default function CodeEditor(props) {
-  const {
-    name,
-    value = '',
-    mode,
-    readOnly,
-    width,
-    height,
-    wrap,
-    showGutter,
-    showInvisibles,
-    useWorker,
-    enableAutocomplete,
-    onChange,
-    skipDelay = false,
-  } = props;
+export default function CodeEditor({
+  name,
+  value = '',
+  mode,
+  readOnly,
+  width,
+  height,
+  wrap,
+  showGutter,
+  showInvisibles,
+  useWorker,
+  enableAutocomplete,
+  onChange,
+  skipDelay = false,
+}) {
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
   const [state, setState] = useState({
@@ -55,13 +54,31 @@ export default function CodeEditor(props) {
     }
   }, [inputVal, skipDelay, state, typingTimeout, value]);
 
-  const handleLoad = useCallback(
+  const handleLoad = useCallback((
     editor => {
       if (enableAutocomplete) {
         handlebarCompleterSetup(editor);
       }
-    },
-    [enableAutocomplete]
+      if (mode === 'javascript') {
+        // the options available are referenced here: https://jshint.com/docs/options/
+        editor.session.$worker.send('changeOptions', [{
+          asi: true,
+          debug: true,
+          eqnull: true,
+          expr: true,
+          funcscope: true,
+          lastsemic: true,
+          loopfunc: true,
+          notypeof: true,
+          noyield: true,
+          proto: true,
+          supernew: true,
+          validthis: true,
+          withstmt: true,
+        }])
+      }
+    }),
+  [enableAutocomplete, mode]
   );
   const handleChange = useCallback(
     value => {
@@ -87,7 +104,6 @@ export default function CodeEditor(props) {
 
   if (skipDelay) v = value;
   const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
-
   return (
     <>
       <AceEditor

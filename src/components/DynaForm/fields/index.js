@@ -101,6 +101,7 @@ import DynaSelectLookup from './DynaSelectLookup';
 import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
+import DynaJsonResourcePath from './DynaJsonResourcePath';
 
 export default {
   mode: DynaMode,
@@ -215,4 +216,5 @@ export default {
   selectlookup: DynaSelectLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
+  jsonresourcepath: DynaJsonResourcePath,
 };
