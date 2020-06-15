@@ -272,7 +272,7 @@ export function* mappingInit({ id }) {
   yield call(refreshGenerates, {id, isInit: true })
 }
 export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value}) {
-  if (value.indexOf('_child_') === -1) {
+  if (value && value.indexOf('_child_') === -1) {
     return;
   }
   const {
