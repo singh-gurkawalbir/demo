@@ -35,7 +35,11 @@ const useStyles = makeStyles(theme => ({
   fileValue: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-
+  },
+  defaultText: {
+    margin: 0,
+    marginLeft: theme.spacing(0.5),
+    color: '#b1c6d7'
   },
 }));
 
@@ -88,7 +92,7 @@ function FileUploader(props) {
           className={classes.fileInput}
           onChange={handleFileChosen}
         />
-        <p className={classes.fileValue}> {fileName}</p>
+        {fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>}
 
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
