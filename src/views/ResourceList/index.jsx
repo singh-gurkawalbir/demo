@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
+
 const defaultFilter = { take: process.env.DEFAULT_TABLE_ROW_COUNT || 10 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {

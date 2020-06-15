@@ -120,8 +120,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Email</TableCell>
               <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>
                 Access level
                 <Help
@@ -142,17 +142,15 @@ export default function UserList({ integrationId, onEditUserClick }) {
               </TableCell>
               {isAccountOwner && (
                 <>
-                  {!integrationId && (
-                    <TableCell>
-                      Enable user
-                      <Help
-                        title="Enable user"
-                        helpKey="users.enable"
-                        caption="users.enable"
-                        className={classes.helpIcon}
+                  <TableCell>
+                    Enable user
+                    <Help
+                      title="Enable user"
+                      helpKey="users.enable"
+                      caption="users.enable"
+                      className={classes.helpIcon}
                       />
-                    </TableCell>
-                  )}
+                  </TableCell>
                   <TableCell>
                     Actions
                     <Help

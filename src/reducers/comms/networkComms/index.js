@@ -15,6 +15,7 @@ Object.freeze(COMM_STATES);
 export default (state = initialState, action) => {
   const { type, path, message, hidden, method = 'GET', key } = action;
   const timestamp = Date.now();
+  let errorMsg;
   const commKey = commKeyGenerator(path, method);
 
   return produce(state, draft => {
@@ -46,9 +47,16 @@ export default (state = initialState, action) => {
         break;
 
       case actionTypes.API_FAILURE:
+        try {
+          const errorsJSON = JSON.parse(message);
+
+          errorMsg = (errorsJSON && errorsJSON[0].message) || message;
+        } catch (e) {
+          errorMsg = message;
+        }
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
-        draft[commKey].message = message || 'unknown error';
+        draft[commKey].message = errorMsg || 'unknown error';
 
         // if not defined it should be false
         draft[commKey].hidden = !!hidden;
