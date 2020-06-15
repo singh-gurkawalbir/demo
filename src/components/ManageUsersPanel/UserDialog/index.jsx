@@ -6,7 +6,6 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import CommStatus from '../../CommStatus';
@@ -19,7 +18,6 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
   const [disableSave, setDisableSave] = useState(false);
   const [actionsToClear, setActionsToClear] = useState();
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleClose = useCallback(() => {
     setErrorMessage();
 
@@ -72,12 +70,6 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         )
       ) {
         if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
-          enqueueSnackbar({
-            message: userId
-              ? 'User updated successfully'
-              : 'User invited successfully',
-          });
-
           if (onSuccess) onSuccess();
 
           setErrorMessage();
@@ -91,7 +83,7 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         setDisableSave(false);
       }
     },
-    [enqueueSnackbar, onSuccess, userId]
+    [onSuccess]
   );
 
   return (
