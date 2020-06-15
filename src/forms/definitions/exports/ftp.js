@@ -324,15 +324,6 @@ export default {
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
     },
-    file: {
-      formId: 'file',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
     exportPanel: {
