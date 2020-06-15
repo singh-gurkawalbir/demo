@@ -104,8 +104,6 @@ export default {
     }
 
     if (newValues['/outputMode'] === 'blob') {
-      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-
       if (newValues['/fileMetadata']) {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
@@ -152,7 +150,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -189,7 +186,6 @@ export default {
     's3.bucket': { fieldId: 's3.bucket' },
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
-    'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -291,7 +287,6 @@ export default {
               's3.bucket',
               's3.keyStartsWith',
               's3.keyEndsWith',
-              'ftp.leaveFile',
             ],
           },
           {
