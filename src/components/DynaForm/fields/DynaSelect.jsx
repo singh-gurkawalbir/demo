@@ -117,6 +117,7 @@ export default function DynaSelect(props) {
     className,
     label,
     onFieldChange,
+    skipSort
   } = props;
 
   const listRef = React.createRef();
@@ -159,7 +160,7 @@ export default function DynaSelect(props) {
         []
       );
 
-    if (!isSubHeader) {
+    if (!isSubHeader && !skipSort) {
       items = items.sort(stringCompare('label'));
     }
 
@@ -171,7 +172,7 @@ export default function DynaSelect(props) {
     items = [defaultItem, ...items];
 
     return items;
-  }, [isSubHeader, options, placeholder]);
+  }, [isSubHeader, skipSort, options, placeholder]);
 
   const matchMenuIndex = useAutoScrollOption(items, open, listRef);
   let finalTextValue;
