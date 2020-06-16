@@ -18,7 +18,7 @@ export default {
       default: colors.celigoNeutral1,
       drawer: colors.celigoNeutral9,
       drawer2: colors.celigoNeutral8,
-      drawer3: colors.celigoNeutral7,
+      drawer3: colors.celigoNeutral10,
       drawerActive: colors.celigoAccent1,
     },
     primary: {

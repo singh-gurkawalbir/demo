@@ -81,6 +81,7 @@ const neutral = {
   celigoNeutral7: colors.celigoNeutral7,
   celigoNeutral8: colors.celigoNeutral8,
   celigoNeutral9: colors.celigoNeutral9,
+  celigoNeutral10: colors.celigoNeutral10,
 
 };
 const Tiles = ({ colors }) =>
