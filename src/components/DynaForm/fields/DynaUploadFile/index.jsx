@@ -9,14 +9,14 @@ function DynaUploadFile(props) {
   const {
     options = '',
     id,
-    label,
     resourceId,
     resourceType,
     formContext,
     onFieldChange,
+    placeholder,
     persistData = false,
   } = props;
-  const DEFAULT_PLACEHOLDER = `${label}` || 'Browse to zip file:';
+  const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState('');
