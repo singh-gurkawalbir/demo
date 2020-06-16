@@ -99,9 +99,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common'],
+      },
       {
         collapsed: true,
         label: 'How would you like the records imported?',

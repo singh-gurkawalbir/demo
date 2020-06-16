@@ -334,9 +334,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common', 'outputMode'],
+          },
           {
             collapsed: true,
             label: 'How would you like to parse files?',
