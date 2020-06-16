@@ -3,9 +3,7 @@ import { MAX_DATA_LOADER_FILE_SIZE } from '../../../utils/constants';
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
-
     delete newValues['/file/csvHelper'];
-
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
@@ -14,13 +12,10 @@ export default {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
     }
-
     newValues['/file/output'] = 'records';
-
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -33,7 +28,6 @@ export default {
       delete newValues['/file/csv/hasHeaderRow'];
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
-
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
@@ -77,13 +71,10 @@ export default {
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
     }
-
     if (newValues['/file/decompressFiles'] === false) {
       newValues['/file/compressionFormat'] = undefined;
     }
-
     delete newValues['/file/decompressFiles'];
-
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
@@ -94,20 +85,17 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
-
       // resetting key coloums when hasHeaderRow changes
       if (keyColoumnField.hasHeaderRow !== hasHeaderRowField.value) {
         keyColoumnField.value = [];
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
       }
-
       return {
         includeHeader: hasHeaderRowField.value,
       };
     }
     if (fieldId === 'uploadFile') {
       const fileType = fields.find(field => field.id === 'file.type');
-
       return fileType.value;
     }
     if (fieldId === 'file.csvHelper') {
@@ -129,7 +117,6 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.csv.hasHeaderRow'
       );
-
       return {
         fields: {
           columnDelimiter: columnDelimiterField && columnDelimiterField.value,
@@ -164,7 +151,6 @@ export default {
         rowsToSkip: rowsToSkipField && rowsToSkipField.value,
         hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
       };
-
       return options;
     }
   },
@@ -191,10 +177,11 @@ export default {
       id: 'uploadFile',
       name: '/uploadFile',
       type: 'uploadfile',
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Upload the file to use',
+      maxSize: MAX_DATA_LOADER_FILE_SIZE,
+      mode: r => r && r.file && r.file.type,
       required: r => !r.rawData,
       refreshOptionsOnChangesTo: 'file.type',
-      maxSize: MAX_DATA_LOADER_FILE_SIZE,
       helpKey: 'export.uploadFile',
       visibleWhen: [{
         field: 'file.type',
@@ -236,30 +223,45 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'name',
-          'file.type',
-          'uploadFile',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.trimSpaces',
-          'file.csv.rowsToSkip',
-          'file.csv.hasHeaderRow',
-          'file.csv.rowsPerRecord',
-          'file.csv.keyColumns',
-          'file.csvHelper',
-          'file.xml.resourcePath',
-          'file.json.resourcePath',
-          'file.xlsx.hasHeaderRow',
-          'file.xlsx.rowsPerRecord',
-          'file.xlsx.keyColumns',
-        ],
-        type: 'collapse',
         containers: [
           {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+            fields: [
+              'name',
+              'file.type',
+              'uploadFile',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {fields: [
+                'file.csvHelper',
+                'file.csv.columnDelimiter',
+                'file.csv.rowDelimiter',
+                'file.csv.trimSpaces',
+                'file.csv.rowsToSkip',
+                'file.csv.hasHeaderRow',
+                'file.csv.rowsPerRecord',
+                'file.csv.keyColumns',
+              ]}
+            ]
+          },
+          {
+            fields: ['file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns']
+          },
+          {
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                label: 'Advanced',
+                fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+              },
+            ],
           },
         ],
       },
@@ -267,9 +269,8 @@ export default {
         fields: ['exportPanel'],
       }
     ]
-  }
+  },
 };
-
 /*
 _id: "5dfa9a412f350e4437941144"
 createdAt: "2019-12-18T21:29:37.432Z"

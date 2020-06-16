@@ -149,7 +149,7 @@ export default function DynaCsvParse(props) {
             resourceType={resourceType}
             onFieldChange={onFieldChange}
             options="csv"
-            placeholder="Sample file (that would be exported)"
+            placeholder="Sample file (that would be parsed)"
             id={uploadSampleDataFieldName}
             persistData
           />

@@ -54,6 +54,8 @@ export default {
           items: [
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
           ],
         },
       ],

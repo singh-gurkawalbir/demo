@@ -98,7 +98,7 @@ export default function UserForm({
             ],
           },
         ],
-        helpText: 'Access Level help text',
+        helpKey: 'users.accesslevel',
       },
       integrationsToManage: {
         id: 'integrationsToManage',

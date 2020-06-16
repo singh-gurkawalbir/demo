@@ -1247,10 +1247,12 @@ export default {
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
+    placeholder: 'SSL certificate:',
     label: 'SSL certificate',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
+    placeholder: 'SSL client key:',
     label: 'SSL client key',
   },
   'http.clientCertificates.passphrase': {
@@ -1352,6 +1354,10 @@ export default {
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
     label: 'User directory is root',
+  },
+  'ftp.tradingPartner': {
+    type: 'checkbox',
+    label: 'External trading partner?',
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
@@ -1469,7 +1475,7 @@ export default {
   },
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
-    label: 'MDN signature verification',
+    label: 'Partner requires MDN signature verification',
   },
   'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
