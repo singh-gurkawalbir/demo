@@ -2839,85 +2839,12 @@ export function suiteScriptLinkedConnections(state) {
   return linkedConnections;
 }
 
-export function suiteScriptIntegrations(state, connection) {
-  let ssIntegrations = [];
-
-  if (!connection.permissions || !connection.permissions.accessLevel) {
-    return ssIntegrations;
-  }
-
-  ssIntegrations = fromData.suiteScriptIntegrations(state.data, connection._id);
-
-  ssIntegrations = ssIntegrations.map(i => ({
-    ...i,
-    permissions: {
-      accessLevel: connection.permissions.accessLevel,
-      connections: {
-        edit: [
-          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-          INTEGRATION_ACCESS_LEVELS.MANAGE,
-        ].includes(connection.permissions.accessLevel),
-      },
-    },
-  }));
-
-  return ssIntegrations;
+export function suiteScriptIntegrations(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptIntegrations(state.data, ssLinkedConnectionId);
 }
 
-export function suiteScriptTiles(state, connection) {
-  let tiles = fromData.suiteScriptTiles(state.data, connection._id);
-
-  if (tiles.length === 0) {
-    return tiles;
-  }
-
-  const integrations = suiteScriptIntegrations(state, connection);
-  const hasConnectorTiles = tiles.filter(t => t._connectorId).length;
-  let published;
-
-  if (hasConnectorTiles) {
-    published = publishedConnectors(state);
-  }
-
-  let integration;
-  let status;
-  let connector;
-  let tile;
-
-  tiles = tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
-
-    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
-
-    tile = {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-      tag: connection.netsuite.account,
-    };
-
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId);
-      tile.connector = {
-        owner: connector.user.company || connector.user.name,
-        applications: connector.applications || [],
-      };
-    }
-
-    return tile;
-  });
-
-  return tiles;
+export function suiteScriptTiles(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptTiles(state.data, ssLinkedConnectionId);
 }
 
 export function suiteScriptLinkedTiles(state) {
@@ -2925,7 +2852,7 @@ export function suiteScriptLinkedTiles(state) {
   let tiles = [];
 
   linkedConnections.forEach(connection => {
-    tiles = tiles.concat(suiteScriptTiles(state, connection));
+    tiles = tiles.concat(suiteScriptTiles(state, connection._id));
   });
 
   return tiles;

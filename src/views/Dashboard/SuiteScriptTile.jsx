@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, Button, makeStyles } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -18,7 +19,7 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
 import {
   tileStatus,
   dragTileConfig,
@@ -27,6 +28,7 @@ import {
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
+import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -55,20 +57,18 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
-  const integrationAppName = tile.urlName;
+  const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
+  const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
+  const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
   const status = tileStatus(tile);
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/flows`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
   const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(
@@ -89,7 +89,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`
           )
         );
       } else {
@@ -102,7 +102,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     },
     [
       history,
-      integrationAppName,
+      tile.urlName,
       isNotYetSupported,
       tile._integrationId,
       tile.ssLinkedConnectionId,
@@ -236,11 +236,11 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   )}
                 </Manage>
               )}
-              {tile.tag && <Tag variant={`NS Account #${tile.tag}`} />}
+              {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
             </FooterActions>
             <Info
               variant={tile._connectorId ? 'Integration app' : 'Legacy'}
-              label={tile.connector && tile.connector.owner}
+              label={connector?.user?.company}
             />
           </Footer>
         </HomePageCardContainer>

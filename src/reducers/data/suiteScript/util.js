@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, TILE_STATUS, INTEGRATION_MODES } from '../../../utils/constants';
 
 export function tileDisplayName(tile) {
   let name;
@@ -37,12 +37,26 @@ export function parseTiles(tiles) {
     const connector = SUITESCRIPT_CONNECTORS.find(c =>
       [c.name, c.ssName].includes(displayName)
     );
-    return {
+    let status;
+    if (tile._connectorId && tile.mode !== INTEGRATION_MODES.SETTINGS) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (tile.offlineConnections && tile.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (tile.numError && tile.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
+    const updatedTile = {
       ...tile,
       displayName,
-      _connectorId: connector && connector._id,
-      urlName: connector && connector.urlName,
+      status,
     };
+    if (connector) {
+      updatedTile._connectorId = connector._id;
+      updatedTile.urlName = connector.urlName;
+    }
+    return updatedTile;
   });
 }
 
