@@ -554,7 +554,7 @@ export default {
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
-        height: 44,
+        height: 42,
         display: 'inline-flex',
         minHeight: 'unset',
         paddingLeft: 16,

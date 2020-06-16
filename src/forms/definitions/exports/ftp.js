@@ -274,6 +274,7 @@ export default {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
       placeholder: 'Sample file (that would be parsed):',
+      required: true,
     },
     'file.csvHelper': { fieldId: 'file.csvHelper' },
     'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },

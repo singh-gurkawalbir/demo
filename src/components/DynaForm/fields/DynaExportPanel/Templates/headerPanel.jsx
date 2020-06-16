@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
       height: 30,
       padding: theme.spacing(0, 5),
       '&:first-child': {
-        borderRadius: [[24, 0, 0, 24]],
+        borderRadius: props => props.availablePreviewStages.length > 1 ? [[24, 0, 0, 24]] : 'none',
       },
       '&:last-child': {
         height: 30,
@@ -39,8 +39,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function HeaderPanel(props) {
   const { handlePanelViewChange, availablePreviewStages, panelType } = props;
-  const classes = useStyles();
-
+  const classes = useStyles(props);
+  console.log('checking the length of options', availablePreviewStages);
   return (
     <div className={classes.textToggleContainer}>
       <TextToggle
@@ -49,6 +49,7 @@ export default function HeaderPanel(props) {
         onChange={handlePanelViewChange}
         exclusive
         options={availablePreviewStages}
+
       />
     </div>
   );
