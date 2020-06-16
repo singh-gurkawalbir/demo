@@ -481,13 +481,9 @@ function JobErrorTable({
               color="secondary"
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors}>
-              {numSelectedRetriableErrors > 1
-                ? `Retry ${numSelectedRetriableErrors} errors`
-                : `${
-                  numSelectedRetriableErrors === 1
-                    ? `Retry ${numSelectedRetriableErrors} error`
-                    : `${isJobInProgress ? 'Retrying' : 'Retry all'}`
-                }`}
+              {numSelectedRetriableErrors > 0
+                ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
+                : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>
             <Button
               data-test="markResolvedJobs"
