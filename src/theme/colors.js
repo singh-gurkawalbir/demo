@@ -19,6 +19,7 @@ export default {
   celigoNeutral7: '#424E59',
   celigoNeutral8: '#333D47',
   celigoNeutral9: '#2A3138',
+  celigoNeutral10: '#0B0C0E',
 
   celigoSandbox1: '#F5F5F0',
   celigoSandbox2: '#B49569',

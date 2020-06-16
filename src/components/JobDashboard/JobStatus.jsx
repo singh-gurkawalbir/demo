@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
   },
   spinnerWrapper: {
-    marginRight: 10,
+    marginRight: theme.spacing(1),
   },
   link: {
     fontFamily: 'Roboto400',
@@ -54,7 +54,7 @@ export default function JobStatus({ job }) {
         {!isJobInQueuedStatus && (
           <div className={classes.state}>
             <div className={classes.spinnerWrapper}>
-              <Spinner size={24} color="primary" />
+              <Spinner size={18} color="primary" />
             </div>
             {jobStatusDetails.status}
           </div>
@@ -62,7 +62,7 @@ export default function JobStatus({ job }) {
         {isJobInQueuedStatus && (
           <div className={classes.state}>
             <div className={classes.spinnerWrapper}>
-              <Spinner size={24} color="primary" />
+              <Spinner size={18} color="primary" />
             </div>
             <Button
               variant="text"
