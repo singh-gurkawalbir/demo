@@ -25,7 +25,14 @@ const useStyles = makeStyles(theme => ({
   divider: {
     marginTop: '20px',
     marginBottom: '10px',
-  }
+  },
+  summaryContainer: {
+    width: '100%',
+  },
+  summaryLabel: {
+    flexGrow: 1,
+    alignSelf: 'center',
+  },
 }));
 
 export default function DynaSettings(props) {
@@ -35,14 +42,9 @@ export default function DynaSettings(props) {
     resourceContext,
     disabled,
     onFieldChange,
-    label,
+    label = 'Custom settings',
     collapsed = true,
   } = props;
-  const settingsContainer = {
-    // collapsed: true,
-    label: label || 'Custom settings',
-    fields: ['settings'],
-  };
   const { resourceType, resourceId } = resourceContext;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [drawerKey, setDrawerKey] = useState(0);
@@ -112,9 +114,7 @@ export default function DynaSettings(props) {
     if (resourceType === 'integrations') {
       return (
         <div>
-          <Typography>
-            {settingsContainer.label}
-          </Typography>
+          <Typography>{label}</Typography>
           <Divider className={classes.divider} />
           <span>
             You don&apos;t have any custom settings for this integration.
@@ -127,38 +127,33 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-  // Always render the edit drawer. This drawer has logic within to not display unless the
-  // browser location ends with a specific path.
-
     <div className={classes.child}>
       <ExpansionPanel
-        // eslint-disable-next-line react/no-array-index-key
         expanded={shouldExpand}>
         <ExpansionPanelSummary
-          data-test={settingsContainer.label}
+          data-test={label}
+          className={classes.summaryContainer}
           onClick={handleExpandClick}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.label}>
-            {settingsContainer.label}
-            {isDeveloper && !isViewMode && visibleForUser && (
-              <>
-                <Button
-                  data-test="form-editor-action"
-                  variant="outlined"
-                  className={classes.launchButton}
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {isDeveloper && !isViewMode && visibleForUser && shouldExpand && (
+          <>
+            <Button
+              data-test="form-editor-action"
+              variant="text"
+              className={classes.launchButton}
                   // color="secondary"
-                  onClick={toggleEditMode}>
-                  Launch form builder
-                </Button>
-                <FieldHelp
-                  id="settingsForm"
-                  resourceType={resourceType}
-                  helpKey="settingsForm"
-                  label="Settings form builder"
+              onClick={toggleEditMode}>
+              Launch form builder
+            </Button>
+            <FieldHelp
+              id="settingsForm"
+              resourceType={resourceType}
+              helpKey="settingsForm"
+              label="Settings form builder"
                 />
-              </>
-            )}
-          </Typography>
+          </>
+          )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails >
           {hasSettingsForm ? (
@@ -173,7 +168,10 @@ export default function DynaSettings(props) {
           )}
         </ExpansionPanelDetails>
       </ExpansionPanel>
+
       {isDeveloper && !isViewMode && visibleForUser && (
+      // Always render the edit drawer. This drawer has logic within to not display unless the
+      // browser location ends with a specific path.
         <EditDrawer
           key={drawerKey}
           editorId={id}
