@@ -590,9 +590,9 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
         type: 'collapse',
         containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
           {
             collapsed: true,
             label: r => {

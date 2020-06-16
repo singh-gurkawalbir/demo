@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import UserGroupIcon from '../icons/SingleUserIcon';
+import AddIcon from '../icons/AddIcon';
 import RightDrawer from '../drawer/Right';
 import SharedUserList from './SharedUserList';
 import IconTextButton from '../IconTextButton';
@@ -38,7 +38,7 @@ export default function StackShareDrawer() {
           variant="text"
           color="primary"
           onClick={handleInviteClick}>
-          <UserGroupIcon />
+          <AddIcon />
           Invite user
         </IconTextButton>
       </>

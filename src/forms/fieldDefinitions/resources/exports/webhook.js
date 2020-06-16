@@ -114,6 +114,7 @@ export default {
     label: 'Public URL',
     provider: r => r && r.webhook && r.webhook.provider,
     buttonLabel: 'Generate URL',
+    required: true,
   },
   'webhook.username': {
     type: 'text',

@@ -177,6 +177,7 @@ import gorgias from './gorgias';
 import walmart from './walmart';
 import logisense from './logisense';
 import joor from './joor';
+import sapbydesign from './sapbydesign';
 
 export default {
   bigquery,
@@ -357,4 +358,5 @@ export default {
   walmart,
   logisense,
   joor,
+  sapbydesign,
 };

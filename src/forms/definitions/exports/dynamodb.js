@@ -128,9 +128,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common'],
+          },
           {
             collapsed: true,
             label: 'What would you like to export?',
