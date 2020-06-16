@@ -39,7 +39,6 @@ import DrawerTitleBar from './TitleBar';
 import ButtonGroup from '../../../../../../components/ButtonGroup';
 import CollapseWindowIcon from '../../../../../../components/icons/CollapseWindowIcon';
 import ExpandWindowIcon from '../../../../../../components/icons/ExpandWindowIcon';
-import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
 const emptySet = [];
 const useStyles = makeStyles(theme => ({
@@ -381,7 +380,6 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, categoryId } = match.params;
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [requestedMetadata, setRequestedMetadata] = useState(false);
   const mappingsChanged = useSelector(state =>
     selectors.categoryMappingsChanged(state, integrationId, flowId)
@@ -466,15 +464,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
     match.path,
     metadataLoaded,
   ]);
-  useEffect(() => {
-    if (mappingSaveStatus === 'saved' || mappingSaveStatus === 'close') {
-      enqueueSnackbar({
-        variant: 'success',
-        message: 'Your mapping settings have been saved.',
-        persist: false,
-      });
-    }
-  }, [enqueueSnackbar, mappingSaveStatus]);
+
   useEffect(() => {
     if (mappingSaveStatus === 'close') {
       history.push(parentUrl);
@@ -517,12 +507,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
         flowId
       )
     );
-    enqueueSnackbar({
-      variant: 'info',
-      message: 'Saving your mapping settings.',
-      persist: false,
-    });
-  }, [dispatch, enqueueSnackbar, flowId, integrationId]);
+  }, [dispatch, flowId, integrationId]);
   const handleSaveAndClose = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.save(
@@ -531,12 +516,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
         true
       )
     );
-    enqueueSnackbar({
-      variant: 'info',
-      message: 'Saving your mapping settings.',
-      persist: false,
-    });
-  }, [dispatch, enqueueSnackbar, flowId, integrationId]);
+  }, [dispatch, flowId, integrationId]);
   const handleCollapseAll = useCallback(() => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.collapseAll(

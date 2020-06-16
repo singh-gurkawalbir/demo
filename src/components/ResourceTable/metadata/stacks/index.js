@@ -47,5 +47,10 @@ export default {
       value: r => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
     },
   ],
-  rowActions: [GenerateToken, StackShares, AuditLogs, References, Delete],
+  rowActions: r => {
+    if (!r || !r.shared) {
+      return [GenerateToken, StackShares, AuditLogs, References, Delete];
+    }
+    return [];
+  }
 };

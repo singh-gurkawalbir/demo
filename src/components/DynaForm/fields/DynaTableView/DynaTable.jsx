@@ -73,7 +73,6 @@ const useStyles = makeStyles(theme => ({
     width: '95%',
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    overflow: 'hidden',
     gridGap: '8px',
     marginBottom: theme.spacing(1),
   },

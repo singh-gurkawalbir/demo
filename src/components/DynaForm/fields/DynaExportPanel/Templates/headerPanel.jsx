@@ -11,10 +11,14 @@ const useStyles = makeStyles(theme => ({
   textToggle: {
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
+    padding: 1,
     borderColor: theme.palette.secondary.lightest,
     '& > button': {
       height: 30,
       padding: theme.spacing(0, 5),
+      '&:first-child': {
+        borderRadius: [[24, 0, 0, 24]],
+      },
       '&:last-child': {
         height: 30,
         padding: theme.spacing(0, 5),
@@ -24,6 +28,10 @@ const useStyles = makeStyles(theme => ({
         '&:hover': {
           backgroundColor: theme.palette.primary.light,
         },
+      },
+      '&:not(:first-child)': {
+        borderRadius: '0px !important',
+        borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
       },
     },
   },
