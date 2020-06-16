@@ -1,15 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import OnOffSwitch from '../../../../../SwitchToggle';
+import { makeStyles } from '@material-ui/core/styles';
+import CeligoSwitch from '../../../../../CeligoSwitch';
 import Spinner from '../../../../../Spinner';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 
+const useStyles = makeStyles((theme) => ({
+  celigoSwitchOnOff: {
+    marginTop: theme.spacing(1),
+  },
+  spinnerOnOff: {
+    marginLeft: 12,
+  },
+}));
+
 export default function OnOffCell({
   ssLinkedConnectionId,
   flow,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { defaultConfirmDialog } = useConfirmDialog();
   const flowName = flow.ioFlowName || flow.name || `Unnamed (id: ${flow._id})`;
@@ -48,11 +59,12 @@ export default function OnOffCell({
   }
 
   return (
-    <OnOffSwitch
+    <CeligoSwitch
+      className={classes.celigoSwitchOnOff}
       data-test={`toggleOnAndOffFlow${flowName}`}
       disabled={!hasManagePermissions}
-      on={!flow.disabled}
-      onClick={handleDisableClick}
+      enabled={!flow.disabled}
+      onChange={handleDisableClick}
     />
   );
 }
