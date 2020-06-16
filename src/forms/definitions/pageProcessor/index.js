@@ -1,4 +1,4 @@
-import applications from '../../../constants/applications';
+import {applicationsList} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
 
@@ -21,6 +21,7 @@ export default {
     if (importId || exportId) {
       return { '/resourceId': importId || exportId };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
@@ -153,6 +154,7 @@ export default {
     const appField = fields.find(field => field.id === 'application');
     const connectionField = fields.find(field => field.id === 'connection');
     const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const applications = applicationsList();
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};

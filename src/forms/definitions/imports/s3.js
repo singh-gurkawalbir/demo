@@ -287,9 +287,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'dataMappings', 'inputMode'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings', 'inputMode'],
+      },
       {
         collapsed: true,
         label: 'How would you like to generate files?',

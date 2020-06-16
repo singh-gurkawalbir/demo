@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActions, Button, Typography } from '@material-ui/core';
-import applications from '../../constants/applications';
+import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
@@ -123,6 +123,7 @@ export default function MarketplaceList() {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
+  const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector ? connector.name : application;
 
