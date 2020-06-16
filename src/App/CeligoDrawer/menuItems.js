@@ -22,6 +22,7 @@ import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
+import MyApiIcon from '../../components/icons/MyApiIcon';
 
 export default function menuItems(
   userProfile,
@@ -82,6 +83,7 @@ export default function menuItems(
         '/pg/connectors',
         '/pg/recycleBin',
         '/pg/accessTokens',
+        '/pg/apis',
       ],
       children: [
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
@@ -96,6 +98,7 @@ export default function menuItems(
           Icon: ConnectionsIcon,
           path: '/connectors',
         },
+        { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],

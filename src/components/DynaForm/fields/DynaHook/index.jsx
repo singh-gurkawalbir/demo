@@ -5,6 +5,7 @@ import actions from '../../../../actions';
 import Hook from './Hook';
 import LoadResources from '../../../LoadResources';
 
+const emptyObj = {};
 export default function DynaHook(props) {
   const {
     flowId,
@@ -26,6 +27,9 @@ export default function DynaHook(props) {
   // Fetches different input data for different hook types goes here
   const requestSampleData = useCallback(
     ({ flowId, resourceId, resourceType, stage }) => {
+      if (resourceType === 'apis') {
+        return;
+      }
       const finalStage = resourceType === 'exports' ? stage : hookStage;
 
       return actions.flowData.requestSampleData(
@@ -62,12 +66,14 @@ export default function DynaHook(props) {
 
   const preHookData = useSelector(state => {
     if (props.preHookData) return props.preHookData;
-
+    if (resourceType === 'apis') {
+      return emptyObj
+    }
     return getSampleDataSelector({ state, flowId, resourceId });
   });
   const preHookDataStatus = useSelector(state => {
     // Incase of default data for hooks, return status as received
-    if (props.preHookData || hooksWithDefaultSampleData.includes(hookStage)) {
+    if (props.preHookData || resourceType === 'apis' || hooksWithDefaultSampleData.includes(hookStage)) {
       return 'received';
     }
 

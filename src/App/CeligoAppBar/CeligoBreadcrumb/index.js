@@ -86,6 +86,13 @@ const integrationAppRoutes = [
       { path: '/uninstall', breadcrumb: () => 'Uninstall' },
       { path: '/notifications', breadcrumb: () => 'Notifications' },
       { path: '/apitoken', breadcrumb: () => 'API tokens' },
+      { path: '/apis', breadcrumb: () => 'My APIs' },
+    ],
+  },
+  {
+    path: '/flows',
+    breadcrumb: () => 'Flows',
+    childRoutes: [
       {
         path: '/flows',
         breadcrumb: () => 'Flows',
@@ -117,6 +124,7 @@ const routes = [
           { path: '/users', breadcrumb: () => 'Users' },
           { path: '/audit', breadcrumb: () => 'Audit log' },
           { path: '/notifications', breadcrumb: () => 'Notifications' },
+          { path: '/apis', breadcrumb: () => 'My APIs' },
         ],
       },
       ...flowBuilderRoutes,
@@ -211,6 +219,7 @@ const routes = [
     ],
   },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
+  { path: '/pg/apis', breadcrumb: () => 'My APIs' },
   {
     path: '/pg/myAccount',
     breadcrumb: () => 'My account',
