@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useMemo } from 'react';
-import { makeStyles } from '@material-ui/styles';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -34,12 +34,14 @@ const getStatusVariantAndMessage = ({
       message:
         'Your test was not successful. Check your information and try again',
     };
-  } else if (testStatus === PING_STATES.SUCCESS) {
+  }
+  if (testStatus === PING_STATES.SUCCESS) {
     return {
       variant: 'success',
       message: 'Your connection is working great! Nice Job!',
     };
-  } else if (!testStatus && isOffline) {
+  }
+  if (!testStatus && isOffline) {
     return {
       variant: 'error',
       message: isConnectionFix
@@ -52,7 +54,6 @@ const getStatusVariantAndMessage = ({
 };
 
 export default function ConnectionStatusPanel(props) {
-  console.log(`ss ConnectionStatusPanel props`, props);
   const { resourceId, resourceType, ssLinkedConnectionId } = props;
   const classes = useStyles();
   const match = useRouteMatch();
@@ -100,12 +101,6 @@ export default function ConnectionStatusPanel(props) {
   }, [isOffline, location.search, resourceType, testStatus]);
 
   useEffect(() => {
-    // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
-    // and if it is a new connection resource you are creating then there is no point in making ping calls
-    // if (connectionId && !isNewId(connectionId)) {
-    //   dispatch(actions.resource.connections.pingAndUpdate(connectionId));
-    // }
-
     dispatch(
       actions.suiteScript.resource.connections.testClear(
         connectionId,

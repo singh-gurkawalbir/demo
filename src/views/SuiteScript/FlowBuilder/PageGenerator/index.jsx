@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../../reducers';
 
-/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
-   We use the block const across several components and thus is a maintenance issue to 
+/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
+   We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
 const blockHeight = 170;
 const lineHeightOffset = 63;
@@ -35,9 +35,6 @@ const useStyles = makeStyles(theme => ({
 const PageGenerator = ({ history, match }) => {
   const { flowId, ssLinkedConnectionId } = match.params;
   const classes = useStyles();
-
-  console.log(`PageGenerator match.params`, match.params);
-
   const resource = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',

@@ -12,7 +12,7 @@ export default function IntegrationCrumb({ ssLinkedConnectionId, integrationId }
   // the UI from appearing slow... just default the name to a const if no
   // integration -yet- exists in the state.
   return (
-    <LoadResources ssLinkedConnectionId={ssLinkedConnectionId} resources="integrations">
+    <LoadResources ssLinkedConnectionId={ssLinkedConnectionId} resources="tiles">
       {integration ? integration.displayName : 'Integration'}
     </LoadResources>
   );

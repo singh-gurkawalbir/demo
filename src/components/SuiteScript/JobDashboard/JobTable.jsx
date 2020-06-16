@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -84,7 +84,6 @@ export default function JobTable({
   integrationName,
   isFlowBuilderView,
 }) {
-  console.log(`jobsInCurrentPage.length`, jobsInCurrentPage.length);
   const classes = useStyles();
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
@@ -136,7 +135,7 @@ export default function JobTable({
   }
 
   return (
-    <Fragment>
+    <>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -186,6 +185,6 @@ export default function JobTable({
           integrationId={integrationId}
         />
       )}
-    </Fragment>
+    </>
   );
 }

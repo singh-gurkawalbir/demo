@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -29,9 +29,6 @@ const useStyles = makeStyles(theme => ({
 const PageProcessor = ({ history, match }) => {
   const { flowId, ssLinkedConnectionId } = match.params;
   const classes = useStyles();
-
-  console.log(`PageGenerator match.params`, match.params);
-
   const resource = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',

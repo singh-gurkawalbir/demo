@@ -1,6 +1,5 @@
 export default {
   preSave: formValues => {
-    console.log(`formValues`, formValues);
     const newValues = formValues;
 
     if (newValues['/uploadFile']) {

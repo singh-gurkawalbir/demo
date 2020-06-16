@@ -91,7 +91,6 @@ export default function CeligoAppBar() {
   const classes = useStyles();
   const { pathname } = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  console.log(`pathname ${pathname}`);
 
   return (
     <SlideOnScroll threshold={500}>

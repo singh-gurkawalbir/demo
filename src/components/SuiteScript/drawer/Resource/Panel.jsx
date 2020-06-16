@@ -1,12 +1,13 @@
-import { Fragment, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route } from 'react-router-dom';
-import { makeStyles, Typography, IconButton } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import LoadSuiteScriptResources from '../../LoadResources';
 import ResourceForm from '../../ResourceFormFactory';
 import actions from '../../../../actions';
-import Close from '../../../../components/icons/CloseIcon';
+import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
-    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
+    boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   formContainer: {
     padding: theme.spacing(3),
@@ -79,9 +80,6 @@ export default function Panel(props) {
     }
   }
 
-  console.log(`ss Panel match.params ${JSON.stringify(match.params)}`);
-  console.log(`ss Panel props ${JSON.stringify(props)}`);
-
   const isNew = operation === 'add';
   const dispatch = useDispatch();
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
@@ -102,7 +100,7 @@ export default function Panel(props) {
   };
 
   return (
-    <Fragment>
+    <>
       <div className={classes.root}>
         <div className={classes.title}>
           <Typography variant="h3">{`Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`}</Typography>
@@ -152,6 +150,6 @@ export default function Panel(props) {
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}
       />
-    </Fragment>
+    </>
   );
 }

@@ -1,26 +1,27 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TrashIcon from '../../../../../icons/TrashIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import { flowAllowsScheduling } from '../../../../../../utils/suiteScript'
 import * as selectors from '../../../../../../reducers';
-
+import actions from '../../../../../../actions';
+import useConfirmDialog from '../../../../../ConfirmDialog';
 
 export default function DeleteCell({ssLinkedConnectionId, flow}) {
-  const history = useHistory();
+  const dispatch = useDispatch();
+  const { defaultConfirmDialog } = useConfirmDialog();
   const handleClick = useCallback(() => {
-    history.push(`flows/${flow._id}/schedule`);
-  }, [flow._id, history]);
-  const allowSchedule = flowAllowsScheduling(flow);
-
+    defaultConfirmDialog(
+      'delete this Flow?',
+      () => {
+        dispatch(actions.suiteScript.flow.delete({ ssLinkedConnectionId, integrationId: flow._integrationId, _id: flow._id}));
+      }
+    );
+  }, [defaultConfirmDialog, dispatch, flow._id, flow._integrationId, ssLinkedConnectionId]);
   const hasManagePermissions = useSelector(
     state =>
       selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)
         .edit
   );
-
-  if (!allowSchedule) return null;
 
   return (
     <IconButtonWithTooltip

@@ -2,18 +2,7 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-
-function flowTypeFromId(_id) {
-  if (_id.startsWith('re')) {
-    return 'REALTIME_EXPORT';
-  }
-  if (_id.startsWith('e')) {
-    return 'EXPORT';
-  }
-  if (_id.startsWith('i')) {
-    return 'IMPORT';
-  }
-}
+import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
 
 export function* runFlow({ ssLinkedConnectionId, integrationId, flowId, _id }) {
   const requestOptions = {
@@ -52,12 +41,9 @@ export function* runFlow({ ssLinkedConnectionId, integrationId, flowId, _id }) {
 }
 
 export function* enableFlow({ ssLinkedConnectionId, integrationId, _id }) {
-  const flowType = flowTypeFromId(_id);
+  const {flowType, flowId} = getFlowIdAndTypeFromUniqueId(_id);
   const requestOptions = {
-    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${_id
-      .replace('re', '')
-      .replace('e', '')
-      .replace('i', '')}/enable`,
+    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${flowId}/enable`,
     opts: {
       method: 'PUT',
       body: {type: flowType}
@@ -78,12 +64,9 @@ export function* enableFlow({ ssLinkedConnectionId, integrationId, _id }) {
 }
 
 export function* disableFlow({ ssLinkedConnectionId, integrationId, _id }) {
-  const flowType = flowTypeFromId(_id);
+  const {flowType, flowId} = getFlowIdAndTypeFromUniqueId(_id);
   const requestOptions = {
-    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${_id
-      .replace('re', '')
-      .replace('e', '')
-      .replace('i', '')}/disable`,
+    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${flowId}/disable`,
     opts: {
       method: 'PUT',
       body: {type: flowType}
@@ -103,8 +86,28 @@ export function* disableFlow({ ssLinkedConnectionId, integrationId, _id }) {
   yield put(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}));
 }
 
+export function* deleteFlow({ ssLinkedConnectionId, integrationId, _id }) {
+  const {flowType, flowId} = getFlowIdAndTypeFromUniqueId(_id);
+  const requestOptions = {
+    path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${flowId}?type=${flowType}`,
+    opts: {
+      method: 'DELETE',
+    },
+  };
+  try {
+    yield call(apiCallWithRetry, requestOptions);
+  } catch (error) {
+    return true;
+  }
+
+  yield put(
+    actions.suiteScript.resource.deleted('flows', _id, ssLinkedConnectionId)
+  );
+}
+
 export const flowSagas = [
   takeEvery(actionTypes.SUITESCRIPT.FLOW.RUN, runFlow),
   takeEvery(actionTypes.SUITESCRIPT.FLOW.ENABLE, enableFlow),
-  takeEvery(actionTypes.SUITESCRIPT.FLOW.DISABLE, disableFlow)
+  takeEvery(actionTypes.SUITESCRIPT.FLOW.DISABLE, disableFlow),
+  takeEvery(actionTypes.SUITESCRIPT.FLOW.DELETE, deleteFlow),
 ];

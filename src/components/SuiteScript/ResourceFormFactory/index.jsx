@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../actions';
@@ -91,8 +91,6 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType } = props;
   const { actions } = props.fieldMeta;
 
-  // console.log('render: <ActionsFactory>');
-
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
@@ -149,11 +147,10 @@ export const FormStateManager = props => {
 
   useEffect(() => {
     if (formState.submitComplete && onSubmitComplete) {
-      // console.log('fired onSubmitComplete');
       onSubmitComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* , onSubmitComplete */]);
+  }, [formState.submitComplete/* , onSubmitComplete */]);
 
   useEffect(() => {
     remountForm();
@@ -174,8 +171,6 @@ export const FormStateManager = props => {
 };
 
 export const ResourceFormFactory = props => {
-  console.log(`ss ResourceFormFactory props ${JSON.stringify(props)}`);
-
   const {
     resourceType,
     formState,
@@ -188,7 +183,6 @@ export const ResourceFormFactory = props => {
     flowId,
     connection,
     ssLinkedConnectionId,
-    integrationId,
   } = props;
 
   useEffect(() => {

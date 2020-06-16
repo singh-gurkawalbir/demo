@@ -27,8 +27,6 @@ export default function ResourceDrawerLink({
 
   const linkLabel = resource.ioFlowName || resource.name || resource._id || 'unknown';
 
-  // console.log(match);
-
   if (!isEditable || disabled) return linkLabel;
 
   return (

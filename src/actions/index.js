@@ -2006,6 +2006,12 @@ const suiteScript = {
         ssLinkedConnectionId,
         integrationId,
       }),
+    deleted: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.DELETED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+      }),
   },
   sampleData: {
     request: (
@@ -2178,6 +2184,12 @@ const suiteScript = {
     isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
       action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
         { onOffInProgress, ssLinkedConnectionId, _id }),
+    delete: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.DELETE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
   },
 };
 const editorSampleData = {

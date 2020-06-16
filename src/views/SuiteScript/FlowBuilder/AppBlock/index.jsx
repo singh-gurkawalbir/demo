@@ -1,7 +1,7 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
-import * as selectors from '../../../../reducers';
 import BubbleSvg from '../../../FlowBuilder/BubbleSvg';
 import ResourceButton from '../ResourceButton';
 
@@ -112,7 +112,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   deleteButton: {
-    position: `absolute`,
+    position: 'absolute',
     right: -theme.spacing(0.5),
     top: -theme.spacing(0.5),
     zIndex: 1,
@@ -129,9 +129,6 @@ export default function AppBlock({
   resource,
 }) {
   const classes = useStyles();
-
-  console.log(`AppBlock resource`, resource);
-
   let application;
 
   if (

@@ -2,6 +2,7 @@ import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { emptyObject } from '../../../utils/constants';
 import { parseTiles, parseJobs } from './util';
+import { generateUniqueFlowId } from '../../../utils/suiteScript';
 
 const emptyList = [];
 
@@ -187,14 +188,7 @@ export default (
               }
 
               collection.forEach(flow => {
-                const flowId = `${
-                  {
-                    EXPORT: 'e',
-                    IMPORT: 'i',
-                    REALTIME_EXPORT: 're',
-                    REALTIME_IMPORT: 'ri',
-                  }[flow.type]
-                }${flow._id}`;
+                const flowId = generateUniqueFlowId(flow._id, flow.type);
                 const index = draft[ssLinkedConnectionId].flows.findIndex(
                   f => f.type === flow.type && f._id === flowId
                 );
@@ -229,14 +223,7 @@ export default (
             let index;
 
             if (resourceType === 'flows') {
-              const flowId = `${
-                {
-                  EXPORT: 'e',
-                  IMPORT: 'i',
-                  REALTIME_EXPORT: 're',
-                  REALTIME_IMPORT: 'ri',
-                }[resource.type]
-              }${resource._id}`;
+              const flowId = generateUniqueFlowId(resource._id, resource.type);
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
                 r =>
                   r._id === flowId &&
@@ -244,6 +231,17 @@ export default (
               );
               if (index > -1) {
                 draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId, ssLinkedConnectionId};
+              }
+            } else if (resourceType === 'integrations') {
+              index = draft[ssLinkedConnectionId][resourceType].findIndex(
+                r => r._id === resource._id
+              );
+              if (index > -1) {
+                const existingIntegration = draft[ssLinkedConnectionId][resourceType][index];
+                if (!existingIntegration.isNotEditable) {
+                  existingIntegration.displayName = resource.name;
+                }
+                draft[ssLinkedConnectionId][resourceType][index] = {...existingIntegration, ...resource};
               }
             } else {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
@@ -256,6 +254,18 @@ export default (
           }
         }
 
+        break;
+      case actionTypes.SUITESCRIPT.RESOURCE.DELETED:
+        {
+          const { ssLinkedConnectionId, resourceType, resourceId } = action;
+
+          if (
+            draft[ssLinkedConnectionId] &&
+            draft[ssLinkedConnectionId][resourceType]
+          ) {
+            draft[ssLinkedConnectionId][resourceType] = draft[ssLinkedConnectionId][resourceType].filter(r => r._id !== resourceId);
+          }
+        }
         break;
 
       case actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT:

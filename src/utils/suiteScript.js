@@ -1,5 +1,36 @@
 import trim from './trim';
 
+const flowTypes = {
+  REALTIME_EXPORT: 'REALTIME_EXPORT',
+  REALTIME_IMPORT: 'REALTIME_IMPORT',
+  EXPORT: 'EXPORT',
+  IMPORT: 'IMPORT',
+};
+
+const flowTypeToIdPrefixMap = {
+  [flowTypes.REALTIME_EXPORT]: 're',
+  [flowTypes.REALTIME_IMPORT]: 'ri',
+  [flowTypes.EXPORT]: 'e',
+  [flowTypes.IMPORT]: 'i',
+};
+
+export const flowTypeFromId = _id => {
+  let type;
+  Object.keys(flowTypeToIdPrefixMap).forEach(key => {
+    if (_id.startsWith(flowTypeToIdPrefixMap[key])) {
+      type = key;
+    }
+  });
+  return type;
+};
+
+export const generateUniqueFlowId = (_id, type) => `${flowTypeToIdPrefixMap[type]}${_id}`;
+
+export const getFlowIdAndTypeFromUniqueId = _id => {
+  const flowType = flowTypeFromId(_id);
+  return {flowType, flowId: _id.replace(flowTypeToIdPrefixMap[flowType], '')};
+};
+
 export const suiteScriptResourceKey = ({
   ssLinkedConnectionId,
   resourceType,
@@ -8,17 +39,17 @@ export const suiteScriptResourceKey = ({
 
 export const isJavaFlow = flow =>
   (flow.locationQualifier && trim(flow.locationQualifier).length > 0) ||
-          (['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(flow.type) &&
+          ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) &&
             !flow.hasConfiguration)
 
 export const flowType = flow => {
   if (isJavaFlow(flow)) {
     return null;
   }
-  if (['EXPORT', 'IMPORT'].includes(flow.type)) {
+  if ([flowTypes.EXPORT, flowTypes.IMPORT].includes(flow.type)) {
     return 'Scheduled';
   }
-  if (['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(flow.type)) {
+  if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type)) {
     return 'Realtime';
   }
 };
@@ -39,7 +70,7 @@ export const flowSupportsMapping = flow => {
 export const flowAllowsScheduling = flow => {
   let supportsScheduling = !!flow.editable
   if (supportsScheduling && flow.import) {
-    if (['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(flow.import.type)) {
+    if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.import.type)) {
       supportsScheduling = false
     }
   }
@@ -50,7 +81,7 @@ export const flowAllowsScheduling = flow => {
 };
 
 export const isFlowRunnable = flow => {
-  if (!flow.disabled && !['REALTIME_EXPORT', 'REALTIME_IMPORT'].includes(flow.type) && flow.export.type !== 'MY_COMPUTER') {
+  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export.type !== 'MY_COMPUTER') {
     if (flow.version && flow.hasConfiguration) {
       return true;
     }

@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import StatusTag from '../../../components/StatusTag';
+import StatusTag from '../../StatusTag';
 import Spinner from '../../Spinner';
 import { getJobStatusDetails } from './util';
 
@@ -26,10 +26,6 @@ export default function JobStatus({ job }) {
   const classes = useStyles();
   const jobStatusDetails = getJobStatusDetails(job);
 
-  if (job._id === '3087511') {
-    console.log(`jobStatusDetails`, jobStatusDetails);
-  }
-
   if (jobStatusDetails.showStatusTag) {
     return (
       <StatusTag
@@ -42,14 +38,14 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showSpinner) {
     return (
-      <Fragment>
+      <>
         <div className={classes.state}>
           <div className={classes.spinnerWrapper}>
             <Spinner size={24} color="primary" />
           </div>
           {jobStatusDetails.status}
         </div>
-      </Fragment>
+      </>
     );
   }
 

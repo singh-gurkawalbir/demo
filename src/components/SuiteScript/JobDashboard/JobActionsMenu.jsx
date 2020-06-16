@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
@@ -124,7 +124,7 @@ export default function JobActionsMenu({
         resourceId: job._flowId,
       },
     });
-    dispatch(actions.suiteScript.job.paging.setCurrentPage(0));
+    dispatch(actions.suiteScript.paging.job.setCurrentPage(0));
   };
 
   function handleActionClick(action) {
@@ -204,7 +204,7 @@ export default function JobActionsMenu({
   }
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={actionsToMonitor}
         autoClearOnComplete
@@ -231,6 +231,6 @@ export default function JobActionsMenu({
         disabled={menuOptions.length === 0}>
         <EllipsisHorizontallIcon />
       </IconButton>
-    </Fragment>
+    </>
   );
 }

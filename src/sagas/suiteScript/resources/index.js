@@ -22,8 +22,6 @@ export function* commitStagedChanges({
   const { patch, master } = data;
   const { merged } = data;
 
-  // console.log('commitStaged saga', resourceType, id, patch, merged, master);
-
   if (!patch) return; // nothing to do.
 
   let resourceId = resourceType === 'connections' ? merged.id : id;

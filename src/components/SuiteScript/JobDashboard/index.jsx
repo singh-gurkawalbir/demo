@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import LoadResources from '../LoadResources';
 import * as selectors from '../../../reducers';
@@ -44,7 +44,6 @@ export default function JobDashboard({
       left.length === right.length && left[0]._id === right[0]._id
   );
 
-  console.log(`jobs.length`, jobs.length);
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);

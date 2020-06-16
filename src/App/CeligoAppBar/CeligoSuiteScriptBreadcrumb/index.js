@@ -109,8 +109,6 @@ const commonChildRoutes = [];
 function parseUrl(pathname, routes, url = '', params = {}) {
   let crumbs = [];
 
-  // console.log(pathname, url, params);
-
   // stop iterating once we find a match. (return true)
   routes.some(r => {
     const match = matchPath(pathname, r);

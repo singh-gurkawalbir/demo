@@ -5,7 +5,6 @@ import {
   select,
   race,
   take,
-  takeLatest,
 } from 'redux-saga/effects';
 import jsonpatch from 'fast-json-patch';
 import actions from '../../../../actions';
@@ -116,13 +115,14 @@ export function* pingConnectionWithAbort(params) {
   });
 
   // perform submit cleanup
-  if (abortPing)
+  if (abortPing) {
     yield put(
       actions.suiteScript.resource.connections.testCancelled(
         resourceId,
         'Request Cancelled'
       )
     );
+  }
 }
 
 export default [
