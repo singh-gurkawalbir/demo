@@ -431,6 +431,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.csv.hasHeaderRow',
     'file.csv.trimSpaces',
     'file.csv.rowsToSkip',
+    'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
     'file.csvHelper'
