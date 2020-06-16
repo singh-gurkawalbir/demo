@@ -934,9 +934,13 @@ export default {
     formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings', 'formView'],
+      },
       {
         collapsed: true,
         label: r => {
@@ -1025,11 +1029,6 @@ export default {
             ],
           },
         ],
-      },
-      {
-        collapsed: true,
-        label: 'Do you have a sample destination record?',
-        fields: ['sampleData'],
       },
       {
         collapsed: true,
