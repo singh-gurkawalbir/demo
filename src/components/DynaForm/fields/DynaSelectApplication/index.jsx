@@ -4,7 +4,7 @@ import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
-import applications, {
+import {applicationsList,
   groupApplications,
 } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
@@ -220,6 +220,7 @@ export default function SelectApplication(props) {
 
     return true;
   };
+  const applications = applicationsList();
 
   const defaultValue =
     !value || isMulti
