@@ -8,7 +8,7 @@ import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import applications from '../../../constants/applications';
+import {applicationsList} from '../../../constants/applications';
 import {
   getResourceSubType,
   generateNewId,
@@ -217,6 +217,7 @@ const PageGenerator = ({
         blockType,
       };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === pg.application) || {};
 
