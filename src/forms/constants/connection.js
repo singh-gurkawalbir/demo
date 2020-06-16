@@ -100,6 +100,7 @@ export default {
     'loopreturns',
     'orderful',
     'logisense',
+    'sapbydesign'
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

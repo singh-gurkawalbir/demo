@@ -185,6 +185,7 @@ const connectors = [
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
+  { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
   {
     id: '4castplus',
     name: '4CastPlus',
