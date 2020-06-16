@@ -1,4 +1,4 @@
-import applications from '../../../../constants/applications';
+import {applicationsList} from '../../../../constants/applications';
 import { RDBMS_TYPES } from '../../../../utils/constants';
 
 const visibleWhen = [
@@ -28,6 +28,8 @@ const appTypeToAdaptorType = {
 
 export default {
   preSave: ({ application, ...rest }) => {
+    const applications = applicationsList();
+
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -97,6 +99,7 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
 
     if (fieldId === 'connection') {

@@ -80,6 +80,7 @@ export default function UserForm({
         label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
+        skipSort: true,
         options: [
           {
             items: [

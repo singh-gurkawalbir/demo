@@ -300,14 +300,18 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'salesforce.executionType',
-        ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: [
+              'common',
+              'outputMode',
+              'exportOneToMany',
+              'salesforce.executionType',
+            ],
+          },
           {
             collapsed: true,
             label: r => {

@@ -386,6 +386,9 @@ const getFieldConfig = (field = {}, resource = {}) => {
   if (newField.disabled) {
     newField.defaultDisabled = true;
   }
+  if (newField.hidden) {
+    newField.visible = false;
+  }
 
   return newField;
 };
@@ -505,7 +508,6 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
         ],
       };
     })
-    .filter(f => !f.hidden);
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 

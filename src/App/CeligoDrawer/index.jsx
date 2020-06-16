@@ -145,8 +145,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   innerListItems: {
-    // Todo (Azhar): confirm the color from UX team and add to the palette
-    backgroundColor: '#0B0C0E',
+    backgroundColor: theme.palette.background.drawer3,
     '&:hover': {
       backgroundColor: theme.palette.background.drawer3, },
   },
