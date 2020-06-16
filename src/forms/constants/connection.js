@@ -130,7 +130,6 @@ export default {
     'googlesheets',
     'googlecontacts',
     'googlemail',
-    'acumatica',
     'googledrive',
     'googleanalytics',
     'freshbooks',
