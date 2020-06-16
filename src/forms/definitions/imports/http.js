@@ -1510,9 +1510,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings', 'formView'],
+      },
       {
         collapsed: true,
         label: r => {
