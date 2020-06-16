@@ -12,8 +12,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   showToken: {
+    padding: 0,
+    minWidth: 'unset',
     '&:hover': {
       color: theme.palette.primary.main,
+      background: 'transparent',
     },
   },
 }));
