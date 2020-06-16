@@ -28,12 +28,11 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
   titleBar: {
-    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: '14px 0px',
-    margin: theme.spacing(0, 3),
+    padding: theme.spacing(2, 3),
+    background: theme.palette.background.default,
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -43,6 +42,8 @@ const useStyles = makeStyles(theme => ({
   },
   contentContainer: {
     margin: theme.spacing(1, 2),
+    position: 'relative',
+    height: '100%',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -168,7 +169,7 @@ export default function RightDrawer({
                 <BackArrowIcon />
               </IconButton>
             )}
-            <Typography variant="h3" className={classes.title}>
+            <Typography variant="h4" className={classes.title}>
               {title}
               {helpKey && (
                 <Help

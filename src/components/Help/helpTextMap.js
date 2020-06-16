@@ -284,6 +284,8 @@ export default {
     'The API Secret of your ShipStation account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API secret safe. This can be obtained from the Settings section and API secret subsection.',
   'shopify.connection.http.auth.type': 'Integrator.io supports the following authentication types: Basic: Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the "authentication" HTTP request header.Cookie: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application.Custom: Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.Token: Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it. OAuth 2.0: Select this value if your application supports the OAuth 2.0 authentication.',
   'shopify.connection.http.storeURL': 'Go to your Shopify store and you can find out the store name in the browser URL. For example - if your Shopify store URL is "https://demo-store.myshopify.com/"", then provide "demo-store" as the store name.',
+  'shopify.connection.http.unencrypted.version':
+    'Please enter your Shopify account version, for example 2020-01.For more information check the <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
   'shopify.connection.http.auth.basic.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
   'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
   'stripe.connection.http.auth.token.token':
@@ -562,6 +564,9 @@ export default {
     'Please enter the Password of your LogiSense account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
   'logisense.connection.http.encrypted.clientId':
     'Please enter the client_id provided by LogiSense team and perform any needed whitelisting with the destination/source systems.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your client id safe.',
+  'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
+  'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
+  'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1891,6 +1896,11 @@ export default {
     'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
     'Save your Client Id and Client Secret in iClient for an added layer of security.',
+  'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
+  'connection.http.clientCertificates.cert':
+    'Select a certificate of .PEM or .PFX format.',
+  'connection.http.clientCertificates.passphrase':
+    'Enter a passphrase if you need to further protect this certificate file',
   'connection.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'connection.rdbms.useSSL':

@@ -9,7 +9,7 @@ import getJSONPaths, {
   pickFirstObject,
 } from '../jsonPaths';
 import { isJsonString } from '../string';
-import connectors from '../../constants/applications';
+import {applicationsList} from '../../constants/applications';
 
 const isCsvOrXlsxResource = resource => {
   const { adaptorType: resourceAdapterType, file } = resource;
@@ -745,6 +745,7 @@ export default {
   },
   getApplicationName: (resource = {}, conn) => {
     if (resource.assistant) {
+      const connectors = applicationsList();
       const assistant = connectors.find(
         connector => connector.id === resource.assistant
       );

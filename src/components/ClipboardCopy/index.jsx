@@ -11,9 +11,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  copyTokenIcon: {
+    padding: 0,
+  },
   showToken: {
+    padding: 0,
+    minWidth: 'unset',
     '&:hover': {
       color: theme.palette.primary.main,
+      background: 'transparent',
     },
   },
 }));
@@ -32,6 +38,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
           <CopyToClipboard
             text={token}>
             <IconButton
+              className={classes.copyTokenIcon}
               data-test="copyToken"
               title="Copy to clipboard"
               size="small">

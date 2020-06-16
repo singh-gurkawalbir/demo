@@ -34,7 +34,7 @@ const LoadingMask = () => (
   </Loader>
 );
 const defaultFilter = {
-  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   sort: { orderBy: 'doc.name', order: 'asc' }
 };
 

@@ -21,13 +21,6 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    genericOauth: {
-      id: 'genericOauth',
-      label: 'Configure your client id and secret',
-      type: 'checkbox',
-      required: true,
-      defaultValue: r => !!(r && r.http && r.http._iClientId),
-    },
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
@@ -35,24 +28,22 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
-      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
-      visibleWhen: [{ field: 'genericOauth', is: ['true'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'genericOauth',
-      'http._iClientId',
-      'http.auth.oauth.callbackURL',
-    ],
+    fields: ['name'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'Configure your client id and secret',
+        fields: ['http.auth.oauth.callbackURL', 'http._iClientId'],
+      },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
