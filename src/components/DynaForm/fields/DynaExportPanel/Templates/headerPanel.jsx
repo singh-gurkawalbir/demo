@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 export default function HeaderPanel(props) {
   const { handlePanelViewChange, availablePreviewStages, panelType } = props;
   const classes = useStyles(props);
-  console.log('checking the length of options', availablePreviewStages);
+
   return (
     <div className={classes.textToggleContainer}>
       <TextToggle
