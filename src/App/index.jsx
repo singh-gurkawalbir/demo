@@ -74,8 +74,8 @@ export default function App() {
     const domain = getDomain();
 
     /**
-     * We need to initialize the gainsight here for localhost.io only.
-     * We are injecting this intialization script into index.html from
+     * We need to initialize gainsight here for localhost.io only.
+     * We are injecting this initialization script into index.html from
      * backend for other domains as per the gainsight support's suggestion
      * for their "Product Mapper" to work properly.
      */
