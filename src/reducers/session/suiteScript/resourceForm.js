@@ -15,7 +15,6 @@ export default (state = {}, action) => {
     skipClose = false,
     initData,
     ssLinkedConnectionId,
-    integrationId,
   } = action;
   const key = suiteScriptResourceKey({
     ssLinkedConnectionId,
@@ -42,9 +41,9 @@ export default (state = {}, action) => {
           initData:
             state[key] && state[key].initData
               ? fieldsTouchedForMeta(
-                  fieldMeta,
-                  state[key] && state[key].initData
-                )
+                fieldMeta,
+                state[key] && state[key].initData
+              )
               : null,
           isNew,
           skipCommit,
@@ -113,7 +112,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function resourceFormState(
   state,
-  { ssLinkedConnectionId, integrationId, resourceType, resourceId }
+  { ssLinkedConnectionId, resourceType, resourceId }
 ) {
   if (!state) {
     return {};
@@ -130,7 +129,7 @@ export function resourceFormState(
 
 export function resourceFormSaveProcessTerminated(
   state,
-  { ssLinkedConnectionId, integrationId, resourceType, resourceId }
+  { ssLinkedConnectionId, resourceType, resourceId }
 ) {
   if (!state) return false;
   const key = suiteScriptResourceKey({

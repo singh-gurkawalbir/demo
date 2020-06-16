@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -100,7 +100,7 @@ function JobErrorDialog({
 
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
-      <Fragment>
+      <>
         <div>{`${job && job.name}`}</div>
 
         <Help
@@ -112,7 +112,7 @@ function JobErrorDialog({
           fieldId="helpSummary"
           resourceType="jobErrors"
         />
-      </Fragment>
+      </>
 
       <div>
         <JobErrorTable

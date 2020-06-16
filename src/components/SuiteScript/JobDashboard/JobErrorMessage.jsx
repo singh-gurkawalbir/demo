@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import openExternalUrl from '../../../utils/window';
 import RawHtml from '../../RawHtml';
@@ -11,7 +11,7 @@ const recordLabels = {
 
 export default function JobErrorMessage({ type, message, recordLink }) {
   return (
-    <Fragment>
+    <>
       <RawHtml html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {recordLink && (
@@ -25,6 +25,6 @@ export default function JobErrorMessage({ type, message, recordLink }) {
           </Button>
         )}
       </div>
-    </Fragment>
+    </>
   );
 }

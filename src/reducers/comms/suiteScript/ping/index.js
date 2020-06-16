@@ -78,8 +78,9 @@ export const testConnectionStatus = (
     !state ||
     !state[ssLinkedConnectionId] ||
     !state[ssLinkedConnectionId][resourceId]
-  )
+  ) {
     return null;
+  }
   const { status } = state[ssLinkedConnectionId][resourceId];
 
   return status;
@@ -94,8 +95,9 @@ export const testConnectionMessage = (
     !state ||
     !state[ssLinkedConnectionId] ||
     !state[ssLinkedConnectionId][resourceId]
-  )
+  ) {
     return null;
+  }
   const { message } = state[ssLinkedConnectionId][resourceId];
 
   return message;

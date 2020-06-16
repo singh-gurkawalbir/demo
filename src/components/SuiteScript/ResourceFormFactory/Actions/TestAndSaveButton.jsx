@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback, useReducer } from 'react';
+import React, { useEffect, useCallback, useReducer } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -30,7 +30,7 @@ const ConfirmDialog = props => {
   const { confirmDialog } = useConfirmDialog();
 
   useEffect(() => {
-    if (commErrorMessage)
+    if (commErrorMessage) {
       confirmDialog({
         title: 'Confirm',
         message: `Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`,
@@ -51,7 +51,7 @@ const ConfirmDialog = props => {
           },
         ],
       });
-    else confirmDialog(null);
+    } else confirmDialog(null);
   }, [
     commErrorMessage,
     confirmDialog,
@@ -196,18 +196,16 @@ const TestAndSaveButton = props => {
   }, [saveTerminated]);
 
   return (
-    <Fragment>
+    <>
       <ConfirmDialog
         commErrorMessage={erroredMessage}
         formValues={formValues}
         handleCloseAndClearForm={() =>
           dispatchLocalAction({
             type: 'clearFormData',
-          })
-        }
+          })}
         handleSaveCompleted={() =>
-          dispatchLocalAction({ type: 'saveCompleted' })
-        }
+          dispatchLocalAction({ type: 'saveCompleted' })}
         handleSubmit={handleSubmitForm}
       />
       {/* Test button which hides the test button and shows the ping snackbar */}
@@ -227,7 +225,7 @@ const TestAndSaveButton = props => {
         color="primary">
         {label || 'Save'}
       </DynaAction>
-    </Fragment>
+    </>
   );
 };
 

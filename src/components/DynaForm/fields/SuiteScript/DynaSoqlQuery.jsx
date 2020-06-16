@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 
@@ -44,7 +44,6 @@ export default function DynaSoqlQuery(props) {
     })
   );
 
-  console.log(`data in SS SOQL`, data);
   const handleFieldOnBlur = () => {
     setsObject(true);
   };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -88,8 +88,9 @@ export default function CsvParsePanel(props) {
   const allColumns = showKeyColumnsOptions ? getColumns(result) : [];
 
   useEffect(() => {
-    if (showKeyColumnsOptions === false && status !== 'requested')
+    if (showKeyColumnsOptions === false && status !== 'requested') {
       setShowKeyColumnsOptions(true);
+    }
   }, [showKeyColumnsOptions, status]);
 
   // TODO: Refractor to use dyna form
@@ -105,8 +106,7 @@ export default function CsvParsePanel(props) {
             value={columnDelimiter}
             className={classes.select}
             onChange={event =>
-              patchEditor('columnDelimiter', event.target.value)
-            }
+              patchEditor('columnDelimiter', event.target.value)}
             inputProps={{ id: 'columnDelimiter' }}>
             {options.ColumnDelimiterOptions.map(opt => (
               <option key={opt.type} value={opt.value} data-test={opt.type}>

@@ -4,7 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import clsx from 'clsx';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { JOB_STATUS } from '../../../utils/constants';
 import JobStatus from './JobStatus';
 import { getSuccess } from './util';
@@ -144,7 +144,7 @@ export default function JobDetail({
   }
 
   return (
-    <Fragment>
+    <>
       <TableRow>
         <TableCell
           className={clsx(
@@ -213,6 +213,6 @@ export default function JobDetail({
           />
         </TableCell>
       </TableRow>
-    </Fragment>
+    </>
   );
 }

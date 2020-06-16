@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
@@ -91,7 +91,7 @@ export default function DynaCsvParse(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <CsvConfigEditorDialog
           title="CSV Parse Options"
@@ -113,6 +113,6 @@ export default function DynaCsvParse(props) {
         onClick={handleEditorClick}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

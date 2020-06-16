@@ -130,8 +130,9 @@ const applyCustomSettings = ({
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      )
+      ) {
         return 'Settings must be a valid JSON';
+      }
 
       if (field.value && field.value.__invalid) {
         return 'Some of your settings are not valid.';

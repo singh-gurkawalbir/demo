@@ -1,13 +1,12 @@
 import { withRouter, useRouteMatch } from 'react-router-dom';
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { Typography, Link } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import EditableText from '../../../components/EditableText';
 import * as selectors from '../../../reducers';
-import actions from '../../../actions';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import PageGenerator from './PageGenerator';
 import PageProcessor from './PageProcessor';
@@ -147,7 +146,7 @@ function FlowBuilder() {
   // );
 
   return (
-    <Fragment>
+    <>
       {JSON.stringify({
         ssLinkedConnectionId,
         integrationId,
@@ -175,14 +174,14 @@ function FlowBuilder() {
           />
         }
         subtitle={
-          <Fragment>
+          <>
             {flow.lastModified &&
               `Last saved: ${<DateTimeDisplay dateTime={flow.lastModified} />}`}
-          </Fragment>
+          </>
         }
       />
       {flow && !flow.editable && (
-        <Fragment>
+        <>
           <Typography>
             The ability to change settings for the data flow you have selected
             is not currently supported. Please{' '}
@@ -191,7 +190,7 @@ function FlowBuilder() {
             </Link>{' '}
             to request changes.
           </Typography>
-        </Fragment>
+        </>
       )}
       {flow && flow.editable && (
         <div
@@ -258,7 +257,7 @@ function FlowBuilder() {
           </div>
         </div>
       )}
-    </Fragment>
+    </>
   );
 }
 

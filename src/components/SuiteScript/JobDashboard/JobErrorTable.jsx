@@ -1,19 +1,16 @@
-import { useState, useEffect, Fragment, useRef, useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
-import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
-import CeligoTable from '../../../components/CeligoTable';
+import CeligoTable from '../../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
-import { JOB_STATUS } from '../../../utils/constants';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import ButtonsGroup from '../../ButtonGroup';
-import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -73,7 +70,6 @@ const useStyles = makeStyles(theme => ({
 function JobErrorTable({
   rowsPerPage = 10,
   jobErrors,
-  errorCount,
   job,
   onCloseClick,
   ssLinkedConnectionId,
@@ -82,7 +78,6 @@ function JobErrorTable({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { confirmDialog } = useConfirmDialog();
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedErrors, setSelectedErrors] = useState({});
   const selectedErrorIds = Object.keys(selectedErrors).filter(
@@ -92,15 +87,15 @@ function JobErrorTable({
     jobErrors && jobErrors.filter(je => !je.resolved).length > 0;
   const jobErrorsInCurrentPage = jobErrors
     ? jobErrors.slice(
-        currentPage * rowsPerPage,
-        (currentPage + 1) * rowsPerPage
-      )
+      currentPage * rowsPerPage,
+      (currentPage + 1) * rowsPerPage
+    )
     : [];
   const hasUnresolvedErrorsInCurrentPage =
     jobErrorsInCurrentPage.filter(je => !je.resolved).length > 0;
   const numSelectedResolvableErrors = jobErrors
     ? jobErrors.filter(je => selectedErrorIds.includes(je._id) && !je.resolved)
-        .length
+      .length
     : 0;
 
   function handleChangePage(event, newPage) {
@@ -165,7 +160,7 @@ function JobErrorTable({
   };
 
   return (
-    <Fragment>
+    <>
       <ul className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
@@ -191,7 +186,7 @@ function JobErrorTable({
           <Spinner size={20} /> <span>Loading errors...</span>
         </div>
       ) : (
-        <Fragment>
+        <>
           <ButtonsGroup className={classes.btnsWrappper}>
             <Button
               data-test="markResolvedJobs"
@@ -205,7 +200,7 @@ function JobErrorTable({
             </Button>
           </ButtonsGroup>
 
-          <Fragment>
+          <>
             <TablePagination
               classes={{ root: classes.tablePaginationRoot }}
               rowsPerPageOptions={[rowsPerPage]}
@@ -247,10 +242,10 @@ function JobErrorTable({
                 },
               ]}
             />
-          </Fragment>
-        </Fragment>
+          </>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }
 

@@ -1,9 +1,7 @@
 export default {
   preSave: formValues => {
-    const newValues = Object.assign({}, formValues);
-
+    const newValues = formValues;
     newValues['/type'] = newValues['/ftp/useSFTP'] ? 'sftp' : 'ftp';
-
     delete newValues['/ftp/useSFTP'];
 
     return newValues;

@@ -1,7 +1,7 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../components/icons/ArrowDownIcon';
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderTop: 0,
     display: 'flex',
-    justifyContent: `space-between`,
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },
@@ -183,7 +183,7 @@ export default function BottomDrawer({
         </div>
       </div>
 
-      <Fragment>
+      <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           <ConnectionPanel
             ssLinkedConnectionId={ssLinkedConnectionId}
@@ -196,7 +196,7 @@ export default function BottomDrawer({
             flow={flow}
           />
         </TabPanel>
-      </Fragment>
+      </>
     </Drawer>
   );
 }
