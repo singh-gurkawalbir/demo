@@ -18,6 +18,7 @@ const applicationsWithPreviewPanel = [
   'ftp',
   's3',
   'simple',
+  'as2',
 ];
 const emptyList = [];
 
@@ -53,6 +54,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       ];
     case 'ftp':
     case 's3':
+    case 'as2':
       return [
         { label: 'Parsed output', value: 'preview' },
       ];

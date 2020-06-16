@@ -210,39 +210,51 @@ export default {
     },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'exportOneToMany'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How would you like to parse files?',
-        type: 'indent',
-        fields: [
-          'file.type',
-          'file.xml.resourcePath',
-          'file.json.resourcePath',
-          'file.xlsx.hasHeaderRow',
-          'file.xlsx.rowsPerRecord',
-          'file.xlsx.keyColumns',
-          'edix12.format',
-          'fixed.format',
-          'edifact.format',
-          'file.filedefinition.rules',
+        fields: ['common', 'exportOneToMany'],
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            type: 'indent',
+            fields: [
+              'file.type',
+              'file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns',
+              'edix12.format',
+              'fixed.format',
+              'edifact.format',
+              'file.filedefinition.rules',
+            ],
+            containers: [{fields: [
+              'file.csvHelper',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns']}]
+          },
+          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],
-        containers: [{fields: [
-          'file.csvHelper',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.trimSpaces',
-          'file.csv.rowsToSkip',
-          'file.csv.hasHeaderRow',
-          'file.csv.rowsPerRecord',
-          'file.csv.keyColumns']}]
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-    ],
+      {
+        fields: ['exportPanel'],
+      }
+    ]
+
   },
   actions: [
     {

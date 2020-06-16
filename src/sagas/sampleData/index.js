@@ -16,7 +16,11 @@ import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
-import { isRealTimeOrDistributedResource, isFileAdaptor } from '../../utils/resource';
+import {
+  isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource
+} from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 /*
  * Parsers for different file types used for converting into JSON format
@@ -223,7 +227,7 @@ function* fetchExportPreviewData({
   });
   const isRestCsvExport = yield select(isRestCsvMediaTypeExport, resourceId);
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
-  if (isFileAdaptor(body) || isRestCsvExport) {
+  if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
     // extract all details needed for a file sampledata
     const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
     const fileProps = {
