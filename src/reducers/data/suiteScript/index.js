@@ -243,7 +243,7 @@ export default (
                   r._integrationId === resource._integrationId
               );
               if (index > -1) {
-                draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId};
+                draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId, ssLinkedConnectionId};
               }
             } else {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
