@@ -83,6 +83,23 @@ export default function SettingsDrawer({
           defaultValue: flow && flow.settings,
         },
       },
+      layout: {
+        containers: [
+          {
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                label: 'General',
+                fields: ['name', 'description', '_integrationId', '_runNextFlowIds'],
+              },
+            ],
+          },
+          {
+            fields: ['settings']
+          },
+        ],
+      },
     }),
     [flow, nextDataFlows]
   );

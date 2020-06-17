@@ -842,6 +842,7 @@ export default {
     'Specify a private key for use with PGP file transfers.  If you set this field then all files exported to integrator.io will be decrypted with this private key during file download.  If you do not want to use PGP decryption in your FTP Export then leave this field blank.  The key must be in ASCII Armor format.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your authentication key safe.',
   'connection.ftp.pgpPassphrase':
     'Set this field if your PGP private key is secured with a passphrase.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passphrase safe.',
+  'connection.ftp.concurrencyLevel': 'Set this field to limit the number of concurrent/parallel requests allowed by the connection at any one time.',
   'connection.as2.as2Id':
     'This is the AS2 Identifier your trading partners will use as the "To" identifier when sending you documents, and the identifier integrator.io will use as the "From" identifier when you send documents to your trading partners. This field must be unique across all integrator.io users to ensure that inbound documents from your trading partners are routed to the correct integration flows. In addition, you should use a different identifier for production vs. sandbox.',
   'connection.as2.partnerId':
@@ -1233,6 +1234,7 @@ export default {
     "Use this field to specify a file name prefix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
   'export.ftp.fileNameEndsWith':
     "Use this field to specify a file name postfix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
+  'export.file.batchSize': 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'export.s3.region':
     "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
   'export.webhook.provider':
@@ -1558,7 +1560,7 @@ export default {
   'integration.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'integration.description':
-    'Brief description on the integration group created',
+    'Describe your integration here so that other users can quickly understand the high level business problems being solved. Be sure to highlight any nuances that other users might need to know in order to work in this integration.',
   'integration._connectorId':
     'If this flow belongs to a connector, this value will be hold the id of that connector.',
   'integration.mode':

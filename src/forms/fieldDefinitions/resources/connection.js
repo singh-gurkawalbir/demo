@@ -1435,6 +1435,20 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
+  'ftp.concurrencyLevel': {
+    label: 'Concurrency level',
+    type: 'select',
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+        ],
+      },
+    ],
+  },
   // #endregion ftp
   // #region s3
   's3.accessKeyId': {
