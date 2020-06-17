@@ -1,5 +1,4 @@
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
-import { isProduction } from '../../forms/utils';
 
 export const getIntegrationAppUrlName = (
   integrationAppName,
