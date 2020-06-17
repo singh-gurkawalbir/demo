@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
   },
   form: {
     height: props =>
-      `calc(100vh - ${props.heightOffset || 138}px - ${
+      `calc(100vh - ${props.heightOffset || 150}px - ${
         props.notificationPanelHeight
       }px)`,
     width: props => {
