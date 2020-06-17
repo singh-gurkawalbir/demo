@@ -237,6 +237,5 @@ export default {
     return highestEdition;
   },
   isCloningSupported: (_connectorId, name) =>
-    !isProduction() &&
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
