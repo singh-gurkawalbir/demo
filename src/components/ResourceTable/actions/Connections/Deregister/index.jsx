@@ -20,7 +20,7 @@ export default {
     return hasAccess && !isStandalone;
   },
   component: function Deregister({ rowData = {}, integrationId }) {
-    const { _id: connectionId, name: connectionName } = rowData;
+    const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deregisterConnection = useCallback(() => {
@@ -29,26 +29,22 @@ export default {
       );
     }, [connectionId, dispatch, integrationId]);
     const confirmDeregister = useCallback(() => {
-      const message = [
-        'Are you sure you want to deregister',
-        connectionName || connectionId,
-        'connection from this integration?',
-      ].join(' ');
+      const message = 'This connection will no longer be accessible in this integration.';
 
       confirmDialog({
-        title: 'Confirm',
+        title: 'Deregister connection?',
         message,
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Yes',
+            label: 'Deregister connection',
             onClick: deregisterConnection,
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
+    }, [confirmDialog, deregisterConnection]);
 
     useEffect(() => {
       confirmDeregister();

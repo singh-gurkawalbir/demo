@@ -29,14 +29,14 @@ export default {
           : MODEL_PLURAL_TO_LABEL[resourceType];
 
       confirmDialog({
-        title: 'Confirm',
-        message: `Are you sure you want to delete this ${type}?`,
+        title: `Delete ${type}?`,
+        message: 'Most resources can be restored from the recycle bin.',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Yes',
+            label: `Delete ${type}`,
             onClick: deleteResource,
           },
         ],

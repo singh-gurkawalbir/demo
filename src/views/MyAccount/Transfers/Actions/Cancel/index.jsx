@@ -12,20 +12,16 @@ export default {
       dispatch(actions.transfer.cancel(transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = useCallback(() => {
-      const message = 'Are you sure you want to cancel this transfer?';
-
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Are you sure you want to cancel?',
+        message: 'You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'Cancel',
+            label: 'No, go back',
           },
           {
-            label: 'Yes',
-            onClick: () => {
-              cancelTransfer();
-            },
+            label: 'Yes, cancel',
+            onClick: cancelTransfer,
           },
         ],
       });

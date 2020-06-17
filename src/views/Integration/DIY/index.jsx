@@ -276,14 +276,14 @@ export default function Integration(props) {
     const iName = name || integrationId;
 
     confirmDialog({
-      title: 'Confirm',
-      message: `Are you sure you want to delete ${iName} integration?`,
+      title: `Delete ${iName} integration?`,
+      message: 'Most resources can be restored from the recycle bin.',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: `Delete ${iName} integration?`,
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);

@@ -127,17 +127,17 @@ export default function EditorDrawer({
     }
 
     confirmDialog({
-      title: 'Confirm',
-      message: 'You have made changes in the editor. Are you sure you want to discard them?',
+      title: 'Are you sure you want to cancel?',
+      message: 'You have unsaved changes that will be lost if you proceed.',
       buttons: [
         {
-          label: 'No',
+          label: 'No, go back',
         },
         {
-          label: 'Yes',
+          label: 'Yes, cancel',
           onClick: onClose,
         },
-      ],
+      ]
     });
   }, [confirmDialog, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(

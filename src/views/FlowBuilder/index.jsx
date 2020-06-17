@@ -222,25 +222,17 @@ function FlowBuilder() {
     [pageProcessors, patchFlow]
   );
   const handleDelete = useCallback(
-    type => resourceName => index => {
-      let resourceType;
-
-      if (type === itemTypes.PAGE_PROCESSOR) {
-        resourceType = 'Page Processor';
-      } else {
-        resourceType = 'Page Generator';
-      }
-
+    type => index => {
       confirmDialog({
-        title: `Remove ${resourceName} ${resourceType}`,
-        message: `Are you sure you want to remove this ${resourceType} from this flow?`,
+        title: 'Are you sure you want to remove?',
+        message: 'This resource can be added back later if needed again.',
         buttons: [
           {
             label: 'Cancel',
             color: 'secondary',
           },
           {
-            label: `Remove ${resourceType}`,
+            label: 'Remove',
             color: 'primary',
             onClick: () => {
               if (type === itemTypes.PAGE_PROCESSOR) {

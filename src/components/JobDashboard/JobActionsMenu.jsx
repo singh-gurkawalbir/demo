@@ -197,15 +197,15 @@ export default function JobActionsMenu({
       }
     } else if (action === 'cancelJob') {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Are you sure you want to cancel?',
         message:
-          'Are you sure you want to cancel this job? Please note that canceling this job will delete all associated data currently queued for processing.',
+          'You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
           {
-            label: 'No',
+            label: 'No, go back',
           },
           {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: () => {
               if (job.status === JOB_STATUS.RETRYING) {
                 if (isFlowJob) {
