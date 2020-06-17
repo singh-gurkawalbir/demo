@@ -10,16 +10,6 @@ export default {
     label: 'File name starts with',
     editorTitle: 'Build file name starts with',
   },
-  'ftp.batchSize': {
-    type: 'text',
-    label: 'Batch size',
-    validWhen: {
-      matchesRegEx: {
-        pattern: '^[\\d]+$',
-        message: 'Only numbers allowed',
-      },
-    },
-  },
   'ftp.fileNameEndsWith': {
     type: 'namewitheditor',
     label: 'File name ends with',

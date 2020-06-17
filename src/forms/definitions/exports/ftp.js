@@ -329,8 +329,8 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
-    'ftp.batchSize': {
-      fieldId: 'ftp.batchSize',
+    'file.batchSize': {
+      fieldId: 'file.batchSize',
     }
   },
   layout: {
@@ -382,7 +382,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['fileAdvancedSettings', 'ftp.batchSize'],
+            fields: ['fileAdvancedSettings', 'file.batchSize'],
           },
         ],
       },

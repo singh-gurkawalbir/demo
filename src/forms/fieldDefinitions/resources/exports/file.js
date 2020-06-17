@@ -20,6 +20,16 @@ export default {
       },
     ],
   },
+  'file.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
+      },
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
