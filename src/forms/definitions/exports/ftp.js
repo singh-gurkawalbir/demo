@@ -145,7 +145,7 @@ export default {
       }
 
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
     }
     const fileType = fields.find(field => field.id === 'file.type');
@@ -329,6 +329,9 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    'file.batchSize': {
+      fieldId: 'file.batchSize',
+    }
   },
   layout: {
     type: 'column',
@@ -379,7 +382,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['fileAdvancedSettings'],
+            fields: ['fileAdvancedSettings', 'file.batchSize'],
           },
         ],
       },

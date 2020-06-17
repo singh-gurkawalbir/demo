@@ -20,6 +20,16 @@ export default {
       },
     ],
   },
+  'file.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
+      },
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
@@ -308,6 +318,8 @@ export default {
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File has header',
+    defaultValue: r =>
+      !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
     visibleWhen: [
       {
         field: 'file.type',
