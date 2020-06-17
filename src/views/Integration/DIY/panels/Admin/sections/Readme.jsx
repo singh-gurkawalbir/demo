@@ -60,12 +60,9 @@ export default function ReadmeSection({ integrationId }) {
     );
   };
 
-  const infoTextReadme =
-    'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
-
   return (
     <>
-      <PanelHeader title="Readme" infoText={infoTextReadme} />
+      <PanelHeader title="Readme" />
       <div className={classes.root}>
         <div className={classes.editorContainer}>
           <CodeEditor
