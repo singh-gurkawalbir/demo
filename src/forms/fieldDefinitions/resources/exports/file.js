@@ -308,6 +308,8 @@ export default {
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File has header',
+    defaultValue: r =>
+      !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
     visibleWhen: [
       {
         field: 'file.type',

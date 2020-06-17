@@ -128,7 +128,6 @@ const useStyles = makeStyles(theme => ({
   rootExpansionPanel: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    padding: 12,
   },
   innerContentHeader: {
     width: '100%',

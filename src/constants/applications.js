@@ -13,18 +13,7 @@ import { stringCompare } from '../utils/sort';
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
 
-let localStorageAssistants;
 
-// localStorage is browser specific one. It is breaking testcases. Below code changes are to
-// avoid test case breakages.
-// TODO: Need to see alternate solution here.
-try {
-  localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
-} catch (e) {
-  localStorageAssistants = [];
-}
-
-const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -778,6 +767,20 @@ const connectors = [
 ];
 
 connectors.sort(stringCompare('name'));
+const getAssistants = () => {
+  let localStorageAssistants;
+
+  // localStorage is browser specific one. It is breaking testcases. Below code changes are to
+  // avoid test case breakages.
+  // TODO: Need to see alternate solution here.
+  try {
+    localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
+  } catch (e) {
+    localStorageAssistants = [];
+  }
+
+  return localStorageAssistants;
+}
 
 export const groupApplications = (
   resourceType,
@@ -785,6 +788,8 @@ export const groupApplications = (
 ) => {
   // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
+  const assistants = getAssistants();
+
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -884,9 +889,34 @@ export const groupApplications = (
   'mailparser-io',
   'integrator-extension',
 */
+export const applicationsList = () => {
+  const assistants = getAssistants()
+  const applications = connectors.filter(connector => {
+    const assistant = assistants.find(a => a.id === connector.assistant);
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+    return !assistant || !connector.assistant;
+  });
+
+  assistants.forEach(asst => {
+    applications.push({
+      id: asst.id,
+      name: asst.name,
+      type: asst.type,
+      assistant: asst.id,
+      export: asst.export,
+      import: asst.import,
+      webhook: asst.webhook,
+    });
+  });
+  return applications;
+}
+
+
+export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
+export const getWebhookConnectors = () => {
+  const applications = applicationsList();
+  return applications.filter(c => !!c.webhook)
+};
 export const getDatabaseConnectors = () =>
   connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
@@ -894,26 +924,10 @@ export const getWebhookOnlyConnectors = () =>
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;
+  const applications = applicationsList();
 
-  return connectors.find(c => c.id === id) || {};
+  return applications.find(c => c.id === id) || {};
 };
 
-const applications = connectors.filter(connector => {
-  const assistant = assistants.find(a => a.id === connector.assistant);
 
-  return !assistant || !connector.assistant;
-});
-
-assistants.forEach(asst => {
-  applications.push({
-    id: asst.id,
-    name: asst.name,
-    type: asst.type,
-    assistant: asst.id,
-    export: asst.export,
-    import: asst.import,
-    webhook: asst.webhook,
-  });
-});
-
-export default applications;
+export default connectors;

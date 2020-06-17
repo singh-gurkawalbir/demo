@@ -1,4 +1,4 @@
-import applications, {
+import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../constants/applications';
@@ -22,6 +22,7 @@ export default {
     if (exportId) {
       return { '/resourceId': exportId };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
@@ -140,6 +141,7 @@ export default {
 
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
     const connectionField = fields.find(field => field.id === 'connection');
 

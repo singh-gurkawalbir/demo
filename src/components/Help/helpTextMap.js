@@ -1549,7 +1549,7 @@ export default {
   'integration.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'integration.description':
-    'Brief description on the integration group created',
+    'Describe your integration here so that other users can quickly understand the high level business problems being solved. Be sure to highlight any nuances that other users might need to know in order to work in this integration.',
   'integration._connectorId':
     'If this flow belongs to a connector, this value will be hold the id of that connector.',
   'integration.mode':

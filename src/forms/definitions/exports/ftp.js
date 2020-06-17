@@ -145,7 +145,7 @@ export default {
       }
 
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
     }
     const fileType = fields.find(field => field.id === 'file.type');
@@ -334,9 +334,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common', 'outputMode'],
+          },
           {
             collapsed: true,
             label: 'How would you like to parse files?',

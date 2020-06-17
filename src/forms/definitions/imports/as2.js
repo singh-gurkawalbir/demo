@@ -218,9 +218,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'dataMappings'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings'],
+      },
       {
         collapsed: true,
         label: 'How would you like the records imported?',
