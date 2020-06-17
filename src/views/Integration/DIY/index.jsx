@@ -110,6 +110,14 @@ export default function Integration(props) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
+  const hideSettingsTab = useSelector(state => {
+    const canEditSettingsForm =
+      selectors.canEditSettingsForm(state, 'integrations', integrationId, integrationId);
+    const hasSettingsForm =
+      selectors.hasSettingsForm(state, 'integrations', integrationId);
+
+    return !canEditSettingsForm && !hasSettingsForm;
+  });
   const {
     name,
     description,
@@ -211,7 +219,8 @@ export default function Integration(props) {
     supportsChild,
     children,
     isMonitorLevelUser,
-  }), [children, hasAddOns, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
+    hideSettingsTab
+  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
@@ -321,7 +330,7 @@ export default function Integration(props) {
       }
 
       if (!availableTabs.find(tab => tab.path === tab)) {
-        newTab = 'settings';
+        newTab = availableTabs[0].path;
       }
 
       // Redirect to current tab of new store

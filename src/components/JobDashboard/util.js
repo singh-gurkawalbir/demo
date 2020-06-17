@@ -1,8 +1,8 @@
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 
 export const JOB_UI_STATUS = Object.freeze({
-  [JOB_STATUS.QUEUED]: 'Waiting in Queue...',
-  [JOB_STATUS.RUNNING]: 'In Progress...',
+  [JOB_STATUS.QUEUED]: 'Waiting in queue...',
+  [JOB_STATUS.RUNNING]: 'In progress...',
   [JOB_STATUS.COMPLETED]: 'Completed',
   [JOB_STATUS.FAILED]: 'Failed',
   [JOB_STATUS.CANCELED]: 'Canceled',
