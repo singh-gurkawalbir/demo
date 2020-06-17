@@ -67,6 +67,14 @@ export default {
       label: item.name,
       value: item.id,
     })),
+  'suitescript-itemCustomNumberColumn': data =>
+    data
+      .filter(
+        item =>
+          ['float', 'integer'].includes(item.type) &&
+          item.id.indexOf('item[*].custcol') === 0
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'webservices-searchFilters': data =>
     data.fields &&
     data.fields.map(item => ({
@@ -186,6 +194,14 @@ export default {
         value: d.name,
       })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-textFields': data =>
+    data.fields &&
+    data.fields
+      .filter(f => ['string', 'textarea'].includes(f.type))
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-externalIdFields': data =>
     data.fields &&
     data.fields

@@ -266,6 +266,48 @@ export const fileDefinition = (state, definitionId, options) =>
     options
   );
 
+export const hasSuiteScriptData = (
+  state,
+  { ssLinkedConnectionId, integrationId, resourceType }
+) =>
+  fromSuiteScript.hasData(state && state.suiteScript, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType,
+  });
+
+export const suiteScriptResource = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId }
+) =>
+  fromSuiteScript.resource(state && state.suiteScript, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export const suiteScriptResourceList = (
+  state,
+  { resourceType, ssLinkedConnectionId, integrationId }
+) =>
+  fromSuiteScript.resourceList(state && state.suiteScript, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export function suiteScriptJobsPagingDetails(state) {
+  return fromSuiteScript.jobsPagingDetails(state && state.suiteScript);
+}
+
+export function suiteScriptJobErrors(state, { jobId, jobType }) {
+  return fromSuiteScript.jobErrors(state && state.suiteScript, {
+    jobId,
+    jobType,
+  });
+}
+
 export function hasSettingsForm(state, resourceType, resourceId) {
   return fromResources.hasSettingsForm(
     state && state.resources,

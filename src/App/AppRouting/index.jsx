@@ -52,6 +52,16 @@ const ConnectorInstallBase = loadable(() =>
 const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
+const SuiteScriptIntegration = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
+  )
+);
+const SuiteScriptFlowBuilder = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
+  )
+);
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
@@ -172,6 +182,39 @@ export default function AppRouting() {
         exact
         render={({ history }) => history.replace('/pg/accesstokens')}
         />
+      <Route
+        path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId"
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`
+          )
+        }}
+      />
+      <Route
+        path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId"
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`
+          )
+        }}
+      />
+      <Route
+        path={[
+          '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId',
+          '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
+        ]}>
+        <SuiteScriptFlowBuilder />
+      </Route>
+      <Route
+        path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab"
+        component={SuiteScriptIntegration}
+      />
+      <Route
+        path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab"
+        component={SuiteScriptIntegration}
+      />
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />
     </Switch>

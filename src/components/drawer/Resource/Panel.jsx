@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
   },
   appLogo: {
     paddingRight: theme.spacing(6),
+    marginTop: theme.spacing(-0.5),
   },
   title: {
     display: 'flex',

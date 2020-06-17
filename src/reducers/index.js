@@ -60,6 +60,7 @@ import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
+import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 
@@ -2838,85 +2839,12 @@ export function suiteScriptLinkedConnections(state) {
   return linkedConnections;
 }
 
-export function suiteScriptIntegrations(state, connection) {
-  let ssIntegrations = [];
-
-  if (!connection.permissions || !connection.permissions.accessLevel) {
-    return ssIntegrations;
-  }
-
-  ssIntegrations = fromData.suiteScriptIntegrations(state.data, connection._id);
-
-  ssIntegrations = ssIntegrations.map(i => ({
-    ...i,
-    permissions: {
-      accessLevel: connection.permissions.accessLevel,
-      connections: {
-        edit: [
-          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-          INTEGRATION_ACCESS_LEVELS.MANAGE,
-        ].includes(connection.permissions.accessLevel),
-      },
-    },
-  }));
-
-  return ssIntegrations;
+export function suiteScriptIntegrations(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptIntegrations(state.data, ssLinkedConnectionId);
 }
 
-export function suiteScriptTiles(state, connection) {
-  let tiles = fromData.suiteScriptTiles(state.data, connection._id);
-
-  if (tiles.length === 0) {
-    return tiles;
-  }
-
-  const integrations = suiteScriptIntegrations(state, connection);
-  const hasConnectorTiles = tiles.filter(t => t._connectorId).length;
-  let published;
-
-  if (hasConnectorTiles) {
-    published = publishedConnectors(state);
-  }
-
-  let integration;
-  let status;
-  let connector;
-  let tile;
-
-  tiles = tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
-
-    if (t._connectorId && integration.mode !== INTEGRATION_MODES.SETTINGS) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
-
-    tile = {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-      tag: connection.netsuite.account,
-    };
-
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId);
-      tile.connector = {
-        owner: connector.user.company || connector.user.name,
-        applications: connector.applications || [],
-      };
-    }
-
-    return tile;
-  });
-
-  return tiles;
+export function suiteScriptTiles(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptTiles(state.data, ssLinkedConnectionId);
 }
 
 export function suiteScriptLinkedTiles(state) {
@@ -2924,7 +2852,7 @@ export function suiteScriptLinkedTiles(state) {
   let tiles = [];
 
   linkedConnections.forEach(connection => {
-    tiles = tiles.concat(suiteScriptTiles(state, connection));
+    tiles = tiles.concat(suiteScriptTiles(state, connection._id));
   });
 
   return tiles;
@@ -4470,6 +4398,218 @@ export const getScriptContext = createSelector(
   }
 );
 
+export function suiteScriptResourceStatus(
+  state,
+  {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+    resourceReqMethod = 'GET',
+  }
+) {
+  let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
+
+  if (resourceType === 'flows') {
+    path += `integrations/${integrationId}/flows`;
+  } else {
+    path += `${resourceType}`;
+  }
+
+  const commKey = commKeyGen(path, resourceReqMethod);
+  const method = resourceReqMethod;
+  const hasData = fromData.hasSuiteScriptData(state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const isLoading = fromComms.isLoading(state.comms, commKey);
+  const retryCount = fromComms.retryCount(state.comms, commKey);
+  const isReady = method !== 'GET' || (hasData && !isLoading);
+
+  return {
+    resourceType,
+    hasData,
+    isLoading,
+    retryCount,
+    method,
+    isReady,
+  };
+}
+
+export const suiteScriptResource = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId }
+) =>
+  fromData.suiteScriptResource(state && state.data, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export const suiteScriptResourceData = (
+  state,
+  { resourceType, id, ssLinkedConnectionId, integrationId, scope }
+) => {
+  if (!state || !resourceType || !id || !ssLinkedConnectionId) {
+    return emptyObject;
+  }
+
+  const master = suiteScriptResource(state, {
+    resourceType,
+    id,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const { patch, conflict } = fromSession.stagedResource(
+    state.session,
+    suiteScriptResourceKey({
+      ssLinkedConnectionId,
+      resourceType,
+      resourceId: id,
+    }),
+    scope
+  );
+
+  if (!master && !patch) return { merged: {} };
+
+  let merged;
+  let lastChange;
+
+  if (patch) {
+    // If the patch is not deep cloned, its values are also mutated and
+    // on some operations can corrupt the merged result.
+    const patchResult = jsonPatch.applyPatch(
+      master ? jsonPatch.deepClone(master) : {},
+      jsonPatch.deepClone(patch)
+    );
+
+    merged = patchResult.newDocument;
+
+    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
+  }
+
+  const data = {
+    master,
+    patch,
+    lastChange,
+    merged: merged || master,
+  };
+
+  if (conflict) data.conflict = conflict;
+
+  return data;
+};
+
+export const suiteScriptResourceList = (
+  state,
+  { resourceType, ssLinkedConnectionId, integrationId }
+) =>
+  fromData.suiteScriptResourceList(state && state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+
+export function suiteScriptIntegrationConnectionList(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  const flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    ssLinkedConnectionId,
+    integrationId,
+  });
+  const connections = suiteScriptResourceList(state, {
+    resourceType: 'connections',
+    ssLinkedConnectionId,
+  });
+  const connectionIdsInUse = [];
+
+  if (integrationId && flows) {
+    flows.forEach(f => {
+      if (f.export && f.export._connectionId) {
+        connectionIdsInUse.push(f.export._connectionId);
+      }
+      if (f.import && f.import._connectionId) {
+        connectionIdsInUse.push(f.import._connectionId);
+      }
+      if (isJavaFlow(f)) {
+        connectionIdsInUse.push('CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
+      }
+    });
+  }
+
+  return connections.filter(
+    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+  );
+}
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptResourceFormState(state && state.session, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
+export function suiteScriptTestConnectionCommState(
+  state,
+  resourceId,
+  ssLinkedConnectionId
+) {
+  const status = fromComms.suiteScriptTestConnectionStatus(
+    state && state.comms,
+    resourceId,
+    ssLinkedConnectionId
+  );
+  const message = fromComms.suiteScriptTestConnectionMessage(
+    state && state.comms,
+    resourceId,
+    ssLinkedConnectionId
+  );
+
+  return {
+    commState: status,
+    message,
+  };
+}
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptResourceFormSaveProcessTerminated(
+    state && state.session,
+    { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptJobsPagingDetails(state) {
+  return fromData.suiteScriptJobsPagingDetails(state.data);
+}
+
+export function suiteScriptJob(
+  state,
+  { ssLinkedConnectionId, integrationId, jobId, jobType }
+) {
+  const jobList = suiteScriptResourceList(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType: 'jobs',
+  });
+
+  return jobList.find(j => j._id === jobId && j.type === jobType);
+}
+
+export function suiteScriptJobErrors(state, { jobId, jobType }) {
+  return fromData.suiteScriptJobErrors(state.data, { jobId, jobType });
+}
+
 export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);
 }
@@ -4659,3 +4799,7 @@ export const rdbmsConnectionType = (state, connectionId) => {
 
   return connection.rdbms && connection.rdbms.type;
 };
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
+}

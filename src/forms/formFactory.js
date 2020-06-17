@@ -12,7 +12,7 @@ const getAllOptionsHandlerSubForms = (
   optionsHandler
 ) => {
   fieldMap &&
-    Object.keys(fieldMap).forEach(field => {
+    Object.keys(fieldMap).forEach((field) => {
       const { formId } = fieldMap[field];
 
       if (formId) {
@@ -43,7 +43,7 @@ export const getAmalgamatedOptionsHandler = (meta, resourceType) => {
     const finalRes =
       allOptionsHandler &&
       allOptionsHandler
-        .map(indvOptionsHandler => {
+        .map((indvOptionsHandler) => {
           if (indvOptionsHandler) {
             const res = indvOptionsHandler(fieldId, fields);
 
@@ -66,7 +66,7 @@ const applyCustomSettings = ({
   preSave,
   validationHandler,
 }) => {
-  const newLayout = produce(layout, draft => {
+  const newLayout = produce(layout, (draft) => {
     if (draft && draft.containers && draft.containers.length > 0) {
       if (draft.type === 'column') {
         const firstContainer = draft.containers[0];
@@ -95,7 +95,7 @@ const applyCustomSettings = ({
       draft.fields.push('settings');
     }
   });
-  const newFieldMap = produce(fieldMap, draft => {
+  const newFieldMap = produce(fieldMap, (draft) => {
     if (draft) {
       draft.settings = { fieldId: 'settings' };
     }
@@ -103,7 +103,7 @@ const applyCustomSettings = ({
   const preSaveProxy = (values, resource) => {
     const newValues = preSave ? preSave(values, resource) : values;
 
-    return produce(newValues, draft => {
+    return produce(newValues, (draft) => {
       if (Object.hasOwnProperty.call(draft, '/settings')) {
         let settings = draft['/settings'];
 
@@ -122,7 +122,7 @@ const applyCustomSettings = ({
   // formFactory.. this needs to be within the form meta (validWhen rules) or
   // just JS within the Dyna[Input] component mapped to manage the value.
   // This will be easiest after refactor of react-forms-processor to use redux.
-  const validationHandlerProxy = field => {
+  const validationHandlerProxy = (field) => {
     // Handles validity for settings field (when in string form)
     // Incase of other fields call the existing validationHandler
     if (field.id === 'settings') {
@@ -130,7 +130,9 @@ const applyCustomSettings = ({
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      ) return 'Settings must be a valid JSON';
+      ) {
+        return 'Settings must be a valid JSON';
+      }
 
       if (field.value && field.value.__invalid) {
         return 'Some of your settings are not valid.';
@@ -154,6 +156,7 @@ const getResourceFormAssets = ({
   isNew = false,
   assistantData,
   connection,
+  ssLinkedConnectionId,
 }) => {
   let fieldMap;
   let layout = {};
@@ -166,169 +169,201 @@ const getResourceFormAssets = ({
 
   // FormMeta generic pattern: fromMeta[resourceType][sub-type]
   // FormMeta custom pattern: fromMeta[resourceType].custom.[sub-type]
-  switch (resourceType) {
-    case 'connections':
-      if (isNew) {
-        meta = formMeta.connections.new;
-      } else if (resource && resource.assistant === 'financialforce') {
-        // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+  if (ssLinkedConnectionId) {
+    meta = formMeta.suiteScript[resourceType];
 
-        meta = formMeta.connections.salesforce;
-      } else if (resource && resource.assistant) {
-        meta = formMeta.connections.custom[type];
+    if (resourceType === 'connections') {
+      if (resource.type) {
+        meta = meta[resource.type];
+      }
+    } else if (resourceType === 'exports') {
+      const ssExport = resource.export;
 
-        /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
-        perspective and when all assistant metadata files are moved over to HTTP adaptor */
-        if (
-          resource.assistant &&
-          REST_ASSISTANTS.indexOf(resource.assistant) > -1
-        ) {
-          meta = formMeta.connections.custom.http;
+      if (ssExport.netsuite && ssExport.netsuite.type) {
+        meta = meta.netsuite[ssExport.netsuite.type];
+      } else if (ssExport.type === 'salesforce') {
+        if (ssExport.salesforce.type === 'sobject') {
+          meta = meta.salesforce.realtime;
+        } else {
+          meta = meta.salesforce.scheduled;
         }
-
-        if (meta) {
-          meta = meta[resource.assistant];
-        }
-      } else if (resource && resource.type === 'rdbms') {
-        const rdbmsSubType = resource.rdbms.type;
-
-        // when editing rdms connection we lookup for the resource subtype
-        meta = formMeta.connections.rdbms[rdbmsSubType];
-      } else if (RDBMS_TYPES.indexOf(type) !== -1) {
-        meta = formMeta.connections.rdbms[type];
       } else {
-        meta = formMeta.connections[type];
+        meta = meta[ssExport.type];
       }
+    } else if (resourceType === 'imports') {
+      const ssImport = resource.import;
 
-      if (meta) {
-        ({ fieldMap, layout, preSave, init, actions } = meta);
-      }
+      meta = meta[ssImport.type];
+    }
 
-      break;
-
-    case 'imports':
-      meta = formMeta[resourceType];
-
-      if (meta) {
+    if (meta) {
+      ({ fieldMap, layout, preSave, init, actions } = meta);
+    }
+  } else {
+    switch (resourceType) {
+      case 'connections':
         if (isNew) {
-          meta = meta.new;
-        } else if (type === 'netsuite') {
-          // get edit form meta branch
-          meta = meta.netsuiteDistributed;
-        } else if (
-          type === 'salesforce' &&
-          resource.assistant === 'financialforce'
-        ) {
+          meta = formMeta.connections.new;
+        } else if (resource && resource.assistant === 'financialforce') {
           // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-          meta = meta.salesforce;
-        } else if (type === 'rdbms') {
-          const rdbmsSubType =
-            connection && connection.rdbms && connection.rdbms.type;
+
+          meta = formMeta.connections.salesforce;
+        } else if (resource && resource.assistant) {
+          meta = formMeta.connections.custom[type];
+
+          /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
+        perspective and when all assistant metadata files are moved over to HTTP adaptor */
+          if (
+            resource.assistant &&
+            REST_ASSISTANTS.indexOf(resource.assistant) > -1
+          ) {
+            meta = formMeta.connections.custom.http;
+          }
+
+          if (meta) {
+            meta = meta[resource.assistant];
+          }
+        } else if (resource && resource.type === 'rdbms') {
+          const rdbmsSubType = resource.rdbms.type;
 
           // when editing rdms connection we lookup for the resource subtype
-          if (rdbmsSubType === 'snowflake') {
-            meta = meta.rdbms.snowflake;
-          } else {
-            meta = meta.rdbms.sql;
-          }
-        } else if (
-          resource &&
-          (resource.useParentForm !== undefined
-            ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
-        ) {
-          meta = meta.custom.http.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
+          meta = formMeta.connections.rdbms[rdbmsSubType];
+        } else if (RDBMS_TYPES.indexOf(type) !== -1) {
+          meta = formMeta.connections.rdbms[type];
         } else {
-          meta = meta[type];
+          meta = formMeta.connections[type];
         }
 
         if (meta) {
-          ({ fieldMap, layout, init, preSave, actions } = meta);
+          ({ fieldMap, layout, preSave, init, actions } = meta);
         }
-      }
 
-      break;
-    case 'exports':
-      meta = formMeta[resourceType];
+        break;
 
-      if (meta) {
-        if (isNew) {
-          meta = meta.new;
-        } else if (type === 'rdbms') {
-          const rdbmsSubType =
-            connection && connection.rdbms && connection.rdbms.type;
-
-          // when editing rdms connection we lookup for the resource subtype
-          if (rdbmsSubType === 'snowflake') {
-            meta = meta.rdbms.snowflake;
-          } else {
-            meta = meta.rdbms.sql;
-          }
-        } else if (
-          type === 'salesforce' &&
-          resource.assistant === 'financialforce'
-        ) {
-          // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
-
-          meta = meta.salesforce;
-        } else if (
-          resource &&
-          (resource.useParentForm !== undefined
-            ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
-        ) {
-          meta = meta.custom.http.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
-        } else if (type === 'rest') {
-          const { mediaType } = (connection && connection[type]) || {};
-
-          meta = meta[type];
-
-          if (mediaType === 'csv') {
-            meta = meta.csv;
-          } else {
-            meta = meta.json;
-          }
-        } else {
-          meta = meta[type];
-        }
+      case 'imports':
+        meta = formMeta[resourceType];
 
         if (meta) {
-          ({ fieldMap, layout, init, preSave, actions } = meta);
+          if (isNew) {
+            meta = meta.new;
+          } else if (type === 'netsuite') {
+            // get edit form meta branch
+            meta = meta.netsuiteDistributed;
+          } else if (
+            type === 'salesforce' &&
+            resource.assistant === 'financialforce'
+          ) {
+            // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+            meta = meta.salesforce;
+          } else if (type === 'rdbms') {
+            const rdbmsSubType =
+              connection && connection.rdbms && connection.rdbms.type;
+
+            // when editing rdms connection we lookup for the resource subtype
+            if (rdbmsSubType === 'snowflake') {
+              meta = meta.rdbms.snowflake;
+            } else {
+              meta = meta.rdbms.sql;
+            }
+          } else if (
+            resource &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant)
+          ) {
+            meta = meta.custom.http.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else {
+            meta = meta[type];
+          }
+
+          if (meta) {
+            ({ fieldMap, layout, init, preSave, actions } = meta);
+          }
         }
-      }
 
-      break;
+        break;
+      case 'exports':
+        meta = formMeta[resourceType];
 
-    case 'agents':
-    case 'scripts':
-    case 'accesstokens':
-    case 'connectorLicenses':
-    case 'integrations':
-      meta = formMeta[resourceType];
-      ({ fieldMap, preSave, init, layout } = meta);
-      break;
-    case 'stacks':
-    case 'templates':
-    case 'connectors':
-    case 'iClients':
-    case 'asyncHelpers':
-    case 'pageProcessor':
-    case 'pageGenerator':
-      meta = formMeta[resourceType];
-      ({ fieldMap, layout, init, preSave, actions } = meta);
-      break;
+        if (meta) {
+          if (isNew) {
+            meta = meta.new;
+          } else if (type === 'rdbms') {
+            const rdbmsSubType =
+              connection && connection.rdbms && connection.rdbms.type;
 
-    default:
-      meta = formMeta.default;
-      break;
+            // when editing rdms connection we lookup for the resource subtype
+            if (rdbmsSubType === 'snowflake') {
+              meta = meta.rdbms.snowflake;
+            } else {
+              meta = meta.rdbms.sql;
+            }
+          } else if (
+            type === 'salesforce' &&
+            resource.assistant === 'financialforce'
+          ) {
+            // Financial Force assistant is same as Salesforce. For more deatils refer https://celigo.atlassian.net/browse/IO-14279.
+
+            meta = meta.salesforce;
+          } else if (
+            resource &&
+            (resource.useParentForm !== undefined
+              ? !resource.useParentForm && resource.assistant
+              : resource.assistant)
+          ) {
+            meta = meta.custom.http.assistantDefinition(
+              resource._id,
+              resource,
+              assistantData
+            );
+          } else if (type === 'rest') {
+            const { mediaType } = (connection && connection[type]) || {};
+
+            meta = meta[type];
+
+            if (mediaType === 'csv') {
+              meta = meta.csv;
+            } else {
+              meta = meta.json;
+            }
+          } else {
+            meta = meta[type];
+          }
+
+          if (meta) {
+            ({ fieldMap, layout, init, preSave, actions } = meta);
+          }
+        }
+
+        break;
+
+      case 'agents':
+      case 'scripts':
+      case 'accesstokens':
+      case 'connectorLicenses':
+      case 'integrations':
+        meta = formMeta[resourceType];
+        ({ fieldMap, preSave, init, layout } = meta);
+        break;
+      case 'stacks':
+      case 'templates':
+      case 'connectors':
+      case 'iClients':
+      case 'asyncHelpers':
+      case 'pageProcessor':
+      case 'pageGenerator':
+        meta = formMeta[resourceType];
+        ({ fieldMap, layout, init, preSave, actions } = meta);
+        break;
+
+      default:
+        meta = formMeta.default;
+        break;
+    }
   }
 
   const optionsHandler = getAmalgamatedOptionsHandler(meta, resourceType);
@@ -337,7 +372,11 @@ const getResourceFormAssets = ({
   validationHandler = meta && meta.validationHandler;
   const resourceTypesWithSettings = ['exports', 'imports', 'connections'];
 
-  if (!isNew && resourceTypesWithSettings.includes(resourceType)) {
+  if (
+    !isNew &&
+    resourceTypesWithSettings.includes(resourceType) &&
+    !ssLinkedConnectionId
+  ) {
     ({ fieldMap, layout, preSave, validationHandler } = applyCustomSettings({
       fieldMap,
       validationHandler,
@@ -384,7 +423,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
   }
 
   const transformedFieldMap = Object.keys(fieldMapFromSubForm)
-    .map(key => {
+    .map((key) => {
       let field = fieldMapFromSubForm[key];
       const masterFields = masterFieldHash[resourceType]
         ? masterFieldHash[resourceType][field.fieldId]
@@ -397,7 +436,7 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
       }
-      const fieldCopy = produce(field, draft => {
+      const fieldCopy = produce(field, (draft) => {
         if (f.visibleWhen) {
           draft.visibleWhen = draft.visibleWhen || [];
           draft.visibleWhen.push(...f.visibleWhen);
@@ -431,7 +470,7 @@ const applyingMissedOutFieldMetaProperties = (
   const field = incompleteField;
 
   if (!ignoreFunctionTransformations) {
-    Object.keys(field).forEach(key => {
+    Object.keys(field).forEach((key) => {
       if (typeof field[key] === 'function') {
         field[key] = field[key](resource);
       }
@@ -488,7 +527,7 @@ const flattenedFieldMap = (
   } = opts;
 
   fields &&
-    fields.forEach(fieldReferenceName => {
+    fields.forEach((fieldReferenceName) => {
       const f = fieldMap[fieldReferenceName];
 
       if (f && f.formId) {
@@ -561,7 +600,7 @@ const setDefaultsToLayout = (
   let transformedFieldRefs = transformedFieldRef;
   const transformedContainers =
     containers &&
-    containers.map(container => {
+    containers.map((container) => {
       const {
         transformedLayout: transformedLayoutRes,
         transformedFieldMap: transfieldMap,
@@ -633,10 +672,10 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
   });
   const { fieldMap: transformedFieldMap } = transformedMeta;
   const extractedInitFunctions = Object.keys(transformedFieldMap)
-    .map(key => {
+    .map((key) => {
       const field = transformedFieldMap[key];
       const fieldReferenceWithFunc = Object.keys(field)
-        .filter(key => typeof field[key] === 'function')
+        .filter((key) => typeof field[key] === 'function')
         .reduce((acc, key) => {
           if (field[key]) acc[key] = field[key];
 
@@ -645,7 +684,7 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
 
       return { key, value: fieldReferenceWithFunc };
     })
-    .filter(val => Object.keys(val.value).length !== 0)
+    .filter((val) => Object.keys(val.value).length !== 0)
     .reduce((acc, curr) => {
       const { key, value } = curr;
 
@@ -656,10 +695,10 @@ const getFieldsWithoutFuncs = (meta, resource, resourceType) => {
       return acc;
     }, {});
   const transformedFieldMapWithoutFuncs = Object.keys(transformedFieldMap)
-    .map(key => {
+    .map((key) => {
       const field = transformedFieldMap[key];
       const fieldReferenceWithoutFunc = Object.keys(field)
-        .filter(key => typeof field[key] !== 'function')
+        .filter((key) => typeof field[key] !== 'function')
         .reduce((acc, key) => {
           acc[key] = field[key];
 

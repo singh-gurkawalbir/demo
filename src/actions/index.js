@@ -1,4 +1,5 @@
 import actionTypes from './types';
+import { suiteScriptResourceKey } from '../utils/suiteScript';
 
 export const availableResources = [
   'exports',
@@ -1799,7 +1800,398 @@ const exportData = {
       error: err,
     }),
 };
-// #endregion
+const suiteScript = {
+  resourceForm: {
+    init: (
+      resourceType,
+      resourceId,
+      isNew,
+      skipCommit,
+      flowId,
+      initData,
+      ssLinkedConnectionId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT, {
+        resourceType,
+        resourceId,
+        isNew,
+        skipCommit,
+        flowId,
+        initData,
+        ssLinkedConnectionId,
+      }),
+    initComplete: (
+      resourceType,
+      resourceId,
+      fieldMeta,
+      isNew,
+      skipCommit,
+      flowId,
+      ssLinkedConnectionId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT_COMPLETE, {
+        resourceId,
+        resourceType,
+        fieldMeta,
+        isNew,
+        skipCommit,
+        flowId,
+        ssLinkedConnectionId,
+      }),
+    clearInitData: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR_INIT_DATA, {
+        resourceId,
+        resourceType,
+        ssLinkedConnectionId,
+      }),
+    showFormValidations: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(
+        actionTypes.SUITESCRIPT.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS,
+        {
+          resourceType,
+          resourceId,
+          ssLinkedConnectionId,
+        }
+      ),
+    clear: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+      }),
+    submit: (
+      resourceType,
+      resourceId,
+      values,
+      match,
+      skipClose,
+      isGenerate,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT, {
+        resourceType,
+        resourceId,
+        values,
+        match,
+        skipClose,
+        isGenerate,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitComplete: (
+      resourceType,
+      resourceId,
+      formValues,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_COMPLETE, {
+        resourceType,
+        resourceId,
+        formValues,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitFailed: (
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_FAILED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    submitAborted: (
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_ABORTED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+  },
+  resource: {
+    connections: {
+      test: (resourceId, values, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST, {
+          resourceId,
+          values,
+          ssLinkedConnectionId,
+        }),
+      testErrored: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_ERRORED, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testCancelled: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_CANCELLED, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testSuccessful: (resourceId, message, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_SUCCESSFUL, {
+          resourceId,
+          message,
+          ssLinkedConnectionId,
+        }),
+      testClear: (resourceId, retainStatus, ssLinkedConnectionId) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.TEST_CLEAR, {
+          resourceId,
+          retainStatus,
+          ssLinkedConnectionId,
+        }),
+    },
+    patchStaged: (
+      id,
+      patch,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.RESOURCE.STAGE_PATCH, {
+        patch,
+        id: suiteScriptResourceKey({
+          ssLinkedConnectionId,
+          resourceType,
+          resourceId: id,
+        }),
+        scope,
+      }),
+    clearStaged: (
+      id,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.RESOURCE.STAGE_CLEAR, {
+        id: suiteScriptResourceKey({
+          ssLinkedConnectionId,
+          resourceType,
+          resourceId: id,
+        }),
+        scope,
+      }),
+    received: (resourceType, resource, ssLinkedConnectionId, integrationId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.RECEIVED, {
+        resourceType,
+        resource,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    updated: (
+      resourceType,
+      resourceId,
+      master,
+      patch,
+      ssLinkedConnectionId,
+      integrationId
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.UPDATED, {
+        resourceType,
+        resourceId,
+        master,
+        patch,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    deleted: (resourceType, resourceId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.DELETED, {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+      }),
+  },
+  sampleData: {
+    request: (
+      ssLinkedConnectionId,
+      resourceId,
+      resourceType,
+      values,
+      stage,
+      runOffline
+    ) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, {
+        ssLinkedConnectionId,
+        resourceId,
+        resourceType,
+        values,
+        stage,
+        runOffline,
+      }),
+    received: (ssLinkedConnectionId, resourceId, previewData) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED, {
+        ssLinkedConnectionId,
+        resourceId,
+        previewData,
+      }),
+    update: (ssLinkedConnectionId, resourceId, processedData, stage) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.UPDATE, {
+        ssLinkedConnectionId,
+        resourceId,
+        processedData,
+        stage,
+      }),
+    receivedError: (ssLinkedConnectionId, resourceId, error, stage) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR, {
+        ssLinkedConnectionId,
+        resourceId,
+        error,
+        stage,
+      }),
+    reset: (ssLinkedConnectionId, resourceId) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
+        ssLinkedConnectionId,
+        resourceId,
+      }),
+  },
+  job: {
+    clear: () => action(actionTypes.SUITESCRIPT.JOB.CLEAR),
+    requestCollection: ({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      filters,
+    }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        filters,
+      }),
+    receivedCollection: ({ collection }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RECEIVED_COLLECTION, {
+        collection,
+      }),
+    request: ({ jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST, { jobId }),
+    received: ({ job }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RECEIVED, { job }),
+    requestInProgressJobStatus: ({ ssLinkedConnectionId, integrationId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS, {
+        ssLinkedConnectionId,
+        integrationId,
+      }),
+    noInProgressJobs: () =>
+      action(actionTypes.SUITESCRIPT.JOB.NO_IN_PROGRESS_JOBS),
+    requestErrors: ({ ssLinkedConnectionId, integrationId, jobType, jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.REQUEST_COLLECTION, {
+        ssLinkedConnectionId,
+        integrationId,
+        jobType,
+        jobId,
+      }),
+    receivedErrors: ({ collection, jobId, jobType }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RECEIVED_COLLECTION, {
+        collection,
+        jobId,
+        jobType,
+      }),
+    resolveAllPending: () =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_PENDING),
+    resolve: ({ jobId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE, { jobId }),
+    resolveSelected: ({ ssLinkedConnectionId, integrationId, flowId, jobs }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_SELECTED, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        jobs,
+      }),
+    resolveAll: ({ flowId, integrationId, ssLinkedConnectionId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL, {
+        flowId,
+        integrationId,
+        ssLinkedConnectionId,
+      }),
+    resolveInit: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, job),
+    resolveAllInit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT),
+    resolveUndo: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, job),
+    resolveAllUndo: ({ flowId, integrationId, ssLinkedConnectionId }) =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO, {
+        flowId,
+        integrationId,
+        ssLinkedConnectionId,
+      }),
+    resolveCommit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_COMMIT),
+    resolveAllCommit: () =>
+      action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_COMMIT),
+    resolveSelectedErrorsInit: ({ selectedErrorIds }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED_INIT, {
+        selectedErrorIds,
+      }),
+    resolveSelectedErrors: ({
+      ssLinkedConnectionId,
+      integrationId,
+      jobId,
+      jobType,
+      selectedErrorIds,
+    }) =>
+      action(actionTypes.SUITESCRIPT.JOB.ERROR.RESOLVE_SELECTED, {
+        ssLinkedConnectionId,
+        integrationId,
+        jobId,
+        jobType,
+        selectedErrorIds,
+      }),
+    error: {
+      clear: () => action(actionTypes.SUITESCRIPT.JOB.ERROR.CLEAR),
+    },
+  },
+  paging: {
+    job: {
+      setRowsPerPage: rowsPerPage =>
+        action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_ROWS_PER_PAGE, {
+          rowsPerPage,
+        }),
+      setCurrentPage: currentPage =>
+        action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE, {
+          currentPage,
+        }),
+    },
+  },
+  flow: {
+    run: ({ ssLinkedConnectionId, integrationId, flowId, _id }) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RUN, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        _id,
+      }),
+    enable: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.ENABLE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
+    disable: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.DISABLE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
+    isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
+        { onOffInProgress, ssLinkedConnectionId, _id }),
+    delete: ({ssLinkedConnectionId, integrationId, _id}) =>
+      action(actionTypes.SUITESCRIPT.FLOW.DELETE, {
+        ssLinkedConnectionId,
+        integrationId,
+        _id,
+      }),
+  },
+};
 const editorSampleData = {
   request: ({
     flowId,
@@ -1886,6 +2278,7 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  suiteScript,
   customSettings,
   exportData,
   editorSampleData,

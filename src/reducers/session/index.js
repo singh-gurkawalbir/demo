@@ -26,6 +26,7 @@ import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
@@ -60,6 +61,7 @@ export default combineReducers({
   transfers,
   responseMapping,
   fileUpload,
+  suiteScript,
   jobErrorsPreview,
   errorManagement,
   customSettings,
@@ -661,3 +663,37 @@ export function integrationAppImportMetadata(state, importId) {
 }
 
 // #endregion
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormState(state && state.suiteScript, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormSaveProcessTerminated(
+    state && state.suiteScript,
+    {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    }
+  );
+}
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSuiteScript.isFlowOnOffInProgress(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, _id }
+  );
+}

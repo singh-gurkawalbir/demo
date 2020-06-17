@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, Button } from '@material-ui/core';
+import { Typography, Tooltip, Button, makeStyles } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -18,38 +19,61 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
 import {
   tileStatus,
-  suiteScriptTileName,
   dragTileConfig,
   dropTileConfig,
 } from './util';
 import getRoutePath from '../../utils/routePaths';
-import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import ModalDialog from '../../components/ModalDialog';
+import { getDomain } from '../../utils/resource';
+import * as selectors from '../../reducers';
+
+const useStyles = makeStyles(theme => ({
+  tileName: {
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  action: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    color: theme.palette.secondary.light,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+  status: {
+    '& > * :hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
 
 function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
+  const classes = useStyles();
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
-  const accessLevel =
-    tile.integration &&
-    tile.integration.permissions &&
-    tile.integration.permissions.accessLevel;
-  const integrationAppName = getIntegrationAppUrlName(tile.name, true);
+  const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
+  const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
+  const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
   const status = tileStatus(tile);
-  let urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/settings`;
+  let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/uninstall`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/settings`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
-  const isNotYetSupported = true;
+  const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(
+    getDomain()
+  );
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
@@ -65,23 +89,23 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/suiteScript/${tile._ioConnectionId}/integrationapps/${integrationAppName}/${tile._integrationId}/setup`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`
           )
         );
       } else {
         history.push(
           getRoutePath(
-            `/suiteScript/${tile._ioConnectionId}/integrations/${tile._integrationId}/dashboard`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`
           )
         );
       }
     },
     [
       history,
-      integrationAppName,
+      tile.urlName,
       isNotYetSupported,
       tile._integrationId,
-      tile._ioConnectionId,
+      tile.ssLinkedConnectionId,
       tile.status,
     ]
   );
@@ -146,7 +170,10 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
       <div style={{ opacity }} ref={ref}>
         <HomePageCardContainer onClick={handleTileClick}>
           <Header>
-            <Status label={status.label} onClick={handleStatusClick}>
+            <Status
+              label={status.label}
+              onClick={handleStatusClick}
+              className={classes.status}>
               <StatusCircle variant={status.variant} />
             </Status>
           </Header>
@@ -156,8 +183,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                 <Link
                   color="inherit"
                   to={getRoutePath(urlToIntegrationSettings)}
+                  className={classes.tileName}
                   onClick={handleLinkClick}>
-                  {suiteScriptTileName(tile)}
+                  {tile.displayName}
                 </Link>
               </Typography>
             </CardTitle>
@@ -187,6 +215,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                       placement="bottom">
                       <Link
                         color="inherit"
+                        className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
                         onClick={handleLinkClick}>
                         <PermissionsMonitorIcon />
@@ -198,6 +227,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                       placement="bottom">
                       <Link
                         color="inherit"
+                        className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
                         onClick={handleLinkClick}>
                         <PermissionsManageIcon />
@@ -206,11 +236,11 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   )}
                 </Manage>
               )}
-              {tile.tag && <Tag variant={`NS Account #${tile.tag}`} />}
+              {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
             </FooterActions>
             <Info
               variant={tile._connectorId ? 'Integration app' : 'Legacy'}
-              label={tile.connector && tile.connector.owner}
+              label={connector?.user?.company}
             />
           </Footer>
         </HomePageCardContainer>

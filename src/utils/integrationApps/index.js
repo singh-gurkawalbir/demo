@@ -2,17 +2,13 @@ import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } fro
 import { isProduction } from '../../forms/utils';
 
 export const getIntegrationAppUrlName = (
-  integrationAppName,
-  isV2Integration
+  integrationAppName
 ) => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
     return 'integrationApp';
   }
 
-  return (
-    integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '') +
-    (isV2Integration ? 'V2' : '')
-  );
+  return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
 export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
