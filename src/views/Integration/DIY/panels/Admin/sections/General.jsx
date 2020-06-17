@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     '& > div': {
       padding: theme.spacing(3, 0),
+      overflow: 'visible',
     },
   },
 }));
