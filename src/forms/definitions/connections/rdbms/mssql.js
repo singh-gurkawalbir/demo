@@ -49,19 +49,37 @@ export default {
     'rdbms.instanceName': { fieldId: 'rdbms.instanceName' },
     'rdbms.port': { fieldId: 'rdbms.port' },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'rdbms.version',
-      'rdbmsFields',
-      'rdbms.instanceName',
-      'rdbms.port',
-    ],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rdbms.version',
+          'rdbmsFields',
+          'rdbms.instanceName',
+          'rdbms.port',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced Settings',

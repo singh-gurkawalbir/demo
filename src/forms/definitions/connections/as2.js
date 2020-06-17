@@ -241,11 +241,25 @@ export default {
     },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
       {
         collapsed: true,
         label: 'My AS2 Station Configuration',
@@ -310,7 +324,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'API Rate Limits',
+        label: 'Non-standard API rate limiter',
         fields: [
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
@@ -325,7 +339,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['as2.preventCanonicalization', 'as2.concurrencyLevel'],
       },
     ],

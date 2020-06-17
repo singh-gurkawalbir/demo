@@ -121,10 +121,18 @@ export default {
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     settings: { fieldId: 'settings' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
     fields: [
       'name',
+      'application',
       'http.auth.type',
       'http.auth.oauth.scope',
       'http.auth.token.token',

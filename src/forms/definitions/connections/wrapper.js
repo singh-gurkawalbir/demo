@@ -110,6 +110,13 @@ export default {
     'wrapper.pingFunction': { fieldId: 'wrapper.pingFunction' },
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
     wrapperAdvanced: { formId: 'wrapperAdvanced' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
     fields: [
@@ -121,7 +128,23 @@ export default {
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'wrapper.pingFunction',
+          'wrapper._stackId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['wrapperAdvanced'],
       },
     ],

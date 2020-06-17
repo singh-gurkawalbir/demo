@@ -64,17 +64,28 @@ export default {
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'rdbmsFields',
-      'rdbms.port',
-      'rdbms.useSSL',
-      'rdbms.ssl.ca',
-    ],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rdbmsFields',
+          'rdbms.port',
+          'rdbms.useSSL',
+          'rdbms.ssl.ca',
+        ],
+      },
       {
         collapsed: true,
         label: 'Advanced Settings',
