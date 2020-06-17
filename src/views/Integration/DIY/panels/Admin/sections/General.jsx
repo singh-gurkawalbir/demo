@@ -47,7 +47,6 @@ export default function GeneralSection({ integrationId }) {
           type: 'text',
           multiline: true,
           maxRows: 5,
-
           label: 'Description',
           defaultValue: description,
         },
