@@ -10,7 +10,7 @@ import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
 import { adaptorTypeMap } from '../../utils/resource';
 
-export function* saveMappings({ id }) {
+export function* saveMappings({ id, context }) {
   const patch = [];
   const {
     mappings,
@@ -81,6 +81,7 @@ export function* saveMappings({ id }) {
     resourceType: 'imports',
     id: resourceId,
     scope: SCOPES.VALUE,
+    context,
   });
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed(id));

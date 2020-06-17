@@ -89,7 +89,7 @@ export function* evaluateExternalProcessor({ processorData }) {
   }
 }
 
-export function* saveProcessor({ id }) {
+export function* saveProcessor({ id, context }) {
   const patches = yield select(selectors.editorPatchSet, id);
   const editor = yield select(selectors.editor, id);
 
@@ -168,6 +168,7 @@ export function* saveProcessor({ id }) {
           resourceType,
           id: resourceId,
           scope: SCOPES.VALUE,
+          context,
         });
 
         // trigger save failed in case of error
