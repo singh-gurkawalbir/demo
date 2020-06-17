@@ -8,7 +8,6 @@ import {v4} from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
@@ -40,7 +39,6 @@ function DynaWebhookTokenGenerator(props) {
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [token, setToken] = useState(null);
   const [url, setUrl] = useState(false);
   const dispatch = useDispatch();
@@ -115,12 +113,7 @@ function DynaWebhookTokenGenerator(props) {
         <div className={classes.dynaWebhookTokenbtn}>
           {value && value.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
-              text={value}
-              onCopy={() =>
-                enqueueSnackbar({
-                  message: 'Token copied to clipboard.',
-                  variant: 'success',
-                })}>
+              text={value}>
               <Button
                 data-test="copyToClipboard"
                 title="Copy to clipboard"

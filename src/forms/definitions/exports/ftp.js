@@ -104,8 +104,6 @@ export default {
     }
 
     if (newValues['/outputMode'] === 'blob') {
-      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-
       if (newValues['/fileMetadata']) {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
@@ -271,7 +269,6 @@ export default {
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
-    'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -327,15 +324,6 @@ export default {
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
     },
-    file: {
-      formId: 'file',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
     fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
     exportPanel: {
@@ -346,9 +334,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common', 'outputMode'],
+          },
           {
             collapsed: true,
             label: 'How would you like to parse files?',

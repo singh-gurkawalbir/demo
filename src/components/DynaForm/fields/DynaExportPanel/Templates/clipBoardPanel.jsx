@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { makeStyles } from '@material-ui/core/styles';
-import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import CopyIcon from '../../../../icons/CopyIcon';
 import IconTextButton from '../../../../IconTextButton';
 
@@ -24,21 +23,12 @@ const useStyles = makeStyles(theme => ({
 export default function ClipBoardPanel(props) {
   const { text } = props;
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const handleOnCopy = useCallback(
-    () =>
-      enqueueSnackbar({
-        message: 'Data copied to clipboard.',
-        variant: 'success',
-      }),
-    [enqueueSnackbar]
-  );
+
 
   return (
     <div className={classes.clipBoardContainer}>
       <CopyToClipboard
         text={text}
-        onCopy={handleOnCopy}
         className={classes.clipBoard}>
         <IconTextButton
           data-test="copyToClipboard"

@@ -3,7 +3,11 @@ import { deepClone, applyPatch } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
+import {
+  resourceData,
+  getResourceSampleDataWithStatus,
+  isRestCsvMediaTypeExport
+} from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
@@ -12,7 +16,11 @@ import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
-import { isRealTimeOrDistributedResource, isFileAdaptor } from '../../utils/resource';
+import {
+  isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource
+} from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 /*
  * Parsers for different file types used for converting into JSON format
@@ -217,8 +225,9 @@ function* fetchExportPreviewData({
     resourceId,
     resourceType,
   });
-  // If it is a file adaptor , follows a different approach to fetch sample data
-  if (isFileAdaptor(body)) {
+  const isRestCsvExport = yield select(isRestCsvMediaTypeExport, resourceId);
+  // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
+  if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
     // extract all details needed for a file sampledata
     const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
     const fileProps = {

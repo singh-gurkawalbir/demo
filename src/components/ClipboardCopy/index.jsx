@@ -2,8 +2,7 @@ import { IconButton, Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import React, { useCallback } from 'react';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import React from 'react';
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
 
@@ -12,24 +11,22 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  copyTokenIcon: {
+    padding: 0,
+  },
   showToken: {
+    padding: 0,
+    minWidth: 'unset',
     '&:hover': {
       color: theme.palette.primary.main,
+      background: 'transparent',
     },
   },
 }));
 
 export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr }) {
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
 
-  const copyToClipboard = useCallback(() => {
-    enqueueSnackbar({
-      message: `Token (${token}) copied to your clipboard!`,
-    });
-  },
-  [enqueueSnackbar, token]
-  );
 
   return (
     <div className={classes.root}>
@@ -39,9 +36,9 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
             {token || <AccessToken count="23" />}
           </Typography>
           <CopyToClipboard
-            text={token}
-            onCopy={copyToClipboard}>
+            text={token}>
             <IconButton
+              className={classes.copyTokenIcon}
               data-test="copyToken"
               title="Copy to clipboard"
               size="small">

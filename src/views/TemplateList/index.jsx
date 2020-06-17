@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const defaultFilter = { take: process.env.DEFAULT_TABLE_ROW_COUNT || 10 };
+const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 
 export default function TemplateList(props) {
   const { location } = props;

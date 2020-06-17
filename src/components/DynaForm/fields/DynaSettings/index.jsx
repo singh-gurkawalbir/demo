@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Button, Divider } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import { makeStyles, Divider } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
@@ -12,42 +12,41 @@ import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FieldHelp from '../../FieldHelp';
+import FormBuilderButton from '../../../FormBuilderButton';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
   },
-  launchButton: {
-    marginLeft: theme.spacing(2),
-  },
   divider: {
     marginTop: '20px',
     marginBottom: '10px',
-  }
+  },
+  summaryContainer: {
+    width: '100%',
+  },
+  summaryLabel: {
+    flexGrow: 1,
+    alignSelf: 'center',
+  },
 }));
 
 export default function DynaSettings(props) {
-  const classes = useStyles();
   const {
     id,
     resourceContext,
     disabled,
     onFieldChange,
-    label,
+    label = 'Custom settings',
     collapsed = true,
+    fieldsOnly = false
   } = props;
-  const settingsContainer = {
-    // collapsed: true,
-    label: label || 'Custom settings',
-    fields: ['settings'],
-  };
+  const classes = useStyles();
   const { resourceType, resourceId } = resourceContext;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [drawerKey, setDrawerKey] = useState(0);
   const history = useHistory();
-  const match = useRouteMatch();
   const integrationId = useIntegration(resourceType, resourceId);
   const isViewMode = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -71,13 +70,8 @@ export default function DynaSettings(props) {
   const hasSettingsForm = useSelector(state =>
     selectors.hasSettingsForm(state, resourceType, resourceId)
   );
-  const toggleEditMode = useCallback(
-    e => {
-      e.stopPropagation();
-      setDrawerKey(drawerKey => drawerKey + 1);
-      history.push(`${match.url}/editSettings`);
-    },
-    [history, match.url]
+  const handleFormBuilderClick = useCallback(
+    () => setDrawerKey(drawerKey => drawerKey + 1), []
   );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
@@ -112,9 +106,7 @@ export default function DynaSettings(props) {
     if (resourceType === 'integrations') {
       return (
         <div>
-          <Typography>
-            {settingsContainer.label}
-          </Typography>
+          <Typography>{label}</Typography>
           <Divider className={classes.divider} />
           <span>
             You don&apos;t have any custom settings for this integration.
@@ -125,55 +117,15 @@ export default function DynaSettings(props) {
     return null;
   }
 
-  // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
-  return (
-  // Always render the edit drawer. This drawer has logic within to not display unless the
-  // browser location ends with a specific path.
-
-    <div className={classes.child}>
-      <ExpansionPanel
-        // eslint-disable-next-line react/no-array-index-key
-        expanded={shouldExpand}>
-        <ExpansionPanelSummary
-          data-test={settingsContainer.label}
-          onClick={handleExpandClick}
-          expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.label}>
-            {settingsContainer.label}
-            {isDeveloper && !isViewMode && visibleForUser && (
-              <>
-                <Button
-                  data-test="form-editor-action"
-                  variant="outlined"
-                  className={classes.launchButton}
-                  // color="secondary"
-                  onClick={toggleEditMode}>
-                  Launch form builder
-                </Button>
-                <FieldHelp
-                  id="settingsForm"
-                  resourceType={resourceType}
-                  helpKey="settingsForm"
-                  label="Settings form builder"
-                />
-              </>
-            )}
-          </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails >
-          {hasSettingsForm ? (
-            <FormView
-              resourceId={resourceId}
-              resourceType={resourceType}
-              disabled={disabled}
-              onFormChange={handleSettingFormChange}
-            />
-          ) : (
-            <RawView {...props} />
-          )}
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      {isDeveloper && !isViewMode && visibleForUser && (
+  function renderSettings() {
+    return (
+      <>
+        {!hasSettingsForm ? <RawView {...props} /> : <FormView
+          resourceId={resourceId}
+          resourceType={resourceType}
+          disabled={disabled}
+          onFormChange={handleSettingFormChange}
+      />}
         <EditDrawer
           key={drawerKey}
           editorId={id}
@@ -182,7 +134,31 @@ export default function DynaSettings(props) {
           settingsForm={settingsForm}
           onClose={handleEditClose}
         />
-      )}
+      </>
+    );
+  }
+
+  if (fieldsOnly) return renderSettings();
+
+  // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
+  return (
+    <div className={classes.child}>
+      <ExpansionPanel
+        expanded={shouldExpand}>
+        <ExpansionPanelSummary
+          data-test={label}
+          className={classes.summaryContainer}
+          onClick={handleExpandClick}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {isDeveloper && !isViewMode && visibleForUser && shouldExpand && (
+            <FormBuilderButton onClick={handleFormBuilderClick} />
+          )}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails >
+          {renderSettings()}
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     </div>
   );
 }

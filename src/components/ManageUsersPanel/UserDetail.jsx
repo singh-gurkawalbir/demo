@@ -6,7 +6,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
-import EditIcon from '../icons/EditIcon';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -199,10 +198,10 @@ export default function UserDetail(props) {
       />
       <TableRow key={user._id}>
         <TableCell>
-          <div>{user.sharedWithUser.email}</div>
+          <div>{user.sharedWithUser.name}</div>
         </TableCell>
         <TableCell>
-          <div>{user.sharedWithUser.name}</div>
+          <div>{user.sharedWithUser.email}</div>
         </TableCell>
         <TableCell>
           {!integrationId &&
@@ -237,65 +236,74 @@ export default function UserDetail(props) {
         </TableCell>
         {isAccountOwner && (
           <>
+            <TableCell>
+              <CeligoSwitch
+                data-test="disableUser"
+                enabled={!user.disabled}
+                onChange={() => {
+                  handleActionClick('disable');
+                }}
+                  />
+
+            </TableCell>
             {integrationId && user._id !== ACCOUNT_IDS.OWN && (
               <TableCell>
-                <IconButton
-                  data-test="editUser"
-                  onClick={() => {
-                    handleActionClick('edit');
-                  }}>
-                  <EditIcon />
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
+                    onClick={() => {
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
                 </IconButton>
               </TableCell>
             )}
 
             {!integrationId && (
-              <>
-                <TableCell>
-                  <CeligoSwitch
-                    data-test="disableUser"
-                    enabled={!user.disabled}
-                    onChange={() => {
-                      handleActionClick('disable');
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}>
-                    <MenuItem
-                      data-test="changeUserPermissions"
-                      onClick={() => {
-                        handleActionClick('edit');
-                      }}>
-                      Change permissions
-                    </MenuItem>
-                    <Divider />
-                    {user.accepted && (
-                      <MenuItem
-                        data-test="makeAccountOwner"
-                        onClick={() => {
-                          handleActionClick('makeOwner');
-                        }}>
-                        Make account owner
-                      </MenuItem>
-                    )}
-                    {user.accepted && <Divider />}
-                    <MenuItem
-                      data-test="deleteFromAccount"
-                      onClick={() => {
-                        handleActionClick('delete');
-                      }}>
-                      Delete from account
-                    </MenuItem>
-                  </Menu>
-                  <IconButton onClick={handleClick}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </TableCell>
-              </>
+            <>
+              <TableCell>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
+                    onClick={() => {
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                  <Divider />
+                  {user.accepted && (
+                  <MenuItem
+                    data-test="makeAccountOwner"
+                    onClick={() => {
+                      handleActionClick('makeOwner');
+                    }}>
+                    Make account owner
+                  </MenuItem>
+                  )}
+                  {user.accepted && <Divider />}
+                  <MenuItem
+                    data-test="deleteFromAccount"
+                    onClick={() => {
+                      handleActionClick('delete');
+                    }}>
+                    Delete from account
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
+                </IconButton>
+              </TableCell>
+            </>
             )}
           </>
         )}

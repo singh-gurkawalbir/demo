@@ -2,7 +2,7 @@ export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
-    retValues['/http/ping/relativeURI'] = '/admin/orders.json';
+    retValues['/http/ping/relativeURI'] = '/orders.json';
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
@@ -34,15 +34,15 @@ export default {
             ? /^(read_|write_)(\w*)/.exec(scope)[2]
             : '';
           const pingURIs = {
-            content: '/admin/articles/authors.json',
-            themes: '/admin/themes.json',
-            products: '/admin/products/count.json',
-            customers: '/admin/customers/count.json',
-            orders: '/admin/orders/count.json',
-            script_tags: '/admin/script_tags/count.json',
-            fulfillments: '/admin/fulfillment_services.json?scope=all',
-            shipping: '/admin/carrier_services.json',
-            users: '/admin/users.json',
+            content: '/articles/authors.json',
+            themes: '/themes.json',
+            products: '/products/count.json',
+            customers: '/customers/count.json',
+            orders: '/orders/count.json',
+            script_tags: '/script_tags/count.json',
+            fulfillments: '/fulfillment_services.json?scope=all',
+            shipping: '/carrier_services.json',
+            users: '/users.json',
           };
 
           retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
@@ -75,7 +75,9 @@ export default {
       '/type': 'http',
       '/assistant': 'shopify',
       '/http/mediaType': 'json',
-      '/http/baseURI': `https://${formValues['/http/storeURL']}.myshopify.com`,
+      '/http/baseURI': `https://${
+        formValues['/http/storeURL']
+      }.myshopify.com/admin/api/${formValues['/http/unencrypted/version']}`,
       '/http/ping/method': 'GET',
     };
   },
@@ -129,6 +131,16 @@ export default {
 
         return subdomain;
       },
+    },
+    'http.unencrypted.version': {
+      fieldId: 'http.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      helpKey: 'shopify.connection.http.unencrypted.version',
+      required: true,
+      defaultValue: r =>
+        (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
+        '2020-01',
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
@@ -185,6 +197,8 @@ export default {
         'unauthenticated_write_checkouts',
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
+        'read_assigned_fulfillment_orders',
+        'write_assigned_fulfillment_orders',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
@@ -195,6 +209,7 @@ export default {
       'name',
       'http.auth.type',
       'http.storeURL',
+      'http.unencrypted.version',
       'http.auth.basic.username',
       'http.auth.basic.password',
       'http.auth.oauth.scope',

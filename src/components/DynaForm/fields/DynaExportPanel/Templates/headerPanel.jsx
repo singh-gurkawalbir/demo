@@ -11,10 +11,14 @@ const useStyles = makeStyles(theme => ({
   textToggle: {
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
+    padding: 1,
     borderColor: theme.palette.secondary.lightest,
     '& > button': {
       height: 30,
       padding: theme.spacing(0, 5),
+      '&:first-child': {
+        borderRadius: props => props.availablePreviewStages.length > 1 ? [[24, 0, 0, 24]] : 'none',
+      },
       '&:last-child': {
         height: 30,
         padding: theme.spacing(0, 5),
@@ -25,13 +29,17 @@ const useStyles = makeStyles(theme => ({
           backgroundColor: theme.palette.primary.light,
         },
       },
+      '&:not(:first-child)': {
+        borderRadius: '0px !important',
+        borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+      },
     },
   },
 }));
 
 export default function HeaderPanel(props) {
   const { handlePanelViewChange, availablePreviewStages, panelType } = props;
-  const classes = useStyles();
+  const classes = useStyles(props);
 
   return (
     <div className={classes.textToggleContainer}>
@@ -41,6 +49,7 @@ export default function HeaderPanel(props) {
         onChange={handlePanelViewChange}
         exclusive
         options={availablePreviewStages}
+
       />
     </div>
   );

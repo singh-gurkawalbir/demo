@@ -80,6 +80,7 @@ export default function UserForm({
         label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
+        skipSort: true,
         options: [
           {
             items: [
@@ -98,7 +99,7 @@ export default function UserForm({
             ],
           },
         ],
-        helpText: 'Access Level help text',
+        helpKey: 'users.accesslevel',
       },
       integrationsToManage: {
         id: 'integrationsToManage',

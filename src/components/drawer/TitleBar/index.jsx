@@ -8,11 +8,10 @@ import BackArrowIcon from '../../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
-    background: theme.palette.background.paper,
+    background: theme.palette.background.default,
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 0px',
-    margin: theme.spacing(0, 3),
+    padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   title: {
@@ -33,14 +32,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   closeButtonTitleBar: {
+    position: 'absolute',
+    right: theme.spacing(2),
+    top: theme.spacing(2),
     padding: 0,
     '&:hover': {
       backgroundColor: 'transparent',
       color: theme.palette.secondary.dark,
     },
-  },
-  closeIcon: {
-    fontSize: 18,
   },
 }));
 
@@ -72,7 +71,7 @@ export default function DrawerTitleBar({
           <BackArrowIcon />
         </IconButton>
       )}
-      <Typography variant="h3" className={classes.title}>
+      <Typography variant="h4" className={classes.title}>
         {title}
       </Typography>
       {helpKey && (
@@ -88,7 +87,7 @@ export default function DrawerTitleBar({
         aria-label="Close"
         className={classes.closeButtonTitleBar}
         onClick={handleClick}>
-        <CloseIcon className={classes.closeIcon} />
+        <CloseIcon />
       </IconButton>
     </div>
   );

@@ -7,7 +7,6 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 
@@ -19,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(-1),
   },
 }));
-const integrationsFilterConfig = { type: 'integrations' };
 
 export default function SettingsDrawer({
   flow,
@@ -30,10 +28,6 @@ export default function SettingsDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { resources: integrations } = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    integrationsFilterConfig
-  );
   const nextDataFlows = useSelector(state =>
     selectors.nextDataFlowsForFlow(state, flow)
   );
@@ -57,27 +51,6 @@ export default function SettingsDrawer({
           label: 'Description',
           multiline: true,
           defaultValue: flow && flow.description,
-        },
-        _integrationId: {
-          id: '_integrationId',
-          name: '_integrationId',
-          type: 'select',
-          helpKey: 'flow._integrationId',
-          label: 'Integration',
-          placeholder: 'Standalone Flows',
-          defaultValue: flow && flow._integrationId,
-          options: [
-            {
-              items:
-                (integrations &&
-                  integrations.map(integration => ({
-                    label: integration.name,
-                    value: integration._id,
-                  }))) ||
-                [],
-            },
-          ],
-          defaultDisabled: true,
         },
         _runNextFlowIds: {
           id: '_runNextFlowIds',
@@ -111,7 +84,7 @@ export default function SettingsDrawer({
         },
       },
     }),
-    [flow, integrations, nextDataFlows]
+    [flow, nextDataFlows]
   );
   const validationHandler = field => {
     // Incase of invalid json throws error to be shown on the field
