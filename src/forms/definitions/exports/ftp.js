@@ -145,7 +145,7 @@ export default {
       }
 
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
     }
     const fileType = fields.find(field => field.id === 'file.type');
