@@ -222,7 +222,9 @@ function JobErrorTable({
         })
       );
       enqueueSnackbar({
-        message: `${job.numError} errors retried.`,
+        message: `${
+          job.numError === '1' ? 'error retried.' : 'errors retried.'
+        }`,
         showUndo: true,
         autoHideDuration: UNDO_TIME.RETRY,
         handleClose(event, reason) {
@@ -480,7 +482,7 @@ function JobErrorTable({
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors}>
               {numSelectedRetriableErrors > 0
-                ? `Retry ${numSelectedRetriableErrors} errors`
+                ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>
             <Button
@@ -489,9 +491,13 @@ function JobErrorTable({
               color="secondary"
               onClick={handleResolveClick}
               disabled={isJobInProgress || !hasUnresolvedErrors}>
-              {numSelectedResolvableErrors > 0
+              {numSelectedResolvableErrors > 1
                 ? `Mark resolved ${numSelectedResolvableErrors} errors`
-                : 'Mark resolved'}
+                : `${
+                  numSelectedResolvableErrors === 1
+                    ? `Mark resolved ${numSelectedResolvableErrors} error`
+                    : 'Mark resolved'
+                }`}
             </Button>
             <Button
               data-test="downloadAllErrors"

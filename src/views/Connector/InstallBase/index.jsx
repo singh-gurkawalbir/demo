@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
 const defaultFilter = {
-  take: process.env.DEFAULT_TABLE_ROW_COUNT || 10,
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
 };
 export default function InstallBase(props) {

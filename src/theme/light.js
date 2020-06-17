@@ -18,7 +18,7 @@ export default {
       default: colors.celigoNeutral1,
       drawer: colors.celigoNeutral9,
       drawer2: colors.celigoNeutral8,
-      drawer3: colors.celigoNeutral7,
+      drawer3: colors.celigoNeutral10,
       drawerActive: colors.celigoAccent1,
     },
     primary: {
@@ -554,7 +554,7 @@ export default {
     MuiExpansionPanelSummary: {
       root: {
         padding: '0px 12px',
-        height: 44,
+        height: 42,
         display: 'inline-flex',
         minHeight: 'unset',
         paddingLeft: 16,

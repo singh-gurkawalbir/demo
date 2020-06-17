@@ -7,13 +7,12 @@ import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { isJsonString } from '../../../../../utils/string';
+import PanelHeader from '../../../../../components/PanelHeader';
+import FormBuilderButton from '../../../../../components/FormBuilderButton';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    paddingLeft: theme.spacing(2),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
+    padding: theme.spacing(0, 2, 0, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
@@ -23,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
+
 export default function CustomSettings({ integrationId, childId }) {
   const _integrationId = childId || integrationId;
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ export default function CustomSettings({ integrationId, childId }) {
           type: 'settings',
           label: 'Settings',
           defaultValue: settings,
-          collapsed: false,
+          fieldsOnly: true,
         },
       },
       layout: {
@@ -69,7 +69,7 @@ export default function CustomSettings({ integrationId, childId }) {
         typeof field.value === 'string' &&
         !isJsonString(field.value)
       ) {
-        return 'Settings must be a valid JSON';
+        return 'Settings must be valid JSON';
       }
     }
   };
@@ -104,6 +104,10 @@ export default function CustomSettings({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
+      <PanelHeader title="Integration Settings" >
+        <FormBuilderButton />
+      </PanelHeader>
+
       <div className={classes.form}>
         <DynaForm
           disabled={!canEditIntegration}
