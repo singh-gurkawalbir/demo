@@ -429,6 +429,7 @@ const connectors = [
     webhook: true,
   },
   { id: 'jobvite', name: 'Jobvite', type: 'rest', assistant: 'jobvite' },
+  { id: 'joor', name: 'JOOR', type: 'http', assistant: 'joor' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'rest', assistant: 'klaviyo' },
   {
     id: 'lightspeed',
