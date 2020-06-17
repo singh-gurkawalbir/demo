@@ -2729,6 +2729,22 @@ export function formAccessLevel(state, integrationId, resource, disabled) {
   return { disableAllFields: !!disabled };
 }
 
+// TODO: @Ashu, we need to add tests for this once GA is done.  I extracted this
+// logic from the DynaSettings component since it needed to be used in multiple
+// places. Also, the logic below, now in one place could surely be cleaned up and made more
+// readable...I left as-is to minimize risk of regressions.
+export function canEditSettingsForm(state, resourceType, resourceId, integrationId) {
+  const r = resource(state, resourceType, resourceId);
+  const isIAResource = !!(r && r._connectorId);
+  const {allowedToPublish, developer} = userProfile(state);
+  const viewOnly = isFormAMonitorLevelAccess(state, integrationId);
+
+  // if the resource belongs to an IA and the user cannot publish, then
+  // a user can thus also not edit
+  const visibleForUser = !isIAResource || allowedToPublish;
+  return developer && !viewOnly && visibleForUser;
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
