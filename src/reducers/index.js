@@ -4069,20 +4069,56 @@ export function transferListWithMetadata(state) {
   return { resources: transfers };
 }
 
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resourceObj } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RESTExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
+
+export function isDataLoaderExport(state, resourceId, flowId) {
+  if (isNewId(resourceId)) {
+    if (!flowId) return false;
+    const { merged: flowObj = {} } = resourceData(state, 'flows', flowId, 'value');
+    return !!(flowObj.pageGenerators &&
+              flowObj.pageGenerators[0] &&
+              flowObj.pageGenerators[0].application === 'dataLoader');
+  }
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    'exports',
+    resourceId,
+    'value'
+  );
+  return resourceObj.type === 'simple';
+}
+
 // Gives back supported stages of data flow based on resource type
 export function getAvailableResourcePreviewStages(
   state,
   resourceId,
-  resourceType
+  resourceType,
+  flowId
 ) {
-  const { merged: resourceObj } = resourceData(
+  const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
 
-  return getAvailablePreviewStages(resourceObj);
+  const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
+  const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
+
+  return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
 
 /*
@@ -4208,7 +4244,9 @@ export function isPreviewPanelAvailableForResource(
     'connections',
     resourceObj._connectionId
   );
-
+  if (isDataLoaderExport(state, resourceId, flowId)) {
+    return true;
+  }
   // Preview panel is not shown for lookups
   if (
     resourceObj.isLookup ||
@@ -4425,21 +4463,6 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
-
-export function isRestCsvMediaTypeExport(state, resourceId) {
-  const { merged: resource } = resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resource || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RestExport') {
-    return false;
-  }
-
-  const connection = resource(state, 'connections', connectionId);
-
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
-}
 
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);
