@@ -76,16 +76,18 @@ export default function DynaSettings(props) {
   }
 
   function renderSettings() {
-    return (
-      <>
-        {!hasSettingsForm ? <RawView {...props} /> : <FormView
+    if (hasSettingsForm) {
+      return (
+        <FormView
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}
           onFormChange={handleSettingFormChange}
-      />}
-      </>
-    );
+      />
+      );
+    }
+
+    return <RawView {...props} />;
   }
 
   if (fieldsOnly) return renderSettings();
@@ -101,7 +103,7 @@ export default function DynaSettings(props) {
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.summaryLabel}>{label}</Typography>
           {!isCollapsed && (
-            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} />
+            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails >
