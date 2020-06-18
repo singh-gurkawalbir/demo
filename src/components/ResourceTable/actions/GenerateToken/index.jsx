@@ -5,7 +5,7 @@ import RegenerateTokenIcon from '../../../icons/RegenerateTokenIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
 
 export default {
-  label: 'Generate token',
+  label: 'Generate new token',
   icon: RegenerateTokenIcon,
   hasAccess: ({ rowData, resourceType }) =>
     !(resourceType === 'stacks' && rowData.type === 'lambda'),

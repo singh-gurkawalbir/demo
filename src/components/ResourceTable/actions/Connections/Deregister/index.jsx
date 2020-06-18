@@ -6,7 +6,7 @@ import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Deregister',
+  label: 'Deregister connection',
   icon: CloseIcon,
   hasAccess: ({ state, integrationId }) => {
     const isStandalone = integrationId === 'none';

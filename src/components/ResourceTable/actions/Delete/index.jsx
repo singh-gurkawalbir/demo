@@ -8,7 +8,12 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
 
 export default {
-  label: 'Delete',
+  label: (rowData, actionProps) => {
+    if (actionProps.resourceType === 'accesstokens') {
+      return 'Delete API token'
+    }
+    return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`
+  },
   icon: TrashIcon,
   component: function DeleteResource({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;
