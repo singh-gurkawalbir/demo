@@ -770,7 +770,7 @@ export default {
   'connection.http.rateLimit.failValues':
     'This field is used only if the failPath field is set. It indicates to the integrator.io platform what specific values to test for when determining if the requests we make have been rate-limited.',
   'connection.http.rateLimit.limit':
-    'This field lets you tell us the speed at which we can make requests. In other words, how long should we wait (in ms) before we make subsequent calls to the service from integrator.io. Use this if the service you are connecting to does not implement and return rate-limit responses, requiring us to manually regulate calls from our platform.',
+    'This field lets you tell us the speed at which we can make requests. In other words, how long should we wait (in milliseconds) before we make subsequent calls to the service from integrator.io. Use this if the service you are connecting to does not implement and return rate-limit responses, requiring us to manually regulate calls from our platform.',
   'connection.http.unencrypted':
     "Use this JSON field to store all the non security sensitive fields needed by your imports and exports (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
   'connection.http.encrypted':

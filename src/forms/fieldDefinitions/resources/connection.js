@@ -811,7 +811,7 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry header',
+    label: 'Retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
     type: 'text',
@@ -1195,13 +1195,9 @@ export default {
       },
     ],
   },
-  'http.rateLimits': {
-    type: 'labeltitle',
-    label: 'API rate limits',
-  },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail status code',
+    label: 'HTTP status code for rate limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1210,16 +1206,16 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to rate limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Fail values',
+    label: 'Rate limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Limit',
+    label: 'Wait time in between HTTP requests',
     endAdornment: 'milliseconds',
     validWhen: [
       {
