@@ -23,7 +23,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.sapbydesign.com',
       type: 'text',
-      label: 'Store url',
+      label: 'Store URL',
       helpKey: 'sapbydesign.connection.storeURL',
       required: true,
       validWhen: {

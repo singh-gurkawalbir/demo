@@ -197,6 +197,8 @@ export default {
         'unauthenticated_write_checkouts',
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
+        'read_assigned_fulfillment_orders',
+        'write_assigned_fulfillment_orders',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },

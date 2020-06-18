@@ -45,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     '&:last-child': {
       marginRight: theme.spacing(0.5),
     },
+    '&.Mui-focused': {
+      color: 'inherit',
+    },
   },
 }));
 
