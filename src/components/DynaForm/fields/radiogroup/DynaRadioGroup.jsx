@@ -43,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     '&:empty': {
       display: 'none',
     },
+    '&.Mui-focused': {
+      color: 'inherit',
+    },
   },
 }));
 

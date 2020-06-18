@@ -2729,6 +2729,22 @@ export function formAccessLevel(state, integrationId, resource, disabled) {
   return { disableAllFields: !!disabled };
 }
 
+// TODO: @Ashu, we need to add tests for this once GA is done.  I extracted this
+// logic from the DynaSettings component since it needed to be used in multiple
+// places. Also, the logic below, now in one place could surely be cleaned up and made more
+// readable...I left as-is to minimize risk of regressions.
+export function canEditSettingsForm(state, resourceType, resourceId, integrationId) {
+  const r = resource(state, resourceType, resourceId);
+  const isIAResource = !!(r && r._connectorId);
+  const {allowedToPublish, developer} = userProfile(state);
+  const viewOnly = isFormAMonitorLevelAccess(state, integrationId);
+
+  // if the resource belongs to an IA and the user cannot publish, then
+  // a user can thus also not edit
+  const visibleForUser = !isIAResource || allowedToPublish;
+  return developer && !viewOnly && visibleForUser;
+}
+
 export function publishedConnectors(state) {
   const ioConnectors = resourceList(state, {
     type: 'published',
@@ -4069,20 +4085,56 @@ export function transferListWithMetadata(state) {
   return { resources: transfers };
 }
 
+export function isRestCsvMediaTypeExport(state, resourceId) {
+  const { merged: resourceObj } = resourceData(state, 'exports', resourceId);
+  const { adaptorType, _connectionId: connectionId } = resourceObj || {};
+
+  // Returns false if it is not a rest export
+  if (adaptorType !== 'RESTExport') {
+    return false;
+  }
+
+  const connection = resource(state, 'connections', connectionId);
+
+  // Check for media type 'csv' from connection object
+  return connection && connection.rest && connection.rest.mediaType === 'csv';
+}
+
+export function isDataLoaderExport(state, resourceId, flowId) {
+  if (isNewId(resourceId)) {
+    if (!flowId) return false;
+    const { merged: flowObj = {} } = resourceData(state, 'flows', flowId, 'value');
+    return !!(flowObj.pageGenerators &&
+              flowObj.pageGenerators[0] &&
+              flowObj.pageGenerators[0].application === 'dataLoader');
+  }
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    'exports',
+    resourceId,
+    'value'
+  );
+  return resourceObj.type === 'simple';
+}
+
 // Gives back supported stages of data flow based on resource type
 export function getAvailableResourcePreviewStages(
   state,
   resourceId,
-  resourceType
+  resourceType,
+  flowId
 ) {
-  const { merged: resourceObj } = resourceData(
+  const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
 
-  return getAvailablePreviewStages(resourceObj);
+  const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
+  const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
+
+  return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
 
 /*
@@ -4208,7 +4260,9 @@ export function isPreviewPanelAvailableForResource(
     'connections',
     resourceObj._connectionId
   );
-
+  if (isDataLoaderExport(state, resourceId, flowId)) {
+    return true;
+  }
   // Preview panel is not shown for lookups
   if (
     resourceObj.isLookup ||
@@ -4425,21 +4479,6 @@ export const getSampleDataWrapper = createSelector(
     return { status, data };
   }
 );
-
-export function isRestCsvMediaTypeExport(state, resourceId) {
-  const { merged: resource } = resourceData(state, 'exports', resourceId);
-  const { adaptorType, _connectionId: connectionId } = resource || {};
-
-  // Returns false if it is not a rest export
-  if (adaptorType !== 'RestExport') {
-    return false;
-  }
-
-  const connection = resource(state, 'connections', connectionId);
-
-  // Check for media type 'csv' from connection object
-  return connection && connection.rest && connection.rest.mediaType === 'csv';
-}
 
 export function getUploadedFile(state, fileId) {
   return fromSession.getUploadedFile(state && state.session, fileId);
