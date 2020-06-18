@@ -733,16 +733,6 @@ export default {
   },
   actions: [
     {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
-        },
-      ],
-    },
-    {
       id: 'saveandcontinue',
       label: 'Save & continue',
       visibleWhenAll: [
@@ -780,6 +770,16 @@ export default {
     },
     {
       id: 'cancel',
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
+        },
+      ],
     },
   ],
 };

@@ -221,25 +221,12 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [
         {
           field: 'http.auth.type',
           is: ['oauth'],
-        },
-      ],
-    },
-    {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['basic'],
         },
       ],
     },
@@ -254,6 +241,19 @@ export default {
         {
           field: 'http.auth.type',
           is: [''],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
         },
       ],
     },

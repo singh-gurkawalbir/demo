@@ -86,7 +86,18 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -99,25 +110,14 @@ export default {
       ],
     },
     {
+      id: 'cancel',
+    },
+    {
       id: 'test',
       visibleWhen: [
         {
           field: 'http.auth.type',
           is: ['token'],
-        },
-      ],
-    },
-    {
-      id: 'save',
-      label: 'Save',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-        {
-          field: 'http.auth.type',
-          is: [''],
         },
       ],
     },

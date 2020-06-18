@@ -38,7 +38,6 @@ function ActionsFooter(props) {
   const {
     showDone,
     handleDone,
-    handleSave,
     handleSaveAndClose,
     handleClose,
     disabled,
@@ -64,21 +63,12 @@ function ActionsFooter(props) {
           <>
             <Button
               data-test="saveContent"
-              disabled={disabled}
-              className={classes.action}
-              onClick={handleSave}
-              variant="outlined"
-              color="primary">
-              {(isLoading && !closeOnSave) ? 'Saving' : 'Save'}
-            </Button>
-            <Button
-              data-test="saveAndCloseContent"
               className={classes.action}
               disabled={disabled}
               onClick={handleSaveAndClose}
               variant="outlined"
-              color="secondary">
-              {(isLoading && closeOnSave) ? 'Saving' : 'Save & close'}
+              color="primary">
+              {(isLoading && closeOnSave) ? 'Saving' : 'Save'}
             </Button>
           </>
         )
@@ -89,7 +79,7 @@ function ActionsFooter(props) {
         onClick={handleClose}
         variant="text"
         color="primary">
-        close
+        cancel
       </Button>
     </>
   )
@@ -181,7 +171,6 @@ export default function EditorDrawer(props) {
         <ActionsFooter
           showDone={isNewResource}
           handleDone={handleDone}
-          handleSave={handleSave}
           handleSaveAndClose={handleSaveAndClose}
           handleClose={handleClose}
           isLoading={resourceCommStatus === 'loading'}
