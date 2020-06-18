@@ -199,6 +199,7 @@ export default {
           type: 'refreshableselect',
           label: 'Search record type',
           connectionId,
+          required: true,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -211,6 +212,7 @@ export default {
           type: 'netsuitelookupfilters',
           label: 'NS filters',
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -225,6 +227,7 @@ export default {
           type: 'text',
           label: 'Lookup filter expression',
           multiline: true,
+          required: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.expression'],
           visibleWhenAll: [
@@ -249,6 +252,7 @@ export default {
            * * */
           savedRecordType: lookup.recordType,
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
           visibleWhenAll: [
