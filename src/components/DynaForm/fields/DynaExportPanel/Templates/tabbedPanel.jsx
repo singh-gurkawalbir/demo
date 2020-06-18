@@ -64,12 +64,14 @@ export default function TabbedPanel(props) {
           value={tabValue}
           onChange={handleTabChange}
           textColor="primary"
+          centered
           indicatorColor="primary">
           <Tab
             label="Body"
             value="body"
             id="tab-body"
             aria-controls="tab-body"
+
           />
           <Tab
             label="Header"

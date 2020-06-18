@@ -67,10 +67,16 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
+    background: theme.palette.background.paper,
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing(0, 0, 3, 3),
+    // Todo: confirm the color with @keon and to the palette
+    backgroundColor: '#f8faff',
   },
   processorContainer: {
     display: 'flex',
@@ -87,7 +93,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    minHeight: 48,
+    padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -95,14 +101,15 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   destinationTitle: {
-    width: 320,
-    marginLeft: 100,
     marginBottom: theme.spacing(3),
   },
   generatorRoot: {
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(0, 0, 3, 3),
-    minWidth: 429,
+    // Todo: confirm the color with @keon and to the palette
+    backgroundColor: '#f8faff',
+    minWidth: 460,
+    '& ~ div[class*= "makeStyles-name"]': {
+      background: 'black',
+    },
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
@@ -112,6 +119,9 @@ const useStyles = makeStyles(theme => ({
   },
   newPG: {
     marginRight: 50,
+    // '& > div[class*="makeStyles-name"]': {
+    //   background: '#ffffff',
+    // },
   },
   dataLoaderHelp: {
     margin: theme.spacing(5, 0, 0, 5),
@@ -138,6 +148,15 @@ const useStyles = makeStyles(theme => ({
     height: 30,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
+  },
+  roundBtn: {
+    borderRadius: '50%',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    width: 18,
+    height: 18,
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -553,18 +572,17 @@ function FlowBuilder() {
           {/* CANVAS START */}
           <div
             className={classes.generatorRoot}
-            style={{
-              minHeight: 240 * pageGenerators.length + 70,
-            }}>
+            >
             <Typography
               component="div"
               className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
-              {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
+              {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
               {!isDataLoaderFlow && !isFreeFlow && (
                 <IconButton
                   data-test="addGenerator"
                   disabled={isViewMode}
+                  className={classes.roundBtn}
                   onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
@@ -610,12 +628,13 @@ function FlowBuilder() {
               variant="overline">
               {isDataLoaderFlow
                 ? 'DESTINATION APPLICATION'
-                : 'DESTINATION & LOOKUP APPLICATIONS'}
+                : 'DESTINATIONS & LOOKUP '}
 
               {showAddPageProcessor && !isFreeFlow && (
                 <IconButton
                   disabled={isViewMode}
                   data-test="addProcessor"
+                  className={classes.roundBtn}
                   onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
