@@ -83,6 +83,13 @@ export default {
       inputType: 'password',
       helpKey: 'adp.connection.http.encrypted.clientSecret',
     },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
     'http.clientCertificates.cert': {
       fieldId: 'http.clientCertificates.cert',
       label: 'SSL certificate',

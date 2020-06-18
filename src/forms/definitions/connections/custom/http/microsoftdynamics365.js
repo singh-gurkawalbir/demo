@@ -42,12 +42,22 @@ export default {
         return subdomain;
       },
     },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.microsoftDynamics365Subdomain'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.microsoftDynamics365Subdomain'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

@@ -216,6 +216,11 @@ export default {
     fields: ['name', 'http.zohoSubdomain', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.partnerUserId',
+          'http.encrypted.partnerUserSecret'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

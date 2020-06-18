@@ -49,6 +49,11 @@ export default {
     fields: ['name', 'http.encrypted.securityKey', 'http.encrypted.appKey'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.partnerUserId',
+          'http.encrypted.partnerUserSecret'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

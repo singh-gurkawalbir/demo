@@ -38,6 +38,11 @@ export default {
     fields: ['name', 'http.baseURI', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.partnerUserId',
+          'http.encrypted.partnerUserSecret'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

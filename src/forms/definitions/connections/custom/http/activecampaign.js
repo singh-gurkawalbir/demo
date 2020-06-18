@@ -48,11 +48,20 @@ export default {
       required: true,
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
     fields: ['name', 'http.activecampaignSubdomain', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Application details', fields: ['http.activecampaignSubdomain', 'http.auth.token.token'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

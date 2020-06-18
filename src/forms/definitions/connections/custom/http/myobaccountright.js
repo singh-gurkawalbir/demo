@@ -24,12 +24,14 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     fields: ['name'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

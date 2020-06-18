@@ -52,11 +52,19 @@ export default {
       scopes: ['read(all)', 'write(all)'],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
   },
   layout: {
-    fields: ['name', 'http.acceloSubdomain', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Application details', fields: ['http.acceloSubdomain', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
