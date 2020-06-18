@@ -152,10 +152,6 @@ export default {
     label: 'My APIs',
     multiselect: true,
     allowEdit: false,
-    filter: r =>
-      r._integrationId
-        ? { _integrationId: r._integrationId }
-        : { _integrationId: { $exists: false } },
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

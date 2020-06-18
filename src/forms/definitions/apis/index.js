@@ -6,6 +6,11 @@ export default {
     retValues['/_scriptId'] = retValues['/script']._scriptId;
     retValues['/function'] = retValues['/script'].function;
     delete retValues['/script'];
+    if (retValues['/enableShipworksAuthentication'] === false) {
+      delete retValues['/shipworks/username'];
+      delete retValues['/shipworks/password'];
+      retValues['/shipworks'] = undefined;
+    }
     return retValues;
   },
   fieldMap: {
@@ -51,8 +56,13 @@ export default {
       type: 'text',
       name: '/shipworks/username',
       label: 'Username',
-      required: true,
       visibleWhen: [
+        {
+          field: 'enableShipworksAuthentication',
+          is: [true],
+        },
+      ],
+      requiredWhen: [
         {
           field: 'enableShipworksAuthentication',
           is: [true],
@@ -66,10 +76,15 @@ export default {
       type: 'text',
       inputType: 'password',
       label: 'Password',
-      required: true,
       description:
         'Note: for security reasons this field must always be re-entered.',
       visibleWhen: [
+        {
+          field: 'enableShipworksAuthentication',
+          is: [true],
+        },
+      ],
+      requiredWhen: [
         {
           field: 'enableShipworksAuthentication',
           is: [true],
@@ -86,9 +101,13 @@ export default {
   },
 
   layout: {
-    fields: ['name', 'description', 'apiIdentifier', 'script'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: false,
+        label: 'General',
+        fields: ['name', 'description', 'apiIdentifier', 'script'],
+      },
       {
         collapsed: true,
         label: 'Advanced Settings',

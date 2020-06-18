@@ -1,9 +1,7 @@
 import React from 'react';
 import Delete from '../../actions/Delete';
-import References from '../../actions/References';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
-import AuditLogs from '../../actions/AuditLogs';
 
 export default {
   columns: [
@@ -32,5 +30,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: () => [AuditLogs, References, Delete],
+  rowActions: () => [Delete],
 };
