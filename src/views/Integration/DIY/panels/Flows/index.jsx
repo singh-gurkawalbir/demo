@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -78,6 +78,9 @@ export default function FlowsPanel({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
+  const handleClose = useCallback(() => {
+    setShowDialog();
+  }, [setShowDialog]);
 
   useEffect(() => {
     if (!status && isUserInErrMgtTwoDotZero) {
@@ -112,7 +115,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
-          onClose={setShowDialog}
+          onClose={handleClose}
         />
       )}
       <MappingDrawer integrationId={integrationId} />
