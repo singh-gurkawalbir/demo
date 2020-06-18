@@ -48,6 +48,7 @@ export default function SettingsDrawer({
           helpKey: 'flow.name',
           label: 'Name',
           defaultValue: flow && flow.name,
+          required: true
         },
         description: {
           id: 'description',
