@@ -179,6 +179,7 @@ export default {
           label: '',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
           options: [
@@ -215,6 +216,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           value: lookup.expression,
           data: extractFields,
@@ -230,6 +232,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
@@ -239,6 +242,7 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value field',
+          required: true,
           defaultValue: lookup.resultField,
           /** savedRecordType is not being used with the intension of passing prop to the component.
            * But being used in reference to optionHandler.
@@ -251,9 +255,14 @@ export default {
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
+          requiredWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
         },
         'lookup.mapList': {
