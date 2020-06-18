@@ -13,18 +13,7 @@ import { stringCompare } from '../utils/sort';
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
 
-let localStorageAssistants;
 
-// localStorage is browser specific one. It is breaking testcases. Below code changes are to
-// avoid test case breakages.
-// TODO: Need to see alternate solution here.
-try {
-  localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
-} catch (e) {
-  localStorageAssistants = [];
-}
-
-const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -183,6 +172,11 @@ const connectors = [
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   {
+    id: 'gainsight',
+    name: 'Gainsight CS',
+    marketPlaceOnly: true,
+  },
+  {
     id: 'aptrinsic',
     name: 'Gainsight PX',
     type: 'rest',
@@ -191,6 +185,7 @@ const connectors = [
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
+  { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
   {
     id: '4castplus',
     name: '4CastPlus',
@@ -223,7 +218,7 @@ const connectors = [
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
   { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
-  // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
+  { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
     id: 'redshift',
@@ -244,7 +239,7 @@ const connectors = [
   { id: 'chargify', name: 'Chargify', type: 'rest', assistant: 'chargify' },
   // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'Clover', type: 'http', assistant: 'clover' },
-  // { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
+  { id: 'concur', name: 'Concur', marketPlaceOnly: true },
   // {
   //   id: 'concurall',
   //   name: 'Concur',
@@ -353,7 +348,7 @@ const connectors = [
     assistant: 'gorgias',
   },
   // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
-  // { id: 'google', name: 'Google', type: 'http', assistant: 'google' },
+  { id: 'google', name: 'Google', marketPlaceOnly: true },
   {
     id: 'googleanalytics',
     name: 'Google Analytics',
@@ -420,13 +415,11 @@ const connectors = [
     type: 'rest',
     assistant: 'integratorio',
   },
-  // {
-  //  id: 'intercom',
-  //  name: 'Intercom',
-  // type: 'http',
-  //  assistant: 'intercom',
-  //  webhook: true,
-  // },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    marketPlaceOnly: true,
+  },
   { id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet' },
   {
     id: 'jira',
@@ -436,6 +429,7 @@ const connectors = [
     webhook: true,
   },
   { id: 'jobvite', name: 'Jobvite', type: 'rest', assistant: 'jobvite' },
+  { id: 'joor', name: 'JOOR', type: 'http', assistant: 'joor' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'rest', assistant: 'klaviyo' },
   {
     id: 'lightspeed',
@@ -754,7 +748,7 @@ const connectors = [
   { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
   { id: 'xcart', name: 'XCart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
-  // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
+  { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
   {
     id: 'zendesk',
     name: 'Zendesk',
@@ -778,6 +772,20 @@ const connectors = [
 ];
 
 connectors.sort(stringCompare('name'));
+const getAssistants = () => {
+  let localStorageAssistants;
+
+  // localStorage is browser specific one. It is breaking testcases. Below code changes are to
+  // avoid test case breakages.
+  // TODO: Need to see alternate solution here.
+  try {
+    localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
+  } catch (e) {
+    localStorageAssistants = [];
+  }
+
+  return localStorageAssistants;
+}
 
 export const groupApplications = (
   resourceType,
@@ -785,6 +793,8 @@ export const groupApplications = (
 ) => {
   // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
+  const assistants = getAssistants();
+
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -815,6 +825,9 @@ export const groupApplications = (
   assistantConnectors.sort(stringCompare('name'));
 
   let filteredConnectors = assistantConnectors.filter(connector => {
+    if (connector.marketPlaceOnly) {
+      return false
+    }
     const assistant = assistants.find(a => a.id === connector.assistant);
 
     if (
@@ -884,9 +897,34 @@ export const groupApplications = (
   'mailparser-io',
   'integrator-extension',
 */
+export const applicationsList = () => {
+  const assistants = getAssistants()
+  const applications = connectors.filter(connector => {
+    const assistant = assistants.find(a => a.id === connector.assistant);
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+    return !assistant || !connector.assistant;
+  });
+
+  assistants.forEach(asst => {
+    applications.push({
+      id: asst.id,
+      name: asst.name,
+      type: asst.type,
+      assistant: asst.id,
+      export: asst.export,
+      import: asst.import,
+      webhook: asst.webhook,
+    });
+  });
+  return applications;
+}
+
+
+export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
+export const getWebhookConnectors = () => {
+  const applications = applicationsList();
+  return applications.filter(c => !!c.webhook)
+};
 export const getDatabaseConnectors = () =>
   connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
@@ -894,26 +932,10 @@ export const getWebhookOnlyConnectors = () =>
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;
+  const applications = applicationsList();
 
-  return connectors.find(c => c.id === id) || {};
+  return applications.find(c => c.id === id) || {};
 };
 
-const applications = connectors.filter(connector => {
-  const assistant = assistants.find(a => a.id === connector.assistant);
 
-  return !assistant || !connector.assistant;
-});
-
-assistants.forEach(asst => {
-  applications.push({
-    id: asst.id,
-    name: asst.name,
-    type: asst.type,
-    assistant: asst.id,
-    export: asst.export,
-    import: asst.import,
-    webhook: asst.webhook,
-  });
-});
-
-export default applications;
+export default connectors;

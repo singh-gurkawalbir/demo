@@ -142,22 +142,24 @@ function DynaFileDefinitionEditor(props) {
   });
 
   useEffect(() => {
-    if (isRuleChanged && sampleData) {
+    if (isRuleChanged) {
       onFieldChange(id, rule, true);
       // Processes the updated sample data and rules on change of format
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: parserType,
-            file: sampleData,
-            editorValues: { rule, data: sampleData },
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
+      if (sampleData) {
+        dispatch(
+          actions.sampleData.request(
+            resourceId,
+            resourceType,
+            {
+              type: parserType,
+              file: sampleData,
+              editorValues: { rule, data: sampleData },
+              formValues: formContext.value,
+            },
+            'file'
+          )
+        );
+      }
       setIsRuleChanged(false);
     }
   }, [

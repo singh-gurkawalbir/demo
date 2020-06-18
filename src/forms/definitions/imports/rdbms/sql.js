@@ -169,9 +169,13 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: ['common', 'dataMappings', 'modelMetadata'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings', 'modelMetadata'],
+      },
       {
         collapsed: true,
         label: 'How would you like the records imported?',

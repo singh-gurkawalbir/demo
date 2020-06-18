@@ -18,8 +18,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row !important',
     width: '100%',
     display: 'flex',
+    wordBreak: 'break-word',
     alignItems: 'center',
     border: '1px solid',
+    background: theme.palette.background.paper,
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(1),
     borderRadius: theme.spacing(0.5),
@@ -34,7 +36,11 @@ const useStyles = makeStyles(theme => ({
   fileValue: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-
+  },
+  defaultText: {
+    margin: 0,
+    marginLeft: theme.spacing(0.5),
+    color: '#b1c6d7'
   },
 }));
 
@@ -45,11 +51,11 @@ function FileUploader(props) {
     isValid,
     errorMessages,
     name,
+    label,
     required,
     handleFileChosen,
     fileName,
     uploadError,
-    label,
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -85,7 +91,7 @@ function FileUploader(props) {
           className={classes.fileInput}
           onChange={handleFileChosen}
         />
-        <p className={classes.fileValue}> {fileName}</p>
+        {fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>}
 
       </div>
       {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}

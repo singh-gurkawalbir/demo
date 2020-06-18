@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import IconTextButton from '../IconTextButton';
-import UsersIcon from '../icons/SingleUserIcon';
+import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UserDialog from './UserDialog';
 import UserList from './UserList';
@@ -62,7 +62,7 @@ export default function ManageUsersPanel({ integrationId }) {
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
           <IconTextButton onClick={handleInviteUserClick}>
-            <UsersIcon /> Invite user
+            <AddIcon /> Invite user
           </IconTextButton>
         )}
       </PanelHeader>

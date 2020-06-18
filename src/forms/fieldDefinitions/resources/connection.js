@@ -1249,15 +1249,18 @@ export default {
     type: 'uploadfile',
     placeholder: 'SSL certificate:',
     label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.cert',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
     placeholder: 'SSL client key:',
     label: 'SSL client key',
+    helpKey: 'connection.http.clientCertificates.key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
     label: 'SSL passphrase',
+    helpKey: 'connection.http.clientCertificates.passphrase',
   },
   // #endregion http
   // #region ftp
@@ -1429,6 +1432,20 @@ export default {
     ],
     description:
       'Note: for security reasons this field must always be re-entered.',
+  },
+  'ftp.concurrencyLevel': {
+    label: 'Concurrency level',
+    type: 'select',
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+        ],
+      },
+    ],
   },
   // #endregion ftp
   // #region s3

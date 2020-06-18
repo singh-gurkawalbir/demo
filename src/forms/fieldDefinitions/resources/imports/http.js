@@ -199,7 +199,6 @@ export default {
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
     label: 'Build HTTP request body',
-    required: true,
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
     visibleWhen: [

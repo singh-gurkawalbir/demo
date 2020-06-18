@@ -12,7 +12,6 @@ import {
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
 import { isNewId } from '../../../utils/resource';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
@@ -35,28 +34,29 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 660 : 0;
+      return props.match.isExact ? 824 : 0;
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   resourceFormWrapper: {
-    padding: theme.spacing(3, 3, 1, 3),
+    padding: theme.spacing(3, 3, 0, 3),
   },
   appLogo: {
     paddingRight: theme.spacing(6),
+    marginTop: theme.spacing(-0.5),
   },
   title: {
     display: 'flex',
-    padding: '14px 0px',
-    margin: theme.spacing(0, 3),
+    padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
+    background: theme.palette.background.default,
   },
   titleText: {
     wordBreak: 'break-word',
+    paddingRight: theme.spacing(2),
   },
 
   closeButton: {
@@ -77,9 +77,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'transparent',
       color: theme.palette.secondary.dark,
     },
-  },
-  closeIcon: {
-    fontSize: 18,
   },
 
   nestedDrawerTitleText: {
@@ -162,7 +159,6 @@ export default function Panel(props) {
   const dispatch = useDispatch();
 
   useRedirectionToParentRoute(resourceType, id);
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles({
     ...props,
     occupyFullWidth,
@@ -316,12 +312,6 @@ export default function Panel(props) {
         if (!resourceId) {
           return props.history.replace(getEditUrl(id));
         }
-
-        // Take care of existing resource selection.
-        enqueueSnackbar({
-          message: `${resourceLabel} added`,
-          variant: 'success',
-        });
       }
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
@@ -344,12 +334,7 @@ export default function Panel(props) {
         return;
       }
 
-      if (newResourceId) {
-        enqueueSnackbar({
-          message: `${resourceLabel} created`,
-          variant: 'success',
-        });
-      }
+
       onClose();
     }
   }
@@ -382,7 +367,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>}
           <div className={classes.titleImgBlock}>
-            <Typography variant="h3" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
+            <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>
             {showApplicationLogo && (
@@ -398,7 +383,7 @@ export default function Panel(props) {
             data-test="closeDrawer"
             className={classes.closeButton}
             onClick={onClose}>
-            <Close className={classes.closeIcon} />
+            <Close />
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>

@@ -1,5 +1,6 @@
 import { isNewId } from '../../../utils/resource';
 import { isLookupResource } from '../../../utils/flows';
+import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   init: (fieldMeta, resource = {}, flow) => {
@@ -104,8 +105,6 @@ export default {
     }
 
     if (newValues['/outputMode'] === 'blob') {
-      newValues['/file/skipDelete'] = newValues['/ftp/leaveFile'];
-
       if (newValues['/fileMetadata']) {
         newValues['/file/output'] = 'metadata';
       } else newValues['/file/output'] = 'blobKeys';
@@ -146,13 +145,95 @@ export default {
       }
 
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
+    }
+    const fileType = fields.find(field => field.id === 'file.type');
+
+    if (fieldId === 'uploadFile') {
+      return fileType.value;
+    }
+    if (fieldId === 'file.filedefinition.rules') {
+      let definitionFieldId;
+
+      // Fetch format specific Field Definition field to fetch id
+      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
+      else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
+      else definitionFieldId = 'edifact.format';
+      const definition = fields.find(field => field.id === definitionFieldId);
+      const resourcePath = fields.find(
+        field => field.id === 'file.fileDefinition.resourcePath'
+      );
+
+      alterFileDefinitionRulesVisibility(fields);
+
+      return {
+        format: definition && definition.format,
+        definitionId: definition && definition.value,
+        resourcePath: resourcePath && resourcePath.value,
+      };
+    }
+    if (fieldId === 'file.csvHelper') {
+      const keyColumnsField = fields.find(
+        field => field.id === 'file.csv.keyColumns'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+
+      return {
+        fields: {
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          trimSpaces: trimSpacesField && trimSpacesField.value,
+          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+          keyColumns: keyColumnsField && keyColumnsField.value,
+        },
+        uploadSampleDataFieldName: 'uploadFile',
+      };
+    }
+    if (fieldId === 'file.csv.keyColumns') {
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const trimSpacesField = fields.find(
+        field => field.id === 'file.csv.trimSpaces'
+      );
+      const rowsToSkipField = fields.find(
+        field => field.id === 'file.csv.rowsToSkip'
+      );
+      const hasHeaderRowField = fields.find(
+        field => field.id === 'file.csv.hasHeaderRow'
+      );
+      const options = {
+        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+        trimSpaces: trimSpacesField && trimSpacesField.value,
+        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
+        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+      };
+
+      return options;
     }
   },
   fieldMap: {
     common: { formId: 'common' },
-
     outputMode: {
       id: 'outputMode',
       type: 'mode',
@@ -189,7 +270,6 @@ export default {
     's3.bucket': { fieldId: 's3.bucket' },
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
-    'ftp.leaveFile': { fieldId: 'ftp.leaveFile' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -254,9 +334,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common', 'outputMode'],
+          },
           {
             collapsed: true,
             label: 'How would you like to parse files?',
@@ -291,7 +375,6 @@ export default {
               's3.bucket',
               's3.keyStartsWith',
               's3.keyEndsWith',
-              'ftp.leaveFile',
             ],
           },
           {

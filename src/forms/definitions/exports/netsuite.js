@@ -489,14 +489,18 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'netsuite.execution.type',
-        ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: [
+              'common',
+              'outputMode',
+              'exportOneToMany',
+              'netsuite.execution.type',
+            ],
+          },
           {
             collapsed: true,
             label: r => {
