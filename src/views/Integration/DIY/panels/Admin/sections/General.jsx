@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     '& > div': {
       padding: theme.spacing(3, 0),
+      overflow: 'visible',
     },
   },
 }));
@@ -47,7 +48,6 @@ export default function GeneralSection({ integrationId }) {
           type: 'text',
           multiline: true,
           maxRows: 5,
-
           label: 'Description',
           defaultValue: description,
         },

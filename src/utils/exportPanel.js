@@ -16,13 +16,23 @@ const applicationsWithPreviewPanel = [
   'netsuite',
   'salesforce',
   'ftp',
-  's3'
+  's3',
+  'simple',
+  'as2',
 ];
 const emptyList = [];
 
-export const getAvailablePreviewStages = resource => {
+export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
+
+  // Handles File based preview stage for DL, Rest csv
+  // Other file adaptors are handled down under switch
+  if (isDataLoader || isRestCsvExport) {
+    return [
+      { label: 'Parsed output', value: 'preview' },
+    ];
+  }
 
   if (!appType) return emptyList;
 
@@ -44,6 +54,7 @@ export const getAvailablePreviewStages = resource => {
       ];
     case 'ftp':
     case 's3':
+    case 'as2':
       return [
         { label: 'Parsed output', value: 'preview' },
       ];
@@ -60,8 +71,9 @@ export const getAvailablePreviewStages = resource => {
  * This fn return true for all applications that support Preview Panel
  * List of supported applications are in applicationsWithPreviewPanel above
  * Currently we support only Exports as it is an Incremental release
+ * @params - resource , resourceType and connection obj
  */
-export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
+export const isPreviewPanelAvailable = (resource, resourceType) => {
   if (resourceType !== 'exports') return false;
 
   // Panel is shown for assistants
@@ -70,22 +82,7 @@ export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   const appType = adaptorTypeMap[adaptorType];
 
   // If appType is not part of supported applications list, return false
-  if (!applicationsWithPreviewPanel.includes(appType)) {
-    return false;
-  }
-
-  // In rest 'csv' media type export is not supported
-  if (
-    appType === 'rest' &&
-    connection &&
-    connection.rest &&
-    connection.rest.mediaType === 'csv'
-  ) {
-    return false;
-  }
-
-  // Other than rest 'csv' type all are supported , so return true
-  return true;
+  return applicationsWithPreviewPanel.includes(appType)
 };
 
 const formatPreviewData = records => {

@@ -9,17 +9,23 @@ export default {
     _importIds: { fieldId: '_importIds' },
   },
   layout: {
-    fields: [
-      'name',
-      'description',
-      'autoPurgeAt',
-      'fullAccess',
-      '_connectionIds',
-      '_exportIds',
-      '_importIds',
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['name', 'description', 'autoPurgeAt'],
+      },
+      {
+        collapsed: true,
+        label: 'Token permissions',
+        fields: ['fullAccess',
+          '_connectionIds',
+          '_exportIds',
+          '_importIds'],
+      }
     ],
   },
-
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
