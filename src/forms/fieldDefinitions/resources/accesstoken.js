@@ -83,6 +83,7 @@ export default {
         ],
       },
     ],
+    required: true
   },
   _connectionIds: {
     type: 'selectresource',
