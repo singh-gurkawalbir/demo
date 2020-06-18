@@ -1220,6 +1220,7 @@ export default {
   'http.rateLimit.limit': {
     type: 'text',
     label: 'Limit',
+    endAdornment: 'milliseconds',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
