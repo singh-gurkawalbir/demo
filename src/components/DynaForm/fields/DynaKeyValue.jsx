@@ -7,6 +7,7 @@ import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
 import ActionButton from '../../ActionButton';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -121,6 +122,7 @@ export function KeyValueComponent(props) {
       data-test={dataTest}
       className={classes.container}>
       <FormLabel className={classes.label}>{label}</FormLabel>
+      <FieldHelp {...props} />
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>

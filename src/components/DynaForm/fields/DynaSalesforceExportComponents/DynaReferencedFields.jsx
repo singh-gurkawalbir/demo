@@ -59,23 +59,20 @@ const FirstLevelModal = props => {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
         label: 'Parent SObject type:',
-        // Todo (Surya) IO- jira 15533 : help text is needed
-        helpText: 'helptext is useful to give information to the users',
         type: 'refreshableselect',
+        helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
       },
-
       referencedFields: {
         connectionId,
         id: 'referencedFields',
+        helpKey: 'referencedFields',
         label: 'Referenced fields:',
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
-        // Todo (Surya) : help text is needed
-        helpText: 'helptext is useful to give information to the users',
         errorMsg: 'Please select a parent sObject Type',
         disabledWhen: [{ field: 'parentSObjectType', is: [''] }],
         defaultValue: props.value,
