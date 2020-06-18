@@ -105,7 +105,6 @@ export default function DynaRadio(props) {
               className={classes.radioGroupLabel}>
               {label ? `${label}` : ''}
             </FormLabel>
-            {/* Todo (surya): needs to pass the helptext */}
             <FieldHelp
               {...props}
             />
