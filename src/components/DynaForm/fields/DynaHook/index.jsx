@@ -5,6 +5,7 @@ import actions from '../../../../actions';
 import Hook from './Hook';
 import LoadResources from '../../../LoadResources';
 
+// TODO @Raghu: add logic for apis
 const emptyObj = {};
 export default function DynaHook(props) {
   const {
@@ -27,6 +28,7 @@ export default function DynaHook(props) {
   // Fetches different input data for different hook types goes here
   const requestSampleData = useCallback(
     ({ flowId, resourceId, resourceType, stage }) => {
+      // TODO @Raghu: add logic for apis
       if (resourceType === 'apis') {
         return;
       }

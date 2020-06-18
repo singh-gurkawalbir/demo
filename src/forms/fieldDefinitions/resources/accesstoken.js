@@ -146,4 +146,24 @@ export default {
     ],
     ignoreEnvironmentFilter: true,
   },
+  _apiIds: {
+    type: 'selectresource',
+    resourceType: 'apis',
+    label: 'My APIs',
+    multiselect: true,
+    allowEdit: false,
+    filter: r =>
+      r._integrationId
+        ? { _integrationId: r._integrationId }
+        : { _integrationId: { $exists: false } },
+    allowNew: false,
+    valueDelimiter: ',',
+    visibleWhen: [
+      {
+        field: 'fullAccess',
+        is: ['false'],
+      },
+    ],
+    ignoreEnvironmentFilter: true,
+  },
 };

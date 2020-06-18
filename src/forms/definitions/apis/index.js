@@ -1,4 +1,13 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
+  preSave: formValues => {
+    const retValues = { ...formValues };
+    retValues['/_scriptId'] = retValues['/script']._scriptId;
+    retValues['/function'] = retValues['/script'].function;
+    delete retValues['/script'];
+    return retValues;
+  },
   fieldMap: {
     name: {
       id: 'name',
@@ -20,50 +29,64 @@ export default {
     script: {
       id: 'script',
       name: '/script',
-      defaultValue: r => r.script,
       type: 'hook',
       hookType: 'script',
+      defaultValue: r => ({
+        _scriptId: r._scriptId,
+        function: r.function
+      }),
+      hookStage: '',
       label: 'Script',
+      required: true,
     },
     enableShipworksAuthentication: {
       id: 'enableShipworksAuthentication',
       name: '/enableShipworksAuthentication',
-      defaultValue: r => r.enableShipworksAuthentication,
       type: 'checkbox',
-      label: 'Enable Shipworks Authentication',
+      label: 'Enable Shipworks authentication',
+      defaultValue: r => !!(r && r.shipworks && r.shipworks.username),
     },
-    username: {
-      id: 'username',
-      name: '/username',
-      defaultValue: r => r.username,
+    'shipworks.username': {
+      id: 'shipworks.username',
       type: 'text',
-      multiline: true,
-      maxRows: 5,
+      name: '/shipworks/username',
       label: 'Username',
-      requiredWhen: [
+      required: true,
+      visibleWhen: [
         {
           field: 'enableShipworksAuthentication',
           is: [true],
         },
       ],
     },
-    password: {
-      id: 'password',
-      name: '/password',
+    'shipworks.password': {
+      id: 'shipworks.password',
+      name: '/shipworks/password',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
       label: 'Password',
-      requiredWhen: [
+      required: true,
+      description:
+        'Note: for security reasons this field must always be re-entered.',
+      visibleWhen: [
         {
           field: 'enableShipworksAuthentication',
           is: [true],
         },
       ],
-    }
+    },
+    apiIdentifier: {
+      id: 'apiIdentifier',
+      label: 'Invoke',
+      helpKey: 'apiIdentifier',
+      type: 'apiidentifier',
+      visible: r => r && !isNewId(r._id),
+    },
   },
+
   layout: {
-    fields: ['name', 'description', 'script'],
+    fields: ['name', 'description', 'apiIdentifier', 'script'],
     type: 'collapse',
     containers: [
       {
@@ -71,8 +94,8 @@ export default {
         label: 'Advanced Settings',
         fields: [
           'enableShipworksAuthentication',
-          'username',
-          'password'
+          'shipworks.username',
+          'shipworks.password',
         ],
       },
     ],

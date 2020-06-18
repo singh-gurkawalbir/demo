@@ -14,8 +14,8 @@ import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
-// import CheckPermissions from '../../components/CheckPermissions';
-// import { PERMISSIONS } from '../../utils/constants';
+import CheckPermissions from '../../components/CheckPermissions';
+import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -89,13 +89,12 @@ export default function ResourceList(props) {
   }, [dispatch, resourceType]);
 
   return (
-    // <CheckPermissions
-    //   permission={
-    //     PERMISSIONS &&
-    //     PERMISSIONS[resourceType] &&
-    //     PERMISSIONS[resourceType].view
-    //   }></CheckPermissions>
-    <>
+    <CheckPermissions
+      permission={
+         PERMISSIONS &&
+         PERMISSIONS[resourceType] &&
+         PERMISSIONS[resourceType].view
+       }>
       {// This is where we will be adding all Right drawers to Celigo Table
       resourceType === 'stacks' && <StackShareDrawer />
       }
@@ -139,6 +138,6 @@ export default function ResourceList(props) {
         count={list.count}
         maxCount={list.filtered}
       />
-    </>
+    </CheckPermissions>
   );
 }
