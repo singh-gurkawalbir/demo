@@ -51,11 +51,11 @@ function FileUploader(props) {
     isValid,
     errorMessages,
     name,
-    label,
     required,
     handleFileChosen,
     fileName,
     uploadError,
+    label,
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
