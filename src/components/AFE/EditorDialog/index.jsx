@@ -235,14 +235,6 @@ export default function EditorDialog(props) {
 }
       </DialogContent>
       <DialogActions className={classes.actions}>
-        {showPreviewAction && (
-          <Button
-            data-test="previewEditorResult"
-            variant="outlined"
-            onClick={handlePreview}>
-            Preview
-          </Button>
-        )}
         {patchOnSave ? (
           <EditorSaveButton
             id={id}
@@ -272,6 +264,14 @@ export default function EditorDialog(props) {
           onClick={handleCancelClick}>
           Cancel
         </Button>
+        {showPreviewAction && (
+          <Button
+            data-test="previewEditorResult"
+            variant="outlined"
+            onClick={handlePreview}>
+            Preview
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

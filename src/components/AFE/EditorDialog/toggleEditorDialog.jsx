@@ -256,15 +256,6 @@ export default function ToggleEditorDialog(props) {
 }
       </DialogContent>
       <DialogActions className={classes.actions}>
-        {showPreviewAction && (
-          <Button
-            variant="outlined"
-            data-test="previewEditorResult"
-            disabled={!!saveInProgress}
-            onClick={handlePreview}>
-            Preview
-          </Button>
-        )}
         <EditorSaveButton
           key={activeEditorId}
           id={activeEditorId}
@@ -283,6 +274,15 @@ export default function ToggleEditorDialog(props) {
           onClick={handleCancelClick}>
           Cancel
         </Button>
+        {showPreviewAction && (
+          <Button
+            variant="outlined"
+            data-test="previewEditorResult"
+            disabled={!!saveInProgress}
+            onClick={handlePreview}>
+            Preview
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

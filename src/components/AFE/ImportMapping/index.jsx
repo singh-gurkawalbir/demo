@@ -439,16 +439,6 @@ export default function ImportMapping(props) {
         </div>
         <ButtonGroup
           className={classes.importMappingButtonGroup}>
-          {showPreviewPane && (
-            <Button
-              variant="outlined"
-              color="primary"
-              data-test="preview"
-              disabled={!!(disabled || saveInProgress)}
-              onClick={handlePreviewClick}>
-              Preview
-            </Button>
-          )}
           <MappingSaveButton
             id={editorId}
             disabled={!!(disabled || saveInProgress)}
@@ -473,6 +463,16 @@ export default function ImportMapping(props) {
             onClick={handleClose}>
             {saveCompleted ? 'Close' : 'Cancel'}
           </Button>
+          {showPreviewPane && (
+            <Button
+              variant="outlined"
+              color="primary"
+              data-test="preview"
+              disabled={!!(disabled || saveInProgress)}
+              onClick={handlePreviewClick}>
+              Preview
+            </Button>
+          )}
         </ButtonGroup>
       </div>
       {showPreviewPane && (

@@ -224,15 +224,6 @@ export default function EditorDrawer({
         resourceType={resourceType}
       />
       <div className={classes.actionContainer}>
-        {!editor.autoEvaluate && (
-          <Button
-            data-test="previewEditorResult"
-            variant="outlined"
-            onClick={handlePreview}
-            disabled={!!editorViolations}>
-            Preview
-          </Button>
-        )}
         {!hideSaveAction && (
           <EditorSaveButton
             id={editorId}
@@ -252,6 +243,15 @@ export default function EditorDrawer({
           onClick={handleCancelClick}>
           Cancel
         </Button>
+        {!editor.autoEvaluate && (
+          <Button
+            data-test="previewEditorResult"
+            variant="outlined"
+            onClick={handlePreview}
+            disabled={!!editorViolations}>
+            Preview
+          </Button>
+        )}
       </div>
     </RightDrawer>
   );
