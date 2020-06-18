@@ -29,17 +29,15 @@ export default {
       );
     }, [connectionId, dispatch, integrationId]);
     const confirmDeregister = useCallback(() => {
-      const message = 'This connection will no longer be accessible in this integration.';
-
       confirmDialog({
-        title: 'Deregister connection?',
-        message,
+        title: 'Confirm deregister',
+        message: 'Are you sure you want to deregister this connection? The connection will no longer be accessible to this integration.',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Deregister connection',
+            label: 'Deregister',
             onClick: deregisterConnection,
           },
         ],

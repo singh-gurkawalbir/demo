@@ -13,8 +13,8 @@ export default {
     }, [dispatch, transfer._id]);
     const handleClick = useCallback(() => {
       confirmDialog({
-        title: 'Are you sure you want to cancel?',
-        message: 'You have unsaved changes that will be lost if you proceed.',
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
             label: 'No, go back',

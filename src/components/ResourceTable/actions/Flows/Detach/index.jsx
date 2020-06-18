@@ -25,17 +25,15 @@ export default {
       dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
     }, [dispatch, resourceId]);
     const confirmDetachFlow = useCallback(() => {
-      const message = 'This flow will be moved to the standalone flows tile.';
-
       confirmDialog({
-        title: 'Detach flow?',
-        message,
+        title: 'Confirm detach',
+        message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Detach flow',
+            label: 'Detach',
             onClick: detachFlow,
           },
         ],

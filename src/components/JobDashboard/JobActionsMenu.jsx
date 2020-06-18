@@ -198,9 +198,9 @@ export default function JobActionsMenu({
       }
     } else if (action === 'cancelJob') {
       confirmDialog({
-        title: 'Are you sure you want to cancel?',
+        title: 'Confirm cancel',
         message:
-          'You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
+          'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
           {
             label: 'No, go back',
