@@ -124,7 +124,6 @@ export default function DynaNetSuiteLookup(props) {
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>
-          {/* //Todo: helpText is needed here */}
           <FieldHelp {...props} />
         </div>
 
