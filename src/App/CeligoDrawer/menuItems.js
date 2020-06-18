@@ -16,7 +16,7 @@ import StacksIcon from '../../components/icons/StacksIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
-import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
+import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
@@ -84,19 +84,15 @@ export default function menuItems(
         '/pg/accessTokens',
       ],
       children: [
-        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
-        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
         { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },
+        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
+        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
-        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        {
-          label: 'Integration apps',
-          Icon: ConnectionsIcon,
-          path: '/connectors',
-        },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
+        { label: 'Integration apps', Icon: ConnectionsIcon, path: '/connectors', },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
