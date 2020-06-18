@@ -32,18 +32,18 @@ const ConfirmDialog = props => {
   useEffect(() => {
     if (commErrorMessage) {
       confirmDialog({
-        title: 'Confirm',
-        message: `Test failed for this connection with the following error. ${commErrorMessage}. Do you want to save this connection regardless (i.e. in offline mode)?`,
+        title: 'Confirm save',
+        message: `Are you sure you want to save this connection? Test connection failed with the following error: ${commErrorMessage}.`,
         buttons: [
           {
-            label: 'No',
+            label: 'Cancel',
             onClick: () => {
               handleSaveCompleted();
               handleCloseAndClearForm();
             },
           },
           {
-            label: 'Yes',
+            label: 'Save',
             onClick: () => {
               handleSubmit(formValues);
               handleCloseAndClearForm();
