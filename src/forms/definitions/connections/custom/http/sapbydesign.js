@@ -44,6 +44,7 @@ export default {
         return subdomain;
       },
     },
+    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
       required: true,
@@ -63,19 +64,14 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'storeURL',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.partnerUserId',
-          'http.encrypted.partnerUserSecret'] },
+        fields: ['storeURL',
+          'http.unencrypted.username',
+          'http.encrypted.password'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

@@ -36,21 +36,17 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.pacejetLocation',
-      'http.encrypted.pacejetLicenseKey',
-    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.partnerUserId',
-          'http.encrypted.partnerUserSecret'] },
+        fields: ['http.unencrypted.pacejetLocation',
+          'http.encrypted.pacejetLicenseKey'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

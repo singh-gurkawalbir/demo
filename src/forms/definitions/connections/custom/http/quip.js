@@ -17,6 +17,7 @@ export default {
       helpKey: 'quip.connection.http.auth.token.token',
       required: true,
     },
+    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -26,8 +27,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.partnerUserId',
-          'http.encrypted.partnerUserSecret'] },
+        fields: ['http.auth.token.token'] },
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },

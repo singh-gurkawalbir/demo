@@ -33,6 +33,7 @@ export default {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
     },
+    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -40,10 +41,6 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
-      { collapsed: true,
-        label: 'Application details',
-        fields: ['http.unencrypted.partnerUserId',
-          'http.encrypted.partnerUserSecret'] },
       {
         collapsed: true,
         label: 'Configure your client id and secret',
