@@ -1,8 +1,8 @@
-import { withRouter, useRouteMatch } from 'react-router-dom';
-import React, { useState } from 'react';
+import { withRouter, useRouteMatch, useHistory } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
 import { Typography, Link } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import EditableText from '../../../components/EditableText';
@@ -12,8 +12,17 @@ import PageGenerator from './PageGenerator';
 import PageProcessor from './PageProcessor';
 import ResourceDrawer from '../../../components/SuiteScript/drawer/Resource';
 import BottomDrawer from './drawers/BottomDrawer';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
+import CalendarIcon from '../../../components/icons/CalendarIcon';
+import ScheduleDrawer from './drawers/Schedule';
+import LoadResources from '../../../components/SuiteScript/LoadResources';
+import { flowAllowsScheduling } from '../../../utils/suiteScript';
+import OnOffCell from '../../../components/ResourceTable/metadata/suiteScript/flows/OnOffCell';
+import RunCell from '../../../components/ResourceTable/metadata/suiteScript/flows/RunCell';
+import DeleteCell from '../../../components/ResourceTable/metadata/suiteScript/flows/DeleteCell';
+import actions from '../../../actions';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
@@ -102,14 +111,15 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const match = useRouteMatch();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const { ssLinkedConnectionId, integrationId, flowId } = match.params;
-  const isNewFlow = false;
   // Bottom drawer is shown for existing flows and docked for new flow
-  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
+  const [bottomDrawerSize, setBottomDrawerSize] = useState(1);
   const [tabValue, setTabValue] = useState(0);
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+  const drawerOpened = useSelector((state) => selectors.drawerOpened(state));
   const flow = useSelector(
-    state =>
+    (state) =>
       selectors.suiteScriptResourceData(state, {
         resourceType: 'flows',
         id: flowId,
@@ -118,51 +128,62 @@ function FlowBuilder() {
       }).merged,
     shallowEqual
   );
-  // const { export: exportDoc, import: importDoc } = flow;
-  // const flowDetails = flow;
+  const pushOrReplaceHistory = useCallback(
+    (to) => {
+      if (match.isExact) {
+        history.push(to);
+      } else {
+        history.replace(to);
+      }
+    },
+    [history, match.isExact]
+  );
+  const handleDrawerOpen = useCallback(
+    (path) => {
+      pushOrReplaceHistory(`${match.url}/${path}`);
+    },
+    [match.url, pushOrReplaceHistory]
+  );
+  const handleDrawerClick = useCallback(
+    (path) => () => {
+      handleDrawerOpen(path);
+    },
+    [handleDrawerOpen]
+  );
+  const handleRunStart = useCallback(() => {
+    // Highlights Run Dashboard in the bottom drawer
+    setTabValue(1);
+
+    // Raise Bottom Drawer height
+    if (bottomDrawerSize < 2) {
+      setBottomDrawerSize(2);
+    }
+    dispatch(actions.patchFilter('suitescriptjobs', { currentPage: 0 }));
+  }, [bottomDrawerSize, dispatch]);
   const isViewMode = false;
-  // const patchFlow = useCallback(
-  //   (path, value) => {
-  //     const patchSet = [{ op: 'replace', path, value }];
-
-  //     dispatch(
-  //       actions.suiteScript.resource.patchStaged(
-  //         flowId,
-  //         patchSet,
-  //         'value',
-  //         ssLinkedConnectionId,
-  //         integrationId,
-  //         'flows',
-  //         flowType
-  //       )
-  //     );
-  //     // dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-
-  //     // if (!isNewFlow) {
-  //     //   dispatch(actions.flowData.updateFlow(flowId));
-  //     // }
-  //   },
-  //   [flowId, flowType, integrationId, ssLinkedConnectionId]
-  // );
 
   return (
-    <>
-      {JSON.stringify({
-        ssLinkedConnectionId,
-        integrationId,
-        flowId,
-      })}
+    <LoadResources
+      required
+      ssLinkedConnectionId={ssLinkedConnectionId}
+      integrationId={integrationId}
+      resources="connections,flows"
+    >
       <ResourceDrawer
         flowId={flowId}
         disabled={isViewMode}
         integrationId={integrationId}
         ssLinkedConnectionId={ssLinkedConnectionId}
       />
+      <ScheduleDrawer
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        flowId={flowId}
+      />
       <CeligoPageBar
         title={
           <EditableText
             disabled={isViewMode || !flow.editable}
-            text={flow.name}
+            text={flow.ioFlowname || flow.name}
             // multiline
             defaultText={`Unnamed (id:${flowId})`}
             // onChange={handleTitleChange}
@@ -176,23 +197,39 @@ function FlowBuilder() {
         subtitle={
           <>
             {flow.lastModified &&
-              `Last saved: ${<DateTimeDisplay dateTime={flow.lastModified} />}`}
+              `Last saved: ${(
+                <DateTimeDisplay dateTime={flow.lastModified} />
+              )}`}
           </>
         }
-      />
-      {flow && !flow.editable && (
-        <>
-          <Typography>
-            The ability to change settings for the data flow you have selected
-            is not currently supported. Please{' '}
-            <Link href="https://celigo.com/support" target="_blank">
-              contact Celigo Support
-            </Link>{' '}
-            to request changes.
-          </Typography>
-        </>
-      )}
-      {flow && flow.editable && (
+      >
+        <div className={classes.actions}>
+          <OnOffCell ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
+          <RunCell
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            flow={flow}
+            onRunStart={handleRunStart}
+          />
+          {flowAllowsScheduling(flow) && (
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Schedule',
+                placement: 'bottom',
+              }}
+              data-test="scheduleFlow"
+              onClick={handleDrawerClick('schedule')}
+            >
+              <CalendarIcon />
+            </IconButtonWithTooltip>
+          )}
+          <DeleteCell
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            flow={flow}
+            isFlowBuilderView
+          />
+        </div>
+      </CeligoPageBar>
+      {flow && (
         <div
           className={clsx(classes.canvasContainer, {
             [classes.canvasShift]: drawerOpened,
@@ -202,39 +239,57 @@ function FlowBuilder() {
               25}vh - ${theme.appBarHeight +
               theme.pageBarHeight +
               (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
-          }}>
+          }}
+        >
           <div className={classes.canvas}>
             {/* CANVAS START */}
-            <div
-              className={classes.generatorRoot}
-              style={{
-                minHeight: 240 * 1 + 70,
-              }}>
-              <Typography
-                component="div"
-                className={clsx(classes.title, classes.sourceTitle)}
-                variant="overline">
-                SOURCE APPLICATION
+            {!flow.editable && (
+              <Typography>
+                The ability to change settings for the data flow you have
+                selected is not currently supported. Please{' '}
+                <Link href="https://celigo.com/support" target="_blank">
+                  contact Celigo Support
+                </Link>{' '}
+                to request changes.
               </Typography>
+            )}
+            {flow.editable && (
+              <>
+                <div
+                  className={classes.generatorRoot}
+                  style={{
+                    minHeight: 240 * 1 + 70,
+                  }}
+                >
+                  <Typography
+                    component="div"
+                    className={clsx(classes.title, classes.sourceTitle)}
+                    variant="overline"
+                  >
+                    SOURCE APPLICATION
+                  </Typography>
 
-              <div className={classes.generatorContainer}>
-                <PageGenerator isViewMode={isViewMode} />
-              </div>
-            </div>
-            <div className={classes.processorRoot}>
-              <Typography
-                component="div"
-                className={clsx(classes.title, classes.destinationTitle)}
-                variant="overline">
-                DESTINATION APPLICATION
-              </Typography>
-              <div className={classes.processorContainer}>
-                <PageProcessor
-                  isViewMode={isViewMode}
-                  isMonitorLevelAccess={false}
-                />
-              </div>
-            </div>
+                  <div className={classes.generatorContainer}>
+                    <PageGenerator isViewMode={isViewMode} />
+                  </div>
+                </div>
+                <div className={classes.processorRoot}>
+                  <Typography
+                    component="div"
+                    className={clsx(classes.title, classes.destinationTitle)}
+                    variant="overline"
+                  >
+                    DESTINATION APPLICATION
+                  </Typography>
+                  <div className={classes.processorContainer}>
+                    <PageProcessor
+                      isViewMode={isViewMode}
+                      isMonitorLevelAccess={false}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             {bottomDrawerSize < 3 && (
               <div
                 className={classes.fabContainer}
@@ -257,7 +312,7 @@ function FlowBuilder() {
           </div>
         </div>
       )}
-    </>
+    </LoadResources>
   );
 }
 

@@ -30,24 +30,24 @@ const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
     action(actionTypes.AUTH_REQUEST, { email, password }),
-  signInWithGoogle: returnTo =>
+  signInWithGoogle: (returnTo) =>
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
-  reSignInWithGoogle: email =>
+  reSignInWithGoogle: (email) =>
     action(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, { email }),
-  linkWithGoogle: returnTo =>
+  linkWithGoogle: (returnTo) =>
     action(actionTypes.AUTH_LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH_SUCCESSFUL),
-  failure: message => action(actionTypes.AUTH_FAILURE, { message }),
+  failure: (message) => action(actionTypes.AUTH_FAILURE, { message }),
   warning: () => action(actionTypes.AUTH_WARNING),
-  logout: isExistingSessionInvalid =>
+  logout: (isExistingSessionInvalid) =>
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   initSession: () => action(actionTypes.INIT_SESSION),
-  changePassword: updatedPassword =>
+  changePassword: (updatedPassword) =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
-  changeEmail: updatedEmail =>
+  changeEmail: (updatedEmail) =>
     action(actionTypes.USER_CHANGE_EMAIL, { updatedEmail }),
   defaultAccountSet: () => action(actionTypes.DEFAULT_ACCOUNT_SET),
   sessionTimestamp: () => action(actionTypes.AUTH_TIMESTAMP),
@@ -78,7 +78,7 @@ const connection = {
       connectionId,
       integrationId,
     }),
-  requestRevoke: connectionId =>
+  requestRevoke: (connectionId) =>
     action(actionTypes.CONNECTION.REVOKE_REQUEST, {
       connectionId,
     }),
@@ -92,25 +92,25 @@ const connection = {
       iClients,
       connectionId,
     }),
-  requestDebugLogs: connectionId =>
+  requestDebugLogs: (connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, { connectionId }),
   receivedDebugLogs: (debugLogs, connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_RECEIVED, {
       debugLogs,
       connectionId,
     }),
-  clearDebugLogs: connectionId =>
+  clearDebugLogs: (connectionId) =>
     action(actionTypes.CONNECTION.DEBUG_LOGS_CLEAR, { connectionId }),
-  madeOnline: connectionId =>
+  madeOnline: (connectionId) =>
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
-  requestQueuedJobs: connectionId =>
+  requestQueuedJobs: (connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
   receivedQueuedJobs: (queuedJobs, connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
       queuedJobs,
       connectionId,
     }),
-  cancelQueuedJob: jobId =>
+  cancelQueuedJob: (jobId) =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
 };
 const marketplace = {
@@ -136,7 +136,7 @@ const marketplace = {
 const recycleBin = {
   restore: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
-  restoreRedirectUrl: redirectTo =>
+  restoreRedirectUrl: (redirectTo) =>
     action(actionTypes.RECYCLEBIN.RESTORE_REDIRECT_TO, { redirectTo }),
   restoreClear: () => action(actionTypes.RECYCLEBIN.RESTORE_CLEAR),
   purge: (resourceType, resourceId) =>
@@ -151,8 +151,8 @@ const flowMetrics = {
 
   received: (flowId, response) =>
     action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
-  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
+  clear: (flowId) => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  failed: (error) => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
   downloadFile: (id, resourceType) =>
@@ -183,7 +183,7 @@ const resource = {
       resourceType,
       collection,
     }),
-  clearCollection: resourceType =>
+  clearCollection: (resourceType) =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
   patch: (resourceType, id, patchSet) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet }),
@@ -202,7 +202,7 @@ const resource = {
 
   clearReferences: () => action(actionTypes.RESOURCE.REFERENCES_CLEAR, {}),
 
-  receivedReferences: resourceReferences =>
+  receivedReferences: (resourceReferences) =>
     action(actionTypes.RESOURCE.REFERENCES_RECEIVED, {
       resourceReferences,
     }),
@@ -249,11 +249,11 @@ const resource = {
       offset,
     }),
   connections: {
-    pingAndUpdate: connectionId =>
+    pingAndUpdate: (connectionId) =>
       action(actionTypes.CONNECTION.PING_AND_UPDATE, { connectionId }),
-    updateStatus: collection =>
+    updateStatus: (collection) =>
       action(actionTypes.CONNECTION.UPDATE_STATUS, { collection }),
-    refreshStatus: integrationId =>
+    refreshStatus: (integrationId) =>
       action(actionTypes.CONNECTION.REFRESH_STATUS, { integrationId }),
     test: (resourceId, values) =>
       action(actionTypes.CONNECTION.TEST, {
@@ -286,9 +286,9 @@ const resource = {
         resourceId,
         values,
       }),
-    authorized: connectionId =>
+    authorized: (connectionId) =>
       action(actionTypes.CONNECTION.AUTHORIZED, { connectionId }),
-    commitAndAuthorize: resourceId =>
+    commitAndAuthorize: (resourceId) =>
       action(actionTypes.RESOURCE_FORM.COMMIT_AND_AUTHORIZE, {
         resourceId,
       }),
@@ -306,8 +306,8 @@ const resource = {
       }),
     requestTokenFailed: (resourceId, message) =>
       action(actionTypes.TOKEN.FAILED, { resourceId, message }),
-    clearToken: resourceId => action(actionTypes.TOKEN.CLEAR, { resourceId }),
-    requestIClients: connectionId =>
+    clearToken: (resourceId) => action(actionTypes.TOKEN.CLEAR, { resourceId }),
+    requestIClients: (connectionId) =>
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
@@ -326,12 +326,12 @@ const resource = {
           connectionId,
           message,
         }),
-      clearUserRoles: connectionId =>
+      clearUserRoles: (connectionId) =>
         action(actionTypes.NETSUITE_USER_ROLES.CLEAR, { connectionId }),
     },
   },
   notifications: {
-    update: notifications =>
+    update: (notifications) =>
       action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
   },
 };
@@ -416,7 +416,7 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
-  requestAssistantImportPreview: resourceId =>
+  requestAssistantImportPreview: (resourceId) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
       resourceId,
     }),
@@ -426,11 +426,11 @@ const metadata = {
       resourceId,
       previewData,
     }),
-  failedAssistantImportPreview: resourceId =>
+  failedAssistantImportPreview: (resourceId) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_FAILED, {
       resourceId,
     }),
-  resetAssistantImportPreview: resourceId =>
+  resetAssistantImportPreview: (resourceId) =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
     }),
@@ -438,11 +438,11 @@ const metadata = {
 const fileDefinitions = {
   preBuilt: {
     request: () => action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.REQUEST),
-    received: fileDefinitions =>
+    received: (fileDefinitions) =>
       action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED, {
         fileDefinitions,
       }),
-    receivedError: error =>
+    receivedError: (error) =>
       action(actionTypes.FILE_DEFINITIONS.PRE_BUILT.RECEIVED_ERROR, {
         error,
       }),
@@ -705,15 +705,15 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-    clearRedirect: integrationId =>
+    clearRedirect: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.CLEAR_REDIRECT, {
         integrationId,
       }),
-    requestedUpgrade: licenseId =>
+    requestedUpgrade: (licenseId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.UPGRADE_REQUESTED, {
         licenseId,
       }),
-    requestAddOnLicenseMetadata: integrationId =>
+    requestAddOnLicenseMetadata: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA, {
         integrationId,
       }),
@@ -725,14 +725,14 @@ const integrationApp = {
           response,
         }
       ),
-    addOnLicenseMetadataFailed: integrationId =>
+    addOnLicenseMetadataFailed: (integrationId) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE,
         {
           integrationId,
         }
       ),
-    requestMappingMetadata: integrationId =>
+    requestMappingMetadata: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
       }),
@@ -766,18 +766,19 @@ const integrationApp = {
         flowId,
         sectionId,
       }),
-    submitComplete: params =>
+    submitComplete: (params) =>
       action(
         actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE,
         params
       ),
-    submitFailed: params =>
+    submitFailed: (params) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
-      id: integrationId,
-    }),
+    initChild: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+        id: integrationId,
+      }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
@@ -822,7 +823,7 @@ const integrationApp = {
         storeId,
         id: integrationId,
       }),
-    clearSteps: integrationId =>
+    clearSteps: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.STEP.CLEAR, {
         id: integrationId,
       }),
@@ -851,7 +852,7 @@ const integrationApp = {
         error,
         storeId,
       }),
-    uninstallIntegration: integrationId =>
+    uninstallIntegration: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
       }),
@@ -885,17 +886,17 @@ const integrationApp = {
         id: integrationId,
         formVal,
       }),
-    clearSteps: integrationId =>
+    clearSteps: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
         id: integrationId,
       }),
-    complete: integrationId =>
+    complete: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
         id: integrationId,
       }),
   },
   store: {
-    addNew: integrationId =>
+    addNew: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
     updateStep: (integrationId, installerFunction, update) =>
       action(actionTypes.INTEGRATION_APPS.STORE.UPDATE, {
@@ -903,7 +904,7 @@ const integrationApp = {
         installerFunction,
         update,
       }),
-    clearSteps: integrationId =>
+    clearSteps: (integrationId) =>
       action(actionTypes.INTEGRATION_APPS.STORE.CLEAR, { id: integrationId }),
     completedStepInstall: (integrationId, installerFunction, steps) =>
       action(actionTypes.INTEGRATION_APPS.STORE.COMPLETE, {
@@ -934,7 +935,7 @@ const integrationApp = {
         isCloned: true,
         integrationId,
       }),
-    clearIntegrationClonedStatus: id =>
+    clearIntegrationClonedStatus: (id) =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
         id,
         isCloned: false,
@@ -948,7 +949,7 @@ const integrationApp = {
     }),
 };
 const ashare = {
-  receivedCollection: ashares =>
+  receivedCollection: (ashares) =>
     resource.receivedCollection('ashares', ashares),
 };
 const clone = {
@@ -958,9 +959,9 @@ const clone = {
     action(actionTypes.CLONE.CREATE_COMPONENTS, { resourceType, resourceId }),
 };
 const template = {
-  generateZip: integrationId =>
+  generateZip: (integrationId) =>
     action(actionTypes.TEMPLATE.ZIP_GENERATE, { integrationId }),
-  requestPreview: templateId =>
+  requestPreview: (templateId) =>
     action(actionTypes.TEMPLATE.PREVIEW_REQUEST, { templateId }),
   installStepsReceived: (installSteps, connectionMap, templateId, data) =>
     action(actionTypes.TEMPLATE.STEPS_RECEIVED, {
@@ -969,9 +970,9 @@ const template = {
       templateId,
       data,
     }),
-  failedPreview: templateId =>
+  failedPreview: (templateId) =>
     action(actionTypes.TEMPLATE.FAILURE, { templateId }),
-  failedInstall: templateId =>
+  failedInstall: (templateId) =>
     action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
   createdComponents: (components, templateId) =>
     action(actionTypes.TEMPLATE.CREATED_COMPONENTS, { components, templateId }),
@@ -985,9 +986,9 @@ const template = {
     action(actionTypes.TEMPLATE.UPDATE_STEP, { step, templateId }),
   createComponents: (templateId, runKey) =>
     action(actionTypes.TEMPLATE.CREATE_COMPONENTS, { templateId, runKey }),
-  clearUploaded: templateId =>
+  clearUploaded: (templateId) =>
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
-  clearTemplate: templateId =>
+  clearTemplate: (templateId) =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
   verifyBundleOrPackageInstall: (step, connection, templateId) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
@@ -997,16 +998,17 @@ const template = {
     }),
 };
 const agent = {
-  displayToken: id => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
-  changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
-  tokenReceived: agentToken =>
+  displayToken: (id) => action(actionTypes.AGENT.TOKEN_DISPLAY, { id }),
+  changeToken: (id) => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
+  tokenReceived: (agentToken) =>
     action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
-  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
+  maskToken: (agentToken) =>
+    action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
 const file = {
-  previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
+  previewZip: (file) => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
   upload: (resourceType, resourceId, fileType, file) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
@@ -1029,26 +1031,27 @@ const file = {
     }),
   processError: ({ fileId, error }) =>
     action(actionTypes.FILE.PROCESS_ERROR, { fileId, error }),
-  reset: fileId => action(actionTypes.FILE.RESET, { fileId }),
+  reset: (fileId) => action(actionTypes.FILE.RESET, { fileId }),
 };
 const transfer = {
-  cancel: id => action(actionTypes.TRANSFER.CANCEL, { id }),
-  preview: data => action(actionTypes.TRANSFER.PREVIEW, { data }),
+  cancel: (id) => action(actionTypes.TRANSFER.CANCEL, { id }),
+  preview: (data) => action(actionTypes.TRANSFER.PREVIEW, { data }),
   receivedPreview: ({ response, error }) =>
     action(actionTypes.TRANSFER.RECEIVED_PREVIEW, { response, error }),
   clearPreview: () => action(actionTypes.TRANSFER.CLEAR_PREVIEW),
-  create: data => action(actionTypes.TRANSFER.CREATE, { data }),
-  canceledTransfer: id => action(actionTypes.TRANSFER.CANCELLED, { id }),
+  create: (data) => action(actionTypes.TRANSFER.CREATE, { data }),
+  canceledTransfer: (id) => action(actionTypes.TRANSFER.CANCELLED, { id }),
 };
 const stack = {
-  displayToken: id => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
-  generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
-  tokenReceived: stackToken =>
+  displayToken: (id) => action(actionTypes.STACK.TOKEN_DISPLAY, { id }),
+  generateToken: (id) => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
+  tokenReceived: (stackToken) =>
     action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
-  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  maskToken: (stackToken) =>
+    action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
   inviteStackShareUser: (email, stackId) =>
     action(actionTypes.STACK.SHARE_USER_INVITE, { email, stackId }),
-  toggleUserStackSharing: userId =>
+  toggleUserStackSharing: (userId) =>
     action(actionTypes.STACK.USER_SHARING_TOGGLE, { userId }),
   toggledUserStackSharing: ({ userId }) =>
     action(actionTypes.STACK.USER_SHARING_TOGGLED, { id: userId }),
@@ -1058,58 +1061,58 @@ const stack = {
 const user = {
   toggleDebug: () => action(actionTypes.TOGGLE_DEBUG),
   profile: {
-    request: message => resource.request('profile', undefined, message),
+    request: (message) => resource.request('profile', undefined, message),
     delete: () => action(actionTypes.DELETE_PROFILE),
-    update: profile => action(actionTypes.UPDATE_PROFILE, { profile }),
+    update: (profile) => action(actionTypes.UPDATE_PROFILE, { profile }),
     unlinkWithGoogle: () => action(actionTypes.UNLINK_WITH_GOOGLE),
     unlinkedWithGoogle: () => action(actionTypes.UNLINKED_WITH_GOOGLE),
   },
   org: {
     users: {
-      requestCollection: message =>
+      requestCollection: (message) =>
         resource.requestCollection('ashares', undefined, message),
-      create: user => action(actionTypes.USER_CREATE, { user }),
-      created: user => action(actionTypes.USER_CREATED, { user }),
+      create: (user) => action(actionTypes.USER_CREATE, { user }),
+      created: (user) => action(actionTypes.USER_CREATED, { user }),
       update: (_id, user) => action(actionTypes.USER_UPDATE, { _id, user }),
-      updated: user => action(actionTypes.USER_UPDATED, { user }),
-      delete: _id => action(actionTypes.USER_DELETE, { _id }),
-      deleted: _id => action(actionTypes.USER_DELETED, { _id }),
+      updated: (user) => action(actionTypes.USER_UPDATED, { user }),
+      delete: (_id) => action(actionTypes.USER_DELETE, { _id }),
+      deleted: (_id) => action(actionTypes.USER_DELETED, { _id }),
       disable: (_id, disabled) =>
         action(actionTypes.USER_DISABLE, { _id, disabled }),
-      disabled: _id => action(actionTypes.USER_DISABLED, { _id }),
-      makeOwner: email => action(actionTypes.USER_MAKE_OWNER, { email }),
+      disabled: (_id) => action(actionTypes.USER_DISABLED, { _id }),
+      makeOwner: (email) => action(actionTypes.USER_MAKE_OWNER, { email }),
     },
     accounts: {
-      requestCollection: message =>
+      requestCollection: (message) =>
         resource.requestCollection('shared/ashares', undefined, message),
-      requestLicenses: message =>
+      requestLicenses: (message) =>
         resource.requestCollection('licenses', undefined, message),
       requestTrialLicense: () => action(actionTypes.LICENSE_TRIAL_REQUEST, {}),
-      trialLicenseIssued: message =>
+      trialLicenseIssued: (message) =>
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
-      requestUpdate: actionType =>
+      requestUpdate: (actionType) =>
         action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
-      licenseUpgradeRequestSubmitted: message =>
+      licenseUpgradeRequestSubmitted: (message) =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
-      leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
+      leave: (id) => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
       requestNumEnabledFlows: () =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
-      receivedNumEnabledFlows: response =>
+      receivedNumEnabledFlows: (response) =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
     },
   },
   preferences: {
-    request: message => resource.request('preferences', undefined, message),
-    update: preferences =>
+    request: (message) => resource.request('preferences', undefined, message),
+    update: (preferences) =>
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
   sharedNotifications: {
     acceptInvite: (resourceType, id) =>
       action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
-    acceptedInvite: id =>
+    acceptedInvite: (id) =>
       action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
     rejectInvite: (resourceType, id) =>
       action(actionTypes.SHARED_NOTIFICATION_REJECT, { resourceType, id }),
@@ -1136,7 +1139,7 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
-  reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
+  reset: (resourceId) => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
 };
 const importSampleData = {
   request: (resourceId, options, refreshCache) =>
@@ -1156,7 +1159,7 @@ const importSampleData = {
     }),
 };
 const flowData = {
-  init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
+  init: (flow) => action(actionTypes.FLOW_DATA.INIT, { flow }),
   requestStage: (flowId, resourceId, stage) =>
     action(actionTypes.FLOW_DATA.STAGE_REQUEST, { flowId, resourceId, stage }),
   requestPreviewData: (flowId, resourceId, previewType) =>
@@ -1210,7 +1213,7 @@ const flowData = {
       resourceId,
       resourceType,
     }),
-  updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
+  updateFlow: (flowId) => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
   updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
     action(actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE, {
       flowId,
@@ -1234,32 +1237,32 @@ const toggleBanner = () => action(actionTypes.APP_TOGGLE_BANNER);
 const toggleDrawer = () => action(actionTypes.APP_TOGGLE_DRAWER);
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
-const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
+const clearFilter = (name) => action(actionTypes.CLEAR_FILTER, { name });
 const clearComms = () => action(actionTypes.CLEAR_COMMS);
-const clearCommByKey = key => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
+const clearCommByKey = (key) => action(actionTypes.CLEAR_COMM_BY_KEY, { key });
 const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 //
 // #region Editor actions
 const editor = {
   init: (id, processor, options) =>
     action(actionTypes.EDITOR_INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
+  changeLayout: (id) => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
   patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR_RESET, { id }),
-  updateHelperFunctions: helperFunctions =>
+  reset: (id) => action(actionTypes.EDITOR_RESET, { id }),
+  updateHelperFunctions: (helperFunctions) =>
     action(actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
   refreshHelperFunctions: () =>
     action(actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
+  evaluateRequest: (id) => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
   evaluateFailure: (id, error) =>
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: id => action(actionTypes.EDITOR_SAVE, { id }),
-  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
+  save: (id) => action(actionTypes.EDITOR_SAVE, { id }),
+  saveFailed: (id) => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
+  saveComplete: (id) => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
@@ -1286,19 +1289,19 @@ const mapping = {
       value,
     }),
   delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: id => action(actionTypes.MAPPING.SAVE, { id }),
-  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
+  save: (id) => action(actionTypes.MAPPING.SAVE, { id }),
+  saveFailed: (id) => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
+  saveComplete: (id) => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
     action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
-  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
+  requestPreview: (id) => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
   previewReceived: (id, value) =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
-  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
+  previewFailed: (id) => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
-
+  refreshGenerates: (id) =>
+    action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
 };
 const searchCriteria = {
   init: (id, value) =>
@@ -1404,14 +1407,14 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
 };
 const accessToken = {
-  displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
-  generateToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
-  tokenReceived: accessToken =>
+  displayToken: (id) => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
+  generateToken: (id) => action(actionTypes.ACCESSTOKEN_TOKEN_GENERATE, { id }),
+  tokenReceived: (accessToken) =>
     action(actionTypes.ACCESSTOKEN_TOKEN_RECEIVED, { accessToken }),
-  maskToken: accessToken =>
+  maskToken: (accessToken) =>
     action(actionTypes.ACCESSTOKEN_TOKEN_MASK, { accessToken }),
-  revoke: id => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
-  activate: id => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
+  revoke: (id) => action(actionTypes.ACCESSTOKEN_REVOKE, { id }),
+  activate: (id) => action(actionTypes.ACCESSTOKEN_ACTIVATE, { id }),
   deletePurged: () => action(actionTypes.ACCESSTOKEN_DELETE_PURGED),
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
@@ -1513,9 +1516,9 @@ const job = {
       errorFileId,
     }),
   paging: {
-    setRowsPerPage: rowsPerPage =>
+    setRowsPerPage: (rowsPerPage) =>
       action(actionTypes.JOB.PAGING.SET_ROWS_PER_PAGE, { rowsPerPage }),
-    setCurrentPage: currentPage =>
+    setCurrentPage: (currentPage) =>
       action(actionTypes.JOB.PAGING.SET_CURRENT_PAGE, { currentPage }),
   },
   error: {
@@ -1535,7 +1538,7 @@ const job = {
       }),
     previewError: ({ jobId, error }) =>
       action(actionTypes.JOB.ERROR.PREVIEW.ERROR, { jobId, error }),
-    clearPreview: jobId =>
+    clearPreview: (jobId) =>
       action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
@@ -1753,9 +1756,9 @@ const responseMapping = {
     }),
   delete: (id, index) =>
     action(actionTypes.RESPONSE_MAPPING.DELETE, { id, index }),
-  save: id => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
-  saveFailed: id => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id =>
+  save: (id) => action(actionTypes.RESPONSE_MAPPING.SAVE, { id }),
+  saveFailed: (id) => action(actionTypes.RESPONSE_MAPPING.SAVE_FAILED, { id }),
+  saveComplete: (id) =>
     action(actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE, { id }),
 };
 const customSettings = {
@@ -1775,7 +1778,7 @@ const customSettings = {
       resourceId,
       error,
     }),
-  formClear: resourceId =>
+  formClear: (resourceId) =>
     action(actionTypes.CUSTOM_SETTINGS.FORM_CLEAR, {
       resourceId,
     }),
@@ -1968,6 +1971,20 @@ const suiteScript = {
         }),
         scope,
       }),
+    commitStaged: (
+      id,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, {
+        resourceType,
+        id,
+        scope,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
     clearStaged: (
       id,
       scope,
@@ -2115,9 +2132,9 @@ const suiteScript = {
         integrationId,
         ssLinkedConnectionId,
       }),
-    resolveInit: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, job),
+    resolveInit: (job) => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT, job),
     resolveAllInit: () => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT),
-    resolveUndo: job => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, job),
+    resolveUndo: (job) => action(actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO, job),
     resolveAllUndo: ({ flowId, integrationId, ssLinkedConnectionId }) =>
       action(actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO, {
         flowId,
@@ -2151,11 +2168,11 @@ const suiteScript = {
   },
   paging: {
     job: {
-      setRowsPerPage: rowsPerPage =>
+      setRowsPerPage: (rowsPerPage) =>
         action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_ROWS_PER_PAGE, {
           rowsPerPage,
         }),
-      setCurrentPage: currentPage =>
+      setCurrentPage: (currentPage) =>
         action(actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE, {
           currentPage,
         }),
@@ -2169,22 +2186,25 @@ const suiteScript = {
         flowId,
         _id,
       }),
-    enable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    enable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.ENABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    disable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    disable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DISABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
-      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
-        { onOffInProgress, ssLinkedConnectionId, _id }),
-    delete: ({ssLinkedConnectionId, integrationId, _id}) =>
+    isOnOffActionInprogress: ({ onOffInProgress, ssLinkedConnectionId, _id }) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+        onOffInProgress,
+        ssLinkedConnectionId,
+        _id,
+      }),
+    delete: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DELETE, {
         ssLinkedConnectionId,
         integrationId,

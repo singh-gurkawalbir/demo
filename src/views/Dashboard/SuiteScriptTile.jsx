@@ -19,18 +19,18 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
-import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
 import {
-  tileStatus,
-  dragTileConfig,
-  dropTileConfig,
-} from './util';
+  INTEGRATION_ACCESS_LEVELS,
+  TILE_STATUS,
+  SUITESCRIPT_CONNECTORS,
+} from '../../utils/constants';
+import { tileStatus, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
 import * as selectors from '../../reducers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   tileName: {
     color: theme.palette.secondary.light,
     '&:hover': {
@@ -57,9 +57,15 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
-  const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
-  const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
-  const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
+  const accessLevel = useSelector((state) =>
+    selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId)
+  );
+  const ssLinkedConnection = useSelector((state) =>
+    selectors.resource(state, 'connections', tile.ssLinkedConnectionId)
+  );
+  const connector = SUITESCRIPT_CONNECTORS.find(
+    (c) => c._id === tile._connectorId
+  );
   const status = tileStatus(tile);
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
@@ -71,11 +77,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
-  const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(
-    getDomain()
-  );
+  const isNotYetSupported = [].includes(getDomain());
   const handleStatusClick = useCallback(
-    event => {
+    (event) => {
       event.stopPropagation();
 
       if (isNotYetSupported) {
@@ -110,7 +114,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     ]
   );
   const handleLinkClick = useCallback(
-    event => {
+    (event) => {
       event.stopPropagation();
 
       if (isNotYetSupported) {
@@ -125,7 +129,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     []
   );
   const handleTileClick = useCallback(
-    event => {
+    (event) => {
       event.stopPropagation();
 
       if (isNotYetSupported) {
@@ -135,7 +139,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     [isNotYetSupported]
   );
   // IO-13418
-  const getApplication = application =>
+  const getApplication = (application) =>
     application === 'magento' ? 'magento1' : application;
   // #region Drag&Drop related
   const ref = useRef(null);
@@ -152,7 +156,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     <>
       {showNotYetSupportedDialog && (
         <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          <>Not Yet Available</>
+          Not Yet Available
           <Typography>
             This Integration{tile._connectorId && ' App'} is not yet available
             from this UI. To access your Integration
@@ -162,7 +166,8 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleNotYetSupportedDialogCloseClick}>
+            onClick={handleNotYetSupportedDialogCloseClick}
+          >
             Close
           </Button>
         </ModalDialog>
@@ -173,7 +178,8 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
             <Status
               label={status.label}
               onClick={handleStatusClick}
-              className={classes.status}>
+              className={classes.status}
+            >
               <StatusCircle variant={status.variant} />
             </Status>
           </Header>
@@ -184,25 +190,24 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   color="inherit"
                   to={getRoutePath(urlToIntegrationSettings)}
                   className={classes.tileName}
-                  onClick={handleLinkClick}>
+                  onClick={handleLinkClick}
+                >
                   {tile.displayName}
                 </Link>
               </Typography>
             </CardTitle>
-            {tile.connector &&
-              tile.connector.applications &&
-              tile.connector.applications.length > 1 && (
-                <ApplicationImages>
-                  <ApplicationImg
-                    type={getApplication(tile.connector.applications[0])}
-                  />
-                  <span>
-                    <AddIcon />
-                  </span>
-                  <ApplicationImg
-                    type={getApplication(tile.connector.applications[1])}
-                  />
-                </ApplicationImages>
+            {tile.connector && tile.connector.applications && (
+              <ApplicationImages>
+                <ApplicationImg
+                  type={getApplication(tile.connector.applications[0])}
+                />
+                <span>
+                  <AddIcon />
+                </span>
+                <ApplicationImg
+                  type={getApplication(tile.connector.applications[1])}
+                />
+              </ApplicationImages>
             )}
           </Content>
           <Footer>
@@ -212,31 +217,39 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                   {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
                     <Tooltip
                       title="You have monitor permissions"
-                      placement="bottom">
+                      placement="bottom"
+                    >
                       <Link
                         color="inherit"
                         className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
-                        onClick={handleLinkClick}>
+                        onClick={handleLinkClick}
+                      >
                         <PermissionsMonitorIcon />
                       </Link>
                     </Tooltip>
                   ) : (
                     <Tooltip
                       title="You have manage permissions"
-                      placement="bottom">
+                      placement="bottom"
+                    >
                       <Link
                         color="inherit"
                         className={classes.action}
                         to={getRoutePath(urlToIntegrationSettings)}
-                        onClick={handleLinkClick}>
+                        onClick={handleLinkClick}
+                      >
                         <PermissionsManageIcon />
                       </Link>
                     </Tooltip>
                   )}
                 </Manage>
               )}
-              {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
+              {ssLinkedConnection?.netsuite?.account && (
+                <Tag
+                  variant={`NS Account #${ssLinkedConnection.netsuite.account}`}
+                />
+              )}
             </FooterActions>
             <Info
               variant={tile._connectorId ? 'Integration app' : 'Legacy'}
