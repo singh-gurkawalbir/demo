@@ -432,7 +432,7 @@ function JobErrorTable({
             onChange={handleRetryDataChange}
             onClose={handleRetryDataEditorClose}
             value={retryObject.retryData.data}
-            title="Edit Retry Data"
+            title="Edit retry data"
             id={editDataOfRetryId}
           />
         ) : (
@@ -616,7 +616,7 @@ function JobErrorTable({
                   return [
                     {
                       icon: <EditIcon />,
-                      label: 'Edit Retry Data',
+                      label: 'Edit retry data',
                       component: function EditRetryData() {
                         useEffect(() => {
                           handleEditRetryDataClick(r._retryId);

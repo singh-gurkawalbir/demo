@@ -91,7 +91,7 @@ export default {
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
       }
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
     }
     if (fieldId === 'uploadFile') {

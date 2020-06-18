@@ -1,5 +1,4 @@
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
-import { isProduction } from '../../forms/utils';
 
 export const getIntegrationAppUrlName = (
   integrationAppName,
@@ -54,31 +53,33 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
 }
 
 export const getTopLevelTabs = (options = {}) => {
-  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId} = options;
-  const tabs = [];
+  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId, hideSettingsTab} = options;
+  const excludeTabs = [];
   const showAdminTabs = !!getAdminLevelTabs(options).length
   const isStandalone = STANDALONE_INTEGRATION.id === integrationId
   if (isIntegrationApp) {
-    tabs.push('users')
+    excludeTabs.push('users')
     if (!hasAddOns) {
-      tabs.push('addons')
+      excludeTabs.push('addons')
     }
   } else {
-    tabs.push('addons')
+    excludeTabs.push('addons')
   }
   if (isParent) {
-    tabs.push('flows')
-    tabs.push('dashboard')
+    excludeTabs.push('flows')
+    excludeTabs.push('dashboard')
   }
   if (isStandalone) {
-    tabs.push('settings')
-    tabs.push('admin')
+    excludeTabs.push('admin')
+  }
+  if (isStandalone || hideSettingsTab) {
+    excludeTabs.push('settings')
   }
   if (!showAdminTabs) {
-    tabs.push('admin')
+    excludeTabs.push('admin')
   }
 
-  return allTabs.filter(tab => !tabs.includes(tab.path))
+  return allTabs.filter(tab => !excludeTabs.includes(tab.path))
 }
 
 const getIntegrationApp = ({ _connectorId, name }) => {
@@ -237,6 +238,5 @@ export default {
     return highestEdition;
   },
   isCloningSupported: (_connectorId, name) =>
-    !isProduction() &&
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };

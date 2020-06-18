@@ -67,6 +67,7 @@ export default {
       visibleWhen: [{ field: 'ftp.type', is: ['ftp', 'ftps'] }],
     },
     'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
+    'ftp.concurrencyLevel': { fieldId: 'ftp.concurrencyLevel' },
     'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
     'ftp.requireSocketReUse': {
       fieldId: 'ftp.requireSocketReUse',
@@ -130,6 +131,7 @@ export default {
           'ftp.pgpPassphrase',
           'ftp.useCustomPGPEncryptionAlgorithm',
           'ftp.pgpKeyAlgorithm',
+          'ftp.concurrencyLevel'
         ],
       },
     ],
