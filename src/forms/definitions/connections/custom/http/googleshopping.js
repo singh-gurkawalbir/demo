@@ -16,7 +16,7 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     application: {
-      id: 'application',
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
