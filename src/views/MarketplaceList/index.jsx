@@ -136,7 +136,9 @@ export default function MarketplaceList() {
   }, [connectors.length, dispatch, fetchedCollection, templates.length]);
   const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
-    if (connector.installed) {
+    if (connector._id === 'suitescript-salesforce-netsuite') {
+      history.push('/pg/suitescript/integrationapps/suitescript-salesforce-netsuite/setup');
+    } else if (connector.installed) {
       confirmDialog({
         isPrompt: true,
         title: 'Multiple Installs',

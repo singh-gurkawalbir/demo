@@ -2,8 +2,10 @@ import produce from 'immer';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
+import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
 const emptySet = [];
+const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === 'suitescript-salesforce-netsuite');
 
 export default (state = {}, action) => {
   const { type, connectors, templates } = action;
@@ -12,6 +14,8 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.MARKETPLACE.CONNECTORS_RECEIVED:
         draft.connectors = connectors || [];
+        // to show v2 SF connector
+        draft.connectors.push({...sfConnector, canInstall: true });
         break;
 
       case actionTypes.MARKETPLACE.TEMPLATES_RECEIVED:
@@ -36,6 +40,9 @@ export function connectors(state, application, sandbox, licenses) {
 
   connectors = connectors.map(c => {
     const conn = c;
+    if (conn._id === SUITESCRIPT_CONNECTORS[0]._id) {
+      return conn;
+    }
     let hasLicense = false;
 
     licenses &&
