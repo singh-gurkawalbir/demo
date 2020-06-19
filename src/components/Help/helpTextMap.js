@@ -584,6 +584,10 @@ export default {
     'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':
     'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
+  'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
+  'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
+  'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
+  'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
   'asynchelper.name':
     'Enter a name for the Async Helper that you are creating.',
@@ -1976,6 +1980,7 @@ export default {
     'Select the Exports that this token should provide access to.',
   'accesstoken._importIds':
     'Select the Imports that this token should provide access to.',
+  'accesstoken._apiIds': 'Select the My API that this token should provide access to.',
   'accesstoken.autoPurgeAt':
     'Select the time after which the token should be automatically purged from the system.',
   'distributed.sObjectType':

@@ -146,4 +146,20 @@ export default {
     ],
     ignoreEnvironmentFilter: true,
   },
+  _apiIds: {
+    type: 'selectresource',
+    resourceType: 'apis',
+    label: 'My APIs',
+    multiselect: true,
+    allowEdit: false,
+    allowNew: false,
+    valueDelimiter: ',',
+    visibleWhen: [
+      {
+        field: 'fullAccess',
+        is: ['false'],
+      },
+    ],
+    ignoreEnvironmentFilter: true,
+  },
 };

@@ -7,6 +7,7 @@ import AgentStatus from '../../../AgentStatus';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import GenerateToken from '../../actions/GenerateToken';
+import Edit from '../../actions/Edit';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -46,5 +47,5 @@ export default {
       value: r => <AgentToken agentId={r._id} />,
     },
   ],
-  rowActions: () => [GenerateToken, References, Delete],
+  rowActions: () => [Edit, GenerateToken, References, Delete],
 };

@@ -81,18 +81,21 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'environment',
-      'http.unencrypted.p3plUserID',
-      'http.encrypted.p3plUserPassword',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment',
+          'http.unencrypted.p3plUserID',
+          'http.encrypted.p3plUserPassword'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };
