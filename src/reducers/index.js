@@ -802,6 +802,7 @@ export function resourceList(state, options = {}) {
       'templates',
       'published',
       'transfers',
+      'apis',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -828,6 +829,7 @@ export function resourceListModified(userState, resourcesState, options = {}) {
       'templates',
       'published',
       'transfers',
+      'apis',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type

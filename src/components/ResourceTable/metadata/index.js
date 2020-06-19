@@ -9,6 +9,7 @@ import exports from './exports';
 import imports from './imports';
 import scripts from './scripts';
 import stacks from './stacks';
+import apis from './apis';
 
 export const ConnectorNameComp = ({ r }) => (
   <>{useGetConnectorName(r)}</>
@@ -23,6 +24,7 @@ const metadata = {
   stacks,
   connectors,
   accesstokens,
+  apis,
 };
 
 export default function (resourceType) {

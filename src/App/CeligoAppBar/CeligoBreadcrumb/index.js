@@ -211,6 +211,7 @@ const routes = [
     ],
   },
   { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
+  { path: '/pg/apis', breadcrumb: () => 'My APIs' },
   {
     path: '/pg/myAccount',
     breadcrumb: () => 'My account',
