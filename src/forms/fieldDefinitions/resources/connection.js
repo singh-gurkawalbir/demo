@@ -1197,7 +1197,7 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'API rate limits',
+    label: 'Non-standard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',

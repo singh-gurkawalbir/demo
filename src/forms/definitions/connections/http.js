@@ -548,18 +548,6 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Application details',
-        fields: [
-          'http.headers',
-          'http.baseURI',
-          'http.mediaType',
-          'http.auth.failStatusCode',
-          'http.auth.failPath',
-          'http.auth.failValues',
-        ],
-      },
-      {
-        collapsed: true,
         label: 'Configure auth',
         fields: [
           'http.auth.type',
@@ -590,6 +578,18 @@ export default {
           'http.auth.oauth.scheme',
           'http.oauth.customAuthScheme',
           'http.auth.oauth.paramName',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.headers',
+          'http.baseURI',
+          'http.mediaType',
+          'http.auth.failStatusCode',
+          'http.auth.failPath',
+          'http.auth.failValues',
         ],
       },
       {
