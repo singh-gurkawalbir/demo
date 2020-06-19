@@ -43,6 +43,13 @@ export default {
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
   },
+  application: {
+    id: 'application',
+    type: 'text',
+    label: 'Application',
+    defaultValue: r => r && r.assistant ? r.assistant : r.type,
+    defaultDisabled: true,
+  },
   assistant: {
     type: 'select',
     label: 'Assistant',
@@ -1194,6 +1201,10 @@ export default {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
       },
     ],
+  },
+  'http.rateLimits': {
+    type: 'labeltitle',
+    label: 'Non-standard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
