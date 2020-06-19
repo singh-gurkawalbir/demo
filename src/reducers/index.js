@@ -4803,3 +4803,6 @@ export const rdbmsConnectionType = (state, connectionId) => {
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
 }
+export function suiteScriptMapping(state, id) {
+  return fromSession.suiteScriptMappingState(state && state.session, id);
+}

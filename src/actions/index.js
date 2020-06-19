@@ -1300,6 +1300,31 @@ const mapping = {
   refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
 
 };
+
+const suiteScriptMapping = {
+  init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.INIT, {
+      ssLinkedConnectionId, integrationId, flowId
+    }),
+  initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.INIT_COMPLETE, {
+      ssLinkedConnectionId, integrationId, flowId, generatedMappings
+    }),
+  patchField: ({ ssLinkedConnectionId, integrationId, flowId, field, key, value }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, {
+      ssLinkedConnectionId, integrationId, flowId, field, key, value
+    }),
+  delete: ({ ssLinkedConnectionId, integrationId, flowId, key }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.DELETE, {
+      ssLinkedConnectionId, integrationId, flowId, key
+    }),
+  changeOrder: ({ ssLinkedConnectionId, integrationId, flowId, mappings }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER, {
+      ssLinkedConnectionId, integrationId, flowId, mappings
+    }),
+
+
+}
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {
@@ -2282,4 +2307,5 @@ export default {
   customSettings,
   exportData,
   editorSampleData,
+  suiteScriptMapping,
 };

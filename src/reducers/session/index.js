@@ -21,6 +21,8 @@ import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import mappings, * as fromMappings from './mappings';
+import suiteScriptMappings, * as fromSuiteScriptMappings from './suiteScriptMappings';
+
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
@@ -67,6 +69,7 @@ export default combineReducers({
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
+  suiteScriptMappings
 });
 
 // #region PUBLIC SELECTORS
@@ -695,5 +698,12 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
   return fromSuiteScript.isFlowOnOffInProgress(
     state && state.suiteScript,
     { ssLinkedConnectionId, _id }
+  );
+}
+
+export function suiteScriptMappingState(state, { ssLinkedConnectionId, integrationId, flowId }) {
+  return fromSuiteScriptMappings.mappings(
+    state && state.suiteScriptMappings,
+    {ssLinkedConnectionId, integrationId, flowId }
   );
 }
