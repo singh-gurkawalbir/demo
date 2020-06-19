@@ -5,11 +5,7 @@ export default {
     's3.secretAccessKey': { fieldId: 's3.secretAccessKey' },
     's3.pingBucket': { fieldId: 's3.pingBucket' },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
   },
   layout: {

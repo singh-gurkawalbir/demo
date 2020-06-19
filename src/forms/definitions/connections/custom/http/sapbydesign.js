@@ -44,7 +44,9 @@ export default {
         return subdomain;
       },
     },
-    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
+    application: {
+      fieldId: 'application',
+    },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
       required: true,

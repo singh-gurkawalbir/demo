@@ -43,6 +43,13 @@ export default {
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
   },
+  application: {
+    id: 'application',
+    type: 'text',
+    label: 'Application',
+    defaultValue: r => r && r.assistant ? r.assistant : r.type,
+    defaultDisabled: true,
+  },
   assistant: {
     type: 'select',
     label: 'Assistant',

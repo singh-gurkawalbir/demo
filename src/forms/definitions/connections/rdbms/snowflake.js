@@ -47,11 +47,7 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
     'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
   },

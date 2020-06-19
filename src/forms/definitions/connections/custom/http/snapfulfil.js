@@ -45,7 +45,9 @@ export default {
       fieldId: 'http.auth.basic.password',
       helpKey: 'snapfulfil.connection.http.auth.basic.password',
     },
-    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

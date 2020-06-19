@@ -23,7 +23,9 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

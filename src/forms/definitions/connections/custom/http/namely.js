@@ -52,7 +52,9 @@ export default {
       required: true,
       helpKey: 'namely.connection.http.auth.token.token',
     },
-    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

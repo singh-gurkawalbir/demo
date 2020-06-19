@@ -172,11 +172,7 @@ export default {
     },
     'netsuite.concurrencyLevel': { fieldId: 'netsuite.concurrencyLevel' },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
   },
   layout: {

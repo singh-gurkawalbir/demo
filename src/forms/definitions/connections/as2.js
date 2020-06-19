@@ -242,11 +242,7 @@ export default {
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application'
     },
   },
   layout: {

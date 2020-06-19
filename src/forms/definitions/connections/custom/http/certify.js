@@ -38,11 +38,7 @@ export default {
       helpKey: 'certify.connection.http.encrypted.apiSecret',
     },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

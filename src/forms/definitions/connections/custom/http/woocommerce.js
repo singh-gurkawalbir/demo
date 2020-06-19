@@ -25,7 +25,9 @@ export default {
       helpKey: 'woocommerce.connection.http.auth.basic.password',
       label: 'Consumer secret',
     },
-    application: { id: 'application', type: 'text', label: 'Application', defaultValue: r => r && r.assistant ? r.assistant : r.type, defaultDisabled: true, },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

@@ -111,11 +111,7 @@ export default {
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
     wrapperAdvanced: { formId: 'wrapperAdvanced' },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
   },
   layout: {

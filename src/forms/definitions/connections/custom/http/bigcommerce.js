@@ -155,11 +155,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     application: {
-      id: 'application',
-      type: 'text',
-      label: 'Application',
-      defaultValue: r => r && r.assistant ? r.assistant : r.type,
-      defaultDisabled: true,
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
