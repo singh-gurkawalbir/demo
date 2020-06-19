@@ -152,7 +152,7 @@ export default function menuItems(
       );
 
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Scripts' || i.label === 'Stacks')
+        i => !(i.label === 'Scripts' || i.label === 'Stacks' || i.label === 'My APIs')
       );
     }
 
