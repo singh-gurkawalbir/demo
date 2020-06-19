@@ -40,7 +40,7 @@ export const suiteScriptResourceKey = ({
 export const isJavaFlow = flow =>
   (flow.locationQualifier && trim(flow.locationQualifier).length > 0) ||
           ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) &&
-            !flow.hasConfiguration)
+            !flow.hasConfiguration);
 
 export const flowType = flow => {
   if (isJavaFlow(flow)) {
@@ -55,29 +55,29 @@ export const flowType = flow => {
 };
 
 export const flowSupportsMapping = flow => {
-  let supportsMapping = !!flow.editable
+  let supportsMapping = !!flow.editable;
   if (supportsMapping && flow.import) {
     if (['ACTIVITY_STREAM', 'ftp', 'magento', 'ebay'].includes(flow.import.type)) {
-      supportsMapping = false
+      supportsMapping = false;
     }
   }
   if (supportsMapping && flow.export.type === 'MY_COMPUTER') {
-    supportsMapping = false
+    supportsMapping = false;
   }
   return supportsMapping;
 };
 
 export const flowAllowsScheduling = flow => {
-  let supportsScheduling = !!flow.editable
+  let supportsScheduling = !!flow.editable;
   if (supportsScheduling && flow.import) {
     if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.import.type)) {
-      supportsScheduling = false
+      supportsScheduling = false;
     }
   }
   if (supportsScheduling && flow.export.type === 'MY_COMPUTER') {
-    supportsScheduling = false
+    supportsScheduling = false;
   }
-  return supportsScheduling
+  return supportsScheduling;
 };
 
 export const isFlowRunnable = flow => {
