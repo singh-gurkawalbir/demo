@@ -84,7 +84,7 @@ export function* requestSteps({ id }) {
       timeout: 5 * 60 * 1000,
       opts: { method: 'GET' },
       message: 'Fetching uninstall steps',
-    })
+    });
   } catch (error) {
     yield put(actions.api.failure(path, 'GET', error && error.message, false));
     yield put(
@@ -104,9 +104,9 @@ export function* requestSteps({ id }) {
     )
   );
 
-  const visibleSteps = uninstallSteps.filter(s => !s.completed)
+  const visibleSteps = uninstallSteps.filter(s => !s.completed);
   if (!visibleSteps || visibleSteps.length === 0) {
-    return yield call(uninstallStep, { id })
+    return yield call(uninstallStep, { id });
   }
 }
 

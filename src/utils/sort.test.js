@@ -4,7 +4,7 @@ const { stringCompare } = require('./sort');
 describe('Sort util function test', () => {
   test('should return correct sorted data for array of strings with all Capitals', () => {
     const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual(['Australia',
       'Canada',
       'China',
@@ -17,7 +17,7 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of strings with all small letters', () => {
     const sampleArray = ['canada', 'usa', 'india', 'china', 'australia', 'swden', 'sri Lanka', 'germany'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual([
       'australia',
       'canada',
@@ -31,7 +31,7 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of strings with combination of small and capitalized letters', () => {
     const sampleArray = ['Canada', 'USSR', 'USA', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual([
       'australia',
       'Austria',
@@ -48,19 +48,19 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of just numbers', () => {
     const sampleArray = [3, 67, 78, 34, 21, 456, 678, 432, 999, 342, 123, 456, 876, 2, 321, 987, 1232];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual([2, 3, 21, 34, 67, 78, 123, 321, 342, 432, 456, 456, 678, 876, 987, 999, 1232]);
   });
 
   test('should return correct sorted data for just numbers stored as strings', () => {
     const sampleArray = ['3', '67', '78', '34', '21', '456', '678', '432', '999', '342', '123', '456', '876', '2', '321', '987', '1232'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual(['2', '3', '21', '34', '67', '78', '123', '321', '342', '432', '456', '456', '678', '876', '987', '999', '1232']);
   });
 
   test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers', () => {
     const sampleArray = [123, '1233', '123Canada', 'Canada', 'USSR', 'USA', '456India', 'indonesia', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual([
       123,
       '1233',
@@ -84,7 +84,7 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers', () => {
     const sampleArray = [123, 3, 335, 333345, '123Canada', 'Canada', 'USSR', 456, 4567, '456New zealand', '876Bangladesh', '1233', 'USA', '456India', 'indonesia', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
-    sampleArray.sort(stringCompare())
+    sampleArray.sort(stringCompare());
     expect(sampleArray).toEqual([
       3,
       123,
@@ -115,7 +115,7 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of objects with all Capitals', () => {
     const sampleArray = [{id: 'Canada'}, {id: 'USA'}, {id: 'India'}, {id: 'China'}, {id: 'Australia'}, {id: 'Swden'}, {id: 'Sri Lanka'}, {id: 'Germany'}];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: 'Australia'},
       {id: 'Canada'},
@@ -130,7 +130,7 @@ describe('Sort util function test', () => {
 
   test('should return correct sorted data for array of objects with all small letters', () => {
     const sampleArray = [{id: 'canada'}, {id: 'usa'}, {id: 'india'}, {id: 'china'}, {id: 'australia'}, {id: 'sweden'}, {id: 'sri Lanka'}, {id: 'germany'}];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: 'australia'},
       {id: 'canada'},
@@ -157,7 +157,7 @@ describe('Sort util function test', () => {
       {id: 'germany'},
       {id: 'Greenland'}
     ];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: 'australia'},
       {id: 'Austria'},
@@ -186,7 +186,7 @@ describe('Sort util function test', () => {
       {id: 999},
       {id: 342}
     ];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: 3},
       {id: 21},
@@ -214,7 +214,7 @@ describe('Sort util function test', () => {
       {id: '999'},
       {id: '342'}
     ];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: '3'},
       {id: '21'},
@@ -254,7 +254,7 @@ describe('Sort util function test', () => {
       {id: 'sri Lanka'},
       {id: 'germany'},
       {id: 'Greenland'}];
-    sampleArray.sort(stringCompare('id'))
+    sampleArray.sort(stringCompare('id'));
     expect(sampleArray).toEqual([
       {id: 3},
       {id: 123},

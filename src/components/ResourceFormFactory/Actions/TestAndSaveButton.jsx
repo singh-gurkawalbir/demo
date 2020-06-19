@@ -157,7 +157,7 @@ const TestAndSaveButton = props => {
   }, []);
 
   const handleSaveCompleted = useCallback(() =>
-    dispatchLocalAction({ type: 'saveCompleted' }), [])
+    dispatchLocalAction({ type: 'saveCompleted' }), []);
 
   return (
     <>

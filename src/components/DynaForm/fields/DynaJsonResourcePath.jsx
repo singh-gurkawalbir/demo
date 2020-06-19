@@ -49,15 +49,15 @@ export default function DynaJsonResourcePath(props) {
       let resourcePathToSave = value.resourcePathToShow;
       if (Array.isArray(parsedJsonContent)) {
         if (!resourcePathToSave) {
-          resourcePathToSave = '*'
+          resourcePathToSave = '*';
         } else {
           resourcePathToSave = `${resourcePathToSave}.*`;
         }
       }
-      onFieldChange(id, { ...value, resourcePathToSave })
+      onFieldChange(id, { ...value, resourcePathToSave });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jsonContent])
+  }, [jsonContent]);
 
   const handleOnResourcePathChange = useCallback((id, newValue) => {
     const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, newValue);
@@ -74,12 +74,12 @@ export default function DynaJsonResourcePath(props) {
       resourcePathToShow: newValue,
       resourcePathToSave
     });
-  }, [jsonContent, onFieldChange])
+  }, [jsonContent, onFieldChange]);
 
   return <DynaText
     id={id}
     onFieldChange={handleOnResourcePathChange}
     value={value && value.resourcePathToShow}
     label={label}
-/>
+/>;
 }
