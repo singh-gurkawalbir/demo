@@ -14,7 +14,7 @@ export default (state = defaultState, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-        if (!['shared/ashares', 'shared/sshares'].includes(resourceType)) {
+        if (!['shared/ashares', 'shared/sshares', 'transfers'].includes(resourceType)) {
           break;
         }
 
@@ -26,6 +26,8 @@ export default (state = defaultState, action) => {
           draft.accounts = pendingShares;
         } else if (resourceType === 'shared/sshares') {
           draft.stacks = pendingShares;
+        } else if (resourceType === 'transfers') {
+          draft.transfers = pendingShares;
         }
 
         break;
@@ -40,8 +42,9 @@ export default (state = defaultState, action) => {
 export const userNotifications = createSelector(
   state => state && state.accounts,
   state => state && state.stacks,
-  (accounts, stacks) => {
-    if (!accounts && !stacks) {
+  state => state && state.transfers,
+  (accounts, stacks, transfers) => {
+    if (!accounts && !stacks && !transfers) {
       return emptySet;
     }
 
@@ -57,6 +60,27 @@ export const userNotifications = createSelector(
           // secondaryMessage: `${a.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
         });
       });
+    transfers &&
+    transfers.forEach(t => {
+      const interationsDoc = [];
+      let name = '';
+      if (t.toTransfer && t.toTransfer.integrations) {
+        t.toTransfer.integrations.forEach(i => {
+          name = ((i._id === 'none') ? 'Standalone Flows' : i.name) || i._id;
+          if (i.tag) {
+            name += ` (${i.tag})`;
+          }
+          interationsDoc.push(name);
+        });
+      }
+      notifications.push({
+        id: t._id,
+        type: 'transfer',
+        nameOrCompany: t.ownerUser.name || t.ownerUser.company,
+        email: t.ownerUser.email,
+        integrationsToTransfer: interationsDoc.join(',')
+      });
+    });
 
     stacks &&
       stacks.forEach(s => {

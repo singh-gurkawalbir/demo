@@ -74,6 +74,7 @@ export default function Notifications() {
       </Tooltip>
     );
   }
+  // Here also i need to do change
 
   return (
     <>
@@ -102,11 +103,8 @@ export default function Notifications() {
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}
-                message={
-                  n.type === 'account'
-                    ? 'is inviting you to join their account.'
-                    : `${n.email} has shared the "${n.stackName}" stack with you.`
-                }
+                stackName={n.stackName}
+                integrationsToTransfer={n.integrationsToTransfer}
               />
               {i < notifications.length - 1 && (
                 <Divider className={classes.divider} />

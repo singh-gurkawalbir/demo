@@ -27,9 +27,19 @@ export default function InvitationItem({
   id,
   name,
   email,
-  message,
+  stackName,
   onActionClick,
+  integrationsToTransfer,
 }) {
+  let message;
+  if (type === 'account') {
+    message = 'is inviting you to join their account.';
+  } else if (type === 'transfer') {
+    message = `Wants to transfer integration(s) ${integrationsToTransfer} to you.`;
+  } else {
+    message = `${email} has shared the "${stackName}" stack with you.`;
+  }
+
   const classes = useStyles();
 
   return (
