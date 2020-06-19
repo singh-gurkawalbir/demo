@@ -75,7 +75,7 @@ export default function CodeEditor({
           supernew: true,
           validthis: true,
           withstmt: true,
-        }])
+        }]);
       }
     }),
   [enableAutocomplete, mode]

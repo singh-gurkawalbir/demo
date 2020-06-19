@@ -1,20 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { makeStyles, Divider } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import * as selectors from '../../../../reducers';
-import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FormBuilderButton from '../../../FormBuilderButton';
 
-const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
@@ -44,34 +41,15 @@ export default function DynaSettings(props) {
   } = props;
   const classes = useStyles();
   const { resourceType, resourceId } = resourceContext;
-  const [shouldExpand, setShouldExpand] = useState(!collapsed);
-  const [drawerKey, setDrawerKey] = useState(0);
-  const history = useHistory();
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
 
-    return (resource && resource.settingsForm) || emptyObj;
-  });
-  const isIAResource = useSelector(state => {
-    const r = selectors.resource(state, resourceType, resourceId);
-    return !!(r && r._connectorId);
-  });
+  const allowFormEdit = useSelector(state =>
+    selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
+  );
 
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
-  );
-  const canPublish = useSelector(
-    state => selectors.userProfile(state).allowedToPublish
-  );
   const hasSettingsForm = useSelector(state =>
     selectors.hasSettingsForm(state, resourceType, resourceId)
-  );
-  const handleFormBuilderClick = useCallback(
-    () => setDrawerKey(drawerKey => drawerKey + 1), []
   );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
@@ -88,54 +66,28 @@ export default function DynaSettings(props) {
     },
     [id, onFieldChange]
   );
-  const handleExpandClick = useCallback(() => setShouldExpand(!shouldExpand), [
-    shouldExpand,
-  ]);
-  const handleEditClose = useCallback(() => history.goBack(), [history]);
+  const handleExpandClick = useCallback(() =>
+    setIsCollapsed(!isCollapsed), [isCollapsed]);
 
-  // if its an IA resource and cannot publish, then
-  // we only show the form view
-  let visibleForUser = true;
-  if (isIAResource && !canPublish) {
-    visibleForUser = false;
-  }
-
-  // only developers can see/edit raw settings!
-  // thus, if there is no metadata and the user is not a dev, render custom text.
-  if ((!isDeveloper || isViewMode || !visibleForUser) && !hasSettingsForm) {
-    if (resourceType === 'integrations') {
-      return (
-        <div>
-          <Typography>{label}</Typography>
-          <Divider className={classes.divider} />
-          <span>
-            You don&apos;t have any custom settings for this integration.
-          </span>
-        </div>
-      );
-    }
+  // Only developers can see/edit raw settings!
+  // thus, if there is no settings form and the user is not a dev, render nothing.
+  if (!allowFormEdit && !hasSettingsForm) {
     return null;
   }
 
   function renderSettings() {
-    return (
-      <>
-        {!hasSettingsForm ? <RawView {...props} /> : <FormView
+    if (hasSettingsForm) {
+      return (
+        <FormView
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}
           onFormChange={handleSettingFormChange}
-      />}
-        <EditDrawer
-          key={drawerKey}
-          editorId={id}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          settingsForm={settingsForm}
-          onClose={handleEditClose}
-        />
-      </>
-    );
+      />
+      );
+    }
+
+    return <RawView {...props} />;
   }
 
   if (fieldsOnly) return renderSettings();
@@ -143,16 +95,15 @@ export default function DynaSettings(props) {
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
     <div className={classes.child}>
-      <ExpansionPanel
-        expanded={shouldExpand}>
+      <ExpansionPanel expanded={!isCollapsed}>
         <ExpansionPanelSummary
           data-test={label}
           className={classes.summaryContainer}
           onClick={handleExpandClick}
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.summaryLabel}>{label}</Typography>
-          {isDeveloper && !isViewMode && visibleForUser && shouldExpand && (
-            <FormBuilderButton onClick={handleFormBuilderClick} />
+          {!isCollapsed && (
+            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails >

@@ -83,6 +83,7 @@ export default {
         ],
       },
     ],
+    required: true
   },
   _connectionIds: {
     type: 'selectresource',
@@ -135,6 +136,22 @@ export default {
       r._integrationId
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
+    allowNew: false,
+    valueDelimiter: ',',
+    visibleWhen: [
+      {
+        field: 'fullAccess',
+        is: ['false'],
+      },
+    ],
+    ignoreEnvironmentFilter: true,
+  },
+  _apiIds: {
+    type: 'selectresource',
+    resourceType: 'apis',
+    label: 'My APIs',
+    multiselect: true,
+    allowEdit: false,
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

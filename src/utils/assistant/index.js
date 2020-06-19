@@ -737,7 +737,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   if (adaptorType === 'http') {
     Object.keys(operationDetails.response || {}).forEach(
-      prop => { exportDoc.response[prop] = operationDetails.response[prop] }
+      prop => { exportDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 
@@ -1726,7 +1726,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     importDoc.response.successPath = operationDetails.successPath;
 
     Object.keys(operationDetails.response || {}).forEach(
-      prop => { importDoc.response[prop] = operationDetails.response[prop] }
+      prop => { importDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 

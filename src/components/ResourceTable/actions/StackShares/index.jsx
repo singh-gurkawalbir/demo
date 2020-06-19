@@ -4,7 +4,7 @@ import ShareStackIcon from '../../../icons/ShareStackIcon';
 
 // Todo fix icon after other PR merge
 export default {
-  label: 'Stack shares',
+  label: 'Share stack',
   icon: ShareStackIcon,
   key: 'stackShares',
   component: function StackShares({ rowData = {} }) {

@@ -19,23 +19,26 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  noSettings: {
+    margin: theme.spacing(1, 2, 4, 2),
+  },
 }));
 
 const emptyObj = {};
 
-export default function CustomSettings({ integrationId, childId }) {
-  const _integrationId = childId || integrationId;
+export default function CustomSettings({ integrationId: parentIntegrationId, childId }) {
+  const integrationId = childId || parentIntegrationId;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
   const settings = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', _integrationId);
+    const resource = selectors.resource(state, 'integrations', integrationId);
 
     return resource ? resource.settings : emptyObj;
   });
   const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', _integrationId).edit
+      selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
   const fieldMeta = useMemo(
     () => ({
@@ -88,24 +91,24 @@ export default function CustomSettings({ integrationId, childId }) {
       ];
 
       dispatch(
-        actions.resource.patchStaged(_integrationId, patchSet, SCOPES.VALUE)
+        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
       );
       dispatch(
         actions.resource.commitStaged(
           'integrations',
-          _integrationId,
+          integrationId,
           SCOPES.VALUE
         )
       );
       setFormKey(formKey => formKey + 1);
     },
-    [dispatch, _integrationId]
+    [dispatch, integrationId]
   );
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Integration Settings" >
-        <FormBuilderButton />
+      <PanelHeader title="Settings" >
+        <FormBuilderButton resourceType="integrations" resourceId={integrationId} integrationId={integrationId} />
       </PanelHeader>
 
       <div className={classes.form}>
@@ -113,12 +116,12 @@ export default function CustomSettings({ integrationId, childId }) {
           disabled={!canEditIntegration}
           fieldMeta={fieldMeta}
           resourceType="integrations"
-          resourceId={_integrationId}
+          resourceId={integrationId}
           validationHandler={validationHandler}
           key={formKey}>
           <DynaSubmit
             resourceType="integrations"
-            resourceId={_integrationId}
+            resourceId={integrationId}
             disabled={!canEditIntegration}
             onClick={handleSubmit}>
             Save

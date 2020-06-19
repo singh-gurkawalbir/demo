@@ -54,10 +54,10 @@ export default function FormGenerator(props) {
   const { fields, containers, type } = layout || {};
 
   const defaultFields = useMemo(() => {
-    if (!fields || !fieldMap) return null
+    if (!fields || !fieldMap) return null;
 
     return getCorrespondingFieldMap(fields, fieldMap);
-  }, [fieldMap, fields])
+  }, [fieldMap, fields]);
   if (!layout || !fieldMap) return null;
 
   const fieldsComponent = fields && (

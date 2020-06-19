@@ -1,6 +1,6 @@
 import { put, select, call } from 'redux-saga/effects';
 import { resourceData, flowReferencesForResource } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
+import { SCOPES, updateFlowDoc } from '../../resourceForm';
 import actions from '../../../actions';
 import { getFlowUpdatesFromPatch } from '../../../utils/flowData';
 
@@ -40,6 +40,7 @@ export function* updateFlowOnResourceUpdate({
   resourceType,
   resourceId,
   patch,
+  context,
 }) {
   if (resourceType === 'flows') {
     const flowUpdates = getFlowUpdatesFromPatch(patch);
@@ -58,9 +59,10 @@ export function* updateFlowOnResourceUpdate({
   }
 
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
-    yield put(
-      actions.flowData.updateFlowsForResource(resourceId, resourceType)
-    );
+    yield put(actions.flowData.updateFlowsForResource(resourceId, resourceType));
+    if (context?.flowId) {
+      yield call(updateFlowDoc, { flowId: context.flowId, resourceType, resourceId });
+    }
   }
 }
 

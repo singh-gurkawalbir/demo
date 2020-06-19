@@ -3,7 +3,7 @@ import UploadIcon from '../../../icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
-  label: 'Upload ZIP file',
+  label: 'Upload file',
   icon: UploadIcon,
   component: function UploadZipFile({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;

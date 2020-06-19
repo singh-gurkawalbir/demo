@@ -80,7 +80,7 @@ export default function AdminPanel({
     filterTabs.push('apitoken');
   }
   if (!canUninstall) {
-    filterTabs.push('uninstall')
+    filterTabs.push('uninstall');
   }
 
   const availableSections = allSections.filter(sec =>

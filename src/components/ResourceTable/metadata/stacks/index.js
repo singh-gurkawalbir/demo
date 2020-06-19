@@ -7,6 +7,7 @@ import StackShares from '../../actions/StackShares';
 import StackSystemToken from '../../../StackSystemToken';
 import { formatLastModified } from '../../../CeligoTable/util';
 import GenerateToken from '../../actions/GenerateToken';
+import Edit from '../../actions/Edit';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -49,7 +50,7 @@ export default {
   ],
   rowActions: r => {
     if (!r || !r.shared) {
-      return [GenerateToken, StackShares, AuditLogs, References, Delete];
+      return [Edit, GenerateToken, StackShares, AuditLogs, References, Delete];
     }
     return [];
   }

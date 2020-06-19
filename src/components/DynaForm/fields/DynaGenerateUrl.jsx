@@ -12,7 +12,7 @@ import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
 const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
   field => !field.isValid || field.isDiscretelyInvalid
-)
+);
 const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const webookRequiredFields = ['webhook.password', 'webhook.username']
+const webookRequiredFields = ['webhook.password', 'webhook.username'];
 
 function GenerateUrl(props) {
   const {
@@ -53,7 +53,7 @@ function GenerateUrl(props) {
     if (inValidFields(webookRequiredFields, fieldStates)) {
       webookRequiredFields.forEach(fieldId => {
         onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
-      })
+      });
       return;
     }
     dispatch(
