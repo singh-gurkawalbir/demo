@@ -12,6 +12,7 @@ import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import Revoke from '../../actions/Connections/Revoke';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: (r, actionProps) => {
@@ -82,8 +83,6 @@ export default {
 
     if (actionProps.integrationId && !r._connectorId) {
       actionsToReturn = [Deregister, ...actionsToReturn];
-    } else if (!r._connectorId && actionProps.type !== 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, Delete];
     }
 
     if (r.type === 'netsuite' || r.type === 'salesforce') {
@@ -95,6 +94,10 @@ export default {
       !!((((r.http || {}).auth || {}).token || {}).revoke || {}).uri
     ) {
       actionsToReturn = [Revoke, ...actionsToReturn];
+    }
+    actionsToReturn = [Edit, ...actionsToReturn];
+    if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
+      actionsToReturn = [...actionsToReturn, Delete];
     }
 
     return actionsToReturn;

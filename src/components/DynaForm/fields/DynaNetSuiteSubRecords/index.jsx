@@ -150,14 +150,14 @@ export default function DynaNetSuiteSubRecords(props) {
   const handleDeleteClick = useCallback(
     fieldId => {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm remove',
         message: 'Are you sure you want to remove this subrecord import?',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Yes',
+            label: 'Remove',
             onClick: () => {
               const updatedSubrecords = subrecords.filter(
                 sr => sr.fieldId !== fieldId

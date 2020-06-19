@@ -13,6 +13,7 @@ import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
 import MappingCell from './MappingCell';
 import SettingsCell from './SettingsCell';
+import EditCell from './EditCell';
 
 export default {
   columns: (empty, actionProps) => {
@@ -120,16 +121,15 @@ export default {
     // 'detach','clone','delete','references','download',
 
     if (isIntegrationApp) {
-      return [AuditLogs];
+      return [EditCell, AuditLogs];
     }
 
-    let actions = [];
 
+    let actions = [EditCell, AuditLogs, References, Download, Clone];
     if (!isStandalone) {
       actions.push(Detach);
     }
-
-    actions = [...actions, Clone, AuditLogs, References, Download, Delete];
+    actions = [...actions, Delete];
 
     return actions;
   },
