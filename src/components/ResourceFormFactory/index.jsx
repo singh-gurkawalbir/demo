@@ -108,7 +108,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       actionButtons = ['save', 'cancel'];
     }
     return actionButtons.map(id => ({id}));
-  }, [actions, connectionType, isNew, resourceType])
+  }, [actions, connectionType, isNew, resourceType]);
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {

@@ -19,6 +19,7 @@ export default function EditorSaveButton(props) {
     disabled = false,
     dataTest,
     onClose,
+    flowId,
   } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
   const editor = useSelector(state => selectors.editor(state, id));
@@ -39,9 +40,9 @@ export default function EditorSaveButton(props) {
     }
   }, [onClose, saveCompleted, saveTerminated]);
   const onSave = useCallback(() => {
-    dispatch(actions.editor.save(id));
+    dispatch(actions.editor.save(id, { flowId }));
     saveTriggered = true;
-  }, [dispatch, id]);
+  }, [dispatch, id, flowId]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,

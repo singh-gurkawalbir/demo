@@ -43,7 +43,7 @@ function ActionsFooter(props) {
     disabled,
     isLoading,
     closeOnSave,
-  } = props
+  } = props;
   const classes = useStyles();
 
   return (
@@ -82,7 +82,7 @@ function ActionsFooter(props) {
         cancel
       </Button>
     </>
-  )
+  );
 }
 
 /**
@@ -95,7 +95,7 @@ function ActionsFooter(props) {
 export default function EditorDrawer(props) {
   const { handleClose, label, editorProps, saveProps } = props;
   const { id, value, mode, disabled, handleUpdateOnDrawerSave, handleUpdate } = editorProps;
-  const { resourceId, resourceType, patchKey} = saveProps
+  const { resourceId, resourceType, patchKey} = saveProps;
   const isNewResource = isNewId(resourceId);
   // Hooks used
   const classes = useStyles();
@@ -131,13 +131,13 @@ export default function EditorDrawer(props) {
   const handleDone = useCallback(() => {
     handleUpdate(content);
     handleClose();
-  }, [handleUpdate, handleClose, content])
+  }, [handleUpdate, handleClose, content]);
   // useEffect
   useEffect(() => {
     if (resourceCommStatus === 'success') {
       if (closeOnSave) {
         handleClose();
-        setCloseOnSave(false)
+        setCloseOnSave(false);
       }
       setDisableSave(false);
     }
@@ -145,7 +145,7 @@ export default function EditorDrawer(props) {
       setDisableSave(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resourceCommStatus])
+  }, [resourceCommStatus]);
   return (
     <Drawer
       anchor="right"

@@ -695,7 +695,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'API Rate Limits',
+        label: 'Non-standard API rate limiter',
         fields: [
           'http.rateLimit.limit',
           'http.rateLimit.failStatusCode',

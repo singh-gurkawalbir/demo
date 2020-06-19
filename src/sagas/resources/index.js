@@ -69,7 +69,7 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options }) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -264,9 +264,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   yield put(actions.resource.received(resourceType, updated));
 
   if (!isNew) {
-    yield put(
-      actions.resource.updated(resourceType, updated._id, master, patch)
-    );
+    yield put(actions.resource.updated(resourceType, updated._id, master, patch, context));
   }
 
   if (options && options.action === 'flowEnableDisable') {
