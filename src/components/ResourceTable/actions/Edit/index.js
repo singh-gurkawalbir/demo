@@ -7,9 +7,9 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 export default {
   label: (rowData, actionProps) => {
     if (actionProps.resourceType === 'accesstokens') {
-      return 'Edit API token'
+      return 'Edit API token';
     }
-    return `Edit ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`
+    return `Edit ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
   },
   icon: EditIcon,
   component: function Edit(props) {

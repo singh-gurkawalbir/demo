@@ -125,11 +125,11 @@ export default {
     }
 
 
-    let actions = [EditCell, AuditLogs, References, Download, Clone]
+    let actions = [EditCell, AuditLogs, References, Download, Clone];
     if (!isStandalone) {
       actions.push(Detach);
     }
-    actions = [...actions, Delete]
+    actions = [...actions, Delete];
 
     return actions;
   },

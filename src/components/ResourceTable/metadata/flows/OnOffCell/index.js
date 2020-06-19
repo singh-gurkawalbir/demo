@@ -118,7 +118,7 @@ export default function OnOffCell({
             }
           }
         }]
-    })
+    });
   }, [
     confirmDialog,
     dispatch,

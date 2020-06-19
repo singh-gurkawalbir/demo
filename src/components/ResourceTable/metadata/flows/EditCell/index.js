@@ -12,9 +12,9 @@ export default {
   component: function Edit(props) {
     const { rowData = {} } = props;
 
-    const flowId = rowData._id
-    const integrationId = rowData._integrationId
-    const isIntegrationApp = !!rowData._connectorId
+    const flowId = rowData._id;
+    const integrationId = rowData._integrationId;
+    const isIntegrationApp = !!rowData._connectorId;
     const history = useHistory();
     const isDataLoader = useSelector(state =>
       selectors.isDataLoader(state, flowId)
