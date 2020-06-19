@@ -1,6 +1,6 @@
 export default {
   'rest.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'rest.blobMethod': {
     type: 'select',
-    label: 'HTTP Method',
+    label: 'HTTP method',
     required: true,
     options: [
       {
