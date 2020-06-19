@@ -40,7 +40,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP Method',
     required: true,
     visibleWhen: [
       {

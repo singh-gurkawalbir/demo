@@ -40,7 +40,7 @@ export default {
   },
   'rest.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP Method',
     required: true,
     options: [
       {

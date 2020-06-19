@@ -959,7 +959,6 @@ export default {
           // 'mapping',
           'rest.relativeURI',
           'rest.body',
-          'blobKeyPath',
         ],
         type: 'collapse',
         containers: [
@@ -1033,7 +1032,8 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

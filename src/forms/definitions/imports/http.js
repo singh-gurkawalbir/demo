@@ -1537,7 +1537,6 @@ export default {
           'http.batchSize',
           'http.body',
           'uploadFile',
-          'blobKeyPath',
         ],
         containers: [
           {type: 'indent',
@@ -1641,6 +1640,7 @@ export default {
         label: 'Advanced',
         fields: [
           'http.ignoreEmptyNodes',
+          'blobKeyPath',
           'advancedSettings',
           'http.configureAsyncHelper',
           'http._asyncHelperId',
