@@ -72,6 +72,13 @@ export default {
       fieldId: 'rdbms.ssl.passphrase',
       visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
   },
   layout: {

@@ -94,7 +94,7 @@ export default {
           'http.encrypted.apiSecret',
           'http.auth.token.token',
           'http.auth.token.refreshToken'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

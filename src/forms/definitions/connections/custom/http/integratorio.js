@@ -127,7 +127,7 @@ export default {
         fields: ['integrator.region',
           'integrator.environment',
           'integrator.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

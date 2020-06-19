@@ -53,7 +53,7 @@ export default {
         fields: ['http.unencrypted.tpl',
           'http.unencrypted.userLoginId',
           'http._iClientId'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

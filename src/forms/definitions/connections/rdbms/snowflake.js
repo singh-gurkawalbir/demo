@@ -46,22 +46,40 @@ export default {
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
     'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
   },
   layout: {
-    fields: [
-      'name',
-      'rdbms.host',
-      'rdbms.database',
-      'rdbms.snowflake.warehouse',
-      'rdbms.user',
-      'rdbms.password',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rdbms.host',
+          'rdbms.database',
+          'rdbms.snowflake.warehouse',
+          'rdbms.user',
+          'rdbms.password',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: [
           '_borrowConcurrencyFromConnectionId',
           'rdbms.concurrencyLevel',

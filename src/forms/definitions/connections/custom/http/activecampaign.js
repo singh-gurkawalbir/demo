@@ -61,7 +61,7 @@ export default {
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true, label: 'Application details', fields: ['http.activecampaignSubdomain', 'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

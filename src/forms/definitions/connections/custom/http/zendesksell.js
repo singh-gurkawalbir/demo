@@ -45,7 +45,7 @@ export default {
         label: 'Configure your client id and secret',
         fields: ['http.auth.oauth.callbackURL', 'http._iClientId'],
       },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

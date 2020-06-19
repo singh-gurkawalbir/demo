@@ -217,7 +217,7 @@ export default {
           'http.unencrypted.company',
           'http.auth.oauth.scope',
           'genericOauthConnector'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [

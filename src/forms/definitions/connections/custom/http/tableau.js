@@ -100,7 +100,7 @@ export default {
           'http.unencrypted.contentUrl',
           'http.auth.token.token',
           'http.unencrypted.siteId'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

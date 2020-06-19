@@ -109,7 +109,7 @@ export default {
         fields: ['environment',
           'http.unencrypted.apiSiteId',
           'http._iClientId'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

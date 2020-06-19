@@ -64,7 +64,7 @@ export default {
         fields: ['gorgiasSubdomain',
           'http.auth.basic.username',
           'http.auth.basic.password'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

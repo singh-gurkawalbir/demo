@@ -97,7 +97,7 @@ export default {
           'http.encrypted.apiKey',
           'http.encrypted.apiSecret',
           'http.unencrypted.sellerId'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

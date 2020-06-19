@@ -65,7 +65,7 @@ export default {
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true, label: 'Application details', fields: ['http.acceloSubdomain', 'http.auth.oauth.scope'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

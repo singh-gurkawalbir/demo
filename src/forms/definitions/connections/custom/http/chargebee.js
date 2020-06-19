@@ -60,7 +60,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['chargebeeSubdomain', 'http.auth.basic.username'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -47,7 +47,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.pacejetLocation',
           'http.encrypted.pacejetLicenseKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

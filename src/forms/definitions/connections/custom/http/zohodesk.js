@@ -70,7 +70,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.organizationId',
           'http.auth.oauth.scope'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -77,7 +77,7 @@ export default {
         fields: ['http.unencrypted.apiKey',
           'http.encrypted.apiSecret',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

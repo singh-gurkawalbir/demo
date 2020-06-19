@@ -17,7 +17,6 @@ export default {
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
@@ -25,7 +24,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.partnerUserId',
           'http.encrypted.partnerUserSecret'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
 };

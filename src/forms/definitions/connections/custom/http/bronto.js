@@ -74,7 +74,7 @@ export default {
           'http.encrypted.clientSecret',
           'http.auth.token.token',
           'http.auth.token.refreshToken'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

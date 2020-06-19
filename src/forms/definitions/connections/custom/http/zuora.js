@@ -80,7 +80,7 @@ export default {
         fields: ['http.sandbox',
           'http.unencrypted.apiAccessKeyId',
           'http.encrypted.apiSecretAccessKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

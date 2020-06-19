@@ -93,7 +93,7 @@ export default {
         fields: ['environment',
           'http.unencrypted.p3plUserID',
           'http.encrypted.p3plUserPassword'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -138,7 +138,7 @@ export default {
         fields: ['http.auth.type',
           'http.auth.oauth.scope',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [

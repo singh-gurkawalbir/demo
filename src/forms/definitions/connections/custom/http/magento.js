@@ -84,7 +84,7 @@ export default {
           'http.unencrypted.username',
           'http.encrypted.password',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

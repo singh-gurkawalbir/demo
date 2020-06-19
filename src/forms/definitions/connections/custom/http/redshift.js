@@ -67,7 +67,7 @@ export default {
         fields: ['region',
           'http.unencrypted.accessKeyId',
           'http.encrypted.secretAccessKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

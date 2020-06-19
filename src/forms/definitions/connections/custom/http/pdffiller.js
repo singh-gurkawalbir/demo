@@ -20,7 +20,7 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

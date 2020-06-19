@@ -142,7 +142,7 @@ export default {
           'http.encrypted.password',
           'http.encrypted.clientId',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -133,7 +133,7 @@ export default {
           'http.encrypted.password',
           'http.unencrypted.namespace',
           'http.unencrypted.apiKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

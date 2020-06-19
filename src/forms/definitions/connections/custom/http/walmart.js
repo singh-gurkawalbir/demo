@@ -117,7 +117,7 @@ export default {
         fields: ['environment',
           'http.unencrypted.clientId',
           'http.encrypted.clientSecret'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

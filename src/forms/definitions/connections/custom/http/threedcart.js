@@ -64,7 +64,7 @@ export default {
         fields: ['http.threedcartSecureUrl',
           'http.encrypted.PrivateKey',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

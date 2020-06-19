@@ -70,7 +70,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.refreshTokenBody.user', 'http.encrypted.password'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

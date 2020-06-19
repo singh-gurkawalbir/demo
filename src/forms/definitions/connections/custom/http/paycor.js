@@ -39,7 +39,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.unencrypted.publicKey', 'http.encrypted.secretKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

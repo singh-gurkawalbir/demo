@@ -100,7 +100,7 @@ export default {
           'http.unencrypted.clientId',
           'http.encrypted.clientSecret',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

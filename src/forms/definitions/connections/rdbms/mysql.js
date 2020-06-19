@@ -61,6 +61,13 @@ export default {
       fieldId: 'rdbms.ssl.ca',
       visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
+    application: {
+      id: 'application',
+      type: 'text',
+      label: 'Application',
+      defaultValue: r => r && r.assistant ? r.assistant : r.type,
+      defaultDisabled: true,
+    },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
   },
   layout: {
@@ -88,7 +95,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['rdbmsAdvanced'],
       },
     ],

@@ -119,11 +119,6 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'name',
-      'wrapper.pingFunction',
-      'wrapper._stackId',
-    ],
     type: 'collapse',
     containers: [
       {

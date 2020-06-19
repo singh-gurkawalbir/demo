@@ -23,7 +23,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.partnerUserId',
           'http.encrypted.partnerUserSecret'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
 };

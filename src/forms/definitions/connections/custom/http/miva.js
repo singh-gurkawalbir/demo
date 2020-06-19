@@ -72,7 +72,7 @@ export default {
         fields: ['http.apiEndpoint',
           'http.unencrypted.Store_Code',
           'xMivaAPIToken'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

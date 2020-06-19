@@ -122,7 +122,7 @@ export default {
           'http.clientCertificates.cert',
           'http.clientCertificates.key',
           'http.clientCertificates.passphrase'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

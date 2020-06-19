@@ -94,7 +94,7 @@ export default {
         fields: ['http.encrypted.subscriptionKey',
           'http.unencrypted.applicationKey',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

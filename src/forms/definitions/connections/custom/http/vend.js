@@ -52,7 +52,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.subdomain'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

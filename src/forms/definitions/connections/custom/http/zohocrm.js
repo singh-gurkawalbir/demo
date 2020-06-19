@@ -220,7 +220,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.zohoSubdomain', 'http.auth.oauth.scope'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

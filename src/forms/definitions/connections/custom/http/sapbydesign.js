@@ -72,7 +72,7 @@ export default {
         fields: ['storeURL',
           'http.unencrypted.username',
           'http.encrypted.password'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

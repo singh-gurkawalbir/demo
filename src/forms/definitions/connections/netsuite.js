@@ -207,13 +207,13 @@ export default {
           'netsuite.tokenId',
           'netsuite.tokenSecret',
           'netsuite._iClientId',
-          'netsuite.linkSuiteScriptIntegrator',
         ],
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: [
+          'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
         ],

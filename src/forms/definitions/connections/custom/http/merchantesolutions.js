@@ -72,7 +72,7 @@ export default {
         fields: ['http.unencrypted.profileId',
           'http.encrypted.profileKey',
           'http.encrypted.cardNumber'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

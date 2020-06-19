@@ -101,7 +101,7 @@ export default {
           'http.encrypted.transactionKey'] },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['httpAdvanced'],
       },
     ],

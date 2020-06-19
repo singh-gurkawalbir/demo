@@ -83,7 +83,7 @@ export default {
           'http.unencrypted.companyId',
           'http.unencrypted.api',
           'http.encrypted.secret'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

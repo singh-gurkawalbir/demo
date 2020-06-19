@@ -33,7 +33,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.auth.basic.password'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

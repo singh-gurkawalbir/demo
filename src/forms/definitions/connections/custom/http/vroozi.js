@@ -74,7 +74,7 @@ export default {
         fields: ['accountType',
           'http.unencrypted.apiKey',
           'http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

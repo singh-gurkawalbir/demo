@@ -49,7 +49,7 @@ export default {
         label: 'Application details',
         fields: ['http.encrypted.serverToken',
           'http.encrypted.accountToken'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

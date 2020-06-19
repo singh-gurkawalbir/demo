@@ -69,7 +69,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['environment', 'http.encrypted.apiKey'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

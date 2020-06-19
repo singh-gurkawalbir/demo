@@ -72,7 +72,7 @@ export default {
           'http.auth.basic.username',
           'http.auth.basic.password',
           'http.unencrypted.merchantId'] },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };
