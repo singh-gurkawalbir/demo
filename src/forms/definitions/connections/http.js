@@ -415,7 +415,7 @@ export default {
     'http.oauth.baseURI': {
       id: 'http.oauth.baseURI',
       type: 'text',
-      label: 'Base uri',
+      label: 'Base URI',
       required: true,
       helpKey: 'connection.http.baseURI',
       defaultValue: r => r && r.http && r.http.baseURI,

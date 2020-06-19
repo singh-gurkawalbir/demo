@@ -902,7 +902,7 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token url',
+    label: 'Access token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -919,7 +919,7 @@ export default {
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication url',
+    label: 'Authentication URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
@@ -999,7 +999,7 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback url',
+    label: 'Callback URL',
     defaultDisabled: true,
     visible: !isProduction(),
     defaultValue: () => {
@@ -1015,7 +1015,7 @@ export default {
   },
   'http.auth.token.revoke.uri': {
     type: 'text',
-    label: 'Revoke token url',
+    label: 'Revoke token URL',
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
@@ -1852,7 +1852,7 @@ export default {
   },
   as2url: {
     type: 'select',
-    label: 'AS2 url',
+    label: 'AS2 URL',
     options: [
       {
         items: [
@@ -2191,7 +2191,7 @@ export default {
   },
   'netsuite.dataCenterURLs': {
     type: 'text',
-    label: 'NetSuite data center urls',
+    label: 'NetSuite data center URLs',
   },
   'netsuite.accountName': {
     type: 'text',
