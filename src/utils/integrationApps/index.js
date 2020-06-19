@@ -26,15 +26,15 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
 
   if (integrationId === STANDALONE_INTEGRATION.id) {
     sectionsToHide.push('readme');
-    sectionsToHide.push('general')
+    sectionsToHide.push('general');
   }
   if (!isIntegrationApp) {
     sectionsToHide.push('subscription');
     sectionsToHide.push('apitoken');
-    sectionsToHide.push('uninstall')
+    sectionsToHide.push('uninstall');
   } else {
     sectionsToHide.push('readme');
-    sectionsToHide.push('general')
+    sectionsToHide.push('general');
     if (!isParent) {
       sectionsToHide.push('subscription');
       sectionsToHide.push('apitoken');
@@ -43,44 +43,44 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
     }
   }
   if (isMonitorLevelUser) {
-    sectionsToHide.push('uninstall')
-    sectionsToHide.push('apitoken')
+    sectionsToHide.push('uninstall');
+    sectionsToHide.push('apitoken');
   }
 
   return tabs.filter(
     sec => !sectionsToHide.includes(sec)
   );
-}
+};
 
 export const getTopLevelTabs = (options = {}) => {
   const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId, hideSettingsTab} = options;
   const excludeTabs = [];
-  const showAdminTabs = !!getAdminLevelTabs(options).length
-  const isStandalone = STANDALONE_INTEGRATION.id === integrationId
+  const showAdminTabs = !!getAdminLevelTabs(options).length;
+  const isStandalone = STANDALONE_INTEGRATION.id === integrationId;
   if (isIntegrationApp) {
-    excludeTabs.push('users')
+    excludeTabs.push('users');
     if (!hasAddOns) {
-      excludeTabs.push('addons')
+      excludeTabs.push('addons');
     }
   } else {
-    excludeTabs.push('addons')
+    excludeTabs.push('addons');
   }
   if (isParent) {
-    excludeTabs.push('flows')
-    excludeTabs.push('dashboard')
+    excludeTabs.push('flows');
+    excludeTabs.push('dashboard');
   }
   if (isStandalone) {
-    excludeTabs.push('admin')
+    excludeTabs.push('admin');
   }
   if (isStandalone || hideSettingsTab) {
-    excludeTabs.push('settings')
+    excludeTabs.push('settings');
   }
   if (!showAdminTabs) {
-    excludeTabs.push('admin')
+    excludeTabs.push('admin');
   }
 
-  return allTabs.filter(tab => !excludeTabs.includes(tab.path))
-}
+  return allTabs.filter(tab => !excludeTabs.includes(tab.path));
+};
 
 const getIntegrationApp = ({ _connectorId, name }) => {
   const domain = window.document.location.hostname.replace('www.', '');

@@ -6,6 +6,7 @@ import Clone from '../../actions/Clone';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import { ConnectorNameComp } from '..';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -28,5 +29,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: () => [Clone, AuditLogs, References, Delete],
+  rowActions: () => [Edit, AuditLogs, References, Clone, Delete],
 };

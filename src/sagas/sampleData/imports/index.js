@@ -201,7 +201,7 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
 
       case 'SalesforceImport': {
         const { _connectionId: connectionId, salesforce } = resource;
-        const {sObjects} = options
+        const {sObjects} = options;
         if (sObjects && Array.isArray(sObjects)) {
           for (let i = 0; i < sObjects.length; i += 1) {
             yield put(

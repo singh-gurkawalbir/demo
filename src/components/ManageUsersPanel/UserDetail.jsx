@@ -55,7 +55,7 @@ export default function UserDetail(props) {
     switch (action) {
       case 'disable':
         confirmDialog({
-          title: 'Confirm',
+          title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
           message: `Are you sure you want to ${
             user.disabled ? 'enable' : 'disable'
           } this user?`,
@@ -64,7 +64,7 @@ export default function UserDetail(props) {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
@@ -99,14 +99,14 @@ export default function UserDetail(props) {
         break;
       case 'delete':
         confirmDialog({
-          title: 'Confirm',
+          title: 'Confirm delete',
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
@@ -239,7 +239,8 @@ export default function UserDetail(props) {
             <TableCell>
               <CeligoSwitch
                 data-test="disableUser"
-                enabled={!user.disabled}
+                disabled={!user.accepted}
+                checked={!user.disabled}
                 onChange={() => {
                   handleActionClick('disable');
                 }}

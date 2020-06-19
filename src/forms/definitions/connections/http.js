@@ -590,7 +590,18 @@ export default {
       },
       {
         collapsed: true,
-        label: 'How to test this connection?',
+        label: 'Non-standard API rate limiter',
+        fields: [
+          'http.rateLimit.limit',
+          'http.rateLimit.failStatusCode',
+          'http.rateLimit.failPath',
+          'http.rateLimit.failValues',
+          'http.retryHeader',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'How to test connection?',
         fields: [
           'http.ping.relativeURI',
           'http.ping.method',
@@ -600,17 +611,6 @@ export default {
           'http.ping.failPath',
           'http.ping.failValues',
           'http.ping.errorPath',
-        ],
-      },
-      {
-        collapsed: true,
-        label: 'Non-standard API rate limiter',
-        fields: [
-          'http.rateLimit.limit',
-          'http.rateLimit.failStatusCode',
-          'http.rateLimit.failPath',
-          'http.rateLimit.failValues',
-          'http.retryHeader',
         ],
       },
       {

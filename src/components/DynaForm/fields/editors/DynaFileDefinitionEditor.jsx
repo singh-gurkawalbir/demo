@@ -12,7 +12,6 @@ import {
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
 import FieldHelp from '../../FieldHelp';
-import helpTextMap from '../../../Help/helpTextMap';
 
 /*
  * This editor is shown in case of :
@@ -50,7 +49,6 @@ function DynaFileDefinitionEditor(props) {
     options = {},
     value,
     disabled,
-    helpKey,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
@@ -212,8 +210,7 @@ function DynaFileDefinitionEditor(props) {
             onClick={handleEditorClick}>
             Launch
           </Button>
-          {/* TODO: surya we need to add the helptext for the upload file */}
-          <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
+          <FieldHelp {...props} />
         </LoadResources>
       </div>
     </>

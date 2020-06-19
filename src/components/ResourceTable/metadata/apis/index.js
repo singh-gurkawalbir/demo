@@ -1,49 +1,36 @@
 import React from 'react';
 import Delete from '../../actions/Delete';
-import References from '../../actions/References';
-import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
-import AgentToken from '../../../AgentToken';
-import AgentStatus from '../../../AgentStatus';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
-import GenerateToken from '../../actions/GenerateToken';
+import Edit from '../../actions/Edit';
 
-const getAgentDownloadInstaller = agent => (
-  <AgentDownloadInstaller agentId={agent._id} />
-);
-const getAgentToken = agent => <AgentToken agentId={agent._id} />;
 
 export default {
   columns: [
     {
       heading: 'Name',
       value: function ExportDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="agents" resource={r} />;
+        return <ResourceDrawerLink resourceType="apis" resource={r} />;
       },
       orderBy: 'name',
     },
     {
-      heading: 'Status',
-      value(r) {
-        return <AgentStatus agentId={r._id} />;
-      },
+      heading: 'Function',
+      value: function functionName(r) {
+        return r.function;
+      }
+    },
+    {
+      heading: 'Script',
+      value: function scriptName(r) {
+        return r._scriptId;
+      }
     },
     {
       heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
-
-    {
-      heading: 'Install',
-      width: '175px',
-      value: r => getAgentDownloadInstaller(r),
-    },
-    {
-      heading: 'Access token',
-      width: '285px',
-      value: r => getAgentToken(r),
-    },
   ],
-  rowActions: () => [GenerateToken, References, Delete],
+  rowActions: () => [Edit, Delete],
 };

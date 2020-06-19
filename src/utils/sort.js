@@ -4,10 +4,10 @@ import isObject from 'lodash/isObject';
 const isNumber = el => {
   if (typeof el === 'number') { return true; }
   if (typeof el === 'string') {
-    return !/\D/.test(el)
+    return !/\D/.test(el);
   }
   return false;
-}
+};
 export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   const firstEl = sortProperty && isObject(a) ? get(a, sortProperty) || '' : a;
   const secondEl = sortProperty && isObject(b) ? get(b, sortProperty) || '' : b;

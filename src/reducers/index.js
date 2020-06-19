@@ -802,6 +802,7 @@ export function resourceList(state, options = {}) {
       'templates',
       'published',
       'transfers',
+      'apis',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -828,6 +829,7 @@ export function resourceListModified(userState, resourcesState, options = {}) {
       'templates',
       'published',
       'transfers',
+      'apis',
     ].includes(
       /* These resources are common for both production & sandbox environments. */
       options.type
@@ -1330,13 +1332,13 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
     let registeredConnections = [];
     if (!childId) {
       childIntegrations.forEach(intId => {
-        const integration = resource(state, 'integrations', intId)
-        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds)
-      })
+        const integration = resource(state, 'integrations', intId);
+        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
+      });
     } else {
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
-      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections)
+      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections);
     }
 
     if (registeredConnections) {
@@ -1345,9 +1347,9 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
   } else if (integration._connectorId) {
     resources = resources.filter(conn => {
       if (childId && childId !== integrationId) {
-        return [integrationId, childId].includes(conn._integrationId)
+        return [integrationId, childId].includes(conn._integrationId);
       }
-      return childIntegrations.includes(conn._integrationId)
+      return childIntegrations.includes(conn._integrationId);
     });
   }
 
@@ -1995,7 +1997,7 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
         return flowStore
           ? flowStore === store.label
           : flows.indexOf(f._id) > -1;
-      })
+      });
       return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
@@ -2102,7 +2104,7 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
     if (!uninstallSteps || uninstallSteps.length === 0) return true;
     return !(uninstallSteps.find(s =>
       !s.completed
-    ))
+    ));
   }
   return false;
 }

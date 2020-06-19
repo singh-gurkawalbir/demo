@@ -68,6 +68,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       insertStubKey="filter"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      flowId={flowId}
     />
   );
 }
