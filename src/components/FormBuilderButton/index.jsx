@@ -31,7 +31,7 @@ export default function FormBuilderButton({resourceId, resourceType, integration
   const toggleEditMode = useCallback(
     e => {
       e.stopPropagation();
-      setDrawerKey(drawerKey => drawerKey + 1)
+      setDrawerKey(drawerKey => drawerKey + 1);
       history.push(`${match.url}/editSettings`);
     },
     [history, match.url]

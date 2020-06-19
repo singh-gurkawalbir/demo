@@ -137,7 +137,7 @@ export default function DynaHook(props) {
     if (shouldCommit === true) {
       const options = { dispatch, isNew: true };
 
-      saveScript({ ...values, scriptId: tempScriptId }, options);
+      saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
     }
 
     setShowCreateScriptDialog(false);
@@ -209,6 +209,7 @@ export default function DynaHook(props) {
           onClose={handleClose}
           resultMode={editorResultMode}
           optionalSaveParams={optionalSaveParams}
+          flowId={flowId}
           patchOnSave
         />
       )}
@@ -216,6 +217,7 @@ export default function DynaHook(props) {
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
           scriptId={tempScriptId}
+          flowId={flowId}
         />
       )}
 

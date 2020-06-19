@@ -12,6 +12,7 @@
  * filter,
  * step,
  * update
+ * handleRequest
  */
 
 const preSavePageFunctionStub = ` 
@@ -288,6 +289,31 @@ const formInitFunctionStub = `/*
 function formInit (options) {
   return options.resource.settingsForm.form
 }`;
+const handleRequestFunctionStub = `/*
+* handleRequest function stub:
+*
+* The name of the function can be changed to anything you like.
+*
+* The function will be passed one 'options' argument that has the following fields:
+*   'method' - http request method (uppercase string).
+*   'headers' - http request headers (object).  
+*   'queryString' - http request query string (object).
+*   'body' - parsed http request body (object, or undefined if unable to parse).
+*   'rawBody' - raw http request body (string).
+*
+* The function needs to return a response object that has the following fields:
+*   ‘statusCode’ - http response status code (number).
+*   'headers' - http response headers overrides (object, optional).
+*   'body' - http response body (string or object).
+* Throwing an exception will signal an error.
+*/
+function handleRequest (options) {
+  return {
+    statusCode: 200,
+    headers: { },
+    body: options.body
+  }
+}`;
 
 export default {
   preSavePage: preSavePageFunctionStub,
@@ -302,4 +328,5 @@ export default {
   step: stepFunctionStub,
   update: updateFunctionStub,
   formInit: formInitFunctionStub,
+  handleRequest: handleRequestFunctionStub,
 };

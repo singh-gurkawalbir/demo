@@ -239,7 +239,8 @@ export default function UserDetail(props) {
             <TableCell>
               <CeligoSwitch
                 data-test="disableUser"
-                enabled={!user.disabled}
+                disabled={!user.accepted}
+                checked={!user.disabled}
                 onChange={() => {
                   handleActionClick('disable');
                 }}

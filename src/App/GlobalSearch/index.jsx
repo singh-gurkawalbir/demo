@@ -115,6 +115,7 @@ function GlobalSearch({ location }) {
     'agents',
     'scripts',
     'stacks',
+    'apis',
   ];
   const searchResults = useSelector(state => {
     const results = [];

@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-import helpTextMap from '../../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -52,12 +51,11 @@ function FileUploader(props) {
     isValid,
     errorMessages,
     name,
-    label,
     required,
     handleFileChosen,
     fileName,
     uploadError,
-    helpKey,
+    label,
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -71,8 +69,7 @@ function FileUploader(props) {
         <FormLabel required={required}>
           {label}
         </FormLabel>
-        {/* TODO: surya we need to add the helptext for the upload file */}
-        <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
+        <FieldHelp {...props} />
       </div>
       <div className={classes.uploadContainer}>
         <Button

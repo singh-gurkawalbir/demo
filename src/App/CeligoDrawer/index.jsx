@@ -189,7 +189,7 @@ function getHrefProps(href, path) {
     target: href && '_blank',
     href,
     to: !href ? getRoutePath(path) : undefined
-  }
+  };
 }
 
 const integrationsFilterConfig = {

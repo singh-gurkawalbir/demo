@@ -624,7 +624,7 @@ function JobErrorTable({
                         return null;
                       },
                     },
-                  ]
+                  ];
                 }}
               />
             </>

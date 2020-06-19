@@ -81,6 +81,7 @@ export default function ToggleEditorDialog(props) {
     helpTitle,
     helpKey,
     hidePreviewAction = false,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -274,6 +275,7 @@ export default function ToggleEditorDialog(props) {
           disabled={disableSave}
           onClose={handleClose}
           submitButtonLabel="Save"
+          flowId={flowId}
         />
         <Button
           variant="text"

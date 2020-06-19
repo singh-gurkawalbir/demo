@@ -2291,7 +2291,7 @@ describe('integrationApps reducer test cases', () => {
       settings: {},
       addon: {},
       clone: {},
-    }
+    };
     describe('INIT action', () => {
       test('should create an integrationId reference inside uninstaller2 state object', () => {
         const newState = reducer(
@@ -2304,7 +2304,7 @@ describe('integrationApps reducer test cases', () => {
         expect(newState).toEqual(state);
       });
       test('should not affect any other integration id state', () => {
-        state.uninstaller2 = {456: {key: 'value'}}
+        state.uninstaller2 = {456: {key: 'value'}};
         const newState = reducer(
           state,
           actions.integrationApp.uninstaller2.init(
@@ -2337,11 +2337,11 @@ describe('integrationApps reducer test cases', () => {
             'some error msg'
           )
         );
-        state.uninstaller2 = {123: {error: 'some error msg'}}
+        state.uninstaller2 = {123: {error: 'some error msg'}};
         expect(newState).toEqual(state);
       });
       test('should not affect any other integration id state', () => {
-        state.uninstaller2 = {123: {}, 456: {key: 'value'}}
+        state.uninstaller2 = {123: {}, 456: {key: 'value'}};
         const newState = reducer(
           state,
           actions.integrationApp.uninstaller2.failed(
@@ -2377,11 +2377,11 @@ describe('integrationApps reducer test cases', () => {
             uninstallSteps
           )
         );
-        state.uninstaller2 = {123: {steps: uninstallSteps, isFetched: true}}
+        state.uninstaller2 = {123: {steps: uninstallSteps, isFetched: true}};
         expect(newState).toEqual(state);
       });
       test('should not affect any other state', () => {
-        state.uninstaller2 = {123: {}, 456: {key: 'value'}}
+        state.uninstaller2 = {123: {}, 456: {key: 'value'}};
         const newState = reducer(
           state,
           actions.integrationApp.uninstaller2.receivedSteps(
@@ -2408,7 +2408,7 @@ describe('integrationApps reducer test cases', () => {
         expect(newState).toEqual(state);
       });
       test('should not affect any other state', () => {
-        state.uninstaller2 = {123: {key: 'some value'}, 456: {key: 'value'}}
+        state.uninstaller2 = {123: {key: 'some value'}, 456: {key: 'value'}};
         const newState = reducer(
           state,
           actions.integrationApp.uninstaller2.clearSteps(
@@ -2481,5 +2481,5 @@ describe('integrationApps reducer test cases', () => {
         expect(selectors.uninstall2Data(newState, '123')).toEqual(expectedData);
       });
     });
-  })
+  });
 });

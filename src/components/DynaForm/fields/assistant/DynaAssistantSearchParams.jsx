@@ -126,7 +126,7 @@ export default function DynaAssistantSearchParams(props) {
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
         {/* {Todo (shiva): we need helpText for the component} */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <ErroredMessageComponent
         isValid={isValid}

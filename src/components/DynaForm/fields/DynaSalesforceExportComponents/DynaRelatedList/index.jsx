@@ -115,8 +115,7 @@ function EditListItemModal(props) {
       childRelationship: {
         id: 'childRelationship',
         name: 'childRelationship',
-        // Todo (Surya) 15533: helptext is needed
-        helpText: 'helpText is useful to provide details to the user about the field',
+        helpKey: 'childRelationship',
         label: 'Child SObject Type',
         type: 'refreshableselect',
         filterKey: 'salesforce-sObjects-childReferenceTo',
@@ -127,8 +126,7 @@ function EditListItemModal(props) {
       referencedFields: {
         connectionId,
         label: 'Referenced fields',
-        // Todo (Surya) 15533: helptext is needed
-        helpText: 'helpText is useful to provide details to the user about the field',
+        helpKey: 'salesforce.referencedFields',
         id: 'referencedFields',
         name: 'referencedFields',
         refreshOptionsOnChangesTo: ['childRelationship'],
@@ -141,8 +139,7 @@ function EditListItemModal(props) {
       filterExpression: {
         label: 'Filter expression',
         id: 'filter',
-        // Todo (Surya) 15533: helptext is needed
-        helpText: 'helpText is useful to provide details to the user about the field',
+        helpKey: 'filterExpression',
         name: 'filter',
         type: 'text',
         multiline: true,
@@ -150,8 +147,7 @@ function EditListItemModal(props) {
       },
       orderBy: {
         label: 'Order by',
-        // Todo (Surya) 15533: helptext is needed
-        helpText: 'helpText is useful to provide details to the user about the field',
+        helpKey: 'orderBy',
         id: 'orderBy',
         name: 'orderBy',
         type: 'refreshableselect',
