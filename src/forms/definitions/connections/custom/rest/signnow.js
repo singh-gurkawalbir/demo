@@ -20,7 +20,6 @@ export default {
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },

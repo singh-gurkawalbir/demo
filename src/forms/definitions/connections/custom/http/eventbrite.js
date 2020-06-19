@@ -27,7 +27,6 @@ export default {
     },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },

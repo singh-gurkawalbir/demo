@@ -57,7 +57,6 @@ export default {
     },
   },
   layout: {
-    fields: ['name', 'http.activecampaignSubdomain', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },

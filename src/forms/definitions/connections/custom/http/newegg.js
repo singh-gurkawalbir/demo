@@ -88,13 +88,6 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'accountType',
-      'http.encrypted.apiKey',
-      'http.encrypted.apiSecret',
-      'http.unencrypted.sellerId',
-    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },

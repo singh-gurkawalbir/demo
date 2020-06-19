@@ -58,12 +58,6 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.freshdeskSubdomain',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-    ],
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
