@@ -81,6 +81,7 @@ export default function EditorDialog(props) {
     hidePreviewAction = false,
     patchOnSave = false,
     toggleAction,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -252,6 +253,7 @@ export default function EditorDialog(props) {
             disabled={disableSave}
             onClose={handleSave(true)}
             submitButtonLabel="Save"
+            flowId={flowId}
           />
         ) : (
           <Button

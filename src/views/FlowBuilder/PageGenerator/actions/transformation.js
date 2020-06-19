@@ -67,6 +67,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       insertStubKey="transform"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      flowId={flowId}
     />
   );
 }
