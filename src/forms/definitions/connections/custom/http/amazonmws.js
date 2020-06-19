@@ -192,7 +192,7 @@ export default {
       helpKey: 'amazonmws.connection.http._iClientId',
     },
     application: {
-      fieldId: 'application', 
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
