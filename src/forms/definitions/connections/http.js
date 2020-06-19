@@ -548,6 +548,18 @@ export default {
       },
       {
         collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.headers',
+          'http.baseURI',
+          'http.mediaType',
+          'http.auth.failStatusCode',
+          'http.auth.failPath',
+          'http.auth.failValues',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Configure auth',
         fields: [
           'http.auth.type',
@@ -582,14 +594,16 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Application details',
+        label: 'How to test this connection?',
         fields: [
-          'http.headers',
-          'http.baseURI',
-          'http.mediaType',
-          'http.auth.failStatusCode',
-          'http.auth.failPath',
-          'http.auth.failValues',
+          'http.ping.relativeURI',
+          'http.ping.method',
+          'http.ping.body',
+          'http.ping.successPath',
+          'http.ping.successValues',
+          'http.ping.failPath',
+          'http.ping.failValues',
+          'http.ping.errorPath',
         ],
       },
       {
@@ -601,20 +615,6 @@ export default {
           'http.rateLimit.failPath',
           'http.rateLimit.failValues',
           'http.retryHeader',
-        ],
-      },
-      {
-        collapsed: true,
-        label: 'How to test this connection?',
-        fields: [
-          'http.ping.relativeURI',
-          'http.ping.method',
-          'http.ping.body',
-          'http.ping.successPath',
-          'http.ping.successValues',
-          'http.ping.failPath',
-          'http.ping.failValues',
-          'http.ping.errorPath',
         ],
       },
       {
