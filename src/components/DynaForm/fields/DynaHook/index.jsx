@@ -69,7 +69,7 @@ export default function DynaHook(props) {
   const preHookData = useSelector(state => {
     if (props.preHookData) return props.preHookData;
     if (resourceType === 'apis') {
-      return emptyObj
+      return emptyObj;
     }
     return getSampleDataSelector({ state, flowId, resourceId });
   });

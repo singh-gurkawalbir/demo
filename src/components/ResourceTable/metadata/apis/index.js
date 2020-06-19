@@ -15,13 +15,13 @@ export default {
     {
       heading: 'Function',
       value: function functionName(r) {
-        return r.function
+        return r.function;
       }
     },
     {
       heading: 'Script',
       value: function scriptName(r) {
-        return r._scriptId
+        return r._scriptId;
       }
     },
     {
