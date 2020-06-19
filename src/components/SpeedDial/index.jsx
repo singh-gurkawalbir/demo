@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(2),
     right: theme.spacing(3),
   },
-}))
+}));
 export default function SpeedDial({children}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);

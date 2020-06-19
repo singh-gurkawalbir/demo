@@ -49,7 +49,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
         Array.isArray(fields.keyColumns) &&
         fields.keyColumns.length,
       keyColumns: fields.keyColumns,
-    }
+    };
   }
   // no additional props for json and xml - Add in future if updated
   if (type === 'json' || type === 'xml') {
@@ -59,8 +59,8 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
   const fileDefinitionRules = resource.file && resource.file.filedefinition && resource.file.filedefinition.rules;
   return {
     rule: fileDefinitionRules,
-  }
-}
+  };
+};
 
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;

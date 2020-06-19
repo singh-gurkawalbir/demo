@@ -80,14 +80,14 @@ const getConnectionType = resource => {
   return type;
 };
 
-const ActionButtons = ({actions, formProps}) => actions.length &&
+const ActionButtons = ({actions, formProps}) => (actions.length &&
 actions.map(action => {
   const Action = consolidatedActions[action.id];
   // remove form disabled prop...
   // they dont necessary apply to action button
   const { disabled, ...rest } = formProps;
   return <Action key={action.id} dataTest={action.id} {...rest} {...action} />;
-});
+})) || null;
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
@@ -108,7 +108,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       actionButtons = ['save', 'cancel'];
     }
     return actionButtons.map(id => ({id}));
-  }, [actions, connectionType, isNew, resourceType])
+  }, [actions, connectionType, isNew, resourceType]);
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {

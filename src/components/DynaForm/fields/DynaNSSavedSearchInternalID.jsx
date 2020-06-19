@@ -86,7 +86,6 @@ export default function DynaNSSavedSearchInternalID(props) {
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>
-          {/* //Todo: helpText is must here */}
           <FieldHelp {...props} />
         </div>
 

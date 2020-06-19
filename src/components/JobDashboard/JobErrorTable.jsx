@@ -192,11 +192,11 @@ function JobErrorTable({
 
       // else take the confirmation from the user for the same and proceed if yes
       confirmDialog({
-        title: 'Confirm',
-        message: 'The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always \'Download All Errors\' and work from the latest error file. Are you sure you want to proceed with this upload?',
+        title: 'Confirm upload',
+        message: 'Are you sure you want to proceed with this upload? The name of the file you are uploading does not match the name of the latest file associated with this job. We strongly recommend that you always work from the most recent file.',
         buttons: [
           {
-            label: 'Yes',
+            label: 'Upload',
             onClick: () => {
               dispatch(
                 actions.file.processFile({ fileId, file, fileType: 'csv' })
@@ -204,7 +204,7 @@ function JobErrorTable({
             },
           },
           {
-            label: 'No',
+            label: 'Cancel',
           },
         ],
       });
@@ -222,7 +222,9 @@ function JobErrorTable({
         })
       );
       enqueueSnackbar({
-        message: `${job.numError} errors retried.`,
+        message: `${
+          job.numError === '1' ? 'error retried.' : 'errors retried.'
+        }`,
         showUndo: true,
         autoHideDuration: UNDO_TIME.RETRY,
         handleClose(event, reason) {
@@ -430,7 +432,7 @@ function JobErrorTable({
             onChange={handleRetryDataChange}
             onClose={handleRetryDataEditorClose}
             value={retryObject.retryData.data}
-            title="Edit Retry Data"
+            title="Edit retry data"
             id={editDataOfRetryId}
           />
         ) : (
@@ -480,7 +482,7 @@ function JobErrorTable({
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors}>
               {numSelectedRetriableErrors > 0
-                ? `Retry ${numSelectedRetriableErrors} errors`
+                ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>
             <Button
@@ -489,9 +491,13 @@ function JobErrorTable({
               color="secondary"
               onClick={handleResolveClick}
               disabled={isJobInProgress || !hasUnresolvedErrors}>
-              {numSelectedResolvableErrors > 0
+              {numSelectedResolvableErrors > 1
                 ? `Mark resolved ${numSelectedResolvableErrors} errors`
-                : 'Mark resolved'}
+                : `${
+                  numSelectedResolvableErrors === 1
+                    ? `Mark resolved ${numSelectedResolvableErrors} error`
+                    : 'Mark resolved'
+                }`}
             </Button>
             <Button
               data-test="downloadAllErrors"
@@ -610,7 +616,7 @@ function JobErrorTable({
                   return [
                     {
                       icon: <EditIcon />,
-                      label: 'Edit Retry Data',
+                      label: 'Edit retry data',
                       component: function EditRetryData() {
                         useEffect(() => {
                           handleEditRetryDataClick(r._retryId);
@@ -618,7 +624,7 @@ function JobErrorTable({
                         return null;
                       },
                     },
-                  ]
+                  ];
                 }}
               />
             </>

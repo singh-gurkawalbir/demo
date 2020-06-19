@@ -37,6 +37,7 @@ export default {
     common: {
       formId: 'common',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
@@ -112,6 +113,11 @@ export default {
           'mongodb.document',
           'mongodb.update',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
       },
     ],
   },

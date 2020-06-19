@@ -164,6 +164,8 @@ export default {
         'unauthenticated_write_checkouts',
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
+        'read_assigned_fulfillment_orders',
+        'write_assigned_fulfillment_orders',
       ],
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
@@ -181,7 +183,7 @@ export default {
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
   actions: [

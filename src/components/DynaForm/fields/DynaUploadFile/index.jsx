@@ -9,6 +9,7 @@ function DynaUploadFile(props) {
   const {
     options = '',
     id,
+    maxSize,
     resourceId,
     resourceType,
     formContext,
@@ -69,9 +70,16 @@ function DynaUploadFile(props) {
       const file = event.target.files[0];
 
       if (!file) return;
-      dispatch(actions.file.processFile({ fileId, file, fileType: options }));
+      dispatch(actions.file.processFile(
+        {
+          fileId,
+          file,
+          fileType: options,
+          fileProps: { maxSize },
+        }
+      ));
     },
-    [dispatch, fileId, options]
+    [dispatch, fileId, options, maxSize]
   );
 
   return (

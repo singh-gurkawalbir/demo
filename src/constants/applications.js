@@ -429,6 +429,7 @@ const connectors = [
     webhook: true,
   },
   { id: 'jobvite', name: 'Jobvite', type: 'rest', assistant: 'jobvite' },
+  { id: 'joor', name: 'JOOR', type: 'http', assistant: 'joor' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'rest', assistant: 'klaviyo' },
   {
     id: 'lightspeed',
@@ -784,7 +785,7 @@ const getAssistants = () => {
   }
 
   return localStorageAssistants;
-}
+};
 
 export const groupApplications = (
   resourceType,
@@ -825,7 +826,7 @@ export const groupApplications = (
 
   let filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.marketPlaceOnly) {
-      return false
+      return false;
     }
     const assistant = assistants.find(a => a.id === connector.assistant);
 
@@ -897,7 +898,7 @@ export const groupApplications = (
   'integrator-extension',
 */
 export const applicationsList = () => {
-  const assistants = getAssistants()
+  const assistants = getAssistants();
   const applications = connectors.filter(connector => {
     const assistant = assistants.find(a => a.id === connector.assistant);
 
@@ -916,13 +917,13 @@ export const applicationsList = () => {
     });
   });
   return applications;
-}
+};
 
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
 export const getWebhookConnectors = () => {
   const applications = applicationsList();
-  return applications.filter(c => !!c.webhook)
+  return applications.filter(c => !!c.webhook);
 };
 export const getDatabaseConnectors = () =>
   connectors.filter(c => c.group === 'db');

@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function JobErrorDialog({
+export default function JobErrorDialog({
   jobId,
   parentJobId,
   showResolved,
@@ -60,6 +60,7 @@ function JobErrorDialog({
   numResolved = 0,
   onCloseClick,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
   const [errorCount, setErrorCount] = useState(
@@ -121,12 +122,13 @@ function JobErrorDialog({
     onCloseClick();
   }
 
-  const classes = useStyles();
-
   return (
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
       <>
-        <div>{`${flowJob && flowJob.name}`}</div>
+        <div>
+          {`${flowJob?.name}`}
+          {job?.name && ` > ${job.name}`}
+        </div>
 
         <Help
           key="help-helpSummary"
@@ -156,5 +158,3 @@ function JobErrorDialog({
     </ModalDialog>
   );
 }
-
-export default JobErrorDialog;

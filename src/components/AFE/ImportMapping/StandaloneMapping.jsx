@@ -100,7 +100,7 @@ export default function StandaloneMapping(props) {
 
   const refreshExtractFields = useCallback(
     () => requestSampleData(true), [requestSampleData]
-  )
+  );
 
   useEffect(() => {
     if (
