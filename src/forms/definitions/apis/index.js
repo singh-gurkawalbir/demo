@@ -54,7 +54,7 @@ export default {
     'shipworks.username': {
       id: 'shipworks.username',
       type: 'text',
-      name: '/shipworks/username',
+      name: 'shipworks/username',
       label: 'Username',
       visibleWhen: [
         {
@@ -71,7 +71,7 @@ export default {
     },
     'shipworks.password': {
       id: 'shipworks.password',
-      name: '/shipworks/password',
+      name: 'shipworks/password',
       defaultValue: '',
       type: 'text',
       inputType: 'password',

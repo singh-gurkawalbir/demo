@@ -23,6 +23,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      required: true,
       helpKey: 'inspectorio.connection.enviornment',
       options: [
         {
