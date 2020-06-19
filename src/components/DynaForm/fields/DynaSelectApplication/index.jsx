@@ -252,7 +252,7 @@ export default function SelectApplication(props) {
     if (inputValue) {
       refState.inputValue = inputValue;
     }
-  }, [])
+  }, []);
 
   function handleRemove(index) {
     const newApps = [...value];
