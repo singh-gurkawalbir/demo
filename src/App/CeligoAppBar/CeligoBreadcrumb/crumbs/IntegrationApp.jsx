@@ -19,7 +19,7 @@ export const StoreCrumb = ({ integrationId, storeId }) => {
   const store = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId, storeId);
     if (integration && integration.stores) {
-      return integration.stores.find(s => s.value === storeId)
+      return integration.stores.find(s => s.value === storeId);
     }
 
     return null;
@@ -29,7 +29,7 @@ export const StoreCrumb = ({ integrationId, storeId }) => {
   const childName = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', storeId);
     return integration && integration.name;
-  })
+  });
 
   if (isFrameWork2) {
     return childName || storeId;

@@ -206,10 +206,10 @@ export function* refreshGenerates({ id, isInit = false }) {
     importSampleData,
     application
   );
-  const { _id: resourceId, } = resource
+  const { _id: resourceId, } = resource;
   if (application === adaptorTypeMap.SalesforceImport) {
     // salesforce Import could have sub objects as well
-    const { _connectionId, salesforce } = resource
+    const { _connectionId, salesforce } = resource;
     const { sObjectType } = salesforce;
     // getting all childRelationshipFields of parent sObject
     const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
@@ -217,34 +217,34 @@ export function* refreshGenerates({ id, isInit = false }) {
         connectionId: _connectionId,
         commMetaPath: `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
-      })
+      });
     // during init, parent sObject metadata is already fetched.
     const sObjectList = isInit ? [] : [sObjectType];
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
       if (id.indexOf('[*].') !== -1) {
-        const childObjectName = id.split('[*].')[0]
-        const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName)
+        const childObjectName = id.split('[*].')[0];
+        const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName);
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
-          sObjectList.push(childRelationshipObject.childSObject)
+          sObjectList.push(childRelationshipObject.childSObject);
         }
       }
-    })
+    });
     // check for child sObject in mappings.
     mappings.forEach(({generate}) => {
       if (generate && generate.indexOf('[*].') !== -1) {
-        const subListName = generate.split('[*].')[0]
-        const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName)
+        const subListName = generate.split('[*].')[0];
+        const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName);
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
-          sObjectList.push(childRelationshipObject.childSObject)
+          sObjectList.push(childRelationshipObject.childSObject);
         }
       }
-    })
+    });
     yield put(actions.importSampleData.request(
       resourceId,
       {sObjects: sObjectList},
       !isInit
-    ))
+    ));
     // in case of salesforce import, fetch all child sObject reference
   } else {
     const opts = {};
@@ -269,7 +269,7 @@ export function* mappingInit({ id }) {
     return;
   }
   // load all sObjects used in mapping list
-  yield call(refreshGenerates, {id, isInit: true })
+  yield call(refreshGenerates, {id, isInit: true });
 }
 export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' }) {
   if (value.indexOf('_child_') === -1) {
@@ -291,7 +291,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
   );
   const mappingObj = mappings.find(_mapping => _mapping.generate === value);
   // while adding new row in mapping, key is generated in MAPPING.PATCH_FIELD reducer
-  const {key} = mappingObj
+  const {key} = mappingObj;
   const childRelationshipField =
           generateFields && generateFields.find(field => field.id === value);
   if (childRelationshipField && childRelationshipField.childSObject) {
@@ -306,7 +306,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
     yield put(actions.importSampleData.request(
       resourceId,
       {sObjects: [childSObject]}
-    ))
+    ));
   }
 }
 export const mappingSagas = [

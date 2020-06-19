@@ -199,12 +199,12 @@ export default function Integration(props) {
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
   const {addOnStatus, hasAddOns} = useSelector(state => {
-    const addOnState = selectors.integrationAppAddOnState(state, integrationId)
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState &&
       addOnState.addOns &&
       addOnState.addOns.addOnMetaData &&
-      addOnState.addOns.addOnMetaData.length > 0}
+      addOnState.addOns.addOnMetaData.length > 0};
   }, shallowEqual);
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)

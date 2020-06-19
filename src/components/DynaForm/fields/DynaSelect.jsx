@@ -20,7 +20,7 @@ const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 const optionSearch = (search) => ({label, optionSearch}) => search && (
   (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
- (typeof label === 'string' && label.toLowerCase().startsWith(search)))
+ (typeof label === 'string' && label.toLowerCase().startsWith(search)));
 const useAutoScrollOption = (items, open, listRef) => {
   const [search, setSearch] = useState('');
   const [scrolIndex, setScrolIndex] = useState(-1);
@@ -28,15 +28,15 @@ const useAutoScrollOption = (items, open, listRef) => {
   useEffect(() => {
     setSearch('');
     setScrolIndex(-1);
-  }, [open])
+  }, [open]);
 
   useEffect(() => {
     // clear out search result after
-    const timerId = setTimeout(() => setSearch(''), AUTO_CLEAR_SEARCH)
+    const timerId = setTimeout(() => setSearch(''), AUTO_CLEAR_SEARCH);
     return () => {
-      clearTimeout(timerId)
-    }
-  }, [search])
+      clearTimeout(timerId);
+    };
+  }, [search]);
   const keydownListener = useCallback((e) => {
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
@@ -57,15 +57,15 @@ const useAutoScrollOption = (items, open, listRef) => {
 
         // console.log('see ', tmp);
         return tmp;
-      })
+      });
     }
-  }, [items.length, scrolIndex])
+  }, [items.length, scrolIndex]);
 
   useEffect(() => {
     const matchingIndex = items.findIndex(optionSearch(search));
 
     if (matchingIndex > 0) {
-      setScrolIndex(matchingIndex)
+      setScrolIndex(matchingIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
@@ -83,9 +83,9 @@ const useAutoScrollOption = (items, open, listRef) => {
       listRef && listRef.current && listRef.current.scrollToItem(scrolIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrolIndex])
+  }, [scrolIndex]);
   return scrolIndex;
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   fieldWrapper: {

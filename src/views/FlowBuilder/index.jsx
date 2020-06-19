@@ -330,7 +330,7 @@ function FlowBuilder() {
     const parts = location.pathname.split('/');
     const newPath = `${parts.slice(0, 4).join('/')}/flows`;
     history.push(newPath);
-  }, [history, location])
+  }, [history, location]);
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {

@@ -254,10 +254,10 @@ export default function Suggestions(props) {
   );
   const handleLookupEditorShown = useCallback(
     (val) => {
-      showLookupModal(val)
+      showLookupModal(val);
     },
     [showLookupModal],
-  )
+  );
   const showSuggestion =
     !hide &&
     (showSuggestionsWithoutHandlebar ||
