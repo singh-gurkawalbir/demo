@@ -281,18 +281,15 @@ export default function Integration(props) {
 
       return;
     }
-
-    const iName = name || integrationId;
-
     confirmDialog({
-      title: 'Confirm',
-      message: `Are you sure you want to delete ${iName} integration?`,
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this integration?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);
@@ -306,7 +303,6 @@ export default function Integration(props) {
     dispatch,
     enqueueSnackbar,
     integrationId,
-    name,
   ]);
   const handleStoreChange = useCallback(
     e => {

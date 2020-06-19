@@ -4,6 +4,7 @@ import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import { formatLastModified } from '../../../CeligoTable/util';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -20,5 +21,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [AuditLogs, References, Delete],
+  rowActions: [Edit, AuditLogs, References, Delete],
 };

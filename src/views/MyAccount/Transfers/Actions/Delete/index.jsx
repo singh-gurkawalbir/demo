@@ -12,17 +12,15 @@ export default {
       dispatch(actions.resource.delete('transfers', transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = useCallback(() => {
-      const message = 'Are you sure you want to delete this transfer?';
-
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm delete',
+        message: 'Are you sure you want to delete this transfer?',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Yes',
+            label: 'Delete',
             onClick: () => {
               deleteTransfer();
             },
