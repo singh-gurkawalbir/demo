@@ -1144,7 +1144,6 @@ export default {
       id: 'http.resourceIdPathUpdate',
       type: 'text',
       label: 'Response ID path',
-
       visibleWhenAll: [
         {
           field: 'http.compositeType',

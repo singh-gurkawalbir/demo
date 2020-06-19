@@ -263,6 +263,7 @@ export default {
         isNot: ['DELETE'],
       },
     ],
+    helpKey: 'import.sampleData',
     defaultValue: r =>
       r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },
