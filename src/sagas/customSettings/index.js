@@ -15,7 +15,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   if (resource.settingsForm &&
     resource.settingsForm.init) {
     initScriptId = resource.settingsForm.init._scriptId;
-    initFunc = resource.settingsForm.init.function
+    initFunc = resource.settingsForm.init.function;
   }
   let metadata = resource.settingsForm && resource.settingsForm.form;
 

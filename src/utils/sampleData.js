@@ -382,10 +382,10 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
 
   // Segments : Array of level wiser paths to drill down the sample data
   try {
-    segments.forEach(path => { processedSampleData = processedSampleData[path] });
+    segments.forEach(path => { processedSampleData = processedSampleData[path]; });
     return processedSampleData;
   } catch (e) {
-    return {}
+    return {};
   }
 };
 

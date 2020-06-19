@@ -16,7 +16,7 @@ export default function DynaCsvHasHeaderRow({
       // The field could be reset inside inside DynaFileKeyColumn as well where it looks for change in useEffect and resets the value.
       setTimeout(() => {
         if (fieldToReset) onFieldChange(fieldToReset, fieldResetValue);
-      }, 500)
+      }, 500);
     },
     [fieldResetValue, fieldToReset, id, onFieldChange]
   );

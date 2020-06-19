@@ -165,7 +165,7 @@ export default function ImportMapping(props) {
       );
     },
     [dispatch, editorId],
-  )
+  );
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier) {
