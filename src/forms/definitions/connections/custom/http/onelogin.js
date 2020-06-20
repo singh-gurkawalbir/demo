@@ -80,19 +80,23 @@ export default {
       label: 'refresh token',
       visible: false,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'http.oneloginRegion',
-      'http.unencrypted.apiKey',
-      'http.encrypted.apiSecret',
-      'http.auth.token.token',
-      'http.auth.token.refreshToken',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.oneloginRegion',
+          'http.unencrypted.apiKey',
+          'http.encrypted.apiSecret',
+          'http.auth.token.token',
+          'http.auth.token.refreshToken'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

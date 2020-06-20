@@ -59,19 +59,22 @@ export default {
       required: true,
       type: 'text',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.accountType',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.unencrypted.merchantId',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.accountType',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.unencrypted.merchantId'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -33,18 +33,21 @@ export default {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
       {
         collapsed: true,
         label: 'Configure your client id and secret',
         fields: ['http.auth.oauth.callbackURL', 'http._iClientId'],
       },
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

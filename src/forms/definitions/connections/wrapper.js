@@ -110,18 +110,32 @@ export default {
     'wrapper.pingFunction': { fieldId: 'wrapper.pingFunction' },
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
     wrapperAdvanced: { formId: 'wrapperAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'wrapper.pingFunction',
-      'wrapper._stackId',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'wrapper.pingFunction',
+          'wrapper._stackId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['wrapperAdvanced'],
       },
     ],
