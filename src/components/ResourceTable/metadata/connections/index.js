@@ -7,7 +7,6 @@ import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
 import Deregister from '../../actions/Connections/Deregister';
 // eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
-import OpenDebugger from '../../actions/Connections/OpenDebugger';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
 import Revoke from '../../actions/Connections/Revoke';
 import Delete from '../../actions/Delete';
@@ -67,33 +66,24 @@ export default {
     return columns;
   },
   rowActions: (r, actionProps) => {
-    let actionsToReturn = [AuditLogs];
+    let actionsToReturn = [];
 
-    if (actionProps.type === 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, References];
-
-      actionsToReturn = [OpenDebugger, ...actionsToReturn];
-    } else {
-      actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
-
-      if (r.debugDate) {
-        actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
-      }
+    if (r.debugDate) {
+      actionsToReturn = [DownloadDebugLogs];
     }
-
+    actionsToReturn = [ConfigureDebugger, ...actionsToReturn, AuditLogs, References];
     if (actionProps.integrationId && !r._connectorId) {
-      actionsToReturn = [Deregister, ...actionsToReturn];
+      actionsToReturn = [...actionsToReturn, Deregister];
     }
-
     if (r.type === 'netsuite' || r.type === 'salesforce') {
-      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
+      actionsToReturn = [...actionsToReturn, RefreshMetadata];
     }
 
     if (
       r.type === 'http' &&
       !!((((r.http || {}).auth || {}).token || {}).revoke || {}).uri
     ) {
-      actionsToReturn = [Revoke, ...actionsToReturn];
+      actionsToReturn = [...actionsToReturn, Revoke];
     }
     actionsToReturn = [Edit, ...actionsToReturn];
     if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {

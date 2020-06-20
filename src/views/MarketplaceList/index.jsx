@@ -11,7 +11,6 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import {
   CONTACT_SALES_MESSAGE,
-  MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
@@ -139,9 +138,9 @@ export default function MarketplaceList() {
     if (connector.installed) {
       confirmDialog({
         isPrompt: true,
-        title: 'Multiple Installs',
+        title: 'Confirm multiple Installs',
         label: 'Tag',
-        message: MULTIPLE_INSTALLS,
+        message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [
           {
             label: 'Cancel',
