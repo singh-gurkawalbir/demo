@@ -37,9 +37,13 @@ describe('initialize all app relevant resources sagas', () => {
           'Retrieving user\'s accounts'
         )
       );
+      const getTransfersEffect = call(
+        getResourceCollection,
+        actions.resource.requestCollection('transfers')
+      );
 
       expect(saga.next().value).toEqual(
-        all([getLicensesEffect, getOrgUsersEffect, getOrgAccountsEffect])
+        all([getLicensesEffect, getOrgUsersEffect, getOrgAccountsEffect, getTransfersEffect])
       );
     });
   });
