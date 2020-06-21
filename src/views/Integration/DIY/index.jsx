@@ -110,6 +110,14 @@ export default function Integration(props) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
+  const hideSettingsTab = useSelector(state => {
+    const canEditSettingsForm =
+      selectors.canEditSettingsForm(state, 'integrations', integrationId, integrationId);
+    const hasSettingsForm =
+      selectors.hasSettingsForm(state, 'integrations', integrationId);
+
+    return !canEditSettingsForm && !hasSettingsForm;
+  });
   const {
     name,
     description,
@@ -191,12 +199,12 @@ export default function Integration(props) {
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
   const {addOnStatus, hasAddOns} = useSelector(state => {
-    const addOnState = selectors.integrationAppAddOnState(state, integrationId)
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState &&
       addOnState.addOns &&
       addOnState.addOns.addOnMetaData &&
-      addOnState.addOns.addOnMetaData.length > 0}
+      addOnState.addOns.addOnMetaData.length > 0};
   }, shallowEqual);
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
@@ -211,7 +219,8 @@ export default function Integration(props) {
     supportsChild,
     children,
     isMonitorLevelUser,
-  }), [children, hasAddOns, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
+    hideSettingsTab
+  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
@@ -272,18 +281,15 @@ export default function Integration(props) {
 
       return;
     }
-
-    const iName = name || integrationId;
-
     confirmDialog({
-      title: 'Confirm',
-      message: `Are you sure you want to delete ${iName} integration?`,
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this integration?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);
@@ -297,7 +303,6 @@ export default function Integration(props) {
     dispatch,
     enqueueSnackbar,
     integrationId,
-    name,
   ]);
   const handleStoreChange = useCallback(
     e => {
@@ -321,7 +326,7 @@ export default function Integration(props) {
       }
 
       if (!availableTabs.find(tab => tab.path === tab)) {
-        newTab = 'settings';
+        newTab = availableTabs[0].path;
       }
 
       // Redirect to current tab of new store

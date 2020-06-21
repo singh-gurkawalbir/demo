@@ -136,13 +136,13 @@ export default {
           'netsuite.file.name',
           'netsuite.file.fileType',
           'netsuite.file.folder',
-          'blobKeyPath',
         ],
       },
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

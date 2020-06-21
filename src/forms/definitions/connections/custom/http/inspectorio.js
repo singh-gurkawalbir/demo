@@ -23,6 +23,7 @@ export default {
       id: 'environment',
       type: 'select',
       label: 'Environment',
+      required: true,
       helpKey: 'inspectorio.connection.enviornment',
       options: [
         {
@@ -53,13 +54,19 @@ export default {
       defaultValue: '',
       helpKey: 'inspectorio.connection.http.encrypted.apiKey',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'environment', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment', 'http.encrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

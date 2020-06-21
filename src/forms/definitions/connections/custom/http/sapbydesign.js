@@ -23,7 +23,7 @@ export default {
       startAdornment: 'https://',
       endAdornment: '.sapbydesign.com',
       type: 'text',
-      label: 'Store url',
+      label: 'Store URL',
       helpKey: 'sapbydesign.connection.storeURL',
       required: true,
       validWhen: {
@@ -44,6 +44,9 @@ export default {
         return subdomain;
       },
     },
+    application: {
+      fieldId: 'application',
+    },
     'http.unencrypted.username': {
       id: 'http.unencrypted.username',
       required: true,
@@ -63,15 +66,15 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'storeURL',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['storeURL',
+          'http.unencrypted.username',
+          'http.encrypted.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

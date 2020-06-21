@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core'
+import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 // import { useLocation, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
+import { useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import MappingRow from './MappingRow';
-import MappingSaveButton from '../../ResourceFormFactory/Actions/MappingSaveButton';
+import SaveButton from './SaveButton';
 
 // const emptySet = [];
 const emptyObj = {};
@@ -77,27 +78,35 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
     padding: '16px 0px',
+    '& > button': {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    }
   },
 
 }));
-export default function SuiteScriptImportMapping(props) {
+export default function SuiteScriptMapping(props) {
+  const {disabled, onClose } = props;
+  const match = useRouteMatch();
+  const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
+  const integrationId = str1[str1.length - 1];
+  const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
+  const ssLinkedConnectionId = str2[str2.length - 1];
+  const flowId = match.params && match.params.flowId;
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
   });
   const { localMappings, localChangeIdentifier } = state;
 
-  const {disabled, onClose} = props;
+
   const classes = useStyles();
-  const ssLinkedConnectionId = '5ee899321bac9b4c34de1387';
-  const integrationId = '26230';
-  const flowId = 'i35026';
   const dispatch = useDispatch();
-  const showPreviewPane = false
-  const {mappings, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const showPreviewPane = false;
+  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScriptMapping.init({ssLinkedConnectionId, integrationId, flowId}));
-  }, [dispatch]);
+  }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
   const extractLabel = 'Source Record Field';
   const generateLabel = 'Import field';
   const emptyRowIndex = useMemo(() => localMappings.length, [
@@ -105,13 +114,13 @@ export default function SuiteScriptImportMapping(props) {
   ]);
   const handleClose = useCallback(
     () => {
-      onClose()
+      onClose();
     },
     [onClose],
   );
   const handleDelete = useCallback(key => {
-    dispatch(actions.suiteScriptMapping.delete({ssLinkedConnectionId, integrationId, flowId, key}));
-  }, [dispatch]);
+    dispatch(actions.suiteScriptMapping.delete({ ssLinkedConnectionId, integrationId, flowId, key }));
+  }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
@@ -129,13 +138,39 @@ export default function SuiteScriptImportMapping(props) {
         }
       }
 
-      dispatch(actions.suiteScriptMapping.patchField({ssLinkedConnectionId, integrationId, flowId, field, key, value}));
+      dispatch(actions.suiteScriptMapping.patchField({ ssLinkedConnectionId, integrationId, flowId, field, key, value }));
     },
-    [dispatch, handleDelete]
+    [dispatch, flowId, handleDelete, integrationId, ssLinkedConnectionId]
   );
+  const patchSettings = useCallback(
+    (key, settings) => {
+      dispatch(actions.suiteScriptMapping.patchSettings({ ssLinkedConnectionId, integrationId, flowId, key, settings }));
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
+  const updateLookupHandler = (lookupOps = []) => {
+    let lookupsTmp = [...lookups];
+    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
+
+    lookupOps.forEach(({ isDelete, obj }) => {
+      if (isDelete) {
+        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
+      } else {
+        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+        if (index !== -1) {
+          lookupsTmp[index] = obj;
+        } else {
+          lookupsTmp.push(obj);
+        }
+      }
+    });
+
+    dispatch(actions.suiteScriptMapping.updateLookups({ ssLinkedConnectionId, integrationId, flowId, lookups: lookupsTmp }));
+  };
   const handleDrop = useCallback(() => {
     dispatch(actions.suiteScriptMapping.changeOrder({ssLinkedConnectionId, integrationId, flowId, mappings: localMappings}));
-  }, [dispatch, localMappings]);
+  }, [dispatch, flowId, integrationId, localMappings, ssLinkedConnectionId]);
 
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
@@ -170,7 +205,7 @@ export default function SuiteScriptImportMapping(props) {
   );
   useEffect(() => {
     handleInit();
-  }, [handleInit])
+  }, [handleInit]);
   // console.log('props', props)
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
@@ -218,10 +253,8 @@ export default function SuiteScriptImportMapping(props) {
               ssLinkedConnectionId={ssLinkedConnectionId}
               integrationId={integrationId}
               flowId={flowId}
-              // updateLookupHandler={updateLookupHandler}
-              // patchSettings={patchSettings}
-              // options={options}
-              // lookups={lookups}
+              updateLookupHandler={updateLookupHandler}
+              patchSettings={patchSettings}
               onDelete={handleDelete}
               onMove={handleMove}
               onDrop={handleDrop}
@@ -237,23 +270,28 @@ export default function SuiteScriptImportMapping(props) {
             ssLinkedConnectionId={ssLinkedConnectionId}
             integrationId={integrationId}
             flowId={flowId}
-            // updateLookupHandler={updateLookupHandler}
-            // patchSettings={patchSettings}
-            // options={options}
-            // lookups={lookups}
+            updateLookupHandler={updateLookupHandler}
+            patchSettings={patchSettings}
             onDelete={handleDelete}
             isDraggable={false}
           />
         </div>
         <ButtonGroup
           className={classes.importMappingButtonGroup}>
-          <MappingSaveButton
+          <SaveButton
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
+            flowId={flowId}
             disabled={!!(disabled)}
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
+
           />
-          <MappingSaveButton
+          <SaveButton
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
+            flowId={flowId}
             variant="outlined"
             color="secondary"
             dataTest="saveAndCloseImportMapping"
@@ -273,5 +311,5 @@ export default function SuiteScriptImportMapping(props) {
       </div>
 
     </div>
-  )
+  );
 }

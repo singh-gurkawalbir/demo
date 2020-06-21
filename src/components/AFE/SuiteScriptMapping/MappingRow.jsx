@@ -3,13 +3,13 @@ import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import TrashIcon from '../../icons/TrashIcon';
 import ActionButton from '../../ActionButton';
 import LockIcon from '../../icons/LockIcon';
 import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import GripperIcon from '../../icons/GripperIcon';
+import Settings from './Settings/Button';
 
 const useStyles = makeStyles(theme => ({
   child: {
@@ -93,8 +93,6 @@ export default function MappingRow(props) {
     integrationId,
     flowId,
     // application,
-    options,
-    lookups,
     onDelete,
     onMove,
     onDrop,
@@ -227,19 +225,15 @@ export default function MappingRow(props) {
           )}
         </div>
         <div>
-          <MappingSettings
+          <Settings
             id={`fieldMappingSettings-${index}`}
             onSave={handleSettingsSave}
             value={mapping}
-            options={options}
-            generate={generate}
-            // application={application}
             ssLinkedConnectionId={ssLinkedConnectionId}
             integrationId={integrationId}
             flowId={flowId}
             updateLookup={updateLookupHandler}
             disabled={disabled}
-            lookups={lookups}
             extractFields={extractFields}
             generateFields={generateFields}
           />

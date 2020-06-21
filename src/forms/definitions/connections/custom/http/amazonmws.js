@@ -191,20 +191,23 @@ export default {
       allowEdit: true,
       helpKey: 'amazonmws.connection.http._iClientId',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.sellerId',
-      'http.unencrypted.mwsAuthToken',
-      'http.unencrypted.marketplaceId',
-      'http.unencrypted.marketplaceRegion',
-      'http._iClientId',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.sellerId',
+          'http.unencrypted.mwsAuthToken',
+          'http.unencrypted.marketplaceId',
+          'http.unencrypted.marketplaceRegion',
+          'http._iClientId'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

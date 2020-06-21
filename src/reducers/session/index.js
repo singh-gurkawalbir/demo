@@ -707,3 +707,17 @@ export function suiteScriptMappingState(state, { ssLinkedConnectionId, integrati
     {ssLinkedConnectionId, integrationId, flowId }
   );
 }
+
+export function suitesciptMappingsChanged(state, { ssLinkedConnectionId, integrationId, flowId }) {
+  return fromSuiteScriptMappings.mappingsChanged(
+    state && state.suiteScriptMappings,
+    {ssLinkedConnectionId, integrationId, flowId }
+  );
+}
+
+export function suitesciptMappingsSaveStatus(state, { ssLinkedConnectionId, integrationId, flowId }) {
+  return fromSuiteScriptMappings.mappingsSaveStatus(
+    state && state.suiteScriptMappings,
+    {ssLinkedConnectionId, integrationId, flowId }
+  );
+}

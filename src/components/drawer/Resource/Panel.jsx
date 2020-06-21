@@ -23,7 +23,7 @@ const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = (url) => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
-  strict: false})
+  strict: false});
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   resourceFormWrapper: {
-    padding: theme.spacing(3, 3, 1, 3),
+    padding: theme.spacing(3, 3, 0, 3),
   },
   appLogo: {
     paddingRight: theme.spacing(6),

@@ -104,7 +104,7 @@ export default function ImportMapping(props) {
     exportResource = {},
     options = {},
   } = props;
-  const { sObjectType, connectionId, recordType } = options;
+  const { sObjectType, connectionId, recordType, flowId } = options;
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
@@ -165,7 +165,7 @@ export default function ImportMapping(props) {
       );
     },
     [dispatch, editorId],
-  )
+  );
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier) {
@@ -455,6 +455,7 @@ export default function ImportMapping(props) {
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
+            flowId={flowId}
           />
           <MappingSaveButton
             id={editorId}
@@ -465,6 +466,7 @@ export default function ImportMapping(props) {
             disabled={!!(disabled || saveInProgress)}
             showOnlyOnChanges
             submitButtonLabel="Save & close"
+            flowId={flowId}
           />
           <Button
             variant="text"

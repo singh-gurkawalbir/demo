@@ -65,7 +65,6 @@ const SuiteScriptFlowBuilder = loadable(() =>
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
-
   return (
     <Switch>
       <Route

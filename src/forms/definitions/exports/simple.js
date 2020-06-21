@@ -1,3 +1,5 @@
+import { MAX_DATA_LOADER_FILE_SIZE } from '../../../utils/constants';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -89,7 +91,7 @@ export default {
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
       }
       return {
-        includeHeader: hasHeaderRowField.value,
+        hasHeaderRow: hasHeaderRowField.value,
       };
     }
     if (fieldId === 'uploadFile') {
@@ -159,7 +161,7 @@ export default {
       name: '/file/type',
       type: 'select',
       label: 'File type',
-      defaultValue: r => r && r.file && r.file.type,
+      defaultValue: r => (r && r.file && r.file.type) || '',
       options: [
         {
           items: [
@@ -175,11 +177,16 @@ export default {
       id: 'uploadFile',
       name: '/uploadFile',
       type: 'uploadfile',
-      label: 'Upload the file to use',
+      placeholder: 'Upload the file to use',
+      maxSize: MAX_DATA_LOADER_FILE_SIZE,
       mode: r => r && r.file && r.file.type,
       required: r => !r.rawData,
       refreshOptionsOnChangesTo: 'file.type',
       helpKey: 'export.uploadFile',
+      visibleWhen: [{
+        field: 'file.type',
+        isNot: [''],
+      }],
     },
     'file.csvHelper': {
       fieldId: 'file.csvHelper',
@@ -208,49 +215,60 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
+    type: 'column',
     containers: [
       {
-        fields: [
-          'name',
-          'file.type',
-          'uploadFile',
-        ],
-      },
-      {
-        type: 'indent',
-        containers: [
-          {fields: [
-            'file.csvHelper',
-            'file.csv.columnDelimiter',
-            'file.csv.rowDelimiter',
-            'file.csv.trimSpaces',
-            'file.csv.rowsToSkip',
-            'file.csv.hasHeaderRow',
-            'file.csv.rowsPerRecord',
-            'file.csv.keyColumns',
-          ]}
-        ]
-      },
-      {
-        fields: ['file.xml.resourcePath',
-          'file.json.resourcePath',
-          'file.xlsx.hasHeaderRow',
-          'file.xlsx.rowsPerRecord',
-          'file.xlsx.keyColumns']
-      },
-      {
-        type: 'collapse',
         containers: [
           {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+            fields: [
+              'name',
+              'file.type',
+              'uploadFile',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {fields: [
+                'file.csvHelper',
+                'file.csv.columnDelimiter',
+                'file.csv.rowDelimiter',
+                'file.csv.trimSpaces',
+                'file.csv.rowsToSkip',
+                'file.csv.hasHeaderRow',
+                'file.csv.rowsPerRecord',
+                'file.csv.keyColumns',
+              ]}
+            ]
+          },
+          {
+            fields: ['file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns']
+          },
+          {
+            type: 'collapse',
+            containers: [
+              {
+                collapsed: true,
+                label: 'Advanced',
+                fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
+              },
+            ],
           },
         ],
       },
-    ],
+      {
+        fields: ['exportPanel'],
+      }
+    ]
   },
 };
 /*

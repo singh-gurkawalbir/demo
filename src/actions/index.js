@@ -13,6 +13,7 @@ export const availableResources = [
   'tiles',
   'flows',
   'templates',
+  'apis',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -171,12 +172,13 @@ const resource = {
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, master, patch) =>
+  updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
       resourceId,
       master,
       patch,
+      context,
     }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
@@ -219,12 +221,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options) =>
+  commitStaged: (resourceType, id, scope, options, context) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
+      context,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -1257,7 +1260,7 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
   saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
@@ -1286,7 +1289,7 @@ const mapping = {
       value,
     }),
   delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  save: (id, context) => action(actionTypes.MAPPING.SAVE, { id, context }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
@@ -1306,9 +1309,9 @@ const suiteScriptMapping = {
     action(actionTypes.SUITESCRIPT_MAPPING.INIT, {
       ssLinkedConnectionId, integrationId, flowId
     }),
-  initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings }) =>
+  initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }) =>
     action(actionTypes.SUITESCRIPT_MAPPING.INIT_COMPLETE, {
-      ssLinkedConnectionId, integrationId, flowId, generatedMappings
+      ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups
     }),
   patchField: ({ ssLinkedConnectionId, integrationId, flowId, field, key, value }) =>
     action(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, {
@@ -1318,13 +1321,26 @@ const suiteScriptMapping = {
     action(actionTypes.SUITESCRIPT_MAPPING.DELETE, {
       ssLinkedConnectionId, integrationId, flowId, key
     }),
+  patchSettings: ({ ssLinkedConnectionId, integrationId, flowId, key, settings }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_SETTINGS, {
+      ssLinkedConnectionId, integrationId, flowId, key, settings
+    }),
+  updateLookups: ({ ssLinkedConnectionId, integrationId, flowId, lookups }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.UPDATE_LOOKUPS, {
+      ssLinkedConnectionId, integrationId, flowId, lookups
+    }),
   changeOrder: ({ ssLinkedConnectionId, integrationId, flowId, mappings }) =>
     action(actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER, {
       ssLinkedConnectionId, integrationId, flowId, mappings
     }),
+  save: ({ ssLinkedConnectionId, integrationId, flowId, mappings }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.SAVE, {
+      ssLinkedConnectionId, integrationId, flowId, mappings
+    }),
+  saveFailed: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED, { ssLinkedConnectionId, integrationId, flowId }),
+  saveComplete: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE, { ssLinkedConnectionId, integrationId, flowId }),
 
-
-}
+};
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {

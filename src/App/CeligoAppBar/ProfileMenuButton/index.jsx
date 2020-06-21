@@ -43,8 +43,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProfileMenuButton() {
-  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
   const hasProfile = useSelector(state => selectors.hasProfile(state));
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
@@ -54,14 +55,7 @@ export default function ProfileMenuButton() {
       selectors.resourcePermissions(state).accessLevel ===
       USER_ACCESS_LEVELS.ACCOUNT_OWNER
   );
-  const accountOwnerEmail = useSelector(state => {
-    const owner = selectors.accountOwner(state);
-
-    if (owner) {
-      return owner.email;
-    }
-  });
-  const dispatch = useDispatch();
+  const accountOwnerEmail = useSelector(state => selectors.accountOwner(state)?.email);
   const open = !!anchorEl;
   const { name, email } = profile;
   const handleMenu = event => {

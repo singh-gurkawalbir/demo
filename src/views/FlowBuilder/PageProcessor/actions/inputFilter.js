@@ -83,6 +83,7 @@ function InputFilterDialog({
       insertStubKey="filter"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      flowId={flowId}
     />
   );
 }

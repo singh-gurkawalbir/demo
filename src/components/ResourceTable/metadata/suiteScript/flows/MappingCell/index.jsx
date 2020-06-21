@@ -2,13 +2,19 @@ import React, { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import MapDataIcon from '../../../../../icons/MapDataIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import { flowSupportsMapping } from '../../../../../../utils/suiteScript'
-import SuiteScriptImportMappingDrawer from '../../../../../AFE/SuiteScriptImportMapping/Drawer';
+import { flowSupportsMapping } from '../../../../../../utils/suiteScript';
+import SuiteScriptMappingDrawer from '../../../../../AFE/SuiteScriptMapping/Drawer';
 
 export default function MappingCell({flow}) {
   const history = useHistory();
   const location = useLocation();
   const showMapping = flowSupportsMapping(flow);
+  const handleClose = useCallback(
+    () => {
+      history.pop();
+    },
+    [history],
+  );
   const handleClick = useCallback(() => {
     history.push(`${location.pathname}/${flow._id}/mapping`);
   }, [location.pathname, flow._id, history]);
@@ -22,7 +28,9 @@ export default function MappingCell({flow}) {
         onClick={handleClick}>
         <MapDataIcon />
       </IconButtonWithTooltip>
-      <SuiteScriptImportMappingDrawer />
+      <SuiteScriptMappingDrawer
+        onClose={handleClose}
+        />
     </>
   );
 }

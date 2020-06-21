@@ -6,8 +6,26 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
-import { useLoadingSnackbarOnSave } from '.';
 
+export const useLoadingSnackbarOnSave = props => {
+  const { saveTerminated, onSave } = props;
+  const [disableSave, setDisableSave] = useState(false);
+  const handleSubmitForm = useCallback(
+    values => {
+      onSave(values);
+      setDisableSave(true);
+    },
+    [onSave]
+  );
+
+  useEffect(() => {
+    if (saveTerminated) {
+      setDisableSave(false);
+    }
+  }, [saveTerminated]);
+
+  return { handleSubmitForm, disableSave };
+};
 const styles = theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
@@ -31,7 +49,7 @@ const MappingSaveButton = props => {
     selectors.mapping(state, id)
   );
   const mappingsChanged = useSelector(state =>
-    selectors.mappingsChanged(state, id)
+    selectors.suitesciptMappingsChanged(state, id)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
@@ -50,8 +68,7 @@ const MappingSaveButton = props => {
   }, [dispatch, id]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
-    onSave,
-    resourceType: 'mappings',
+    onSave
   });
   const handleButtonClick = () => {
     if (validationErrMsg) {

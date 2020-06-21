@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 // import { useRouteMatch, useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import RightDrawer from '../../drawer/Right';
-import SuiteScriptImportMapping from '.';
+import SuiteScriptMapping from '.';
 
 const rootPath = ':flowId/mapping';
 
-export default function SuiteScriptImportMappingDrawer() {
+export default function SuiteScriptMappingDrawer() {
   const history = useHistory();
 
   const handelClose = useCallback(() => {
@@ -22,7 +22,7 @@ export default function SuiteScriptImportMappingDrawer() {
       // helpKey={}
       // helpTitle={}
       >
-      <SuiteScriptImportMapping
+      <SuiteScriptMapping
         onClose={handelClose} />
     </RightDrawer>
   );

@@ -95,7 +95,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId }}
+          actionProps={{ integrationId, resourceType: 'connections'
+          }}
         />
       </LoadResources>
     </div>

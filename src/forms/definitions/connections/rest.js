@@ -135,27 +135,47 @@ export default {
     'rest.pingSuccessPath': { fieldId: 'rest.pingSuccessPath' },
     'rest.pingSuccessValues': { fieldId: 'rest.pingSuccessValues' },
     restAdvanced: { formId: 'restAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'rest.authType',
-      'rest.headers',
-      'rest.baseURI',
-      'rest.mediaType',
-      'rest.encrypted',
-      'rest.unencrypted',
-      'restBasic',
-      'restToken',
-      'restCookie',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'How to test connection?',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rest.headers',
+          'rest.baseURI',
+          'rest.mediaType',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure auth',
+        fields: [
+          'rest.authType',
+          'rest.encrypted',
+          'rest.unencrypted',
+          'restBasic',
+          'restToken',
+          'restCookie',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'How to test this connection?',
         fields: [
           'rest.pingMethod',
           'rest.pingBody',
@@ -166,7 +186,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['rest.disableStrictSSL', 'restAdvanced'],
       },
     ],
