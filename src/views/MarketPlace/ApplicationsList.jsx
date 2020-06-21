@@ -63,8 +63,8 @@ export default function ApplicationsList({ filter }) {
   const templates = useSelector(state => selectors.marketplaceTemplates(state));
   let applications = [];
 
-  connectors.forEach(c => { applications = applications.concat(c.applications) });
-  templates.forEach(t => { applications = applications.concat(t.applications) });
+  connectors.forEach(c => { applications = applications.concat(c.applications); });
+  templates.forEach(t => { applications = applications.concat(t.applications); });
   applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(
     a =>

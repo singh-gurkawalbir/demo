@@ -64,7 +64,7 @@ const sandbox = {
   celigoSandbox3: colors.celigoSandbox3,
   celigoSandbox4: colors.celigoSandbox4,
   celigoSandbox5: colors.celigoSandbox5,
-}
+};
 const accent = {
   celigoAccent1: colors.celigoAccent1,
   celigoAccent2: colors.celigoAccent2,

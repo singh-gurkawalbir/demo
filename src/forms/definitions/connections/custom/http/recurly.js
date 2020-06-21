@@ -43,13 +43,19 @@ export default {
       defaultValue: '',
       helpKey: 'recurly.connection.http.auth.basic.username',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'recurlySubdomain', 'http.auth.basic.username'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['recurlySubdomain', 'http.auth.basic.username'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

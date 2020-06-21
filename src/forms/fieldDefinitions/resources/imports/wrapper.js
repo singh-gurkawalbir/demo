@@ -11,7 +11,7 @@ export default {
   sampleData: {
     type: 'editor',
     label: 'Paste destination record here',
-    helpKey: 'export.sampleData',
+    helpKey: 'import.sampleData',
     defaultValue: r =>
       r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },

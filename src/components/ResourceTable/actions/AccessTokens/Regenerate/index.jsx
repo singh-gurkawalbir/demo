@@ -4,7 +4,7 @@ import actions from '../../../../../actions';
 import RegenerateTokenIcon from '../../../../icons/RegenerateTokenIcon';
 
 export default {
-  label: 'Regenerate token',
+  label: 'Generate new API token',
   icon: RegenerateTokenIcon,
   component: function RegenerateAccessToken({ rowData = {} }) {
     const { _id: resourceId } = rowData;

@@ -8,7 +8,7 @@ export default {
     const newfieldMeta = deepClone(fieldMeta);
 
     const unEncryptedText = resource.wrapper && resource.wrapper.unencrypted && Object.prototype.toString.apply(resource.wrapper.unencrypted) === '[object Object]' ? JSON.stringify(resource.wrapper.unencrypted) : resource.wrapper.unencrypted;
-    let unEncryptedFields = []
+    let unEncryptedFields = [];
     if (resource && resource.wrapper && resource.wrapper.unencryptedFields && resource.wrapper.unencryptedFields.length > 0) {
       resource.wrapper.unencryptedFields.forEach(fld => {
         unEncryptedFields.push({
@@ -22,8 +22,8 @@ export default {
             required: !!fld.required,
             defaultValue: resource && resource.wrapper && resource.wrapper.unencrypted && resource.wrapper.unencrypted[fld.id]
           }
-        })
-      })
+        });
+      });
     } else {
       unEncryptedFields.push({
         position: 1,
@@ -36,7 +36,7 @@ export default {
           required: true,
           defaultValue: unEncryptedText || '{"field": "value"}'
         }
-      })
+      });
     }
 
     if (resource && resource.wrapper && resource.wrapper.encryptedFields && resource.wrapper.encryptedFields.length > 0) {
@@ -52,8 +52,8 @@ export default {
             required: !!fld.required,
             inputType: 'password',
           }
-        })
-      })
+        });
+      });
     } else {
       unEncryptedFields.push({
         position: 2,
@@ -66,13 +66,13 @@ export default {
           required: true,
           defaultValue: (isNewId(resource && resource._id)) ? '{"field": "value"}' : '',
         }
-      })
+      });
     }
 
-    unEncryptedFields = sortBy(unEncryptedFields, 'position')
+    unEncryptedFields = sortBy(unEncryptedFields, 'position');
     if (unEncryptedFields) {
       for (let i = 0; i < unEncryptedFields.length; i += 1) {
-        unEncryptedFields[i] = unEncryptedFields[i].field
+        unEncryptedFields[i] = unEncryptedFields[i].field;
         newfieldMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
         if (newfieldMeta.layout.fields) { newfieldMeta.layout.fields.push(unEncryptedFields[i].id); }
       }
@@ -110,18 +110,32 @@ export default {
     'wrapper.pingFunction': { fieldId: 'wrapper.pingFunction' },
     'wrapper._stackId': { fieldId: 'wrapper._stackId' },
     wrapperAdvanced: { formId: 'wrapperAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'wrapper.pingFunction',
-      'wrapper._stackId',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'wrapper.pingFunction',
+          'wrapper._stackId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['wrapperAdvanced'],
       },
     ],

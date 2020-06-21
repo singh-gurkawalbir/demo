@@ -48,7 +48,7 @@ describe('Json paths util method', () => {
       { id: 'a.arr2', type: 'array' },
       { id: 'b.c', type: 'number' },
     ]);
-  })
+  });
 });
 
 describe('Route paths util method', () => {

@@ -59,15 +59,40 @@ export default function JobActionsMenu({
   ].includes(job.uiStatus);
   const isFlowJob = job.type === JOB_TYPES.FLOW;
   const menuOptions = [];
+  if (!isFlowBuilderView) {
+    if (
+      userPermissionsOnIntegration.flows &&
+      userPermissionsOnIntegration.flows.edit
+    ) {
+      menuOptions.push({ label: 'Edit flow', action: 'editFlow', icon: <EditIcon /> });
+    } else {
+      menuOptions.push({ label: 'View flow', action: 'viewFlow' });
+    }
+  }
 
   if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
     menuOptions.push({ label: 'Cancel', action: 'cancelJob', icon: <CancelIcon /> });
   }
-
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, job._flowId),
     shallowEqual
   );
+  if (isFlowJob) {
+    if (!isJobInProgress) {
+      if (
+        job.type === JOB_TYPES.FLOW &&
+        job.status !== JOB_STATUS.RETRYING &&
+        flowDetails &&
+        flowDetails.isRunnable
+      ) {
+        menuOptions.push({
+          label: 'Run flow',
+          action: 'runFlow',
+          icon: <RunIcon />
+        });
+      }
+    }
+  }
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -95,19 +120,6 @@ export default function JobActionsMenu({
 
   if (isFlowJob) {
     if (!isJobInProgress) {
-      if (
-        job.type === JOB_TYPES.FLOW &&
-        job.status !== JOB_STATUS.RETRYING &&
-        flowDetails &&
-        flowDetails.isRunnable
-      ) {
-        menuOptions.push({
-          label: 'Run flow',
-          action: 'runFlow',
-          icon: <RunIcon />
-        });
-      }
-
       if (job.files && job.files.length > 0) {
         menuOptions.push({
           label: `${job.files.length > 1 ? 'Download files' : 'Download file'}`,
@@ -121,17 +133,6 @@ export default function JobActionsMenu({
         action: 'downloadDiagnostics',
         icon: <DownloadIntegrationIcon />,
       });
-    }
-
-    if (!isFlowBuilderView) {
-      if (
-        userPermissionsOnIntegration.flows &&
-        userPermissionsOnIntegration.flows.edit
-      ) {
-        menuOptions.push({ label: 'Edit flow', action: 'editFlow', icon: <EditIcon /> });
-      } else {
-        menuOptions.push({ label: 'View flow', action: 'viewFlow' });
-      }
     }
   }
 
@@ -198,15 +199,15 @@ export default function JobActionsMenu({
       }
     } else if (action === 'cancelJob') {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm cancel',
         message:
-          'Are you sure you want to cancel this job? Please note that canceling this job will delete all associated data currently queued for processing.',
+          'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
           {
-            label: 'No',
+            label: 'No, go back',
           },
           {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: () => {
               if (job.status === JOB_STATUS.RETRYING) {
                 if (isFlowJob) {

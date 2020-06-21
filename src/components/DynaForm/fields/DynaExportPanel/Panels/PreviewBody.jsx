@@ -12,7 +12,7 @@ const useStyles = makeStyles({
       margin: 'auto',
     },
   },
-})
+});
 export default function PreviewBody(props) {
   const {
     resourceSampleData,
