@@ -10,7 +10,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    paddingLeft: theme.spacing(2),
+    padding: theme.spacing(0, 2),
     '& > div': {
       padding: theme.spacing(3, 0),
     },
