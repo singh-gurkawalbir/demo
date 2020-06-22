@@ -13,7 +13,7 @@ import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
 import MappingCell from './MappingCell';
 import SettingsCell from './SettingsCell';
-import EditCell from './EditCell';
+import EditCell from '../../actions/Flows/Edit';
 
 export default {
   columns: (empty, actionProps) => {

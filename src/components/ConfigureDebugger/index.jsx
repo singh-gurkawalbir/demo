@@ -127,7 +127,7 @@ export default function ConfigureDebugger(props) {
       <DrawerTitleBar
         onClose={onClose}
         title="Debug connection"
-        helpKey="connection.configDebugger"
+        helpKey="connection.debug"
         helpTitle="Configure debugger"
       />
       <div className={classes.content}>
