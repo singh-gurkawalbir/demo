@@ -192,11 +192,11 @@ function JobErrorTable({
 
       // else take the confirmation from the user for the same and proceed if yes
       confirmDialog({
-        title: 'Confirm',
-        message: 'The name of the file you are uploading does not match the name of the latest error file associated with this job. We strongly recommend that you always \'Download All Errors\' and work from the latest error file. Are you sure you want to proceed with this upload?',
+        title: 'Confirm upload',
+        message: 'Are you sure you want to proceed with this upload? The name of the file you are uploading does not match the name of the latest file associated with this job. We strongly recommend that you always work from the most recent file.',
         buttons: [
           {
-            label: 'Yes',
+            label: 'Upload',
             onClick: () => {
               dispatch(
                 actions.file.processFile({ fileId, file, fileType: 'csv' })
@@ -204,7 +204,7 @@ function JobErrorTable({
             },
           },
           {
-            label: 'No',
+            label: 'Cancel',
           },
         ],
       });
@@ -370,7 +370,7 @@ function JobErrorTable({
         maxWidth: 'md',
         buttons: [
           {
-            label: 'Yes',
+            label: 'Proceed',
             onClick: () => {
               // dispatch action that retries this current job with uploaded file stored at s3Key
               dispatch(
@@ -385,7 +385,7 @@ function JobErrorTable({
             },
           },
           {
-            label: 'No',
+            label: 'Cancel',
           },
         ],
       });
@@ -624,7 +624,7 @@ function JobErrorTable({
                         return null;
                       },
                     },
-                  ]
+                  ];
                 }}
               />
             </>

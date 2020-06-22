@@ -46,27 +46,27 @@ const Notifications = ({ allLoadingOrErrored }) => {
   if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
   const loadingMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && !r.retryCount
-  ) && ({name: LOADING_MSG, message: LOADING_MSG})
+  ) && ({name: LOADING_MSG, message: LOADING_MSG});
 
   const retryMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && r.retryCount
-  ) && ({name: RETRY_MSG, message: RETRY_MSG})
+  ) && ({name: RETRY_MSG, message: RETRY_MSG});
 
   const errored = allLoadingOrErrored
     .filter(r => r.status === COMM_STATES.ERROR)
     .map(({name, status, message }) => ({name, message, status }
     ));
 
-  const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r)
+  const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r);
 
 
-  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR ? (<ErroredMessageList messages={message} />) : <Typography>{message}</Typography>
+  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR ? (<ErroredMessageList messages={message} />) : <Typography>{message}</Typography>;
 
-  if (consolidatedNotificationMsgs.length === 1) { return <NotificationMsg {...consolidatedNotificationMsgs[0]} /> }
+  if (consolidatedNotificationMsgs.length === 1) { return <NotificationMsg {...consolidatedNotificationMsgs[0]} />; }
   const notificationMsgs = consolidatedNotificationMsgs.map(({name, status, message}) => (
     <li key={name}>
       <NotificationMsg status={status} message={message} />
-    </li>))
+    </li>));
   return <ul>{notificationMsgs}</ul>;
 };
 

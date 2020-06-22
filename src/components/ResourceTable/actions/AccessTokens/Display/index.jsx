@@ -22,7 +22,7 @@ export default function Display({ accessToken }) {
     selectors.apiAccessToken(state, accessToken._id)
   );
 
-  const handleDisplayClick = useCallback(() => dispatch(actions.accessToken.displayToken(accessToken._id)), [accessToken._id, dispatch])
+  const handleDisplayClick = useCallback(() => dispatch(actions.accessToken.displayToken(accessToken._id)), [accessToken._id, dispatch]);
 
 
   return (

@@ -273,8 +273,6 @@ export default {
   'netsuite.restlet.batchSize': {
     type: 'text',
     label: 'Batch size limit',
-    // Todo (surya) 15533 helptext needed
-    helpText: 'helptext is used to provide information to the user',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

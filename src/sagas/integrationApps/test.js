@@ -104,7 +104,7 @@ describe('uninstaller2.0 saga', () => {
             error.message
           )
         )
-        .run()
+        .run();
     });
   });
 
@@ -120,7 +120,7 @@ describe('uninstaller2.0 saga', () => {
             uninstallSteps,
           )
         )
-        .run()
+        .run();
     });
     test('should make API call and dispatch resource request action, if there is no API response', () => expectSaga(uninstallStep, { id })
       .provide([[matchers.call.fn(apiCallWithRetry), undefined]])
@@ -161,7 +161,7 @@ describe('uninstaller2.0 saga', () => {
             error.message
           )
         )
-        .run()
+        .run();
     });
   });
 
@@ -178,7 +178,7 @@ describe('uninstaller2.0 saga', () => {
           )
         )
         .not.call(uninstallStep, { id })
-        .run()
+        .run();
     });
     test('should make API call and call uninstallStep function if all steps are completed', () => {
       const uninstallSteps = [{type: 'form', completed: true}, {type: 'url', completed: true}];
@@ -192,7 +192,7 @@ describe('uninstaller2.0 saga', () => {
           )
         )
         .call(uninstallStep, { id })
-        .run()
+        .run();
     });
     test('should disptach failed action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
@@ -211,7 +211,7 @@ describe('uninstaller2.0 saga', () => {
             error.message
           )
         )
-        .run()
+        .run();
     });
   });
 });

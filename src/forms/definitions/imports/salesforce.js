@@ -260,13 +260,13 @@ export default {
           'salesforce.idLookup.whereClause',
           'salesforce.upsert.externalIdField',
           'salesforce.idLookup.extract',
-          'blobKeyPath',
         ],
       },
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

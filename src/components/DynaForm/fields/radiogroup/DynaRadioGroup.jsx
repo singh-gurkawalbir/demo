@@ -10,7 +10,6 @@ import {
 } from '@material-ui/core';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
-import helpTextMap from '../../../Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   columnFlexWrapper: {
@@ -63,7 +62,6 @@ export default function DynaRadio(props) {
     showOptionsVertically,
     label,
     isValid,
-    helpKey,
     onFieldChange,
   } = props;
   const classes = useStyles();
@@ -107,10 +105,8 @@ export default function DynaRadio(props) {
               className={classes.radioGroupLabel}>
               {label ? `${label}` : ''}
             </FormLabel>
-            {/* Todo (surya): needs to pass the helptext */}
             <FieldHelp
               {...props}
-              helpText={(helpKey && helpTextMap[helpKey]) || label}
             />
           </div>
           <RadioGroup

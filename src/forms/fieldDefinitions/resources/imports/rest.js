@@ -1,6 +1,6 @@
 export default {
   'rest.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'rest.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     options: [
       {
@@ -263,6 +263,7 @@ export default {
         isNot: ['DELETE'],
       },
     ],
+    helpKey: 'import.sampleData',
     defaultValue: r =>
       r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },

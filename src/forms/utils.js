@@ -510,7 +510,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
           },
         ],
       };
-    })
+    });
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 

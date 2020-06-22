@@ -40,7 +40,7 @@ module.exports = {
     'new-cap': 'off',
     'no-invalid-this': 'off',
     'object-curly-spacing': 'off',
-    semi: 'off',
+    'semi': 'error',
     'no-unused-expressions': 'off',
     'babel/no-invalid-this': airbnbBaseBestPractices['no-invalid-this'],
     // // The worker/serviceworker envs above don't properly respect
@@ -97,7 +97,7 @@ module.exports = {
         eventHandlerPropPrefix: 'on',
       },
     ],
-    'react/jsx-indent': 1,
+    'react/jsx-indent': 'warn',
     'react/prefer-stateless-function': 'off',
     'react/prop-types': 'off',
     'react/sort-comp': 'off',
@@ -110,13 +110,13 @@ module.exports = {
     // The following rules are set by our UI team
     'max-len': 'off',
     'react/jsx-filename-extension': [
-      1,
+      'warn',
       { extensions: ['.js', '.jsx'] },
     ],
     'react/no-did-mount-set-state': 'off',
     'no-underscore-dangle': 'off',
     'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 1,
+    'react-hooks/exhaustive-deps': 'warn',
     'no-param-reassign': [
       'error',
       {
