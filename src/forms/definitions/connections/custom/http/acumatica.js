@@ -232,6 +232,19 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [

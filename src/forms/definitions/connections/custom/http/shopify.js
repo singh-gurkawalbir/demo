@@ -235,7 +235,19 @@ export default {
     },
     {
       id: 'save',
-      label: 'Test and save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
       visibleWhen: [
         {
           field: 'http.auth.type',

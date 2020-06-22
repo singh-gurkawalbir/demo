@@ -666,6 +666,19 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'cancel',
     },
     {

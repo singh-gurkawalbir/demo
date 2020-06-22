@@ -103,6 +103,19 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [

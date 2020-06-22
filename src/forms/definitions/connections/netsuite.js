@@ -232,6 +232,19 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['basic'],
+        },
+        {
+          field: 'netsuite.authType',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [

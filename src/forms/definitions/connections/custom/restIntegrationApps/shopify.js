@@ -197,6 +197,10 @@ export default {
       label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
+    {
+      id: 'saveandclose',
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+    },
     { id: 'cancel' },
     {
       id: 'test',
