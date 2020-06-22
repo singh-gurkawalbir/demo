@@ -109,8 +109,8 @@ export default function AddOrSelect(props) {
           options={[
             {
               items: [
-                { label: `Setup New ${resourceLabel}`, value: 'new' },
-                { label: `Use Existing ${resourceLabel}`, value: 'existing' },
+                { label: `Set up new ${resourceLabel}`, value: 'new' },
+                { label: `Use existing ${resourceLabel}`, value: 'existing' },
               ],
             },
           ]}
