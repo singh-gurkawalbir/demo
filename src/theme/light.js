@@ -197,8 +197,10 @@ export default {
     },
     MuiMenuItem: {
       root: {
-        minHeight: 42,
+        minHeight: 38,
         fontSize: 'unset',
+        // when there is a long name it is hiding the text
+        whiteSpace: 'normal',
         borderBottom: `1px solid ${colors.celigoNeutral3}`,
         '&$selected': {
           backgroundColor: colors.celigoNeutral2,
