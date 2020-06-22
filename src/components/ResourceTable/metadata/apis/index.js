@@ -3,6 +3,7 @@ import Delete from '../../actions/Delete';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Edit from '../../actions/Edit';
+import { ScriptName } from '..';
 
 
 export default {
@@ -23,7 +24,7 @@ export default {
     {
       heading: 'Script',
       value: function scriptName(r) {
-        return r._scriptId;
+        return <ScriptName id={r._scriptId} />;
       }
     },
     {
