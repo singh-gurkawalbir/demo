@@ -98,7 +98,7 @@ export default function MappingSettings(props) {
           lookup,
         });
       }
-    }, [connectionId, generate, importType, lookup, ssLinkedConnectionId, value]
+    }, [connectionId, generate, importType, lookup, recordType, ssLinkedConnectionId, value]
   );
   const disableSave = useMemo(() => {
     // Disable all fields except useAsAnInitializeValue in case mapping is not editable
@@ -109,7 +109,6 @@ export default function MappingSettings(props) {
   }, [disabled, fieldMeta, value]);
   const handleSubmit = useCallback(
     formVal => {
-      console.log('formVal', formVal);
       const {
         settings,
         lookup: updatedLookup,

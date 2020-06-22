@@ -11,51 +11,29 @@ const getFormattedLookup = (lookup, formVal) => {
   }
 
   if (formVal._mode === 'dynamic') {
-    lookupTmp.method = formVal._method;
-    lookupTmp.relativeURI = formVal._relativeURI;
-    lookupTmp.extract = formVal._extract;
-    lookupTmp.postBody = formVal._postBody;
     lookupTmp.recordType = formVal.recordType;
     lookupTmp.whereClause = formVal.whereClause;
     lookupTmp.sObjectType = formVal.sObjectType;
     lookupTmp.resultField = formVal.resultField;
-    lookupTmp.expression = formVal.lookupExpression;
+    lookupTmp.searchField = formVal.searchField;
   } else {
     lookupTmp.map = {};
     formVal._mapList.forEach(obj => {
       if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
     });
   }
-
-  if (formVal.lookupAction === 'disallowFailure') lookupTmp.allowFailures = false;
-  else {
+  if (formVal.lookupFailIfMatchNotFound) {
+    lookupTmp.allowFailures = false;
+  } else {
     lookupTmp.allowFailures = true;
-
-    switch (formVal.lookupAction) {
-      case 'useEmptyString':
-        lookupTmp.default = '';
-        break;
-      case 'useNull':
-        lookupTmp.default = null;
-        break;
-      case 'useDefaultOnMultipleMatches':
-        lookupTmp.useDefaultOnMultipleMatches = true;
-        lookupTmp.default =
-            formVal.lookupDefault ||
-            formVal.lookupSelect ||
-            formVal.lookupCheckbox;
-        break;
-      case 'default':
-        lookupTmp.default =
-            formVal.lookupDefault ||
-            formVal.lookupSelect ||
-            formVal.lookupCheckbox ||
-            formVal.lookupSFSelect;
-        break;
-      default:
+    if ('lookupUseNull' in formVal && formVal.lookupUseNull === true) {
+      lookupTmp.default = null;
+    } else if ('lookupuseEmptyString' in formVal && formVal.lookupUseEmptyString === true) {
+      lookupTmp.default = '';
+    } else if ('lookupDefault' in formVal && formVal.lookupDefault) {
+      lookupTmp.default = formVal.lookupDefault;
     }
   }
-
   return lookupTmp;
 };
 

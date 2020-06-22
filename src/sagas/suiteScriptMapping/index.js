@@ -31,7 +31,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
 }
 
 export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
-  const {mappings} = yield select(selectors.suiteScriptMapping, {ssLinkedConnectionId, integrationId, flowId });
+  const {mappings, lookups} = yield select(selectors.suiteScriptMapping, {ssLinkedConnectionId, integrationId, flowId });
   const flows = yield select(
     selectors.suiteScriptResourceList,
     {
@@ -51,6 +51,13 @@ export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
     path: '/import/mapping',
     value: _mappings,
   });
+  if (lookups) {
+    patchSet.push({
+      op: lookups ? 'replace' : 'add',
+      path: importType === 'netsuite' ? '/import/netsuite/lookups' : '/import/salesforce/lookups',
+      value: lookups,
+    });
+  }
 
   const resourceId = selectedFlow._id;
   const resourceType = 'imports';

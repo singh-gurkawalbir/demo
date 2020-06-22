@@ -47,7 +47,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -214,6 +214,44 @@ export default {
           helpKey: 'mapping.hardcodedDefault',
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
+        'lookup.failIfMatchNotFound': {
+          id: 'lookup.failIfMatchNotFound',
+          name: 'lookupFailIfMatchNotFound',
+          label: 'Fail If Unique Match Not Found',
+          type: 'checkbox',
+          required: true,
+          helpKey: 'mapping.suitescript.lookup.failWhenUniqueMatchNotFound',
+          defaultValue: !(lookup.allowFailures),
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ]
+        },
+        'lookup.useNull': {
+          id: 'lookup.useNull',
+          name: 'lookupUseNull',
+          label: 'Use Null as Default Value',
+          type: 'checkbox',
+          required: true,
+          helpKey: 'mapping.suitescript.lookup.useNull',
+          defaultValue: lookup.default === null,
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.failIfMatchNotFound', is: [false] },
+          ]
+        },
+        'lookup.useEmptyString': {
+          id: 'lookup.useEmptyString',
+          name: 'lookupUseEmptyString',
+          label: 'Use Empty String as Default Value',
+          type: 'checkbox',
+          required: true,
+          helpKey: 'mapping.suitescript.lookup.useEmptyString',
+          defaultValue: lookup.default === '',
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.failIfMatchNotFound', is: [false] },
+          ]
+        },
         lookupDefault: {
           id: 'lookupDefault',
           name: 'lookupDefault',
@@ -221,8 +259,10 @@ export default {
           label: 'Default lookup value',
           required: true,
           visibleWhenAll: [
-            { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.failIfMatchNotFound', is: [false] },
+            { field: 'lookup.useNull', is: [false] },
+            { field: 'lookup.useEmptyString', is: [false] },
           ],
           helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
@@ -292,6 +332,9 @@ export default {
           'hardcodedDefault',
           'hardcodedSFSelect',
           'hardcodedCheckbox',
+          'lookup.failIfMatchNotFound',
+          'lookup.useNull',
+          'lookup.useEmptyString',
           'lookupDefault',
           'lookupSFSelect',
           'extractDateFormat',

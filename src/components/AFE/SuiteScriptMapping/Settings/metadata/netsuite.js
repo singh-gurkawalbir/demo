@@ -104,7 +104,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
@@ -142,7 +142,7 @@ export default {
           savedRecordType: lookup.recordType,
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
-          helpKey: 'mapping.netsuite.lookup.searchField',
+          helpKey: 'mapping.suitescript.netsuite.lookup.searchField',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -196,7 +196,18 @@ export default {
             { field: 'lookup.mode', is: ['static'] },
           ],
         },
-
+        'lookup.failIfMatchNotFound': {
+          id: 'lookup.failIfMatchNotFound',
+          name: 'lookupFailIfMatchNotFound',
+          label: 'Fail If Unique Match Not Found',
+          type: 'checkbox',
+          required: true,
+          helpKey: 'mapping.suitescript.lookup.failWhenUniqueMatchNotFound',
+          defaultValue: !(lookup.allowFailures),
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+          ]
+        },
         hardcodedDefault: {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
@@ -301,6 +312,7 @@ export default {
           'hardcodedCheckbox',
           'extractDateFormat',
           'extractDateTimezone',
+          'lookup.failIfMatchNotFound',
           'isKey',
         ],
       },
