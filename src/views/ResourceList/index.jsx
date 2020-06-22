@@ -35,6 +35,9 @@ const resourcesToLoad = resourceType => {
     // add connections
     return `${resourceType},connections`;
   }
+  if (resourceType === 'apis') {
+    return `${resourceType},scripts`;
+  }
 
   return resourceType;
 };
