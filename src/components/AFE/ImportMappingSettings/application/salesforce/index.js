@@ -89,6 +89,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
+          required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -102,6 +103,7 @@ export default {
           type: 'salesforcelookupfilters',
           label: '',
           connectionId,
+          required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
@@ -119,6 +121,7 @@ export default {
           type: 'text',
           multiline: true,
           disableText: true,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
@@ -137,6 +140,7 @@ export default {
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
