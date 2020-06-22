@@ -99,7 +99,6 @@ export default function AddOrSelect(props) {
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
         <RadioGroup
-          // {...props}
           value={props.value}
           id="selectType"
           className={classes.resourceFormRadioGroupWrapper}
