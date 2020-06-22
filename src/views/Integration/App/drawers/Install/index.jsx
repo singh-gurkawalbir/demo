@@ -265,14 +265,14 @@ export default function ConnectorInstallation(props) {
   const handleUninstall = e => {
     e.preventDefault();
     confirmDialog({
-      title: 'Uninstall',
-      message: 'Are you sure you want to uninstall',
+      title: 'Confirm uninstall',
+      message: 'Are you sure you want to uninstall?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Uninstall',
           onClick: () => {
             const storeId = (integration.stores || {}).length
               ? integration.stores[0].value

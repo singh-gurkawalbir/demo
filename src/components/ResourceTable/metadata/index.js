@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetConnectorName } from '../../CeligoTable/util';
+import { useGetConnectorName, useGetScriptName } from '../../CeligoTable/util';
 import accesstokens from './accesstokens';
 import agents from './agents';
 import connections from './connections';
@@ -13,6 +13,9 @@ import apis from './apis';
 
 export const ConnectorNameComp = ({ r }) => (
   <>{useGetConnectorName(r)}</>
+);
+export const ScriptName = ({id}) => (
+  <>{useGetScriptName(id)}</>
 );
 
 const metadata = {
