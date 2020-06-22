@@ -43,7 +43,6 @@ export default {
     let errorStatus = false;
     let errorMessage = '';
     const settings = {};
-    let conditionalLookup;
 
     settings.generate = generate;
 
@@ -60,26 +59,6 @@ export default {
       if (formVal.extractDateTimezone) {
         settings.extractDateTimezone = formVal.extractDateTimezone;
       }
-
-      if (formVal.generateDateFormat) {
-        settings.generateDateFormat = formVal.generateDateFormat;
-      }
-
-      if (formVal.generateDateTimezone) {
-        settings.generateDateTimezone = formVal.generateDateTimezone;
-      }
-    }
-
-    if (formVal.discardIfEmpty) {
-      settings.discardIfEmpty = formVal.discardIfEmpty;
-    }
-
-    if (formVal.useAsAnInitializeValue) {
-      settings.useAsAnInitializeValue = formVal.useAsAnInitializeValue;
-    }
-
-    if (formVal.immutable) {
-      settings.immutable = formVal.immutable;
     }
 
     if (formVal.fieldMappingType === 'hardCoded') {
@@ -93,25 +72,6 @@ export default {
         settings.hardCodedValue = formVal.hardcodedCheckbox;
       }
     }
-    // else if (
-    //   formVal.fieldMappingType === 'standard' ||
-    //   formVal.fieldMappingType === 'multifield'
-    // ) {
-    //   switch (formVal.standardAction) {
-    //     case 'useEmptyString':
-    //       settings.default = '';
-    //       break;
-    //     case 'useNull':
-    //       settings.default = null;
-    //       break;
-    //     case 'default':
-    //       settings.default = formVal.default || formVal.defaultSFSelect;
-    //       break;
-    //     default:
-    //   }
-    // }
-
-    // setting extract value
     if (
       formVal.fieldMappingType === 'standard' &&
       extract &&
@@ -147,37 +107,11 @@ export default {
       settings.lookupName = updatedLookup && updatedLookup.name;
     }
 
-    if (formVal.conditionalWhen) {
-      settings.conditional = {};
-      settings.conditional.when = formVal.conditionalWhen;
-
-      if (
-        formVal.conditionalWhen === 'lookup_not_empty' ||
-        formVal.conditionalWhen === 'lookup_empty'
-      ) {
-        settings.conditional.lookupName = formVal.conditionalLookupName;
-
-        if (formVal.lookups) {
-          const tempLookUp = formVal.lookups.find(
-            l => l.name === formVal.conditionalLookupName
-          );
-
-          if (
-            tempLookUp &&
-            (!updatedLookup || updatedLookup.name !== tempLookUp.name)
-          ) {
-            conditionalLookup = tempLookUp;
-          }
-        }
-      }
-    }
-
     return {
       settings,
       lookup: updatedLookup,
       errorStatus,
       errorMessage,
-      conditionalLookup,
     };
   }
 };
