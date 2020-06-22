@@ -6,6 +6,7 @@ import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
 import OAuthButton from './OAuthButton';
 import NetsuiteValidateButton from './NetsuiteValidateButton';
+import SaveAndCloseFileDefinitionButton from './SaveAndCloseFileDefinitionButton';
 import SaveFileDefinitionButton from './SaveFileDefinitionButton';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 import SaveAndContinueButton from './SaveAndContinueButton';
@@ -46,6 +47,7 @@ export default {
   oauth: OAuthButton,
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,
+  saveandclosedefinition: SaveAndCloseFileDefinitionButton,
   saveintegrationsettings: IntegrationSettingsSaveButton,
   saveandcontinue: SaveAndContinueButton,
 };

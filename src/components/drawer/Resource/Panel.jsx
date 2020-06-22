@@ -240,7 +240,7 @@ export default function Panel(props) {
     'pageGenerator',
     'pageProcessor',
   ].includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
+  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
 
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {

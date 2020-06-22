@@ -464,11 +464,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
