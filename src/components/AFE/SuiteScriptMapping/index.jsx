@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 // import { useLocation, useRouteMatch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
 import { useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../reducers';
@@ -104,11 +104,23 @@ export default function SuiteScriptMapping(props) {
   const dispatch = useDispatch();
   const showPreviewPane = false;
   const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {importType, exportType} = useSelector(state => {
+    const flows = selectors.suiteScriptResourceList(state, {
+      resourceType: 'flows',
+      integrationId,
+      ssLinkedConnectionId,
+    });
+    const selectedFlow = flows && flows.find(flow => flow._id === flowId);
+    const exportType = selectedFlow.export.netsuite ? 'netsuite' : selectedFlow.export.type;
+
+    return {importType: selectedFlow.import && selectedFlow.import.type, exportType};
+  }, shallowEqual);
+
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScriptMapping.init({ssLinkedConnectionId, integrationId, flowId}));
   }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
-  const extractLabel = 'Source Record Field';
-  const generateLabel = 'Import field';
+  const extractLabel = `Source Record Field (${exportType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
+  const generateLabel = `Import Field (${importType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
   const emptyRowIndex = useMemo(() => localMappings.length, [
     localMappings,
   ]);
