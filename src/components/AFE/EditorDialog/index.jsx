@@ -237,16 +237,27 @@ export default function EditorDialog(props) {
       </DialogContent>
       <DialogActions className={classes.actions}>
         {patchOnSave ? (
-          <EditorSaveButton
-            id={id}
-            variant="outlined"
-            color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            onClose={handleSave(true)}
-            submitButtonLabel="Save"
-            flowId={flowId}
-          />
+          <>
+            <EditorSaveButton
+              id={id}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              submitButtonLabel="Save"
+              flowId={flowId}
+            />
+            <EditorSaveButton
+              id={id}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              onClose={handleSave(true)}
+              submitButtonLabel="Save & close"
+              flowId={flowId}
+            />
+          </>
         ) : (
           <Button
             variant="outlined"

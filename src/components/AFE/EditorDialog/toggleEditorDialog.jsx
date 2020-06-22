@@ -264,8 +264,18 @@ export default function ToggleEditorDialog(props) {
           color="primary"
           dataTest="saveEditor"
           disabled={disableSave}
-          onClose={handleClose}
           submitButtonLabel="Save"
+          flowId={flowId}
+        />
+        <EditorSaveButton
+          key={activeEditorId}
+          id={activeEditorId}
+          variant="outlined"
+          color="primary"
+          dataTest="saveEditor"
+          disabled={disableSave}
+          onClose={handleClose}
+          submitButtonLabel="Save & close"
           flowId={flowId}
         />
         <Button

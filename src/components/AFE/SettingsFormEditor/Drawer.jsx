@@ -225,15 +225,25 @@ export default function EditorDrawer({
       />
       <div className={classes.actionContainer}>
         {!hideSaveAction && (
-          <EditorSaveButton
-            id={editorId}
-            variant="outlined"
-            color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            onClose={handleSave}
-            submitButtonLabel="Save"
-          />
+          <>
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              submitButtonLabel="Save"
+            />
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              onClose={handleSave}
+              submitButtonLabel="Save & close"
+            />
+          </>
         )}
         <Button
           variant="text"
