@@ -127,7 +127,7 @@ function* requestResource({
 
   try {
     const resource = yield call(apiCallWithRetry, {path, opts});
-    yield put(actions.suiteScript.resource.received(resourceType, resource, ssLinkedConnectionId, integrationId))
+    yield put(actions.suiteScript.resource.received(resourceType, resource, ssLinkedConnectionId, integrationId));
   } catch (error) {
     return true;
   }

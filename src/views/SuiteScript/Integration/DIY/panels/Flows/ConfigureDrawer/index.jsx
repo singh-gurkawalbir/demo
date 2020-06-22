@@ -54,7 +54,7 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const section = useSelector(state => {
-    const flowSections = selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId)
+    const flowSections = selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId);
 
     return flowSections.find(s => s.titleId === sectionId);
   });
@@ -79,11 +79,11 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
   );
 
   useEffect(() => {
-    dispatch(actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId))
+    dispatch(actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
     return () => {
       dispatch(actions.suiteScript.iaForm.initClear(ssLinkedConnectionId, integrationId));
-    }
-  }, [dispatch, integrationId, ssLinkedConnectionId])
+    };
+  }, [dispatch, integrationId, ssLinkedConnectionId]);
   const { formState, handleClose } = useSuiteScriptIAFormWithHandleClose(
     integrationId, ssLinkedConnectionId,
     parentUrl

@@ -286,9 +286,9 @@ function* suiteScriptSubmitIA({
 
   try {
     yield call(apiCallWithRetry, {path, opts});
-    yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId))
+    yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
   } catch (error) {
-    yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId))
+    yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
   }
 
   // refetch settings with latest doc

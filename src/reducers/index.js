@@ -58,7 +58,7 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
@@ -1804,15 +1804,14 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
+    titleId: getTitleIdFromSection(sec),
   }));
 }
-
 export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
   const {sections = []} = suiteScriptSettings(state, id, ssLinkedConnectionId);
   return sections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
+    titleId: getTitleIdFromSection(sec),
   }));
 }
 export function integrationAppGeneralSettings(state, id, storeId) {
@@ -1886,8 +1885,7 @@ export function integrationAppSectionMetadata(
   const selectedSection =
     allSections.find(
       sec =>
-        sec.title &&
-        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+        getTitleIdFromSection(sec) === section
     ) || {};
 
   return selectedSection;
@@ -1917,8 +1915,7 @@ export function suiteScriptSectionMetadata(
   const selectedSection =
     allSections.find(
       sec =>
-        sec.title &&
-        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+        getTitleIdFromSection(sec) === section
     ) || {};
 
   return selectedSection;
@@ -1956,8 +1953,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   const selectedSection =
     allSections.find(
       sec =>
-        sec.title &&
-        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+        getTitleIdFromSection(sec) === section
     ) || {};
 
   if (!section) {
@@ -4612,8 +4608,7 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   const selectedSection =
       allSections.find(
         sec =>
-          sec.title &&
-          sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+          getTitleIdFromSection(sec) === section
       ) || {};
 
   if (!section) {
