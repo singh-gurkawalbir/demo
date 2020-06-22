@@ -6,26 +6,8 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
+import { useLoadingSnackbarOnSave } from '.';
 
-export const useLoadingSnackbarOnSave = props => {
-  const { saveTerminated, onSave } = props;
-  const [disableSave, setDisableSave] = useState(false);
-  const handleSubmitForm = useCallback(
-    values => {
-      onSave(values);
-      setDisableSave(true);
-    },
-    [onSave]
-  );
-
-  useEffect(() => {
-    if (saveTerminated) {
-      setDisableSave(false);
-    }
-  }, [saveTerminated]);
-
-  return { handleSubmitForm, disableSave };
-};
 const styles = theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
@@ -42,6 +24,7 @@ const MappingSaveButton = props => {
     dataTest,
     showOnlyOnChanges,
     onClose,
+    flowId,
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -49,7 +32,7 @@ const MappingSaveButton = props => {
     selectors.mapping(state, id)
   );
   const mappingsChanged = useSelector(state =>
-    selectors.suitesciptMappingsChanged(state, id)
+    selectors.mappingsChanged(state, id)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
@@ -63,12 +46,13 @@ const MappingSaveButton = props => {
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
-    dispatch(actions.mapping.save(id));
+    dispatch(actions.mapping.save(id, { flowId }));
     setSaveTriggered(true);
-  }, [dispatch, id]);
+  }, [dispatch, id, flowId]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
-    onSave
+    onSave,
+    resourceType: 'mappings',
   });
   const handleButtonClick = () => {
     if (validationErrMsg) {
