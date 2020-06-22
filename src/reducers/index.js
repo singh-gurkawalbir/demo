@@ -4644,7 +4644,7 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
     resourceType: 'flows',
     integrationId: id,
     ssLinkedConnectionId,
-  })
+  });
   flows = flows
     .filter(f => requiredFlows.includes(f.flowGUID))
     .sort(

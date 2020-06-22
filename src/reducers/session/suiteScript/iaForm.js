@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 const iaFormKey = (
   ssLinkedConnectionId,
   integrationId,
-) => `${ssLinkedConnectionId}-${integrationId}`
+) => `${ssLinkedConnectionId}-${integrationId}`;
 export default (state = {}, action) => {
   const {
     type,
@@ -21,8 +21,7 @@ export default (state = {}, action) => {
         if (!draft[key]) draft[key] = {};
         draft[key] = { initComplete: true,
           showFormValidationsBeforeTouch: false,
-
-        }
+        };
         return;
 
       case actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR:
@@ -31,9 +30,11 @@ export default (state = {}, action) => {
         return;
 
       case actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS:
+        if (!draft[key])draft[key] = {};
         draft[key].showFormValidationsBeforeTouch = true;
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT:
+        if (!draft[key])draft[key] = {};
         delete draft[key].submitFailed;
         delete draft[key].submitComplete;
 
@@ -49,7 +50,7 @@ export default (state = {}, action) => {
       default:
     }
   });
-}
+};
 
 // #region PUBLIC SELECTORS
 export function suiteScriptIAFormState(
