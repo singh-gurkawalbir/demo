@@ -80,14 +80,30 @@ const getConnectionType = resource => {
   return type;
 };
 
-const ActionButtons = ({actions, formProps}) => (actions.length &&
+const ActionButtons = ({actions, formProps}) => {
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
+  return (actions.length &&
 actions.map(action => {
   const Action = consolidatedActions[action.id];
+  let actionProps = {};
+  if (action.id !== 'cancel') {
+    actionProps = {
+      disableSaveOnClick,
+      setDisableSaveOnClick
+    };
+  }
   // remove form disabled prop...
   // they dont necessary apply to action button
   const { disabled, ...rest } = formProps;
-  return <Action key={action.id} dataTest={action.id} {...rest} {...action} />;
+  return <Action
+    key={action.id}
+    dataTest={action.id}
+    {...rest}
+    {...action}
+    {...actionProps}
+   />;
 })) || null;
+};
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
@@ -104,8 +120,10 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       } else {
         actionButtons = ['testandsave', 'cancel', 'test'];
       }
+    } else if (!isNew) {
+      actionButtons = ['save', 'saveandclose', 'cancel'];
     } else {
-      actionButtons = ['save', 'cancel'];
+      actionButtons = ['saveandclose', 'cancel'];
     }
     return actionButtons.map(id => ({id}));
   }, [actions, connectionType, isNew, resourceType]);
