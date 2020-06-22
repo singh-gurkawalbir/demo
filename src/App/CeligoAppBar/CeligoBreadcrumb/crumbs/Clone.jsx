@@ -11,7 +11,7 @@ export default function CloneCrumb({ resourceId, resourceType }) {
 
   return (
     <LoadResources resources={resourceType}>
-      {resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
+      Clone - {resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
     </LoadResources>
   );
 }
