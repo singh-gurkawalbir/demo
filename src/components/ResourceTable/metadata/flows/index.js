@@ -7,7 +7,6 @@ import Download from '../../actions/Download';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import NameCell from './NameCell';
-import TypeCell from './TypeCell';
 import OnOffCell from './OnOffCell';
 import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
@@ -35,13 +34,6 @@ export default {
         orderBy: 'name',
       },
       {
-        // Mixed, Scheduled, Realtime, or Data loader
-        heading: 'Type',
-        value: function Type(r) {
-          return <TypeCell flowId={r._id} />;
-        },
-      },
-      {
         heading: 'Last updated',
         value: r => r.lastModified && formatLastModified(r.lastModified),
         orderBy: 'lastModified',
@@ -53,12 +45,14 @@ export default {
       },
       {
         heading: 'Mapping',
+        align: 'center',
         value: function Mapping(r) {
           return <MappingCell flowId={r._id} />;
         },
       },
       {
         heading: 'Schedule',
+        align: 'center',
         value: function Schedule(r) {
           return <ScheduleCell flowId={r._id} name={r.name} />;
         },
@@ -69,6 +63,7 @@ export default {
       columns.push(
         {
           heading: 'Settings',
+          align: 'center',
           value: function Settings(r) {
             return <SettingsCell flowId={r._id} name={r.name} />;
           }
