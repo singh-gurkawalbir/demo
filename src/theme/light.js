@@ -190,6 +190,11 @@ export default {
         maxHeight: 300,
       },
     },
+    MuiTooltip: {
+      tooltipPlacementBottom: {
+        margin: '0 !important',
+      },
+    },
     MuiMenuItem: {
       root: {
         minHeight: 42,

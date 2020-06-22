@@ -177,7 +177,7 @@ export default {
       } else if (step.isTriggered) {
         stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to configure';
       }
     } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
@@ -189,14 +189,14 @@ export default {
           stepText = 'Verify Now';
         }
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to install';
       }
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
       stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
     } else {
-      stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+      stepText = isUninstall ? 'Click to Uninstall' : 'Click to install';
     }
 
     return stepText;
