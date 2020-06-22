@@ -16,12 +16,13 @@ import StacksIcon from '../../components/icons/StacksIcon';
 import TicketTagIcon from '../../components/icons/TicketTagIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
-import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
+import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
+import MyApiIcon from '../../components/icons/MyApiIcon';
 
 export default function menuItems(
   userProfile,
@@ -82,21 +83,19 @@ export default function menuItems(
         '/pg/connectors',
         '/pg/recycleBin',
         '/pg/accessTokens',
+        '/pg/apis',
       ],
       children: [
-        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
-        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
         { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },
+        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
+        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
-        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        {
-          label: 'Integration apps',
-          Icon: ConnectionsIcon,
-          path: '/connectors',
-        },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
+        { label: 'Integration apps', Icon: ConnectionsIcon, path: '/connectors', },
+        { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -149,7 +148,7 @@ export default function menuItems(
       );
 
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Scripts' || i.label === 'Stacks')
+        i => !(i.label === 'Scripts' || i.label === 'Stacks' || i.label === 'My APIs')
       );
     }
 

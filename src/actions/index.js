@@ -13,6 +13,7 @@ export const availableResources = [
   'tiles',
   'flows',
   'templates',
+  'apis',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -171,12 +172,13 @@ const resource = {
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, master, patch) =>
+  updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
       resourceId,
       master,
       patch,
+      context,
     }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
@@ -219,12 +221,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options) =>
+  commitStaged: (resourceType, id, scope, options, context) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
+      context,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -1268,7 +1271,7 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: (id) => action(actionTypes.EDITOR_SAVE, { id }),
+  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
   saveFailed: (id) => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
   saveComplete: (id) => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
@@ -1297,7 +1300,7 @@ const mapping = {
       value,
     }),
   delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: (id) => action(actionTypes.MAPPING.SAVE, { id }),
+  save: (id, context) => action(actionTypes.MAPPING.SAVE, { id, context }),
   saveFailed: (id) => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: (id) => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
@@ -2228,6 +2231,83 @@ const suiteScript = {
       action(actionTypes.SUITESCRIPT.ACCOUNT.RECEIVED_HAS_INTEGRATIONS, {
         account,
         hasIntegrations,
+      }),
+  },
+  installer: {
+    initSteps: (connectorId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS, {
+        id: connectorId,
+      }),
+    updateStep: (connectorId, status) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.STEP, {
+        id: connectorId,
+        status,
+      }),
+    updateSSLinkedConnectionId: (connectorId, connectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.LINKED_CONNECTION, {
+        id: connectorId,
+        ssLinkedConnectionId: connectionId,
+      }),
+    updateSSIntegrationId: (connectorId, ssIntegrationId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_INTEGRATION_ID, {
+        id: connectorId,
+        ssIntegrationId,
+      }),
+    updateSSConnection: (connectorId, connectionId, doc) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_CONNECTION, {
+        id: connectorId,
+        connectionId,
+        doc,
+      }),
+    updatePackage: (connectorId, packageType, packageUrl) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE, {
+        id: connectorId,
+        packageType,
+        packageUrl,
+      }),
+    requestPackages: (connectorId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, {
+        connectorId,
+        ssLinkedConnectionId,
+      }),
+    verifyNSBundle: (
+      connectorId,
+      ssLinkedConnectionId,
+      shouldContinue,
+      ssName
+    ) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.INTEGRATOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        shouldContinue,
+        ssName,
+      }),
+    verifySFBundle: (connectorId, ssLinkedConnectionId, ssName) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.CONNECTOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        ssName,
+      }),
+    verifySSConnection: (connectorId, ssLinkedConnectionId, connectionType) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, {
+        connectorId,
+        ssLinkedConnectionId,
+        connectionType,
+      }),
+    verifyPackage: (connectorId, ssLinkedConnectionId, installerFunction) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.PACKAGE, {
+        connectorId,
+        ssLinkedConnectionId,
+        installerFunction,
+      }),
+    failed: (connectorId, error) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.FAILED, {
+        id: connectorId,
+        error,
+      }),
+    clearSteps: (connectorId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.CLEAR_STEPS, {
+        id: connectorId,
       }),
   },
 };

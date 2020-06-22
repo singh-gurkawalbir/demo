@@ -704,3 +704,10 @@ export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
     account
   );
 }
+
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  return fromSuiteScript.installerData(
+    state && state.suiteScript,
+    id
+  );
+}

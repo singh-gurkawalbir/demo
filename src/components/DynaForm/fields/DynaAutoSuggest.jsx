@@ -189,8 +189,7 @@ export default function DynaAutoSuggest(props) {
         <FormLabel required={required} error={!isValid}>
           {label}
         </FormLabel>
-        {/* Todo: helpText is needed here */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <div className={classes.root}>
         <Autosuggest

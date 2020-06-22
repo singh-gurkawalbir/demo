@@ -111,7 +111,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function IntegrationApp(props) {
   const classes = useStyles();
-  const history = useHistory()
+  const history = useHistory();
   const dispatch = useDispatch();
   const { integrationAppName, integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
@@ -207,9 +207,9 @@ export default function IntegrationApp(props) {
     isParent: true,
     supportsChild: !!(integration && integration.settings && integration.settings.supportsMultiStore),
     isMonitorLevelUser: accessLevel === 'monitor',
-  }).length
+  }).length;
   if (!showAdminTab) {
-    filterTabs.push('admin')
+    filterTabs.push('admin');
   }
   const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(

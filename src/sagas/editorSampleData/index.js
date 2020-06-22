@@ -41,7 +41,7 @@ export function* requestEditorSampleData({
       isAS2Resource(resource) ||
       isRestCsvMediaType
     ) {
-      yield call(requestExportSampleData, { resourceId, resourceType, values: formValues })
+      yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
       const parsedData = yield select(
         selectors.getResourceSampleDataWithStatus,
         resourceId,

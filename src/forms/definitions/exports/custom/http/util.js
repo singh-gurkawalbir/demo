@@ -327,7 +327,7 @@ export function fieldMeta({ resource, assistantData }) {
             },
             {
               collapsed: true,
-              label: 'Advanced Settings',
+              label: 'Advanced',
               fields: ['apiIdentifier'],
             },
           ],

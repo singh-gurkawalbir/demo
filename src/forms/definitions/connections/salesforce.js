@@ -44,21 +44,35 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'salesforce.concurrencyLevel': { fieldId: 'salesforce.concurrencyLevel' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'salesforce.info.email',
-      'salesforce.info.organization_id',
-      'salesforce.sandbox',
-      'salesforce.oauth2FlowType',
-      'salesforce.username',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'salesforce.info.email',
+          'salesforce.info.organization_id',
+          'salesforce.sandbox',
+          'salesforce.oauth2FlowType',
+          'salesforce.username',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: [
           '_borrowConcurrencyFromConnectionId',
           'salesforce.concurrencyLevel',

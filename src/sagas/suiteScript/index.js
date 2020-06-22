@@ -3,6 +3,7 @@ import { resourceSagas } from './resources';
 import { jobSagas } from './jobs';
 import { flowSagas } from './flows';
 import { accountSagas } from './account';
+import installerSagas from './installer';
 
 // eslint-disable-next-line import/prefer-default-export
 export const suiteScriptSagas = [
@@ -11,4 +12,5 @@ export const suiteScriptSagas = [
   ...jobSagas,
   ...flowSagas,
   ...accountSagas,
+  ...installerSagas,
 ];

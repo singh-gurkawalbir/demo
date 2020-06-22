@@ -125,13 +125,8 @@ export default (
           const { collection = [] } = action;
 
           if (resourceType.startsWith('suitescript/connections/')) {
-            const [
-              ,
-              ,
-              ssLinkedConnectionId,
-              ,
-              integrationId,
-            ] = resourceType.split('/');
+            const ssLinkedConnectionId = resourceType.split('/')[2];
+            const integrationId = resourceType.split('/')[4];
 
             if (!draft[ssLinkedConnectionId]) {
               draft[ssLinkedConnectionId] = { tiles: [] };
@@ -215,7 +210,7 @@ export default (
                 }
               });
             } else if (resourceType.endsWith('/flows')) {
-              //next data flows
+              // next data flows
               draft[ssLinkedConnectionId].nextFlows = collection.filter(
                 (f) =>
                   f.version === 'V2' && f.integrationName !== 'Simple Imports'

@@ -133,23 +133,96 @@ export const PERMISSIONS = Object.freeze({
     edit: 'imports.edit',
     delete: 'imports.delete',
   },
+  apis: {
+    view: 'apis.view',
+    create: 'apis.create',
+    edit: 'apis.edit',
+    delete: 'apis.delete',
+  },
 });
 
 export const PASSWORD_MASK = '******';
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
-    name: 'Salesforce - NetSuite Connector',
+    name: 'Salesforce - NetSuite Connector (V2)',
     urlName: 'sfns',
     ssName: 'Salesforce Connector',
-    description:
-      'Streamline your Lead-to-Cash process with the Salesforce - NetSuite Connector. Manage sales process effectively and in real-time. Packed with Celigo’s deep domain expertise and best practices, this Connector is the embodiment of several years of customer feedback, learning and growth.  With distributed adapters running only in NetSuite and Salesforce, our connector allows endless customization options.',
+    description: 'v2 is the legacy version of our Integration app that comes bundled with comprehensive out-of-the-box flows for the Lead-to-Cash process. With an intuitive setup that requires no coding, integrating platforms is a seamless process.',
     applications: ['salesforce', 'netsuite'],
     user: {
       name: 'Celigo',
       email: 'yrjcbv9kkq1azk@gmail.com',
       company: 'Celigo',
     },
+    installSteps: Object.freeze([
+      {
+        name: 'NetSuite Connection',
+        type: 'connection',
+        connectionType: 'netsuite',
+        description: 'Select a NetSuite connection or create a new one for your NetSuite account. Integrator.io will use this to connect to your NetSuite account.',
+        imageURL: '/images/company-logos/netsuite.png',
+        completed: false,
+        __index: 1
+      },
+      {
+        imageURL: '/images/company-logos/netsuite.png',
+        installURL: 'https://system.na1.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+        completed: false,
+        description: 'Install integrator bundle in NetSuite account.',
+        name: 'Integrator Bundle',
+        type: 'integrator-bundle',
+        __index: 2
+      },
+      {
+        imageURL: '/images/company-logos/netsuite.png',
+        installURL: 'https://system.na1.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=48893',
+        completed: false,
+        description: 'Install Salesforce Connector bundle in NetSuite account.',
+        name: 'Salesforce Bundle',
+        type: 'connector-bundle',
+        __index: 3
+      },
+      {
+        name: 'NetSuite Connection',
+        type: 'ssConnection',
+        connectionType: 'netsuite',
+        description: 'Provide NetSuite account credentials. The Connector will use them to send data from Salesforce to NetSuite.',
+        imageURL: '/images/company-logos/netsuite.png',
+        completed: false,
+        __index: 4
+      },
+      {
+        name: 'Salesforce Connection',
+        type: 'ssConnection',
+        connectionType: 'salesforce',
+        description: 'Provide Salesforce account credentials. The Connector will use them to send data from NetSuite to Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 5
+      },
+      {
+        name: 'Integrator package',
+        type: 'package',
+        installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04to0000000OIhq',
+        installerFunction: 'verifyIntegratorPackage',
+        description: 'Install integrator package in Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 6
+      },
+      {
+        name: 'Connector package',
+        type: 'package',
+        installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000000LYeu',
+        installerFunction: 'verifyConnectorPackage',
+        description: 'Install NetSuite Connector package in Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 7
+      }
+    ])
   },
   {
     _id: 'suitescript-svb-netsuite',
@@ -433,6 +506,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.csv.hasHeaderRow',
     'file.csv.trimSpaces',
     'file.csv.rowsToSkip',
+    'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
     'file.csvHelper'

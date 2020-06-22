@@ -57,7 +57,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.SUITESCRIPT.CONNECTION.TEST_CLEAR: {
-        if (retainStatus) {
+        if (retainStatus && draft[ssLinkedConnectionId][resourceId]) {
           delete draft[ssLinkedConnectionId][resourceId].message;
         } else draft[ssLinkedConnectionId][resourceId] = {};
 

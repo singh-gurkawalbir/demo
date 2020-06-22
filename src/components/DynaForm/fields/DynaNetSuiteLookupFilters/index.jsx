@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
+import FormLabel from '@material-ui/core/FormLabel';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 import RefreshIcon from '../../../icons/RefreshIcon';
-
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -47,6 +47,8 @@ export default function DynaNetSuiteLookupFilters(props) {
     options = {},
     onFieldChange,
     editorId,
+    required,
+    disabled,
   } = props;
   const { disableFetch, commMetaPath } = options;
   let rule = [];
@@ -122,7 +124,9 @@ export default function DynaNetSuiteLookupFilters(props) {
   return (
     <>
       <div className={classes.refreshFilters}>
-        Refresh  search filters
+        <FormLabel disabled={disabled} required={required} >
+          Refresh  search filters
+        </FormLabel>
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}

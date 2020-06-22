@@ -7,35 +7,38 @@ import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { isJsonString } from '../../../../../utils/string';
+import PanelHeader from '../../../../../components/PanelHeader';
+import FormBuilderButton from '../../../../../components/FormBuilderButton';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    paddingLeft: theme.spacing(2),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
+    padding: theme.spacing(0, 2, 0, 2),
   },
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  noSettings: {
+    margin: theme.spacing(1, 2, 4, 2),
+  },
 }));
 
 const emptyObj = {};
-export default function CustomSettings({ integrationId, childId }) {
-  const _integrationId = childId || integrationId;
+
+export default function CustomSettings({ integrationId: parentIntegrationId, childId }) {
+  const integrationId = childId || parentIntegrationId;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
   const settings = useSelector(state => {
-    const resource = selectors.resource(state, 'integrations', _integrationId);
+    const resource = selectors.resource(state, 'integrations', integrationId);
 
     return resource ? resource.settings : emptyObj;
   });
   const canEditIntegration = useSelector(
     state =>
-      selectors.resourcePermissions(state, 'integrations', _integrationId).edit
+      selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
   const fieldMeta = useMemo(
     () => ({
@@ -47,7 +50,7 @@ export default function CustomSettings({ integrationId, childId }) {
           type: 'settings',
           label: 'Settings',
           defaultValue: settings,
-          collapsed: false,
+          fieldsOnly: true,
         },
       },
       layout: {
@@ -69,7 +72,7 @@ export default function CustomSettings({ integrationId, childId }) {
         typeof field.value === 'string' &&
         !isJsonString(field.value)
       ) {
-        return 'Settings must be a valid JSON';
+        return 'Settings must be valid JSON';
       }
     }
   };
@@ -88,33 +91,37 @@ export default function CustomSettings({ integrationId, childId }) {
       ];
 
       dispatch(
-        actions.resource.patchStaged(_integrationId, patchSet, SCOPES.VALUE)
+        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
       );
       dispatch(
         actions.resource.commitStaged(
           'integrations',
-          _integrationId,
+          integrationId,
           SCOPES.VALUE
         )
       );
       setFormKey(formKey => formKey + 1);
     },
-    [dispatch, _integrationId]
+    [dispatch, integrationId]
   );
 
   return (
     <div className={classes.root}>
+      <PanelHeader title="Settings" >
+        <FormBuilderButton resourceType="integrations" resourceId={integrationId} integrationId={integrationId} />
+      </PanelHeader>
+
       <div className={classes.form}>
         <DynaForm
           disabled={!canEditIntegration}
           fieldMeta={fieldMeta}
           resourceType="integrations"
-          resourceId={_integrationId}
+          resourceId={integrationId}
           validationHandler={validationHandler}
           key={formKey}>
           <DynaSubmit
             resourceType="integrations"
-            resourceId={_integrationId}
+            resourceId={integrationId}
             disabled={!canEditIntegration}
             onClick={handleSubmit}>
             Save

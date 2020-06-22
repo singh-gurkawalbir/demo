@@ -13,7 +13,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
-import ArrowBackIcon from '../../../../../components/icons/BackArrowIcon'
+import ArrowBackIcon from '../../../../../components/icons/BackArrowIcon';
 import InstallationStep from '../../../../../components/InstallStep';
 import { UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
@@ -76,7 +76,7 @@ export default function Uninstaller2({ integration, integrationId }) {
         actions.integrationApp.uninstaller2.requestSteps(integrationId)
       );
     }
-  }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode])
+  }, [dispatch, integrationId, isFetched, isIAUninstallComplete, mode]);
 
   useEffect(() => {
     if (isComplete) {
@@ -87,7 +87,7 @@ export default function Uninstaller2({ integration, integrationId }) {
       );
       history.replace(getRoutePath('dashboard'));
     }
-  }, [dispatch, history, integrationId, isComplete])
+  }, [dispatch, history, integrationId, isComplete]);
 
   const handleStepClick = useCallback((step) => {
     const { type, isTriggered, form } = step;

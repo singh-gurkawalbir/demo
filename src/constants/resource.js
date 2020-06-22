@@ -16,6 +16,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   stack: 'stacks',
   template: 'templates',
   license: 'licenses',
+  api: 'apis',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
@@ -49,6 +50,7 @@ const allResources = [
   'stacks',
   'scripts',
   'integrations',
+  'apis',
   ...connections,
 ];
 

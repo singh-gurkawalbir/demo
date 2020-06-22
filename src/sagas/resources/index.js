@@ -106,7 +106,13 @@ export function* linkUnlinkSuiteScriptIntegrator(connectionId, link) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options }) {
+export function* commitStagedChanges({
+  resourceType,
+  id,
+  scope,
+  options,
+  context,
+}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -186,8 +192,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   ) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment
-    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox'))
+    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox')) {
       merged.sandbox = isSandbox;
+    }
   }
 
   let updated;
@@ -305,7 +312,13 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (!isNew) {
     yield put(
-      actions.resource.updated(resourceType, updated._id, master, patch)
+      actions.resource.updated(
+        resourceType,
+        updated._id,
+        master,
+        patch,
+        context
+      )
     );
   }
 
@@ -611,8 +624,9 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       if (!collection) collection = invitedTransfers;
-      else if (invitedTransfers)
+      else if (invitedTransfers) {
         collection = [...collection, ...invitedTransfers];
+      }
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));

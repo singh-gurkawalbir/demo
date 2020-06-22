@@ -89,6 +89,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
+          required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -102,6 +103,7 @@ export default {
           type: 'salesforcelookupfilters',
           label: '',
           connectionId,
+          required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
@@ -119,6 +121,7 @@ export default {
           type: 'text',
           multiline: true,
           disableText: true,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
@@ -137,6 +140,7 @@ export default {
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
@@ -171,7 +175,6 @@ export default {
           name: 'functions',
           type: 'fieldexpressionselect',
           label: 'Function',
-          // Todo (surya) 15533 : help text
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
@@ -448,8 +451,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
-          // Todo (surya) 15533 : help text needed
-          helpText: 'only perform mapping helptext will come here',
+          helpKey: 'mapping.conditional.when',
           options: [
             {
               items: isProduction()
@@ -465,13 +467,10 @@ export default {
           visible: false,
           defaultValue: lookups,
         },
-
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           type: 'selectlookup',
-          // Todo (surya) 15533 : help text needed
-          helpText: 'conditional lookup helptext content should display here',
           flowId,
           resourceId,
           importType: 'salesforce',

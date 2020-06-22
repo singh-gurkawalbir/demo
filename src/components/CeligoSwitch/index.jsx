@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CeligoSwitch({
-  enabled = false,
+  checked = false,
   disabled,
   onChange,
   className,
@@ -77,10 +77,10 @@ export default function CeligoSwitch({
   return (
     <Toggle
       {...props}
-      className={clsx(classes.customSwitch, className, {[classes.customSwitchChecked]: enabled})}
+      className={clsx(classes.customSwitch, className, {[classes.customSwitchChecked]: checked})}
       disabled={disabled}
       onChange={onChange}
-      checked={enabled}
+      checked={checked}
       icons={{
         checked: <SwitchOnIcon />,
         unchecked: <SwitchOffIcon />,
