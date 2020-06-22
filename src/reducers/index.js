@@ -147,7 +147,7 @@ export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
 
   if (!resourceStatuses) return null;
 
-  return resourceStatuses.map(comm => {
+  return resourceStatuses.map((comm) => {
     const { message, ...rest } = comm;
 
     return { ...rest, message: inferErrorMessage(message) };
@@ -165,7 +165,7 @@ export function isAllLoadingCommsAboveThreshold(state) {
 
   return (
     loadingOrErrored.filter(
-      resource =>
+      (resource) =>
         resource.status === fromNetworkComms.COMM_STATES.LOADING &&
         Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
     ).length === 0
@@ -276,12 +276,12 @@ export function redirectToOnInstallationComplete(
 
   switch (resourceType) {
     case 'integrations':
-      integration = components.find(c => c.model === 'Integration');
+      integration = components.find((c) => c.model === 'Integration');
 
       if (integration) redirectTo = `/integrations/${integration._id}/flows`;
       break;
     case 'flows':
-      flow = components.find(c => c.model === 'Flow');
+      flow = components.find((c) => c.model === 'Flow');
 
       if (flow) {
         // eslint-disable-next-line no-use-before-define
@@ -334,8 +334,8 @@ export function templateInstallSteps(state, templateId) {
     templateId
   );
 
-  return produce(templateInstallSteps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
+  return produce(templateInstallSteps, (draft) => {
+    const unCompletedStep = draft.find((s) => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
@@ -381,7 +381,7 @@ export function connectorFieldOptions(
     options:
       (data &&
         data.options &&
-        data.options.map(option => ({
+        data.options.map((option) => ({
           value: option[0],
           label: option[1],
         }))) ||
@@ -550,8 +550,8 @@ export function accountShareHeader(state, path) {
 }
 
 export const userOwnPreferences = createSelector(
-  state => state.user,
-  user => fromUser.userOwnPreferences(user)
+  (state) => state.user,
+  (user) => fromUser.userOwnPreferences(user)
 );
 
 // export function userOwnPreferences(state) {
@@ -1046,7 +1046,7 @@ export function isIAConnectionSetupPending(state, connectionId) {
 
   if (integration && integration.install) {
     const installStep = integration.install.find(
-      step => step._connectionId === connectionId
+      (step) => step._connectionId === connectionId
     );
 
     if (installStep && !installStep.completed) {
@@ -1069,7 +1069,7 @@ export function resourcesByIds(state, resourceType, resourceIds) {
     type: resourceType,
   });
 
-  return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
+  return resources.filter((r) => resourceIds.indexOf(r._id) >= 0);
 }
 
 export function matchingConnectionList(state, connection = {}, environment) {
@@ -1095,7 +1095,8 @@ export function matchingConnectionList(state, connection = {}, environment) {
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment) &&
+            this.netsuite.account &&
+            this.netsuite.environment &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
         }
@@ -1154,7 +1155,7 @@ export function marketplaceConnectors(
   );
 
   return connectors
-    .map(c => {
+    .map((c) => {
       const installedIntegrationApps = resourceListModified(
         userState,
         resourceState,
@@ -1204,11 +1205,11 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
   }
 
   const attachedExports =
-    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
+    exports && exports.filter((e) => exportIds.indexOf(e._id) > -1);
   const attachedImports =
-    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
+    imports && imports.filter((i) => importIds.indexOf(i._id) > -1);
 
-  attachedExports.forEach(exp => {
+  attachedExports.forEach((exp) => {
     if (
       exp &&
       exp._connectionId &&
@@ -1217,7 +1218,7 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
       connectionIds.push(exp._connectionId);
     }
   });
-  attachedImports.forEach(imp => {
+  attachedImports.forEach((imp) => {
     if (
       imp &&
       imp._connectionId &&
@@ -1229,10 +1230,10 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
 
   const attachedConnections =
     connections &&
-    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
+    connections.filter((conn) => connectionIds.indexOf(conn._id) > -1);
 
   if (!options.ignoreBorrowedConnections) {
-    attachedConnections.forEach(conn => {
+    attachedConnections.forEach((conn) => {
       if (
         conn &&
         conn._borrowConcurrencyFromConnectionId &&
@@ -1318,10 +1319,18 @@ export function isOnOffInProgress(state, flowId) {
   return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
 
-export function integrationConnectionList(state, integrationId, childId, tableConfig) {
+export function integrationConnectionList(
+  state,
+  integrationId,
+  childId,
+  tableConfig
+) {
   const integration = resource(state, 'integrations', integrationId) || {};
   // eslint-disable-next-line no-use-before-define
-  const childIntegrations = map(integrationChildren(state, integrationId), 'value');
+  const childIntegrations = map(
+    integrationChildren(state, integrationId),
+    'value'
+  );
   let { resources = [] } = resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
@@ -1330,25 +1339,31 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
     let registeredConnections = [];
     if (!childId) {
-      childIntegrations.forEach(intId => {
-        const integration = resource(state, 'integrations', intId)
-        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds)
-      })
+      childIntegrations.forEach((intId) => {
+        const integration = resource(state, 'integrations', intId);
+        registeredConnections = registeredConnections.concat(
+          integration._registeredConnectionIds
+        );
+      });
     } else {
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
-      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections)
+      registeredConnections = registeredConnections
+        .concat(parentIntegration._registeredConnections)
+        .concat(childIntegration._registeredConnections);
     }
 
     if (registeredConnections) {
-      resources = resources.filter(c => registeredConnections.includes(c._id));
+      resources = resources.filter((c) =>
+        registeredConnections.includes(c._id)
+      );
     }
   } else if (integration._connectorId) {
-    resources = resources.filter(conn => {
+    resources = resources.filter((conn) => {
       if (childId && childId !== integrationId) {
-        return [integrationId, childId].includes(conn._integrationId)
+        return [integrationId, childId].includes(conn._integrationId);
       }
-      return childIntegrations.includes(conn._integrationId)
+      return childIntegrations.includes(conn._integrationId);
     });
   }
 
@@ -1424,22 +1439,22 @@ export function integrationAppResourceList(
   const connections = [];
   const exports = [];
   const imports = [];
-  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
+  const selectedStore = (sections || []).find((s) => s.id === storeId) || {};
 
-  (selectedStore.sections || []).forEach(sec => {
+  (selectedStore.sections || []).forEach((sec) => {
     flowIds.push(...map(sec.flows, '_id'));
   });
 
-  flowIds.forEach(fid => {
+  flowIds.forEach((fid) => {
     const flow = resource(state, 'flows', fid) || {};
-    flows.push({_id: flow._id, name: flow.name});
+    flows.push({ _id: flow._id, name: flow.name });
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {
-    connections: integrationConnections.filter(c =>
+    connections: integrationConnections.filter((c) =>
       connections.includes(c._id)
     ),
     flows,
@@ -1459,7 +1474,7 @@ export function integrationAppStore(state, integrationId, storeId) {
   }
 
   return (
-    integration.stores.find(store => store.value === storeId) || emptyObject
+    integration.stores.find((store) => store.value === storeId) || emptyObject
   );
 }
 
@@ -1513,7 +1528,7 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
       integrationId,
       flowId
     ) || {};
-  const mappingData = response.find(op => op.operation === 'mappingData');
+  const mappingData = response.find((op) => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const categoryRelationshipData = fromSession.categoryMappingGeneratesMetadata(
@@ -1559,10 +1574,10 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
   }
 
   const extractsMetadata = response.find(
-    sec => sec.operation === 'extractsMetaData'
+    (sec) => sec.operation === 'extractsMetaData'
   );
   const generatesMetadata = response.find(
-    sec => sec.operation === 'generatesMetaData'
+    (sec) => sec.operation === 'generatesMetaData'
   );
 
   if (extractsMetadata) {
@@ -1592,11 +1607,11 @@ export function mappedCategories(state, integrationId, flowId) {
   const { response } = categoryMappingData;
 
   if (response) {
-    const mappingData = response.find(sec => sec.operation === 'mappingData');
+    const mappingData = response.find((sec) => sec.operation === 'mappingData');
 
     if (mappingData) {
       mappedCategories = mappingData.data.mappingData.basicMappings.recordMappings.map(
-        item => ({
+        (item) => ({
           id: item.id,
           name: item.name === 'commonAttributes' ? 'Common' : item.name,
           children: item.children,
@@ -1623,7 +1638,7 @@ export function categoryMappingGenerateFields(
     ) || {};
 
   if (generatesMetadata) {
-    return generatesMetadata.find(sec => sec.id === sectionId);
+    return generatesMetadata.find((sec) => sec.id === sectionId);
   }
 
   return null;
@@ -1656,7 +1671,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
     ) || emptyObject;
 
   if (recordMappings) {
-    mappings = recordMappings.find(item => item.id === sectionId) || {};
+    mappings = recordMappings.find((item) => item.id === sectionId) || {};
   }
 
   if (isVariationAttributes) {
@@ -1668,7 +1683,7 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
   const { variation_themes = [] } = mappings;
 
   return (
-    variation_themes.find(theme => theme.variation_theme === variation) ||
+    variation_themes.find((theme) => theme.variation_theme === variation) ||
     emptyObject
   );
 }
@@ -1690,7 +1705,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
     }) || {};
 
   if (recordMappings) {
-    mappings = recordMappings.find(item => item.id === sectionId);
+    mappings = recordMappings.find((item) => item.id === sectionId);
   }
 
   // If no filters are passed, return all mapppings
@@ -1701,8 +1716,8 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
   const mappedFields = map(mappings.fieldMappings, 'generate');
   // Filter all generateFields with filter which are not yet mapped
   const filteredFields = fields
-    .filter(field => !mappedFields.includes(field.id))
-    .map(field => ({
+    .filter((field) => !mappedFields.includes(field.id))
+    .map((field) => ({
       generate: field.id,
       extract: '',
       discardIfEmpty: true,
@@ -1727,7 +1742,7 @@ export function integrationChildren(state, integrationId) {
   }).resources;
 
   children.push({ value: integrationId, label: integration.name });
-  childIntegrations.forEach(ci => {
+  childIntegrations.forEach((ci) => {
     children.push({ value: ci._id, label: ci.name });
   });
 
@@ -1745,7 +1760,7 @@ export function integrationAppLicense(state, id) {
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
-  const license = userLicenses.find(l => l._integrationId === id) || {};
+  const license = userLicenses.find((l) => l._integrationId === id) || {};
   const upgradeRequested = checkUpgradeRequested(state, license._id);
   const { expires, created } = license;
   const hasExpired = moment(expires) - moment() < 0;
@@ -1787,17 +1802,17 @@ export function integrationAppFlowSections(state, id, store) {
     if (Array.isArray(sections) && sections.length) {
       if (store) {
         flowSections =
-          (sections.find(sec => sec.id === store) || {}).sections || [];
+          (sections.find((sec) => sec.id === store) || {}).sections || [];
       } else {
         flowSections =
-          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+          (sections.find((sec) => sec.mode !== 'install') || {}).sections || [];
       }
     }
   } else {
     flowSections = sections;
   }
 
-  return flowSections.map(sec => ({
+  return flowSections.map((sec) => ({
     ...sec,
     titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
   }));
@@ -1812,12 +1827,12 @@ export function integrationAppGeneralSettings(state, id, storeId) {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    const storeSection = (general || []).find(s => s.id === storeId) || {};
+    const storeSection = (general || []).find((s) => s.id === storeId) || {};
 
     ({ fields, sections: subSections } = storeSection);
   } else if (Array.isArray(general)) {
     ({ fields, sections: subSections } =
-      general.find(s => s.title === 'General') || {});
+      general.find((s) => s.title === 'General') || {});
   } else {
     ({ fields, sections: subSections } = general || {});
   }
@@ -1835,10 +1850,10 @@ export function hasGeneralSettings(state, integrationId, storeId) {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    return !!(general || []).find(s => s.id === storeId);
+    return !!(general || []).find((s) => s.id === storeId);
   }
   if (Array.isArray(general)) {
-    return !!general.find(s => s.title === 'General');
+    return !!general.find((s) => s.title === 'General');
   }
 
   return !isEmpty(general);
@@ -1865,7 +1880,7 @@ export function integrationAppSectionMetadata(
   if (supportsMultiStore) {
     if (storeId) {
       // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      const store = sections.find((s) => s.id === storeId) || {};
 
       allSections = store.sections || [];
     }
@@ -1873,7 +1888,7 @@ export function integrationAppSectionMetadata(
 
   const selectedSection =
     allSections.find(
-      sec =>
+      (sec) =>
         sec.title &&
         sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
     ) || {};
@@ -1899,13 +1914,13 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   if (supportsMultiStore) {
     if (storeId) {
       // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      const store = sections.find((s) => s.id === storeId) || {};
 
       allSections = store.sections || [];
     } else {
       // If no storeId is passed, return all sections from all stores
       allSections = [];
-      sections.forEach(sec => {
+      sections.forEach((sec) => {
         allSections.push(...sec.sections);
       });
     }
@@ -1913,13 +1928,13 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
 
   const selectedSection =
     allSections.find(
-      sec =>
+      (sec) =>
         sec.title &&
         sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
     ) || {};
 
   if (!section) {
-    allSections.forEach(sec => {
+    allSections.forEach((sec) => {
       requiredFlows.push(...map(sec.flows, '_id'));
     });
   } else {
@@ -1927,16 +1942,16 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }
   hasNSInternalIdLookup = some(
     selectedSection.flows,
-    f => f.showNSInternalIdLookup
+    (f) => f.showNSInternalIdLookup
   );
-  hasDescription = some(selectedSection.flows, f => {
+  hasDescription = some(selectedSection.flows, (f) => {
     const flow = resource(state, 'flows', f._id) || {};
 
     return !!flow.description;
   });
   showFlowSettings = some(
     selectedSection.flows,
-    f =>
+    (f) =>
       !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
   );
   const { fields, sections: subSections } = selectedSection;
@@ -1948,7 +1963,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   }).resources;
 
   flows = flows
-    .filter(f => requiredFlows.includes(f._id))
+    .filter((f) => requiredFlows.includes(f._id))
     .sort(
       (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
     );
@@ -1975,7 +1990,7 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
   const integration = integrationAppSettings(state, integrationId);
 
   if (integration.stores && storeId) {
-    const store = integration.stores.find(store => store.value === storeId);
+    const store = integration.stores.find((store) => store.value === storeId);
     const { flows } = integrationAppFlowSettings(
       state,
       integrationId,
@@ -1984,7 +1999,7 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
     );
 
     if (store) {
-      const storeFlows = allIntegrationFlows.filter(f => {
+      const storeFlows = allIntegrationFlows.filter((f) => {
         // TODO: this is not reliable way to extract store flows. With current integration json,
         // there is no good way to extract this
         // Extract store from the flow name. (Regex extracts store label from flow name)
@@ -1996,15 +2011,12 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
         return flowStore
           ? flowStore === store.label
           : flows.indexOf(f._id) > -1;
-      })
-      return map(storeFlows.length ? storeFlows : flows,
-        '_id'
-      );
+      });
+      return map(storeFlows.length ? storeFlows : flows, '_id');
     }
 
     return map(flows, '_id');
   }
-
 
   return map(allIntegrationFlows, '_id');
 }
@@ -2024,9 +2036,11 @@ export function integrationInstallSteps(state, integrationId) {
     integrationId
   );
 
-  const visibleSteps = integrationInstallSteps.filter(s => s.type !== 'hidden');
+  const visibleSteps = integrationInstallSteps.filter(
+    (s) => s.type !== 'hidden'
+  );
 
-  return visibleSteps.map(step => {
+  return visibleSteps.map((step) => {
     if (step.isCurrentStep) {
       return { ...step, ...installStatus };
     }
@@ -2036,27 +2050,26 @@ export function integrationInstallSteps(state, integrationId) {
 }
 
 const emptyStepsArr = [];
-export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
-  const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
-    state && state.session,
-    integrationId
-  ) : fromSession.uninstallData(
-    state && state.session,
-    integrationId
-  );
+export function integrationUninstallSteps(
+  state,
+  { integrationId, isFrameWork2 }
+) {
+  const uninstallData = isFrameWork2
+    ? fromSession.uninstall2Data(state && state.session, integrationId)
+    : fromSession.uninstallData(state && state.session, integrationId);
   const { steps: uninstallSteps, error, isFetched, isComplete } = uninstallData;
 
   if (!uninstallSteps || !Array.isArray(uninstallSteps)) {
     return uninstallData;
   }
 
-  const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+  const visibleSteps = uninstallSteps.filter((s) => s.type !== 'hidden');
   if (visibleSteps.length === 0) {
     return { steps: emptyStepsArr, error, isFetched, isComplete };
   }
 
-  const modifiedSteps = produce(visibleSteps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
+  const modifiedSteps = produce(visibleSteps, (draft) => {
+    const unCompletedStep = draft.find((s) => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
@@ -2077,8 +2090,8 @@ export function addNewStoreSteps(state, integrationId) {
     return addNewStoreSteps;
   }
 
-  const modifiedSteps = produce(steps, draft => {
-    const unCompletedStep = draft.find(s => !s.completed);
+  const modifiedSteps = produce(steps, (draft) => {
+    const unCompletedStep = draft.find((s) => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
@@ -2089,7 +2102,10 @@ export function addNewStoreSteps(state, integrationId) {
 }
 
 export function isIAV2UninstallComplete(state, { integrationId }) {
-  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  const integration = fromData.integrationAppSettings(
+    state.data,
+    integrationId
+  );
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
 
@@ -2101,9 +2117,7 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   const { steps: uninstallSteps, isFetched } = uninstallData;
   if (isFetched) {
     if (!uninstallSteps || uninstallSteps.length === 0) return true;
-    return !(uninstallSteps.find(s =>
-      !s.completed
-    ))
+    return !uninstallSteps.find((s) => !s.completed);
   }
   return false;
 }
@@ -2117,15 +2131,11 @@ export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
 
   if (!skipCloneCheck) {
     isCloned =
-    integration.install &&
-    integration.install.find(step => step.isClone);
+      integration.install && integration.install.find((step) => step.isClone);
   }
   const isFrameWork2 =
-    (
-      integration.installSteps &&
-      integration.installSteps.length) || (
-      integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
+    (integration.installSteps && integration.installSteps.length) ||
+    (integration.uninstallSteps && integration.uninstallSteps.length) ||
     isCloned;
   return isFrameWork2;
 }
@@ -2464,7 +2474,7 @@ export function hasAcceptedUsers(state) {
     state.user &&
     state.user.org &&
     state.user.org.users &&
-    state.user.org.users.filter(a => a.accepted && !a.disabled).length > 0
+    state.user.org.users.filter((a) => a.accepted && !a.disabled).length > 0
   );
 }
 
@@ -2474,7 +2484,7 @@ export function hasAcceptedAccounts(state) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
+      (a) => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
     ).length > 0
   );
 }
@@ -2485,7 +2495,7 @@ export function isValidSharedAccountId(state, _id) {
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
-      a =>
+      (a) =>
         a.accepted && !a.disabled && a._id === _id && a._id !== ACCOUNT_IDS.OWN
     ).length > 0
   );
@@ -2496,7 +2506,7 @@ export function getOneValidSharedAccountId(state) {
 
   if (state && state.user && state.user.org && state.user.org.accounts) {
     const accepted = state.user.org.accounts.filter(
-      a => a.accepted && !a.disabled && a._id !== ACCOUNT_IDS.OWN
+      (a) => a.accepted && !a.disabled && a._id !== ACCOUNT_IDS.OWN
     );
 
     if (accepted && accepted.length > 0) {
@@ -2584,13 +2594,13 @@ export function userPermissionsOnConnection(state, connectionId) {
       type: 'integrations',
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-      i =>
+      (i) =>
         i._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
 
-    ioIntegrationsWithConnectionRegistered.forEach(i => {
+    ioIntegrationsWithConnectionRegistered.forEach((i) => {
       if ((permissions.integrations[i._id] || {}).accessLevel) {
         if (!highestPermissionIntegration.accessLevel) {
           highestPermissionIntegration = permissions.integrations[i._id];
@@ -2755,12 +2765,12 @@ export function userAccessLevelOnConnection(state, connectionId) {
       type: 'integrations',
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-      i =>
+      (i) =>
         i._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
 
-    ioIntegrationsWithConnectionRegistered.forEach(i => {
+    ioIntegrationsWithConnectionRegistered.forEach((i) => {
       if ((permissions.integrations[i._id] || {}).accessLevel) {
         if (!accessLevelOnConnection) {
           accessLevelOnConnection = (permissions.integrations[i._id] || {})
@@ -2789,11 +2799,11 @@ export function availableConnectionsToRegister(state, integrationId) {
   const registeredConnections =
     (integration && integration._registeredConnectionIds) || [];
   let availableConnectionsToRegister = allConnections.filter(
-    conn => registeredConnections.indexOf(conn._id) === -1
+    (conn) => registeredConnections.indexOf(conn._id) === -1
   );
 
   availableConnectionsToRegister = availableConnectionsToRegister.filter(
-    conn => {
+    (conn) => {
       const accessLevel = userAccessLevelOnConnection(state, conn._id);
 
       return accessLevel === 'manage' || accessLevel === 'owner';
@@ -2819,8 +2829,8 @@ export function suiteScriptLinkedConnections(state) {
     return linkedConnections;
   }
 
-  preferences.ssConnectionIds.forEach(connectionId => {
-    connection = connections.find(c => c._id === connectionId);
+  preferences.ssConnectionIds.forEach((connectionId) => {
+    connection = connections.find((c) => c._id === connectionId);
 
     if (connection) {
       accessLevel = userAccessLevelOnConnection(state, connectionId);
@@ -2851,7 +2861,7 @@ export function suiteScriptLinkedTiles(state) {
   const linkedConnections = suiteScriptLinkedConnections(state);
   let tiles = [];
 
-  linkedConnections.forEach(connection => {
+  linkedConnections.forEach((connection) => {
     tiles = tiles.concat(suiteScriptTiles(state, connection._id));
   });
 
@@ -2871,7 +2881,7 @@ export function tiles(state) {
   }
 
   let published;
-  const hasConnectorTiles = tiles.filter(t => t._connectorId);
+  const hasConnectorTiles = tiles.filter((t) => t._connectorId);
 
   if (hasConnectorTiles) {
     published = publishedConnectors(state);
@@ -2879,7 +2889,7 @@ export function tiles(state) {
 
   const permissions = userPermissions(state);
   const hasStandaloneTile = tiles.find(
-    t => t._integrationId === STANDALONE_INTEGRATION.id
+    (t) => t._integrationId === STANDALONE_INTEGRATION.id
   );
 
   if (hasStandaloneTile) {
@@ -2889,7 +2899,7 @@ export function tiles(state) {
     ];
   }
 
-  integrations = integrations.map(i => {
+  integrations = integrations.map((i) => {
     if (
       [
         USER_ACCESS_LEVELS.ACCOUNT_OWNER,
@@ -2925,52 +2935,51 @@ export function tiles(state) {
   let connector;
   let status;
 
-  return tiles
-    .map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles.map((t) => {
+    integration = integrations.find((i) => i._id === t._integrationId) || {};
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-        status = TILE_STATUS.UNINSTALL;
-      } else if (
-        t._connectorId &&
-        integration.mode !== INTEGRATION_MODES.SETTINGS
-      ) {
-        status = TILE_STATUS.IS_PENDING_SETUP;
-      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-      } else if (t.numError && t.numError > 0) {
-        status = TILE_STATUS.HAS_ERRORS;
-      } else {
-        status = TILE_STATUS.SUCCESS;
-      }
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
 
-      if (t._connectorId) {
-        connector = published.find(i => i._id === t._connectorId) || {
-          user: {},
-        };
-
-        return {
-          ...t,
-          status,
-          integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
-          },
-          connector: {
-            owner: connector.user.company || connector.user.name,
-            applications: connector.applications || [],
-          },
-        };
-      }
+    if (t._connectorId) {
+      connector = published.find((i) => i._id === t._connectorId) || {
+        user: {},
+      };
 
       return {
         ...t,
         status,
         integration: {
+          mode: integration.mode,
           permissions: integration.permissions,
         },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
-    });
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
 }
 // #endregion
 
@@ -3008,7 +3017,8 @@ export function resourceStatus(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -3035,7 +3045,8 @@ export function resourceStatusModified(
 ) {
   let resourceType;
 
-  if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
+  if (origResourceType && origResourceType.startsWith('/'))
+    resourceType = origResourceType;
   else resourceType = `/${origResourceType}`;
   const commKey = commKeyGen(resourceType, resourceReqMethod);
   const method = resourceReqMethod;
@@ -3062,7 +3073,7 @@ export function allResourceStatus(
   return (typeof resourceTypes === 'string'
     ? resourceTypes.split(',')
     : resourceTypes
-  ).map(resourceType =>
+  ).map((resourceType) =>
     resourceStatusModified(resourceState, networkCommState, resourceType.trim())
   );
 }
@@ -3273,7 +3284,7 @@ export function integrationResources(state, _integrationId, storeId) {
   const diyConnections = resourceList(state, {
     type: 'connections',
     filter: {
-      _id: id =>
+      _id: (id) =>
         _registeredConnectionIds.includes(id) ||
         ['none', 'none-sb'].includes(_integrationId),
     },
@@ -3287,13 +3298,13 @@ export function integrationResources(state, _integrationId, storeId) {
     ? integrationAppResourceList(state, _integrationId, storeId).flows
     : diyFlows;
   const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
+    .filter((c) => !!notifications.find((n) => n._connectionId === c._id))
+    .map((c) => c._id);
   let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
+    .filter((f) => !!notifications.find((n) => n._flowId === f._id))
+    .map((f) => f._id);
   const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
+    (n) => n._integrationId === _integrationId
   );
 
   if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
@@ -3346,7 +3357,7 @@ export function auditLogs(
       ...map(connections, '_id'),
     ];
 
-    return auditLogs.filter(log => {
+    return auditLogs.filter((log) => {
       if (
         ['export', 'import', 'connection', 'flow'].includes(log.resourceType)
       ) {
@@ -3528,7 +3539,7 @@ export function accessTokenList(
     sort,
     sandbox,
   });
-  const filteredTokens = tokensList.resources.filter(t => {
+  const filteredTokens = tokensList.resources.filter((t) => {
     if (integrationId) {
       return t._integrationId === integrationId;
     }
@@ -3536,7 +3547,7 @@ export function accessTokenList(
     return !t._integrationId;
   });
   let isEmbeddedToken;
-  const tokens = filteredTokens.map(t => {
+  const tokens = filteredTokens.map((t) => {
     isEmbeddedToken = !!(t._connectorId && !t.autoPurgeAt);
 
     const permissions = {
@@ -3559,7 +3570,7 @@ export function accessTokenList(
         : 'To delete this api token you need to revoke it first.',
     };
 
-    Object.keys(permissions).forEach(p => {
+    Object.keys(permissions).forEach((p) => {
       if (permissions[p]) {
         delete permissionReasons[p];
       }
@@ -3609,10 +3620,10 @@ export function flowJobs(state) {
   const jobs = fromData.flowJobs(state.data);
   const resourceMap = resourceDetailsMap(state);
 
-  return jobs.map(job => {
+  return jobs.map((job) => {
     if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-      job.children = job.children.map(cJob => {
+      job.children = job.children.map((cJob) => {
         const additionalChildProps = {
           name: cJob._exportId
             ? resourceMap.exports[cJob._exportId].name
@@ -3650,7 +3661,7 @@ export function flowJobs(state) {
 export function flowJob(state, { jobId }) {
   const jobList = flowJobs(state);
 
-  return jobList.find(j => j._id === jobId);
+  return jobList.find((j) => j._id === jobId);
 }
 
 export function inProgressJobIds(state) {
@@ -3701,7 +3712,7 @@ export function flowJobConnections(state, flowId) {
     ignoreBorrowedConnections: true,
   });
 
-  connectionIds.forEach(c => {
+  connectionIds.forEach((c) => {
     const conn = resource(state, 'connections', c);
 
     connections.push({ id: conn._id, name: conn.name });
@@ -3717,7 +3728,7 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
     return connectionIdsToRegister;
   }
 
-  selectedFlows.forEach(flow => {
+  selectedFlows.forEach((flow) => {
     connectionIdsToRegister = connectionIdsToRegister.concat(
       getAllConnectionIdsUsedInTheFlow(state, flow)
     );
@@ -3835,7 +3846,7 @@ export function isAnyFlowConnectionOffline(state, flowId) {
   const connectionList =
     resourcesByIds(state, 'connections', connectionIds) || [];
 
-  return connectionList.some(c => c.offline);
+  return connectionList.some((c) => c.offline);
 }
 
 export function flowConnectionList(state, flow) {
@@ -3971,7 +3982,7 @@ export function transferListWithMetadata(state) {
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
-      transfer.toTransfer.integrations.forEach(i => {
+      transfer.toTransfer.integrations.forEach((i) => {
         let { name } = i;
 
         if (i._id === 'none') {
@@ -4035,7 +4046,7 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
   const flow = resource(state, 'flows', flowId);
   const { pageProcessors = [] } = flow || {};
 
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+  return !!pageProcessors.find((pp) => pp._exportId === resourceId);
 }
 
 /*
@@ -4411,6 +4422,8 @@ export function suiteScriptResourceStatus(
 
   if (resourceType === 'flows') {
     path += `integrations/${integrationId}/flows`;
+  } else if (resourceType === 'nextFlows') {
+    path += 'flows';
   } else {
     path += `${resourceType}`;
   }
@@ -4527,7 +4540,7 @@ export function suiteScriptIntegrationConnectionList(
   const connectionIdsInUse = [];
 
   if (integrationId && flows) {
-    flows.forEach(f => {
+    flows.forEach((f) => {
       if (f.export && f.export._connectionId) {
         connectionIdsInUse.push(f.export._connectionId);
       }
@@ -4541,7 +4554,7 @@ export function suiteScriptIntegrationConnectionList(
   }
 
   return connections.filter(
-    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+    (c) => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
   );
 }
 
@@ -4603,7 +4616,7 @@ export function suiteScriptJob(
     resourceType: 'jobs',
   });
 
-  return jobList.find(j => j._id === jobId && j.type === jobType);
+  return jobList.find((j) => j._id === jobId && j.type === jobType);
 }
 
 export function suiteScriptJobErrors(state, { jobId, jobType }) {
@@ -4634,7 +4647,7 @@ export function resourceError(state, { flowId, resourceId, options, errorId }) {
     options,
   });
 
-  return errors.find(error => error.errorId === errorId);
+  return errors.find((error) => error.errorId === errorId);
 }
 
 export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
@@ -4642,13 +4655,15 @@ export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
-    .map(error => error.retryDataKey);
+    .map((error) => error.retryDataKey);
 }
 
 export function selectedErrorIds(state, { flowId, resourceId, options = {} }) {
   const { errors } = resourceErrors(state, { flowId, resourceId, options });
 
-  return errors.filter(({ selected }) => selected).map(error => error.errorId);
+  return errors
+    .filter(({ selected }) => selected)
+    .map((error) => error.errorId);
 }
 
 export function isAllErrorsSelected(
@@ -4661,7 +4676,7 @@ export function isAllErrorsSelected(
     resourceId,
     options: { ...errorFilter, isResolved },
   });
-  const errorIds = errors.map(error => error.errorId);
+  const errorIds = errors.map((error) => error.errorId);
 
   return fromSession.isAllErrorsSelected(state && state.session, {
     flowId,
@@ -4729,7 +4744,7 @@ export function flowResources(state, flowId) {
   }
 
   if (flow.pageGenerators && flow.pageGenerators.length) {
-    flow.pageGenerators.forEach(pg => {
+    flow.pageGenerators.forEach((pg) => {
       const exportDoc = fromData.resource(
         state && state.data,
         'exports',
@@ -4741,7 +4756,7 @@ export function flowResources(state, flowId) {
   }
 
   if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
+    flow.pageProcessors.forEach((pp) => {
       if (pp.type === 'import' && pp._importId) {
         const importDoc = fromData.resource(
           state && state.data,
@@ -4800,6 +4815,71 @@ export const rdbmsConnectionType = (state, connectionId) => {
   return connection.rdbms && connection.rdbms.type;
 };
 
-export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
-  return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
+export function isSuiteScriptFlowOnOffInProgress(
+  state,
+  { ssLinkedConnectionId, _id }
+) {
+  return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, {
+    ssLinkedConnectionId,
+    _id,
+  });
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!(connection && connection.netsuite && connection.netsuite.account)) {
+    return false;
+  }
+
+  return fromSession.netsuiteAccountHasSuiteScriptIntegrations(
+    state && state.session,
+    connection.netsuite.account
+  );
+}
+
+export function canLinkSuiteScriptIntegrator(state, connectionId) {
+  const preferences = userPreferences(state);
+  if (preferences && preferences.ssConnectionIds) {
+    if (preferences.ssConnectionIds.includes(connectionId)) {
+      return true;
+    }
+
+    const linkedAccounts = [];
+    let connection = resource(state, 'connections', connectionId);
+    if (!connection?.netsuite?.account || connection._connectorId) {
+      return false;
+    }
+    const connectionAccount = connection.netsuite.account.toUpperCase();
+    preferences.ssConnectionIds.forEach((connId) => {
+      connection = resource(state, 'connections', connId);
+      if (connection && connection.netsuite && connection.netsuite.account) {
+        linkedAccounts.push(connection.netsuite.account.toUpperCase());
+      }
+    });
+    if (linkedAccounts.includes(connectionAccount)) {
+      return false;
+    }
+  }
+
+  return netsuiteAccountHasSuiteScriptIntegrations(state, connectionId);
+}
+
+export function suiteScriptIntegratorLinkedConnectionId(state, account) {
+  const preferences = userPreferences(state);
+  if (!preferences || !preferences.ssConnectionIds) {
+    return;
+  }
+
+  let linkedConnectionId;
+  let connection;
+  preferences.ssConnectionIds.forEach((connId) => {
+    connection = resource(state, 'connections', connId);
+    if (
+      connection?.netsuite?.account?.toUpperCase() === account.toUpperCase()
+    ) {
+      linkedConnectionId = connId;
+    }
+  });
+  return linkedConnectionId;
 }

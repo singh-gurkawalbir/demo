@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import flows, * as fromFlows from './flows';
+import account, * as fromAccount from './account';
 
 export default combineReducers({
   resourceForm,
   flows,
+  account,
 });
 
 export function resourceFormState(
@@ -35,8 +37,12 @@ export function resourceFormSaveProcessTerminated(
 }
 
 export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
-  return fromFlows.isOnOffInProgress(
-    state && state.flows,
-    { ssLinkedConnectionId, _id }
-  );
+  return fromFlows.isOnOffInProgress(state && state.flows, {
+    ssLinkedConnectionId,
+    _id,
+  });
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromAccount.hasIntegrations(state && state.account, account);
 }

@@ -2,7 +2,7 @@ import { isNewId } from '../../../utils/resource';
 import { isProduction } from '../../utils';
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues) => {
     const newValues = { ...formValues };
 
     if (newValues['/netsuite/authType'] === 'token') {
@@ -38,15 +38,16 @@ export default {
   },
   optionsHandler(fieldId, fields) {
     const { value: env } =
-      fields.find(field => field.id === 'netsuite.environment') || {};
+      fields.find((field) => field.id === 'netsuite.environment') || {};
     const { value: acc } =
-      fields.find(field => field.id === 'netsuite.account') || {};
+      fields.find((field) => field.id === 'netsuite.account') || {};
 
     if (fieldId === 'netsuite.account' && env !== '') {
       return { env };
     }
 
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
+    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '')
+      return { env, acc };
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -81,19 +82,19 @@ export default {
       filter: { provider: 'netsuite' },
       type: 'dynaiclient',
       connType: 'netsuite',
-      connectionId: r => r && r._id,
-      connectorId: r => r && r._connectorId,
-      requiredWhen: r => {
+      connectionId: (r) => r && r._id,
+      connectorId: (r) => r && r._connectorId,
+      requiredWhen: (r) => {
         const isRequired =
           !!r._connectorId || (!r._connectorId && !isProduction());
 
         return isRequired
           ? [
-            {
-              field: 'netsuite.authType',
-              is: ['token-auto'],
-            },
-          ]
+              {
+                field: 'netsuite.authType',
+                is: ['token-auto'],
+              },
+            ]
           : [];
       },
     },
@@ -112,7 +113,7 @@ export default {
       id: 'netsuite.tokenAccount',
       visibleWhen: [{ field: 'netsuite.authType', is: ['token'] }],
       type: 'text',
-      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      defaultValue: (r) => r && r.netsuite && r.netsuite.account,
       label: 'Account ID',
       uppercase: true,
     },
@@ -122,7 +123,7 @@ export default {
       label: 'Account ID',
       uppercase: true,
       required: true,
-      defaultValue: r => r && r.netsuite && r.netsuite.account,
+      defaultValue: (r) => r && r.netsuite && r.netsuite.account,
       visibleWhen: [{ field: 'netsuite.authType', is: ['token-auto'] }],
     },
     'netsuite.roleId': {
@@ -141,8 +142,8 @@ export default {
       type: 'text',
       label: 'Role',
       defaultDisabled: true,
-      visible: r => r && !isNewId(r._id),
-      visibleWhen: r => {
+      visible: (r) => r && !isNewId(r._id),
+      visibleWhen: (r) => {
         const isNew = isNewId(r._id);
 
         if (isNew) return [];
@@ -154,7 +155,7 @@ export default {
           },
         ];
       },
-      defaultValue: r => r && r.netsuite && r.netsuite.roleId,
+      defaultValue: (r) => r && r.netsuite && r.netsuite.roleId,
     },
     'netsuite.tokenId': {
       fieldId: 'netsuite.tokenId',

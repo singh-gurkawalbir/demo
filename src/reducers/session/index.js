@@ -498,10 +498,7 @@ export function uninstallData(state, id, storeId) {
 }
 
 export function uninstall2Data(state, id) {
-  return fromIntegrationApps.uninstall2Data(
-    state && state.integrationApps,
-    id,
-  );
+  return fromIntegrationApps.uninstall2Data(state && state.integrationApps, id);
 }
 
 export function addNewStoreSteps(state, id) {
@@ -691,9 +688,19 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
-export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
-  return fromSuiteScript.isFlowOnOffInProgress(
+export function isSuiteScriptFlowOnOffInProgress(
+  state,
+  { ssLinkedConnectionId, _id }
+) {
+  return fromSuiteScript.isFlowOnOffInProgress(state && state.suiteScript, {
+    ssLinkedConnectionId,
+    _id,
+  });
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromSuiteScript.netsuiteAccountHasSuiteScriptIntegrations(
     state && state.suiteScript,
-    { ssLinkedConnectionId, _id }
+    account
   );
 }

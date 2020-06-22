@@ -7,7 +7,7 @@ export default {
   // agent list handleBars evaluated its a dynamicList
   _borrowConcurrencyFromConnectionId: {
     resourceType: 'connections',
-    filter: r => {
+    filter: (r) => {
       const expression = [
         { _id: { $ne: r._id } },
         { _connectorId: { $exists: false } },
@@ -41,7 +41,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
-    defaultDisabled: r => !!r._connectorId,
+    defaultDisabled: (r) => !!r._connectorId,
   },
   assistant: {
     type: 'select',
@@ -399,7 +399,7 @@ export default {
         ],
       },
     ],
-    defaultValue: r =>
+    defaultValue: (r) =>
       r && r.rest && r.rest.mediaType ? r.rest.mediaType : 'json',
   },
   'rest.baseURI': {
@@ -471,7 +471,7 @@ export default {
   'rest.authHeader': {
     type: 'text',
     label: 'Header name',
-    defaultValue: r => (r && r.rest && r.rest.authHeader) || 'Authorization',
+    defaultValue: (r) => (r && r.rest && r.rest.authHeader) || 'Authorization',
   },
   'rest.retryHeader': {
     type: 'text',
@@ -480,7 +480,7 @@ export default {
   'rest.authScheme': {
     type: 'select',
     label: 'Scheme',
-    defaultValue: r =>
+    defaultValue: (r) =>
       r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
     options: [
       {
@@ -609,7 +609,8 @@ export default {
   'rest.refreshTokenMediaType': {
     type: 'select',
     label: 'Refresh token media type',
-    defaultValue: r => (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
+    defaultValue: (r) =>
+      (r && r.rest && r.rest.refreshTokenMediaType) || 'json',
     options: [
       {
         items: [
@@ -736,7 +737,7 @@ export default {
     type: 'select',
     label: 'Media type',
     required: true,
-    defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
+    defaultValue: (r) => (r && r.http && r.http.mediaType) || 'json',
     options: [
       {
         items: [
@@ -750,7 +751,7 @@ export default {
   configureApiRateLimits: {
     label: 'Configure api rate limits',
     type: 'checkbox',
-    defaultValue: r =>
+    defaultValue: (r) =>
       r && r.http && r.http.rateLimit && r.http.rateLimit.limit,
   },
   'http.baseURI': {
@@ -924,7 +925,7 @@ export default {
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
     label: 'Client authentication',
-    defaultValue: r =>
+    defaultValue: (r) =>
       (r &&
         r.http &&
         r.http.auth &&
@@ -979,7 +980,7 @@ export default {
   'http.auth.oauth.applicationType': {
     type: 'select',
     label: 'Provider',
-    defaultValue: r =>
+    defaultValue: (r) =>
       r &&
       r.http &&
       r.http.auth &&
@@ -1050,7 +1051,7 @@ export default {
     type: 'select',
     label: 'Location',
     required: true,
-    defaultValue: r =>
+    defaultValue: (r) =>
       r &&
       r.http &&
       r.http.auth &&
@@ -1069,7 +1070,7 @@ export default {
   'http.auth.token.headerName': {
     type: 'text',
     label: 'Header name',
-    defaultValue: r =>
+    defaultValue: (r) =>
       (r &&
         r.http &&
         r.http.auth &&
@@ -1081,7 +1082,7 @@ export default {
     type: 'select',
     label: 'Scheme',
     required: true,
-    defaultValue: r =>
+    defaultValue: (r) =>
       (r &&
         r.http &&
         r.http.auth &&
@@ -1107,7 +1108,7 @@ export default {
   'http.auth.token.refreshMethod': {
     type: 'select',
     label: 'Refresh method',
-    defaultValue: r =>
+    defaultValue: (r) =>
       r &&
       r.http &&
       r.http.auth &&
@@ -1231,7 +1232,7 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    defaultValue: r => (r && r.http && r.http.headers) || '',
+    defaultValue: (r) => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP headers',
   },
   'http.unencrypted': {
@@ -1275,7 +1276,7 @@ export default {
     type: 'radiogroup',
     label: 'Protocol',
     required: true,
-    defaultValue: r => (r && r.ftp && r.ftp.type) || 'sftp',
+    defaultValue: (r) => (r && r.ftp && r.ftp.type) || 'sftp',
     options: [
       {
         items: [
@@ -1331,7 +1332,7 @@ export default {
   'ftp.usePassiveMode': {
     type: 'checkbox',
     label: 'Use passive mode',
-    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
+    defaultValue: (r) => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
   },
   'ftp.entryParser': {
     type: 'select',
@@ -1374,7 +1375,7 @@ export default {
   },
   'ftp.usePgp': {
     type: 'checkbox',
-    defaultValue: r =>
+    defaultValue: (r) =>
       !!(r && r.ftp && (r.ftp.pgpEncryptKey || r.ftp.pgpDecryptKey)),
     label: 'Use PGP encryption',
   },
@@ -1394,8 +1395,9 @@ export default {
     type: 'select',
     label: 'PGP encryption algorithm',
     // Todo (surya) 15533 : helptext needed
-    helpText: 'helptext is useful to provide information about the field to users',
-    defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
+    helpText:
+      'helptext is useful to provide information about the field to users',
+    defaultValue: (r) => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
     options: [
@@ -1624,7 +1626,7 @@ export default {
   'as2.partnerStationInfo.auth.token.headerName': {
     type: 'text',
     label: 'Header name',
-    defaultValue: r =>
+    defaultValue: (r) =>
       (r &&
         r.as2 &&
         r.as2.partnerStationInfo &&
@@ -2145,7 +2147,7 @@ export default {
   'netsuite.tokenEnvironment': {
     type: 'select',
     label: 'Environment',
-    defaultValue: r => r && r.netsuite && r.netsuite.environment,
+    defaultValue: (r) => r && r.netsuite && r.netsuite.environment,
     options: [
       {
         items: [
@@ -2212,7 +2214,7 @@ export default {
   },
   'netsuite.linkSuiteScriptIntegrator': {
     label: 'Link suitescript integrator',
-    type: 'checkbox',
+    type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
     label: 'IClient',
@@ -2222,7 +2224,7 @@ export default {
   'netsuite.concurrencyLevel': {
     label: 'Concurrency level',
     type: 'select',
-    defaultValue: r =>
+    defaultValue: (r) =>
       r && r.netsuite && r.netsuite.concurrencyLevel
         ? r.netsuite.concurrencyLevel
         : 1,
@@ -2380,7 +2382,7 @@ export default {
   'salesforce.concurrencyLevel': {
     type: 'select',
     label: 'Concurrency level',
-    defaultValue: r =>
+    defaultValue: (r) =>
       (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
     validWhen: [
       {
@@ -2442,7 +2444,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: (r) => !(r && r._connectorId),
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2450,7 +2452,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: (r) => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
@@ -2497,7 +2499,7 @@ export default {
         is: [''],
       },
     ],
-    defaultValue: r => (r && r.wrapper && r.wrapper.concurrencyLevel) || 1,
+    defaultValue: (r) => (r && r.wrapper && r.wrapper.concurrencyLevel) || 1,
   },
   // #endregion wrapper
   // #region mongodb
@@ -2506,7 +2508,7 @@ export default {
     required: true,
     omitWhenValueIs: [''],
     label: 'Host(s)',
-    defaultValue: r => r && r.mongodb && r.mongodb.host[0],
+    defaultValue: (r) => r && r.mongodb && r.mongodb.host[0],
   },
   'mongodb.database': {
     type: 'text',
@@ -2533,7 +2535,7 @@ export default {
   'mongodb.ssl': {
     type: 'checkbox',
     label: 'TLS/SSL',
-    defaultValue: r => (r && r.mongodb && r.mongodb.ssl) || false,
+    defaultValue: (r) => (r && r.mongodb && r.mongodb.ssl) || false,
   },
   'mongodb.authSource': {
     type: 'text',
@@ -2552,7 +2554,7 @@ export default {
   // #endregion dynamodb
   settings: {
     type: 'settings',
-    defaultValue: r => r && r.settings,
+    defaultValue: (r) => r && r.settings,
   },
   // #region custom connection
 };

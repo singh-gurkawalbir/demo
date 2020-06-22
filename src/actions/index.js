@@ -1102,6 +1102,14 @@ const user = {
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: (response) =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+      addLinkedConnectionId: (connectionId) =>
+        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
+      deleteLinkedConnectionId: (connectionId) =>
+        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
     },
   },
   preferences: {
@@ -2209,6 +2217,17 @@ const suiteScript = {
         ssLinkedConnectionId,
         integrationId,
         _id,
+      }),
+  },
+  account: {
+    checkHasIntegrations: (connectionId) =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.CHECK_HAS_INTEGRATIONS, {
+        connectionId,
+      }),
+    receivedHasIntegrations: (account, hasIntegrations) =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.RECEIVED_HAS_INTEGRATIONS, {
+        account,
+        hasIntegrations,
       }),
   },
 };

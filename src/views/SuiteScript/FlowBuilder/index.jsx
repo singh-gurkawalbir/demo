@@ -14,7 +14,9 @@ import ResourceDrawer from '../../../components/SuiteScript/drawer/Resource';
 import BottomDrawer from './drawers/BottomDrawer';
 import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import CalendarIcon from '../../../components/icons/CalendarIcon';
+import SettingsIcon from '../../../components/icons/SettingsIcon';
 import ScheduleDrawer from './drawers/Schedule';
+import SettingsDrawer from './drawers/Settings';
 import LoadResources from '../../../components/SuiteScript/LoadResources';
 import { flowAllowsScheduling } from '../../../utils/suiteScript';
 import OnOffCell from '../../../components/ResourceTable/metadata/suiteScript/flows/OnOffCell';
@@ -160,6 +162,30 @@ function FlowBuilder() {
     }
     dispatch(actions.patchFilter('suitescriptjobs', { currentPage: 0 }));
   }, [bottomDrawerSize, dispatch]);
+  const handleTitleChange = useCallback(
+    (title) => {
+      dispatch(
+        actions.suiteScript.resource.patchStaged(
+          flowId,
+          [{ op: 'replace', path: '/name', value: title }],
+          'value',
+          ssLinkedConnectionId,
+          integrationId,
+          'flows'
+        )
+      );
+      dispatch(
+        actions.suiteScript.resource.commitStaged(
+          flowId,
+          'value',
+          ssLinkedConnectionId,
+          integrationId,
+          'flows'
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
   const isViewMode = false;
 
   return (
@@ -167,7 +193,7 @@ function FlowBuilder() {
       required
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
-      resources="connections,flows"
+      resources="connections,flows,nextFlows"
     >
       <ResourceDrawer
         flowId={flowId}
@@ -179,14 +205,18 @@ function FlowBuilder() {
         ssLinkedConnectionId={ssLinkedConnectionId}
         flowId={flowId}
       />
+      <SettingsDrawer
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        flowId={flowId}
+      />
       <CeligoPageBar
         title={
           <EditableText
             disabled={isViewMode || !flow.editable}
-            text={flow.ioFlowname || flow.name}
+            text={flow.ioFlowName || flow.name}
             // multiline
             defaultText={`Unnamed (id:${flowId})`}
-            // onChange={handleTitleChange}
+            onChange={handleTitleChange}
             inputClassName={
               drawerOpened
                 ? classes.editableTextInputShift
@@ -222,6 +252,17 @@ function FlowBuilder() {
               <CalendarIcon />
             </IconButtonWithTooltip>
           )}
+          <IconButtonWithTooltip
+            tooltipProps={{
+              title: 'Settings',
+              placement: 'bottom',
+            }}
+            disabled={!flow.editable}
+            onClick={handleDrawerClick('settings')}
+            data-test="flowSettings"
+          >
+            <SettingsIcon />
+          </IconButtonWithTooltip>
           <DeleteCell
             ssLinkedConnectionId={ssLinkedConnectionId}
             flow={flow}
