@@ -62,6 +62,11 @@ const SuiteScriptFlowBuilder = loadable(() =>
     /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
   )
 );
+const SalesforceV2Installation = loadable(() =>
+  import(
+    /* webpackChunkName: 'SalesforceV2Installation' */ '../../views/SuiteScript/Integration/App/Install'
+  )
+);
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
@@ -182,12 +187,17 @@ export default function AppRouting() {
         render={({ history }) => history.replace('/pg/accesstokens')}
         />
       <Route
+        path="/pg/suitescript/integrationapps/:integrationAppName/setup"
+        >
+        <SalesforceV2Installation />
+      </Route>
+      <Route
         path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId"
         exact
         render={({ history, match }) => {
           history.replace(
             `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`
-          )
+          );
         }}
       />
       <Route
@@ -196,7 +206,7 @@ export default function AppRouting() {
         render={({ history, match }) => {
           history.replace(
             `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`
-          )
+          );
         }}
       />
       <Route

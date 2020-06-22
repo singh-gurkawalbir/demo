@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import MapDataIcon from '../../../../../icons/MapDataIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import { flowSupportsMapping } from '../../../../../../utils/suiteScript'
+import { flowSupportsMapping } from '../../../../../../utils/suiteScript';
 
 export default function MappingCell({flow}) {
   const history = useHistory();

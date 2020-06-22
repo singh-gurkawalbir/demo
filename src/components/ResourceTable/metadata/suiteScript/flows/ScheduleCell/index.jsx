@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import CalendarIcon from '../../../../../icons/CalendarIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import { flowAllowsScheduling } from '../../../../../../utils/suiteScript'
+import { flowAllowsScheduling } from '../../../../../../utils/suiteScript';
 
 
 export default function ScheduleCell({flow}) {

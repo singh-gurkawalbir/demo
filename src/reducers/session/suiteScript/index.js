@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import flows, * as fromFlows from './flows';
+import installer, * as fromInstaller from './installer';
 
 export default combineReducers({
   resourceForm,
   flows,
+  installer
 });
 
 export function resourceFormState(
@@ -39,4 +41,8 @@ export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
     state && state.flows,
     { ssLinkedConnectionId, _id }
   );
+}
+
+export function installerData(state, id) {
+  return fromInstaller.installerData(state && state.installer, id);
 }

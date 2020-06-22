@@ -4844,3 +4844,30 @@ export const rdbmsConnectionType = (state, connectionId) => {
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
 }
+
+const emptyArr = [];
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  if (!state) return null;
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
+  const modifiedSteps = produce(installer.steps || emptyArr, draft => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+  return {...installer, steps: modifiedSteps};
+}
+
+export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
+  if (!state) return null;
+  let isInstallComplete = false;
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
+
+  if (!installer || !installer.steps) return isInstallComplete;
+  isInstallComplete =
+    installer.steps.length &&
+    !installer.steps.reduce((result, step) => result || !step.completed, false);
+
+  return isInstallComplete;
+}

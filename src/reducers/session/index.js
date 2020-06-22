@@ -697,3 +697,10 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
     { ssLinkedConnectionId, _id }
   );
 }
+
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  return fromSuiteScript.installerData(
+    state && state.suiteScript,
+    id
+  );
+}
