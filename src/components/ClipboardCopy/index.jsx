@@ -1,8 +1,8 @@
-import { IconButton, Typography, Button } from '@material-ui/core';
+import React, {useCallback} from 'react';
+import { makeStyles, IconButton, Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
 
@@ -26,7 +26,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr }) {
   const classes = useStyles();
-
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const handleCopy = useCallback(() =>
+    enquesnackbar({ message: 'Your token has been copied to your clipboard' }), [enquesnackbar]);
 
   return (
     <div className={classes.root}>
@@ -35,26 +37,27 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
           <Typography variant="caption">
             {token || <AccessToken count="23" />}
           </Typography>
+
           <CopyToClipboard
+            onCopy={handleCopy}
             text={token}>
             <IconButton
               className={classes.copyTokenIcon}
               data-test="copyToken"
-              title="Copy to clipboard"
+              title="Copy token"
               size="small">
               <CopyIcon />
             </IconButton>
           </CopyToClipboard>
         </>
-      )
-        : (
-          <Button
-            data-test={showTokenTestAttr || 'showToken'}
-            className={classes.showToken}
-            onClick={onShowToken}>
-            Show Token
-          </Button>
-        )}
+      ) : (
+        <Button
+          data-test={showTokenTestAttr || 'showToken'}
+          className={classes.showToken}
+          onClick={onShowToken}>
+          Show token
+        </Button>
+      )}
     </div>
   );
 }

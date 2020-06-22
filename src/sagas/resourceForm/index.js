@@ -414,6 +414,9 @@ export function* submitFormValues({
   }
 
   if (patch && patch.length) {
+    // no context = {flowId} sent on purpose for the resource forms
+    // on resource submit complete updateFlowDoc will be called anyway
+    // sending context = {flowId} will trigger updateFlowDoc again
     const resp = yield call(commitStagedChanges, {
       resourceType: type,
       id: resourceId,
@@ -474,7 +477,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   let flowPatches = [];
 
   if (resourceType === 'exports') {
-    if (createdResource.isLookup) {
+    if (createdResource?.isLookup) {
       flowPatches = [
         {
           op: 'add',
@@ -619,17 +622,61 @@ function* getResourceType({ resourceType, resourceId }) {
   return updatedResourceType;
 }
 
-function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
+export function* touchFlow(flowId, resourceType, resourceId) {
+  const out = [];
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const r = yield select(selectors.resource, resourceType, resourceId);
+  if (flow?.lastModified && r?.lastModified && flow.lastModified < r.lastModified) {
+    out.push({
+      op: 'replace',
+      path: '/lastModified',
+      value: r.lastModified,
+    });
+    // this is a hack, the backend will need to enhance the audit log generation
+    // https://celigo.atlassian.net/browse/IO-15873
+    // until then, without the hack, flow audit log will show the following paths being changed by mistake
+    if (flow?.pageProcessors?.length) {
+      for (let i = 0; i < flow.pageProcessors.length; i += 1) {
+        const rm = flow.pageProcessors[i]?.responseMapping;
+        if (rm) {
+          const ks = Object.keys(rm);
+          let empty = true;
+          // null check is shallow
+          for (let j = 0; j < ks.length; j += 1) {
+            if (rm[ks[j]] != null && (!Array.isArray(rm[ks[j]]) || rm[ks[j]].length > 0)) {
+              empty = false;
+              break;
+            }
+          }
+          if (empty) {
+            out.push({
+              op: 'remove',
+              path: `/pageProcessors/${i}/responseMapping`,
+            });
+          }
+        }
+      }
+    }
+  }
+  return out;
+}
+
+export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
   const updatedResourceType = yield call(getResourceType, {
     resourceType,
     resourceId,
   });
-  const flowPatches = yield call(
+  let flowPatches = yield call(
     getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
     resourceId,
     flowId
   );
+  // if flowPatches is already non-empty, the flow will be udpated and lastmodified will be changed as well
+  // thus nothing to do for the lastmodified particularly
+  // otherwise, check the stored flow and the changed resource to determine if the flow should be "touched"
+  // to update the lastmodified
+  if (!flowPatches || !flowPatches.length) flowPatches = yield call(touchFlow, flowId, resourceType, resourceId);
 
   yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
   // TODO: is skipRetries a ui field value should this be deleted

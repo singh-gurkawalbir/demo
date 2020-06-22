@@ -133,6 +133,12 @@ export const PERMISSIONS = Object.freeze({
     edit: 'imports.edit',
     delete: 'imports.delete',
   },
+  apis: {
+    view: 'apis.view',
+    create: 'apis.create',
+    edit: 'apis.edit',
+    delete: 'apis.delete',
+  },
 });
 
 export const PASSWORD_MASK = '******';
@@ -433,6 +439,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.csv.hasHeaderRow',
     'file.csv.trimSpaces',
     'file.csv.rowsToSkip',
+    'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
     'file.csvHelper'

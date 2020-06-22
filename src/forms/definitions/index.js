@@ -15,6 +15,7 @@ import integrations from './integrations';
 import asyncHelpers from './asyncHelpers';
 import iClients from './iClients';
 import suiteScript from './suiteScript';
+import apis from './apis';
 
 export default {
   default: defaultMeta,
@@ -34,4 +35,5 @@ export default {
   connectorLicenses,
   integrations,
   suiteScript,
+  apis,
 };

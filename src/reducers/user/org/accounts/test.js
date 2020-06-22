@@ -641,6 +641,7 @@ describe('account (ashares) reducers', () => {
           },
           scripts: { view: true, create: true, edit: true, delete: true },
           stacks: { view: true, create: true, edit: true, delete: true },
+          apis: {view: true, create: true, edit: true, delete: true},
           templates: {},
           transfers: {
             view: true,
@@ -760,7 +761,7 @@ describe('account (ashares) reducers', () => {
           },
           scripts: { view: true, create: true, edit: true, delete: true },
           stacks: { view: true, create: true, edit: true, delete: true },
-
+          apis: {view: true, create: true, edit: true, delete: true },
           templates: {},
           transfers: {},
           users: {},
@@ -811,7 +812,7 @@ describe('account (ashares) reducers', () => {
           recyclebin: {},
           scripts: {},
           stacks: {},
-
+          apis: {},
           templates: {},
           transfers: {},
           users: {},
@@ -876,7 +877,7 @@ describe('account (ashares) reducers', () => {
           recyclebin: {},
           scripts: {},
           stacks: {},
-
+          apis: {},
           templates: {},
           transfers: {},
           users: {},

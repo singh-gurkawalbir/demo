@@ -7,6 +7,7 @@ import InstallBase from '../../actions/Connectors/InstallBase';
 import Licenses from '../../actions/Connectors/Licenses';
 import { formatLastModified } from '../../../CeligoTable/util';
 import getImageUrl from '../../../../utils/image';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -45,5 +46,5 @@ export default {
       value: r => (r.published ? 'Yes' : 'No'),
     },
   ],
-  rowActions: [InstallBase, Licenses, TogglePublish, Delete],
+  rowActions: [Edit, InstallBase, Licenses, TogglePublish, Delete],
 };

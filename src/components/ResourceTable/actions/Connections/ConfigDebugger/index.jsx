@@ -4,7 +4,7 @@ import ConfigureDebugger from '../../../../ConfigureDebugger';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
-  label: 'Configure debugger',
+  label: 'Debug connection',
   icon: DebugIcon,
   hasAccess: ({ state, rowData }) => {
     const { _id: connectionId } = rowData;

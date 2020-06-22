@@ -436,6 +436,7 @@ export function permissions(
     'users',
     'exports',
     'imports',
+    'apis',
   ];
   const permissions = {};
 

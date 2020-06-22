@@ -88,7 +88,7 @@ export default function SelectImport({ flowId }) {
         Select the mapping you would like to edit.
       </Typography>
       <Typography className={classes.stepTitle} variant="h5">
-        Step Name
+        Step name
       </Typography>
 
       {imports.map((i, index) => (
