@@ -52,15 +52,15 @@ export default function MappingSettings(props) {
     flowId,
   } = props;
   const { lookups = []} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
-  const {importType, connectionId} = useSelector(state => {
+  const {importType, connectionId, recordType} = useSelector(state => {
     const flows = selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
     });
     const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-    const {type, _connectionId } = (selectedFlow && selectedFlow.import) || {};
-    return {importType: type, connectionId: _connectionId};
+    const {type, _connectionId, recordType } = (selectedFlow && selectedFlow.import) || {};
+    return {importType: type, connectionId: _connectionId, recordType};
   }, shallowEqual);
 
   const [formState, setFormState] = useState({
@@ -81,8 +81,10 @@ export default function MappingSettings(props) {
           extractFields: [],
           generate,
           generateFields: [],
-          options: {},
-
+          ssLinkedConnectionId,
+          connectionId,
+          lookup,
+          recordType
         });
       }
       if (importType === 'salesforce') {
