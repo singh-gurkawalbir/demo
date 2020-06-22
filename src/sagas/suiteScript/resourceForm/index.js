@@ -1,4 +1,5 @@
 import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
+import jsonPatch from 'fast-json-patch';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import * as selectors from '../../../reducers';
@@ -11,6 +12,7 @@ import { commitStagedChanges } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
+import { apiCallWithRetry } from '../..';
 
 export const SCOPES = {
   META: 'meta',
@@ -268,8 +270,34 @@ export function* initFormValues({
   );
 }
 
+
+function* suiteScriptSubmitIA({
+  ssLinkedConnectionId,
+  integrationId,
+  sectionId,
+  values
+}) {
+  const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings`;
+  // bring sectionId
+
+  const payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values)).newDocument;
+  const camelCasedSectionId = sectionId.charAt(0).toLowerCase() + sectionId.slice(1);
+  const opts = {method: 'PUT', body: {data: {[camelCasedSectionId]: payload}}};
+
+  try {
+    yield call(apiCallWithRetry, {path, opts});
+    yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId))
+  } catch (error) {
+    yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId))
+  }
+
+  // refetch settings with latest doc
+  yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId));
+}
+
 export const resourceFormSagas = [
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT, initFormValues),
+  takeEvery(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, suiteScriptSubmitIA),
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT, submitResourceForm),
   ...connectionSagas,
 ];

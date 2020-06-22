@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
-
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
 import {
@@ -9,6 +8,7 @@ import {
   TabComponentSimple,
   TabComponentWithoutSave,
   TabComponentWithoutSaveVertical,
+  TabIASuiteScriptComponent
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
 
@@ -77,6 +77,9 @@ export default function FormGenerator(props) {
   } else if (type === 'tabIA') {
     // Tab refers to IA settings tab...and each tab would have a save button that would only save that tabs values to IA
     ConvertedContainer = TabIAComponent;
+  } else if (type === 'suitScriptTabIA') {
+    // similar to tabIa behavior except used in suitescript
+    ConvertedContainer = TabIASuiteScriptComponent;
   } else if (type === 'tab') {
     ConvertedContainer = TabComponentSimple;
   } else if (type === 'tabWithoutSave') {

@@ -1801,6 +1801,14 @@ const exportData = {
     }),
 };
 const suiteScript = {
+  iaForm: {
+    initComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
+    initClear: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR, {ssLinkedConnectionId, integrationId}),
+    submit: (ssLinkedConnectionId, integrationId, sectionId, values) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, {ssLinkedConnectionId, integrationId, sectionId, values}),
+    submitComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
+    submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),
+
+  },
   resourceForm: {
     init: (
       resourceType,
@@ -1983,6 +1991,16 @@ const suiteScript = {
         }),
         scope,
       }),
+
+    request: (
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    ) => action(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, {
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    }),
     received: (resourceType, resource, ssLinkedConnectionId, integrationId) =>
       action(actionTypes.SUITESCRIPT.RESOURCE.RECEIVED, {
         resourceType,

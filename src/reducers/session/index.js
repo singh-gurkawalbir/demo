@@ -691,6 +691,27 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormSaveProcessTerminated(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormState(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSuiteScript.isFlowOnOffInProgress(
     state && state.suiteScript,

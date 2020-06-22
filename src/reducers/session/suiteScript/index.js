@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import iaForm, * as fromIAForm from './iaForm';
 import flows, * as fromFlows from './flows';
 
 export default combineReducers({
   resourceForm,
+  iaForm,
   flows,
 });
 
@@ -31,6 +33,26 @@ export function resourceFormSaveProcessTerminated(
       ssLinkedConnectionId,
       integrationId,
     }
+  );
+}
+
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromIAForm.suiteScriptIAFormSaveProcessTerminated(
+    state && state.iaForm,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromIAForm.suiteScriptIAFormState(
+    state && state.iaForm,
+    { ssLinkedConnectionId, integrationId }
   );
 }
 

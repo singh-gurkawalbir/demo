@@ -561,7 +561,7 @@ export const integrationSettingsToDynaFormMetadata = (
   options = {}
 ) => {
   const finalData = {};
-  const { resource, isFlow = false } = options;
+  const { resource, isFlow = false, isSuiteScriptConfigure} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -598,7 +598,8 @@ export const integrationSettingsToDynaFormMetadata = (
     // type tab sends the entire form values
     // type tabIA sends per tab
     // for flow settings we send everything for advancedSettings we send per tab
-    finalData.layout.type = isFlow ? 'tab' : 'tabIA';
+
+    if (isSuiteScriptConfigure) { finalData.layout.type = 'suitScriptTabIA'; } else { finalData.layout.type = isFlow ? 'tab' : 'tabIA'; }
 
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,

@@ -1740,6 +1740,9 @@ export function integrationAppSettings(state, id) {
   return fromData.integrationAppSettings(state.data, id);
 }
 
+export function suiteScriptSettings(state, id, ssLinkedConnectionId) {
+  return fromData.suiteScriptSettings(state && state.data, id, ssLinkedConnectionId);
+}
 export function integrationAppLicense(state, id) {
   if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
@@ -1803,6 +1806,13 @@ export function integrationAppFlowSections(state, id, store) {
   }));
 }
 
+export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptSettings(state, id, ssLinkedConnectionId);
+  return sections.map(sec => ({
+    ...sec,
+    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
+  }));
+}
 export function integrationAppGeneralSettings(state, id, storeId) {
   if (!state) return emptyObject;
   let fields;
@@ -1881,6 +1891,36 @@ export function integrationAppSectionMetadata(
   return selectedSection;
 }
 
+
+export function suiteScriptSectionMetadata(
+  state,
+  integrationId,
+  ssLinkedConnectionId,
+  section,
+) {
+  if (!state) {
+    return emptyObject;
+  }
+
+  const integrationResource = suiteScriptSettings(
+    state,
+    integrationId,
+    ssLinkedConnectionId
+  );
+  const {sections = [] } =
+    integrationResource || {};
+  const allSections = sections;
+
+
+  const selectedSection =
+    allSections.find(
+      sec =>
+        sec.title &&
+        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+    ) || {};
+
+  return selectedSection;
+}
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return emptyObject;
   const integrationResource =
@@ -4501,6 +4541,7 @@ export const suiteScriptResourceData = (
   return data;
 };
 
+
 export const suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
@@ -4510,6 +4551,75 @@ export const suiteScriptResourceList = (
     ssLinkedConnectionId,
     integrationId,
   });
+
+export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section) {
+  if (!state) return emptyObject;
+
+  const integrationResource =
+    suiteScriptSettings(state, id, ssLinkedConnectionId) || emptyObject;
+  const {
+    supportsMatchRuleEngine: showMatchRuleEngine,
+    sections = [],
+  } = integrationResource || {};
+  let requiredFlows = [];
+  let hasNSInternalIdLookup = false;
+  let showFlowSettings = false;
+  let hasDescription = false;
+  const allSections = sections;
+
+
+  const selectedSection =
+      allSections.find(
+        sec =>
+          sec.title &&
+          sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+      ) || {};
+
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+  hasNSInternalIdLookup = some(
+    selectedSection.flows,
+    f => f.showNSInternalIdLookup
+  );
+  hasDescription = some(selectedSection.flows, f => {
+    const flow = suiteScriptResource(state, {resourceType: 'flows', id: f._id, ssLinkedConnectionId, integrationId: id}) || {};
+
+    return !!flow.description;
+  });
+  showFlowSettings = some(
+    selectedSection.flows,
+    f =>
+      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
+  );
+  const { fields, sections: subSections } = selectedSection;
+
+
+  let flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId: id,
+    ssLinkedConnectionId,
+  })
+  flows = flows
+    .filter(f => requiredFlows.includes(f.flowGUID))
+    .sort(
+      (a, b) => requiredFlows.indexOf(a.flowGUID) - requiredFlows.indexOf(b.flowGUID)
+    );
+  return {
+    flows,
+    fields,
+    flowSettings: selectedSection.flows,
+    sections: subSections,
+    hasNSInternalIdLookup,
+    hasDescription,
+    showFlowSettings,
+    showMatchRuleEngine,
+  };
+}
 
 export function suiteScriptIntegrationConnectionList(
   state,
@@ -4589,6 +4699,26 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptIAFormSaveProcessTerminated(
+    state && state.session,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptIAFormState(
+    state && state.session,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
 export function suiteScriptJobsPagingDetails(state) {
   return fromData.suiteScriptJobsPagingDetails(state.data);
 }

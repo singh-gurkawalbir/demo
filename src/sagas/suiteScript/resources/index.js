@@ -116,6 +116,25 @@ export function* commitStagedChanges({
   );
 }
 
+
+function* requestResource({
+  resourceType,
+  ssLinkedConnectionId,
+  integrationId,
+}) {
+  const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/${resourceType}`;
+  const opts = {method: 'GET'};
+
+  try {
+    const resource = yield call(apiCallWithRetry, {path, opts});
+    yield put(actions.suiteScript.resource.received(resourceType, resource, ssLinkedConnectionId, integrationId))
+  } catch (error) {
+    return true;
+  }
+}
+
+
 export const resourceSagas = [
+  takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestResource),
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, commitStagedChanges),
 ];
