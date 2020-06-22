@@ -198,7 +198,6 @@ const routes = [
   },
   {
     path: '/pg/clone',
-    breadcrumb: () => 'Clone',
     childRoutes: [
       {
         path: '/:resourceType/:resourceId',

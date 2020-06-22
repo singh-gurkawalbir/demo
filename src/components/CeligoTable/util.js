@@ -58,6 +58,12 @@ export const useGetConnectorName = resource => {
 
   return 'RDBMS';
 };
+export const useGetScriptName = id => {
+  const script = useSelector(state =>
+    selectors.resource(state, 'scripts', id)
+  );
+  return (script && script.name) || id;
+};
 
 export const formatLastModified = lastModified => (
   <CeligoTimeAgo date={lastModified} />
@@ -75,4 +81,5 @@ export default {
   useGetConnectorName,
   getResourceLink,
   onlineStatus,
+  useGetScriptName,
 };

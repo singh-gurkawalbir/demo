@@ -34,16 +34,16 @@ export default function SharedUserRow({ user }) {
   }, [confirmDialog, dispatch, user._id]);
   const handleToggleSharingClick = useCallback(() => {
     confirmDialog({
-      title: 'Confirm',
+      title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
       message: `Are you sure you want to ${
         user.disabled ? 'enable' : 'disable'
-      } sharing?`,
+      } sharing with this user?`,
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: user.disabled ? 'Enable' : 'Disable',
           onClick: () => {
             dispatch(actions.stack.toggleUserStackSharing(user._id));
           },

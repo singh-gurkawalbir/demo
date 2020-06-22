@@ -102,11 +102,7 @@ export default function Notifications() {
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}
-                message={
-                  n.type === 'account'
-                    ? 'is inviting you to join their account.'
-                    : `${n.email} has shared the "${n.stackName}" stack with you.`
-                }
+                message={n.message}
               />
               {i < notifications.length - 1 && (
                 <Divider className={classes.divider} />
