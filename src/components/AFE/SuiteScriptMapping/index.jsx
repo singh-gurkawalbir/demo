@@ -206,7 +206,6 @@ export default function SuiteScriptMapping(props) {
   useEffect(() => {
     handleInit();
   }, [handleInit]);
-  // console.log('props', props)
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier && mappings) {

@@ -86,7 +86,6 @@ export function* submitFormValues({
   ssLinkedConnectionId,
   integrationId,
 }) {
-  console.log('ress', resourceType, resourceId);
   const formValues = { ...values };
 
   // formValues = yield call(deleteUISpecificValues, {

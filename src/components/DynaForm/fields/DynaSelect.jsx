@@ -120,7 +120,6 @@ export default function DynaSelect(props) {
     skipSort
   } = props;
 
-  console.log('id', id, options);
   const listRef = React.createRef();
 
   const [open, setOpen] = useState(false);
