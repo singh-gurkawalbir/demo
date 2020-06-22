@@ -74,7 +74,6 @@ export default function Notifications() {
       </Tooltip>
     );
   }
-  // Here also i need to do change
 
   return (
     <>
@@ -103,8 +102,7 @@ export default function Notifications() {
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}
-                stackName={n.stackName}
-                integrationsToTransfer={n.integrationsToTransfer}
+                message={n.message}
               />
               {i < notifications.length - 1 && (
                 <Divider className={classes.divider} />

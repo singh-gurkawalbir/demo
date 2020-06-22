@@ -138,7 +138,7 @@ export default function MarketplaceList() {
     if (connector.installed) {
       confirmDialog({
         isPrompt: true,
-        title: 'Confirm multiple Installs',
+        title: 'Confirm multiple installs',
         label: 'Tag',
         message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [

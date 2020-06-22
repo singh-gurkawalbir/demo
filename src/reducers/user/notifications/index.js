@@ -57,6 +57,7 @@ export const userNotifications = createSelector(
           type: 'account',
           nameOrCompany: a.ownerUser.name || a.ownerUser.company,
           email: a.ownerUser.email,
+          message: 'is inviting you to join their account.',
           // secondaryMessage: `${a.ownerUser.email} is inviting you to join their account. Please accept or decline this invitation.`,
         });
       });
@@ -78,7 +79,7 @@ export const userNotifications = createSelector(
         type: 'transfer',
         nameOrCompany: t.ownerUser.name || t.ownerUser.company,
         email: t.ownerUser.email,
-        integrationsToTransfer: interationsDoc.join(',')
+        message: `Wants to transfer integration(s) ${interationsDoc.join(',')} to you.`,
       });
     });
 
@@ -90,6 +91,7 @@ export const userNotifications = createSelector(
           nameOrCompany: s.ownerUser.name || s.ownerUser.company,
           email: s.ownerUser.email,
           stackName: s.stack.name || s.stack._id,
+          message: `${s.ownerUser.email} has shared the "${s.stack.name || s.stack._id}" stack with you.`
           // secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
           //   .name || s.stack._id}" with you. Please accept or decline this.`,
         });

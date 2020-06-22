@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 import actions from '../../actions';
+import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import useConfirmDialog from '../ConfirmDialog';
 
@@ -123,6 +124,12 @@ export default function ConfigureDebugger(props) {
       classes={{
         paper: classes.drawerPaper,
       }}>
+      <DrawerTitleBar
+        onClose={onClose}
+        title="Configure debugger"
+        helpKey="connection.configDebugger"
+        helpTitle="Configure debugger"
+      />
       <div className={classes.content}>
         <FormControl component="fieldset">
           <FormLabel className={classes.label} component="legend">

@@ -4,6 +4,7 @@ import { formatLastModified, onlineStatus } from '../../../CeligoTable/util';
 import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
 import AuditLogs from '../../actions/AuditLogs';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+import OpenDebugger from '../../actions/Connections/OpenDebugger';
 import Deregister from '../../actions/Connections/Deregister';
 // eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
@@ -69,7 +70,11 @@ export default {
     let actionsToReturn = [];
 
     if (r.debugDate) {
-      actionsToReturn = [DownloadDebugLogs];
+      if (actionProps.type === 'flowBuilder') {
+        actionsToReturn = [OpenDebugger];
+      } else {
+        actionsToReturn = [DownloadDebugLogs];
+      }
     }
     actionsToReturn = [ConfigureDebugger, ...actionsToReturn, AuditLogs, References];
     if (actionProps.integrationId && !r._connectorId) {
