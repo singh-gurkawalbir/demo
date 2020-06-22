@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     zIndex: 2,
   },
-  textToggle: {
+  toggleButtons: {
     backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     padding: 1,
@@ -22,6 +22,8 @@ const useStyles = makeStyles(theme => ({
       '&:last-child': {
         height: 30,
         padding: theme.spacing(0, 5),
+        borderTopRightRadius: '24px !important',
+        borderBottomRightRadius: '24px !important',
       },
       '&.Mui-selected': {
         backgroundColor: theme.palette.primary.main,
@@ -30,8 +32,8 @@ const useStyles = makeStyles(theme => ({
         },
       },
       '&:not(:first-child)': {
-        borderRadius: '0px !important',
         borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+        borderRadius: 0,
       },
     },
   },
@@ -45,7 +47,7 @@ export default function HeaderPanel(props) {
     <div className={classes.textToggleContainer}>
       <TextToggle
         value={panelType}
-        className={classes.textToggle}
+        className={classes.toggleButtons}
         onChange={handlePanelViewChange}
         exclusive
         options={availablePreviewStages}
