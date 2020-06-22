@@ -70,7 +70,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
     nsConnIdx = response.findIndex(c => c.type === 'netsuite' && c.id !== 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
     sfConnIdx = response.findIndex(c => c.type === 'salesforce');
   }
-  if (sfConnIdx || sfConnIdx === 0) {
+  if (sfConnIdx > -1) {
     // save doc in session state
     yield put(
       actions.suiteScript.installer.updateSSConnection(
@@ -80,7 +80,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
       )
     );
   }
-  if (nsConnIdx || nsConnIdx === 0) {
+  if (nsConnIdx > -1) {
     // save doc in session state
     yield put(
       actions.suiteScript.installer.updateSSConnection(

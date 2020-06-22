@@ -20,7 +20,10 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS:
         connector = SUITESCRIPT_CONNECTORS.find(s => s._id === id);
-        draft[id].steps = [...connector.installSteps];
+        if (connector) {
+          draft[id].steps = [...connector.installSteps];
+        }
+
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.FAILED:
@@ -52,7 +55,6 @@ export default (state = {}, action) => {
         }
         if (step) {
           step.installURL = packageUrl;
-          step.packageUpdateInProgress = false;
         }
         break;
 
