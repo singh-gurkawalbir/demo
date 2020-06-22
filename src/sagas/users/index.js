@@ -466,7 +466,11 @@ export function* addSuiteScriptLinkedConnection({ connectionId }) {
     });
   } catch (e) {
     return yield put(
-      actions.api.failure(path, opts.method, 'Could not leave account')
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not link suitescript integrator'
+      )
     );
   }
 
@@ -484,7 +488,11 @@ export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
     });
   } catch (e) {
     return yield put(
-      actions.api.failure(path, opts.method, 'Could not leave account')
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not unlink suitescript integrator'
+      )
     );
   }
 
