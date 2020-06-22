@@ -104,7 +104,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
