@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import TableCell from '@material-ui/core/TableCell';
 import { makeStyles } from '@material-ui/core/styles';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
 import { getPages, getSuccess } from './util';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
 import { JOB_STATUS } from '../../utils/constants';
 import DateTimeDisplay from '../DateTimeDisplay';
+import ErrorCountCell from './ErrorCountCell';
 
 const useStyles = makeStyles(theme => ({
   checkAction: {
@@ -52,15 +52,6 @@ const useStyles = makeStyles(theme => ({
   actions: {
     width: '7.5%',
     textAlign: 'center',
-  },
-  stateBtn: {
-    color: theme.palette.error.main,
-    float: 'right',
-    padding: 0,
-    minWidth: 'unset',
-    '&:hover': {
-      color: `${theme.palette.error.dark} !important`,
-    },
   },
   checkActionBorder: {
     paddingLeft: 55,
@@ -105,8 +96,6 @@ export default function ChildJobDetail({
     onSelectChange(true, job._id, true);
   }
 
-  const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
-
   function handleSelectChange(event) {
     onSelectChange(event.target.checked, job._id);
   }
@@ -142,53 +131,22 @@ export default function ChildJobDetail({
       </TableCell>
       <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
       <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-      <TableCell
-        onMouseEnter={() => {
-          setShowViewErrorsLink(true);
-        }}
-        onMouseLeave={() => {
-          setShowViewErrorsLink(false);
-        }}
+
+      <ErrorCountCell
+        count={job.numError}
+        isJobInProgress={isJobInProgress}
+        isError
+        onClick={() => handleViewErrorsClick(false)}
         className={clsx(classes.error, {
           [classes.errorCount]: job.numError > 0,
-        })}>
-        {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
-          <Button
-            data-test="jobNumErrorView"
-            variant="text"
-            color="primary"
-            className={classes.stateBtn}
-            onClick={() => {
-              handleViewErrorsClick(false);
-            }}>
-            {job.numError} View
-          </Button>
-        ) : (
-          job.numError
-        )}
-      </TableCell>
-      <TableCell
-        onMouseEnter={() => {
-          setShowViewErrorsLink(true);
-        }}
-        onMouseLeave={() => {
-          setShowViewErrorsLink(false);
-        }}
-        className={classes.resolved}>
-        {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
-          <Button
-            data-test="jobsNumResolvedView"
-            variant="text"
-            color="primary"
-            onClick={() => {
-              handleViewErrorsClick(true);
-            }}>
-            {job.numResolved} View
-          </Button>
-        ) : (
-          job.numResolved
-        )}
-      </TableCell>
+        })}
+      />
+      <ErrorCountCell
+        count={job.numResolved}
+        isJobInProgress={isJobInProgress}
+        onClick={() => handleViewErrorsClick(false)}
+        className={classes.resolved}
+      />
       <TableCell className={classes.pages}>
         {getPages(job, parentJob)}
       </TableCell>
