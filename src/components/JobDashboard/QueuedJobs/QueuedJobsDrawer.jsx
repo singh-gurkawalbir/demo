@@ -110,7 +110,7 @@ function QueuedJobs({ parentUrl }) {
   );
   const queueSize = useSelector(
     state => {
-      const connection = selectors.resource(state, 'connections', connectionId)
+      const connection = selectors.resource(state, 'connections', connectionId);
       return connection ? connection.queueSize : 0;
     }
   );
