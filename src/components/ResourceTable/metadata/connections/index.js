@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { ConnectorNameComp } from '..';
 import { formatLastModified, onlineStatus } from '../../../CeligoTable/util';
 import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
@@ -69,7 +70,7 @@ export default {
   rowActions: (r, actionProps) => {
     let actionsToReturn = [];
 
-    if (r.debugDate) {
+    if (r.debugDate && moment().isBefore(moment(r.debugDate))) {
       if (actionProps.type === 'flowBuilder') {
         actionsToReturn = [OpenDebugger];
       } else {
