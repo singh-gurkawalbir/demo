@@ -222,7 +222,7 @@ function FlowBuilder() {
     [pageProcessors, patchFlow]
   );
   const handleDelete = useCallback(
-    type => index => {
+    type => () => index => {
       let resourceType;
 
       if (type === itemTypes.PAGE_PROCESSOR) {
@@ -230,6 +230,7 @@ function FlowBuilder() {
       } else {
         resourceType = 'page generator';
       }
+
       confirmDialog({
         title: 'Confirm remove',
         message: `Are you sure you want to remove this ${resourceType}?`,

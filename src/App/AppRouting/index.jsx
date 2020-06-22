@@ -78,6 +78,13 @@ export default function AppRouting() {
         render={({ history }) => history.replace('/pg/dashboard')}
         />
       <Route
+        path="/pg/clone/:resourceType/:resourceId"
+        exact
+        render={({ history, match }) => history.replace(
+          `/pg/clone/${match.params.resourceType}/${match.params.resourceId}/preview`
+        )}
+        />
+      <Route
         path="/pg/clone/:resourceType/:resourceId/preview"
         component={ClonePreview}
         />

@@ -27,8 +27,8 @@ export default function InvitationItem({
   id,
   name,
   email,
-  message,
   onActionClick,
+  message,
 }) {
   const classes = useStyles();
 

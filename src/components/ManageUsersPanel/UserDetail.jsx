@@ -74,22 +74,15 @@ export default function UserDetail(props) {
         break;
       case 'makeOwner':
         confirmDialog({
-          title: 'Transfer Account Ownership',
+          title: 'Confirm owner',
           isHtml: true,
-          message: `${
-            user.sharedWithUser.name
-              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
-              : `<b>${user.sharedWithUser.email}</b>`
-          } <br/> 
-          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
-          Please click Confirm to proceed with this change.
-          `,
+          message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },

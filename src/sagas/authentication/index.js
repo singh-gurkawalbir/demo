@@ -34,6 +34,10 @@ export function* retrievingOrgDetails() {
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     ),
+    call(
+      getResourceCollection,
+      actions.resource.requestCollection('transfers')
+    ),
   ]);
 }
 

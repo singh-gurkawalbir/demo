@@ -370,7 +370,7 @@ function JobErrorTable({
         maxWidth: 'md',
         buttons: [
           {
-            label: 'Yes',
+            label: 'Proceed',
             onClick: () => {
               // dispatch action that retries this current job with uploaded file stored at s3Key
               dispatch(
@@ -385,7 +385,7 @@ function JobErrorTable({
             },
           },
           {
-            label: 'No',
+            label: 'Cancel',
           },
         ],
       });

@@ -109,8 +109,10 @@ function QueuedJobs({ parentUrl }) {
     selectors.queuedJobs(state, connectionId)
   );
   const queueSize = useSelector(
-    state =>
-      selectors.resource(state, 'connections', connectionId).queueSize || 0
+    state => {
+      const connection = selectors.resource(state, 'connections', connectionId);
+      return connection ? connection.queueSize : 0;
+    }
   );
 
   useEffect(() => {
