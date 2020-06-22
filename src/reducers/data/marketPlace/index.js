@@ -2,10 +2,10 @@ import produce from 'immer';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
-import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
 
 const emptySet = [];
-const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === 'suitescript-salesforce-netsuite');
+const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 
 export default (state = {}, action) => {
   const { type, connectors, templates } = action;
@@ -40,7 +40,7 @@ export function connectors(state, application, sandbox, licenses) {
 
   connectors = connectors.map(c => {
     const conn = c;
-    if (conn._id === SUITESCRIPT_CONNECTORS[0]._id) {
+    if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
     let hasLicense = false;

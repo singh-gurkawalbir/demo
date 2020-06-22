@@ -11,25 +11,25 @@ import {
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
-import ArrowBackIcon from '../../../../components/icons/ArrowLeftIcon';
-import ArrowRightIcon from '../../../../components/icons/ArrowRightIcon';
-import InstallationStep from '../../../../components/InstallStep';
-import {SUITESCRIPT_CONNECTORS } from '../../../../utils/constants';
-import openExternalUrl from '../../../../utils/window';
-import ResourceSetupDrawer from '../../../../components/ResourceSetup';
-import RightDrawer from '../../../../components/drawer/Right';
+import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
+import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
+import InstallationStep from '../../../../../components/InstallStep';
+import {SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../../../utils/constants';
+import openExternalUrl from '../../../../../utils/window';
+import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
+import RightDrawer from '../../../../../components/drawer/Right';
 import {
   generateNewId,
-} from '../../../../utils/resource';
-import jsonUtil from '../../../../utils/json';
-import { SCOPES } from '../../../../sagas/resourceForm';
-import ResourceForm from '../../../../components/SuiteScript/ResourceFormFactory';
-import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import { COMM_STATES } from '../../../../reducers/comms/networkComms';
-import Spinner from '../../../../components/Spinner';
-import SpinnerWrapper from '../../../../components/SpinnerWrapper';
+} from '../../../../../utils/resource';
+import jsonUtil from '../../../../../utils/json';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import Spinner from '../../../../../components/Spinner';
+import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const { _id: connectorId, name, urlName, ssName } = SUITESCRIPT_CONNECTORS.find(s => s._id === 'suitescript-salesforce-netsuite');
+const { _id: connectorId, name, urlName, ssName } = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 export default function SalesforceV2Installation() {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -67,14 +67,14 @@ export default function SalesforceV2Installation() {
   const history = useHistory();
   // using isEqual as shallowEqual doesn't do nested equality checks
   const { steps: installSteps, ssLinkedConnectionId, error, NETSUITE_CONNECTION, SALESFORCE_CONNECTION, ssIntegrationId } = useSelector(state =>
-    selectors.salesforceV2Data(state, connectorId), isEqual
+    selectors.suiteScriptIntegrationAppInstallerData(state, connectorId), isEqual
   );
   const packageCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/suitescript/connections/${ssLinkedConnectionId}/installer/getPackageURLs`, 'GET'));
   const currentStep = useMemo(() => installSteps.find(s => s.isCurrentStep), [
     installSteps,
   ]);
   const isInstallComplete = useSelector(state =>
-    selectors.isSalesforceV2InstallComplete(state, connectorId)
+    selectors.isSuiteScriptIntegrationAppInstallComplete(state, connectorId)
   );
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function SalesforceV2Installation() {
       });
       dispatch(actions.resource.requestCollection(`suitescript/connections/${ssLinkedConnectionId}/tiles`));
       history.replace(
-        `/pg/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}/flows`
+        `/pg/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`
       );
       dispatch(actions.suiteScript.installer.clearSteps(
         connectorId,

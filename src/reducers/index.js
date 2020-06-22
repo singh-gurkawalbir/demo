@@ -4846,9 +4846,9 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
 }
 
 const emptyArr = [];
-export function salesforceV2Data(state, id) {
+export function suiteScriptIntegrationAppInstallerData(state, id) {
   if (!state) return null;
-  const installer = fromSession.sfInstallerData(state.session, id);
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
   const modifiedSteps = produce(installer.steps || emptyArr, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
@@ -4859,10 +4859,10 @@ export function salesforceV2Data(state, id) {
   return {...installer, steps: modifiedSteps};
 }
 
-export function isSalesforceV2InstallComplete(state, id) {
+export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
   if (!state) return null;
   let isInstallComplete = false;
-  const installer = fromSession.sfInstallerData(state.session, id);
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
 
   if (!installer || !installer.steps) return isInstallComplete;
   isInstallComplete =

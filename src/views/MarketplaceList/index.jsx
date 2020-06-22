@@ -19,6 +19,7 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -136,8 +137,8 @@ export default function MarketplaceList() {
   }, [connectors.length, dispatch, fetchedCollection, templates.length]);
   const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
-    if (connector._id === 'suitescript-salesforce-netsuite') {
-      history.push('/pg/suitescript/integrationapps/suitescript-salesforce-netsuite/setup');
+    if (connector._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
+      history.push(`/pg/suitescript/integrationapps/${SUITESCRIPT_CONNECTOR_IDS.salesforce}/setup`);
     } else if (connector.installed) {
       confirmDialog({
         isPrompt: true,

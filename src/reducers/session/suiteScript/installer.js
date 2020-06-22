@@ -1,29 +1,29 @@
 import produce from 'immer';
-import actionTypes from '../../../../actions/types';
-import { SUITESCRIPT_CONNECTORS } from '../../../../utils/constants';
+import actionTypes from '../../../actions/types';
+import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
 const emptyObj = {};
 
 export default (state = {}, action) => {
   const { id, type, status, error, ssLinkedConnectionId, ssIntegrationId, connectionId, doc, packageType, packageUrl } = action;
   let step;
+  let connector;
 
   return produce(state, draft => {
     if (!id) {
       return;
     }
-
+    if (!draft[id]) {
+      draft[id] = {};
+    }
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS:
-        draft[id] = {};
-        draft[id].steps = [...SUITESCRIPT_CONNECTORS[0].installSteps];
+        connector = SUITESCRIPT_CONNECTORS.find(s => s._id === id);
+        draft[id].steps = [...connector.installSteps];
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.FAILED:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
         draft[id].error = error;
         break;
 
@@ -32,23 +32,14 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.LINKED_CONNECTION:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
         draft[id].ssLinkedConnectionId = ssLinkedConnectionId;
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_INTEGRATION_ID:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
         draft[id].ssIntegrationId = ssIntegrationId;
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_CONNECTION:
-        if (!draft[id]) {
-          draft[id] = {};
-        }
         draft[id][connectionId] = doc;
         break;
 
@@ -95,7 +86,7 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function sfInstallerData(state, id) {
+export function installerData(state, id) {
   if (!state || !state[id]) {
     return emptyObj;
   }

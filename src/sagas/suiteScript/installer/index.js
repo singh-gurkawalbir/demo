@@ -193,7 +193,7 @@ export function* checkNetSuiteDABundle({ ssLinkedConnectionId, connectorId, shou
   }
 }
 
-export function* verifyPackage({connectorId, ssLinkedConnectionId, installerFunction}) {
+export function* verifyPackage({ssLinkedConnectionId, connectorId, installerFunction}) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/installer/${installerFunction}`;
   const { error, response } = yield makeRequest({ path });
   if (error || !response || !response.success) {

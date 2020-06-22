@@ -64,7 +64,7 @@ const SuiteScriptFlowBuilder = loadable(() =>
 );
 const SalesforceV2Installation = loadable(() =>
   import(
-    /* webpackChunkName: 'SalesforceV2Installation' */ '../../views/SuiteScript/Integration/Install'
+    /* webpackChunkName: 'SalesforceV2Installation' */ '../../views/SuiteScript/Integration/App/Install'
   )
 );
 
