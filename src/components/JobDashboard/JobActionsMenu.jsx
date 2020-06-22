@@ -166,7 +166,7 @@ export default function JobActionsMenu({
 
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }, [])
+  }, []);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
