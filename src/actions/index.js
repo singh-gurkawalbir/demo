@@ -12,6 +12,7 @@ export const availableResources = [
   'tiles',
   'flows',
   'templates',
+  'apis',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];

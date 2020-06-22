@@ -7,6 +7,7 @@ export default {
     _connectionIds: { fieldId: '_connectionIds' },
     _exportIds: { fieldId: '_exportIds' },
     _importIds: { fieldId: '_importIds' },
+    _apiIds: { fieldId: '_apiIds' },
   },
   layout: {
     type: 'collapse',
@@ -22,7 +23,8 @@ export default {
         fields: ['fullAccess',
           '_connectionIds',
           '_exportIds',
-          '_importIds'],
+          '_importIds',
+          '_apiIds'],
       }
     ],
   },
@@ -46,6 +48,7 @@ export default {
       accessTokenData['/_connectionIds'] = [];
       accessTokenData['/_exportIds'] = [];
       accessTokenData['/_importIds'] = [];
+      accessTokenData['/_apiIds'] = [];
 
       if (!resource._integrationId) {
         accessTokenData['/fullAccess'] = true;

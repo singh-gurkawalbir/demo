@@ -84,19 +84,22 @@ export default {
       required: true,
       helpKey: 'newegg.connection.http.unencrypted.sellerId',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'accountType',
-      'http.encrypted.apiKey',
-      'http.encrypted.apiSecret',
-      'http.unencrypted.sellerId',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['accountType',
+          'http.encrypted.apiKey',
+          'http.encrypted.apiSecret',
+          'http.unencrypted.sellerId'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

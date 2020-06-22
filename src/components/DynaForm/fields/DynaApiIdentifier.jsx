@@ -23,7 +23,7 @@ export default function DynaApiIdentifier(props) {
   const { value } = props;
   const classes = useStyles();
   const apiUrl = getApiUrl();
-  const invokeUrl = `${apiUrl}/${value}`
+  const invokeUrl = `${apiUrl}/${value}`;
   return (
     <div className={classes.dynaAPIWrapper}>
       <DynaText

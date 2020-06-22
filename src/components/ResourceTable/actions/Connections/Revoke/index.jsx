@@ -8,33 +8,27 @@ export default {
   label: 'Revoke',
   icon: RevokeTokenIcon,
   component: function Revoke({ rowData = {} }) {
-    const { _id: connectionId, name: connectionName } = rowData;
+    const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const revokeConnection = useCallback(() => {
       dispatch(actions.connection.requestRevoke(connectionId));
     }, [connectionId, dispatch]);
     const confirmRevoke = useCallback(() => {
-      const message = [
-        'Are you sure you want to revoke',
-        connectionName || connectionId,
-        'token?',
-      ].join(' ');
-
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm revoke',
+        message: 'Are you sure you want to revoke this token?',
         buttons: [
           {
             label: 'Cancel',
           },
           {
-            label: 'Yes',
+            label: 'Revoke',
             onClick: revokeConnection,
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, revokeConnection]);
+    }, [confirmDialog, revokeConnection]);
 
     useEffect(() => {
       confirmRevoke();

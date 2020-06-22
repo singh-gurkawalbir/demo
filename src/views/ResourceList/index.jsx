@@ -91,10 +91,10 @@ export default function ResourceList(props) {
   return (
     <CheckPermissions
       permission={
-        PERMISSIONS &&
-        PERMISSIONS[resourceType] &&
-        PERMISSIONS[resourceType].view
-      }>
+         PERMISSIONS &&
+         PERMISSIONS[resourceType] &&
+         PERMISSIONS[resourceType].view
+       }>
       {// This is where we will be adding all Right drawers to Celigo Table
       resourceType === 'stacks' && <StackShareDrawer />
       }

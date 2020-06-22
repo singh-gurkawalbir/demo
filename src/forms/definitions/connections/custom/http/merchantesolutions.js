@@ -54,18 +54,21 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.profileId',
-      'http.encrypted.profileKey',
-      'http.encrypted.cardNumber',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.profileId',
+          'http.encrypted.profileKey',
+          'http.encrypted.cardNumber'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };
