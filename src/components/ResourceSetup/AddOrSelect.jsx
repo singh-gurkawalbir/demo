@@ -99,18 +99,18 @@ export default function AddOrSelect(props) {
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
         <RadioGroup
-          {...props}
+          value={props.value}
           id="selectType"
           className={classes.resourceFormRadioGroupWrapper}
           label="What would you like to do?"
           defaultValue={useNew ? 'new' : 'existing'}
-          fullWidth
+          isValid
           onFieldChange={handleTypeChange}
           options={[
             {
               items: [
-                { label: `Set up new ${resourceLabel}`, value: 'new' },
-                { label: `Use existing ${resourceLabel}`, value: 'existing' },
+                { label: `Set up new ${resourceName}`, value: 'new' },
+                { label: `Use existing ${resourceName}`, value: 'existing' },
               ],
             },
           ]}
