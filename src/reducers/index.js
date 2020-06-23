@@ -4883,7 +4883,6 @@ export function suitesciptMappingsSaveStatus(state) {
   return fromSession.suitesciptMappingsSaveStatus(state && state.session);
 }
 
-// temporary
 export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
@@ -4935,4 +4934,13 @@ export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, int
 
     return { data, status };
   }
+}
+
+export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId,
+    ssLinkedConnectionId,
+  });
+  return flows && flows.find(flow => flow._id === flowId);
 }

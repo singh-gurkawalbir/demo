@@ -114,15 +114,14 @@ const SuiteScriptMapping = (props) => {
 
   const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state));
   const {importType, exportType} = useSelector(state => {
-    const flows = selectors.suiteScriptResourceList(state, {
-      resourceType: 'flows',
+    const flow = selectors.suiteScriptFlowDetail(state, {
       integrationId,
       ssLinkedConnectionId,
+      flowId,
     });
-    const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-    const exportType = selectedFlow.export.netsuite ? 'netsuite' : selectedFlow.export.type;
+    const exportType = flow.export.netsuite ? 'netsuite' : flow.export.type;
 
-    return {importType: selectedFlow.import && selectedFlow.import.type, exportType};
+    return {importType: flow.import && flow.import.type, exportType};
   }, shallowEqual);
   const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 

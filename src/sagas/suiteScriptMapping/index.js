@@ -21,16 +21,15 @@ export function* refreshGenerates({ isInit = false }) {
     flowId,
   } = yield select(selectors.suiteScriptMapping);
 
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const { import: importRes } = selectedFlow;
+  const { import: importRes } = flow;
   const {type: importType, _connectionId} = importRes;
 
   const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
@@ -100,16 +99,15 @@ export function* refreshGenerates({ isInit = false }) {
   }
 }
 export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const {export: exportRes, import: importRes} = selectedFlow;
+  const {export: exportRes, import: importRes} = flow;
   const {type: importType, mapping} = importRes;
   const generatedMappings = suiteScriptMappingUtil.generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
   let lookups = [];
@@ -126,16 +124,15 @@ export function* saveMappings() {
     integrationId,
     flowId
   } = yield select(selectors.suiteScriptMapping);
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const {export: exportConfig, import: importRes} = selectedFlow;
+  const {export: exportConfig, import: importRes, _id: resourceId} = flow;
   const {type: importType, _connectionId } = importRes;
   const options = {};
   if (importType === 'salesforce') {
@@ -155,7 +152,7 @@ export function* saveMappings() {
   const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
   patchSet.push({
-    op: selectedFlow.import.mapping ? 'replace' : 'add',
+    op: importRes.mapping ? 'replace' : 'add',
     path: '/import/mapping',
     value: _mappings,
   });
@@ -167,7 +164,6 @@ export function* saveMappings() {
     });
   }
 
-  const resourceId = selectedFlow._id;
   const resourceType = 'imports';
   yield put(
     actions.suiteScript.resource.patchStaged(
@@ -203,16 +199,15 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
     mappings = [],
     ssLinkedConnectionId, integrationId, flowId,
   } = yield select(selectors.suiteScriptMapping);
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const { import: importRes } = selectedFlow;
+  const { import: importRes } = flow;
   const {type: importType} = importRes;
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
@@ -260,16 +255,15 @@ export function* updateImportSampleData() {
     flowId
   } = yield select(selectors.suiteScriptMapping);
   if (!incompleteGenerates.length) return;
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const { import: importRes } = selectedFlow;
+  const { import: importRes } = flow;
   const {type: importType} = importRes;
 
   const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});

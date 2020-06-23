@@ -6,16 +6,15 @@ import * as selectors from '../../../../reducers';
 
 export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {} }) {
   const { refreshCache } = options;
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
+  const flow = yield select(
+    selectors.suiteScriptFlowDetail,
     {
-      resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
+      flowId
     }
   );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const { import: importRes} = selectedFlow;
+  const { import: importRes} = flow;
   const {type: importType, _connectionId, netsuite, salesforce} = importRes;
   if (importType === 'netsuite') {
     const { recordType } = netsuite;
