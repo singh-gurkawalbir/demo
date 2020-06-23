@@ -41,7 +41,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return [
         { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
-        { label: 'Output', value: 'parse' },
+        { label: 'Parsed output', value: 'parse' },
       ];
     case 'netsuite':
     case 'salesforce':
@@ -149,7 +149,7 @@ export const getPreviewDataPageSizeInfo = previewData => {
   const pageSize = Array.isArray(records) ? records.length : 1;
 
   if (pageSize === 1) {
-    return '1 Page 1 Record';
+    return '1 Page, 1 Record';
   }
 
   return `1 Page ${pageSize} Records`;
