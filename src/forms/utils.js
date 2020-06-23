@@ -384,6 +384,9 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'textarea') {
     newField.multiline = true;
     newField.rowsMax = 10;
+  } else if (newField.type === 'checkbox' && newField.featureCheckConfig) {
+    newField.type = 'featurecheck';
+    newField.featureName = newField.featureCheckConfig.featureName;
   }
 
   if (newField.disabled) {
@@ -484,7 +487,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields = [], _integrationId, resource) =>
+const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConnectionId) =>
   fields
     .map(field => {
       // TODO: generate correct name path
@@ -495,6 +498,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
         ...getFieldConfig(field, resource),
         defaultValue,
         name: `/${name}`,
+        ssLinkedConnectionId,
         _integrationId,
         id: name,
         helpText: tooltip,
@@ -561,7 +565,8 @@ export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
   skipContainerWrap,
-  options = {}
+  options = {},
+  ssLinkedConnectionId
 ) => {
   const finalData = {};
   const { resource, isFlow = false, isSuiteScriptConfigure} = options;
@@ -573,7 +578,8 @@ export const integrationSettingsToDynaFormMetadata = (
     const addedFieldIdFields = translateFieldProps(
       fields,
       integrationId,
-      resource
+      resource,
+      ssLinkedConnectionId
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
@@ -589,7 +595,8 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.fieldMap = translateFieldProps(
         section.fields,
         integrationId,
-        resource
+        resource,
+        ssLinkedConnectionId
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
@@ -607,7 +614,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      ...translateFieldProps(section.fields, integrationId, resource).reduce(
+      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId).reduce(
         generateFieldsAndSections,
         {}
       ),

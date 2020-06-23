@@ -70,6 +70,13 @@ export default combineReducers({
 });
 
 // #region PUBLIC SELECTORS
+
+export function suiteScriptFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSuiteScript.suiteScriptFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
+}
 export function netsuiteUserRoles(
   state,
   connectionId,

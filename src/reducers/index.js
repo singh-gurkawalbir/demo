@@ -4524,6 +4524,12 @@ export const suiteScriptResource = (
     integrationId,
   });
 
+export function suiteScriptFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSession.suiteScriptFeatureCheckState(state && state.session, { ssLinkedConnectionId, integrationId, featureName});
+}
 export const suiteScriptResourceData = (
   state,
   { resourceType, id, ssLinkedConnectionId, integrationId, scope }

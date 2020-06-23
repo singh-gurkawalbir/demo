@@ -1,5 +1,5 @@
 import produce from 'immer';
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 
 const iaFormKey = (
   ssLinkedConnectionId,

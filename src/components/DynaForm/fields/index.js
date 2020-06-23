@@ -102,8 +102,10 @@ import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaFeatureCheck from './checkbox/DynaFeatureCheck';
 
 export default {
+  featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,

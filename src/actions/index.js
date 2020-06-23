@@ -1812,6 +1812,13 @@ const suiteScript = {
     submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),
 
   },
+  featureCheck: {
+    request: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST, {ssLinkedConnectionId, integrationId, featureName}),
+    successful: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.SUCCESSFUL, {ssLinkedConnectionId, integrationId, featureName}),
+    failed: (ssLinkedConnectionId, integrationId, featureName, message) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.FAILED, {ssLinkedConnectionId, integrationId, featureName, message}),
+    clear: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR, {ssLinkedConnectionId, integrationId, featureName}),
+
+  },
   resourceForm: {
     init: (
       resourceType,

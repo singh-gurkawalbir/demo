@@ -6,14 +6,13 @@ import { Link, NavLink, Route, useRouteMatch, Redirect } from 'react-router-dom'
 import CeligoTable from '../../../../../../components/CeligoTable';
 import SettingsIcon from '../../../../../../components/icons/SettingsIcon';
 import IconTextButton from '../../../../../../components/IconTextButton';
-import LoadResources from '../../../../../../components/LoadResources';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
-import ConfigureDrawer from './ConfigureDrawer'
+import ConfigureDrawer from './ConfigureDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,8 +63,7 @@ function FlowList({ integrationId, ssLinkedConnectionId }) {
   const filterKey = `${integrationId}-flows`;
 
   return (
-    // TODO: Is fetching exports necessary
-    <LoadResources required resources="exports">
+    <>
       <ScheduleDrawer />
       <ConfigureDrawer
         integrationId={integrationId}
@@ -93,8 +91,7 @@ function FlowList({ integrationId, ssLinkedConnectionId }) {
         {...metadata}
         actionProps={{ ssLinkedConnectionId, integrationId }}
         />
-
-    </LoadResources>
+    </>
   );
 }
 
@@ -153,7 +150,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId))
+    dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -161,7 +158,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
     ssLinkedConnectionId,
     integrationId,
     resourceType: 'settings',
-  }))
+  }));
   return (
     <div className={classes.root}>
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />

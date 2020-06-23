@@ -133,8 +133,34 @@ function* requestResource({
   }
 }
 
+function* featureCheck({
+  ssLinkedConnectionId,
+  integrationId,
+  featureName,
+}) {
+  const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/featureCheck?featureCheckConfig={"featureName":"${featureName}"}`;
+  const opts = {method: 'GET'};
+
+  let resp;
+  try {
+    resp = yield call(apiCallWithRetry, {path, opts});
+    if (resp.success) {
+      yield put(actions.suiteScript.featureCheck.successful(ssLinkedConnectionId,
+        integrationId,
+        featureName));
+    }
+  // eslint-disable-next-line no-empty
+  } catch (error) {
+  }
+
+  yield put(actions.suiteScript.featureCheck.failed(ssLinkedConnectionId,
+    integrationId,
+    featureName, (resp && resp.errors && resp.errors.length && resp.errors[0].message) || 'Error'));
+}
+
 
 export const resourceSagas = [
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestResource),
+  takeEvery(actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST, featureCheck),
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, commitStagedChanges),
 ];

@@ -2,12 +2,22 @@ import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import iaForm, * as fromIAForm from './iaForm';
 import flows, * as fromFlows from './flows';
+import featureCheck, * as fromFeatureCheck from './featureCheck';
 
 export default combineReducers({
   resourceForm,
   iaForm,
   flows,
+  featureCheck
 });
+
+export function suiteScriptFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromFeatureCheck.suiteScriptFeatureCheckState(state && state.featureCheck, { ssLinkedConnectionId, integrationId, featureName});
+}
+
 
 export function resourceFormState(
   state,

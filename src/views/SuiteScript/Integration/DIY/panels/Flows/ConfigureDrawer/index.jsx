@@ -7,7 +7,6 @@ import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../../components/drawer/TitleBar';
-import LoadResources from '../../../../../../../components/LoadResources';
 import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/useSuiteScriptIAFormWithHandleClose';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
 import { FormStateManager } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
@@ -73,9 +72,10 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
       flowSettingsMeta,
       integrationId,
       true,
-      {isSuiteScriptConfigure: true}
+      {isSuiteScriptConfigure: true},
+      ssLinkedConnectionId
     ),
-    [flowSettingsMeta, integrationId]
+    [flowSettingsMeta, integrationId, ssLinkedConnectionId]
   );
 
   useEffect(() => {
@@ -96,34 +96,28 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      {/* TODO is fetching exports imports connections necessary? */}
-      <LoadResources
-        required
-        resources={['exports', 'imports', 'connections']}>
-        <Drawer
+      <Drawer
         // variant="persistent"
-          anchor="right"
-          open={!!match}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          onClose={handleClose}>
-          <DrawerTitleBar title={`Configure all ${section.title} flows`} />
+        anchor="right"
+        open={!!match}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+        onClose={handleClose}>
+        <DrawerTitleBar title={`Configure all ${section.title} flows`} />
 
-          <FormStateManager
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            integrationId={integrationId}
-            sectionId={sectionId}
-            onSubmitComplete={handleClose}
-            formState={formState}
-            className={clsx(classes.configureDrawerform, {
-              [classes.configureDrawerCamForm]: section.sections,
-            })}
-            fieldMeta={translatedMeta}
+        <FormStateManager
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+          sectionId={sectionId}
+          onSubmitComplete={handleClose}
+          formState={formState}
+          className={clsx(classes.configureDrawerform, {
+            [classes.configureDrawerCamForm]: section.sections,
+          })}
+          fieldMeta={translatedMeta}
         />
-        </Drawer>
-      </LoadResources>
-
+      </Drawer>
     </LoadSuiteScriptResources>
   );
 }
