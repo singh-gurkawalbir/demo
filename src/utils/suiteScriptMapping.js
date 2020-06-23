@@ -135,9 +135,9 @@ const validateMappings = (mappings, lookups) => {
   return { isSuccess: true };
 };
 
-const updateMappingConfigs = ({importType, mappings = [], recordType, exportConfig, options}) => {
+const updateMappingConfigs = ({importType, mappings = [], exportConfig, options}) => {
   const isNetsuiteImport = importType === 'netsuite';
-  const { childRelationships = []} = options;
+  const { childRelationships = [], recordType} = options;
   let generateParts;
   const lists = [];
   const fields = [];

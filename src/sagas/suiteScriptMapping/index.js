@@ -136,7 +136,7 @@ export function* saveMappings() {
   );
   const selectedFlow = flows && flows.find(flow => flow._id === flowId);
   const {export: exportConfig, import: importRes} = selectedFlow;
-  const {type: importType, recordType, _connectionId } = importRes;
+  const {type: importType, _connectionId } = importRes;
   const options = {};
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
@@ -148,8 +148,11 @@ export function* saveMappings() {
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
     options.childRelationships = childRelationshipFields;
+  } else if (importType === 'netsuite') {
+    const { recordType } = importRes.netsuite;
+    options.recordType = recordType;
   }
-  const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, recordType, exportConfig, options});
+  const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
   patchSet.push({
     op: selectedFlow.import.mapping ? 'replace' : 'add',
