@@ -128,7 +128,6 @@ export default function ConfigureDebugger(props) {
         onClose={onClose}
         title="Debug connection"
         helpKey="connection.debug"
-        helpTitle="Configure debugger"
       />
       <div className={classes.content}>
         <FormControl component="fieldset">
