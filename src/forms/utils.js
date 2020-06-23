@@ -619,7 +619,7 @@ export const integrationSettingsToDynaFormMetadata = (
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
-      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+      containers: [{ ...finalData.layout, label: 'Advanced' }],
     };
   }
 
