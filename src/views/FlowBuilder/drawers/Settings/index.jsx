@@ -9,6 +9,7 @@ import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import * as selectors from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -156,10 +157,18 @@ export default function SettingsDrawer({
 
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-      history.goBack();
     },
-    [dispatch, flow._id, history]
+    [dispatch, flow._id]
   );
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/flows/${flow._id}`,
+      onSave: handleSubmit,
+      onClose: handleClose,
+    }
+  );
+
   return (
     <RightDrawer
       path="settings"
@@ -176,10 +185,20 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
-            onClick={handleSubmit}
+            onClick={submitHandler()}
+            disabled={disableSave}
             color="primary"
             variant="outlined">
-            Save
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            resourceType={resourceType}
+            resourceId={resourceId}
+            onClick={submitHandler(true)}
+            disabled={disableSave}
+            color="primary"
+            variant="outlined">
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button onClick={handleClose} variant="text" color="primary">
             Cancel
