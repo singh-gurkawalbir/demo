@@ -240,15 +240,11 @@ const isMappingObjEqual = (mapping1, mapping2) => {
   const {
     rowIdentifier: r1,
     key: key1,
-    isNotEditable: e1,
-    isRequired: req1,
     ...formattedMapping1
   } = mapping1;
   const {
     rowIdentifier: r2,
     key: key2,
-    isNotEditable: e2,
-    isRequired: req2,
     ...formattedMapping2
   } = mapping2;
 

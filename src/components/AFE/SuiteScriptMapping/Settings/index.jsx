@@ -100,13 +100,6 @@ export default function MappingSettings(props) {
       }
     }, [connectionId, generate, importType, lookup, recordType, ssLinkedConnectionId, value]
   );
-  const disableSave = useMemo(() => {
-    // Disable all fields except useAsAnInitializeValue in case mapping is not editable
-    const { fieldMap } = fieldMeta || {};
-    const { isNotEditable } = value;
-
-    return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
-  }, [disabled, fieldMeta, value]);
   const handleSubmit = useCallback(
     formVal => {
       const {
@@ -167,7 +160,7 @@ export default function MappingSettings(props) {
           optionsHandler={fieldMeta.optionsHandler}
           formState={formState}>
           <DynaSubmit
-            disabled={disableSave}
+            disabled={disabled}
             id="fieldMappingSettingsSave"
             showCustomFormValidations={showCustomFormValidations}
             onClick={handleSubmit}>
