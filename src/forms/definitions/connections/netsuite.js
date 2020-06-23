@@ -264,6 +264,15 @@ export default {
       ],
     },
     {
+      id: 'testsaveandclose',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
       id: 'cancel',
     },
     {

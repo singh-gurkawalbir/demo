@@ -4,6 +4,7 @@ import SaveButton from './SaveButton';
 import SaveAndCloseButton from './SaveAndCloseButton';
 import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
+import TestSaveAndCloseButton from './TestSaveAndCloseButton';
 import OAuthButton from './OAuthButton';
 import NetsuiteValidateButton from './NetsuiteValidateButton';
 import SaveAndCloseFileDefinitionButton from './SaveAndCloseFileDefinitionButton';
@@ -22,7 +23,7 @@ export const useLoadingSnackbarOnSave = props => {
   const handleSubmitForm = useCallback(
     values => {
       onSave(values);
-      setDisableSaveOnClick(true);
+      if (setDisableSaveOnClick) setDisableSaveOnClick(true);
       setIsSaving(true);
     },
     [onSave, setDisableSaveOnClick]
@@ -30,7 +31,7 @@ export const useLoadingSnackbarOnSave = props => {
 
   useEffect(() => {
     if (saveTerminated) {
-      setDisableSaveOnClick(false);
+      if (setDisableSaveOnClick) setDisableSaveOnClick(false);
       setIsSaving(false);
     }
   }, [saveTerminated, setDisableSaveOnClick]);
@@ -44,6 +45,7 @@ export default {
   saveandclose: SaveAndCloseButton,
   test: TestButton,
   testandsave: TestAndSaveButton,
+  testsaveandclose: TestSaveAndCloseButton,
   oauth: OAuthButton,
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,

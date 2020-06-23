@@ -118,7 +118,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
         actionButtons = ['oauth', 'cancel'];
       } else {
-        actionButtons = ['testandsave', 'cancel', 'test'];
+        actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
       }
     } else if (!isNew) {
       actionButtons = ['save', 'saveandclose', 'cancel'];
