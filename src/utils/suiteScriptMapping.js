@@ -214,8 +214,36 @@ const updateMappingConfigs = ({importType, mappings = [], recordType, exportConf
   };
 };
 
+const getFormattedGenerateData = (importData,
+  importType) => {
+  let formattedGenerateFields = [];
+
+  if (importData) {
+    if (importType === 'salesforce') {
+      formattedGenerateFields = importData.map(d => ({
+        id: d.value,
+        name: d.label,
+        type: d.type,
+        options: d.picklistValues,
+        childSObject: d.childSObject,
+        relationshipName: d.relationshipName,
+      }));
+    } else if (importType === 'netsuite') {
+      formattedGenerateFields = importData.map(d => ({
+        id: d.value,
+        name: d.label,
+        type: d.type,
+        sublist: d.sublist,
+      }));
+    }
+  }
+
+  return formattedGenerateFields;
+};
+
 export default {
   validateMappings,
   generateFieldAndListMappings,
-  updateMappingConfigs
+  updateMappingConfigs,
+  getFormattedGenerateData
 };

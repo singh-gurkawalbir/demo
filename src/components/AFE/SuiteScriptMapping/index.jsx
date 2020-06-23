@@ -8,6 +8,10 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import MappingRow from './MappingRow';
 import SaveButton from './SaveButton';
+import RefreshIcon from '../../icons/RefreshIcon';
+import IconTextButton from '../../IconTextButton';
+import Spinner from '../../Spinner';
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 // const emptySet = [];
 const emptyObj = {};
@@ -85,25 +89,30 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-export default function SuiteScriptMapping(props) {
-  const {disabled, onClose } = props;
-  const match = useRouteMatch();
-  const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
-  const integrationId = str1[str1.length - 1];
-  const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
-  const ssLinkedConnectionId = str2[str2.length - 1];
-  const flowId = match.params && match.params.flowId;
+function RefreshButton({className, ...props}) {
+  return (
+    <IconTextButton
+      variant="contained"
+      color="secondary"
+      className={className}
+      {...props}>
+      Refresh <RefreshIcon />
+    </IconTextButton>
+  );
+}
+const SuiteScriptMapping = (props) => {
+  const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId } = props;
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
   });
   const { localMappings, localChangeIdentifier } = state;
 
-
   const classes = useStyles();
   const dispatch = useDispatch();
   const showPreviewPane = false;
-  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
+
+  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state));
   const {importType, exportType} = useSelector(state => {
     const flows = selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',
@@ -115,10 +124,22 @@ export default function SuiteScriptMapping(props) {
 
     return {importType: selectedFlow.import && selectedFlow.import.type, exportType};
   }, shallowEqual);
+  const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScriptMapping.init({ssLinkedConnectionId, integrationId, flowId}));
   }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
+  const handleRefreshGenerates = useCallback(
+    () => {
+      dispatch(
+        actions.suiteScriptMapping.refreshGenerates(
+          { ssLinkedConnectionId, integrationId, flowId }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId],
+  );
+
   const extractLabel = `Source Record Field (${exportType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
   const generateLabel = `Import Field (${importType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
   const emptyRowIndex = useMemo(() => localMappings.length, [
@@ -154,6 +175,7 @@ export default function SuiteScriptMapping(props) {
     },
     [dispatch, flowId, handleDelete, integrationId, ssLinkedConnectionId]
   );
+
   const patchSettings = useCallback(
     (key, settings) => {
       dispatch(actions.suiteScriptMapping.patchSettings({ ssLinkedConnectionId, integrationId, flowId, key, settings }));
@@ -215,9 +237,13 @@ export default function SuiteScriptMapping(props) {
       }),
     [localMappings]
   );
+
   useEffect(() => {
     handleInit();
-  }, [handleInit]);
+    return () => {
+      dispatch(actions.suiteScriptMapping.clear());
+    };
+  }, [dispatch, handleInit]);
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier && mappings) {
@@ -248,6 +274,19 @@ export default function SuiteScriptMapping(props) {
             variant="h5"
             className={clsx(classes.childHeader, classes.topHeading)}>
             {generateLabel}
+            { importSampleDataStatus !== 'requested' && (
+              <RefreshButton
+                disabled={disabled}
+                onClick={handleRefreshGenerates}
+                className={classes.refreshButton}
+                data-test="refreshGenerates"
+              />
+            )}
+            {importSampleDataStatus === 'requested' && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
         </div>
 
@@ -270,6 +309,7 @@ export default function SuiteScriptMapping(props) {
               onMove={handleMove}
               onDrop={handleDrop}
               isDraggable={!disabled}
+              importType={importType}
               />
           ))}
           <MappingRow
@@ -285,6 +325,7 @@ export default function SuiteScriptMapping(props) {
             patchSettings={patchSettings}
             onDelete={handleDelete}
             isDraggable={false}
+            importType={importType}
           />
         </div>
         <ButtonGroup
@@ -322,5 +363,57 @@ export default function SuiteScriptMapping(props) {
       </div>
 
     </div>
+  );
+};
+
+export default function SuiteScriptMappingWrapper(props) {
+  const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
+  const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
+  const integrationId = str1[str1.length - 1];
+  const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
+  const ssLinkedConnectionId = str2[str2.length - 1];
+  const flowId = match.params && match.params.flowId;
+
+  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const requestImportSampleData = useCallback(
+    () => {
+      dispatch(
+        actions.importSampleData.requestSuiteScriptData(
+          {ssLinkedConnectionId,
+            integrationId,
+            flowId,
+          }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
+  useEffect(() => {
+    if (
+      !importSampleDataLoaded &&
+      (importSampleDataStatus === 'received' || importSampleDataStatus === 'error')
+    ) {
+      setImportSampleDataLoaded(true);
+    }
+  }, [importSampleDataStatus, importSampleDataLoaded, setImportSampleDataLoaded]);
+
+
+  useEffect(() => {
+    if (!importSampleData && !importSampleDataLoaded) {
+      requestImportSampleData();
+    }
+  }, [importSampleData, dispatch, requestImportSampleData, importSampleDataLoaded]);
+  if (!importSampleDataLoaded) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
+  }
+  return (
+    <SuiteScriptMapping {...props} ssLinkedConnectionId={ssLinkedConnectionId} integrationId={integrationId} flowId={flowId} />
+
   );
 }

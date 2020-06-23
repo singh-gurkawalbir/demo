@@ -10,7 +10,6 @@ const emptyObj = {};
 
 export default function reducer(state = {}, action) {
   const { ssLinkedConnectionId, integrationId, flowId, type } = action;
-  const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
 
   return produce(state, draft => {
     switch (type) {
@@ -22,49 +21,51 @@ export default function reducer(state = {}, action) {
           rowIdentifier: 0,
           key: shortid.generate(),
         }));
-        draft[id] = {
+        draft.mappings = {
           mappings: formattedMappings,
           mappingsCopy: deepClone(formattedMappings),
           lookups,
           lookupsCopy: lookups,
           changeIdentifier: 0,
+          ssLinkedConnectionId,
+          integrationId,
+          flowId,
           status: 'success'
         };
         break;
       }
       case actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER: {
         const { mappings } = action;
-        const key = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-        draft[key].mappings = mappings;
+        draft.mappings.mappings = mappings;
         break;
       }
       case actionTypes.SUITESCRIPT_MAPPING.DELETE: {
         const { key } = action;
 
-        draft[id].changeIdentifier += 1;
-        const filteredMapping = draft[id].mappings.filter(m => m.key !== key);
+        draft.mappings.changeIdentifier += 1;
+        const filteredMapping = draft.mappings.mappings.filter(m => m.key !== key);
 
-        draft[id].mappings = filteredMapping;
+        draft.mappings.mappings = filteredMapping;
 
-        if (draft[id].lastModifiedKey === key) draft[id].lastModifiedKey = '';
+        if (draft.mappings.lastModifiedKey === key) draft.mappings.lastModifiedKey = '';
 
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
-        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
         break;
       }
       case actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD: {
         const {key, field, value} = action;
 
-        draft[id].changeIdentifier += 1;
-        const index = draft[id].mappings.findIndex(m => m.key === key);
+        draft.mappings.changeIdentifier += 1;
+        const index = draft.mappings.mappings.findIndex(m => m.key === key);
 
-        if (draft[id].mappings[index]) {
-          const objCopy = { ...draft[id].mappings[index] };
+        if (draft.mappings.mappings[index]) {
+          const objCopy = { ...draft.mappings.mappings[index] };
 
           objCopy.rowIdentifier += 1;
 
@@ -88,7 +89,7 @@ export default function reducer(state = {}, action) {
             objCopy[field] = inputValue;
 
             // if (
-            //   !mappingUtil.isCsvOrXlsxResource(draft[id].resource) &&
+            //   !mappingUtil.isCsvOrXlsxResource(draft.mappings.resource) &&
             //   inputValue.indexOf('[*].') === -1
             // ) {
             //   if ('isKey' in objCopy) {
@@ -101,32 +102,32 @@ export default function reducer(state = {}, action) {
             // }
           }
 
-          draft[id].mappings[index] = objCopy;
+          draft.mappings.mappings[index] = objCopy;
         } else if (value) {
-          draft[id].mappings.push({
+          draft.mappings.mappings.push({
             [field]: value,
             rowIdentifier: 0,
             key: shortid.generate(),
           });
         }
 
-        draft[id].lastModifiedKey = key;
+        draft.mappings.lastModifiedKey = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
-        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
         break;
       }
       case actionTypes.SUITESCRIPT_MAPPING.PATCH_SETTINGS: {
         const { settings, key: rowKey } = action;
         // ssLinkedConnectionId, integrationId, flowId, key, settings
-        draft[id].changeIdentifier += 1;
-        const index = draft[id].mappings.findIndex(m => m.key === rowKey);
+        draft.mappings.changeIdentifier += 1;
+        const index = draft.mappings.mappings.findIndex(m => m.key === rowKey);
 
-        if (draft[id].mappings[index]) {
+        if (draft.mappings.mappings[index]) {
           const {
             generate,
             extract,
@@ -134,7 +135,7 @@ export default function reducer(state = {}, action) {
             isRequired,
             rowIdentifier,
             key,
-          } = draft[id].mappings[index];
+          } = draft.mappings.mappings[index];
           const valueTmp = {
             generate,
             extract,
@@ -160,17 +161,17 @@ export default function reducer(state = {}, action) {
             delete valueTmp.extract;
           }
 
-          draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedKey = key;
+          draft.mappings.mappings[index] = { ...valueTmp };
+          draft.mappings.lastModifiedKey = key;
           const {
             isSuccess,
             errMessage: validationErrMsg,
           } = suiteScriptMappingUtil.validateMappings(
-            draft[id].mappings,
-            draft[id].lookups
+            draft.mappings.mappings,
+            draft.mappings.lookups
           );
 
-          draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+          draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         }
         break;
       }
@@ -178,29 +179,60 @@ export default function reducer(state = {}, action) {
       case actionTypes.SUITESCRIPT_MAPPING.UPDATE_LOOKUPS:
       {
         const { lookups } = action;
-        draft[id].lookups = lookups;
+        draft.mappings.lookups = lookups;
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft[id].mappings, draft[id].lookups);
+        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
-        draft[id].validationErrMsg = isSuccess ? undefined : validationErrMsg;
+        draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
       }
+      case actionTypes.SUITESCRIPT_MAPPING.PATCH_INCOMPLETE_GENERATES: {
+        const { key, value } = action;
+        draft.mappings.changeIdentifier += 1;
+        if (!draft.mappings.incompleteGenerates) {
+          draft.mappings.incompleteGenerates = [];
+        }
 
+        const incompleteGeneObj = draft.mappings.incompleteGenerates.find(
+          gen => gen.key === key
+        );
+
+        if (incompleteGeneObj) {
+          incompleteGeneObj.value = value;
+        } else {
+          draft.mappings.incompleteGenerates.push({ key, value });
+        }
+
+        break;
+      }
+      case actionTypes.SUITESCRIPT_MAPPING.UPDATE_MAPPINGS: {
+        const { mappings } = action;
+        draft.mappings.changeIdentifier += 1;
+        draft.mappings.mappings = mappings;
+        draft.mappings.mappingsCopy = deepClone(mappings);
+        break;
+      }
+      case actionTypes.SUITESCRIPT_MAPPING.CLEAR: {
+        Object.keys(draft).forEach(key => {
+          delete draft[key];
+        });
+        break;
+      }
       case actionTypes.SUITESCRIPT_MAPPING.SAVE:
-        draft[id].saveStatus = 'requested';
+        draft.mappings.saveStatus = 'requested';
         break;
       case actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE:
-        draft[id].saveStatus = 'completed';
-        draft[id].validationErrMsg = undefined;
-        draft[id].mappingsCopy = deepClone(draft[id].mappings);
-        draft[id].lookupsCopy = deepClone(draft[id].lookups);
+        draft.mappings.saveStatus = 'completed';
+        draft.mappings.validationErrMsg = undefined;
+        draft.mappings.mappingsCopy = deepClone(draft.mappings.mappings);
+        draft.mappings.lookupsCopy = deepClone(draft.mappings.lookups);
 
         break;
       case actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED:
-        draft[id].saveStatus = 'failed';
-        draft[id].validationErrMsg = undefined;
+        draft.mappings.saveStatus = 'failed';
+        draft.mappings.validationErrMsg = undefined;
 
         break;
 
@@ -228,22 +260,20 @@ const isMappingObjEqual = (mapping1, mapping2) => {
   return isEqual(formattedMapping1, formattedMapping2);
 };
 
-export function mappings(state, {ssLinkedConnectionId, integrationId, flowId }) {
-  if (!state || !ssLinkedConnectionId || !integrationId || !flowId) {
+export function mappings(state) {
+  if (!state || !state.mappings) {
     return emptyObj;
   }
-  const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-  return state[id] || emptyObj;
+  return state.mappings;
 }
 
-export function mappingsChanged(state, {ssLinkedConnectionId, integrationId, flowId}) {
-  const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-  if (!state || !ssLinkedConnectionId || !integrationId || !flowId || !state[id]) {
+export function mappingsChanged(state) {
+  if (!state || !state.mappings) {
     return false;
   }
 
   const { mappings, mappingsCopy, lookups, lookupsCopy
-  } = state[id];
+  } = state.mappings;
   let isMappingsChanged = mappings.length !== mappingsCopy.length;
 
   // change of order of mappings is treated as Mapping change
@@ -260,14 +290,12 @@ export function mappingsChanged(state, {ssLinkedConnectionId, integrationId, flo
 
   return isMappingsChanged;
 }
-export function mappingsSaveStatus(state, {ssLinkedConnectionId, integrationId, flowId }) {
-  const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
-
-  if (!state || !ssLinkedConnectionId || !integrationId || !flowId || !state[id]) {
+export function mappingsSaveStatus(state) {
+  if (!state || !state.mappings) {
     return emptyObj;
   }
 
-  const { saveStatus } = state[id];
+  const { saveStatus } = state.mappings;
 
   return {
     saveTerminated: saveStatus === 'completed' || saveStatus === 'failed',

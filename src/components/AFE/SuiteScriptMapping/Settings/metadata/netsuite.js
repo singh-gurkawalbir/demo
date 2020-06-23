@@ -420,8 +420,9 @@ export default {
     }
 
     if (
-      fieldMetadata &&
-      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
+      !fieldMetadata ||
+      (fieldMetadata &&
+      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type))
     ) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;

@@ -701,23 +701,20 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
   );
 }
 
-export function suiteScriptMappingState(state, { ssLinkedConnectionId, integrationId, flowId }) {
+export function suiteScriptMappingState(state) {
   return fromSuiteScriptMappings.mappings(
-    state && state.suiteScriptMappings,
-    {ssLinkedConnectionId, integrationId, flowId }
+    state && state.suiteScriptMappings
   );
 }
 
-export function suitesciptMappingsChanged(state, { ssLinkedConnectionId, integrationId, flowId }) {
+export function suitesciptMappingsChanged(state) {
   return fromSuiteScriptMappings.mappingsChanged(
-    state && state.suiteScriptMappings,
-    {ssLinkedConnectionId, integrationId, flowId }
+    state && state.suiteScriptMappings
   );
 }
 
-export function suitesciptMappingsSaveStatus(state, { ssLinkedConnectionId, integrationId, flowId }) {
+export function suitesciptMappingsSaveStatus(state,) {
   return fromSuiteScriptMappings.mappingsSaveStatus(
     state && state.suiteScriptMappings,
-    {ssLinkedConnectionId, integrationId, flowId }
   );
 }

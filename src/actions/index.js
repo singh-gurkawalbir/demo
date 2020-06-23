@@ -1157,6 +1157,16 @@ const importSampleData = {
       _importId,
       metadata,
     }),
+  requestSuiteScriptData: ({ ssLinkedConnectionId, integrationId, flowId, options }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.SUITESCRIPT_REQUEST, {
+      ssLinkedConnectionId, integrationId, flowId, options
+    })
+};
+const suiteScriptImportSampleData = {
+  request: ({ssLinkedConnectionId, integrationId, flowId, options}) =>
+    action(actionTypes.SUITESCRIPT_IMPORT_SAMPLEDATA.REQUEST, {
+      ssLinkedConnectionId, integrationId, flowId, options
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
@@ -1339,7 +1349,16 @@ const suiteScriptMapping = {
     }),
   saveFailed: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED, { ssLinkedConnectionId, integrationId, flowId }),
   saveComplete: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE, { ssLinkedConnectionId, integrationId, flowId }),
-
+  refreshGenerates: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.REFRESH_GENEREATES, {
+    ssLinkedConnectionId, integrationId, flowId
+  }),
+  patchIncompleteGenerates: (
+    {key, value},
+  ) => action(actionTypes.SUITESCRIPT_MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
+  updateMappings: (mappings) => action(actionTypes.SUITESCRIPT_MAPPING.UPDATE_MAPPINGS, {
+    mappings
+  }),
+  clear: () => action(actionTypes.SUITESCRIPT_MAPPING.CLEAR, {})
 };
 const searchCriteria = {
   init: (id, value) =>
@@ -2310,6 +2329,7 @@ export default {
   stack,
   sampleData,
   importSampleData,
+  suiteScriptImportSampleData,
   flowData,
   connection,
   marketplace,

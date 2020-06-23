@@ -1,6 +1,7 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
@@ -10,6 +11,8 @@ import LockIcon from '../../icons/LockIcon';
 import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import GripperIcon from '../../icons/GripperIcon';
 import Settings from './Settings/Button';
+import * as selectors from '../../../reducers';
+import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
 
 const useStyles = makeStyles(theme => ({
   child: {
@@ -85,7 +88,6 @@ export default function MappingRow(props) {
     mapping,
     extractFields = [],
     onFieldUpdate,
-    generateFields = [],
     disabled,
     updateLookupHandler,
     patchSettings,
@@ -97,6 +99,7 @@ export default function MappingRow(props) {
     onMove,
     onDrop,
     index,
+    importType,
     isDraggable = false,
   } = props;
   const {
@@ -109,6 +112,13 @@ export default function MappingRow(props) {
   } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
+
+  const {data: importData} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const generateFields = useMemo(() => suiteScriptMappingUtil.getFormattedGenerateData(
+    importData,
+    importType
+  ), [importData, importType]);
+
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -165,7 +175,6 @@ export default function MappingRow(props) {
     },
     [patchSettings, key]
   );
-
 
   // generateFields and extractFields are passed as an array of field names
   return (

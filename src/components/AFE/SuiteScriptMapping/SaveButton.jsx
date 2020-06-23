@@ -48,14 +48,14 @@ const MappingSaveButton = props => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { validationErrMsg } = useSelector(state =>
-    selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId})
+    selectors.suiteScriptMapping(state)
   );
   const mappingsChanged = useSelector(state =>
-    selectors.suitesciptMappingsChanged(state, {ssLinkedConnectionId, integrationId, flowId})
+    selectors.suitesciptMappingsChanged(state)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.mappingsSaveStatus(state, {ssLinkedConnectionId, integrationId, flowId})
+    selectors.mappingsSaveStatus(state)
   );
 
   useEffect(() => {
