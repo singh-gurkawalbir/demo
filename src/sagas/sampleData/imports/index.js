@@ -241,53 +241,6 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
     });
   }
 }
-
-export function* requestSuiteScriptSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {} }) {
-  const { refreshCache } = options;
-  const flows = yield select(
-    selectors.suiteScriptResourceList,
-    {
-      resourceType: 'flows',
-      integrationId,
-      ssLinkedConnectionId,
-    }
-  );
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  const { import: importRes} = selectedFlow;
-  const {type: importType, _connectionId, netsuite, salesforce} = importRes;
-  if (importType === 'netsuite') {
-    const { recordType } = netsuite;
-
-    const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    yield put(
-      actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache })
-    );
-  } else if (importType === 'salesforce') {
-    const { sObjects } = options;
-
-    if (sObjects && Array.isArray(sObjects)) {
-      for (let i = 0; i < sObjects.length; i += 1) {
-        yield put(
-          actions.metadata.request(
-            ssLinkedConnectionId,
-            `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjects[i]}`,
-            { refreshCache }
-          )
-        );
-      }
-    } else {
-      const { sObjectType } = salesforce;
-      yield put(
-        actions.metadata.request(
-          ssLinkedConnectionId,
-          `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
-          { refreshCache }
-        )
-      );
-    }
-  }
-}
 export default [
   takeLatest(actionTypes.IMPORT_SAMPLEDATA.REQUEST, requestSampleData),
-  takeLatest(actionTypes.IMPORT_SAMPLEDATA.SUITESCRIPT_REQUEST, requestSuiteScriptSampleData),
 ];
