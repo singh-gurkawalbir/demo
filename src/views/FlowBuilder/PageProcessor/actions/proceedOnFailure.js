@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
@@ -21,11 +21,24 @@ function ProceedOnFailureDialog(props) {
     isViewMode,
     resourceType,
   } = props;
+  const [closeOnSave, setCloseOnSave] = useState(false);
+  const [disableSave, setDisableSave] = useState(isViewMode);
   const { merged: flow = emptyObject } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
     flowId
   );
+
+  const commStatus = useSelector(state =>
+    selectors.commStatusPerPath(state, `/flows/${flowId}`, 'put'));
+
+  const {saveLabel, saveAndCloseLabel} = useMemo(() => {
+    const isSaving = commStatus === 'loading';
+    const saveLabel = (isSaving && !closeOnSave) ? 'Saving' : 'Save';
+    const saveAndCloseLabel = (isSaving && closeOnSave) ? 'Saving' : 'Save & close';
+    return {saveLabel, saveAndCloseLabel};
+  }, [closeOnSave, commStatus]);
+
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(
     pageProcessors[resourceIndex] &&
@@ -63,7 +76,7 @@ function ProceedOnFailureDialog(props) {
       fields: ['proceedOnFailure'],
     },
   };
-  const handleSubmit = formValues => {
+  const saveFormValues = useCallback(formValues => {
     const { proceedOnFailure } = formValues;
     const patchSet = [
       {
@@ -75,23 +88,54 @@ function ProceedOnFailureDialog(props) {
 
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-    onClose();
-  };
+  }, [dispatch, flowId, resourceIndex]);
+
+  const handleSave = useCallback(
+    (formValues) => {
+      saveFormValues(formValues);
+      setCloseOnSave(false);
+      setDisableSave(true);
+    },
+    [saveFormValues],
+  );
+
+  const handleSaveAndClose = useCallback(
+    formValues => {
+      saveFormValues(formValues);
+      setCloseOnSave(true);
+      setDisableSave(true);
+    },
+    [saveFormValues],
+  );
+
+  useEffect(() => {
+    if (commStatus === 'success') {
+      setDisableSave(false);
+      if (closeOnSave) {
+        onClose();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commStatus]);
 
   return (
     <ModalDialog show={open} onClose={onClose}>
       <div>
-        {' '}
         {title}
-        {' '}
       </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <DynaSubmit
-            disabled={isViewMode}
+            disabled={disableSave}
             data-test="saveProceedOnFailure"
-            onClick={handleSubmit}>
-            Save
+            onClick={handleSave}>
+            {saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            disabled={disableSave}
+            data-test="saveProceedOnFailure"
+            onClick={handleSaveAndClose}>
+            {saveAndCloseLabel}
           </DynaSubmit>
           <Button data-test="cancelProceedOnFailure" onClick={onClose}>
             Cancel
