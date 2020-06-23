@@ -7,7 +7,6 @@ import { requestAssistantMetadata } from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
-import * as selectors from '../../../reducers';
 
 function* fetchAssistantSampleData({ resource }) {
   // Fetch assistant's sample data logic
