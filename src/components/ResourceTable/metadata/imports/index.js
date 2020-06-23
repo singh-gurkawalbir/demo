@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConnectorNameComp } from '..';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
@@ -17,7 +17,6 @@ export default {
       },
       orderBy: 'name',
     },
-
     {
       heading: 'Application',
       value: function ConnectorName(r) {
@@ -26,7 +25,7 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

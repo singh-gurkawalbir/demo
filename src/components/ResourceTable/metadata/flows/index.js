@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import Detach from '../../actions/Flows/Detach';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
@@ -35,12 +35,12 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => r.lastModified && formatLastModified(r.lastModified),
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
         heading: 'Last run',
-        value: r => r.lastExecutedAt && formatLastModified(r.lastExecutedAt),
+        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {
