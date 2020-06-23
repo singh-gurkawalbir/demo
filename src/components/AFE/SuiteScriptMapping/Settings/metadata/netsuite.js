@@ -214,7 +214,6 @@ export default {
           type: 'text',
           required: true,
           label: 'Enter default value',
-          placeholder: 'Enter Default Value',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['hardCoded'] },
           ],

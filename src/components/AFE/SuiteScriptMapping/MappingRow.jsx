@@ -1,5 +1,4 @@
 import React, { useRef, useCallback, useMemo } from 'react';
-import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -7,7 +6,6 @@ import { useDrag, useDrop } from 'react-dnd-cjs';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import TrashIcon from '../../icons/TrashIcon';
 import ActionButton from '../../ActionButton';
-import LockIcon from '../../icons/LockIcon';
 import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
 import GripperIcon from '../../icons/GripperIcon';
 import Settings from './Settings/Button';
@@ -104,8 +102,6 @@ export default function MappingRow(props) {
   } = props;
   const {
     key,
-    isRequired,
-    isNotEditable,
     extract,
     generate,
     hardCodedValueTmp,
@@ -189,8 +185,7 @@ export default function MappingRow(props) {
         </div>
         <div
           className={clsx(classes.childHeader, classes.mapField, {
-            [classes.disableChildRow]:
-              isNotEditable || disabled,
+            [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
             id={`fieldMappingExtract-${index}`}
@@ -198,21 +193,14 @@ export default function MappingRow(props) {
             valueName="id"
             value={extract || hardCodedValueTmp}
             options={extractFields}
-            disabled={isNotEditable || disabled}
+            disabled={disabled}
             onBlur={handleBlur('extract')}
           />
-
-          {(isNotEditable) && (
-            <span className={classes.lockIcon}>
-              <LockIcon />
-            </span>
-          )}
         </div>
         <MappingConnectorIcon className={classes.mappingIcon} />
         <div
           className={clsx(classes.childHeader, classes.mapField, {
-            [classes.disableChildRow]:
-              isRequired || disabled,
+            [classes.disableChildRow]: disabled,
           })}>
           <DynaTypeableSelect
             id={`fieldMappingGenerate-${index}`}
@@ -220,18 +208,9 @@ export default function MappingRow(props) {
             labelName="name"
             valueName="id"
             options={generateFields}
-            disabled={isRequired || disabled}
+            disabled={disabled}
             onBlur={handleBlur('generate')}
           />
-          {(isRequired) && (
-            <Tooltip
-              title="This field is required by the application you are importing into"
-              placement="top">
-              <span className={classes.lockIcon}>
-                <LockIcon />
-              </span>
-            </Tooltip>
-          )}
         </div>
         <div>
           <Settings
@@ -253,7 +232,7 @@ export default function MappingRow(props) {
           <ActionButton
             data-test={`fieldMappingRemove-${index}`}
             aria-label="delete"
-            disabled={isRequired || disabled}
+            disabled={disabled}
             onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />

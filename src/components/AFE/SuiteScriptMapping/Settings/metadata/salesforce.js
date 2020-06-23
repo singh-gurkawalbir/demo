@@ -170,7 +170,6 @@ export default {
           name: 'hardcodedDefault',
           type: 'text',
           label: 'Value',
-          placeholder: '',
           required: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['hardCoded'] },
@@ -183,7 +182,6 @@ export default {
           name: 'hardcodedSFSelect',
           type: 'select',
           label: 'Value',
-          placeholder: '',
           required: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['hardCoded'] },

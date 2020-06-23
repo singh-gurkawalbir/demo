@@ -131,16 +131,12 @@ export default function reducer(state = {}, action) {
           const {
             generate,
             extract,
-            isNotEditable,
-            isRequired,
             rowIdentifier,
             key,
           } = draft.mappings.mappings[index];
           const valueTmp = {
             generate,
             extract,
-            isNotEditable,
-            isRequired,
             rowIdentifier,
             key,
           };
