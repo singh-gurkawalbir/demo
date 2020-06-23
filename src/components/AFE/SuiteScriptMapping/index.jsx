@@ -243,7 +243,8 @@ const SuiteScriptMapping = (props) => {
     return () => {
       dispatch(actions.suiteScriptMapping.clear());
     };
-  }, [dispatch, handleInit]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier && mappings) {
@@ -380,7 +381,7 @@ export default function SuiteScriptMappingWrapper(props) {
   const requestImportSampleData = useCallback(
     () => {
       dispatch(
-        actions.importSampleData.requestSuiteScriptData(
+        actions.suiteScript.importSampleData.request(
           {ssLinkedConnectionId,
             integrationId,
             flowId,

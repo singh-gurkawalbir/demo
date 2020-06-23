@@ -37,7 +37,7 @@ export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId,
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
     // getting all childRelationshipFields of parent sObject
-    const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
+    const { data: childRelationshipFields = [] } = yield select(selectors.getMetadataOptions,
       {
         connectionId: ssLinkedConnectionId,
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
@@ -65,7 +65,7 @@ export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId,
         }
       }
     });
-    yield put(actions.importSampleData.requestSuiteScriptData(
+    yield put(actions.suiteScript.importSampleData.request(
       {
         ssLinkedConnectionId,
         integrationId,
@@ -82,7 +82,7 @@ export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId,
     // if (application === adaptorTypeMap.NetSuiteImport && subRecordMappingId) {
     //   opts.recordType = netsuiteRecordType;
     // }
-    yield put(actions.importSampleData.requestSuiteScriptData(
+    yield put(actions.suiteScript.importSampleData.request(
       {
         ssLinkedConnectionId,
         integrationId,
@@ -96,7 +96,6 @@ export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId,
   }
 }
 export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
-  yield call(refreshGenerates, {ssLinkedConnectionId, integrationId, flowId, isInit: true });
   const flows = yield select(
     selectors.suiteScriptResourceList,
     {
@@ -112,6 +111,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
   let lookups = [];
   if (importType === 'netsuite' && importRes.netsuite && importRes.netsuite.lookups) { lookups = deepClone(importRes.netsuite.lookups); } else if (importType === 'salesforce' && importRes.salesforce && importRes.salesforce.lookups) { lookups = deepClone(importRes.salesforce.lookups); }
   yield put(actions.suiteScriptMapping.initComplete({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }));
+  yield call(refreshGenerates, {ssLinkedConnectionId, integrationId, flowId, isInit: true });
 }
 
 export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
@@ -126,9 +126,20 @@ export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
   );
   const selectedFlow = flows && flows.find(flow => flow._id === flowId);
   const {export: exportConfig, import: importRes} = selectedFlow;
-  const {type: importType, recordType} = importRes;
+  const {type: importType, recordType, _connectionId } = importRes;
+  const options = {};
+  if (importType === 'salesforce') {
+    const { sObjectType } = importRes.salesforce;
 
-  const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, recordType, exportConfig});
+    const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
+      {
+        connectionId: ssLinkedConnectionId,
+        commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
+        filterKey: 'salesforce-sObjects-childReferenceTo',
+      });
+    options.childRelationships = childRelationshipFields;
+  }
+  const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, recordType, exportConfig, options});
   const patchSet = [];
   patchSet.push({
     op: selectedFlow.import.mapping ? 'replace' : 'add',
@@ -221,7 +232,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ ssLinkedConnectionId, 
       }
     )
     );
-    yield put(actions.importSampleData.requestSuiteScriptData(
+    yield put(actions.suiteScript.importSampleData.request(
       {
         ssLinkedConnectionId,
         integrationId,

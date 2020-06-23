@@ -135,8 +135,9 @@ const validateMappings = (mappings, lookups) => {
   return { isSuccess: true };
 };
 
-const updateMappingConfigs = ({importType, mappings = [], recordType, exportConfig}) => {
+const updateMappingConfigs = ({importType, mappings = [], recordType, exportConfig, options}) => {
   const isNetsuiteImport = importType === 'netsuite';
+  const { childRelationships = []} = options;
   let generateParts;
   const lists = [];
   const fields = [];
@@ -162,12 +163,16 @@ const updateMappingConfigs = ({importType, mappings = [], recordType, exportConf
           generate: generateListPath,
           fields: [],
         };
+        if (importType === 'salesforce') {
+          const childRelationship = childRelationships.find(rel => rel.value === list.generate);
+          if (childRelationship) {
+            list.salesforce = {
+              relationshipField: childRelationship.value,
+              sObjectType: childRelationship.childSObject
+            };
+          }
+        }
         lists.push(list);
-        // if (self.parent.type === 'salesforce') {
-        //     var childRelationship = self.parent.salesforce.sObject.childRelationships.get(list.generate)
-        //     list.salesforce.relationshipField = childRelationship.field
-        //     list.salesforce.sObjectType = childRelationship.childSObject
-        //   }
       }
     }
     if (isNetsuiteImport) {

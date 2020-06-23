@@ -55,20 +55,14 @@ const MappingSaveButton = props => {
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.mappingsSaveStatus(state)
+    selectors.suitesciptMappingsSaveStatus(state)
   );
 
-  useEffect(() => {
-    if (saveTrigerred && saveCompleted && onClose) {
-      onClose();
-      setSaveTriggered(false);
-    }
-  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
+    setSaveTriggered(true);
     dispatch(actions.suiteScriptMapping.save({ ssLinkedConnectionId,
       integrationId,
       flowId, }));
-    setSaveTriggered(true);
   }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
@@ -86,6 +80,12 @@ const MappingSaveButton = props => {
 
     handleSubmitForm();
   };
+  useEffect(() => {
+    if (saveTrigerred && saveCompleted && onClose) {
+      onClose();
+      setSaveTriggered(false);
+    }
+  }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;

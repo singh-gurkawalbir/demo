@@ -1157,16 +1157,6 @@ const importSampleData = {
       _importId,
       metadata,
     }),
-  requestSuiteScriptData: ({ ssLinkedConnectionId, integrationId, flowId, options }) =>
-    action(actionTypes.IMPORT_SAMPLEDATA.SUITESCRIPT_REQUEST, {
-      ssLinkedConnectionId, integrationId, flowId, options
-    })
-};
-const suiteScriptImportSampleData = {
-  request: ({ssLinkedConnectionId, integrationId, flowId, options}) =>
-    action(actionTypes.SUITESCRIPT_IMPORT_SAMPLEDATA.REQUEST, {
-      ssLinkedConnectionId, integrationId, flowId, options
-    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
@@ -2073,6 +2063,11 @@ const suiteScript = {
         ssLinkedConnectionId,
       }),
   },
+  importSampleData: {
+    request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
+      ssLinkedConnectionId, integrationId, flowId, options
+    })
+  },
   sampleData: {
     request: (
       ssLinkedConnectionId,
@@ -2401,7 +2396,6 @@ export default {
   stack,
   sampleData,
   importSampleData,
-  suiteScriptImportSampleData,
   flowData,
   connection,
   marketplace,

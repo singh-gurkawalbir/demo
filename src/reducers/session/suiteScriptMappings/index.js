@@ -207,7 +207,6 @@ export default function reducer(state = {}, action) {
         const { mappings } = action;
         draft.mappings.changeIdentifier += 1;
         draft.mappings.mappings = mappings;
-        draft.mappings.mappingsCopy = deepClone(mappings);
         break;
       }
       case actionTypes.SUITESCRIPT_MAPPING.CLEAR: {
