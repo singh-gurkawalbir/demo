@@ -3158,6 +3158,8 @@ export function isEditorV2Supported(state, resourceId, resourceType) {
   return [
     'HTTPImport',
     'HTTPExport',
+    'RESTImport',
+    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
