@@ -27,7 +27,7 @@ export default function MappingCell({flowId}) {
   return (
     <RemoveMargin>
       <IconButtonWithTooltip
-        tooltipProps={{title: 'Edit mappings222', placement: 'bottom'}}
+        tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
         onClick={handleClick}>
         <MapDataIcon />
       </IconButtonWithTooltip>
