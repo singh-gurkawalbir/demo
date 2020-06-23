@@ -43,7 +43,7 @@ export function* getPackageURLs({ ssLinkedConnectionId, connectorId }) {
   }
 }
 
-function* isConnectionOnline({ ssLinkedConnectionId, ssConnId}) {
+export function* isConnectionOnline({ ssLinkedConnectionId, ssConnId}) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/${ssConnId}/ping`;
   const { error, response } = yield makeRequest({ path });
   if (error || !response || response.code !== 200 || response.errors) {
@@ -89,7 +89,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
         response[nsConnIdx],
       )
     );
-    const isNSOnline = yield isConnectionOnline({ ssLinkedConnectionId, connectorId, ssConnId: 'NETSUITE_CONNECTION'});
+    const isNSOnline = yield call(isConnectionOnline, { ssLinkedConnectionId, connectorId, ssConnId: 'NETSUITE_CONNECTION'});
     if (isNSOnline) {
       yield put(
         actions.suiteScript.installer.updateStep(
@@ -103,10 +103,10 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
         connectorId,
         'verify'
       ));
-      const isSFOnline = yield isConnectionOnline({ ssLinkedConnectionId, connectorId, ssConnId: 'SALESFORCE_CONNECTION'});
+      const isSFOnline = yield call(isConnectionOnline, { ssLinkedConnectionId, connectorId, ssConnId: 'SALESFORCE_CONNECTION'});
       if (isSFOnline) {
         // get package urls once SF connection is verified
-        yield getPackageURLs({ ssLinkedConnectionId, connectorId });
+        yield call(getPackageURLs, { ssLinkedConnectionId, connectorId });
         return yield put(
           actions.suiteScript.installer.updateStep(
             connectorId,
@@ -154,7 +154,7 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
       connectorId,
       'verify'
     ));
-    yield verifySSConnection({ ssLinkedConnectionId, connectorId });
+    yield call(verifySSConnection, { ssLinkedConnectionId, connectorId });
     return;
   }
   return yield put(
@@ -189,7 +189,7 @@ export function* checkNetSuiteDABundle({ ssLinkedConnectionId, connectorId, shou
       connectorId,
       'verify'
     ));
-    yield verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssName });
+    yield call(verifyConnectorBundle, { ssLinkedConnectionId, connectorId, ssName });
   }
 }
 
