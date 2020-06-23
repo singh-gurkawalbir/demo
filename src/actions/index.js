@@ -1313,35 +1313,32 @@ const suiteScriptMapping = {
     action(actionTypes.SUITESCRIPT_MAPPING.INIT_COMPLETE, {
       ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups
     }),
-  patchField: ({ ssLinkedConnectionId, integrationId, flowId, field, key, value }) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, {
-      ssLinkedConnectionId, integrationId, flowId, field, key, value
-    }),
-  delete: ({ ssLinkedConnectionId, integrationId, flowId, key }) =>
+  patchField: ({ field, key, value }) =>
+    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, { field, key, value }),
+  delete: (key) =>
     action(actionTypes.SUITESCRIPT_MAPPING.DELETE, {
-      ssLinkedConnectionId, integrationId, flowId, key
+      key
     }),
-  patchSettings: ({ ssLinkedConnectionId, integrationId, flowId, key, settings }) =>
+  patchSettings: (key, settings) =>
     action(actionTypes.SUITESCRIPT_MAPPING.PATCH_SETTINGS, {
-      ssLinkedConnectionId, integrationId, flowId, key, settings
+      key, settings
     }),
-  updateLookups: ({ ssLinkedConnectionId, integrationId, flowId, lookups }) =>
+  updateLookups: (lookups) =>
     action(actionTypes.SUITESCRIPT_MAPPING.UPDATE_LOOKUPS, {
-      ssLinkedConnectionId, integrationId, flowId, lookups
+      lookups
     }),
-  changeOrder: ({ ssLinkedConnectionId, integrationId, flowId, mappings }) =>
+  changeOrder: (mappings) =>
     action(actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER, {
-      ssLinkedConnectionId, integrationId, flowId, mappings
+      mappings
     }),
-  save: ({ ssLinkedConnectionId, integrationId, flowId, mappings }) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.SAVE, {
-      ssLinkedConnectionId, integrationId, flowId, mappings
-    }),
-  saveFailed: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED, { ssLinkedConnectionId, integrationId, flowId }),
-  saveComplete: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE, { ssLinkedConnectionId, integrationId, flowId }),
-  refreshGenerates: ({ ssLinkedConnectionId, integrationId, flowId }) => action(actionTypes.SUITESCRIPT_MAPPING.REFRESH_GENEREATES, {
-    ssLinkedConnectionId, integrationId, flowId
-  }),
+  save: () =>
+    action(actionTypes.SUITESCRIPT_MAPPING.SAVE, {}),
+  saveFailed: () =>
+    action(actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED, { }),
+  saveComplete: () =>
+    action(actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE, {}),
+  refreshGenerates: () =>
+    action(actionTypes.SUITESCRIPT_MAPPING.REFRESH_GENEREATES, {}),
   patchIncompleteGenerates: (
     {key, value},
   ) => action(actionTypes.SUITESCRIPT_MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),

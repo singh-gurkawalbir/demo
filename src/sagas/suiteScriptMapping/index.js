@@ -13,7 +13,14 @@ export const SCOPES = {
   SCRIPT: 'script',
 };
 
-export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId, isInit = false }) {
+export function* refreshGenerates({ isInit = false }) {
+  const {
+    mappings = [],
+    ssLinkedConnectionId,
+    integrationId,
+    flowId,
+  } = yield select(selectors.suiteScriptMapping);
+
   const flows = yield select(
     selectors.suiteScriptResourceList,
     {
@@ -26,9 +33,6 @@ export function* refreshGenerates({ ssLinkedConnectionId, integrationId, flowId,
   const { import: importRes } = selectedFlow;
   const {type: importType, _connectionId} = importRes;
 
-  const {
-    mappings = [],
-  } = yield select(selectors.suiteScriptMapping);
   const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
     importData,
@@ -111,11 +115,17 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
   let lookups = [];
   if (importType === 'netsuite' && importRes.netsuite && importRes.netsuite.lookups) { lookups = deepClone(importRes.netsuite.lookups); } else if (importType === 'salesforce' && importRes.salesforce && importRes.salesforce.lookups) { lookups = deepClone(importRes.salesforce.lookups); }
   yield put(actions.suiteScriptMapping.initComplete({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }));
-  yield call(refreshGenerates, {ssLinkedConnectionId, integrationId, flowId, isInit: true });
+  yield call(refreshGenerates, {isInit: true });
 }
 
-export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
-  const {mappings, lookups} = yield select(selectors.suiteScriptMapping, {ssLinkedConnectionId, integrationId, flowId });
+export function* saveMappings() {
+  const {
+    mappings,
+    lookups,
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  } = yield select(selectors.suiteScriptMapping);
   const flows = yield select(
     selectors.suiteScriptResourceList,
     {
@@ -175,22 +185,21 @@ export function* saveMappings({ ssLinkedConnectionId, integrationId, flowId }) {
   });
   if (resp && (resp.error || resp.conflict)) {
     return yield put(
-      actions.suiteScriptMapping.saveFailed({
-        ssLinkedConnectionId,
-        integrationId,
-        flowId,
-      })
+      actions.suiteScriptMapping.saveFailed()
     );
   }
   return yield put(
-    actions.suiteScriptMapping.saveComplete({
-      ssLinkedConnectionId,
-      integrationId,
-      flowId,
-    })
+    actions.suiteScriptMapping.saveComplete()
   );
 }
-export function* checkForIncompleteSFGenerateWhilePatch({ ssLinkedConnectionId, integrationId, flowId, field, value = '' }) {
+export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
+  if (value.indexOf('_child_') === -1) {
+    return;
+  }
+  const {
+    mappings = [],
+    ssLinkedConnectionId, integrationId, flowId,
+  } = yield select(selectors.suiteScriptMapping);
   const flows = yield select(
     selectors.suiteScriptResourceList,
     {
@@ -202,13 +211,6 @@ export function* checkForIncompleteSFGenerateWhilePatch({ ssLinkedConnectionId, 
   const selectedFlow = flows && flows.find(flow => flow._id === flowId);
   const { import: importRes } = selectedFlow;
   const {type: importType} = importRes;
-
-  if (value.indexOf('_child_') === -1) {
-    return;
-  }
-  const {
-    mappings = [],
-  } = yield select(selectors.suiteScriptMapping);
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
@@ -250,7 +252,9 @@ export function* updateImportSampleData() {
   const {
     incompleteGenerates = [],
     mappings = [],
-    ssLinkedConnectionId, integrationId, flowId
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
   } = yield select(selectors.suiteScriptMapping);
   if (!incompleteGenerates.length) return;
   const flows = yield select(

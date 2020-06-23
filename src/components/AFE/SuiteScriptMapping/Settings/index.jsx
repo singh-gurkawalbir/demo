@@ -51,7 +51,7 @@ export default function MappingSettings(props) {
     integrationId,
     flowId,
   } = props;
-  const { lookups = []} = useSelector(state => selectors.suiteScriptMapping(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const { lookups = []} = useSelector(state => selectors.suiteScriptMapping(state));
   const {importType, connectionId, recordType} = useSelector(state => {
     const flows = selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',

@@ -132,12 +132,10 @@ const SuiteScriptMapping = (props) => {
   const handleRefreshGenerates = useCallback(
     () => {
       dispatch(
-        actions.suiteScriptMapping.refreshGenerates(
-          { ssLinkedConnectionId, integrationId, flowId }
-        )
+        actions.suiteScriptMapping.refreshGenerates()
       );
     },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId],
+    [dispatch],
   );
 
   const extractLabel = `Source Record Field (${exportType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
@@ -152,8 +150,8 @@ const SuiteScriptMapping = (props) => {
     [onClose],
   );
   const handleDelete = useCallback(key => {
-    dispatch(actions.suiteScriptMapping.delete({ ssLinkedConnectionId, integrationId, flowId, key }));
-  }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
+    dispatch(actions.suiteScriptMapping.delete(key));
+  }, [dispatch]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
@@ -171,16 +169,16 @@ const SuiteScriptMapping = (props) => {
         }
       }
 
-      dispatch(actions.suiteScriptMapping.patchField({ ssLinkedConnectionId, integrationId, flowId, field, key, value }));
+      dispatch(actions.suiteScriptMapping.patchField({field, key, value }));
     },
-    [dispatch, flowId, handleDelete, integrationId, ssLinkedConnectionId]
+    [dispatch, handleDelete]
   );
 
   const patchSettings = useCallback(
     (key, settings) => {
-      dispatch(actions.suiteScriptMapping.patchSettings({ ssLinkedConnectionId, integrationId, flowId, key, settings }));
+      dispatch(actions.suiteScriptMapping.patchSettings(key, settings));
     },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+    [dispatch]
   );
   const updateLookupHandler = (lookupOps = []) => {
     let lookupsTmp = [...lookups];
@@ -200,11 +198,11 @@ const SuiteScriptMapping = (props) => {
       }
     });
 
-    dispatch(actions.suiteScriptMapping.updateLookups({ ssLinkedConnectionId, integrationId, flowId, lookups: lookupsTmp }));
+    dispatch(actions.suiteScriptMapping.updateLookups(lookupsTmp));
   };
   const handleDrop = useCallback(() => {
-    dispatch(actions.suiteScriptMapping.changeOrder({ssLinkedConnectionId, integrationId, flowId, mappings: localMappings}));
-  }, [dispatch, flowId, integrationId, localMappings, ssLinkedConnectionId]);
+    dispatch(actions.suiteScriptMapping.changeOrder(localMappings));
+  }, [dispatch, localMappings]);
 
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {

@@ -60,10 +60,8 @@ const MappingSaveButton = props => {
 
   const onSave = useCallback(() => {
     setSaveTriggered(true);
-    dispatch(actions.suiteScriptMapping.save({ ssLinkedConnectionId,
-      integrationId,
-      flowId, }));
-  }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
+    dispatch(actions.suiteScriptMapping.save());
+  }, [dispatch]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,
