@@ -240,6 +240,7 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
     });
   }
 }
+
 export default [
   takeLatest(actionTypes.IMPORT_SAMPLEDATA.REQUEST, requestSampleData),
 ];
