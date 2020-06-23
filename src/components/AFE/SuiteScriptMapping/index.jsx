@@ -330,9 +330,6 @@ const SuiteScriptMapping = (props) => {
         <ButtonGroup
           className={classes.importMappingButtonGroup}>
           <SaveButton
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            integrationId={integrationId}
-            flowId={flowId}
             disabled={!!(disabled)}
             color="primary"
             dataTest="saveImportMapping"
@@ -340,9 +337,6 @@ const SuiteScriptMapping = (props) => {
 
           />
           <SaveButton
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            integrationId={integrationId}
-            flowId={flowId}
             variant="outlined"
             color="secondary"
             dataTest="saveAndCloseImportMapping"

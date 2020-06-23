@@ -39,9 +39,6 @@ const MappingSaveButton = props => {
     color = 'secondary',
     disabled = false,
     dataTest,
-    ssLinkedConnectionId,
-    integrationId,
-    flowId,
     showOnlyOnChanges,
     onClose,
   } = props;
