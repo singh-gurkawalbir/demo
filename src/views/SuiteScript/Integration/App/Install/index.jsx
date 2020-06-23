@@ -131,7 +131,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
         )
       );
     }
-  }, [connectorId, currentStep.installURL, currentStep.isTriggered, currentStep.verifying, dispatch, ssLinkedConnectionId, ssName]);
+  }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
   const verifyNSBundle = useCallback((connectionId) => {
     if (!currentStep.isTriggered && !connectionId) {
@@ -162,7 +162,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
         )
       );
     }
-  }, [connectorId, currentStep.installURL, currentStep.isTriggered, currentStep.verifying, dispatch, ssLinkedConnectionId, ssName]);
+  }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
   const handleStepClick = useCallback((step) => {
     const {
@@ -308,7 +308,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     );
     setSSConnection(null);
     history.goBack();
-  }, [connectorId, currentStep.connectionType, dispatch, history, ssLinkedConnectionId]);
+  }, [connectorId, currentStep, dispatch, history, ssLinkedConnectionId]);
 
   if (error) {
     enqueueSnackbar({
