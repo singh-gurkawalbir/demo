@@ -701,6 +701,12 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
   );
 }
 
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  return fromSuiteScript.installerData(
+    state && state.suiteScript,
+    id
+  );
+}
 export function suiteScriptMappingState(state) {
   return fromSuiteScriptMappings.mappings(
     state && state.suiteScriptMappings
@@ -715,6 +721,6 @@ export function suitesciptMappingsChanged(state) {
 
 export function suitesciptMappingsSaveStatus(state,) {
   return fromSuiteScriptMappings.mappingsSaveStatus(
-    state && state.suiteScriptMappings,
+    state && state.suiteScriptMappings
   );
 }

@@ -164,15 +164,16 @@ export default function JobActionsMenu({
     [enqueueSnackbar]
   );
 
-  function handleMenuClose() {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
   }
 
-  const handleRunStart = () => {
+  const handleRunStart = useCallback(() => {
+    handleMenuClose();
     setActionsToMonitor({
       ...actionsToMonitor,
       runFlow: {
@@ -181,7 +182,7 @@ export default function JobActionsMenu({
       },
     });
     dispatch(actions.job.paging.setCurrentPage(0));
-  };
+  }, []);
 
   function handleActionClick(action) {
     handleMenuClose();

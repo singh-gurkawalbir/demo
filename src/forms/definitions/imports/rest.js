@@ -896,7 +896,7 @@ export default {
       id: 'sampleDataTitle',
       type: 'labeltitle',
       label: 'Do you have sample data?',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'inputMode',
           is: ['records'],
@@ -909,6 +909,16 @@ export default {
     },
     sampleData: {
       fieldId: 'sampleData',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+        {
+          field: 'rest.method',
+          isNot: ['DELETE'],
+        },
+      ],
     },
     dataMappings: {
       formId: 'dataMappings',

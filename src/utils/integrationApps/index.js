@@ -165,6 +165,7 @@ export default {
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
+      step.type === 'ssConnection' ||
       step.sourceConnection ||
       step.type === INSTALL_STEP_TYPES.FORM
     ) {

@@ -11,7 +11,6 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import {
   CONTACT_SALES_MESSAGE,
-  MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
@@ -19,6 +18,7 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -136,12 +136,14 @@ export default function MarketplaceList() {
   }, [connectors.length, dispatch, fetchedCollection, templates.length]);
   const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
-    if (connector.installed) {
+    if (connector._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
+      history.push(`/pg/suitescript/integrationapps/${SUITESCRIPT_CONNECTOR_IDS.salesforce}/setup`);
+    } else if (connector.installed) {
       confirmDialog({
         isPrompt: true,
-        title: 'Multiple Installs',
+        title: 'Confirm multiple installs',
         label: 'Tag',
-        message: MULTIPLE_INSTALLS,
+        message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [
           {
             label: 'Cancel',

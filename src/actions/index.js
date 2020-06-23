@@ -2251,6 +2251,78 @@ const suiteScript = {
         _id,
       }),
   },
+  installer: {
+    initSteps: (connectorId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS, {
+        id: connectorId,
+      }),
+    updateStep: (connectorId, status) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.STEP, {
+        id: connectorId,
+        status,
+      }),
+    updateSSLinkedConnectionId: (connectorId, connectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.LINKED_CONNECTION, {
+        id: connectorId,
+        ssLinkedConnectionId: connectionId,
+      }),
+    updateSSIntegrationId: (connectorId, ssIntegrationId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_INTEGRATION_ID, {
+        id: connectorId,
+        ssIntegrationId,
+      }),
+    updateSSConnection: (connectorId, connectionId, doc) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_CONNECTION, {
+        id: connectorId,
+        connectionId,
+        doc,
+      }),
+    updatePackage: (connectorId, packageType, packageUrl) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE, {
+        id: connectorId,
+        packageType,
+        packageUrl,
+      }),
+    requestPackages: (connectorId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, {
+        connectorId,
+        ssLinkedConnectionId,
+      }),
+    verifyNSBundle: (connectorId, ssLinkedConnectionId, shouldContinue, ssName) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.INTEGRATOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        shouldContinue,
+        ssName
+      }),
+    verifySFBundle: (connectorId, ssLinkedConnectionId, ssName) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.CONNECTOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        ssName
+      }),
+    verifySSConnection: (connectorId, ssLinkedConnectionId, connectionType) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, {
+        connectorId,
+        ssLinkedConnectionId,
+        connectionType,
+      }),
+    verifyPackage: (connectorId, ssLinkedConnectionId, installerFunction) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.PACKAGE, {
+        connectorId,
+        ssLinkedConnectionId,
+        installerFunction,
+      }),
+    failed: (connectorId, error) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.FAILED, {
+        id: connectorId,
+        error,
+      }),
+    clearSteps: connectorId =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.CLEAR_STEPS, {
+        id: connectorId,
+      }),
+  },
 };
 const editorSampleData = {
   request: ({

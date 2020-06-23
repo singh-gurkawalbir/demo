@@ -42,14 +42,14 @@ export default function UninstallSection({ storeId, integrationId }) {
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
-      title: 'Uninstall',
-      message: 'Are you sure you want to uninstall',
+      title: 'Confirm uninstall',
+      message: 'Are you sure you want to uninstall?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Uninstall',
           onClick: () => {
             if (
               integration.settings &&

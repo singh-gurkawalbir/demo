@@ -64,7 +64,6 @@ export default function AttachFlows({ onClose, integrationId }) {
   ]);
 
   return (
-    // Todo (Ashok): Onclose is not working
     <ModalDialog show maxWidth={false} onClose={onClose}>
       <div>Attach flows</div>
       <div>
