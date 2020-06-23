@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
   medium: {
     width: 660,
   },
+  default: {
+    width: 824,
+  },
   large: {
     width: 995,
   },
@@ -89,7 +92,7 @@ const useStyles = makeStyles(theme => ({
 export default function RightDrawer({
   title,
   path,
-  width = 'small',
+  width = 'default',
   height = 'short',
   type = 'legacy',
   hideBackButton = false,

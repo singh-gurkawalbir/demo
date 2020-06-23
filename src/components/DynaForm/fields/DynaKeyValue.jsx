@@ -31,6 +31,12 @@ const useStyles = makeStyles(theme => ({
   dynaValueField: {
     marginLeft: theme.spacing(0.5),
   },
+  dynaKeyValueLabelWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-start',
+
+  }
 }));
 
 /**
@@ -121,8 +127,10 @@ export function KeyValueComponent(props) {
       disabled={disabled}
       data-test={dataTest}
       className={classes.container}>
-      <FormLabel className={classes.label}>{label}</FormLabel>
-      <FieldHelp {...props} />
+      <div className={classes.dynaKeyValueLabelWrapper}>
+        <FormLabel className={classes.label}>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
