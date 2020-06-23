@@ -2401,7 +2401,7 @@ export default {
     type: 'select',
     label: 'Concurrency level',
     defaultValue: r =>
-      (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
+      r && r.salesforce && r.salesforce.concurrencyLevel ? r && r.salesforce && r.salesforce.concurrencyLevel : 5,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
