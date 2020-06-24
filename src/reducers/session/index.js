@@ -698,6 +698,13 @@ export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, 
   );
 }
 
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromSuiteScript.netsuiteAccountHasSuiteScriptIntegrations(
+    state && state.suiteScript,
+    account
+  );
+}
+
 export function suiteScriptIntegrationAppInstallerData(state, id) {
   return fromSuiteScript.installerData(
     state && state.suiteScript,

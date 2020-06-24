@@ -6,9 +6,9 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
@@ -30,12 +30,14 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
 
   return (
     <div className={classes.root}>
+      <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
       <LoadSuiteScriptResources
         required
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
-        resources="flows">
+        resources="flows"
+      >
         <CeligoTable
           data={flows}
           {...metadata}

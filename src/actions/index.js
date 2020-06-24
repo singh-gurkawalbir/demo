@@ -778,7 +778,7 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+    initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
@@ -860,7 +860,7 @@ const integrationApp = {
       }),
   },
   uninstaller2: {
-    init: (integrationId) =>
+    init: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
         id: integrationId,
       }),
@@ -874,7 +874,7 @@ const integrationApp = {
         id: integrationId,
         uninstallSteps,
       }),
-    requestSteps: (integrationId) =>
+    requestSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
         id: integrationId,
       }),
@@ -1102,6 +1102,14 @@ const user = {
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+      addLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
+      deleteLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
     },
   },
   preferences: {
@@ -1971,6 +1979,20 @@ const suiteScript = {
         }),
         scope,
       }),
+    commitStaged: (
+      id,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, {
+        resourceType,
+        id,
+        scope,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
     clearStaged: (
       id,
       scope,
@@ -2172,30 +2194,44 @@ const suiteScript = {
         flowId,
         _id,
       }),
-    enable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    enable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.ENABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    disable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    disable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DISABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
-      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
-        { onOffInProgress, ssLinkedConnectionId, _id }),
-    delete: ({ssLinkedConnectionId, integrationId, _id}) =>
+    isOnOffActionInprogress: ({ onOffInProgress, ssLinkedConnectionId, _id }) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+        onOffInProgress,
+        ssLinkedConnectionId,
+        _id,
+      }),
+    delete: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DELETE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
   },
+  account: {
+    checkHasIntegrations: connectionId =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.CHECK_HAS_INTEGRATIONS, {
+        connectionId,
+      }),
+    receivedHasIntegrations: (account, hasIntegrations) =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.RECEIVED_HAS_INTEGRATIONS, {
+        account,
+        hasIntegrations,
+      }),
+  },
   installer: {
-    initSteps: (connectorId) =>
+    initSteps: connectorId =>
       action(actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS, {
         id: connectorId,
       }),
@@ -2236,13 +2272,13 @@ const suiteScript = {
         connectorId,
         ssLinkedConnectionId,
         shouldContinue,
-        ssName
+        ssName,
       }),
     verifySFBundle: (connectorId, ssLinkedConnectionId, ssName) =>
       action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.CONNECTOR_BUNDLE, {
         connectorId,
         ssLinkedConnectionId,
-        ssName
+        ssName,
       }),
     verifySSConnection: (connectorId, ssLinkedConnectionId, connectionType) =>
       action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, {

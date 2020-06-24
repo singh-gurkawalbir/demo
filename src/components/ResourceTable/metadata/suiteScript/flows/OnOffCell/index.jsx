@@ -7,7 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
     marginTop: theme.spacing(1),
   },
@@ -16,17 +16,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function OnOffCell({
-  ssLinkedConnectionId,
-  flow,
-}) {
+export default function OnOffCell({ ssLinkedConnectionId, flow }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { defaultConfirmDialog } = useConfirmDialog();
   const flowName = flow.ioFlowName || flow.name || `Unnamed (id: ${flow._id})`;
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
   const onOffInProgress = useSelector(
-    state => selectors.isSuiteScriptFlowOnOffInProgress(state, {ssLinkedConnectionId, _id: flow._id}).onOffInProgress
+    state =>
+      selectors.isSuiteScriptFlowOnOffInProgress(state, {
+        ssLinkedConnectionId,
+        _id: flow._id,
+      }).onOffInProgress
   );
   const hasManagePermissions = useSelector(
     state =>
@@ -37,7 +38,7 @@ export default function OnOffCell({
     defaultConfirmDialog(
       `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
-        dispatch(actions.suiteScript.flow.isOnOffActionInprogress({ onOffInProgress: true, ssLinkedConnectionId, _id: flow._id}));
+        dispatch(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId, _id: flow._id}));
         setOnOffInProgressStatus(true);
         if (flow.disabled) {
           dispatch(actions.suiteScript.flow.enable({ssLinkedConnectionId, integrationId: flow._integrationId, _id: flow._id}));

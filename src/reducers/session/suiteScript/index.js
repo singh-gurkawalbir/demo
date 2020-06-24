@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import flows, * as fromFlows from './flows';
+import account, * as fromAccount from './account';
 import installer, * as fromInstaller from './installer';
 
 export default combineReducers({
   resourceForm,
   flows,
-  installer
+  account,
+  installer,
 });
 
 export function resourceFormState(
@@ -41,6 +43,10 @@ export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
     state && state.flows,
     { ssLinkedConnectionId, _id }
   );
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromAccount.hasIntegrations(state && state.account, account);
 }
 
 export function installerData(state, id) {
