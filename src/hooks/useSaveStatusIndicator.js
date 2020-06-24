@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import { commStatusPerPath } from '../reducers';
 
 export default function useSaveStatusIndicator(props) {
-  const { path, onSave, disabled = false, onClose } = props;
+  const { path, method = 'put', onSave, disabled = false, onClose } = props;
   const [disableSave, setDisableSave] = useState(disabled);
   const [saveInProgress, setSaveInProgress] = useState(false);
   const [closeOnSuccess, setCloseOnSuccess] = useState(false);
-  const commStatus = useSelector(state => commStatusPerPath(state, path, 'put'));
+  const commStatus = useSelector(state => commStatusPerPath(state, path, method));
   const submitHandler = useCallback(
     (closeOnSave) => (values) => {
       onSave(values);
