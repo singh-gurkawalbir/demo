@@ -26,11 +26,10 @@ const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   fileInput: { display: 'none' },
   spinner: {
-    left: '0px',
-    right: '0px',
-    top: '60px',
-    bottom: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
+    left: 0,
+    right: 0,
+    top: -40,
+    bottom: 0,
     width: '100%',
     position: 'absolute',
     textAlign: 'center',
@@ -39,12 +38,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     height: 'inherit',
     zIndex: '3',
-    '& div': {
-      color: theme.palette.background.paper,
-    },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
     },
   },
   btnsWrappper: {

@@ -8,11 +8,11 @@ import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   spinner: {
-    left: '0px',
-    right: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
+    left: 0,
+    right: 0,
+    top: -40,
     width: '100%',
     position: 'absolute',
     textAlign: 'center',
@@ -20,13 +20,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     height: 'inherit',
-    '& div': {
-      width: '20px !important',
-      height: '20px !important',
-    },
     '& span': {
       marginLeft: '10px',
-      color: theme.palette.background.paper,
     },
   },
 }));
@@ -117,7 +112,7 @@ export default function ErrorDrawer({
 
       {!job ? (
         <div className={classes.spinner}>
-          <Spinner /> <span>Loading child jobs...</span>
+          <Spinner size={20} /> <span>Loading child jobs...</span>
         </div>
       ) : (
         <JobErrorTable
