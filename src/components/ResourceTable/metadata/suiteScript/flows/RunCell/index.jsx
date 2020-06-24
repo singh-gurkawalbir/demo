@@ -7,7 +7,7 @@ import getRoutePath from '../../../../../../utils/routePaths';
 
 export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
   const history = useHistory();
-  const integrationAppName = useSelector((state) => {
+  const integrationAppName = useSelector(state => {
     const integration = selectors.suiteScriptResource(state, {
       resourceType: 'integrations',
       id: flow._integrationId,
@@ -19,31 +19,13 @@ export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
     if (onRunStart) {
       onRunStart();
     } else if (integrationAppName) {
-      history.push(
-        getRoutePath(
-          `/suitescript/${ssLinkedConnectionId}/integrationapps/${integrationAppName}/${flow._integrationId}/dashboard`
-        )
-      );
+      history.push(getRoutePath(`/suitescript/${ssLinkedConnectionId}/integrationapps/${integrationAppName}/${flow._integrationId}/dashboard`));
     } else {
-      history.push(
-        getRoutePath(
-          `/suitescript/${ssLinkedConnectionId}/integrations/${flow._integrationId}/dashboard`
-        )
-      );
+      history.push(getRoutePath(`/suitescript/${ssLinkedConnectionId}/integrations/${flow._integrationId}/dashboard`));
     }
-  }, [
-    onRunStart,
-    integrationAppName,
-    history,
-    ssLinkedConnectionId,
-    flow._integrationId,
-  ]);
+  }, [onRunStart, integrationAppName, history, ssLinkedConnectionId, flow._integrationId]);
 
   return (
-    <RunFlowButton
-      ssLinkedConnectionId={ssLinkedConnectionId}
-      flow={flow}
-      onRunStart={handleOnRunStart}
-    />
+    <RunFlowButton ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} onRunStart={handleOnRunStart} />
   );
 }

@@ -41,7 +41,7 @@ export function resourceFormSaveProcessTerminated(
 export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromFlows.isOnOffInProgress(
     state && state.flows,
-    { ssLinkedConnectionId, _id}
+    { ssLinkedConnectionId, _id }
   );
 }
 

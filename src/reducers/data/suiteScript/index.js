@@ -187,7 +187,7 @@ export default (
                 draft[ssLinkedConnectionId].flows = [];
               }
 
-              collection.forEach((flow) => {
+              collection.forEach(flow => {
                 const flowId = generateUniqueFlowId(flow._id, flow.type);
                 const index = draft[ssLinkedConnectionId].flows.findIndex(
                   f => f.type === flow.type && f._id === flowId
@@ -268,9 +268,7 @@ export default (
             draft[ssLinkedConnectionId] &&
             draft[ssLinkedConnectionId][resourceType]
           ) {
-            draft[ssLinkedConnectionId][resourceType] = draft[
-              ssLinkedConnectionId
-            ][resourceType].filter(r => r._id !== resourceId);
+            draft[ssLinkedConnectionId][resourceType] = draft[ssLinkedConnectionId][resourceType].filter(r => r._id !== resourceId);
           }
         }
         break;

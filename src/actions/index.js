@@ -1004,8 +1004,7 @@ const agent = {
   changeToken: id => action(actionTypes.AGENT.TOKEN_CHANGE, { id }),
   tokenReceived: agentToken =>
     action(actionTypes.AGENT.TOKEN_RECEIVED, { agentToken }),
-  maskToken: agentToken =>
-    action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
+  maskToken: agentToken => action(actionTypes.AGENT.TOKEN_MASK, { agentToken }),
   downloadInstaller: (osType, id) =>
     action(actionTypes.AGENT.DOWNLOAD_INSTALLER, { osType, id }),
 };
@@ -1049,8 +1048,7 @@ const stack = {
   generateToken: id => action(actionTypes.STACK.TOKEN_GENERATE, { id }),
   tokenReceived: stackToken =>
     action(actionTypes.STACK.TOKEN_RECEIVED, { stackToken }),
-  maskToken: stackToken =>
-    action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
+  maskToken: stackToken => action(actionTypes.STACK.TOKEN_MASK, { stackToken }),
   inviteStackShareUser: (email, stackId) =>
     action(actionTypes.STACK.SHARE_USER_INVITE, { email, stackId }),
   toggleUserStackSharing: userId =>
@@ -1310,7 +1308,8 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+
 };
 const searchCriteria = {
   init: (id, value) =>

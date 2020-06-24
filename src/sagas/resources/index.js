@@ -594,7 +594,7 @@ export function* getResourceCollection({ resourceType }) {
         path: '/shared/stacks',
       });
 
-      sharedStacks = sharedStacks.map((stack) => ({ ...stack, shared: true }));
+      sharedStacks = sharedStacks.map(stack => ({ ...stack, shared: true }));
 
       if (!collection) collection = sharedStacks;
       else collection = [...collection, ...sharedStacks];

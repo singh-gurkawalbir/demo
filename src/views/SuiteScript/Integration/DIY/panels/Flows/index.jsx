@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
-  const flows = useSelector((state) =>
+  const flows = useSelector(state =>
     selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',
       integrationId,

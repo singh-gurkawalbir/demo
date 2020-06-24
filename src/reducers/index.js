@@ -381,7 +381,7 @@ export function connectorFieldOptions(
     options:
       (data &&
         data.options &&
-        data.options.map((option) => ({
+        data.options.map(option => ({
           value: option[0],
           label: option[1],
         }))) ||
@@ -2103,9 +2103,9 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   const { steps: uninstallSteps, isFetched } = uninstallData;
   if (isFetched) {
     if (!uninstallSteps || uninstallSteps.length === 0) return true;
-    return !uninstallSteps.find(s =>
+    return !(uninstallSteps.find(s =>
       !s.completed
-    );
+    ));
   }
   return false;
 }

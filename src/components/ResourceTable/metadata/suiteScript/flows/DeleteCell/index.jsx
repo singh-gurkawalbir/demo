@@ -8,11 +8,7 @@ import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import getRoutePath from '../../../../../../utils/routePaths';
 
-export default function DeleteCell({
-  ssLinkedConnectionId,
-  flow,
-  isFlowBuilderView,
-}) {
+export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderView}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { defaultConfirmDialog } = useConfirmDialog();
@@ -43,17 +39,16 @@ export default function DeleteCell({
     ssLinkedConnectionId,
   ]);
   const hasManagePermissions = useSelector(
-    (state) =>
+    state =>
       selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)
         .edit
   );
 
   return (
     <IconButtonWithTooltip
-      tooltipProps={{ title: 'Delete', placement: 'bottom' }}
+      tooltipProps={{title: 'Delete', placement: 'bottom'}}
       onClick={handleClick}
-      disabled={!hasManagePermissions}
-    >
+      disabled={!hasManagePermissions}>
       <TrashIcon />
     </IconButtonWithTooltip>
   );

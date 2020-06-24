@@ -7,7 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
     marginTop: theme.spacing(1),
   },
@@ -23,14 +23,14 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
   const flowName = flow.ioFlowName || flow.name || `Unnamed (id: ${flow._id})`;
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
   const onOffInProgress = useSelector(
-    (state) =>
+    state =>
       selectors.isSuiteScriptFlowOnOffInProgress(state, {
         ssLinkedConnectionId,
         _id: flow._id,
       }).onOffInProgress
   );
   const hasManagePermissions = useSelector(
-    (state) =>
+    state =>
       selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)
         .edit
   );
@@ -38,42 +38,16 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
     defaultConfirmDialog(
       `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
       () => {
-        dispatch(
-          actions.suiteScript.flow.isOnOffActionInprogress({
-            onOffInProgress: true,
-            ssLinkedConnectionId,
-            _id: flow._id,
-          })
-        );
+        dispatch(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId, _id: flow._id}));
         setOnOffInProgressStatus(true);
         if (flow.disabled) {
-          dispatch(
-            actions.suiteScript.flow.enable({
-              ssLinkedConnectionId,
-              integrationId: flow._integrationId,
-              _id: flow._id,
-            })
-          );
+          dispatch(actions.suiteScript.flow.enable({ssLinkedConnectionId, integrationId: flow._integrationId, _id: flow._id}));
         } else {
-          dispatch(
-            actions.suiteScript.flow.disable({
-              ssLinkedConnectionId,
-              integrationId: flow._integrationId,
-              _id: flow._id,
-            })
-          );
+          dispatch(actions.suiteScript.flow.disable({ssLinkedConnectionId, integrationId: flow._integrationId, _id: flow._id}));
         }
       }
     );
-  }, [
-    defaultConfirmDialog,
-    flow.disabled,
-    flow._integrationId,
-    flow._id,
-    flowName,
-    dispatch,
-    ssLinkedConnectionId,
-  ]);
+  }, [defaultConfirmDialog, flow.disabled, flow._integrationId, flow._id, flowName, dispatch, ssLinkedConnectionId]);
 
   useEffect(() => {
     if (!onOffInProgress) {

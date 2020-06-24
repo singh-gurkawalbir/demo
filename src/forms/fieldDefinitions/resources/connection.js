@@ -47,7 +47,7 @@ export default {
     id: 'application',
     type: 'text',
     label: 'Application',
-    defaultValue: r => (r && r.assistant ? r.assistant : r.type),
+    defaultValue: r => r && r.assistant ? r.assistant : r.type,
     defaultDisabled: true,
   },
   assistant: {
@@ -487,7 +487,8 @@ export default {
   'rest.authScheme': {
     type: 'select',
     label: 'Scheme',
-    defaultValue: r => r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
+    defaultValue: r =>
+      r && r.rest && r.rest.authScheme ? r.rest.authScheme : 'Bearer',
     options: [
       {
         items: [
@@ -2461,7 +2462,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
-    visible: (r) => !(r && r._connectorId),
+    visible: r => !(r && r._connectorId),
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2469,7 +2470,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
-    visible: (r) => !(r && r._connectorId),
+    visible: r => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

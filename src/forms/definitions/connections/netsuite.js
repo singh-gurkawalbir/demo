@@ -91,8 +91,8 @@ export default {
           ? [
             {
               field: 'netsuite.authType',
-              is: ['token-auto']
-            }
+              is: ['token-auto'],
+            },
           ]
           : [];
       },
@@ -183,7 +183,7 @@ export default {
         label: 'General',
         fields: [
           'name',
-          'application'
+          'application',
         ],
       },
       {
