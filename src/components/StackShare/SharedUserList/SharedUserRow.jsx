@@ -79,7 +79,7 @@ export default function SharedUserRow({ user }) {
         {user.accepted && (
           <CeligoSwitch
             data-test="disableUser"
-            enabled={!user.disabled}
+            checked={!user.disabled}
             onChange={handleToggleSharingClick}
           />
         )}
