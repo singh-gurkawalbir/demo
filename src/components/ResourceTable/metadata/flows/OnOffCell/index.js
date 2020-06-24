@@ -153,7 +153,7 @@ export default function OnOffCell({
           className={classes.celigoSwitchOnOff}
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
-          enabled={!disabled}
+          checked={!disabled}
           onChange={handleDisableClick}
       />
       </RemoveMargin>
