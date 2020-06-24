@@ -6,7 +6,7 @@ import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, multiStepSaveResourceTypes } from '../../utils/resource';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 
@@ -109,6 +109,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
+  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
     if (actions) return actions;
@@ -120,13 +121,13 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       } else {
         actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
       }
-    } else if (!isNew) {
+    } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
       actionButtons = ['save', 'saveandclose', 'cancel'];
     } else {
       actionButtons = ['saveandclose', 'cancel'];
     }
     return actionButtons.map(id => ({id}));
-  }, [actions, connectionType, isNew, resourceType]);
+  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {
@@ -158,7 +159,6 @@ export const FormStateManager = props => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.submitComplete]);
-
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);

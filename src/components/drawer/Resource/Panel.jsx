@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, multiStepSaveResourceTypes } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
@@ -233,13 +233,7 @@ export default function Panel(props) {
 
     return assistant || adaptorType;
   });
-  const isMultiStepSaveResource = [
-    'imports',
-    'exports',
-    'connections',
-    'pageGenerator',
-    'pageProcessor',
-  ].includes(resourceType);
+  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
 
   function lookupProcessorResourceType() {
@@ -317,9 +311,20 @@ export default function Panel(props) {
       // so move to step 2 of the form...
 
       dispatch(actions.resource.created(resourceId, id));
+      // Incase of a resource with single step save, when skipFormClose is passed
+      // redirect to the updated URL with new resourceId as we do incase of edit - check else part
+      if (skipFormClose && !isMultiStepSaveResource) {
+        return props.history.replace(
+          generatePath(match.path, {
+            id: newResourceId || id,
+            resourceType,
+            operation,
+          })
+        );
+      }
+      // In other cases , close the drawer
       onClose();
     } else {
-      // For web hook generate URL case
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
       if (skipFormClose) {

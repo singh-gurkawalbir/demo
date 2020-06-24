@@ -19,7 +19,7 @@ const SaveAndCloseFileDefinitionButton = props => {
     resourceId,
     flowId,
     disabled = false,
-    skipClose = false,
+    skipCloseOnSave = false,
     disableSaveOnClick,
     setDisableSaveOnClick,
   } = props;
@@ -46,7 +46,7 @@ const SaveAndCloseFileDefinitionButton = props => {
               values,
             },
             flowId,
-            skipClose,
+            skipCloseOnSave,
           )
         );
         setIsSaving(true);
@@ -60,7 +60,7 @@ const SaveAndCloseFileDefinitionButton = props => {
         });
       }
     },
-    [dispatch, enquesnackbar, flowId, resourceId, resourceType, skipClose, setDisableSaveOnClick]
+    [dispatch, enquesnackbar, flowId, resourceId, resourceType, skipCloseOnSave, setDisableSaveOnClick]
   );
 
   useEffect(() => {

@@ -93,13 +93,20 @@ const TestAndSaveButton = props => {
     label,
     disabled,
     disableSaveOnClick,
-    setDisableSaveOnClick
+    setDisableSaveOnClick,
+    skipCloseOnSave
   } = props;
   const dispatch = useDispatch();
   const handleSaveForm = useCallback(
     values =>
-      dispatch(actions.resourceForm.submit(resourceType, resourceId, values)),
-    [dispatch, resourceId, resourceType]
+      dispatch(actions.resourceForm.submit(
+        resourceType,
+        resourceId,
+        values,
+        null,
+        skipCloseOnSave
+      )),
+    [dispatch, resourceId, resourceType, skipCloseOnSave]
   );
   const handleTestConnection = useCallback(values =>
     dispatch(actions.resource.connections.test(resourceId, values)), [dispatch, resourceId]);

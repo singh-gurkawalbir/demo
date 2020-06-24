@@ -21,7 +21,7 @@ const SaveButton = props => {
     match,
     disabled = false,
     isGenerate = false,
-    skipClose = false,
+    skipCloseOnSave = false,
     flowId,
     disableSaveOnClick,
     setDisableSaveOnClick,
@@ -38,13 +38,13 @@ const SaveButton = props => {
           resourceId,
           values,
           match,
-          skipClose,
+          skipCloseOnSave,
           isGenerate,
           flowId
         )
       );
     },
-    [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipClose]
+    [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
