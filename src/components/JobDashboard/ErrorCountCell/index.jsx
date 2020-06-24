@@ -23,7 +23,6 @@ export default function ErrorCountCell({count, isError, onClick, isJobInProgress
     <TableCell
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={onClick}
       className={className}>
       {showLink && !isJobInProgress && count > 0 ? (
         <Button
