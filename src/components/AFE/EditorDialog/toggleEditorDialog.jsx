@@ -268,11 +268,11 @@ export default function ToggleEditorDialog(props) {
           flowId={flowId}
         />
         <EditorSaveButton
-          key={activeEditorId}
+          key={`${activeEditorId}-close`}
           id={activeEditorId}
           variant="outlined"
-          color="primary"
-          dataTest="saveEditor"
+          color="secondary"
+          dataTest="saveAndCloseEditor"
           disabled={disableSave}
           onClose={handleClose}
           submitButtonLabel="Save & close"

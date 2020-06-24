@@ -237,8 +237,8 @@ export default function EditorDrawer({
             <EditorSaveButton
               id={editorId}
               variant="outlined"
-              color="primary"
-              dataTest="saveEditor"
+              color="secondary"
+              dataTest="saveAndCloseEditor"
               disabled={disableSave}
               onClose={handleSave}
               submitButtonLabel="Save & close"
