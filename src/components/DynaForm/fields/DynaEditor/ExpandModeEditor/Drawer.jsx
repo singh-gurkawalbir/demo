@@ -72,7 +72,7 @@ function ActionsFooter(props) {
               {(isLoading && !closeOnSave) ? 'Saving' : 'Save'}
             </Button>
             <Button
-              data-test="saveContent"
+              data-test="saveAndCloseContent"
               className={classes.action}
               disabled={disabled}
               onClick={handleSaveAndClose}
