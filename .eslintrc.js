@@ -11,7 +11,10 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: ['plugin:react/recommended', 'airbnb'],
+  extends: [
+    'plugin:react/recommended',
+    'airbnb',
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -24,7 +27,10 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: 'module',
   },
-  plugins: ['react', 'react-hooks'],
+  plugins: [
+    'react',
+    'react-hooks'
+  ],
   rules: {
     // Override AirBnB's configuration of 'always', since they only set that value due to
     // babel-preset-airbnb not supporting class properties, whereas @neutrinojs/react does.
@@ -34,15 +40,15 @@ module.exports = {
     'new-cap': 'off',
     'no-invalid-this': 'off',
     'object-curly-spacing': 'off',
-    semi: 'error',
+    'semi': 'error',
     'no-unused-expressions': 'off',
     'babel/no-invalid-this': airbnbBaseBestPractices['no-invalid-this'],
     // // The worker/serviceworker envs above don't properly respect
     // // the `self` global with the Airbnb preset rules
     // // https://github.com/airbnb/javascript/issues/1632
-    'no-restricted-globals': airbnbBaseRules['no-restricted-globals'].filter(
-      (global) => global !== 'self'
-    ),
+    'no-restricted-globals': airbnbBaseRules[
+      'no-restricted-globals'
+    ].filter(global => global !== 'self'),
     // Prefer double or quotes in JSX attributes
     // http://eslint.org/docs/rules/jsx-quotes
     'jsx-quotes': ['error', 'prefer-double'],
@@ -103,7 +109,10 @@ module.exports = {
     'react/require-default-props': 'off',
     // The following rules are set by our UI team
     'max-len': 'off',
-    'react/jsx-filename-extension': ['warn', { extensions: ['.js', '.jsx'] }],
+    'react/jsx-filename-extension': [
+      'warn',
+      { extensions: ['.js', '.jsx'] },
+    ],
     'react/no-did-mount-set-state': 'off',
     'no-underscore-dangle': 'off',
     'react-hooks/rules-of-hooks': 'error',
@@ -123,18 +132,18 @@ module.exports = {
     'implicit-arrow-linebreak': 'off',
     'react/destructuring-assignment': 'off',
     'import/no-extraneous-dependencies': [
-      'error',
+      'error', 
       {
-        devDependencies: [
+        'devDependencies': [
           '*.config.js',
           'jest/*',
           '**/test/**/*.js',
           '**/test.js',
           '**/test.*.js',
           '**/*.test.js',
-          '**/*.spec.js',
-        ],
-      },
+          '**/*.spec.js'
+        ]
+      }
     ],
     'no-shadow': 'off',
     'no-confusing-arrow': 'off',
