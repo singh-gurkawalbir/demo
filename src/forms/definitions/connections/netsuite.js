@@ -93,6 +93,10 @@ export default {
               field: 'netsuite.authType',
               is: ['token-auto'],
             },
+            {
+              field: 'netsuite.authType',
+              is: ['token'],
+            },
           ]
           : [];
       },

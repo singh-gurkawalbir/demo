@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import { makeStyles, Button, TableCell, Tooltip } from '@material-ui/core';
+import { makeStyles, Button, TableCell } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   errorButton: {
@@ -26,16 +26,14 @@ export default function ErrorCountCell({count, isError, onClick, isJobInProgress
       onClick={onClick}
       className={className}>
       {showLink && !isJobInProgress && count > 0 ? (
-        <Tooltip title={`${count} errors`}>
-          <Button
-            data-test={`view-job-${isError ? 'error' : 'resolved'}`}
-            variant="text"
-            color="primary"
-            className={isError ? classes.errorButton : undefined}
-            onClick={onClick}>
-            View
-          </Button>
-        </Tooltip>
+        <Button
+          data-test={`view-job-${isError ? 'error' : 'resolved'}`}
+          variant="text"
+          color="primary"
+          className={isError ? classes.errorButton : undefined}
+          onClick={onClick}>
+          View
+        </Button>
       ) :
         count}
     </TableCell>
