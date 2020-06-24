@@ -276,9 +276,9 @@ export default function ImportMapping(props) {
       }
       let value;
       if (sObjectType) {
-        value = meta.id
+        value = meta.id;
       } else if (recordType) {
-        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
       }
       if (lastModifiedRowKey && value) {
         dispatch(
