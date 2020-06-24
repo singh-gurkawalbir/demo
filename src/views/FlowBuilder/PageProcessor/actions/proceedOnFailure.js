@@ -104,6 +104,7 @@ function ProceedOnFailureDialog(props) {
           <DynaSubmit
             disabled={disableSave}
             data-test="saveProceedOnFailure"
+            color="secondary"
             onClick={submitHandler(true)}>
             {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>

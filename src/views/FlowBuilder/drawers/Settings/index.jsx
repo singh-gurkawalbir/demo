@@ -194,9 +194,7 @@ export default function SettingsDrawer({
             resourceType={resourceType}
             resourceId={resourceId}
             onClick={validateAndSubmit()}
-            disabled={disableSave}
-            color="primary"
-            variant="outlined">
+            disabled={disableSave}>
             {defaultLabels.saveLabel}
           </DynaSubmit>
           <DynaSubmit
@@ -204,8 +202,7 @@ export default function SettingsDrawer({
             resourceId={resourceId}
             onClick={validateAndSubmit(true)}
             disabled={disableSave}
-            color="primary"
-            variant="outlined">
+            color="secondary">
             {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button onClick={handleClose} variant="text" color="primary">
