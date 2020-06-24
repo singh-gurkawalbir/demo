@@ -64,8 +64,8 @@ function ActionsFooter(props) {
           <>
             <Button
               data-test="saveContent"
-              className={classes.action}
               disabled={disabled}
+              className={classes.action}
               onClick={handleSave}
               variant="outlined"
               color="primary">
