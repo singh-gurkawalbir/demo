@@ -182,7 +182,7 @@ export default function JobActionsMenu({
       },
     });
     dispatch(actions.job.paging.setCurrentPage(0));
-  }, []);
+  }, [actionsToMonitor, dispatch, handleMenuClose, job._flowId]);
 
   function handleActionClick(action) {
     handleMenuClose();
