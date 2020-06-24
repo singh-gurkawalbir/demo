@@ -39,10 +39,10 @@ export function resourceFormSaveProcessTerminated(
 }
 
 export function isFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
-  return fromFlows.isOnOffInProgress(state && state.flows, {
-    ssLinkedConnectionId,
-    _id,
-  });
+  return fromFlows.isOnOffInProgress(
+    state && state.flows,
+    { ssLinkedConnectionId, _id}
+  );
 }
 
 export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {

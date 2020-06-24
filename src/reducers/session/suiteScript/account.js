@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 export default (state = {}, action) => {
   const { type, account, hasIntegrations } = action;
 
-  return produce(state, (draft) => {
+  return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.ACCOUNT.RECEIVED_HAS_INTEGRATIONS:
         draft[account.toUpperCase()] = { hasIntegrations };

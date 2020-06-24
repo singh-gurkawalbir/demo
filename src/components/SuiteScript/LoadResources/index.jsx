@@ -11,7 +11,7 @@ export default function LoadResources({
   required,
 }) {
   const dispatch = useDispatch();
-  const resourceStatus = useSelector((state) => {
+  const resourceStatus = useSelector(state => {
     const requiredStatus = (typeof resources === 'string'
       ? resources.split(',')
       : resources
@@ -40,7 +40,7 @@ export default function LoadResources({
 
   useEffect(() => {
     if (!isAllDataReady) {
-      resourceStatus.forEach((resource) => {
+      resourceStatus.forEach(resource => {
         if (!resource.hasData) {
           let path = `suitescript/connections/${ssLinkedConnectionId}/`;
 

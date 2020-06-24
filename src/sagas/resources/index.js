@@ -106,13 +106,7 @@ export function* linkUnlinkSuiteScriptIntegrator(connectionId, link) {
   }
 }
 
-export function* commitStagedChanges({
-  resourceType,
-  id,
-  scope,
-  options,
-  context,
-}) {
+export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -192,9 +186,7 @@ export function* commitStagedChanges({
   ) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment
-    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox')) {
-      merged.sandbox = isSandbox;
-    }
+    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox')) merged.sandbox = isSandbox;
   }
 
   let updated;
@@ -205,9 +197,7 @@ export function* commitStagedChanges({
   // remove this code and let all docs be built on HTTP adaptor.
   if (
     // if it matches integrations/<id>/connections when creating a connection
-    (resourceType === 'connections' ||
-      (resourceType.startsWith('integrations/') &&
-        resourceType.endsWith('connnections'))) &&
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
     merged.assistant &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
@@ -311,15 +301,7 @@ export function* commitStagedChanges({
   yield put(actions.resource.received(resourceType, updated));
 
   if (!isNew) {
-    yield put(
-      actions.resource.updated(
-        resourceType,
-        updated._id,
-        master,
-        patch,
-        context
-      )
-    );
+    yield put(actions.resource.updated(resourceType, updated._id, master, patch, context));
   }
 
   if (options && options.action === 'flowEnableDisable') {
@@ -624,9 +606,7 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       if (!collection) collection = invitedTransfers;
-      else if (invitedTransfers) {
-        collection = [...collection, ...invitedTransfers];
-      }
+      else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));

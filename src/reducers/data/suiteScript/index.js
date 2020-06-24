@@ -35,7 +35,7 @@ export default (
     return state;
   }
 
-  return produce(state, (draft) => {
+  return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.PAGING.JOB.SET_CURRENT_PAGE:
         {
@@ -73,7 +73,7 @@ export default (
         {
           const { job } = action;
           const jobIndex = state.jobs.findIndex(
-            (j) => j._id === job._id && j.type === job.type
+            j => j._id === job._id && j.type === job.type
           );
 
           if (jobIndex > -1) {
@@ -98,7 +98,7 @@ export default (
         {
           const { collection = emptyList } = action;
 
-          draft.jobErrors = collection.filter((je) => !je.resolved);
+          draft.jobErrors = collection.filter(je => !je.resolved);
         }
 
         break;
@@ -108,7 +108,7 @@ export default (
           const { selectedErrorIds } = action;
 
           if (selectedErrorIds && selectedErrorIds.length > 0) {
-            draft.jobErrors = draft.jobErrors.map((je) => {
+            draft.jobErrors = draft.jobErrors.map(je => {
               if (selectedErrorIds.includes(je._id)) {
                 return { ...je, resolved: true };
               }
@@ -125,8 +125,7 @@ export default (
           const { collection = [] } = action;
 
           if (resourceType.startsWith('suitescript/connections/')) {
-            const ssLinkedConnectionId = resourceType.split('/')[2];
-            const integrationId = resourceType.split('/')[4];
+            const [, , ssLinkedConnectionId, , integrationId] = resourceType.split('/');
 
             if (!draft[ssLinkedConnectionId]) {
               draft[ssLinkedConnectionId] = { tiles: [] };
@@ -134,7 +133,7 @@ export default (
 
             if (resourceType.endsWith('/tiles')) {
               const tiles = parseTiles(collection);
-              draft[ssLinkedConnectionId].tiles = tiles.map((tile) => ({
+              draft[ssLinkedConnectionId].tiles = tiles.map(tile => ({
                 ...tile,
                 ssLinkedConnectionId,
               }));
@@ -143,13 +142,12 @@ export default (
                 draft[ssLinkedConnectionId].integrations = [];
               }
 
-              tiles.forEach((tile) => {
+              tiles.forEach(tile => {
                 const integration = {
                   _id: tile._integrationId,
                   name: tile.name,
                   displayName: tile.displayName,
-                  isNotEditable:
-                    tile.isNotEditable || tile.name !== tile.displayName,
+                  isNotEditable: tile.isNotEditable || (tile.name !== tile.displayName),
                 };
 
                 if (tile._connectorId) {
@@ -160,7 +158,7 @@ export default (
 
                 const index = draft[
                   ssLinkedConnectionId
-                ].integrations.findIndex((i) => i._id === integration._id);
+                ].integrations.findIndex(i => i._id === integration._id);
 
                 if (index > -1) {
                   draft[ssLinkedConnectionId].integrations[index] = {
@@ -192,7 +190,7 @@ export default (
               collection.forEach((flow) => {
                 const flowId = generateUniqueFlowId(flow._id, flow.type);
                 const index = draft[ssLinkedConnectionId].flows.findIndex(
-                  (f) => f.type === flow.type && f._id === flowId
+                  f => f.type === flow.type && f._id === flowId
                 );
 
                 if (index === -1) {
@@ -212,8 +210,7 @@ export default (
             } else if (resourceType.endsWith('/flows')) {
               // next data flows
               draft[ssLinkedConnectionId].nextFlows = collection.filter(
-                (f) =>
-                  f.version === 'V2' && f.integrationName !== 'Simple Imports'
+                f => f.version === 'V2' && f.integrationName !== 'Simple Imports'
               );
             }
           }
@@ -233,35 +230,27 @@ export default (
             if (resourceType === 'flows') {
               const flowId = generateUniqueFlowId(resource._id, resource.type);
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
-                (r) =>
+                r =>
                   r._id === flowId &&
                   r._integrationId === resource._integrationId
               );
               if (index > -1) {
-                draft[ssLinkedConnectionId][resourceType][index] = {
-                  ...resource,
-                  _id: flowId,
-                  ssLinkedConnectionId,
-                };
+                draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId, ssLinkedConnectionId};
               }
             } else if (resourceType === 'integrations') {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
-                (r) => r._id === resource._id
+                r => r._id === resource._id
               );
               if (index > -1) {
-                const existingIntegration =
-                  draft[ssLinkedConnectionId][resourceType][index];
+                const existingIntegration = draft[ssLinkedConnectionId][resourceType][index];
                 if (!existingIntegration.isNotEditable) {
                   existingIntegration.displayName = resource.name;
                 }
-                draft[ssLinkedConnectionId][resourceType][index] = {
-                  ...existingIntegration,
-                  ...resource,
-                };
+                draft[ssLinkedConnectionId][resourceType][index] = {...existingIntegration, ...resource};
               }
             } else {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
-                (r) => r._id === resource._id
+                r => r._id === resource._id
               );
               if (index > -1) {
                 draft[ssLinkedConnectionId][resourceType][index] = resource;
@@ -281,14 +270,14 @@ export default (
           ) {
             draft[ssLinkedConnectionId][resourceType] = draft[
               ssLinkedConnectionId
-            ][resourceType].filter((r) => r._id !== resourceId);
+            ][resourceType].filter(r => r._id !== resourceId);
           }
         }
         break;
 
       case actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_INIT:
         {
-          const newCollection = state.jobs.map((job) => {
+          const newCollection = state.jobs.map(job => {
             if (job.status === 'running' || job.numError === 0) {
               return job;
             }
@@ -308,7 +297,7 @@ export default (
         break;
       case actionTypes.SUITESCRIPT.JOB.RESOLVE_ALL_UNDO:
         {
-          const newCollection = state.jobs.map((job) => {
+          const newCollection = state.jobs.map(job => {
             if (!job.__original || !job.__original.numError) {
               return job;
             }
@@ -328,7 +317,7 @@ export default (
         {
           const { jobId, jobType } = action;
           const jobIndex = state.jobs.findIndex(
-            (j) => j._id === jobId && j.type === jobType
+            j => j._id === jobId && j.type === jobType
           );
 
           if (jobIndex > -1) {
@@ -350,7 +339,7 @@ export default (
         {
           const { jobId, jobType } = action;
           const jobIndex = state.jobs.findIndex(
-            (j) => j._id === jobId && j.type === jobType
+            j => j._id === jobId && j.type === jobType
           );
 
           if (jobIndex > -1) {
@@ -443,13 +432,13 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 
   if (!resources) return null;
 
-  let match = resources.find((r) => r._id === id);
+  let match = resources.find(r => r._id === id);
 
   if (!match) {
     if (resourceType === 'connections') {
-      match = resources.find((r) => r.id === id);
+      match = resources.find(r => r.id === id);
     } else if (resourceType === 'flows') {
-      match = resources.find((r) => r._flowId === id);
+      match = resources.find(r => r._flowId === id);
     }
   }
 
@@ -522,9 +511,9 @@ export function jobs(state, { ssLinkedConnectionId, integrationId }) {
     integrationId,
   });
 
-  return filteredJobs.map((j) => {
+  return filteredJobs.map(j => {
     if (j._flowId) {
-      const flow = flows.find((f) => f._flowId === j._flowId);
+      const flow = flows.find(f => f._flowId === j._flowId);
 
       if (flow) {
         return { ...j, name: flow.ioFlowName || flow.name };
@@ -554,7 +543,7 @@ export function resourceList(
 
   if (resourceType === 'flows' && integrationId) {
     return state[ssLinkedConnectionId][resourceType].filter(
-      (f) => f._integrationId === integrationId
+      f => f._integrationId === integrationId
     );
   }
 
@@ -576,9 +565,7 @@ export function hasData(
   const resources = state[ssLinkedConnectionId][resourceType];
 
   if (resourceType === 'flows') {
-    return (
-      resources.filter((r) => r._integrationId === integrationId).length > 0
-    );
+    return resources.filter(r => r._integrationId === integrationId).length > 0;
   }
 
   return resources.length > 0;
@@ -597,7 +584,7 @@ export function jobErrors(state, { jobId, jobType }) {
     state.jobErrors[0]._jobId === jobId &&
     state.jobErrors[0].type === jobType
   ) {
-    return state.jobErrors.filter((je) => !je.resolved);
+    return state.jobErrors.filter(je => !je.resolved);
   }
 
   return emptyList;
