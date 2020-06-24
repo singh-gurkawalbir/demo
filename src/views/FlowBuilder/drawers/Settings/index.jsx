@@ -93,7 +93,7 @@ export default function SettingsDrawer({
               {
                 collapsed: true,
                 label: 'General',
-                fields: ['name', 'description', '_integrationId', '_runNextFlowIds'],
+                fields: ['name', 'description', '_runNextFlowIds'],
               },
             ],
           },
@@ -135,7 +135,7 @@ export default function SettingsDrawer({
         {
           op: 'replace',
           path: '/_integrationId',
-          value: formVal._integrationId,
+          value: integrationId,
         },
         {
           op: 'replace',
@@ -158,7 +158,7 @@ export default function SettingsDrawer({
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
     },
-    [dispatch, flow._id]
+    [dispatch, integrationId, flow._id]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
