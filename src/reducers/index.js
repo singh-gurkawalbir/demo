@@ -4133,8 +4133,8 @@ export function getAvailableResourcePreviewStages(
     'value'
   );
 
-  const isDataLoader = resourceType === 'exports' && isDataLoaderExport(state, resourceId, flowId);
-  const isRestCsvExport = resourceType === 'exports' && isRestCsvMediaTypeExport(state, resourceId);
+  const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
+  const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
 
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
@@ -4251,6 +4251,7 @@ export function isPreviewPanelAvailableForResource(
   resourceType,
   flowId
 ) {
+  if (resourceType !== 'exports') return false;
   const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
@@ -4262,7 +4263,7 @@ export function isPreviewPanelAvailableForResource(
     'connections',
     resourceObj._connectionId
   );
-  if (resourceType === 'exports' && isDataLoaderExport(state, resourceId, flowId)) {
+  if (isDataLoaderExport(state, resourceId, flowId)) {
     return true;
   }
   // Preview panel is not shown for lookups
