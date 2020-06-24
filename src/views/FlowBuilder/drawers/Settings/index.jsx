@@ -145,9 +145,6 @@ export default function SettingsDrawer({
       ];
 
       if (Object.hasOwnProperty.call(formVal, 'settings')) {
-        // dont submit the form if there is validation error
-        // REVIEW: re-visit once Surya's form PR is merged
-        if (formVal && formVal.settings && formVal.settings.__invalid) return;
         patchSet.push({
           op: 'replace',
           path: '/settings',
@@ -169,6 +166,17 @@ export default function SettingsDrawer({
     }
   );
 
+  const validateAndSubmit = useCallback(closeOnSave => formVal => {
+    if (Object.hasOwnProperty.call(formVal, 'settings')) {
+      // dont submit the form if there is validation error
+      // REVIEW: re-visit once Surya's form PR is merged
+      if (formVal && formVal.settings && formVal.settings.__invalid) {
+        return;
+      }
+    }
+    submitHandler(closeOnSave)(formVal);
+  }, [submitHandler]);
+
   return (
     <RightDrawer
       path="settings"
@@ -185,7 +193,7 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
-            onClick={submitHandler()}
+            onClick={validateAndSubmit()}
             disabled={disableSave}
             color="primary"
             variant="outlined">
@@ -194,7 +202,7 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
-            onClick={submitHandler(true)}
+            onClick={validateAndSubmit(true)}
             disabled={disableSave}
             color="primary"
             variant="outlined">
