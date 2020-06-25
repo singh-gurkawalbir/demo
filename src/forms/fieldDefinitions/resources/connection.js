@@ -2120,11 +2120,12 @@ export default {
   },
   'as2.contentBasedFlowRouter': {
     type: 'routingrules',
-    label: 'Choose a script and function name to use for determining AS2 message routing',
+    label: 'Routing rules editor',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
-    helpkey: 'connection.as2.contentBasedFlowRouter',
+    helpKey: 'connection.as2.contentBasedFlowRouter',
+    title: 'Choose a script and function name to use for determining AS2 message routing',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
@@ -2576,10 +2577,12 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access key ID',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
+    required: true,
   },
   // #endregion dynamodb
   settings: {
