@@ -839,10 +839,10 @@ export const groupApplications = (
     ) {
       if (assistant) {
         if (appType === 'import') {
-          return assistant.import || connector.useGenericAdaptor;
+          return assistant.import || assistant.useGenericAdaptor;
         }
         if (appType === 'export') {
-          return assistant.export || connector.useGenericAdaptor;
+          return assistant.export || assistant.useGenericAdaptor;
         }
 
         return true;
