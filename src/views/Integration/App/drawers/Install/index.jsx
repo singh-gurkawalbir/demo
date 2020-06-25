@@ -78,7 +78,7 @@ const getConnectionType = (resource = {}) => {
   if (assistant) return assistant;
 
   if (resource && resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
+    if (resource.netsuite && resource.netsuite.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
   }
