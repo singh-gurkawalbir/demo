@@ -458,11 +458,11 @@ export default function Integration(props) {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
-  } else if (installSteps.length && mode === 'install') {
+  } else if (installSteps && installSteps.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );
-  } else if (uninstallSteps.length && mode === 'uninstall') {
+  } else if (uninstallSteps && uninstallSteps.length && mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
         childId ? `/${childId}` : ''
