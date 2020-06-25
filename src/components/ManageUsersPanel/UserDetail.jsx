@@ -61,13 +61,14 @@ export default function UserDetail(props) {
           } this user?`,
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
               label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -79,13 +80,14 @@ export default function UserDetail(props) {
           message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
               label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -96,13 +98,14 @@ export default function UserDetail(props) {
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
               label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });

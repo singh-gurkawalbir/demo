@@ -1,5 +1,7 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
 import { isProduction } from '../../utils';
+import { isNewId } from '../../../utils/resource';
+import { applicationsList } from '../../../constants/applications';
 
 export default {
   // #region common
@@ -42,12 +44,22 @@ export default {
     type: 'text',
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
+    required: true,
   },
   application: {
     id: 'application',
     type: 'text',
     label: 'Application',
-    defaultValue: r => r && r.assistant ? r.assistant : r.type,
+    defaultValue: r => {
+      if (isNewId(r._id)) {
+        return r.application;
+      }
+      const applications = applicationsList();
+      const application = r.assistant || r.type;
+
+      const app = applications.find(a => a.id === application) || {};
+      return app.name;
+    },
     defaultDisabled: true,
   },
   assistant: {
@@ -2107,12 +2119,12 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
-    type: 'hook',
-    label: '',
+    type: 'routingrules',
+    label: 'Choose a script and function name to use for determining AS2 message routing',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
-    helpkey: 'export.as2.contentBasedFlowRouter',
+    helpkey: 'connection.as2.contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',

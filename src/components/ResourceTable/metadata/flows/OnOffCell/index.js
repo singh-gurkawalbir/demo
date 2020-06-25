@@ -80,9 +80,6 @@ export default function OnOffCell({
       message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow?`,
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: `${disabled ? 'Enable' : 'Disable'}`,
           onClick: () => {
             if (isIntegrationApp && !istwoDotZeroFrameWork) {
@@ -117,6 +114,10 @@ export default function OnOffCell({
               patchFlow('/disabled', !disabled);
             }
           }
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         }]
     });
   }, [
