@@ -3,16 +3,25 @@ import { deepClone, applyPatch } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { resourceData, getResourceSampleDataWithStatus } from '../../reducers';
+import {
+  resourceData,
+  getResourceSampleDataWithStatus,
+  isRestCsvMediaTypeExport
+} from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
+import requestFileAdaptorSampleData from './sampleDataGenerator/fileAdaptorSampleData';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
-import { isRealTimeOrDistributedResource } from '../../utils/resource';
-
+import {
+  isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource
+} from '../../utils/resource';
+import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -47,13 +56,6 @@ export function* constructResourceFromFormValues({
 
   return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
     .newDocument;
-}
-
-function getRulesFromResourceFormValues(formValues = {}) {
-  if (!formValues['/transform']) return [];
-  const transformRules = formValues['/transform'].rules;
-
-  return transformRules && transformRules.length ? transformRules : [];
 }
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
@@ -121,114 +123,149 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   }
 }
 
-function* processData({ resourceId, processorData, stage }) {
+function* getProcessorOutput({ processorData }) {
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
-    yield put(actions.sampleData.update(resourceId, processedData, stage));
+    return { data: processedData };
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 
-      yield put(
-        actions.sampleData.receivedError(resourceId, parsedError, stage)
-      );
+      return {error: parsedError};
     }
   }
 }
-
-function* transformData({ resourceId, values, stage }) {
-  const { data } = yield select(
-    getResourceSampleDataWithStatus,
-    resourceId,
-    stage
-  );
-  const processorData = values || {};
-
-  processorData.data = data;
-  processorData.processor = stage;
-
-  yield call(processData, { resourceId, processorData, stage });
+/**
+ * Given list of stages mapped with data to be saved against it
+ * Triggers action that saves each stage with data on resource's sample data
+ */
+function* updateDataForStages({resourceId, dataForEachStageMap }) {
+  const stages = Object.keys(dataForEachStageMap);
+  for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
+    const stage = stages[stageIndex];
+    const stageData = dataForEachStageMap[stage];
+    yield put(actions.sampleData.update(resourceId, stageData, stage));
+  }
 }
 
-function* processRawData({ resourceId, resourceType, values = {}, stage }) {
-  if (stage === 'transform') {
-    return yield call(transformData, { resourceId, values, stage });
-  }
-
+function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
-  let { file } = values;
+  const { file } = values;
+  const body = yield call(constructResourceFromFormValues, {
+    formValues,
+    resourceId,
+    resourceType,
+  });
+  const { file: fileProps} = body || {};
+  // If there are no editorValues passed from the editor,
+  // parse the resourceBody and construct props to process file content
+  if (!values.editorValues) {
+    // eslint-disable-next-line no-param-reassign
+    values.editorValues = generateFileParserOptionsFromResource(body, type);
+  }
+  const dataForEachStageMap = {
+    rawFile: { data: [{ body: file, type }] },
+    raw: { data: [{ body: file }] },
+  };
+  const processorData = deepClone(values.editorValues || {});
 
-  // Add file type and file body as part of the state with a 'rawFile'
-  yield put(
-    actions.sampleData.update(
-      resourceId,
-      { data: [{ body: file, type }] },
-      'rawFile'
-    )
-  );
-  // Update Raw Data with the file uploaded before parsing
-  yield put(
-    actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'raw')
-  );
-
-  // JSON file does not need parsing
   if (type === 'json') {
-    // Update the parsed JSON file in parse stage
-    yield put(
-      actions.sampleData.update(
-        resourceId,
-        { data: [{ body: processJsonSampleData(file) }] },
-        'parse'
-      )
-    );
-
+    // For JSON, no need of processor call, the below util takes care of parsing json file as per options
+    const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
+    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     return;
+  }
+  // For all other file types processor call gives us the JSON format based on the options user configured
+  if (type === 'xlsx') {
+    const { result } = getCsvFromXlsx(file);
+    dataForEachStageMap.csv = { data: [{ body: result }] };
+    // save csv content of xlsx file uploaded to be 'data' for the processor call
+    processorData.data = result;
   }
 
   if (type === 'csv') {
-    // Saving csv file content for csv in sample data for future use
-    yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
-    );
+    dataForEachStageMap.csv = { data: [{ body: file }] };
   }
 
-  // For xlsx file , content gets converted to 'csv' before parsing
-  if (type === 'xlsx') {
-    const { result } = getCsvFromXlsx(file);
-
-    file = result;
-    // Saving csv file content for xlsx in sample data for future use
-    // Incase of FTP Imports, sampleData field in resource expects 'csvContent' for xlsx file upload to be saved
-    yield put(
-      actions.sampleData.update(resourceId, { data: [{ body: file }] }, 'csv')
-    );
+  if (type === 'xml') {
+    processorData.resourcePath = fileProps.xml && fileProps.xml.resourcePath;
   }
-
-  const processorData = deepClone(values.editorValues || {});
-
-  processorData.data = file;
+  if (type !== 'xlsx') {
+    // 'data' here represents the source file content (based on file type) against which processor runs to get JSON data
+    // Only exception is xlsx, where 'data' is 'csv' content as we use csv processor
+    processorData.data = file;
+  }
   processorData.processor = processorData.processor || PARSERS[type];
-  yield call(processData, { resourceId, processorData, stage: 'parse' });
-  // Call Transform processor if rules exist for this resource
-  const transformRules = getRulesFromResourceFormValues(formValues);
-
-  if (transformRules.length) {
+  const processorOutput = yield call(getProcessorOutput, { processorData });
+  if (processorOutput && processorOutput.data) {
+    dataForEachStageMap.parse = processorOutput.data;
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
+  }
+  if (processorOutput && processorOutput.error) {
+    yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     yield put(
-      actions.sampleData.request(
-        resourceId,
-        resourceType,
-        transformRules,
-        'transform'
-      )
+      actions.sampleData.receivedError(resourceId, processorOutput.error, 'parse')
     );
   }
 }
 
-function* requestSampleData({
+function* fetchExportPreviewData({
+  resourceId,
+  resourceType,
+  values,
+  runOffline,
+}) {
+  const body = yield call(constructResourceFromFormValues, {
+    formValues: values,
+    resourceId,
+    resourceType,
+  });
+  const isRestCsvExport = yield select(isRestCsvMediaTypeExport, resourceId);
+  // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
+  if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
+    // extract all details needed for a file sampledata
+    const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
+    const fileProps = {
+      type: fileDetails.type,
+      file: fileDetails.body,
+      formValues: values,
+    };
+    if (!fileDetails.body) {
+      // when no file uploaded , try fetching sampleData on resource
+      const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
+
+      if (parsedData) {
+        return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
+      }
+      // If no sample data on resource too...
+      // Show empty data representing no data is being passed
+      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+    }
+    if (body.file.output === 'blobKeys') {
+      // If the output mode is 'blob' , no data is passed so show empty data
+      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+    }
+    return yield call(processRawData, {
+      resourceId,
+      resourceType,
+      values: fileProps
+    });
+  }
+  // For all other adaptors, go make preview api call for the sampleData
+  yield call(getPreviewData, {
+    resourceId,
+    resourceType,
+    values,
+    runOffline,
+  });
+}
+
+export function* requestExportSampleData({
   resourceId,
   resourceType,
   values,
@@ -243,7 +280,7 @@ function* requestSampleData({
       stage,
     });
   } else {
-    yield call(getPreviewData, {
+    yield call(fetchExportPreviewData, {
       resourceId,
       resourceType,
       values,
@@ -298,6 +335,6 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
 }
 
 export default [
-  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestSampleData),
+  takeLatest(actionTypes.SAMPLEDATA.REQUEST, requestExportSampleData),
   takeLatest(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, requestLookupSampleData),
 ];

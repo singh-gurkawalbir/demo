@@ -81,6 +81,7 @@ export default function EditorDialog(props) {
     hidePreviewAction = false,
     patchOnSave = false,
     toggleAction,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -133,16 +134,17 @@ export default function EditorDialog(props) {
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
-        title: 'Confirm',
-        message: 'You have made changes in the editor. Are you sure you want to discard them?',
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'No',
-          },
-          {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: onClose,
           },
+          {
+            label: 'No, go back',
+            color: 'secondary',
+          }
         ],
       });
     } else {
@@ -252,6 +254,7 @@ export default function EditorDialog(props) {
             disabled={disableSave}
             onClose={handleSave(true)}
             submitButtonLabel="Save"
+            flowId={flowId}
           />
         ) : (
           <Button

@@ -79,22 +79,25 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: {
       formId: 'httpAdvanced',
     },
   },
   layout: {
-    fields: [
-      'name',
-      'authorizeNet.accType',
-      'http.encrypted.apiLoginID',
-      'http.encrypted.transactionKey',
-    ],
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['authorizeNet.accType',
+          'http.encrypted.apiLoginID',
+          'http.encrypted.transactionKey'] },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['httpAdvanced'],
       },
     ],

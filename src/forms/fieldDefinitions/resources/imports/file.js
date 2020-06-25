@@ -111,6 +111,7 @@ export default {
       'file.csv.rowDelimiter',
       'file.csv.replaceNewlineWithSpace',
       'file.csv.replaceTabWithSpace',
+      'file.csv.truncateLastRowDelimiter',
       'file.csv.wrapWithQuotes',
     ],
     visibleWhenAll: [
@@ -179,6 +180,18 @@ export default {
     label: 'Replace tab with space',
     defaultValue: r =>
       (r.file && r.file.csv && r.file.csv.replaceTabWithSpace) || false,
+    visibleWhenAll: [
+      {
+        field: 'file.type',
+        is: ['csv'],
+      },
+    ],
+  },
+  'file.csv.truncateLastRowDelimiter': {
+    type: 'checkbox',
+    label: 'Truncate last row delimiter',
+    defaultValue: r =>
+      (r.file && r.file.csv && r.file.csv.truncateLastRowDelimiter) || false,
     visibleWhenAll: [
       {
         field: 'file.type',

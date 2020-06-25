@@ -28,9 +28,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
+
 export default function TemplateList(props) {
   const { location } = props;
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;

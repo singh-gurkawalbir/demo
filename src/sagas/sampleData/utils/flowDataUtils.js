@@ -95,7 +95,7 @@ export function* fetchResourceDataForNewFlowResource({
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
+export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh }) {
   const resourceMap = {};
   const resourceList = flow[type];
 
@@ -140,7 +140,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow }
+            { resource, flow, refresh }
           );
         }
       }

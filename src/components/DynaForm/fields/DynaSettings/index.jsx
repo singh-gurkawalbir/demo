@@ -1,103 +1,55 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import * as selectors from '../../../../reducers';
-import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
-import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
+import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
-import FieldHelp from '../../FieldHelp';
+import FormBuilderButton from '../../../FormBuilderButton';
 
-const emptyObj = {};
-// TODO: @Azhar, since this is a copied styling from CollapsedComponents, should
-// we move this to a common theme?
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
   },
-  expPanelSummary: {
-    flexDirection: 'row-reverse',
-    paddingLeft: 0,
-    minHeight: 'unset',
-    height: 38,
-    display: 'inline-flex',
-    '& > .MuiExpansionPanelSummary-expandIcon': {
-      padding: 0,
-      margin: theme.spacing(-0.5, 0.5, 0, 0),
-      '&.Mui-expanded': {
-        transform: 'rotate(90deg)',
-      },
-    },
-    '&.Mui-expanded': {
-      minHeight: 0,
-    },
-    '& > .MuiExpansionPanelSummary-content': {
-      margin: 0,
-      '&.Mui-expanded': {
-        margin: 0,
-      },
-    },
+  divider: {
+    marginTop: '20px',
+    marginBottom: '10px',
   },
-  expansionPanel: {
-    boxShadow: 'none',
-    background: 'none',
+  summaryContainer: {
+    width: '100%',
   },
-  expDetails: {
-    padding: 0,
-  },
-  launchButton: {
-    marginLeft: theme.spacing(2),
+  summaryLabel: {
+    flexGrow: 1,
+    alignSelf: 'center',
   },
 }));
 
 export default function DynaSettings(props) {
-  const classes = useStyles();
   const {
     id,
     resourceContext,
     disabled,
     onFieldChange,
-    label,
+    label = 'Custom settings',
     collapsed = true,
+    fieldsOnly = false
   } = props;
-  const settingsContainer = {
-    // collapsed: true,
-    label: label || 'Custom settings',
-    fields: ['settings'],
-  };
+  const classes = useStyles();
   const { resourceType, resourceId } = resourceContext;
-  const [shouldExpand, setShouldExpand] = useState(!collapsed);
-  const [drawerKey, setDrawerKey] = useState(0);
-  const history = useHistory();
-  const match = useRouteMatch();
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
-  const isViewMode = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
 
-    return (resource && resource.settingsForm) || emptyObj;
-  });
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
+  const allowFormEdit = useSelector(state =>
+    selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
+
   const hasSettingsForm = useSelector(state =>
     selectors.hasSettingsForm(state, resourceType, resourceId)
-  );
-  const toggleEditMode = useCallback(
-    e => {
-      e.stopPropagation();
-      setDrawerKey(drawerKey => drawerKey + 1);
-      history.push(`${match.url}/editSettings`);
-    },
-    [history, match.url]
   );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
@@ -114,75 +66,50 @@ export default function DynaSettings(props) {
     },
     [id, onFieldChange]
   );
-  const handleExpandClick = useCallback(() => setShouldExpand(!shouldExpand), [
-    shouldExpand,
-  ]);
-  const handleEditClose = useCallback(() => history.goBack(), [history]);
+  const handleExpandClick = useCallback(() =>
+    setIsCollapsed(!isCollapsed), [isCollapsed]);
 
-  // only developers can see/edit raw settings!
-  // thus, if there is no metadata and the user is not a dev, render nothing.
-  if ((!isDeveloper || isViewMode) && !hasSettingsForm) return null;
+  // Only developers can see/edit raw settings!
+  // thus, if there is no settings form and the user is not a dev, render nothing.
+  if (!allowFormEdit && !hasSettingsForm) {
+    return null;
+  }
+
+  function renderSettings() {
+    if (hasSettingsForm) {
+      return (
+        <FormView
+          resourceId={resourceId}
+          resourceType={resourceType}
+          disabled={disabled}
+          onFormChange={handleSettingFormChange}
+      />
+      );
+    }
+
+    return <RawView {...props} />;
+  }
+
+  if (fieldsOnly) return renderSettings();
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-  // Always render the edit drawer. This drawer has logic within to not display unless the
-  // browser location ends with a specific path.
-
     <div className={classes.child}>
-      <ExpansionPanel
-        className={classes.expansionPanel}
-        // eslint-disable-next-line react/no-array-index-key
-        expanded={shouldExpand}>
+      <ExpansionPanel expanded={!isCollapsed}>
         <ExpansionPanelSummary
-          data-test={settingsContainer.label}
-          className={classes.expPanelSummary}
+          data-test={label}
+          className={classes.summaryContainer}
           onClick={handleExpandClick}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.label}>
-            {settingsContainer.label}
-            {isDeveloper && !isViewMode && (
-              <>
-                <Button
-                  data-test="form-editor-action"
-                  variant="outlined"
-                  className={classes.launchButton}
-                  // color="secondary"
-                  onClick={toggleEditMode}>
-                  Launch form builder
-                </Button>
-                <FieldHelp
-                  id="settingsForm"
-                  resourceType={resourceType}
-                  helpKey="settingsForm"
-                  label="Settings form builder"
-                />
-              </>
-            )}
-          </Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expDetails}>
-          {hasSettingsForm ? (
-            <FormView
-              resourceId={resourceId}
-              resourceType={resourceType}
-              disabled={disabled}
-              onFormChange={handleSettingFormChange}
-            />
-          ) : (
-            <RawView {...props} />
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {!isCollapsed && (
+            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
           )}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails >
+          {renderSettings()}
         </ExpansionPanelDetails>
       </ExpansionPanel>
-      {isDeveloper && !isViewMode && (
-        <EditDrawer
-          key={drawerKey}
-          editorId={id}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          settingsForm={settingsForm}
-          onClose={handleEditClose}
-        />
-      )}
     </div>
   );
 }

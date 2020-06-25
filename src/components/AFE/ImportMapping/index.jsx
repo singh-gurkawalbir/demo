@@ -7,7 +7,6 @@ import actions from '../../../actions';
 import mappingUtil from '../../../utils/mapping';
 import * as selectors from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
-import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import ButtonGroup from '../../ButtonGroup';
@@ -85,6 +84,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: '16px 0px',
   },
+
 }));
 const emptyMappingRow = {};
 
@@ -104,12 +104,10 @@ export default function ImportMapping(props) {
     exportResource = {},
     options = {},
   } = props;
-  const { sObjectType, connectionId, recordType } = options;
+  const { sObjectType, connectionId, recordType, flowId } = options;
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
-    fetchSalesforceSObjectMetadata,
-    refreshGenerateFields,
     refreshExtractFields,
   } = optionalHanlder;
   const {
@@ -117,7 +115,7 @@ export default function ImportMapping(props) {
     lookups,
     changeIdentifier,
     preview = {},
-    lastModifiedKey,
+    lastModifiedRowKey = '',
     salesforceMasterRecordTypeId,
     showSalesforceNetsuiteAssistant,
     importSampleData,
@@ -158,6 +156,16 @@ export default function ImportMapping(props) {
   });
   const { localMappings, localChangeIdentifier } = state;
 
+  const handleRefreshGenerates = useCallback(
+    () => {
+      dispatch(
+        actions.mapping.refreshGenerates(
+          editorId
+        )
+      );
+    },
+    [dispatch, editorId],
+  );
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier) {
@@ -190,51 +198,29 @@ export default function ImportMapping(props) {
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
 
-      if (value === '') {
-        if (
-          (field === 'extract' && generate === '') ||
-          (field === 'generate' &&
-            extract === '' &&
-            !('hardCodedValue' in _mapping))
-        ) {
-          dispatch(actions.mapping.delete(editorId, key));
-
-          return;
+      // check if value changes or user entered something in new row
+      if ((!key && value) || (key && _mapping[field] !== value)) {
+        if (key && value === '') {
+          if (
+            (field === 'extract' && generate === '') ||
+            (field === 'generate' &&
+              extract === '' &&
+              !('hardCodedValue' in _mapping))
+          ) {
+            dispatch(actions.mapping.delete(editorId, key));
+            return;
+          }
         }
+        dispatch(actions.mapping.patchField(editorId, field, key, value));
+        return;
       }
 
-      if (
-        field === 'generate' &&
-        application === adaptorTypeMap.SalesforceImport &&
-        value &&
-        value.indexOf('_child_') > -1
-      ) {
-        const childRelationshipField =
-          generateFields && generateFields.find(field => field.id === value);
-
-        if (childRelationshipField) {
-          const { childSObject, relationshipName } = childRelationshipField;
-
-          dispatch(
-            actions.mapping.patchIncompleteGenerates(
-              editorId,
-              key,
-              relationshipName
-            )
-          );
-          fetchSalesforceSObjectMetadata(childSObject);
-        }
+      if (lastModifiedRowKey !== key) {
+        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+        dispatch(actions.mapping.updateLastFieldTouched(editorId, _lastModifiedRowKey));
       }
-
-      dispatch(actions.mapping.patchField(editorId, field, key, value));
     },
-    [
-      application,
-      dispatch,
-      editorId,
-      fetchSalesforceSObjectMetadata,
-      generateFields,
-    ]
+    [dispatch, editorId, lastModifiedRowKey]
   );
   const patchSettings = useCallback(
     (key, settings) => {
@@ -283,36 +269,31 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
-  const handleSalesforceAssistantFieldClick = useCallback(
+  const handleSFNSAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedKey) {
+      if (disabled) {
+        return;
+      }
+      let value;
+      if (sObjectType) {
+        value = meta.id;
+      } else if (recordType) {
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
+      }
+      if (lastModifiedRowKey && value) {
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedKey,
-            meta.id
+            lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
+            value
           )
         );
       }
     },
-    [dispatch, editorId, lastModifiedKey]
+    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType, disabled]
   );
-  const handleNetSuiteAssistantFieldClick = useCallback(
-    meta => {
-      if (lastModifiedKey) {
-        dispatch(
-          actions.mapping.patchField(
-            editorId,
-            'generate',
-            lastModifiedKey,
-            meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
-          )
-        );
-      }
-    },
-    [dispatch, editorId, lastModifiedKey]
-  );
+
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -322,6 +303,7 @@ export default function ImportMapping(props) {
   const handleDrop = useCallback(() => {
     dispatch(actions.mapping.changeOrder(editorId, localMappings));
   }, [dispatch, editorId, localMappings]);
+
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const mappingsCopy = [...localMappings];
@@ -406,7 +388,7 @@ export default function ImportMapping(props) {
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
                 disabled={disabled}
-                onClick={refreshGenerateFields}
+                onClick={handleRefreshGenerates}
                 data-test="refreshGenerates"
               />
             )}
@@ -459,9 +441,7 @@ export default function ImportMapping(props) {
           />
         </div>
         <ButtonGroup
-          className={clsx({
-            [classes.importMappingButtonGroup]: showPreviewPane,
-          })}>
+          className={classes.importMappingButtonGroup}>
           {showPreviewPane && (
             <Button
               variant="outlined"
@@ -478,6 +458,7 @@ export default function ImportMapping(props) {
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
+            flowId={flowId}
           />
           <MappingSaveButton
             id={editorId}
@@ -488,6 +469,7 @@ export default function ImportMapping(props) {
             disabled={!!(disabled || saveInProgress)}
             showOnlyOnChanges
             submitButtonLabel="Save & close"
+            flowId={flowId}
           />
           <Button
             variant="text"
@@ -510,7 +492,7 @@ export default function ImportMapping(props) {
               sObjectType={sObjectType}
               sObjectLabel={sObjectType}
               layoutId={salesforceMasterRecordTypeId}
-              onFieldClick={handleSalesforceAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
@@ -522,7 +504,7 @@ export default function ImportMapping(props) {
               }}
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
-              onFieldClick={handleNetSuiteAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}

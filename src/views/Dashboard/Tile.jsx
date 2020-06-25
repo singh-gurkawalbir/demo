@@ -95,18 +95,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
-    if (
-      integration &&
-      integration.installSteps &&
-      integration.installSteps.length
-    ) {
-      urlToIntegrationSettings = `/integrations/${integration._id}`;
-      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
-    } else {
-      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-    }
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
   let app1;
@@ -140,7 +130,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '58d94e6b2e4b300dbf6b01bc', // eBay
       '5b754a8fddbb3b71d6046c87', // Amazon MCF
       '58c90bccc13f547763bf2fc1', // Amazon
-      // '586cb88fc1d53d6a279d527e', // CAM
+      '586cb88fc1d53d6a279d527e', // CAM
+      '5728756afee45a8d11e79cb7', // ADP
       '5a546b705556c2539f4a8dba', // Shipwire
       '5bfe38e363afaf4b872b4ee0', // Returnly
       '58859b520b11ee387108165a', // ShipStation

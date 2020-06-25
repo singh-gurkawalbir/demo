@@ -8,7 +8,12 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
 
 export default {
-  label: 'Delete',
+  label: (rowData, actionProps) => {
+    if (actionProps.resourceType === 'accesstokens') {
+      return 'Delete API token';
+    }
+    return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
+  },
   icon: TrashIcon,
   component: function DeleteResource({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;
@@ -23,21 +28,27 @@ export default {
       setShowRef(true);
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
-      const type =
+      let type;
+      if (resourceType === 'accesstokens') {
+        type = 'API token';
+      } else {
+        type =
         resourceType && resourceType.indexOf('/licenses') >= 0
           ? 'license'
-          : MODEL_PLURAL_TO_LABEL[resourceType];
+          : MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
+      }
 
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm delete',
         message: `Are you sure you want to delete this ${type}?`,
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Delete',
+            onClick: deleteResource,
           },
           {
-            label: 'Yes',
-            onClick: deleteResource,
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

@@ -58,16 +58,18 @@ const FirstLevelModal = props => {
       parentSObjectType: {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
-        label: 'Parent SObject Type:',
+        label: 'Parent SObject type:',
         type: 'refreshableselect',
+        helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
       },
-
       referencedFields: {
         connectionId,
         id: 'referencedFields',
+        helpKey: 'referencedFields',
+        label: 'Referenced fields:',
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
@@ -83,7 +85,7 @@ const FirstLevelModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <div>Referenced Fields</div>
+      <div>Referenced fields</div>
 
       <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
         <DynaSubmit
@@ -124,7 +126,7 @@ export default function DynaReferencedFields(props) {
         className={classes.refrencedFieldDynaText}
       />
       {status === 'refreshed' ? (
-        <Spinner />
+        <Spinner size={24} />
       ) : (
         <ActionButton
           data-test="editReferencedFields"

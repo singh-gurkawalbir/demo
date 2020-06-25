@@ -1,4 +1,5 @@
-import React from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -10,16 +11,20 @@ import actions from '../../../../../../../actions';
 import * as selectors from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
+import InfoIconButton from '../../../../../../../components/InfoIconButton';
 
 const metadata = {
   columns: [
     {
       heading: 'Name',
-      value: r => r && r.name,
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && r.name}
+            <InfoIconButton info={r.description} size="xs" />
+          </>
+        );
+      },
     },
     {
       heading: 'Installed On',
@@ -28,7 +33,6 @@ const metadata = {
     },
     {
       heading: 'Action',
-
       value: function Installer(r) {
         return <AddonInstallerButton resource={r} />;
       },

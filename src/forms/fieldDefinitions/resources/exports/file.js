@@ -20,6 +20,16 @@ export default {
       },
     ],
   },
+  'file.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
+      },
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
@@ -69,27 +79,9 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
-
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'ftp.leaveFile': {
-    type: 'checkbox',
-    label: 'Leave file on server',
-    defaultValue: r => r && r.file && r.file.skipDelete,
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
   },
   'file.compressionFormat': {
     type: 'select',
@@ -108,7 +100,7 @@ export default {
   },
   'file.json.resourcePath': {
     label: 'Resource path',
-    type: 'text',
+    type: 'jsonresourcepath',
     visibleWhen: [
       {
         field: 'file.type',
@@ -326,6 +318,8 @@ export default {
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File has header',
+    defaultValue: r =>
+      !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
     visibleWhen: [
       {
         field: 'file.type',

@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
-import applications, {
-  groupApplications,
-} from '../../../../constants/applications';
+import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import SearchIcon from '../../../icons/SearchIcon';
+
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -66,7 +65,9 @@ export default function SelectApplication(props) {
     placeholder,
     onFieldChange,
   } = props;
-  // Custom styles for Select Control
+  const classes = useStyles();
+  const theme = useTheme();
+  const ref = useRef(null);
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
@@ -78,8 +79,8 @@ export default function SelectApplication(props) {
       }),
     [appType, fieldOptions, isDataLoader, resourceType]
   );
-  const classes = useStyles();
-  const theme = useTheme();
+
+  // Custom styles for Select Control
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -129,6 +130,7 @@ export default function SelectApplication(props) {
     }),
     input: () => ({
       color: theme.palette.secondary.light,
+      // marginLeft: 3,
     }),
     placeholder: () => ({
       color: theme.palette.secondary.light,
@@ -182,6 +184,7 @@ export default function SelectApplication(props) {
       assistant: app.assistant,
     })),
   }));
+
   const DropdownIndicator = props => (
     <components.DropdownIndicator {...props}>
       <SearchIcon />
@@ -220,6 +223,7 @@ export default function SelectApplication(props) {
 
     return true;
   };
+  const applications = applicationsList();
 
   const defaultValue =
     !value || isMulti
@@ -229,14 +233,26 @@ export default function SelectApplication(props) {
         label: applications.find(a => a.id === value).name,
       };
 
-  function handleChange(e) {
+  const handleChange = useCallback(e => {
+    ref?.current?.select?.blur();
+
     if (onFieldChange) {
       const newValue = isMulti ? [...value, e.value] : e.value;
 
       // console.log('newValue', newValue);
       onFieldChange(id, newValue);
     }
-  }
+  }, [id, isMulti, onFieldChange, value]);
+
+
+  const handleFocus = useCallback(() => {
+    const refState = ref?.current?.state;
+    const inputValue = refState.value?.label;
+
+    if (inputValue) {
+      refState.inputValue = inputValue;
+    }
+  }, []);
 
   function handleRemove(index) {
     const newApps = [...value];
@@ -255,6 +271,7 @@ export default function SelectApplication(props) {
         {label}
       </InputLabel>
       <Select
+        ref={ref}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
@@ -263,6 +280,8 @@ export default function SelectApplication(props) {
         defaultMenuIsOpen={!value}
         options={options}
         onChange={handleChange}
+        onFocus={handleFocus}
+        // onBlur={handleBlur}
         styles={customStyles}
         filterOption={filterOptions}
       />

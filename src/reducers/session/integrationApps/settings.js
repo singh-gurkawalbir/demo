@@ -106,12 +106,30 @@ export default (state = {}, action) => {
 
         draft[key].submitComplete = false;
         break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA:
+        if (!draft[addOnKey]) {
+          draft[addOnKey] = {};
+        }
+
+        draft[addOnKey].status = 'requested';
+
+        break;
+      case actionTypes.INTEGRATION_APPS.SETTINGS
+        .ADDON_LICENSES_METADATA_FAILURE:
+        if (!draft[addOnKey]) {
+          draft[addOnKey] = {};
+        }
+
+        draft[addOnKey].status = 'failed';
+
+        break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_UPDATE:
         if (response && response.addOns) {
           if (!draft[addOnKey]) {
             draft[addOnKey] = {};
           }
 
+          draft[addOnKey].status = 'received';
           draft[addOnKey].addOns = {
             addOnMetaData: response.addOns && response.addOns.addOnMetaData,
             addOnLicenses: response.addOns && response.addOns.addOnLicenses,

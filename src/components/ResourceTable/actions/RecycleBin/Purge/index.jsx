@@ -6,7 +6,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR } from '../../../../../constants/resource';
 
 export default {
-  label: 'purge',
+  label: 'Purge',
   icon: PurgeIcon,
   component: function Purge({ rowData = {} }) {
     const dispatch = useDispatch();
@@ -21,17 +21,18 @@ export default {
     }, [dispatch, rowData.doc, rowData.model]);
     const confirmPurge = useCallback(() => {
       confirmDialog({
-        title: 'Confirm',
-        message: `Are you sure you want to delete this ${
-          RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model]
+        title: 'Confirm purge',
+        message: `Are you sure you want to purge this ${
+          RESOURCE_TYPE_LABEL_TO_SINGULAR[rowData.model].toLowerCase()
         }?`,
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Purge',
+            onClick: purgeResource,
           },
           {
-            label: 'Yes',
-            onClick: purgeResource,
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

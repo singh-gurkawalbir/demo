@@ -7,19 +7,27 @@ export default {
     _connectionIds: { fieldId: '_connectionIds' },
     _exportIds: { fieldId: '_exportIds' },
     _importIds: { fieldId: '_importIds' },
+    _apiIds: { fieldId: '_apiIds' },
   },
   layout: {
-    fields: [
-      'name',
-      'description',
-      'autoPurgeAt',
-      'fullAccess',
-      '_connectionIds',
-      '_exportIds',
-      '_importIds',
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['name', 'description', 'autoPurgeAt'],
+      },
+      {
+        collapsed: true,
+        label: 'Token permissions',
+        fields: ['fullAccess',
+          '_connectionIds',
+          '_exportIds',
+          '_importIds',
+          '_apiIds'],
+      }
     ],
   },
-
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
@@ -40,6 +48,7 @@ export default {
       accessTokenData['/_connectionIds'] = [];
       accessTokenData['/_exportIds'] = [];
       accessTokenData['/_importIds'] = [];
+      accessTokenData['/_apiIds'] = [];
 
       if (!resource._integrationId) {
         accessTokenData['/fullAccess'] = true;

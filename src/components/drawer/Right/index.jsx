@@ -28,11 +28,11 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
   titleBar: {
-    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
+    background: theme.palette.background.default,
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -42,6 +42,8 @@ const useStyles = makeStyles(theme => ({
   },
   contentContainer: {
     margin: theme.spacing(1, 2),
+    position: 'relative',
+    height: '100%',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -51,6 +53,9 @@ const useStyles = makeStyles(theme => ({
   },
   medium: {
     width: 660,
+  },
+  default: {
+    width: 824,
   },
   large: {
     width: 995,
@@ -87,7 +92,7 @@ const useStyles = makeStyles(theme => ({
 export default function RightDrawer({
   title,
   path,
-  width = 'small',
+  width = 'default',
   height = 'short',
   type = 'legacy',
   hideBackButton = false,
@@ -121,7 +126,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
 
   let fullPath;
-  if (typeof path === 'string') {
+  if (typeof path === 'string' || typeof path === 'number') {
     fullPath = `${match.url}/${path}`;
   } else if (Array.isArray(path)) {
     fullPath = path.map(p => `${match.url}/${p}`);
@@ -167,7 +172,7 @@ export default function RightDrawer({
                 <BackArrowIcon />
               </IconButton>
             )}
-            <Typography variant="h3" className={classes.title}>
+            <Typography variant="h4" className={classes.title}>
               {title}
               {helpKey && (
                 <Help

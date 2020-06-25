@@ -1,5 +1,4 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS } from '../constants';
-import { isProduction } from '../../forms/utils';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 
 export const getIntegrationAppUrlName = (
   integrationAppName,
@@ -13,6 +12,74 @@ export const getIntegrationAppUrlName = (
     integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '') +
     (isV2Integration ? 'V2' : '')
   );
+};
+
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+  const tabs = [
+    'general',
+    'readme',
+    'apitoken',
+    'subscription',
+    'uninstall'
+  ];
+  const sectionsToHide = [];
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general');
+  }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall');
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general');
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length > 1) {
+      sectionsToHide.push('uninstall');
+    }
+  }
+  if (isMonitorLevelUser) {
+    sectionsToHide.push('uninstall');
+    sectionsToHide.push('apitoken');
+  }
+
+  return tabs.filter(
+    sec => !sectionsToHide.includes(sec)
+  );
+};
+
+export const getTopLevelTabs = (options = {}) => {
+  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId, hideSettingsTab} = options;
+  const excludeTabs = [];
+  const showAdminTabs = !!getAdminLevelTabs(options).length;
+  const isStandalone = STANDALONE_INTEGRATION.id === integrationId;
+  if (isIntegrationApp) {
+    excludeTabs.push('users');
+    if (!hasAddOns) {
+      excludeTabs.push('addons');
+    }
+  } else {
+    excludeTabs.push('addons');
+  }
+  if (isParent) {
+    excludeTabs.push('flows');
+    excludeTabs.push('dashboard');
+  }
+  if (isStandalone) {
+    excludeTabs.push('admin');
+  }
+  if (isStandalone || hideSettingsTab) {
+    excludeTabs.push('settings');
+  }
+  if (!showAdminTabs) {
+    excludeTabs.push('admin');
+  }
+
+  return allTabs.filter(tab => !excludeTabs.includes(tab.path));
 };
 
 const getIntegrationApp = ({ _connectorId, name }) => {
@@ -106,13 +173,13 @@ export default {
       step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
-        stepText = 'Configured';
+        stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = 'Click to Configure';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
@@ -122,14 +189,14 @@ export default {
           stepText = 'Verify Now';
         }
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to install';
       }
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
       stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
     } else {
-      stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+      stepText = isUninstall ? 'Click to Uninstall' : 'Click to install';
     }
 
     return stepText;
@@ -171,6 +238,5 @@ export default {
     return highestEdition;
   },
   isCloningSupported: (_connectorId, name) =>
-    !isProduction() &&
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };

@@ -5,6 +5,7 @@ import {
   MenuItem,
   TextField,
   FormControl,
+  InputAdornment,
 } from '@material-ui/core';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
@@ -12,6 +13,7 @@ import parse from 'autosuggest-highlight/parse';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import ArrowDownIcon from '../../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   },
   suggestion: {
     display: 'block',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderTop: 'none',
   },
   suggestionsList: {
     margin: 0,
@@ -57,6 +62,14 @@ const useStyles = makeStyles(theme => ({
   divider: {
     height: theme.spacing(2),
   },
+  autoSuggestDropdown: {
+    position: 'absolute',
+    top: 4,
+    right: 0,
+    marginTop: '0px !important',
+    color: theme.palette.secondary.light,
+    pointerEvents: 'none'
+  }
 }));
 
 function renderInputComponent(inputProps) {
@@ -72,6 +85,7 @@ function renderInputComponent(inputProps) {
           ref(node);
           inputRef(node);
         },
+        endAdornment: (<InputAdornment className={classes.autoSuggestDropdown} position="start"><ArrowDownIcon /></InputAdornment>),
       }}
       {...other}
     />
@@ -175,8 +189,7 @@ export default function DynaAutoSuggest(props) {
         <FormLabel required={required} error={!isValid}>
           {label}
         </FormLabel>
-        {/* Todo: helpText is needed here */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <div className={classes.root}>
         <Autosuggest

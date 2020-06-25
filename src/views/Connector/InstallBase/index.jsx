@@ -23,15 +23,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
-
+const defaultFilter = {
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
+  searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
+};
 export default function InstallBase(props) {
-  const defaultFilter = useMemo(
-    () => ({
-      take: 10,
-      searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
-    }),
-    []
-  );
   const { match, history } = props;
   const { connectorId } = match.params;
   const sortFilterKey = 'connectorInstallBase';
@@ -42,9 +38,10 @@ export default function InstallBase(props) {
   const connectorInstallBaseConfig = useMemo(
     () => ({
       type: 'connectorInstallBase',
-      ...{ ...defaultFilter, ...filter },
+      ...defaultFilter,
+      ...filter,
     }),
-    [defaultFilter, filter]
+    [filter]
   );
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -57,7 +54,7 @@ export default function InstallBase(props) {
   const connector = useSelector(state =>
     selectors.resource(state, 'connectors', connectorId)
   );
-  const resources = list.resources.map(r => {
+  const resources = list.resources && list.resources.map(r => {
     const license = licenses.find(l => l._integrationId === r._integrationId);
 
     return { ...r, _id: r._integrationId, license };
@@ -134,23 +131,21 @@ export default function InstallBase(props) {
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources="connectorInstallBase">
-          {list.count === 0 ? (
-            <Typography>
-              {list.total === 0
-                ? "You don't have any installbase."
-                : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
-            </Typography>
-          ) : (
-            <CeligoTable
-              data={resources}
-              filterKey={sortFilterKey}
-              onSelectChange={handleSelectChange}
-              {...metadata}
-              selectableRows
-            />
-          )}
-        </LoadResources>
+        {list.count === 0 ? (
+          <Typography>
+            {list.total === 0
+              ? 'You don\'t have any installbase.'
+              : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
+          </Typography>
+        ) : (
+          <CeligoTable
+            data={resources}
+            filterKey={sortFilterKey}
+            onSelectChange={handleSelectChange}
+            {...metadata}
+            selectableRows
+          />
+        )}
       </div>
       <ShowMoreDrawer
         filterKey="connectorInstallBase"

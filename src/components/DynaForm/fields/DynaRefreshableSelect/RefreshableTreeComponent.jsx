@@ -5,8 +5,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
-import ChevronRightIcon from '../../../icons/ArrowRightIcon';
-import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
+import ArrowDownIcon from '../../../icons/ArrowDownIcon';
+import ArrowUpIcon from '../../../icons/ArrowUpIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
 // TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
@@ -73,7 +73,7 @@ const RefreshTreeElement = props => {
       label={`${selectedRelationshipName} Fields...`}
       nodeId={nodeId}
       expandIcon={
-        status === 'refreshed' ? <RefreshIcon /> : <ChevronRightIcon />
+        status === 'refreshed' ? <RefreshIcon /> : <ArrowDownIcon />
       }>
       {expanded.includes(nodeId) ? (
         <TreeViewComponent {...props} key={label} />
@@ -127,7 +127,7 @@ function TreeViewComponent(props) {
   return (
     <>
       {status === 'refreshed' ? (
-        <Spinner />
+        <Spinner size={24} />
       ) : (
         (!skipNonReferencedFields &&
           nonReferenceFields &&
@@ -243,8 +243,8 @@ export default function RefreshableTreeComponent(props) {
     <TreeView
       expanded={expanded}
       onNodeToggle={onNodeToggle}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}>
+      defaultCollapseIcon={<ArrowUpIcon />}
+      defaultExpandIcon={<ArrowDownIcon />}>
       <TreeViewComponent
         setExpanded={setExpanded}
         {...props}

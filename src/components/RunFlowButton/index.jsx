@@ -20,9 +20,17 @@ const useStyles = makeStyles(theme => ({
   blockButton: {
     marginRight: theme.spacing(2),
   },
+  runNowIcon: {
+    marginLeft: theme.spacing(-1),
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.primary.main,
+    }
+  },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+  const classes = useStyles();
   if (isRequested) return <Spinner size={20} />;
 
   if (variant === 'icon') {
@@ -30,6 +38,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
       return (
         <IconButton
           data-test="runFlow"
+          className={classes.runNowIcon}
           disabled>
           <RunIcon />
         </IconButton>
@@ -38,13 +47,14 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant }) {
 
     return (
       <IconButtonWithTooltip
-      // size="small"
+        className={classes.runNowIcon}
         tooltipProps={{
           title: 'Run now',
           placement: 'bottom',
         }}
         disabled={disabled}
         data-test="runFlow"
+
         onClick={onRunClick}>
         <RunIcon />
       </IconButtonWithTooltip>
@@ -190,9 +200,7 @@ export default function RunFlowButton({
         );
         // Removes uploaded file from session as it is no longer needed once triggered flow run
         dispatch(actions.file.reset(flowId));
-        enqueueSnackbar({
-          message: `${flowDetails.name} has been added to your queue.`,
-        });
+
 
         if (onRunStart) onRunStart();
         break;

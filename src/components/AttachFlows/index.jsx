@@ -65,7 +65,7 @@ export default function AttachFlows({ onClose, integrationId }) {
 
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach Flows</div>
+      <div>Attach flows</div>
       <div>
         <LoadResources
           required

@@ -29,11 +29,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = { take: 10 };
+const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
 const resourcesToLoad = resourceType => {
   if (resourceType === 'exports' || resourceType === 'imports') {
     // add connections
     return `${resourceType},connections`;
+  }
+  if (resourceType === 'apis') {
+    return `${resourceType},scripts`;
   }
 
   return resourceType;
@@ -91,10 +94,10 @@ export default function ResourceList(props) {
   return (
     <CheckPermissions
       permission={
-        PERMISSIONS &&
-        PERMISSIONS[resourceType] &&
-        PERMISSIONS[resourceType].view
-      }>
+         PERMISSIONS &&
+         PERMISSIONS[resourceType] &&
+         PERMISSIONS[resourceType].view
+       }>
       {// This is where we will be adding all Right drawers to Celigo Table
       resourceType === 'stacks' && <StackShareDrawer />
       }

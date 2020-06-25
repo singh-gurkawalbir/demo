@@ -80,25 +80,26 @@ export default function UserForm({
         label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
+        skipSort: true,
         options: [
           {
             items: [
               {
-                label: 'Manage All (including future) Integrations',
+                label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
               },
               {
-                label: 'Monitor All (including future) Integrations',
+                label: 'Monitor all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
               },
               {
-                label: 'Manage/Monitor Selected Integrations',
+                label: 'Manage/monitor select integrations',
                 value: USER_ACCESS_LEVELS.TILE,
               },
             ],
           },
         ],
-        helpText: 'Access Level help text',
+        helpKey: 'users.accesslevel',
       },
       integrationsToManage: {
         id: 'integrationsToManage',
@@ -120,7 +121,7 @@ export default function UserForm({
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),
@@ -149,7 +150,7 @@ export default function UserForm({
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),

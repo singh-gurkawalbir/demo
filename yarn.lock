@@ -7740,10 +7740,10 @@ markdown-table@^1.1.0:
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-1.1.3.tgz#9fcb69bcfdb8717bfd0398c6ec2d93036ef8de60"
   integrity sha512-1RUZVgQlpJSPWYbFSpmudq5nHY1doEIv89gBtF0s4gW1GF2XorxcA/70M5vq7rLv0a6mhOUccRsqkwhwLCIQ2Q==
 
-markdown-to-jsx@^6.10.3:
-  version "6.11.2"
-  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-6.11.2.tgz#d58d5497bad5decff415354854ce56a8a07a819c"
-  integrity sha512-Jip5MDGQ47tj/aQws9p/qctN2Myj2MsZts4tjfzm7Qfqir/TxgEuItJWjP4LtGVEFiv5bfNfvXwU0zG+1I2uPA==
+markdown-to-jsx@^6.11.4:
+  version "6.11.4"
+  resolved "https://registry.yarnpkg.com/markdown-to-jsx/-/markdown-to-jsx-6.11.4.tgz#b4528b1ab668aef7fe61c1535c27e837819392c5"
+  integrity sha512-3lRCD5Sh+tfA52iGgfs/XZiw33f7fFX9Bn55aNnVNUd2GzLDkOWyKYYD8Yju2B1Vn+feiEdgJs8T6Tg0xNokPw==
   dependencies:
     prop-types "^15.6.2"
     unquote "^1.1.0"
@@ -9580,10 +9580,10 @@ react-router@5.1.2:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-select@3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/react-select/-/react-select-3.0.8.tgz#06ff764e29db843bcec439ef13e196865242e0c1"
-  integrity sha512-v9LpOhckLlRmXN5A6/mGGEft4FMrfaBFTGAnuPHcUgVId7Je42kTq9y0Z+Ye5z8/j0XDT3zUqza8gaRaI1PZIg==
+react-select@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-3.1.0.tgz#ab098720b2e9fe275047c993f0d0caf5ded17c27"
+  integrity sha512-wBFVblBH1iuCBprtpyGtd1dGMadsG36W5/t2Aj8OE6WbByDg5jIFyT7X5gT+l0qmT5TqWhxX+VsKJvCEl2uL9g==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@emotion/cache" "^10.0.9"
@@ -9592,7 +9592,7 @@ react-select@3.0.8:
     memoize-one "^5.0.0"
     prop-types "^15.6.0"
     react-input-autosize "^2.2.2"
-    react-transition-group "^2.2.1"
+    react-transition-group "^4.3.0"
 
 react-simple-code-editor@^0.10.0:
   version "0.10.0"
@@ -9609,10 +9609,10 @@ react-smooth@^1.0.5:
     raf "^3.4.0"
     react-transition-group "^2.5.0"
 
-react-styleguidist@^11.0.6:
-  version "11.0.6"
-  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-11.0.6.tgz#bc7c25029fcb835ebee9c9bc7f914c6b7014a537"
-  integrity sha512-jrbCdUW8fUC2IusY12JQb6UrABLixQeW9N7sxwKe7QPzy+qc+cpiaR51LFvcwLeGBigaEzNJcLvlTtxspt1YRQ==
+react-styleguidist@^11.0.8:
+  version "11.0.8"
+  resolved "https://registry.yarnpkg.com/react-styleguidist/-/react-styleguidist-11.0.8.tgz#68edbaf6b71d529a07be208ad148ad6040b7d9d9"
+  integrity sha512-ckqBfipqgFmCl5/Lk5AnaLRbizOwd34YEUCsGLYvMwinzeemoDt6jUgojJhZDnytFzvaIutEqCaXSW72c6X4TQ==
   dependencies:
     "@vxna/mini-html-webpack-template" "^1.0.0"
     acorn "^6.4.1"
@@ -9651,7 +9651,7 @@ react-styleguidist@^11.0.6:
     loader-utils "^2.0.0"
     lodash "^4.17.15"
     lowercase-keys "^2.0.0"
-    markdown-to-jsx "^6.10.3"
+    markdown-to-jsx "^6.11.4"
     mini-html-webpack-plugin "^2.0.0"
     mri "^1.1.4"
     ora "^4.0.2"
@@ -9702,7 +9702,7 @@ react-toggle@^4.1.1:
   dependencies:
     classnames "^2.2.5"
 
-react-transition-group@^2.2.1, react-transition-group@^2.5.0:
+react-transition-group@^2.5.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.9.0.tgz#df9cdb025796211151a436c69a8f3b97b5b07c8d"
   integrity sha512-+HzNTCHpeQyl4MJ/bdE0u6XRMe9+XG/+aL4mCxVN4DnPBQ0/5bfHWPDuOZUzYdMj94daZaZdCCc1Dzt9R/xSSg==
@@ -9712,7 +9712,7 @@ react-transition-group@^2.2.1, react-transition-group@^2.5.0:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-react-transition-group@^4.0.0:
+react-transition-group@^4.0.0, react-transition-group@^4.3.0:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
   integrity sha512-Djqr7OQ2aPUiYurhPalTrVy9ddmFCCzwhqQmtN+J3+3DzLO209Fdr70QrN8Z3DsglWql6iY1lDWAfpFiBtuKGw==
@@ -12066,7 +12066,7 @@ webpack-dev-middleware@^3.7.2:
     range-parser "^1.2.1"
     webpack-log "^2.0.0"
 
-webpack-dev-server@^3.10.3, webpack-dev-server@^3.9.0:
+webpack-dev-server@^3.11.0, webpack-dev-server@^3.9.0:
   version "3.11.0"
   resolved "https://registry.yarnpkg.com/webpack-dev-server/-/webpack-dev-server-3.11.0.tgz#8f154a3bce1bcfd1cc618ef4e703278855e7ff8c"
   integrity sha512-PUxZ+oSTxogFQgkTtFndEtJIPNmml7ExwufBZ9L2/Xyyd5PnOL5UreWe5ZT7IU25DSdykL9p1MLQzmLh2ljSeg==

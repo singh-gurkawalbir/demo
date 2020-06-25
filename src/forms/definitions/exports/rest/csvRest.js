@@ -124,8 +124,8 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample file (that would be exported)',
-      mode: r => r && r.file && r.file.type,
+      placeholder: 'Sample file (that would be parsed):',
+      options: 'csv',
       visibleWhen: [
         {
           field: 'outputMode',
@@ -274,40 +274,51 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'outputMode', 'exportOneToMany', 'formView'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
-          return 'What would you like to export?';
-        },
-        fields: [
-          'rest.blobMethod',
-          'rest.relativeURI',
-          'rest.headers',
-          'uploadFile',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.trimSpaces',
-          'file.csv.rowsToSkip',
-          'file.csv.hasHeaderRow',
-          'file.csv.rowsPerRecord',
-          'file.csv.keyColumns',
-          'file.csvHelper',
-          'rest.blobFormat',
+              return 'What would you like to export?';
+            },
+            fields: [
+              'rest.blobMethod',
+              'rest.relativeURI',
+              'rest.headers',
+              'uploadFile',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns',
+              'file.csvHelper',
+              'rest.blobFormat',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Non-standard API response patterns',
+            fields: ['rest.resourcePath'],
+          },
+          { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },
       {
-        collapsed: true,
-        label: 'Non-standard API response patterns',
-        fields: ['rest.resourcePath'],
-      },
-      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
-    ],
+        fields: ['exportPanel'],
+      }
+    ]
   },
 };

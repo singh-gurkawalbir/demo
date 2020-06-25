@@ -12,9 +12,15 @@ import moment from 'moment';
 import actions from '../../actions';
 import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
+import useConfirmDialog from '../ConfirmDialog';
+
 
 const useStyles = makeStyles(theme => ({
   submit: {
+    marginTop: theme.spacing(3),
+  },
+  cancel: {
+    padding: theme.spacing(3),
     marginTop: theme.spacing(3),
   },
   label: {
@@ -60,7 +66,8 @@ const debugDurationOptions = [
 
 export default function ConfigureDebugger(props) {
   const classes = useStyles();
-  const { id, name, debugDate, onClose } = props;
+  const { id, debugDate, onClose } = props;
+  const { confirmDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
   const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
@@ -94,6 +101,22 @@ export default function ConfigureDebugger(props) {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
+  const handleCancelClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm cancel',
+      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+      buttons: [
+        {
+          label: 'Yes, cancel',
+          onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
+        },
+      ]
+    });
+  }, [onClose, confirmDialog]);
 
   return (
     <Drawer
@@ -104,9 +127,8 @@ export default function ConfigureDebugger(props) {
       }}>
       <DrawerTitleBar
         onClose={onClose}
-        title={`Configure debugger: ${name}`}
-        helpKey="connection.configDebugger"
-        helpTitle="Configure debugger"
+        title="Debug connection"
+        helpKey="connection.debug"
       />
       <div className={classes.content}>
         <FormControl component="fieldset">
@@ -142,6 +164,14 @@ export default function ConfigureDebugger(props) {
             className={classes.submit}
             value="Save">
             {saveLabel}
+          </Button>
+          <Button
+            variant="text"
+            className={classes.cancel}
+            color="primary"
+            data-test="closeEditor"
+            onClick={handleCancelClick}>
+            Cancel
           </Button>
         </div>
       </div>

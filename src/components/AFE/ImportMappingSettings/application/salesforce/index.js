@@ -21,6 +21,11 @@ export default {
     const { connectionId, flowId, resourceId } = options;
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
+    let picklistOptions = [];
+
+    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
+      picklistOptions = selectedGenerateObj.options;
+    }
     const fieldMeta = {
       fieldMap: {
         immutable: {
@@ -62,7 +67,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -84,6 +89,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
+          required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -97,6 +103,7 @@ export default {
           type: 'salesforcelookupfilters',
           label: '',
           connectionId,
+          required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
@@ -114,6 +121,7 @@ export default {
           type: 'text',
           multiline: true,
           disableText: true,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
@@ -126,10 +134,13 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
+          // Todo (Aditya): label is needed
+          label: 'Value field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
@@ -152,6 +163,7 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
+          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -439,6 +451,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
+          helpKey: 'mapping.conditional.when',
           options: [
             {
               items: isProduction()
@@ -454,7 +467,6 @@ export default {
           visible: false,
           defaultValue: lookups,
         },
-
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',

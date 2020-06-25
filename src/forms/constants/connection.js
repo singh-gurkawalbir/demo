@@ -100,6 +100,9 @@ export default {
     'loopreturns',
     'orderful',
     'logisense',
+    'sapbydesign',
+    'concurexpense',
+    'concurinvoice',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -130,7 +133,6 @@ export default {
     'googlesheets',
     'googlecontacts',
     'googlemail',
-    'acumatica',
     'googledrive',
     'googleanalytics',
     'freshbooks',

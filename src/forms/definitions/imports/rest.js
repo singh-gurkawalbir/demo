@@ -896,7 +896,7 @@ export default {
       id: 'sampleDataTitle',
       type: 'labeltitle',
       label: 'Do you have sample data?',
-      visibleWhen: [
+      visibleWhenAll: [
         {
           field: 'inputMode',
           is: ['records'],
@@ -909,6 +909,16 @@ export default {
     },
     sampleData: {
       fieldId: 'sampleData',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+        {
+          field: 'rest.method',
+          isNot: ['DELETE'],
+        },
+      ],
     },
     dataMappings: {
       formId: 'dataMappings',
@@ -934,9 +944,13 @@ export default {
     formView: { fieldId: 'formView' },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings', 'formView'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings', 'formView'],
+      },
       {
         collapsed: true,
         label: r => {
@@ -955,7 +969,6 @@ export default {
           // 'mapping',
           'rest.relativeURI',
           'rest.body',
-          'blobKeyPath',
         ],
         type: 'collapse',
         containers: [
@@ -1028,13 +1041,9 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Do you have a sample destination record?',
-        fields: ['sampleData'],
-      },
-      {
-        collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

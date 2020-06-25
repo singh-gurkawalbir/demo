@@ -1,22 +1,29 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import {
   Route,
   useLocation,
   generatePath,
   useHistory,
-  useRouteMatch,
+  matchPath,
+  useRouteMatch
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
 import { isNewId } from '../../../utils/resource';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
+import Back from '../../icons/BackArrowIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 
+const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
+const isNestedDrawer = (url) => !!matchPath(url, {
+  path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
+  exact: true,
+  strict: false});
 const useStyles = makeStyles(theme => ({
   root: {
     zIndex: props => props.zIndex,
@@ -27,30 +34,32 @@ const useStyles = makeStyles(theme => ({
     width: props => {
       if (props.occupyFullWidth) return '100%';
 
-      return props.match.isExact ? 660 : 150;
+      return props.match.isExact ? 824 : 0;
     },
     overflowX: 'hidden',
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   resourceFormWrapper: {
-    padding: theme.spacing(3, 3, 1, 3),
+    padding: theme.spacing(3, 3, 0, 3),
   },
   appLogo: {
-    paddingRight: theme.spacing(6),
+    paddingRight: theme.spacing(2),
+    marginTop: theme.spacing(-0.5),
+    marginRight: theme.spacing(4),
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+
   },
   title: {
     display: 'flex',
-    justifyContent: 'space-between',
-    padding: '14px 0px',
-    margin: theme.spacing(0, 3),
+    padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.paper,
+    background: theme.palette.background.default,
   },
   titleText: {
-    maxWidth: '80%',
     wordBreak: 'break-word',
+    paddingRight: theme.spacing(2),
   },
 
   closeButton: {
@@ -63,9 +72,25 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.dark,
     },
   },
-  closeIcon: {
-    fontSize: 18,
+
+  backButton: {
+    marginRight: theme.spacing(1),
+    padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.secondary.dark,
+    },
   },
+
+  nestedDrawerTitleText: {
+    maxWidth: '90%',
+  },
+  titleImgBlock: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+
 }));
 const determineRequiredResources = type => {
   const resourceType = [];
@@ -101,6 +126,9 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
     return 'Fix offline connection';
   }
+  if (resourceType === 'accesstokens') {
+    return `${opTitle} ${resourceLabel}`;
+  }
 
   return `${opTitle} ${resourceLabel.toLowerCase()}`;
 };
@@ -134,7 +162,6 @@ export default function Panel(props) {
   const dispatch = useDispatch();
 
   useRedirectionToParentRoute(resourceType, id);
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles({
     ...props,
     occupyFullWidth,
@@ -288,12 +315,6 @@ export default function Panel(props) {
         if (!resourceId) {
           return props.history.replace(getEditUrl(id));
         }
-
-        // Take care of existing resource selection.
-        enqueueSnackbar({
-          message: `${resourceLabel} added`,
-          variant: 'success',
-        });
       }
       // this is NOT a case where a user selected an existing resource,
       // so move to step 2 of the form...
@@ -316,12 +337,7 @@ export default function Panel(props) {
         return;
       }
 
-      if (newResourceId) {
-        enqueueSnackbar({
-          message: `${resourceLabel} created`,
-          variant: 'success',
-        });
-      }
+
       onClose();
     }
   }
@@ -346,23 +362,31 @@ export default function Panel(props) {
     <>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3" className={classes.titleText}>
-            {title}
-          </Typography>
-          {showApplicationLogo && (
+          {isNestedDrawer(location.pathname) &&
+          <IconButton
+            data-test="backDrawer"
+            className={classes.backButton}
+            onClick={onClose}>
+            <Back />
+          </IconButton>}
+          <div className={classes.titleImgBlock}>
+            <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
+              {title}
+            </Typography>
+            {showApplicationLogo && (
             <ApplicationImg
               className={classes.appLogo}
               size="small"
               type={applicationType}
               alt={applicationType || 'Application image'}
             />
-          )}
+            )}
+          </div>
           <IconButton
-            data-test="closeFlowSchedule"
-            aria-label="Close"
+            data-test="closeDrawer"
             className={classes.closeButton}
             onClick={onClose}>
-            <Close className={classes.closeIcon} />
+            <Close />
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
@@ -382,7 +406,7 @@ export default function Panel(props) {
       </div>
 
       <Route
-        path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
+        path={`${match.url}${DRAWER_PATH}`}
         render={props => (
           <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
         )}

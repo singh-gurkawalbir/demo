@@ -7,6 +7,10 @@ export default {
     delete newValues['/file/csvHelper'];
     newValues['/type'] = 'webhook';
 
+    const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+    if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
+      newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
+    }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -206,37 +210,51 @@ export default {
     },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'exportOneToMany'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How would you like to parse files?',
-        fields: [
-          'file.type',
-          'file.csv.columnDelimiter',
-          'file.csv.rowDelimiter',
-          'file.csv.trimSpaces',
-          'file.csv.rowsToSkip',
-          'file.csv.hasHeaderRow',
-          'file.csv.rowsPerRecord',
-          'file.csv.keyColumns',
-          'file.csvHelper',
-          'file.xml.resourcePath',
-          'file.json.resourcePath',
-          'file.xlsx.hasHeaderRow',
-          'file.xlsx.rowsPerRecord',
-          'file.xlsx.keyColumns',
-          'edix12.format',
-          'fixed.format',
-          'edifact.format',
-          'file.filedefinition.rules',
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            type: 'indent',
+            fields: [
+              'file.type',
+              'file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns',
+              'edix12.format',
+              'fixed.format',
+              'edifact.format',
+              'file.filedefinition.rules',
+            ],
+            containers: [{fields: [
+              'file.csvHelper',
+              'file.csv.columnDelimiter',
+              'file.csv.rowDelimiter',
+              'file.csv.trimSpaces',
+              'file.csv.rowsToSkip',
+              'file.csv.hasHeaderRow',
+              'file.csv.rowsPerRecord',
+              'file.csv.keyColumns']}]
+          },
+          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-    ],
+      {
+        fields: ['exportPanel'],
+      }
+    ]
+
   },
   actions: [
     {

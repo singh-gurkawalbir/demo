@@ -1,42 +1,38 @@
 import { useDispatch } from 'react-redux';
-import React, { useCallback } from 'react';
-import { IconButton } from '@material-ui/core';
+import { useCallback, useEffect } from 'react';
 import actions from '../../../../../actions';
-import CloseIcon from '../../../../../components/icons/TrashIcon';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
 export default {
   label: 'Delete transfer',
-  component: function Delete({ resource: transfer }) {
+  component: function Delete({ rowData: transfer }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deleteTransfer = useCallback(() => {
       dispatch(actions.resource.delete('transfers', transfer._id));
     }, [dispatch, transfer._id]);
-    const handleClick = () => {
-      const message = 'Are you sure you want to delete this transfer?';
-
+    const handleClick = useCallback(() => {
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm delete',
+        message: 'Are you sure you want to delete this transfer?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
-            label: 'Yes',
+            label: 'Delete',
             onClick: () => {
               deleteTransfer();
             },
           },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
         ],
       });
-    };
+    }, [confirmDialog, deleteTransfer]);
+    useEffect(() => {
+      handleClick();
+    }, [handleClick]);
 
-    return (
-      <IconButton data-test="delete" size="small" onClick={handleClick}>
-        <CloseIcon />
-      </IconButton>
-    );
+    return null;
   },
 };

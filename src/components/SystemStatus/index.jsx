@@ -12,12 +12,16 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   wrapper: {
-    padding: theme.spacing(2),
-    maxWidth: '319px',
+    padding: 12,
+    maxWidth: 324,
     display: 'flex',
+
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    '& > p': {
+      fontSize: 14,
+    }
   },
   progressBar: {
     marginTop: theme.spacing(1.5),

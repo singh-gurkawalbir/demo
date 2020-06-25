@@ -68,15 +68,15 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'accType',
-      'http.unencrypted.x-seller-id',
-      'http.auth.token.token',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['accType',
+          'http.unencrypted.x-seller-id',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

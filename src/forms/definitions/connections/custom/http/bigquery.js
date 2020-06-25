@@ -32,13 +32,19 @@ export default {
     genericOauthConnector: {
       formId: 'genericOauthConnector',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.oauth.scope', 'genericOauthConnector'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.oauth.scope', 'genericOauthConnector'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

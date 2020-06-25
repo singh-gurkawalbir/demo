@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FlowsPanel({ integrationId }) {
+export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -47,6 +47,10 @@ export default function FlowsPanel({ integrationId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = { ...flowFilter, type: 'flows' };
+  const isIntegrationApp = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', integrationId);
+    return !!(integration && integration._connectorId);
+  });
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -62,9 +66,9 @@ export default function FlowsPanel({ integrationId }) {
           f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : integrationId)
+            : (childId || integrationId))
       ),
-    [allFlows, integrationId]
+    [allFlows, childId, integrationId]
   );
   const {
     status,
@@ -74,6 +78,9 @@ export default function FlowsPanel({ integrationId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
+  const handleClose = useCallback(() => {
+    setShowDialog();
+  }, [setShowDialog]);
 
   useEffect(() => {
     if (!status && isUserInErrMgtTwoDotZero) {
@@ -108,14 +115,14 @@ export default function FlowsPanel({ integrationId }) {
       {showDialog && (
         <AttachFlowsDialog
           integrationId={integrationId}
-          onClose={setShowDialog}
+          onClose={handleClose}
         />
       )}
       <MappingDrawer integrationId={integrationId} />
       <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {permission.create && (
+        {permission.create && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -123,7 +130,7 @@ export default function FlowsPanel({ integrationId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-        {permission.attach && !isStandalone && (
+        {permission.attach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
@@ -131,7 +138,7 @@ export default function FlowsPanel({ integrationId }) {
           </IconTextButton>
         )}
         {/* check if this condition is correct */}
-        {permission.edit && (
+        {permission.edit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"

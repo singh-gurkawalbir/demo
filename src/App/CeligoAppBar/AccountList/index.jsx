@@ -131,15 +131,11 @@ export default function AccountList() {
     account => {
       handleClose();
       confirmDialog({
-        title: 'Leave Account',
-        message: `By leaving the account "${account.company}", 
-        you will no longer have access to the account or any of the integrations within the account.`,
+        title: 'Confirm leave',
+        message: 'Are you sure you want to leave this account? You will no longer have access to the account after you leave.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
-            label: 'Yes',
+            label: 'Leave',
             onClick: () => {
               if (userPreferences.defaultAShareId === account.id) {
                 history.push(getRoutePath('/'));
@@ -147,6 +143,10 @@ export default function AccountList() {
 
               dispatch(actions.user.org.accounts.leave(account.id));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

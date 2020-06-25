@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import Detach from '../../actions/Flows/Detach';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
@@ -7,15 +7,16 @@ import Download from '../../actions/Download';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import NameCell from './NameCell';
-import TypeCell from './TypeCell';
 import OnOffCell from './OnOffCell';
 import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
 import MappingCell from './MappingCell';
+import SettingsCell from './SettingsCell';
+import EditCell from '../../actions/Flows/Edit';
 
 export default {
   columns: (empty, actionProps) => {
-    const columns = [
+    let columns = [
       {
         heading: 'Name',
         value: function Name(r) {
@@ -33,34 +34,45 @@ export default {
         orderBy: 'name',
       },
       {
-        // Mixed, Scheduled, Realtime, or Data loader
-        heading: 'Type',
-        value: function Type(r) {
-          return <TypeCell flowId={r._id} />;
-        },
-      },
-      {
         heading: 'Last updated',
-        value: r => r.lastModified && formatLastModified(r.lastModified),
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
         heading: 'Last run',
-        value: r => r.lastExecutedAt && formatLastModified(r.lastExecutedAt),
+        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {
         heading: 'Mapping',
+        align: 'center',
         value: function Mapping(r) {
           return <MappingCell flowId={r._id} />;
         },
       },
       {
         heading: 'Schedule',
+        align: 'center',
         value: function Schedule(r) {
-          return <ScheduleCell {...r} />;
+          return <ScheduleCell flowId={r._id} name={r.name} />;
         },
-      },
+      }
+    ];
+
+    if (actionProps.isIntegrationApp) {
+      columns.push(
+        {
+          heading: 'Settings',
+          align: 'center',
+          value: function Settings(r) {
+            return <SettingsCell flowId={r._id} name={r.name} />;
+          }
+        }
+      );
+    }
+
+    columns = [
+      ...columns,
       {
         heading: 'Run',
         value: function Name(r) {
@@ -75,7 +87,7 @@ export default {
         },
       },
       {
-        heading: 'On/off',
+        heading: 'Off/On',
         value: function Type(r) {
           return (
             <OnOffCell
@@ -89,7 +101,7 @@ export default {
             />
           );
         },
-      },
+      }
     ];
 
     return columns;
@@ -104,16 +116,15 @@ export default {
     // 'detach','clone','delete','references','download',
 
     if (isIntegrationApp) {
-      return [AuditLogs];
+      return [EditCell, AuditLogs];
     }
 
-    let actions = [];
 
+    let actions = [EditCell, AuditLogs, References, Download, Clone];
     if (!isStandalone) {
       actions.push(Detach);
     }
-
-    actions = [...actions, Clone, AuditLogs, References, Download, Delete];
+    actions = [...actions, Delete];
 
     return actions;
   },

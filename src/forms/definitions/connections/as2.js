@@ -200,25 +200,6 @@ export default {
       type: 'labeltitle',
       visibleWhen: [{ field: 'configureTokenRefresh', is: [true] }],
     },
-    configureApiRateLimits: {
-      id: 'configureApiRateLimits',
-      type: 'checkbox',
-      label: 'Configure API rate limits',
-      defaultValue: r =>
-        !!(
-          r &&
-          r.as2 &&
-          r.as2.partnerStationInfo &&
-          r.as2.partnerStationInfo.rateLimit &&
-          r.as2.partnerStationInfo.rateLimit.limit
-        ),
-    },
-    apiRateLimits: {
-      id: 'apiRateLimits',
-      label: 'API rate limits',
-      type: 'labeltitle',
-      visibleWhen: [{ field: 'configureApiRateLimits', is: [true] }],
-    },
     'as2.partnerStationInfo.auth.token.refreshToken': {
       fieldId: 'as2.partnerStationInfo.auth.token.refreshToken',
     },
@@ -260,14 +241,24 @@ export default {
     },
     'as2.concurrencyLevel': { fieldId: 'as2.concurrencyLevel' },
     'as2.preventCanonicalization': { fieldId: 'as2.preventCanonicalization' },
+    application: {
+      fieldId: 'application'
+    },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'My AS2 Station Configuration',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure my AS2 station',
         fields: [
           'as2url',
           'as2.as2Id',
@@ -285,7 +276,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Partner AS2 Station Configuration',
+        label: 'Configure partner AS2 station',
         fields: [
           'as2.partnerStationInfo.as2URI',
           'as2.partnerId',
@@ -302,7 +293,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Authentication',
+        label: 'Configure auth',
         fields: [
           'as2.partnerStationInfo.auth.type',
           'as2.partnerStationInfo.auth.failStatusCode',
@@ -317,7 +308,6 @@ export default {
           'as2.partnerStationInfo.auth.token.scheme',
           'as2.partnerStationInfo.auth.token.paramName',
           'configureTokenRefresh',
-          'configureApiRateLimits',
           'refreshTokenHeader',
           'as2.partnerStationInfo.auth.token.refreshToken',
           'as2.partnerStationInfo.auth.token.refreshRelativeURI',
@@ -326,7 +316,12 @@ export default {
           'as2.partnerStationInfo.auth.token.refreshBody',
           'as2.partnerStationInfo.auth.token.refreshTokenPath',
           'as2.partnerStationInfo.auth.token.refreshHeaders',
-          'apiRateLimits',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API rate limiter',
+        fields: [
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
           'as2.partnerStationInfo.rateLimit.failPath',
@@ -335,12 +330,12 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Configure routing for shared connection',
+        label: 'Configure routing for shared connections',
         fields: ['as2.contentBasedFlowRouter'],
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: ['as2.preventCanonicalization', 'as2.concurrencyLevel'],
       },
     ],

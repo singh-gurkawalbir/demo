@@ -219,9 +219,13 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
+      },
       {
         collapsed: true,
         label: 'How would you like the records imported?',
@@ -256,13 +260,13 @@ export default {
           'salesforce.idLookup.whereClause',
           'salesforce.upsert.externalIdField',
           'salesforce.idLookup.extract',
-          'blobKeyPath',
         ],
       },
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

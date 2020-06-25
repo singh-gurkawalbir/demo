@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     position: 'relative',
     marginLeft: 12,
+    marginRight: theme.spacing(4),
+    marginTop: theme.spacing(-3),
     '&:before': {
       position: 'absolute',
       content: '""',
@@ -148,14 +150,11 @@ export default function DynaNetSuiteSubRecords(props) {
   const handleDeleteClick = useCallback(
     fieldId => {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm remove',
         message: 'Are you sure you want to remove this subrecord import?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
-            label: 'Yes',
+            label: 'Remove',
             onClick: () => {
               const updatedSubrecords = subrecords.filter(
                 sr => sr.fieldId !== fieldId
@@ -175,6 +174,10 @@ export default function DynaNetSuiteSubRecords(props) {
                 )
               );
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

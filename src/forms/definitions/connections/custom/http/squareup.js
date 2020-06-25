@@ -30,6 +30,15 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      defaultValue: r =>
+        r &&
+      r.http &&
+      r.http.auth &&
+      r.http.auth.oauth &&
+      r.http.auth.oauth.scope
+          ? r.http.auth.oauth.scope
+          : ['MERCHANT_PROFILE_WRITE',
+            'MERCHANT_PROFILE_READ'],
       scopes: [
         'BANK_ACCOUNTS_READ',
         'CUSTOMERS_READ',
@@ -40,7 +49,6 @@ export default {
         'INVENTORY_WRITE',
         'ITEMS_READ',
         'ITEMS_WRITE',
-        'MERCHANT_PROFILE_READ',
         'ORDERS_READ',
         'ORDERS_WRITE',
         'PAYMENTS_READ',
@@ -52,18 +60,22 @@ export default {
         'TIMECARDS_WRITE',
         'TIMECARDS_SETTINGS_READ',
         'TIMECARDS_SETTINGS_WRITE',
-        'MERCHANT_PROFILE_WRITE',
         'CASH_DRAWER_READ',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.oauth.scope'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.oauth.scope'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

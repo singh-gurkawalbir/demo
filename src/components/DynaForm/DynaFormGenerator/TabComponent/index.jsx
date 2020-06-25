@@ -39,7 +39,7 @@ const TabLabel = ({layout, fieldMap, label, tabType }) => (
 
     )}
   </FormContext.Consumer>
-)
+);
 
 function TabComponent(props) {
   const { containers, fieldMap, children, type,

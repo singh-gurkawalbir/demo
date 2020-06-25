@@ -22,7 +22,7 @@ import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
-import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
+import ConflictAlertDialog from '../components/ConflictAlertDialog';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -74,8 +74,8 @@ export default function App() {
     const domain = getDomain();
 
     /**
-     * We need to initialize the gainsight here for localhost.io only.
-     * We are injecting this intialization script into index.html from
+     * We need to initialize gainsight here for localhost.io only.
+     * We are injecting this initialization script into index.html from
      * backend for other domains as per the gainsight support's suggestion
      * for their "Product Mapper" to work properly.
      */

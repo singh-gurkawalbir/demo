@@ -18,7 +18,7 @@ import { isNewId } from '../../utils/resource';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 import { UI_FIELD_VALUES } from '../../utils/constants';
-import { isIntegrationApp } from '../../utils/flows';
+import { isIntegrationApp, isFlowUpdatedWithPgOrPP } from '../../utils/flows';
 
 export const SCOPES = {
   META: 'meta',
@@ -414,6 +414,9 @@ export function* submitFormValues({
   }
 
   if (patch && patch.length) {
+    // no context = {flowId} sent on purpose for the resource forms
+    // on resource submit complete updateFlowDoc will be called anyway
+    // sending context = {flowId} will trigger updateFlowDoc again
     const resp = yield call(commitStagedChanges, {
       resourceType: type,
       id: resourceId,
@@ -434,29 +437,39 @@ export function* submitFormValues({
   );
 }
 
-export function* getFlowUpdatePatchesOnPGorPPSave(
+
+// this saga specifically creates new PG or PP updates to a flow document
+export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
   tempResourceId,
   flowId
 ) {
   if (
     !['exports', 'imports'].includes(resourceType) ||
-    !flowId ||
-    !isNewId(tempResourceId)
-  ) return [];
+    !flowId) return [];
 
   // is pageGenerator or pageProcessor
-  const createdId = yield select(selectors.createdResourceId, tempResourceId);
+  const { merged: flowDoc, master: origFlowDoc } = yield select(
+    selectors.resourceData,
+    'flows',
+    flowId
+  );
+  // if its an existing resource and original flow document does not have any references to newly created PG or PP
+  // then we can go ahead and update it...if it has existing references no point creating additional create patches
+  // this was specifically created to support webhooks where in generating url we have to create a new PG...
+
+  if (!isNewId(tempResourceId) && isFlowUpdatedWithPgOrPP(origFlowDoc, tempResourceId)) {
+    return [];
+  }
+
+  const createdId = isNewId(tempResourceId) ?
+    yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(
     selectors.resource,
     resourceType,
     createdId
   );
-  const { merged: flowDoc } = yield select(
-    selectors.resourceData,
-    'flows',
-    flowId
-  );
+
   const addIndexPP =
     (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
   const addIndexPG =
@@ -464,7 +477,7 @@ export function* getFlowUpdatePatchesOnPGorPPSave(
   let flowPatches = [];
 
   if (resourceType === 'exports') {
-    if (createdResource.isLookup) {
+    if (createdResource?.isLookup) {
       flowPatches = [
         {
           op: 'add',
@@ -556,7 +569,7 @@ export function* skipRetriesPatches(
   );
   // if the export is a lookup then no patches should be applied
 
-  if (createdResource.isLookup) return null;
+  if (createdResource.isLookup) return [];
 
   const { merged: flow } = yield select(
     selectors.resourceData,
@@ -569,8 +582,12 @@ export function* skipRetriesPatches(
       pg => pg._exportId === (createdId || resourceId)
     );
 
-  if (index === -1) {
-    return null;
+  if (index === null || index === -1) {
+    return [];
+  }
+  // if its same value no point patching...return
+  if (flow.pageGenerators[index].skipRetries === skipRetries) {
+    return [];
   }
 
   const opDetermination =
@@ -605,17 +622,61 @@ function* getResourceType({ resourceType, resourceId }) {
   return updatedResourceType;
 }
 
-function* updateFlowDoc({ resourceType, flowId, resourceId, resourceValues }) {
+export function* touchFlow(flowId, resourceType, resourceId) {
+  const out = [];
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const r = yield select(selectors.resource, resourceType, resourceId);
+  if (flow?.lastModified && r?.lastModified && flow.lastModified < r.lastModified) {
+    out.push({
+      op: 'replace',
+      path: '/lastModified',
+      value: r.lastModified,
+    });
+    // this is a hack, the backend will need to enhance the audit log generation
+    // https://celigo.atlassian.net/browse/IO-15873
+    // until then, without the hack, flow audit log will show the following paths being changed by mistake
+    if (flow?.pageProcessors?.length) {
+      for (let i = 0; i < flow.pageProcessors.length; i += 1) {
+        const rm = flow.pageProcessors[i]?.responseMapping;
+        if (rm) {
+          const ks = Object.keys(rm);
+          let empty = true;
+          // null check is shallow
+          for (let j = 0; j < ks.length; j += 1) {
+            if (rm[ks[j]] != null && (!Array.isArray(rm[ks[j]]) || rm[ks[j]].length > 0)) {
+              empty = false;
+              break;
+            }
+          }
+          if (empty) {
+            out.push({
+              op: 'remove',
+              path: `/pageProcessors/${i}/responseMapping`,
+            });
+          }
+        }
+      }
+    }
+  }
+  return out;
+}
+
+export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValues = {} }) {
   const updatedResourceType = yield call(getResourceType, {
     resourceType,
     resourceId,
   });
-  const flowPatches = yield call(
-    getFlowUpdatePatchesOnPGorPPSave,
+  let flowPatches = yield call(
+    getFlowUpdatePatchesForNewPGorPP,
     updatedResourceType,
     resourceId,
     flowId
   );
+  // if flowPatches is already non-empty, the flow will be udpated and lastmodified will be changed as well
+  // thus nothing to do for the lastmodified particularly
+  // otherwise, check the stored flow and the changed resource to determine if the flow should be "touched"
+  // to update the lastmodified
+  if (!flowPatches || !flowPatches.length) flowPatches = yield call(touchFlow, flowId, resourceType, resourceId);
 
   yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
   // TODO: is skipRetries a ui field value should this be deleted

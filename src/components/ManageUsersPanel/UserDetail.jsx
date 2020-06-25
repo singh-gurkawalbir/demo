@@ -6,7 +6,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
-import EditIcon from '../icons/EditIcon';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -56,61 +55,57 @@ export default function UserDetail(props) {
     switch (action) {
       case 'disable':
         confirmDialog({
-          title: 'Confirm',
+          title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
           message: `Are you sure you want to ${
             user.disabled ? 'enable' : 'disable'
           } this user?`,
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
         break;
       case 'makeOwner':
         confirmDialog({
-          title: 'Transfer Account Ownership',
+          title: 'Confirm owner',
           isHtml: true,
-          message: `${
-            user.sharedWithUser.name
-              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
-              : `<b>${user.sharedWithUser.email}</b>`
-          } <br/> 
-          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
-          Please click Confirm to proceed with this change.
-          `,
+          message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
         break;
       case 'delete':
         confirmDialog({
-          title: 'Confirm',
+          title: 'Confirm delete',
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -199,10 +194,10 @@ export default function UserDetail(props) {
       />
       <TableRow key={user._id}>
         <TableCell>
-          <div>{user.sharedWithUser.email}</div>
+          <div>{user.sharedWithUser.name}</div>
         </TableCell>
         <TableCell>
-          <div>{user.sharedWithUser.name}</div>
+          <div>{user.sharedWithUser.email}</div>
         </TableCell>
         <TableCell>
           {!integrationId &&
@@ -237,65 +232,75 @@ export default function UserDetail(props) {
         </TableCell>
         {isAccountOwner && (
           <>
+            <TableCell>
+              <CeligoSwitch
+                data-test="disableUser"
+                disabled={!user.accepted}
+                checked={!user.disabled}
+                onChange={() => {
+                  handleActionClick('disable');
+                }}
+                  />
+
+            </TableCell>
             {integrationId && user._id !== ACCOUNT_IDS.OWN && (
               <TableCell>
-                <IconButton
-                  data-test="editUser"
-                  onClick={() => {
-                    handleActionClick('edit');
-                  }}>
-                  <EditIcon />
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
+                    onClick={() => {
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
                 </IconButton>
               </TableCell>
             )}
 
             {!integrationId && (
-              <>
-                <TableCell>
-                  <CeligoSwitch
-                    data-test="disableUser"
-                    enabled={!user.disabled}
-                    onChange={() => {
-                      handleActionClick('disable');
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}>
-                    <MenuItem
-                      data-test="changeUserPermissions"
-                      onClick={() => {
-                        handleActionClick('edit');
-                      }}>
-                      Change permissions
-                    </MenuItem>
-                    <Divider />
-                    {user.accepted && (
-                      <MenuItem
-                        data-test="makeAccountOwner"
-                        onClick={() => {
-                          handleActionClick('makeOwner');
-                        }}>
-                        Make account owner
-                      </MenuItem>
-                    )}
-                    {user.accepted && <Divider />}
-                    <MenuItem
-                      data-test="deleteFromAccount"
-                      onClick={() => {
-                        handleActionClick('delete');
-                      }}>
-                      Delete from account
-                    </MenuItem>
-                  </Menu>
-                  <IconButton onClick={handleClick}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </TableCell>
-              </>
+            <>
+              <TableCell>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
+                    onClick={() => {
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                  <Divider />
+                  {user.accepted && (
+                  <MenuItem
+                    data-test="makeAccountOwner"
+                    onClick={() => {
+                      handleActionClick('makeOwner');
+                    }}>
+                    Make account owner
+                  </MenuItem>
+                  )}
+                  {user.accepted && <Divider />}
+                  <MenuItem
+                    data-test="deleteFromAccount"
+                    onClick={() => {
+                      handleActionClick('delete');
+                    }}>
+                    Delete from account
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
+                </IconButton>
+              </TableCell>
+            </>
             )}
           </>
         )}

@@ -24,6 +24,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   connectorLicenses: 'License',
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
+  apis: 'My API',
 });
 
 /**
@@ -490,11 +491,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   return helpUrl;
 };
 
-export const getUniversityUrl = () => {
-  const domainUrl = getDomainUrl();
-
-  return `${domainUrl}/litmos/sso`;
-};
+export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
   const subrecordLabelMap = {
@@ -713,3 +710,29 @@ export const isOauth = connectionDoc =>
     (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
     (connectionDoc.netsuite &&
       connectionDoc.netsuite.authType === 'token-auto'));
+
+export function getConnectionType(resource) {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (['acumatica', 'shopify'].includes(assistant)) {
+    if (
+      resource.http &&
+      resource.http.auth &&
+      resource.http.auth.type === 'oauth'
+    ) {
+      return `${assistant}-oauth`;
+    }
+
+    return '';
+  }
+
+  if (assistant) return assistant;
+
+  if (resource.type === 'netsuite') {
+    if (resource.netsuite.authType === 'token-auto') {
+      return 'netsuite-oauth';
+    }
+  }
+
+  return type;
+}

@@ -29,7 +29,7 @@ export default function DynaQuery(props) {
 
   return (
     <>
-      <DynaText label={label} value={value} disabled multiline />
+      <DynaText {...props} disabled multiline />
       {showEditor && (
         <SqlQueryBuilderEditorDialog
           title="Lookups"

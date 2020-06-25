@@ -10,6 +10,8 @@ import {
   TabComponentWithoutSave,
   TabComponentWithoutSaveVertical,
 } from './TabComponent';
+import IndentedComponents from './IndentedComponents';
+
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -52,10 +54,10 @@ export default function FormGenerator(props) {
   const { fields, containers, type } = layout || {};
 
   const defaultFields = useMemo(() => {
-    if (!fields || !fieldMap) return null
+    if (!fields || !fieldMap) return null;
 
     return getCorrespondingFieldMap(fields, fieldMap);
-  }, [fieldMap, fields])
+  }, [fieldMap, fields]);
   if (!layout || !fieldMap) return null;
 
   const fieldsComponent = fields && (
@@ -68,6 +70,8 @@ export default function FormGenerator(props) {
 
   if (type === 'collapse') {
     ConvertedContainer = CollapsedComponents;
+  } else if (type === 'indent') {
+    ConvertedContainer = IndentedComponents;
   } else if (type === 'column') {
     ConvertedContainer = ColumnComponents;
   } else if (type === 'tabIA') {

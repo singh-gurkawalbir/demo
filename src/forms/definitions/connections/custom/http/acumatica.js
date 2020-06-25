@@ -192,26 +192,28 @@ export default {
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      fieldId: 'application'
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      'http.auth.type',
-      '_agentId',
-      'instanceURI',
-      'oauth.instanceURI',
-      'http.unencrypted.endpointName',
-      'http.unencrypted.endpointVersion',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-      'http.unencrypted.company',
-      'http.auth.oauth.scope',
-      'genericOauthConnector',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.auth.type',
+          'instanceURI',
+          'oauth.instanceURI',
+          'http.unencrypted.endpointName',
+          'http.unencrypted.endpointVersion',
+          'http.unencrypted.username',
+          'http.encrypted.password',
+          'http.unencrypted.company',
+          'http.auth.oauth.scope',
+          'genericOauthConnector'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
@@ -244,6 +246,10 @@ export default {
         {
           field: 'http.auth.type',
           is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
         },
       ],
     },

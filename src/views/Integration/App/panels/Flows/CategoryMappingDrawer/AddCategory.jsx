@@ -14,7 +14,6 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
 import Spinner from '../../../../../../components/Spinner';
-import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +41,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const { flowId } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const history = useHistory();
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
@@ -75,14 +73,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           grandchildCategory,
         })
       );
-      enqueueSnackbar({
-        variant: 'success',
-        message: `You have successfully added a new ${uiAssistant} category! Congratulations!`,
-        persist: false,
-      });
+
       handleClose();
     },
-    [dispatch, enqueueSnackbar, flowId, handleClose, integrationId, uiAssistant]
+    [dispatch, flowId, handleClose, integrationId]
   );
   const fieldMeta = {
     fieldMap: {
@@ -91,6 +85,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         name: 'category',
         type: 'select',
         label: 'Choose Category',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: true,
         defaultValue: '',
         options: [
@@ -106,6 +102,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'childCategory',
         name: 'childCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: uiAssistant !== 'jet',
         defaultValue: '',
         label: 'Choose Sub-category',
@@ -116,6 +114,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'grandchildCategory',
         name: 'grandchildCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: false,
         visible: false,
         label: 'Choose nested-category',

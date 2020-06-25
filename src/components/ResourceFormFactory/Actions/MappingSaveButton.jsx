@@ -24,6 +24,7 @@ const MappingSaveButton = props => {
     dataTest,
     showOnlyOnChanges,
     onClose,
+    flowId,
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -45,9 +46,9 @@ const MappingSaveButton = props => {
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
-    dispatch(actions.mapping.save(id));
+    dispatch(actions.mapping.save(id, { flowId }));
     setSaveTriggered(true);
-  }, [dispatch, id]);
+  }, [dispatch, id, flowId]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,

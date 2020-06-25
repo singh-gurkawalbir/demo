@@ -271,7 +271,9 @@ export function fieldMeta({ resource, assistantData }) {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+    pageSize: { fieldId: 'pageSize' },
     formView: { fieldId: 'formView' },
+    skipRetries: { fieldId: 'skipRetries' },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -308,9 +310,13 @@ export function fieldMeta({ resource, assistantData }) {
       type: 'column',
       containers: [
         {
-          fields: ['common', 'exportOneToMany', 'formView'],
           type: 'collapse',
           containers: [
+            {
+              collapsed: true,
+              label: 'General',
+              fields: ['common', 'exportOneToMany', 'formView'],
+            },
             {
               collapsed: true,
               label: 'What would you like to export?',
@@ -323,8 +329,8 @@ export function fieldMeta({ resource, assistantData }) {
             },
             {
               collapsed: true,
-              label: 'Advanced Settings',
-              fields: ['apiIdentifier'],
+              label: 'Advanced',
+              fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
             },
           ],
         },

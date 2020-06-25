@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect } from 'react';
 import {
   Route,
-  Link,
   NavLink,
   Redirect,
   useRouteMatch,
@@ -10,16 +9,14 @@ import {
 import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
-import IconTextButton from '../../../../../components/IconTextButton';
-import SettingsIcon from '../../../../../components/icons/SettingsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import CeligoTable from '../../../../../components/CeligoTable';
 import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
-import ConfigureDrawer from './ConfigureDrawer';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
@@ -81,10 +78,9 @@ export const IAFormStateManager = props => {
 };
 
 function FlowList({ integrationId, storeId }) {
-  const classes = useStyles();
   const match = useRouteMatch();
   const { sectionId } = match.params;
-  const { flows, fields, sections } = useSelector(state =>
+  const { flows } = useSelector(state =>
     selectors.integrationAppFlowSettings(
       state,
       integrationId,
@@ -92,7 +88,6 @@ function FlowList({ integrationId, storeId }) {
       storeId
     )
   );
-  const hasAdvancedSettings = !!fields || !!sections;
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
@@ -101,11 +96,7 @@ function FlowList({ integrationId, storeId }) {
 
   return (
     <LoadResources required resources="flows,exports">
-      <ConfigureDrawer
-        integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
-      />
+      <ScheduleDrawer />
       <SettingsDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -134,26 +125,12 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-
-      <PanelHeader title={`${section.title} flows`}>
-        {hasAdvancedSettings && (
-          <IconTextButton
-            variant="text"
-            color="primary"
-            data-test={`configure${section.title}`}
-            component={Link}
-            className={classes.configureSectionBtn}
-            to={`${sectionId}/configure`}>
-            <SettingsIcon /> Configure {section.title}
-          </IconTextButton>
-        )}
-      </PanelHeader>
-
+      <PanelHeader title={`${section.title} flows`} />
       <CeligoTable
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
-        actionProps={{ storeId, resourceType: 'flows' }}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
         />
     </LoadResources>
   );

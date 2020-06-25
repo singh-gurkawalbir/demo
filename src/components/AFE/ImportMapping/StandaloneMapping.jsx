@@ -86,17 +86,21 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
-  const requestSampleData = useCallback(() => {
+  const requestSampleData = useCallback((refresh = false) => {
     dispatch(
       actions.flowData.requestSampleData(
         flowId,
         resourceId,
         'imports',
         'importMappingExtract',
-        true
+        refresh
       )
     );
   }, [dispatch, flowId, resourceId]);
+
+  const refreshExtractFields = useCallback(
+    () => requestSampleData(true), [requestSampleData]
+  );
 
   useEffect(() => {
     if (
@@ -108,10 +112,10 @@ export default function StandaloneMapping(props) {
   }, [extractStatus, flowSampleDataLoaded]);
 
   useEffect(() => {
-    if (!extractFields) {
+    if (!extractStatus) {
       requestSampleData(false);
     }
-  }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
+  }, [requestSampleData, extractStatus]);
 
   if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
     dispatch(actions.mapping.updateFlowData(id, extractFields));
@@ -401,19 +405,9 @@ export default function StandaloneMapping(props) {
     );
   }
 
-  const fetchSalesforceSObjectMetadata = sObject => {
-    dispatch(
-      actions.metadata.request(
-        connectionId,
-        `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObject}`
-      )
-    );
-  };
-
   const optionalHandler = {
-    fetchSalesforceSObjectMetadata,
     refreshGenerateFields: requestImportSampleData,
-    refreshExtractFields: requestSampleData,
+    refreshExtractFields,
   };
   const isGenerateRefreshSupported =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||

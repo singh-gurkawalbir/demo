@@ -427,7 +427,7 @@ export const getMetadata = ({
         name: 'activeTab',
         type: 'radiogroup',
         helpKey: 'flow.type',
-        label: '',
+        label: 'Type',
         fullWidth: true,
         defaultValue: resource.activeTab,
         options: [

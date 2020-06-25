@@ -157,6 +157,7 @@ export default {
       filterKey: 'salesforce-soqlQuery',
       required: true,
       multiline: true,
+      helpKey: 'export.salesforce.soql.query',
       connectionId: r => r && r._connectionId,
       defaultValue: r => r && r.salesforce && r.salesforce.soql,
       refreshOptionsOnChangesTo: ['delta.dateField', 'once.booleanField'],
@@ -283,6 +284,7 @@ export default {
       fieldId: 'salesforce.objectType',
     },
     pageSize: { fieldId: 'pageSize' },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
@@ -300,14 +302,18 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'outputMode',
-          'exportOneToMany',
-          'salesforce.executionType',
-        ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: [
+              'common',
+              'outputMode',
+              'exportOneToMany',
+              'salesforce.executionType',
+            ],
+          },
           {
             collapsed: true,
             label: r => {
@@ -352,6 +358,7 @@ export default {
               'salesforce.distributed.batchSize',
               'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
+              'apiIdentifier'
             ],
           },
         ],

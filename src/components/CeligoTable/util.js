@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import TimeAgo from 'react-timeago';
 import { Typography } from '@material-ui/core';
+import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
@@ -58,9 +58,15 @@ export const useGetConnectorName = resource => {
 
   return 'RDBMS';
 };
+export const useGetScriptName = id => {
+  const script = useSelector(state =>
+    selectors.resource(state, 'scripts', id)
+  );
+  return (script && script.name) || id;
+};
 
 export const formatLastModified = lastModified => (
-  <TimeAgo date={lastModified} />
+  <CeligoTimeAgo date={lastModified} />
 );
 
 export const onlineStatus = r => (
@@ -75,4 +81,5 @@ export default {
   useGetConnectorName,
   getResourceLink,
   onlineStatus,
+  useGetScriptName,
 };

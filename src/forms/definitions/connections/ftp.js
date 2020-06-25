@@ -67,6 +67,7 @@ export default {
       visibleWhen: [{ field: 'ftp.type', is: ['ftp', 'ftps'] }],
     },
     'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
+    'ftp.concurrencyLevel': { fieldId: 'ftp.concurrencyLevel' },
     'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
     'ftp.requireSocketReUse': {
       fieldId: 'ftp.requireSocketReUse',
@@ -102,22 +103,36 @@ export default {
       defaultValue: r => !!(r && r.ftp && r.ftp.pgpKeyAlgorithm),
       visibleWhen: [{ field: 'ftp.usePgp', is: [true] }],
     },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'ftp.hostURI',
-      'ftp.type',
-      'ftp.username',
-      'ftp.password',
-      'ftp.authKey',
-      'ftp.useImplicitFtps',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'ftp.hostURI',
+          'ftp.type',
+          'ftp.username',
+          'ftp.password',
+          'ftp.authKey',
+          'ftp.useImplicitFtps',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: [
           'ftp.port',
           'ftp.usePassiveMode',
@@ -130,6 +145,7 @@ export default {
           'ftp.pgpPassphrase',
           'ftp.useCustomPGPEncryptionAlgorithm',
           'ftp.pgpKeyAlgorithm',
+          'ftp.concurrencyLevel'
         ],
       },
     ],

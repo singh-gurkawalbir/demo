@@ -4,14 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActions, Button, Typography } from '@material-ui/core';
-import applications from '../../constants/applications';
+import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import {
   CONTACT_SALES_MESSAGE,
-  MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
@@ -123,6 +122,7 @@ export default function MarketplaceList() {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
+  const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector ? connector.name : application;
 
@@ -138,13 +138,10 @@ export default function MarketplaceList() {
     if (connector.installed) {
       confirmDialog({
         isPrompt: true,
-        title: 'Multiple Installs',
+        title: 'Confirm multiple installs',
         label: 'Tag',
-        message: MULTIPLE_INSTALLS,
+        message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [
-          {
-            label: 'Cancel',
-          },
           {
             label: 'Install',
             onClick: tag => {
@@ -157,6 +154,10 @@ export default function MarketplaceList() {
               );
               history.push(getRoutePath('/dashboard'));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

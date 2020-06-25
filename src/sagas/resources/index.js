@@ -69,7 +69,7 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options }) {
+export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -83,8 +83,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (!patch || !patch.length) return; // nothing to do.
 
+  // integrations/<id>/connections for create and /connections for update
   // For accesstokens and connections within an integration for edit case
-  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
+  if (!isNew && resourceType.startsWith('integrations/')) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
   }
@@ -158,7 +159,8 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
   if (
-    resourceType === 'connections' &&
+    // if it matches integrations/<id>/connections when creating a connection
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
     merged.assistant &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
@@ -262,9 +264,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   yield put(actions.resource.received(resourceType, updated));
 
   if (!isNew) {
-    yield put(
-      actions.resource.updated(resourceType, updated._id, master, patch)
-    );
+    yield put(actions.resource.updated(resourceType, updated._id, master, patch, context));
   }
 
   if (options && options.action === 'flowEnableDisable') {

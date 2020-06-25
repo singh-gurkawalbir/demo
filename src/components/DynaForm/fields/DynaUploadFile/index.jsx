@@ -9,6 +9,7 @@ function DynaUploadFile(props) {
   const {
     options = '',
     id,
+    maxSize,
     resourceId,
     resourceType,
     formContext,
@@ -19,17 +20,18 @@ function DynaUploadFile(props) {
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
-  const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
+  const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
     state => getUploadedFile(state, fileId),
     shallowEqual
   );
 
   useEffect(() => {
-    const { status, file, fileType } = uploadedFile || {};
+    const { status, file, fileType, name } = uploadedFile || {};
 
     if (status === 'received') {
-      setFileName(DEFAULT_PLACEHOLDER);
+      setFileName(name);
+
       onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(
@@ -56,7 +58,7 @@ function DynaUploadFile(props) {
       dispatch(actions.sampleData.reset(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
-      setFileName(DEFAULT_PLACEHOLDER);
+      setFileName('');
     }
 
     return () => !persistData && dispatch(actions.file.reset(fileId));
@@ -68,14 +70,22 @@ function DynaUploadFile(props) {
       const file = event.target.files[0];
 
       if (!file) return;
-      dispatch(actions.file.processFile({ fileId, file, fileType: options }));
+      dispatch(actions.file.processFile(
+        {
+          fileId,
+          file,
+          fileType: options,
+          fileProps: { maxSize },
+        }
+      ));
     },
-    [dispatch, fileId, options]
+    [dispatch, fileId, options, maxSize]
   );
 
   return (
     <FileUploader
       {...props}
+      label={DEFAULT_PLACEHOLDER}
       fileName={fileName}
       uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}

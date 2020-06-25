@@ -20,6 +20,10 @@ export const INSTALL_STEP_TYPES = Object.freeze({
   STACK: 'Stack',
   FORM: 'form',
 });
+export const UNINSTALL_STEP_TYPES = Object.freeze({
+  FORM: 'form',
+  HIDDEN: 'hidden',
+});
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',
   UNINSTALL: 'uninstall',
@@ -128,6 +132,12 @@ export const PERMISSIONS = Object.freeze({
     create: 'imports.create',
     edit: 'imports.edit',
     delete: 'imports.delete',
+  },
+  apis: {
+    view: 'apis.view',
+    create: 'apis.create',
+    edit: 'apis.edit',
+    delete: 'apis.delete',
   },
 });
 
@@ -427,8 +437,10 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.csv.hasHeaderRow',
     'file.csv.trimSpaces',
     'file.csv.rowsToSkip',
+    'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
+    'file.csvHelper'
   ],
   imports: [
     'lookups',

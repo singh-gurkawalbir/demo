@@ -61,6 +61,7 @@ const InfoIcon = require('../../src/components/icons/InfoIcon').default;
 const InviteUsersIcon = require('../../src/components/icons/InviteUsersIcon').default;
 const InstallIcon = require('../../src/components/icons/InstallIcon').default;
 const InstallIntegrationIcon = require('../../src/components/icons/InstallIntegrationIcon').default;
+const IntegrationAppsIcon = require('../../src/components/icons/IntegrationAppsIcon').default;
 const ImportsIcon = require('../../src/components/icons/ImportsIcon').default;
 const InputFilterIcon = require('../../src/components/icons/InputFilterIcon').default;
 const KnowledgeBaseIcon = require('../../src/components/icons/KnowledgeBaseIcon').default;
@@ -74,6 +75,7 @@ const LockIcon = require('../../src/components/icons/LockIcon').default;
 const MapDataIcon = require('../../src/components/icons/MapDataIcon').default;
 const MappingConnectorIcon = require('../../src/components/icons/MappingConnectorIcon').default;
 const MarketplaceIcon = require('../../src/components/icons/MarketplaceIcon').default;
+const MyAPIIcon = require('../../src/components/icons/MyAPIIcon').default;
 const NotificationsIcon = require('../../src/components/icons/NotificationsIcon').default;
 const OutputFilterIcon = require('../../src/components/icons/OutputFilterIcon').default;
 const OptionalIcon = require('../../src/components/icons/OptionalIcon').default;
@@ -106,6 +108,7 @@ const ShareStackIcon = require('../../src/components/icons/ShareStackIcon').defa
 const SettingsIcon = require('../../src/components/icons/SettingsIcon').default;
 const SubtractIcon = require('../../src/components/icons/SubtractIcon').default;
 const SupportIcon = require('../../src/components/icons/SupportIcon').default;
+const SubmitTicketIcon = require('../../src/components/icons/SubmitTicketIcon').default;
 const SingleUserIcon = require('../../src/components/icons/SingleUserIcon').default;
 const SquareIcon = require('../../src/components/icons/SquareIcon').default;
 const StarIcon = require('../../src/components/icons/StarIcon').default;
@@ -394,6 +397,10 @@ const icon = {
       <p>Imports</p>
     </div>
     <div style={wrapper}>
+      <IntegrationAppsIcon style={icon} />
+      <p>IntegrationApps</p>
+    </div>
+    <div style={wrapper}>
       <InputFilterIcon style={icon} />
       <p>InputFilter</p>
     </div>
@@ -442,6 +449,10 @@ const icon = {
     <div style={wrapper}>
       <MarketplaceIcon style={icon} />
       <p>Marketplace</p>
+    </div>
+    <div style={wrapper}>
+      <MyAPIIcon style={icon} />
+      <p>My API</p>
     </div>
     <div style={wrapper}>
       <NotificationsIcon style={icon} />
@@ -570,6 +581,10 @@ const icon = {
     <div style={wrapper}>
       <SupportIcon style={icon} />
       <p>Support</p>
+    </div>
+    <div style={wrapper}>
+      <SubmitTicketIcon style={icon} />
+      <p>SubmitTicket</p>
     </div>
     <div style={wrapper}>
       <SingleUserIcon style={icon} />

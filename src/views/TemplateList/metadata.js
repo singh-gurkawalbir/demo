@@ -6,6 +6,7 @@ import Download from '../../components/ResourceTable/actions/Download';
 import TogglePublish from '../../components/ResourceTable/actions/TogglePublish';
 import { formatLastModified } from '../../components/CeligoTable/util';
 import ResourceDrawerLink from '../../components/ResourceDrawerLink';
+import Edit from '../../components/ResourceTable/actions/Edit';
 
 export default {
   columns: [
@@ -15,11 +16,6 @@ export default {
         return <ResourceDrawerLink resourceType="templates" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
-      orderBy: 'description',
     },
     {
       heading: 'Last updated',
@@ -49,5 +45,5 @@ export default {
       value: r => (r.published ? 'Yes' : 'No'),
     },
   ],
-  rowActions: [UploadZipFile, Download, TogglePublish, Delete],
+  rowActions: [Edit, TogglePublish, UploadZipFile, Download, Delete],
 };

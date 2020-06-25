@@ -308,6 +308,7 @@ const getResourceFormAssets = ({
       break;
 
     case 'agents':
+    case 'apis':
     case 'scripts':
     case 'accesstokens':
     case 'connectorLicenses':

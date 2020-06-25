@@ -53,7 +53,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     },
     [dispatch, flowId]
   );
-  const { defaultConfirmDialog } = useConfirmDialog();
+  const { confirmDialog } = useConfirmDialog();
+
   const integrationId = flowDetails._integrationId;
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
@@ -97,17 +98,38 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const flowName = flowDetails.name || flowDetails._id;
+
+  const deleteFlow = useCallback(() => {
+    dispatch(actions.resource.delete('flows', flowId));
+    // TODO: If this is re-used for IA flows, this route
+    // would not be the same if flow._connectorId had a value.
+    // Also note we want to replace vs push because a user may be
+    // sitting on a page with the deleted flowId in the url.
+    // we do not want a browser history to contain the deleted flow id.
+    history.replace(`/pg/integrations/${integrationId || 'none'}`);
+  }, [dispatch, history, integrationId, flowId]);
+
+  const detachFlow = useCallback(() => {
+    patchFlow('/_integrationId', undefined);
+  }, [patchFlow]);
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
         case 'detach':
-          defaultConfirmDialog(
-            `detach ${flowName} from this integration?`,
-            () => {
-              patchFlow('/_integrationId', undefined);
-            }
-          );
+          confirmDialog({
+            title: 'Confirm detach',
+            message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
+            buttons: [
+              {
+                label: 'Detach',
+                onClick: detachFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
+              },
+            ],
+          });
           break;
 
         case 'schedule':
@@ -132,14 +154,19 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           break;
 
         case 'delete':
-          defaultConfirmDialog('delete this flow?', () => {
-            dispatch(actions.resource.delete('flows', flowId));
-            // TODO: If this is re-used for IA flows, this route
-            // would not be the same if flow._connectorId had a value.
-            // Also note we want to replace vs push because a user may be
-            // sitting on a page with the deleted flowId in the url.
-            // we do not want a browser history to contain the deleted flow id.
-            history.replace(`/pg/integrations/${integrationId || 'none'}`);
+          confirmDialog({
+            title: 'Confirm delete',
+            message: 'Are you sure you want to delete this flow?',
+            buttons: [
+              {
+                label: 'Delete',
+                onClick: deleteFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
+              },
+            ],
           });
           break;
 
@@ -175,8 +202,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       setAnchorEl(null);
     },
     [
-      defaultConfirmDialog,
-      flowName,
+      confirmDialog,
       flowDetails._connectorId,
       flowDetails.showUtilityMapping,
       history,
@@ -185,7 +211,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       flowId,
       templateName,
       dispatch,
-      patchFlow,
+      deleteFlow,
+      detachFlow,
     ]
   );
   const open = Boolean(anchorEl);

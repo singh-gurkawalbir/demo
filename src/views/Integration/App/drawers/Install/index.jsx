@@ -19,7 +19,7 @@ import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  getResourceSubType,
+  getConnectionType,
   generateNewId,
 } from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
@@ -59,31 +59,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant === 'shopify') {
-    if (
-      resource.http &&
-      resource.http.auth &&
-      resource.http.auth.type === 'oauth'
-    ) {
-      return 'shopify-oauth';
-    }
-
-    return '';
-  }
-
-  if (assistant) return assistant;
-
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
-  }
-
-  return type;
-};
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -155,6 +130,7 @@ export default function ConnectorInstallation(props) {
       ...resourceConstants.OAUTH_APPLICATIONS,
       'netsuite-oauth',
       'shopify-oauth',
+      'acumatica-oauth',
     ],
     []
   );
@@ -234,9 +210,15 @@ export default function ConnectorInstallation(props) {
           dispatch(
             actions.resource.clearChildIntegration()
           );
-          props.history.push(
-            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-          );
+          if (integration && integration.installSteps && integration.installSteps.length > 0) {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}`
+            );
+          } else {
+            props.history.push(
+              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+            );
+          }
         }
       }
     }
@@ -259,20 +241,36 @@ export default function ConnectorInstallation(props) {
   const handleUninstall = e => {
     e.preventDefault();
     confirmDialog({
-      title: 'Uninstall',
-      message: 'Are you sure you want to uninstall',
+      title: 'Confirm uninstall',
+      message: 'Are you sure you want to uninstall?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
+          label: 'Uninstall',
           onClick: () => {
             const storeId = (integration.stores || {}).length
               ? integration.stores[0].value
               : undefined;
 
-            if (
+            // for old cloned IAs, uninstall should happen the old way
+            if (isFrameWork2 && !isCloned) {
+              const {url} = match;
+              const urlExtractFields = url.split('/');
+              const index = urlExtractFields.findIndex(
+                element => element === 'child'
+              );
+
+              // REVIEW: @ashu, review with Dave once
+              // if url contains '/child/xxx' use that id as store id
+              if (index === -1) {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                );
+              } else {
+                history.push(
+                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
+                );
+              }
+            } else if (
               integration.settings &&
               integration.settings.supportsMultiStore
             ) {
@@ -286,11 +284,15 @@ export default function ConnectorInstallation(props) {
             }
           },
         },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
       ],
     });
   };
 
-  const handleStepClick = (step, connection, index) => {
+  const handleStepClick = (step) => {
     const {
       _connectionId,
       installURL,
@@ -298,6 +300,7 @@ export default function ConnectorInstallation(props) {
       type,
       sourceConnection,
       completed,
+      url,
     } = step;
 
     if (completed) {
@@ -331,7 +334,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -344,13 +347,13 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.getCurrentStep(integrationId, step)
         );
-        history.push(`${match.url}/form-${index}`);
+        // history.push(`${match.url}/form/${index}`);
       } else {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(integrationId)
         );
       }
-    } else if (installURL) {
+    } else if (installURL || url) {
       if (!step.isTriggered) {
         dispatch(
           actions.integrationApp.installer.updateStep(
@@ -359,7 +362,7 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL });
+        openExternalUrl({ url: installURL || url });
       } else {
         if (step.verifying) {
           return false;

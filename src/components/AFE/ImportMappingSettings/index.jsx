@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
-    borderTop: `solid 1px ${theme.palette.secondary.lightest}`,
     overflow: 'auto',
     padding: theme.spacing(3),
     paddingTop: theme.spacing(1),

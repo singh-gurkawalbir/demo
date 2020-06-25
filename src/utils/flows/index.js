@@ -671,3 +671,11 @@ export function convertOldFlowSchemaToNewOne(flow) {
 
   return updatedFlow;
 }
+
+
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
+  (flow.pageGenerators
+     && flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
+    (
+      flow.pageProcessors &&
+    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));

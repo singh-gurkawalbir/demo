@@ -18,7 +18,7 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -33,7 +33,7 @@ export function* retrievingOrgDetails() {
     call(
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-    ),
+    )
   ]);
 }
 
@@ -104,7 +104,7 @@ export function* retrievingAssistantDetails() {
     });
     assistantConnectors.push({
       id: 'financialforce',
-      name: 'Financial Force',
+      name: 'FinancialForce',
       type: 'salesforce',
       assistant: 'financialforce',
       export: true,
@@ -192,6 +192,10 @@ export function* auth({ email, password }) {
     if (isExpired) {
       // remount the component
       yield put(actions.app.reload());
+    }
+    const {accessLevel} = yield select(selectors.resourcePermissions);
+    if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+      yield put(actions.resource.requestCollection('transfers'));
     }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));

@@ -6,7 +6,7 @@ import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Deregister',
+  label: 'Deregister connection',
   icon: CloseIcon,
   hasAccess: ({ state, integrationId }) => {
     const isStandalone = integrationId === 'none';
@@ -20,7 +20,7 @@ export default {
     return hasAccess && !isStandalone;
   },
   component: function Deregister({ rowData = {}, integrationId }) {
-    const { _id: connectionId, name: connectionName } = rowData;
+    const { _id: connectionId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const deregisterConnection = useCallback(() => {
@@ -29,26 +29,21 @@ export default {
       );
     }, [connectionId, dispatch, integrationId]);
     const confirmDeregister = useCallback(() => {
-      const message = [
-        'Are you sure you want to deregister',
-        connectionName || connectionId,
-        'connection from this integration?',
-      ].join(' ');
-
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm deregister',
+        message: 'Are you sure you want to deregister this connection? The connection will no longer be accessible to this integration.',
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Deregister',
+            onClick: deregisterConnection,
           },
           {
-            label: 'Yes',
-            onClick: deregisterConnection,
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
-    }, [confirmDialog, connectionId, connectionName, deregisterConnection]);
+    }, [confirmDialog, deregisterConnection]);
 
     useEffect(() => {
       confirmDeregister();

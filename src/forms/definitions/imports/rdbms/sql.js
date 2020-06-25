@@ -112,6 +112,7 @@ export default {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.query': {
       fieldId: 'rdbms.query',
       defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
@@ -168,9 +169,13 @@ export default {
     dataMappings: { formId: 'dataMappings' },
   },
   layout: {
-    fields: ['common', 'dataMappings', 'modelMetadata'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings', 'modelMetadata'],
+      },
       {
         collapsed: true,
         label: 'How would you like the records imported?',
@@ -185,6 +190,11 @@ export default {
           'rdbms.queryInsert',
           'rdbms.queryUpdate',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
       },
     ],
   },

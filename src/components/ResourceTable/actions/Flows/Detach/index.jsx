@@ -9,7 +9,7 @@ export default {
   label: 'Detach flow',
   icon: DetachIcon,
   component: function DetachFlow({ rowData = {} }) {
-    const { name: resourceName, _id: resourceId } = rowData;
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
     const detachFlow = useCallback(() => {
@@ -25,23 +25,21 @@ export default {
       dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
     }, [dispatch, resourceId]);
     const confirmDetachFlow = useCallback(() => {
-      const message = `Are you sure you want to detach 
-      ${resourceName || resourceId} flow from this integration?`;
-
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm detach',
+        message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Detach',
+            onClick: detachFlow,
           },
           {
-            label: 'Yes',
-            onClick: detachFlow,
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
-    }, [confirmDialog, detachFlow, resourceId, resourceName]);
+    }, [confirmDialog, detachFlow]);
 
     useEffect(() => {
       confirmDetachFlow();

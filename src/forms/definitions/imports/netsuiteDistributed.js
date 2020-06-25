@@ -106,9 +106,13 @@ export default {
     settings: { fieldId: 'settings' },
   },
   layout: {
-    fields: ['common', 'inputMode', 'dataMappings'],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
+      },
       {
         collapsed: true,
         label: r => {
@@ -132,13 +136,13 @@ export default {
           'netsuite.file.name',
           'netsuite.file.fileType',
           'netsuite.file.folder',
-          'blobKeyPath',
         ],
       },
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

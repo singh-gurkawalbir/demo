@@ -77,7 +77,6 @@ function ResourceDrawer(props) {
 export default function ResourceDrawerRoute({
   flowId,
   integrationId,
-  disabled,
 }) {
   const match = useRouteMatch();
 
@@ -88,24 +87,14 @@ export default function ResourceDrawerRoute({
       // uses "children" as a prop and this is the intended
       // use (per their docs)
       // eslint-disable-next-line react/no-children-prop
-      children={props => {
-        // To handle connections resource when opened in flow context and stop from being disabled @BugFix: 12280
-        // TODO @Raghu: Discuss on any other better approach to handle this
-        const isConnectionUnderFlowContext =
-          flowId &&
-          props.match &&
-          props.match.params &&
-          props.match.params.resourceType === 'connections';
-
-        return (
+      children={props =>
+        (
           <ResourceDrawer
             {...props}
             flowId={flowId}
             integrationId={integrationId}
-            disabled={!isConnectionUnderFlowContext && disabled}
           />
-        );
-      }}
+        )}
     />
   );
 }

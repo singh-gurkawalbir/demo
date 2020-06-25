@@ -381,10 +381,16 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.resource = resource;
   } else if (newField.type === 'staticMapWidget') {
     newField.type = 'staticMap';
+  } else if (newField.type === 'textarea') {
+    newField.multiline = true;
+    newField.rowsMax = 10;
   }
 
   if (newField.disabled) {
     newField.defaultDisabled = true;
+  }
+  if (newField.hidden) {
+    newField.visible = false;
   }
 
   return newField;
@@ -504,8 +510,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
           },
         ],
       };
-    })
-    .filter(f => !f.hidden);
+    });
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 
@@ -614,7 +619,7 @@ export const integrationSettingsToDynaFormMetadata = (
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
-      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+      containers: [{ ...finalData.layout, label: 'Advanced' }],
     };
   }
 

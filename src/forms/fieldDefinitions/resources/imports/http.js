@@ -1,6 +1,6 @@
 export default {
   'http.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     visibleWhen: [
       {
@@ -199,7 +199,6 @@ export default {
     defaultValue: r =>
       Array.isArray(((r || {}).http || {}).body) ? r.http.body[0] : '',
     label: 'Build HTTP request body',
-    required: true,
     requestMediaType: r =>
       r && r.http ? r && r.http.requestMediaType : 'json',
     visibleWhen: [

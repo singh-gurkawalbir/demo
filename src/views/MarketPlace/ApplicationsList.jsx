@@ -8,7 +8,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../../components/icons/ApplicationImg';
-import connectorsMetadata from '../../constants/applications';
+import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -59,11 +59,12 @@ export default function ApplicationsList({ filter }) {
     undefined,
     sandbox
   );
+  const connectorsMetadata = applicationsList();
   const templates = useSelector(state => selectors.marketplaceTemplates(state));
   let applications = [];
 
-  connectors.forEach(c => { applications = applications.concat(c.applications) });
-  templates.forEach(t => { applications = applications.concat(t.applications) });
+  connectors.forEach(c => { applications = applications.concat(c.applications); });
+  templates.forEach(t => { applications = applications.concat(t.applications); });
   applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(
     a =>
