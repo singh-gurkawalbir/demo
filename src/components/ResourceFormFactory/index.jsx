@@ -91,7 +91,7 @@ actions.map(action => {
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
-  const { actions, layout } = props.fieldMeta;
+  const { actions, fieldMap = {} } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
@@ -113,7 +113,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   // and the form should proceed to auto submit on field change
   // the field type should implement proper onChange logic
   // as required, this currently only applies to new connection form
-  const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && layout?.fields?.length === 1);
+  const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {
