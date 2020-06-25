@@ -44,8 +44,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 0, 3),
   },
   appLogo: {
-    paddingRight: theme.spacing(6),
+    paddingRight: theme.spacing(2),
     marginTop: theme.spacing(-0.5),
+    marginRight: theme.spacing(4),
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+
   },
   title: {
     display: 'flex',
