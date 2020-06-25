@@ -176,7 +176,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],

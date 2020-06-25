@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import Detach from '../../actions/Flows/Detach';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
@@ -7,13 +7,12 @@ import Download from '../../actions/Download';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import NameCell from './NameCell';
-import TypeCell from './TypeCell';
 import OnOffCell from './OnOffCell';
 import RunCell from './RunCell';
 import ScheduleCell from './ScheduleCell';
 import MappingCell from './MappingCell';
 import SettingsCell from './SettingsCell';
-import EditCell from './EditCell';
+import EditCell from '../../actions/Flows/Edit';
 
 export default {
   columns: (empty, actionProps) => {
@@ -35,30 +34,25 @@ export default {
         orderBy: 'name',
       },
       {
-        // Mixed, Scheduled, Realtime, or Data loader
-        heading: 'Type',
-        value: function Type(r) {
-          return <TypeCell flowId={r._id} />;
-        },
-      },
-      {
         heading: 'Last updated',
-        value: r => r.lastModified && formatLastModified(r.lastModified),
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
         heading: 'Last run',
-        value: r => r.lastExecutedAt && formatLastModified(r.lastExecutedAt),
+        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {
         heading: 'Mapping',
+        align: 'center',
         value: function Mapping(r) {
           return <MappingCell flowId={r._id} />;
         },
       },
       {
         heading: 'Schedule',
+        align: 'center',
         value: function Schedule(r) {
           return <ScheduleCell flowId={r._id} name={r.name} />;
         },
@@ -69,6 +63,7 @@ export default {
       columns.push(
         {
           heading: 'Settings',
+          align: 'center',
           value: function Settings(r) {
             return <SettingsCell flowId={r._id} name={r.name} />;
           }

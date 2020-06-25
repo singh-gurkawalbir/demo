@@ -30,7 +30,7 @@ export default {
           },
           {
             label: 'Cancel',
-            variant: 'text',
+            color: 'secondary',
           },
         ],
       });

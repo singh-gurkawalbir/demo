@@ -53,7 +53,8 @@ export function FormView(props) {
       return [
         {
           items: [
-            { label: type && type.toUpperCase(), value: `${isParent}` },
+            // if type is REST then we should show REST API
+            { label: type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },

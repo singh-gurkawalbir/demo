@@ -21,13 +21,14 @@ export default function SharedUserRow({ user }) {
       message: 'Are you sure you want to remove?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: 'Remove',
           onClick: () => {
             dispatch(actions.resource.delete('sshares', user._id));
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });
@@ -40,13 +41,14 @@ export default function SharedUserRow({ user }) {
       } sharing with this user?`,
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: user.disabled ? 'Enable' : 'Disable',
           onClick: () => {
             dispatch(actions.stack.toggleUserStackSharing(user._id));
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });
@@ -79,7 +81,7 @@ export default function SharedUserRow({ user }) {
         {user.accepted && (
           <CeligoSwitch
             data-test="disableUser"
-            enabled={!user.disabled}
+            checked={!user.disabled}
             onChange={handleToggleSharingClick}
           />
         )}

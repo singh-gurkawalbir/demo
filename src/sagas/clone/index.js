@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select, all } from 'redux-saga/effects';
+import { call, takeEvery, takeLatest, put, select, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -92,5 +92,5 @@ export function* createComponents({ resourceType, resourceId }) {
 
 export const cloneSagas = [
   takeEvery(actionTypes.CLONE.PREVIEW_REQUEST, requestPreview),
-  takeEvery(actionTypes.CLONE.CREATE_COMPONENTS, createComponents),
+  takeLatest(actionTypes.CLONE.CREATE_COMPONENTS, createComponents),
 ];

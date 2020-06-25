@@ -4178,6 +4178,7 @@ export function isPreviewPanelAvailableForResource(
   resourceType,
   flowId
 ) {
+  if (resourceType !== 'exports') return false;
   const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,

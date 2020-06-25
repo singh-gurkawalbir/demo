@@ -107,11 +107,12 @@ export default function ConfigureDebugger(props) {
       message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
       buttons: [
         {
-          label: 'No, go back',
-        },
-        {
           label: 'Yes, cancel',
           onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
         },
       ]
     });
@@ -127,8 +128,7 @@ export default function ConfigureDebugger(props) {
       <DrawerTitleBar
         onClose={onClose}
         title="Debug connection"
-        helpKey="connection.configDebugger"
-        helpTitle="Configure debugger"
+        helpKey="connection.debug"
       />
       <div className={classes.content}>
         <FormControl component="fieldset">

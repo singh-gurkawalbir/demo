@@ -43,11 +43,12 @@ export default {
         message: `Are you sure you want to delete this ${type}?`,
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Delete',
             onClick: deleteResource,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
