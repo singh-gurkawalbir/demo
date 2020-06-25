@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
         borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
         borderRadius: 0,
       },
+      '&:hover': {
+        background: theme.palette.background.paper2,
+      }
     },
   },
 }));
