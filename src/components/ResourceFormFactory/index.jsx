@@ -79,7 +79,12 @@ const getConnectionType = resource => {
 
   return type;
 };
-
+/**
+ * We use primary and secondary actions to differentiate two sets of buttons we use for forms
+ * primary - save, save&close, cancel
+ * secondary - test, validate, ...other sort of actions
+ * TODO @Surya: Revisit this once form refactor is done
+ */
 const ActionButtons = ({actions, formProps}) => {
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const primaryActions = [];
@@ -88,6 +93,13 @@ const ActionButtons = ({actions, formProps}) => {
     actions.forEach(action => {
       const Action = consolidatedActions[action.id];
       let actionProps = {};
+      /**
+      * Passes a global state for disable functionality for actions except 'cancel'
+      * used to manage disable states across buttons
+      * Ex: when save is clicked , save&close gets disabled
+      * In these cases, individual actions are recommended to use this disable prop to update
+      * rather than a local state
+      */
       if (action.id !== 'cancel') {
         actionProps = {
           disableSaveOnClick,
