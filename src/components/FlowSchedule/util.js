@@ -406,9 +406,9 @@ export const getMetadata = ({
         label: 'Time zone',
         helpKey: 'flow.timezone',
         defaultValue:
-          (flow && flow.timezone) ||
-          (integration && integration.timeZone) ||
-          (preferences && preferences.timezone),
+          (flow?.timezone) ||
+          (integration?.timeZone) ||
+          (preferences?.timezone),
         options: [
           {
             items:

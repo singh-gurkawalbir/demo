@@ -90,9 +90,7 @@ export default function FlowSchedule({
               ? `/pageGenerators/${index}/_keepDeltaBehindExportId`
               : '/_keepDeltaBehindExportId',
           value:
-            formVal && formVal._keepDeltaBehindExportId
-              ? formVal._keepDeltaBehindExportId
-              : undefined,
+            formVal?._keepDeltaBehindExportId,
         },
       ];
       if (formVal.timeZone) {
@@ -115,7 +113,7 @@ export default function FlowSchedule({
     [dispatch, onClose, enqueueSnackbar, flow, index, pg, scheduleStartMinute]
   );
 
-  const resourceIdentifier = pg && pg._exportId ? 'pagegenerator' : 'flow';
+  const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
   resource = setValues(resource, schedule, scheduleStartMinute, flow, index, resourceIdentifier);
 
   if (resource && !resource.frequency) {
