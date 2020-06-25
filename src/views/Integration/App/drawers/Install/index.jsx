@@ -246,6 +246,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('exports'));
+      dispatch(actions.resource.requestCollection('licenses'));
       dispatch(actions.resource.requestCollection('imports'));
 
       if (mode === 'settings') {
