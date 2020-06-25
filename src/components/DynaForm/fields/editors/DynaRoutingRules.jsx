@@ -1,4 +1,4 @@
-import React, { useState, } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FormLabel, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FieldHelp from '../../FieldHelp';
@@ -27,12 +27,13 @@ export default function DynaRoutingRules(props) {
   const classes = useStyles();
   const {
     id,
-    helpKey,
+    label,
+    title,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
-  const handleEditorClick = () => {
+  const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
-  };
+  }, [showEditor]);
 
   const handleClose = () => {
     handleEditorClick();
@@ -44,19 +45,20 @@ export default function DynaRoutingRules(props) {
         <ModalDialog onClose={handleClose} show>
           <span>Routing rules editor</span>
           <DynaHook
-            {...props} />
+            {...props}
+            label={title} />
           <div>
-            <Button data-test="saveOperandSettings" onClick={handleClose}>
+            <Button data-test="saveRoutingRules" onClick={handleClose}>
               Save
             </Button>
-            <Button data-test="cancelOperandSettings" onClick={handleClose}>
+            <Button data-test="cancelRoutingRules" onClick={handleClose}>
               Cancel
             </Button>
           </div>
         </ModalDialog>
       )}
       <div className={classes.dynaRoutingRulesWrapper}>
-        <FormLabel className={classes.dynaRoutingRulesLabel}>Routing rules editor:</FormLabel>
+        <FormLabel className={classes.dynaRoutingRulesLabel}>{label}</FormLabel>
         <Button
           data-test={id}
           variant="outlined"
@@ -65,8 +67,7 @@ export default function DynaRoutingRules(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-
-        <FieldHelp {...props} helpKey={helpKey} />
+        <FieldHelp {...props} />
       </div>
     </>
   );

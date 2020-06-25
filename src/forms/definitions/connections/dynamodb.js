@@ -21,7 +21,7 @@ export default {
         ],
       },
       {
-        collapsed: false,
+        collapsed: true,
         label: 'Application details',
         fields: [
           'dynamodb.aws.accessKeyId',
