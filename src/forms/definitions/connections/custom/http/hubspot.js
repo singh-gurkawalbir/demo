@@ -130,6 +130,7 @@ export default {
     },
     {
       id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

@@ -82,27 +82,43 @@ const getConnectionType = resource => {
 
 const ActionButtons = ({actions, formProps}) => {
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
-  return (actions.length &&
-actions.map(action => {
-  const Action = consolidatedActions[action.id];
-  let actionProps = {};
-  if (action.id !== 'cancel') {
-    actionProps = {
-      disableSaveOnClick,
-      setDisableSaveOnClick
-    };
+  const primaryActions = [];
+  const secondaryActions = [];
+  if (actions.length) {
+    actions.forEach(action => {
+      const Action = consolidatedActions[action.id];
+      let actionProps = {};
+      if (action.id !== 'cancel') {
+        actionProps = {
+          disableSaveOnClick,
+          setDisableSaveOnClick
+        };
+      }
+      // remove form disabled prop...
+      // they dont necessary apply to action button
+      const { disabled, ...rest } = formProps;
+      const actionContainer = <Action
+        key={action.id}
+        dataTest={action.id}
+        {...rest}
+        {...action}
+        {...actionProps}
+      />;
+      if (action.mode === 'secondary') {
+        secondaryActions.push(actionContainer);
+      } else {
+        primaryActions.push(actionContainer);
+      }
+    });
+  } else {
+    return null;
   }
-  // remove form disabled prop...
-  // they dont necessary apply to action button
-  const { disabled, ...rest } = formProps;
-  return <Action
-    key={action.id}
-    dataTest={action.id}
-    {...rest}
-    {...action}
-    {...actionProps}
-   />;
-})) || null;
+  return (
+    <>
+      <div> {primaryActions} </div>
+      <div> { secondaryActions }</div>
+    </>
+  );
 };
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
@@ -110,6 +126,9 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   const { actions } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
+  // Any extra actions other than Save, Cancel which needs to be separated goes here
+  const secondaryActions = ['test', 'validate'];
+
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
     if (actions) return actions;
@@ -126,15 +145,17 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     } else {
       actionButtons = ['saveandclose', 'cancel'];
     }
-    return actionButtons.map(id => ({id}));
-  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
-  // console.log('render: <ActionsFactory>');
+    return actionButtons.map(id => ({
+      id,
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+    }));
+  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, secondaryActions]);
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
   return (
-    <DynaForm {...props}>
+    <DynaForm {...props} isResourceForm>
       <ActionButtons actions={actionButtons} formProps={props} />
     </DynaForm>
   );

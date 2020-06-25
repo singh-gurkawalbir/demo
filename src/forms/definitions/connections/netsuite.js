@@ -282,6 +282,7 @@ export default {
     {
       id: 'validate',
       label: 'Validate',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'netsuite.authType',
@@ -291,6 +292,7 @@ export default {
     },
     {
       id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'netsuite.authType',

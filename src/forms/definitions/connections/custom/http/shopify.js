@@ -264,6 +264,7 @@ export default {
     },
     {
       id: 'test',
+      mode: 'secondary',
       label: 'Test',
       visibleWhen: [
         {

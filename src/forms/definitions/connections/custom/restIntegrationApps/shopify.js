@@ -204,6 +204,7 @@ export default {
     { id: 'cancel' },
     {
       id: 'test',
+      mode: 'secondary',
       label: 'Test',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },

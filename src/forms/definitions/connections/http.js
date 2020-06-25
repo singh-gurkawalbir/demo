@@ -684,6 +684,7 @@ export default {
     {
       id: 'test',
       label: 'Test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',
