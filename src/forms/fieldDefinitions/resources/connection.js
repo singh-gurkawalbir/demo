@@ -1849,7 +1849,7 @@ export default {
     type: 'select',
     label: 'AS2 url',
     options: [{
-      items: isProduction ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
+      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
     }
     ]
   },

@@ -3949,14 +3949,17 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
+  const { merged: resource = {} } = resourceData(
+    state,
+    'exports',
+    resourceId
+  );
   if (isNewId(resourceId)) {
-    const { merged: resource = {} } = resourceData(
-      state,
-      'exports',
-      resourceId
-    );
-
     return !resource.isLookup;
+  }
+  // In case of webhook, by default it is page generator.
+  if (resource.type === 'webhook') {
+    return true;
   }
 
   // Search in flow doc to determine pg/pp
