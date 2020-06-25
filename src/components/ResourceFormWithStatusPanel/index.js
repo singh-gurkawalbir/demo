@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import ResourceForm from '../ResourceFormFactory';
+import NotificationToaster from '../NotificationToaster';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   removeTopPadding: {
     paddingTop: '0px !important',
   },
@@ -22,9 +23,12 @@ const useStyles = makeStyles(() => ({
     maxHeight: 'unset',
     padding: 0,
   },
+  notification: {
+    marginBottom: theme.spacing(2),
+  }
 }));
 
-export default function ResourceFormWithStatusPanel({ className, ...props }) {
+export default function ResourceFormWithStatusPanel({ className, showNotificationToaster, assistantName, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
   const classes = useStyles({
@@ -34,7 +38,6 @@ export default function ResourceFormWithStatusPanel({ className, ...props }) {
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height);
   }, []);
-
   return (
     <div
       className={clsx(className, {
@@ -47,6 +50,23 @@ export default function ResourceFormWithStatusPanel({ className, ...props }) {
             resourceId={resourceId}
           />
         )}
+        <ReactResizeDetector handleHeight onResize={resize} />
+      </div>
+      <div>
+        {showNotificationToaster &&
+        <NotificationToaster className={classes.notification} variant="info" size="large">
+          <Typography variant="h6">
+            We haven’t created a simplified form for your {assistantName} app yet. Don’t worry! We’ve got you covered. Use our universal HTTP connector to configure your source.{' '}
+            <a
+              className={classes.emailLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              href="mailto:product_feedback@celigo.com">
+              <u>Let us know</u>
+            </a>
+            {' '}to prioritize this!
+          </Typography>
+        </NotificationToaster>}
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <ResourceForm className={classes.form} {...props} />

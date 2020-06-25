@@ -354,6 +354,20 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
+  function getAssistantName() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      return false
+    }
+    const assistantName = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/originalAssistant'
+    )
+    return {
+      showNotificationToaster: !!assistantName?.value,
+      assistantName: assistantName?.value,
+    };
+  }
+
+  const {showNotificationToaster, assistantName} = getAssistantName();
 
   return (
     <>
@@ -397,6 +411,8 @@ export default function Panel(props) {
             submitButtonLabel={submitButtonLabel}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
+            showNotificationToaster={showNotificationToaster}
+            assistantName={assistantName}
             {...props}
           />
         </LoadResources>

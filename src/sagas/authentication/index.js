@@ -88,6 +88,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        useGenericAdaptor: asst.useGenericAdaptor,
         webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });

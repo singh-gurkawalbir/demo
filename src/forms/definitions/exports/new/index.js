@@ -26,8 +26,11 @@ export default {
         newValues['/webhook/provider'] = 'custom';
       }
 
-      if (app.assistant) {
+      if (app.assistant && !app.useGenericAdaptor) {
         newValues['/assistant'] = app.assistant;
+      }
+      if (app.useGenericAdaptor) {
+        newValues['/originalAssistant'] = app.assistant;
       }
     }
 

@@ -36,10 +36,12 @@ export default {
       '/adaptorType': `${appTypeToAdaptorType[app.type]}Import`,
     };
 
-    if (app.assistant) {
+    if (app.assistant && !app.useGenericAdaptor) {
       newValues['/assistant'] = app.assistant;
     }
-
+    if (app.useGenericAdaptor) {
+      newValues['/originalAssistant'] = app.assistant;
+    }
     return newValues;
   },
   fieldMap: {

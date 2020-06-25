@@ -817,6 +817,7 @@ export const groupApplications = (
           export: asst.export,
           import: asst.import,
           webhook: asst.webhook,
+          useGenericAdaptor: asst.useGenericAdaptor,
         });
       }
     });
@@ -838,10 +839,10 @@ export const groupApplications = (
     ) {
       if (assistant) {
         if (appType === 'import') {
-          return assistant.import;
+          return assistant.import || connector.useGenericAdaptor;
         }
         if (appType === 'export') {
-          return assistant.export;
+          return assistant.export || connector.useGenericAdaptor;
         }
 
         return true;
@@ -856,7 +857,7 @@ export const groupApplications = (
     }
 
     if (resourceType === 'pageProcessor' && assistant) {
-      return assistant.export || assistant.import;
+      return assistant.export || assistant.import || assistant.useGenericAdaptor;
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
@@ -914,6 +915,7 @@ export const applicationsList = () => {
       export: asst.export,
       import: asst.import,
       webhook: asst.webhook,
+      useGenericAdaptor: asst.useGenericAdaptor,
     });
   });
   return applications;

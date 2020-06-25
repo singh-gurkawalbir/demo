@@ -39,8 +39,11 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteDistributedImport';
     }
 
-    if (app.assistant) {
+    if (app.assistant && !app.useGenericAdaptor) {
       newValues['/assistant'] = app.assistant;
+    }
+    if (app.useGenericAdaptor) {
+      newValues['/originalAssistant'] = app.assistant;
     }
 
     // On creation of a new page processor lookup,  isLookup is set true
