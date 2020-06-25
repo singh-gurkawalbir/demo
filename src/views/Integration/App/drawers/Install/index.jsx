@@ -4,18 +4,14 @@
  As of now this is not a drawer, but a standalone page.
 */
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
-  IconButton,
-  Button,
   Grid,
-  Paper,
-  Breadcrumbs,
+  Link,
 } from '@material-ui/core';
-import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
@@ -25,15 +21,17 @@ import {
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
-import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
-import { INSTALL_STEP_TYPES } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, emptyObject } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
+import HelpIcon from '../../../../../components/icons/HelpIcon';
+import IconTextButton from '../../../../../components/IconTextButton';
+import RawHtml from '../../../../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,10 +40,13 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: '10px 25px',
   },
+  message: {
+    padding: '10px',
+  },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    marginBottom: 29,
+    marginBottom: 5,
   },
   innerContent: {
     width: '80vw',
@@ -59,7 +60,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = resource => {
+const getConnectionType = (resource = {}) => {
   const { assistant, type } = getResourceSubType(resource);
 
   if (assistant === 'shopify') {
@@ -76,7 +77,7 @@ const getConnectionType = resource => {
 
   if (assistant) return assistant;
 
-  if (resource.type === 'netsuite') {
+  if (resource && resource.type === 'netsuite') {
     if (resource.netsuite.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
@@ -94,13 +95,54 @@ export default function ConnectorInstallation(props) {
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
+  const {
+    name: integrationName,
+    install = [],
+    integrationInstallSteps = [],
+    mode,
+    stores,
+    supportsMultiStore,
+    _connectorId,
+    initChild
+  } = useSelector(state => {
+    const integration = selectors.integrationAppSettings(state, integrationId);
+    if (integration) {
+      return {
+        name: integration.name,
+        initChild: integration.initChild,
+        install: integration.install,
+        mode: integration.mode,
+        stores: integration.stores,
+        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+        _connectorId: integration._connectorId,
+        integrationInstallSteps: integration.installSteps,
+      };
+    }
+    return emptyObject;
+  }, shallowEqual
   );
-  const childIntegration = useSelector(state => {
+  const {
+    name: childIntegrationName,
+    id: childIntegrationId,
+    mode: childIntegrationMode
+  } = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
 
-    return id && selectors.resource(state, 'integrations', id);
+    if (id) {
+      const integration = selectors.resource(state, 'integrations', id);
+      if (integration) {
+        return {
+          name: integration.name,
+          id: integration._id,
+          mode: integration.mode
+        };
+      }
+    }
+    return emptyObject;
+  }, shallowEqual);
+  const helpUrl = useSelector(state => {
+    const integrationApp = selectors.resource(state, 'published', _connectorId);
+    return integrationApp && integrationApp.websiteURL;
   });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
@@ -112,31 +154,21 @@ export default function ConnectorInstallation(props) {
     currentStep,
     installSteps,
   ]);
-  const selectedConnection = useSelector(state =>
-    selectors.resource(
+  const selectedConnectionType = useSelector(state => {
+    const selectedConnection = selectors.resource(
       state,
       'connections',
       connection && connection._connectionId
-    )
-  );
-  const integrationAppName = getIntegrationAppUrlName(
-    integration && integration.name
-  );
-  const integrationChildAppName =
-    childIntegration &&
-    getIntegrationAppUrlName(childIntegration && childIntegration.name);
+    );
+    return getConnectionType(selectedConnection);
+  });
+  const integrationAppName = getIntegrationAppUrlName(integrationName);
+  const integrationChildAppName = getIntegrationAppUrlName(childIntegrationName);
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
-  const isCloned =
-    integration &&
-    integration.install &&
-    integration.install.find(step => step.isClone);
-  const isFrameWork2 =
-    (integration &&
-      integration.installSteps &&
-      integration.installSteps.length) ||
-    isCloned;
+  const isCloned = install.find(step => step.isClone);
+  const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
   useEffect(() => {
     if (
@@ -149,7 +181,6 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
-  const mode = integration && integration.mode;
   const oAuthApplications = useMemo(
     () => [
       ...resourceConstants.OAUTH_APPLICATIONS,
@@ -164,8 +195,7 @@ export default function ConnectorInstallation(props) {
       const step = installSteps.find(s => s.isCurrentStep);
 
       if (
-        selectedConnection &&
-        oAuthApplications.includes(getConnectionType(selectedConnection)) &&
+        oAuthApplications.includes(selectedConnectionType) &&
         !isAuthorized
       ) {
         return;
@@ -206,7 +236,7 @@ export default function ConnectorInstallation(props) {
       integrationId,
       isFrameWork2,
       oAuthApplications,
-      selectedConnection,
+      selectedConnectionType,
     ]
   );
 
@@ -220,21 +250,19 @@ export default function ConnectorInstallation(props) {
 
       if (mode === 'settings') {
         if (
-          integration &&
-          integration.initChild &&
-          integration.initChild.function &&
-          childIntegration &&
-          childIntegration.mode === 'install'
+          initChild &&
+          initChild.function &&
+          childIntegrationMode === 'install'
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+            `/pg/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`
           );
         } else {
           dispatch(
             actions.resource.clearChildIntegration()
           );
-          if (integration && integration.installSteps && integration.installSteps.length > 0) {
+          if (integrationInstallSteps && integrationInstallSteps.length > 0) {
             props.history.push(
               `/pg/integrationapps/${integrationAppName}/${integrationId}`
             );
@@ -246,19 +274,19 @@ export default function ConnectorInstallation(props) {
         }
       }
     }
-  }, [
-    dispatch,
+  }, [dispatch,
     mode,
     integrationAppName,
     integrationId,
     isSetupComplete,
     props.history,
-    integration,
-    childIntegration,
+    childIntegrationId,
+    childIntegrationMode,
     integrationChildAppName,
-  ]);
+    initChild,
+    integrationInstallSteps]);
 
-  if (!installSteps || !integration || !integration._connectorId) {
+  if (!installSteps || !_connectorId) {
     return <Typography>No Integration Found</Typography>;
   }
 
@@ -274,8 +302,8 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
-            const storeId = (integration.stores || {}).length
-              ? integration.stores[0].value
+            const storeId = stores.length
+              ? stores[0].value
               : undefined;
 
             // for old cloned IAs, uninstall should happen the old way
@@ -297,10 +325,7 @@ export default function ConnectorInstallation(props) {
                   `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
                 );
               }
-            } else if (
-              integration.settings &&
-              integration.settings.supportsMultiStore
-            ) {
+            } else if (supportsMultiStore) {
               history.push(
                 `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
               );
@@ -345,8 +370,8 @@ export default function ConnectorInstallation(props) {
               ...sourceConnection,
               newIA: true,
               _id: newId,
-              _integrationId: integration._id,
-              _connectorId: integration._connectorId,
+              _integrationId: integrationId,
+              _connectorId,
             }),
             SCOPES.VALUE
           )
@@ -430,13 +455,14 @@ export default function ConnectorInstallation(props) {
     }
   };
 
-  const handleBackClick = e => {
+  const handleHelpUrlClick = e => {
     e.preventDefault();
-    props.history.push('/pg');
+    openExternalUrl({url: helpUrl});
   };
 
+
   return (
-    <LoadResources required resources="connections,integrations">
+    <LoadResources required resources="connections,integrations,published">
       {connection &&
         (connection._connectionId ? (
           <ResourceSetupDrawer
@@ -465,35 +491,40 @@ export default function ConnectorInstallation(props) {
       <div className={classes.root}>
         <div className={classes.innerContent}>
           <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton
-                data-test="back"
-                onClick={handleBackClick}
-                size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
             <Grid item xs>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {integration.name}
-                  </Typography>
-                </Breadcrumbs>
-              </Paper>
+              Install app: {integrationName}
             </Grid>
-            <Grid item xs={1} className={classes.floatRight}>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={handleUninstall}>
+            {helpUrl && (
+            <Grid item>
+              <IconTextButton
+                data-test="viewHelpGuide"
+                component={Link}
+                variant="text"
+                onClick={handleHelpUrlClick}
+                color="primary">
+                <HelpIcon />
+                View installation guide
+              </IconTextButton>
+            </Grid>
+            )}
+            <Grid item xs={1}>
+              <IconTextButton
+                data-test="uninstall"
+                component={Link}
+                variant="text"
+                onClick={handleUninstall}
+                color="primary">
+                <HelpIcon />
                 Uninstall
-              </Button>
+              </IconTextButton>
             </Grid>
           </Grid>
+          {helpUrl && (
+          <RawHtml
+            className={classes.message}
+            html={`Complete the below steps to install your integration app.
+              Need more help? Check out our <a href="${helpUrl}" target="_blank">help guide.</a> `} />
+          )}
           <Grid container spacing={3} className={classes.stepTable}>
             {installSteps.map((step, index) => (
               <InstallationStep
