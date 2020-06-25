@@ -35,6 +35,22 @@ export default {
       };
     },
   },
+  concurexpense: {
+    responseParser: resp => {
+      const refreshTokenExpiresAt = new Date();
+      refreshTokenExpiresAt.setMilliseconds(resp && resp.refresh_expires_in);
+      return { 'http.auth.token.token': resp && resp.access_token,
+        'http.auth.token.refreshToken': resp && resp.refresh_token,
+        'http.baseURI': resp && resp.geolocation,
+        'http.unencrypted.edition': resp && resp.edition,
+        'http.unencrypted.refreshTokenExpiresAt': refreshTokenExpiresAt && refreshTokenExpiresAt.toISOString(),
+      };
+    },
+    payloadTransformer: form => ({
+      username: form['/http/auth/oauth/username'],
+      password: form['/http/auth/oauth/password'],
+    }),
+  },
   paypal: {
     responseParser: resp => ({
       'http.auth.token.token': resp && resp.access_token,

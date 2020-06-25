@@ -204,9 +204,6 @@ export default function JobActionsMenu({
           'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
           {
-            label: 'No, go back',
-          },
-          {
             label: 'Yes, cancel',
             onClick: () => {
               if (job.status === JOB_STATUS.RETRYING) {
@@ -249,6 +246,10 @@ export default function JobActionsMenu({
 
               dispatch(actions.job.cancel({ jobId: job._id }));
             },
+          },
+          {
+            label: 'No, go back',
+            color: 'secondary',
           },
         ],
       });

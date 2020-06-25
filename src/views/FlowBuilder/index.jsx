@@ -210,7 +210,7 @@ function FlowBuilder() {
     },
     [dispatch, flowId, isNewFlow]
   );
-  const handleMove = useCallback(
+  const handleMovePP = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -220,6 +220,17 @@ function FlowBuilder() {
       patchFlow('/pageProcessors', newOrder);
     },
     [pageProcessors, patchFlow]
+  );
+  const handleMovePG = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageGenerators[dragIndex];
+      const newOrder = [...pageGenerators];
+
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      patchFlow('/pageGenerators', newOrder);
+    },
+    [pageGenerators, patchFlow]
   );
   const handleDelete = useCallback(
     type => () => index => {
@@ -235,10 +246,6 @@ function FlowBuilder() {
         title: 'Confirm remove',
         message: `Are you sure you want to remove this ${resourceType}?`,
         buttons: [
-          {
-            label: 'Cancel',
-            color: 'secondary',
-          },
           {
             label: 'Remove',
             color: 'primary',
@@ -257,6 +264,10 @@ function FlowBuilder() {
                 patchFlow('/pageGenerators', newOrder);
               }
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -590,6 +601,7 @@ function FlowBuilder() {
                   index={i}
                   isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
+                  onMove={handleMovePG}
                 />
               ))}
               {!pageGenerators.length && (
@@ -644,7 +656,7 @@ function FlowBuilder() {
                   isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
-                  onMove={handleMove}
+                  onMove={handleMovePP}
                 />
               ))}
               {!pageProcessors.length && showAddPageProcessor && (
