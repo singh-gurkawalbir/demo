@@ -297,9 +297,6 @@ export default function ConnectorInstallation(props) {
       message: 'Are you sure you want to uninstall?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: 'Uninstall',
           onClick: () => {
             const storeId = stores.length
@@ -335,6 +332,10 @@ export default function ConnectorInstallation(props) {
               );
             }
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });

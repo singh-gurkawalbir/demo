@@ -247,10 +247,6 @@ function FlowBuilder() {
         message: `Are you sure you want to remove this ${resourceType}?`,
         buttons: [
           {
-            label: 'Cancel',
-            color: 'secondary',
-          },
-          {
             label: 'Remove',
             color: 'primary',
             onClick: () => {
@@ -268,6 +264,10 @@ function FlowBuilder() {
                 patchFlow('/pageGenerators', newOrder);
               }
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

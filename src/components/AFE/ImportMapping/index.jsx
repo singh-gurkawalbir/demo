@@ -291,7 +291,7 @@ export default function ImportMapping(props) {
         );
       }
     },
-    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType]
+    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType, disabled]
   );
 
   const handleClose = () => {

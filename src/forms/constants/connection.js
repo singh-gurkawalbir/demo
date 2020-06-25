@@ -100,7 +100,9 @@ export default {
     'loopreturns',
     'orderful',
     'logisense',
-    'sapbydesign'
+    'sapbydesign',
+    'concurexpense',
+    'concurinvoice',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

@@ -10,6 +10,8 @@ export default {
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connection.partnerrequireasynchronousmdns':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
+  'connection.as2.contentBasedFlowRouter':
+    'The AS2 connection you selected is being used by other listeners. Script based routing rules must be defined to route inbound files received to the correct flows.',
   'export.as2.contentBasedFlowRouter':
     'The AS2 connection you selected is being used by other listeners. Script based routing rules must be defined to route inbound files received to the correct flows.',
   'export.netsuite.distributed.executionContext': 'This is a required field to specify the exact execution context values for which a record should be exported in real-time. For example, it is very common for a real-time export to run only for \'User Interface\' and \'Web Store\' changes. These values both represent actual end users manually submitting changes to NetSuite (like a user editing and saving a customer record in the browser, or a shopper submitting an order via the web store), and these manual data changes are normally small and also important to propagate quickly to other applications (i.e. new web orders probably need to get sent to the shipping API asap). Execution context values like \'CSV Import\' are risky to enable because (1) you will slow down your mass update due to the overhead of sending data to an external system one record at a time, and (2) you may inadvertently flood your integration with way too many individual records that don\'t need to be synced right away (where a scheduled data flow would have been a better fit).',
@@ -288,6 +290,8 @@ export default {
     'Please enter your Shopify account version, for example 2020-01.For more information check the <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
   'shopify.connection.http.auth.basic.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
   'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
+  'concurinvoice.connection.http.unencrypted.username': 'Please enter the value of <b>id</b> which appears in the redirected popup page URL after signin to integrator.io.',
+  'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.',
   'stripe.connection.http.auth.token.token':
     'The secret key of your Stripe account.',
   'twilio.connection.http.auth.basic.username':

@@ -2119,12 +2119,12 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
-    type: 'hook',
-    label: '',
+    type: 'routingrules',
+    label: 'Choose a script and function name to use for determining AS2 message routing',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
-    helpkey: 'export.as2.contentBasedFlowRouter',
+    helpkey: 'connection.as2.contentBasedFlowRouter',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
