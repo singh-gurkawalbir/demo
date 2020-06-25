@@ -1,5 +1,7 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
 import { isProduction } from '../../utils';
+import { isNewId } from '../../../utils/resource';
+import { applicationsList } from '../../../constants/applications';
 
 export default {
   // #region common
@@ -42,6 +44,23 @@ export default {
     type: 'text',
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
+    required: true,
+  },
+  application: {
+    id: 'application',
+    type: 'text',
+    label: 'Application',
+    defaultValue: r => {
+      if (isNewId(r._id)) {
+        return r.application;
+      }
+      const applications = applicationsList();
+      const application = r.assistant || r.type;
+
+      const app = applications.find(a => a.id === application) || {};
+      return app.name;
+    },
+    defaultDisabled: true,
   },
   assistant: {
     type: 'select',
