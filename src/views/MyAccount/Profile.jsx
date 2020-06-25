@@ -11,6 +11,7 @@ import dateTimezones from '../../utils/dateTimezones';
 import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -129,6 +130,14 @@ export default function ProfileComponent() {
     dispatch(actions.user.profile.unlinkWithGoogle());
   };
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: '/profile',
+      method: 'PUT',
+      onSave: handleSubmit,
+    }
+  );
+
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -240,8 +249,9 @@ export default function ProfileComponent() {
       <DynaForm formState={formState} fieldMeta={fieldMeta}>
         <DynaSubmit
           showCustomFormValidations={showCustomFormValidations}
-          onClick={handleSubmit}>
-          Save
+          onClick={submitHandler()}
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
         </DynaSubmit>
       </DynaForm>
       {getDomain() !== 'eu.integrator.io' && (
