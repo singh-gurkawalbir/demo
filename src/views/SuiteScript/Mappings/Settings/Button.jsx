@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import SettingsIcon from '../../../icons/SettingsIcon';
-import ActionButton from '../../../ActionButton';
+import SettingsIcon from '../../../../components/icons/SettingsIcon';
+import ActionButton from '../../../../components/ActionButton';
 import MappingSettings from '.';
 /**
  *

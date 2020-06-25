@@ -1304,49 +1304,6 @@ const mapping = {
 
 };
 
-const suiteScriptMapping = {
-  init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.INIT, {
-      ssLinkedConnectionId, integrationId, flowId
-    }),
-  initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.INIT_COMPLETE, {
-      ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups
-    }),
-  patchField: ({ field, key, value }) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, { field, key, value }),
-  delete: (key) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.DELETE, {
-      key
-    }),
-  patchSettings: (key, settings) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.PATCH_SETTINGS, {
-      key, settings
-    }),
-  updateLookups: (lookups) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.UPDATE_LOOKUPS, {
-      lookups
-    }),
-  changeOrder: (mappings) =>
-    action(actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER, {
-      mappings
-    }),
-  save: () =>
-    action(actionTypes.SUITESCRIPT_MAPPING.SAVE, {}),
-  saveFailed: () =>
-    action(actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED, { }),
-  saveComplete: () =>
-    action(actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE, {}),
-  refreshGenerates: () =>
-    action(actionTypes.SUITESCRIPT_MAPPING.REFRESH_GENEREATES, {}),
-  patchIncompleteGenerates: (
-    {key, value},
-  ) => action(actionTypes.SUITESCRIPT_MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
-  updateMappings: (mappings) => action(actionTypes.SUITESCRIPT_MAPPING.UPDATE_MAPPINGS, {
-    mappings
-  }),
-  clear: () => action(actionTypes.SUITESCRIPT_MAPPING.CLEAR, {})
-};
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {
@@ -2315,6 +2272,49 @@ const suiteScript = {
         id: connectorId,
       }),
   },
+  mapping: {
+    init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
+        ssLinkedConnectionId, integrationId, flowId
+      }),
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups
+      }),
+    patchField: ({ field, key, value }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
+    delete: (key) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
+        key
+      }),
+    patchSettings: (key, settings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
+        key, settings
+      }),
+    updateLookups: (lookups) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
+        lookups
+      }),
+    changeOrder: (mappings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER, {
+        mappings
+      }),
+    save: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE, {}),
+    saveFailed: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED, { }),
+    saveComplete: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE, {}),
+    refreshGenerates: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, {}),
+    patchIncompleteGenerates: (
+      {key, value},
+    ) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
+    updateMappings: (mappings) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
+      mappings
+    }),
+    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
+  }
 };
 const editorSampleData = {
   request: ({
@@ -2406,5 +2406,4 @@ export default {
   customSettings,
   exportData,
   editorSampleData,
-  suiteScriptMapping,
 };

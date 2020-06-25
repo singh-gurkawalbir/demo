@@ -16,7 +16,7 @@ import DashboardPanel from './panels/Dashboard';
 // import IntegrationTabs from '../common/Tabs';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import IntegrationTabs from '../common/Tabs';
-import SuiteScriptMappingDrawer from '../../../../components/AFE/SuiteScriptMapping/Drawer';
+import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {

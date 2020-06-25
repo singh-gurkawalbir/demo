@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
-// import { useLocation, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import clsx from 'clsx';
 import { useRouteMatch } from 'react-router-dom';
@@ -8,12 +7,11 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import MappingRow from './MappingRow';
 import SaveButton from './SaveButton';
-import RefreshIcon from '../../icons/RefreshIcon';
-import IconTextButton from '../../IconTextButton';
-import Spinner from '../../Spinner';
-import SpinnerWrapper from '../../SpinnerWrapper';
+import RefreshIcon from '../../../components/icons/RefreshIcon';
+import IconTextButton from '../../../components/IconTextButton';
+import Spinner from '../../../components/Spinner';
+import SpinnerWrapper from '../../../components/SpinnerWrapper';
 
-// const emptySet = [];
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
@@ -112,7 +110,7 @@ const SuiteScriptMapping = (props) => {
   const dispatch = useDispatch();
   const showPreviewPane = false;
 
-  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMapping(state));
+  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMappings(state));
   const {importType, exportType} = useSelector(state => {
     const flow = selectors.suiteScriptFlowDetail(state, {
       integrationId,
@@ -126,12 +124,12 @@ const SuiteScriptMapping = (props) => {
   const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
-    dispatch(actions.suiteScriptMapping.init({ssLinkedConnectionId, integrationId, flowId}));
+    dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId}));
   }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
   const handleRefreshGenerates = useCallback(
     () => {
       dispatch(
-        actions.suiteScriptMapping.refreshGenerates()
+        actions.suiteScript.mapping.refreshGenerates()
       );
     },
     [dispatch],
@@ -149,7 +147,7 @@ const SuiteScriptMapping = (props) => {
     [onClose],
   );
   const handleDelete = useCallback(key => {
-    dispatch(actions.suiteScriptMapping.delete(key));
+    dispatch(actions.suiteScript.mapping.delete(key));
   }, [dispatch]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
@@ -168,14 +166,14 @@ const SuiteScriptMapping = (props) => {
         }
       }
 
-      dispatch(actions.suiteScriptMapping.patchField({field, key, value }));
+      dispatch(actions.suiteScript.mapping.patchField({field, key, value }));
     },
     [dispatch, handleDelete]
   );
 
   const patchSettings = useCallback(
     (key, settings) => {
-      dispatch(actions.suiteScriptMapping.patchSettings(key, settings));
+      dispatch(actions.suiteScript.mapping.patchSettings(key, settings));
     },
     [dispatch]
   );
@@ -197,10 +195,10 @@ const SuiteScriptMapping = (props) => {
       }
     });
 
-    dispatch(actions.suiteScriptMapping.updateLookups(lookupsTmp));
+    dispatch(actions.suiteScript.mapping.updateLookups(lookupsTmp));
   };
   const handleDrop = useCallback(() => {
-    dispatch(actions.suiteScriptMapping.changeOrder(localMappings));
+    dispatch(actions.suiteScript.mapping.changeOrder(localMappings));
   }, [dispatch, localMappings]);
 
   const handleMove = useCallback(
@@ -238,7 +236,7 @@ const SuiteScriptMapping = (props) => {
   useEffect(() => {
     handleInit();
     return () => {
-      dispatch(actions.suiteScriptMapping.clear());
+      dispatch(actions.suiteScript.mapping.clear());
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -353,7 +351,6 @@ const SuiteScriptMapping = (props) => {
           </Button>
         </ButtonGroup>
       </div>
-
     </div>
   );
 };

@@ -8,12 +8,12 @@ const { deepClone } = require('fast-json-patch');
 
 const emptyObj = {};
 
-export default function reducer(state = {}, action) {
+export default (state = {}, action) => {
   const { ssLinkedConnectionId, integrationId, flowId, type } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.SUITESCRIPT_MAPPING.INIT_COMPLETE:
+      case actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE:
       {
         const { generatedMappings, lookups } = action;
 
@@ -34,12 +34,12 @@ export default function reducer(state = {}, action) {
         };
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.CHANGE_ORDER: {
+      case actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER: {
         const { mappings } = action;
         draft.mappings.mappings = mappings;
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.DELETE: {
+      case actionTypes.SUITESCRIPT.MAPPING.DELETE: {
         const { key } = action;
 
         draft.mappings.changeIdentifier += 1;
@@ -58,7 +58,7 @@ export default function reducer(state = {}, action) {
 
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD: {
+      case actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD: {
         const {key, field, value} = action;
 
         draft.mappings.changeIdentifier += 1;
@@ -121,7 +121,7 @@ export default function reducer(state = {}, action) {
 
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.PATCH_SETTINGS: {
+      case actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS: {
         const { settings, key: rowKey } = action;
         // ssLinkedConnectionId, integrationId, flowId, key, settings
         draft.mappings.changeIdentifier += 1;
@@ -172,7 +172,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.SUITESCRIPT_MAPPING.UPDATE_LOOKUPS:
+      case actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS:
       {
         const { lookups } = action;
         draft.mappings.lookups = lookups;
@@ -184,7 +184,7 @@ export default function reducer(state = {}, action) {
         draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.PATCH_INCOMPLETE_GENERATES: {
+      case actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const { key, value } = action;
         draft.mappings.changeIdentifier += 1;
         if (!draft.mappings.incompleteGenerates) {
@@ -203,29 +203,29 @@ export default function reducer(state = {}, action) {
 
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.UPDATE_MAPPINGS: {
+      case actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS: {
         const { mappings } = action;
         draft.mappings.changeIdentifier += 1;
         draft.mappings.mappings = mappings;
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.CLEAR: {
+      case actionTypes.SUITESCRIPT.MAPPING.CLEAR: {
         Object.keys(draft).forEach(key => {
           delete draft[key];
         });
         break;
       }
-      case actionTypes.SUITESCRIPT_MAPPING.SAVE:
+      case actionTypes.SUITESCRIPT.MAPPING.SAVE:
         draft.mappings.saveStatus = 'requested';
         break;
-      case actionTypes.SUITESCRIPT_MAPPING.SAVE_COMPLETE:
+      case actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE:
         draft.mappings.saveStatus = 'completed';
         draft.mappings.validationErrMsg = undefined;
         draft.mappings.mappingsCopy = deepClone(draft.mappings.mappings);
         draft.mappings.lookupsCopy = deepClone(draft.mappings.lookups);
 
         break;
-      case actionTypes.SUITESCRIPT_MAPPING.SAVE_FAILED:
+      case actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED:
         draft.mappings.saveStatus = 'failed';
         draft.mappings.validationErrMsg = undefined;
 
@@ -234,7 +234,7 @@ export default function reducer(state = {}, action) {
       default:
     }
   });
-}
+};
 
 const isMappingObjEqual = (mapping1, mapping2) => {
   const {
@@ -251,7 +251,7 @@ const isMappingObjEqual = (mapping1, mapping2) => {
   return isEqual(formattedMapping1, formattedMapping2);
 };
 
-export function mappings(state) {
+export function mappingState(state) {
   if (!state || !state.mappings) {
     return emptyObj;
   }

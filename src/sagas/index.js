@@ -57,7 +57,6 @@ import errorDetailsSagas from './errorManagement/errorDetails';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
-import { suiteScriptMappingSagas } from './suiteScriptMapping';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -161,6 +160,5 @@ export default function* rootSaga() {
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
-    ...suiteScriptMappingSagas,
   ]);
 }

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
+import Spinner from '../../../components/Spinner';
 
 export const useLoadingSnackbarOnSave = props => {
   const { saveTerminated, onSave } = props;
@@ -45,7 +45,7 @@ const MappingSaveButton = props => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { validationErrMsg } = useSelector(state =>
-    selectors.suiteScriptMapping(state)
+    selectors.suiteScriptMappings(state)
   );
   const mappingsChanged = useSelector(state =>
     selectors.suitesciptMappingsChanged(state)
@@ -57,7 +57,7 @@ const MappingSaveButton = props => {
 
   const onSave = useCallback(() => {
     setSaveTriggered(true);
-    dispatch(actions.suiteScriptMapping.save());
+    dispatch(actions.suiteScript.mapping.save());
   }, [dispatch]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,

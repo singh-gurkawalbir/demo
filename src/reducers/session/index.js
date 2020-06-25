@@ -21,8 +21,6 @@ import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
 import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import mappings, * as fromMappings from './mappings';
-import suiteScriptMappings, * as fromSuiteScriptMappings from './suiteScriptMappings';
-
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
@@ -69,7 +67,6 @@ export default combineReducers({
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
-  suiteScriptMappings
 });
 
 // #region PUBLIC SELECTORS
@@ -707,20 +704,20 @@ export function suiteScriptIntegrationAppInstallerData(state, id) {
     id
   );
 }
-export function suiteScriptMappingState(state) {
-  return fromSuiteScriptMappings.mappings(
-    state && state.suiteScriptMappings
+export function suiteScriptMappings(state) {
+  return fromSuiteScript.mappingState(
+    state && state.suiteScript
   );
 }
 
 export function suitesciptMappingsChanged(state) {
-  return fromSuiteScriptMappings.mappingsChanged(
-    state && state.suiteScriptMappings
+  return fromSuiteScript.mappingsChanged(
+    state && state.suiteScript
   );
 }
 
 export function suitesciptMappingsSaveStatus(state,) {
-  return fromSuiteScriptMappings.mappingsSaveStatus(
-    state && state.suiteScriptMappings
+  return fromSuiteScript.mappingsSaveStatus(
+    state && state.suiteScript
   );
 }

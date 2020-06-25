@@ -3,14 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
-import TrashIcon from '../../icons/TrashIcon';
-import ActionButton from '../../ActionButton';
-import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
-import GripperIcon from '../../icons/GripperIcon';
+import TrashIcon from '../../../components/icons/TrashIcon';
+import ActionButton from '../../../components/ActionButton';
+import MappingConnectorIcon from '../../../components/icons/MappingConnectorIcon';
+import GripperIcon from '../../../components/icons/GripperIcon';
 import Settings from './Settings/Button';
 import * as selectors from '../../../reducers';
 import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
+import DynaTypeableSelect from '../../../components/DynaForm/fields/DynaTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
   child: {

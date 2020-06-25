@@ -1,11 +1,11 @@
 import { takeEvery, put, select, call, takeLatest } from 'redux-saga/effects';
 // import { deepClone } from 'fast-json-patch';
 import { deepClone } from 'fast-json-patch/lib/core';
-import actionTypes from '../../actions/types';
-import actions from '../../actions';
-import * as selectors from '../../reducers';
-import suiteScriptMappingUtil from '../../utils/suiteScriptMapping';
-import { commitStagedChanges } from '../suiteScript/resources';
+import actionTypes from '../../../actions/types';
+import actions from '../../../actions';
+import * as selectors from '../../../reducers';
+import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
+import { commitStagedChanges } from '../resources';
 
 export const SCOPES = {
   META: 'meta',
@@ -19,7 +19,7 @@ export function* refreshGenerates({ isInit = false }) {
     ssLinkedConnectionId,
     integrationId,
     flowId,
-  } = yield select(selectors.suiteScriptMapping);
+  } = yield select(selectors.suiteScriptMappings);
 
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
@@ -112,7 +112,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
   const generatedMappings = suiteScriptMappingUtil.generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
   let lookups = [];
   if (importType === 'netsuite' && importRes.netsuite && importRes.netsuite.lookups) { lookups = deepClone(importRes.netsuite.lookups); } else if (importType === 'salesforce' && importRes.salesforce && importRes.salesforce.lookups) { lookups = deepClone(importRes.salesforce.lookups); }
-  yield put(actions.suiteScriptMapping.initComplete({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }));
+  yield put(actions.suiteScript.mapping.initComplete({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }));
   yield call(refreshGenerates, {isInit: true });
 }
 
@@ -123,7 +123,7 @@ export function* saveMappings() {
     ssLinkedConnectionId,
     integrationId,
     flowId
-  } = yield select(selectors.suiteScriptMapping);
+  } = yield select(selectors.suiteScriptMappings);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -184,11 +184,11 @@ export function* saveMappings() {
   });
   if (resp && (resp.error || resp.conflict)) {
     return yield put(
-      actions.suiteScriptMapping.saveFailed()
+      actions.suiteScript.mapping.saveFailed()
     );
   }
   return yield put(
-    actions.suiteScriptMapping.saveComplete()
+    actions.suiteScript.mapping.saveComplete()
   );
 }
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
@@ -198,7 +198,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   const {
     mappings = [],
     ssLinkedConnectionId, integrationId, flowId,
-  } = yield select(selectors.suiteScriptMapping);
+  } = yield select(selectors.suiteScriptMappings);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -225,7 +225,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   if (childRelationshipField && childRelationshipField.childSObject) {
     const { childSObject, relationshipName } = childRelationshipField;
 
-    yield put(actions.suiteScriptMapping.patchIncompleteGenerates(
+    yield put(actions.suiteScript.mapping.patchIncompleteGenerates(
       {
         key,
         value: relationshipName
@@ -253,7 +253,7 @@ export function* updateImportSampleData() {
     ssLinkedConnectionId,
     integrationId,
     flowId
-  } = yield select(selectors.suiteScriptMapping);
+  } = yield select(selectors.suiteScriptMappings);
   if (!incompleteGenerates.length) return;
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
@@ -295,13 +295,13 @@ export function* updateImportSampleData() {
     }
   });
 
-  yield put(actions.suiteScriptMapping.updateMappings(modifiedMappings));
+  yield put(actions.suiteScript.mapping.updateMappings(modifiedMappings));
 }
 
-export const suiteScriptMappingSagas = [
-  takeEvery(actionTypes.SUITESCRIPT_MAPPING.INIT, mappingInit),
-  takeEvery(actionTypes.SUITESCRIPT_MAPPING.SAVE, saveMappings),
-  takeLatest(actionTypes.SUITESCRIPT_MAPPING.REFRESH_GENEREATES, refreshGenerates),
-  takeLatest(actionTypes.SUITESCRIPT_MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
+export const mappingSagas = [
+  takeEvery(actionTypes.SUITESCRIPT.MAPPING.INIT, mappingInit),
+  takeEvery(actionTypes.SUITESCRIPT.MAPPING.SAVE, saveMappings),
+  takeLatest(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, refreshGenerates),
+  takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
 ];

@@ -4873,8 +4873,8 @@ export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
   return isInstallComplete;
 }
 
-export function suiteScriptMapping(state) {
-  return fromSession.suiteScriptMappingState(state && state.session);
+export function suiteScriptMappings(state) {
+  return fromSession.suiteScriptMappings(state && state.session);
 }
 export function suitesciptMappingsChanged(state) {
   return fromSession.suitesciptMappingsChanged(state && state.session);

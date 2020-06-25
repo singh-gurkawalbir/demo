@@ -3,10 +3,10 @@ import Button from '@material-ui/core/Button';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, shallowEqual } from 'react-redux';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DynaForm from '../../../../components/DynaForm';
+import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import DrawerTitleBar from '../../../drawer/TitleBar';
+import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import * as selectors from '../../../../reducers';
@@ -51,7 +51,7 @@ export default function MappingSettings(props) {
     integrationId,
     flowId,
   } = props;
-  const { lookups = []} = useSelector(state => selectors.suiteScriptMapping(state));
+  const { lookups = []} = useSelector(state => selectors.suiteScriptMappings(state));
   const {importType, connectionId, recordType} = useSelector(state => {
     const flows = selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',
