@@ -233,8 +233,10 @@ export default function Panel(props) {
 
     return assistant || adaptorType;
   });
+  // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
 
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {
@@ -400,6 +402,7 @@ export default function Panel(props) {
             resourceId={id}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
+            submitButtonColor={submitButtonColor}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
             {...props}

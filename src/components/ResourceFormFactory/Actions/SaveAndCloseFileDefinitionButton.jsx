@@ -20,7 +20,7 @@ const SaveAndCloseFileDefinitionButton = props => {
     flowId,
     disabled = false,
     skipCloseOnSave = false,
-    color = 'secondary',
+    submitButtonColor = 'secondary',
     disableSaveOnClick,
     setDisableSaveOnClick,
   } = props;
@@ -74,7 +74,7 @@ const SaveAndCloseFileDefinitionButton = props => {
   return (
     <DynaAction
       {...props}
-      color={color}
+      color={submitButtonColor}
       className={classes.actionButton}
       disabled={disabled || disableSaveOnClick}
       onClick={handleSubmitForm}>

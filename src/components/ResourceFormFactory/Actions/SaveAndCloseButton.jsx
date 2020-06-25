@@ -24,7 +24,7 @@ const SaveButton = props => {
     skipCloseOnSave = false,
     flowId,
     disableSaveOnClick,
-    color = 'secondary',
+    submitButtonColor = 'secondary',
     setDisableSaveOnClick,
   } = props;
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const SaveButton = props => {
   return (
     <DynaAction
       {...props}
-      color={color}
+      color={submitButtonColor}
       className={classes.actionButton}
       disabled={disabled || disableSave}
       onClick={handleSubmitForm}>

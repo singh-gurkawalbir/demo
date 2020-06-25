@@ -95,7 +95,7 @@ const TestAndSaveButton = props => {
     disableSaveOnClick,
     setDisableSaveOnClick,
     skipCloseOnSave,
-    color = 'secondary',
+    submitButtonColor = 'secondary',
   } = props;
   const dispatch = useDispatch();
   const handleSaveForm = useCallback(
@@ -211,7 +211,7 @@ const TestAndSaveButton = props => {
         className={classes.actionButton}
         size="small"
         variant="outlined"
-        color={color}>
+        color={submitButtonColor}>
         {label || 'Save & close'}
       </DynaAction>
     </>
