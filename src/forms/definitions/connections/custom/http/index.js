@@ -178,6 +178,7 @@ import walmart from './walmart';
 import logisense from './logisense';
 import joor from './joor';
 import sapbydesign from './sapbydesign';
+import concurinvoice from './concurinvoice';
 
 export default {
   bigquery,
@@ -359,4 +360,5 @@ export default {
   logisense,
   joor,
   sapbydesign,
+  concurinvoice,
 };
