@@ -93,6 +93,10 @@ export default {
               field: 'netsuite.authType',
               is: ['token-auto'],
             },
+            {
+              field: 'netsuite.authType',
+              is: ['token'],
+            },
           ]
           : [];
       },
@@ -171,31 +175,45 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'netsuite.concurrencyLevel': { fieldId: 'netsuite.concurrencyLevel' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'netsuite.authType',
-      'netsuite.email',
-      'netsuite.password',
-      'netsuite.environment',
-      'netsuite.tokenEnvironment',
-      'netsuite.account',
-      'netsuite.tokenAccount',
-      'netsuite.token.auto.account',
-      'netsuite.token.auto.roleId',
-      'netsuite.roleId',
-      'netsuite.tokenId',
-      'netsuite.tokenSecret',
-      'netsuite._iClientId',
-      'netsuite.linkSuiteScriptIntegrator',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
         fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'netsuite.authType',
+          'netsuite.email',
+          'netsuite.password',
+          'netsuite.environment',
+          'netsuite.tokenEnvironment',
+          'netsuite.account',
+          'netsuite.tokenAccount',
+          'netsuite.token.auto.account',
+          'netsuite.token.auto.roleId',
+          'netsuite.roleId',
+          'netsuite.tokenId',
+          'netsuite.tokenSecret',
+          'netsuite._iClientId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
         ],

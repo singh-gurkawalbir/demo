@@ -24,6 +24,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   connectorLicenses: 'License',
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
+  apis: 'My API',
 });
 
 /**

@@ -271,7 +271,9 @@ export function fieldMeta({ resource, assistantData }) {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
+    pageSize: { fieldId: 'pageSize' },
     formView: { fieldId: 'formView' },
+    skipRetries: { fieldId: 'skipRetries' },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -327,8 +329,8 @@ export function fieldMeta({ resource, assistantData }) {
             },
             {
               collapsed: true,
-              label: 'Advanced Settings',
-              fields: ['apiIdentifier'],
+              label: 'Advanced',
+              fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
             },
           ],
         },

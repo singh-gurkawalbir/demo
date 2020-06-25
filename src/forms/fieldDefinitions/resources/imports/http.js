@@ -1,6 +1,6 @@
 export default {
   'http.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     visibleWhen: [
       {
@@ -325,8 +325,6 @@ export default {
   'http.batchSize': {
     type: 'text',
     label: 'Batch size limit',
-    // Todo (surya) 15533 helptext needed
-    helpText: 'helptext is used to provide information to the user',
     defaultValue: 1,
     validWhen: {
       matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

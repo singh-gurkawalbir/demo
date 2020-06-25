@@ -1,11 +1,12 @@
 import React from 'react';
 import { ConnectorNameComp } from '..';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -16,7 +17,6 @@ export default {
       },
       orderBy: 'name',
     },
-
     {
       heading: 'Application',
       value: function ConnectorName(r) {
@@ -25,9 +25,9 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Clone, AuditLogs, References, Delete],
+  rowActions: [Edit, AuditLogs, References, Clone, Delete],
 };

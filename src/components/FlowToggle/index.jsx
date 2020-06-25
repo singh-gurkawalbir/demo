@@ -43,22 +43,17 @@ export default function FlowToggle({
   );
   const enableOrDisableFlow = () => {
     const enable = flow.disabled;
-    const message = [
-      'Are you sure you want to ',
-      enable ? 'enable' : 'disable',
-      flow.name || flow._id,
-      'flow?',
-    ].join(' ');
+    const message = `Are you sure you want to ${enable ? 'enable' : 'disable'} this flow?`;
 
     confirmDialog({
-      title: 'Confirm',
+      title: `Confirm ${enable ? 'enable' : 'disable'}`,
       message,
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: `${enable ? 'Enable' : 'Disable'}`,
           onClick: () => {
             if (flow._connectorId && !istwoDotZeroFrameWork) {
               dispatch(actions.flow.isOnOffActionInprogress(true, flow._id));

@@ -33,7 +33,7 @@ export default function OnOffCell({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { defaultConfirmDialog } = useConfirmDialog();
+  const { confirmDialog } = useConfirmDialog();
   const flowName = name || `Unnamed (id: ${flowId})`;
   const [onOffInProgressStatus, setOnOffInProgressStatus] = useState(false);
   const onOffInProgress = useSelector(
@@ -75,49 +75,56 @@ export default function OnOffCell({
     [dispatch, flowId]
   );
   const handleDisableClick = useCallback(() => {
-    defaultConfirmDialog(
-      `${disabled ? 'enable' : 'disable'} ${flowName}?`,
-      () => {
-        if (isIntegrationApp && !istwoDotZeroFrameWork) {
-          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
-          setOnOffInProgressStatus(true);
-          dispatch(
-            actions.integrationApp.settings.update(
-              integrationId,
-              flowId,
-              storeId,
-              null,
-              {
-                '/flowId': flowId,
-                '/disabled': !disabled,
-              },
-              { action: 'flowEnableDisable' }
-            )
-          );
-        } else {
-          if (disabled && !isFree && !isDataLoader) {
-            if (!isLicenseValidToEnableFlow.enable) {
-              return enqueueSnackbar({
-                message: isLicenseValidToEnableFlow.message,
-                variant: 'error',
-              });
+    confirmDialog({
+      title: `Confirm ${disabled ? 'enable' : 'disable'}`,
+      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow?`,
+      buttons: [
+        {
+          label: 'Cancel',
+        },
+        {
+          label: `${disabled ? 'Enable' : 'Disable'}`,
+          onClick: () => {
+            if (isIntegrationApp && !istwoDotZeroFrameWork) {
+              dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
+              setOnOffInProgressStatus(true);
+              dispatch(
+                actions.integrationApp.settings.update(
+                  integrationId,
+                  flowId,
+                  storeId,
+                  null,
+                  {
+                    '/flowId': flowId,
+                    '/disabled': !disabled,
+                  },
+                  { action: 'flowEnableDisable' }
+                )
+              );
+            } else {
+              if (disabled && !isFree && !isDataLoader) {
+                if (!isLicenseValidToEnableFlow.enable) {
+                  return enqueueSnackbar({
+                    message: isLicenseValidToEnableFlow.message,
+                    variant: 'error',
+                  });
+                }
+              }
+
+              dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
+              setOnOffInProgressStatus(true);
+
+              patchFlow('/disabled', !disabled);
             }
           }
-
-          dispatch(actions.flow.isOnOffActionInprogress(true, flowId));
-          setOnOffInProgressStatus(true);
-
-          patchFlow('/disabled', !disabled);
-        }
-      }
-    );
+        }]
+    });
   }, [
-    defaultConfirmDialog,
+    confirmDialog,
     dispatch,
     disabled,
     enqueueSnackbar,
     flowId,
-    flowName,
     integrationId,
     isDataLoader,
     isFree,
@@ -146,7 +153,7 @@ export default function OnOffCell({
           className={classes.celigoSwitchOnOff}
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
-          enabled={!disabled}
+          checked={!disabled}
           onChange={handleDisableClick}
       />
       </RemoveMargin>

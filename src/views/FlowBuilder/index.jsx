@@ -36,12 +36,12 @@ import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
-import DateTimeDisplay from '../../components/DateTimeDisplay';
 import StatusCircle from '../../components/StatusCircle';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
+import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -241,25 +241,25 @@ function FlowBuilder() {
     [pageProcessors, patchFlow]
   );
   const handleDelete = useCallback(
-    type => resourceName => index => {
+    type => () => index => {
       let resourceType;
 
       if (type === itemTypes.PAGE_PROCESSOR) {
-        resourceType = 'Page Processor';
+        resourceType = 'page processor';
       } else {
-        resourceType = 'Page Generator';
+        resourceType = 'page generator';
       }
 
       confirmDialog({
-        title: `Remove ${resourceName} ${resourceType}`,
-        message: `Are you sure you want to remove this ${resourceType} from this flow?`,
+        title: 'Confirm remove',
+        message: `Are you sure you want to remove this ${resourceType}?`,
         buttons: [
           {
             label: 'Cancel',
             color: 'secondary',
           },
           {
-            label: `Remove ${resourceType}`,
+            label: 'Remove',
             color: 'primary',
             onClick: () => {
               if (type === itemTypes.PAGE_PROCESSOR) {
@@ -349,7 +349,7 @@ function FlowBuilder() {
     const parts = location.pathname.split('/');
     const newPath = `${parts.slice(0, 4).join('/')}/flows`;
     history.push(newPath);
-  }, [history, location])
+  }, [history, location]);
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -474,7 +474,7 @@ function FlowBuilder() {
             {isNewFlow ? (
               'Never'
             ) : (
-              <DateTimeDisplay dateTime={flow.lastModified} />
+              <CeligoTimeAgo date={flow.lastModified} />
             )}
           </>
         }

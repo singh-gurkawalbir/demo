@@ -5,7 +5,7 @@ import RegenerateTokenIcon from '../../../icons/RegenerateTokenIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
 
 export default {
-  label: 'Generate token',
+  label: 'Generate new token',
   icon: RegenerateTokenIcon,
   hasAccess: ({ rowData, resourceType }) =>
     !(resourceType === 'stacks' && rowData.type === 'lambda'),
@@ -20,12 +20,12 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const confirmGenerateToken = useCallback(() => {
       confirmDialog({
-        title: 'Generate new token?',
+        title: 'Confirm generate',
         message:
-          'Are you sure you want to generate a new token? Your old token will be replaced with a new one. You will not be able to use your old token.',
+          'Are you sure you want to generate a new token? Your old token will not work after making this change.',
         buttons: [
           {
-            label: 'Generate token',
+            label: 'Generate',
             onClick: generateSystemToken,
           },
           {

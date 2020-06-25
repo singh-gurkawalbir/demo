@@ -7,11 +7,12 @@ import AgentStatus from '../../../AgentStatus';
 import { formatLastModified } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import GenerateToken from '../../actions/GenerateToken';
+import Edit from '../../actions/Edit';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
 );
-const getAgentToken = agent => <AgentToken agentId={agent._id} />;
+// const getAgentToken = agent => <AgentToken agentId={agent._id} />;
 
 export default {
   columns: [
@@ -30,6 +31,7 @@ export default {
     },
     {
       heading: 'Last updated',
+      width: '150px', // minimum width to prevent heading to wrap.
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
@@ -42,8 +44,8 @@ export default {
     {
       heading: 'Access token',
       width: '285px',
-      value: r => getAgentToken(r),
+      value: r => <AgentToken agentId={r._id} />,
     },
   ],
-  rowActions: () => [GenerateToken, References, Delete],
+  rowActions: () => [Edit, GenerateToken, References, Delete],
 };

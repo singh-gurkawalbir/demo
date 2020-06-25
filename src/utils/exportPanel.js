@@ -41,7 +41,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return [
         { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
-        { label: 'Output', value: 'parse' },
+        { label: 'Parsed output', value: 'parse' },
       ];
     case 'netsuite':
     case 'salesforce':
@@ -82,7 +82,7 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
   const appType = adaptorTypeMap[adaptorType];
 
   // If appType is not part of supported applications list, return false
-  return applicationsWithPreviewPanel.includes(appType)
+  return applicationsWithPreviewPanel.includes(appType);
 };
 
 const formatPreviewData = records => {
@@ -92,9 +92,9 @@ const formatPreviewData = records => {
   if (!records) return { page_of_records };
 
   if (Array.isArray(records)) {
-    const rows = []
+    const rows = [];
     records.forEach(record => rows.push(record));
-    page_of_records.push({rows})
+    page_of_records.push({rows});
   } else {
     page_of_records.push({ record: records });
   }
@@ -149,7 +149,7 @@ export const getPreviewDataPageSizeInfo = previewData => {
   const pageSize = Array.isArray(records) ? records.length : 1;
 
   if (pageSize === 1) {
-    return '1 Page 1 Record';
+    return '1 Page, 1 Record';
   }
 
   return `1 Page ${pageSize} Records`;

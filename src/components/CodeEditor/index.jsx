@@ -59,7 +59,7 @@ export default function CodeEditor({
       if (enableAutocomplete) {
         handlebarCompleterSetup(editor);
       }
-      if (mode === 'javascript') {
+      if (mode === 'javascript' && editor && editor.session && editor.session.$worker) {
         // the options available are referenced here: https://jshint.com/docs/options/
         editor.session.$worker.send('changeOptions', [{
           asi: true,
@@ -75,7 +75,7 @@ export default function CodeEditor({
           supernew: true,
           validthis: true,
           withstmt: true,
-        }])
+        }]);
       }
     }),
   [enableAutocomplete, mode]

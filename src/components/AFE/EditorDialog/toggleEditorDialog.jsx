@@ -81,6 +81,7 @@ export default function ToggleEditorDialog(props) {
     helpTitle,
     helpKey,
     hidePreviewAction = false,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -130,14 +131,14 @@ export default function ToggleEditorDialog(props) {
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
-        title: 'Confirm',
-        message: 'You have made changes in the editor. Are you sure you want to discard them?',
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'No',
+            label: 'No, go back',
           },
           {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: onClose,
           },
         ],
@@ -274,6 +275,7 @@ export default function ToggleEditorDialog(props) {
           disabled={disableSave}
           onClose={handleClose}
           submitButtonLabel="Save"
+          flowId={flowId}
         />
         <Button
           variant="text"

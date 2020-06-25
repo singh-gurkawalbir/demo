@@ -10,7 +10,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    paddingLeft: theme.spacing(2),
+    padding: theme.spacing(0, 2),
     '& > div': {
       padding: theme.spacing(3, 0),
     },
@@ -101,7 +101,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   };
 
   const infoTextNotifications =
-    'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
+    'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';
 
   return (
     <div className={classes.root}>

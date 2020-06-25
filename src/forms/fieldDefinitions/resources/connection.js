@@ -43,6 +43,13 @@ export default {
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
   },
+  application: {
+    id: 'application',
+    type: 'text',
+    label: 'Application',
+    defaultValue: r => r && r.assistant ? r.assistant : r.type,
+    defaultDisabled: true,
+  },
   assistant: {
     type: 'select',
     label: 'Assistant',
@@ -428,7 +435,7 @@ export default {
   },
   'rest.tokenParam': {
     type: 'text',
-    label: 'Rest token param',
+    label: 'REST token param',
   },
   'rest.scope': {
     type: 'selectscopes',
@@ -436,15 +443,15 @@ export default {
   },
   'rest.scopeDelimiter': {
     type: 'text',
-    label: 'Rest scope delimiter',
+    label: 'REST scope delimiter',
   },
   'rest.refreshToken': {
     type: 'text',
-    label: 'Rest refresh token',
+    label: 'REST refresh token',
   },
   'rest.oauthTokenURI': {
     type: 'text',
-    label: 'Rest oauth token URI',
+    label: 'REST oauth token URI',
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
@@ -466,7 +473,7 @@ export default {
   },
   'rest.authURI': {
     type: 'text',
-    label: 'Rest auth URI',
+    label: 'REST auth URI',
   },
   'rest.authHeader': {
     type: 'text',
@@ -475,7 +482,7 @@ export default {
   },
   'rest.retryHeader': {
     type: 'text',
-    label: 'Rest retry header',
+    label: 'REST retry header',
   },
   'rest.authScheme': {
     type: 'select',
@@ -556,11 +563,11 @@ export default {
   },
   'rest.oauth.accessTokenPath': {
     type: 'text',
-    label: 'Rest oauth access token path',
+    label: 'REST oauth access token path',
   },
   'rest.oauth.grantType': {
     type: 'radiogroup',
-    label: 'Rest oauth grant type',
+    label: 'REST oauth grant type',
     options: [
       {
         items: [
@@ -572,12 +579,12 @@ export default {
   },
   'rest.oauth.username': {
     type: 'text',
-    label: 'Rest oauth username',
+    label: 'REST oauth username',
   },
   'rest.oauth.password': {
     type: 'text',
     inputType: 'password',
-    label: 'Rest oauth password',
+    label: 'REST oauth password',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -600,7 +607,7 @@ export default {
   },
   'rest.refreshTokenURI': {
     type: 'text',
-    label: 'Rest refresh token URI',
+    label: 'REST refresh token URI',
   },
   'rest.refreshTokenPath': {
     type: 'text',
@@ -628,7 +635,7 @@ export default {
   },
   'rest.info': {
     type: 'text',
-    label: 'Rest info',
+    label: 'REST info',
   },
   'rest.pingRelativeURI': {
     type: 'text',
@@ -646,14 +653,14 @@ export default {
   },
   'rest.pingFailurePath': {
     type: 'text',
-    label: 'Rest ping failure path',
+    label: 'REST ping failure path',
   },
   'rest.pingFailureValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Rest ping failure values',
+    label: 'REST ping failure values',
   },
   'rest.concurrencyLevel': {
     type: 'select',
@@ -811,7 +818,7 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry header',
+    label: 'Retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
     type: 'text',
@@ -902,7 +909,7 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token url',
+    label: 'Access token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -919,7 +926,7 @@ export default {
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication url',
+    label: 'Authentication URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
@@ -999,7 +1006,7 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback url',
+    label: 'Callback URL',
     defaultDisabled: true,
     visible: !isProduction(),
     defaultValue: () => {
@@ -1015,7 +1022,7 @@ export default {
   },
   'http.auth.token.revoke.uri': {
     type: 'text',
-    label: 'Revoke token url',
+    label: 'Revoke token URL',
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
@@ -1197,11 +1204,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'API rate limits',
+    label: 'Non-standard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail status code',
+    label: 'HTTP status code for rate limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1210,16 +1217,17 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to rate limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Fail values',
+    label: 'Rate limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Limit',
+    label: 'Wait time in between HTTP requests',
+    endAdornment: 'milliseconds',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1393,8 +1401,6 @@ export default {
   'ftp.pgpKeyAlgorithm': {
     type: 'select',
     label: 'PGP encryption algorithm',
-    // Todo (surya) 15533 : helptext needed
-    helpText: 'helptext is useful to provide information about the field to users',
     defaultValue: r => (r && r.ftp && r.ftp.pgpKeyAlgorithm) || 'CAST5',
     description:
       'Note: for security reasons this field must always be re-entered.',
@@ -1857,7 +1863,7 @@ export default {
   },
   as2url: {
     type: 'select',
-    label: 'AS2 url',
+    label: 'AS2 URL',
     options: [
       {
         items: [
@@ -2196,7 +2202,7 @@ export default {
   },
   'netsuite.dataCenterURLs': {
     type: 'text',
-    label: 'NetSuite data center urls',
+    label: 'NetSuite data center URLs',
   },
   'netsuite.accountName': {
     type: 'text',
@@ -2395,7 +2401,7 @@ export default {
     type: 'select',
     label: 'Concurrency level',
     defaultValue: r =>
-      (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
+      r && r.salesforce && r.salesforce.concurrencyLevel ? r && r.salesforce && r.salesforce.concurrencyLevel : 5,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },

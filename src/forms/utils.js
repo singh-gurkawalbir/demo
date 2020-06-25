@@ -510,7 +510,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
           },
         ],
       };
-    })
+    });
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 
@@ -619,7 +619,7 @@ export const integrationSettingsToDynaFormMetadata = (
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
-      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+      containers: [{ ...finalData.layout, label: 'Advanced' }],
     };
   }
 

@@ -176,9 +176,10 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
           options: [
@@ -199,6 +200,7 @@ export default {
           type: 'refreshableselect',
           label: 'Search record type',
           connectionId,
+          required: true,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -211,10 +213,12 @@ export default {
           type: 'netsuitelookupfilters',
           label: 'NS filters',
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           value: lookup.expression,
           data: extractFields,
@@ -225,11 +229,13 @@ export default {
           type: 'text',
           label: 'Lookup filter expression',
           multiline: true,
+          required: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.expression'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
@@ -239,6 +245,7 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value field',
+          required: true,
           defaultValue: lookup.resultField,
           /** savedRecordType is not being used with the intension of passing prop to the component.
            * But being used in reference to optionHandler.
@@ -251,9 +258,14 @@ export default {
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
+          requiredWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
         },
         'lookup.mapList': {

@@ -60,18 +60,21 @@ export default {
       label: 'API token',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.apiEndpoint',
-      'http.unencrypted.Store_Code',
-      'xMivaAPIToken',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.apiEndpoint',
+          'http.unencrypted.Store_Code',
+          'xMivaAPIToken'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

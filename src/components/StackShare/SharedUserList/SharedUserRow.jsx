@@ -17,14 +17,14 @@ export default function SharedUserRow({ user }) {
   const { confirmDialog } = useConfirmDialog();
   const handleDeleteUserClick = useCallback(() => {
     confirmDialog({
-      title: 'Confirm',
-      message: 'Are you sure you want to remove this sharing?',
+      title: 'Confirm remove',
+      message: 'Are you sure you want to remove?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Remove',
           onClick: () => {
             dispatch(actions.resource.delete('sshares', user._id));
           },
@@ -34,16 +34,16 @@ export default function SharedUserRow({ user }) {
   }, [confirmDialog, dispatch, user._id]);
   const handleToggleSharingClick = useCallback(() => {
     confirmDialog({
-      title: 'Confirm',
+      title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
       message: `Are you sure you want to ${
         user.disabled ? 'enable' : 'disable'
-      } sharing?`,
+      } sharing with this user?`,
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: user.disabled ? 'Enable' : 'Disable',
           onClick: () => {
             dispatch(actions.stack.toggleUserStackSharing(user._id));
           },
@@ -79,7 +79,7 @@ export default function SharedUserRow({ user }) {
         {user.accepted && (
           <CeligoSwitch
             data-test="disableUser"
-            enabled={!user.disabled}
+            checked={!user.disabled}
             onChange={handleToggleSharingClick}
           />
         )}
