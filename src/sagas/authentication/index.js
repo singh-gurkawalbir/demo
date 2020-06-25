@@ -73,6 +73,7 @@ export function* retrievingAssistantDetails() {
     'slack',
     'stripe',
     'travis',
+    'surveymonkey'
   ];
 
   if (

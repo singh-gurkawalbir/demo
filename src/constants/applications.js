@@ -626,7 +626,6 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  { id: 'surveymonkey', name: 'surveymonkey', type: 'http', webhookOnly: true },
   { id: 'segment', name: 'segment', type: 'http', webhookOnly: true },
   {
     id: 'servicenow',
