@@ -142,7 +142,7 @@ export default function ConnectorInstallation(props) {
   }, shallowEqual);
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
-    return integrationApp && integrationApp.websiteURL;
+    return integrationApp && integrationApp.helpUrl;
   });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
