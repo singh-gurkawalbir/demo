@@ -28,7 +28,6 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
   const { confirmDialog } = useConfirmDialog();
-
   useEffect(() => {
     if (commErrorMessage) {
       confirmDialog({
@@ -50,6 +49,10 @@ const ConfirmDialog = props => {
             },
           },
         ],
+        onDialogClose: () => {
+          handleSaveCompleted();
+          handleCloseAndClearForm();
+        }
       });
     } else confirmDialog(null);
   }, [
@@ -212,7 +215,7 @@ const TestAndSaveButton = props => {
         size="small"
         variant="outlined"
         color={submitButtonColor}>
-        {label || 'Save & close'}
+        {savingForm ? 'Saving' : (label || 'Save & close')}
       </DynaAction>
     </>
   );
