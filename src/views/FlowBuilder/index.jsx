@@ -75,8 +75,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing(0, 0, 3, 3),
-    // Todo: confirm the color with @keon and to the palette
-    backgroundColor: '#f8faff',
+    backgroundColor: theme.palette.background.default,
   },
   processorContainer: {
     display: 'flex',
@@ -102,10 +101,11 @@ const useStyles = makeStyles(theme => ({
   },
   destinationTitle: {
     marginBottom: theme.spacing(3),
+    marginLeft: 100,
+    justifyContent: 'flex-start',
   },
   generatorRoot: {
-    // Todo: confirm the color with @keon and to the palette
-    backgroundColor: '#f8faff',
+    backgroundColor: theme.palette.background.default,
     minWidth: 460,
     '& ~ div[class*= "makeStyles-name"]': {
       background: 'black',
