@@ -286,14 +286,15 @@ export default function Integration(props) {
       message: 'Are you sure you want to delete this integration?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });
