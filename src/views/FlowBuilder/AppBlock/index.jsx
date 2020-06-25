@@ -221,7 +221,10 @@ function AppBlock({
     },
     [activeAction]
   );
-  const handleActionClose = useCallback(() => setActiveAction(null), []);
+  const handleActionClose = useCallback(() => {
+    setActiveAction(null);
+    setExpanded();
+  }, []);
   const hasActions = actions && Array.isArray(actions) && actions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
     let leftActions = [];

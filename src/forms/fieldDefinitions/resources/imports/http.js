@@ -1,6 +1,6 @@
 export default {
   'http.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'http.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     visibleWhen: [
       {

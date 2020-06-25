@@ -130,7 +130,7 @@ export default function BottomDrawer({
   const connectionIdNameMap = useMemo(() => {
     const resourceIdNameMap = {};
 
-    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id });
+    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id; });
 
     return resourceIdNameMap;
   }, [connections]);

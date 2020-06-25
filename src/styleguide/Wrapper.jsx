@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStore } from 'redux';
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';

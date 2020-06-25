@@ -69,4 +69,5 @@ export default {
     
     IMPORTANT: it may take up to one minute for API token changes to propagate 
     and take effect.`,
+  apis: 'My APIs are custom HTTP endpoints built directly in integrator.io.  These APIs are powered by script functions that have full access to the integrator.io API.  Within your script logic, you can support any content-type (i.e. JSON, XML, etc…), any HTTP request method (GET, PUT, POST, etc…), and you can invoke any number of external APIs.  To provision access to your custom APIs, simply create one or more integrator.io API tokens.',
 };

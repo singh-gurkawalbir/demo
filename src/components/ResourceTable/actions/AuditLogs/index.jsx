@@ -3,7 +3,7 @@ import AuditLogIcon from '../../../icons/AuditLogIcon';
 import AuditLogDialog from '../../../AuditLog/AuditLogDialog';
 
 export default {
-  label: 'Audit log',
+  label: 'View audit log',
   icon: AuditLogIcon,
   component: function AuditLogs({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;

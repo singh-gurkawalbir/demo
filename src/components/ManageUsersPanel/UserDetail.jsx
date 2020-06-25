@@ -55,7 +55,7 @@ export default function UserDetail(props) {
     switch (action) {
       case 'disable':
         confirmDialog({
-          title: 'Confirm',
+          title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
           message: `Are you sure you want to ${
             user.disabled ? 'enable' : 'disable'
           } this user?`,
@@ -64,7 +64,7 @@ export default function UserDetail(props) {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
@@ -74,22 +74,15 @@ export default function UserDetail(props) {
         break;
       case 'makeOwner':
         confirmDialog({
-          title: 'Transfer Account Ownership',
+          title: 'Confirm owner',
           isHtml: true,
-          message: `${
-            user.sharedWithUser.name
-              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
-              : `<b>${user.sharedWithUser.email}</b>`
-          } <br/> 
-          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
-          Please click Confirm to proceed with this change.
-          `,
+          message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },
@@ -99,14 +92,14 @@ export default function UserDetail(props) {
         break;
       case 'delete':
         confirmDialog({
-          title: 'Confirm',
+          title: 'Confirm delete',
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
               label: 'Cancel',
             },
             {
-              label: 'Yes',
+              label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
@@ -239,7 +232,8 @@ export default function UserDetail(props) {
             <TableCell>
               <CeligoSwitch
                 data-test="disableUser"
-                enabled={!user.disabled}
+                disabled={!user.accepted}
+                checked={!user.disabled}
                 onChange={() => {
                   handleActionClick('disable');
                 }}

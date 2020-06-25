@@ -11,7 +11,7 @@ import {
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
-import requestFileAdaptorSampleData from './sampleDataGenerator/fileAdaptorSampleData'
+import requestFileAdaptorSampleData from './sampleDataGenerator/fileAdaptorSampleData';
 import { getCsvFromXlsx } from '../../utils/file';
 import { processJsonSampleData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
@@ -135,7 +135,7 @@ function* getProcessorOutput({ processorData }) {
     if (e.status >= 400 && e.status < 500) {
       const parsedError = JSON.parse(e.message);
 
-      return {error: parsedError}
+      return {error: parsedError};
     }
   }
 }
@@ -176,20 +176,20 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
-    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] }
+    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
     return;
   }
   // For all other file types processor call gives us the JSON format based on the options user configured
   if (type === 'xlsx') {
     const { result } = getCsvFromXlsx(file);
-    dataForEachStageMap.csv = { data: [{ body: result }] }
+    dataForEachStageMap.csv = { data: [{ body: result }] };
     // save csv content of xlsx file uploaded to be 'data' for the processor call
     processorData.data = result;
   }
 
   if (type === 'csv') {
-    dataForEachStageMap.csv = { data: [{ body: file }] }
+    dataForEachStageMap.csv = { data: [{ body: file }] };
   }
 
   if (type === 'xml') {
@@ -234,7 +234,7 @@ function* fetchExportPreviewData({
       type: fileDetails.type,
       file: fileDetails.body,
       formValues: values,
-    }
+    };
     if (!fileDetails.body) {
       // when no file uploaded , try fetching sampleData on resource
       const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
@@ -254,7 +254,7 @@ function* fetchExportPreviewData({
       resourceId,
       resourceType,
       values: fileProps
-    })
+    });
   }
   // For all other adaptors, go make preview api call for the sampleData
   yield call(getPreviewData, {

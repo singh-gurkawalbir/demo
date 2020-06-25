@@ -199,12 +199,12 @@ export default function Integration(props) {
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
   const {addOnStatus, hasAddOns} = useSelector(state => {
-    const addOnState = selectors.integrationAppAddOnState(state, integrationId)
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState &&
       addOnState.addOns &&
       addOnState.addOns.addOnMetaData &&
-      addOnState.addOns.addOnMetaData.length > 0}
+      addOnState.addOns.addOnMetaData.length > 0};
   }, shallowEqual);
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
@@ -281,18 +281,15 @@ export default function Integration(props) {
 
       return;
     }
-
-    const iName = name || integrationId;
-
     confirmDialog({
-      title: 'Confirm',
-      message: `Are you sure you want to delete ${iName} integration?`,
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this integration?',
       buttons: [
         {
           label: 'Cancel',
         },
         {
-          label: 'Yes',
+          label: 'Delete',
           onClick: () => {
             dispatch(actions.resource.delete('integrations', integrationId));
             setIsDeleting(true);
@@ -306,7 +303,6 @@ export default function Integration(props) {
     dispatch,
     enqueueSnackbar,
     integrationId,
-    name,
   ]);
   const handleStoreChange = useCallback(
     e => {

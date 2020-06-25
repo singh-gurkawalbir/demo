@@ -17,6 +17,7 @@ export default {
     label: 'Auto purge token',
     required: r => isNewId(r && r._id),
     defaultValue: 'none',
+    skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
       const items = [
@@ -136,6 +137,22 @@ export default {
       r._integrationId
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
+    allowNew: false,
+    valueDelimiter: ',',
+    visibleWhen: [
+      {
+        field: 'fullAccess',
+        is: ['false'],
+      },
+    ],
+    ignoreEnvironmentFilter: true,
+  },
+  _apiIds: {
+    type: 'selectresource',
+    resourceType: 'apis',
+    label: 'My APIs',
+    multiselect: true,
+    allowEdit: false,
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

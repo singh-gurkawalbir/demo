@@ -584,6 +584,10 @@ export default {
     'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':
     'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
+  'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
+  'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
+  'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
+  'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
   'asynchelper.name':
     'Enter a name for the Async Helper that you are creating.',
@@ -770,7 +774,7 @@ export default {
   'connection.http.rateLimit.failValues':
     'This field is used only if the failPath field is set. It indicates to the integrator.io platform what specific values to test for when determining if the requests we make have been rate-limited.',
   'connection.http.rateLimit.limit':
-    'This field lets the user to tell us the speed at which we can make requests. In other words, how long should we wait before we make subsequent IO calls to the service.  This should be used if the service does not implement and return rate-limit responses and we need to manually regulate IO calls from our platform.',
+    'This field lets you tell us the speed at which we can make requests. In other words, how long should we wait (in milliseconds) before we make subsequent calls to the service from integrator.io. Use this if the service you are connecting to does not implement and return rate-limit responses, requiring us to manually regulate calls from our platform.',
   'connection.http.unencrypted':
     "Use this JSON field to store all the non security sensitive fields needed by your imports and exports (to access the application being integrated).  For example: {'email':'my_email@company.com', 'accountId': '5765432', 'role': 'admin'}",
   'connection.http.encrypted':
@@ -1976,6 +1980,7 @@ export default {
     'Select the Exports that this token should provide access to.',
   'accesstoken._importIds':
     'Select the Imports that this token should provide access to.',
+  'accesstoken._apiIds': 'Select the My API that this token should provide access to.',
   'accesstoken.autoPurgeAt':
     'Select the time after which the token should be automatically purged from the system.',
   'distributed.sObjectType':
@@ -2127,7 +2132,7 @@ export default {
     'Select this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow).  For example, if you are processing order records, but for this step in the flow you want to process the line items within the orders as the main records.',
   pathToMany:
     'If the records being processed are JSON objects, then use this field to specify the JSON path to the child records. This field does not need to be set for array/row based data.',
-  'connection.configDebugger':
+  'connection.debug':
     'Enable Connection debugging for the selected period of time to collect all requests and responses made via the Connection. The debug logs can be accessed via the Connections tab of the Flow Builder.',
   'stack.sharing':
     'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',

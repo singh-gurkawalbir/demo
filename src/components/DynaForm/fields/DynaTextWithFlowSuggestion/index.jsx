@@ -88,10 +88,10 @@ const DynaTextWithFlowSuggestion = props => {
 
   const handleLookupModalShown = useCallback(
     (val) => {
-      setLookupModalShown(val)
+      setLookupModalShown(val);
     },
     [setLookupModalShown],
-  )
+  );
   // close suggestions when clicked outside
   const handleClickOutside = event => {
     if (!lookupModalShown && ref.current && !ref.current.contains(event.target)) {
