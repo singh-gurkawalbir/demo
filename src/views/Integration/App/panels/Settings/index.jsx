@@ -13,7 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { isEqual } from 'lodash';
 import * as selectors from '../../../../../reducers';
 import GeneralSection from './sections/General';
-import ConfigureSettings from '../Flows/ConfigureSettings';
+import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({

@@ -2,11 +2,11 @@ import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
-import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager } from '..';
-import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+import * as selectors from '../../../../../../../reducers';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import LoadResources from '../../../../../../../components/LoadResources';
+import { IAFormStateManager } from '../../../Flows';
+import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIASettingsStateWithHandleClose';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Configure({ integrationId, storeId, sectionId, parentUrl }) {
+export default function ConfigureSettings({ integrationId, storeId, sectionId, parentUrl }) {
   const classes = useStyles();
   const section = useSelector(state => {
     const flowSections = selectors.integrationAppFlowSections(
