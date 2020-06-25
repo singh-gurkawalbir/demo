@@ -50,9 +50,6 @@ export default function ResourceFormWithStatusPanel({ className, showNotificatio
             resourceId={resourceId}
           />
         )}
-        <ReactResizeDetector handleHeight onResize={resize} />
-      </div>
-      <div>
         {showNotificationToaster &&
         <NotificationToaster className={classes.notification} variant="info" size="large">
           <Typography variant="h6">
