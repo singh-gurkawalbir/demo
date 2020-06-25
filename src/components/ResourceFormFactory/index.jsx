@@ -80,18 +80,18 @@ const getConnectionType = resource => {
   return type;
 };
 
-const ActionButtons = ({actions, formProps}) => (actions.length &&
+const ActionButtons = ({actions, formProps, proceedOnChange}) => (actions.length &&
 actions.map(action => {
   const Action = consolidatedActions[action.id];
   // remove form disabled prop...
   // they dont necessary apply to action button
   const { disabled, ...rest } = formProps;
-  return <Action key={action.id} dataTest={action.id} {...rest} {...action} />;
+  return <Action key={action.id} dataTest={action.id} proceedOnChange={proceedOnChange} {...rest} {...action} />;
 })) || null;
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
-  const { actions } = props.fieldMeta;
+  const { actions, layout } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
@@ -109,14 +109,19 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     }
     return actionButtons.map(id => ({id}));
   }, [actions, connectionType, isNew, resourceType]);
+  // this prop allows child components to know that the form contains only a single field
+  // and the form should proceed to auto submit on field change
+  // the field type should implement proper onChange logic
+  // as required, this currently only applies to new connection form
+  const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && layout?.fields?.length === 1);
   // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
   return (
-    <DynaForm {...props}>
-      <ActionButtons actions={actionButtons} formProps={props} />
+    <DynaForm proceedOnChange={proceedOnChange} {...props}>
+      {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}
     </DynaForm>
   );
 }
