@@ -356,11 +356,11 @@ export default function Panel(props) {
   );
   function getAssistantName() {
     if (!stagedProcessor || !stagedProcessor.patch) {
-      return false
+      return false;
     }
     const assistantName = stagedProcessor.patch.find(
       p => p.op === 'replace' && p.path === '/originalAssistant'
-    )
+    );
     return {
       showNotificationToaster: !!assistantName?.value,
       assistantName: assistantName?.value,
