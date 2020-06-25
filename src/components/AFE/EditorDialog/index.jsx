@@ -51,10 +51,18 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
+  },
+  wrapper: {
+    '& Button': {
+      marginRight: '10px',
+    },
+    '& Button:last-child': {
+      marginRight: '0px',
+    },
   },
   editorToggleContainer: {
     marginRight: theme.spacing(2),
@@ -236,47 +244,49 @@ export default function EditorDialog(props) {
 }
       </DialogContent>
       <DialogActions className={classes.actions}>
-        {patchOnSave ? (
-          <>
-            <EditorSaveButton
-              id={id}
+        <div className={classes.wrapper}>
+          {patchOnSave ? (
+            <>
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="primary"
+                dataTest="saveEditor"
+                disabled={disableSave}
+                submitButtonLabel="Save"
+                flowId={flowId}
+            />
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseEditor"
+                disabled={disableSave}
+                onClose={handleSave(true)}
+                submitButtonLabel="Save & close"
+                flowId={flowId}
+            />
+            </>
+          ) : (
+            <Button
               variant="outlined"
+              data-test="saveEditor"
+              disabled={disableSave}
               color="primary"
-              dataTest="saveEditor"
-              disabled={disableSave}
-              submitButtonLabel="Save"
-              flowId={flowId}
-            />
-            <EditorSaveButton
-              id={id}
-              variant="outlined"
-              color="secondary"
-              dataTest="saveAndCloseEditor"
-              disabled={disableSave}
-              onClose={handleSave(true)}
-              submitButtonLabel="Save & close"
-              flowId={flowId}
-            />
-          </>
-        ) : (
-          <Button
-            variant="outlined"
-            data-test="saveEditor"
-            disabled={disableSave}
-            color="primary"
-            onClick={handleSave(true)}>
-            Save
-          </Button>
-        )}
+              onClick={handleSave(true)}>
+              Save
+            </Button>
+          )}
 
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {showPreviewAction && (
           <Button
             data-test="previewEditorResult"

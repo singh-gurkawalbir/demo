@@ -57,11 +57,20 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
+  wrapper: {
+    '& Button': {
+      marginRight: '10px',
+    },
+    '& Button:last-child': {
+      marginRight: '0px',
+    },
+  }
 }));
 
 export default function ToggleEditorDialog(props) {
@@ -257,35 +266,37 @@ export default function ToggleEditorDialog(props) {
 }
       </DialogContent>
       <DialogActions className={classes.actions}>
-        <EditorSaveButton
-          key={activeEditorId}
-          id={activeEditorId}
-          variant="outlined"
-          color="primary"
-          dataTest="saveEditor"
-          disabled={disableSave}
-          submitButtonLabel="Save"
-          flowId={flowId}
+        <div className={classes.wrapper}>
+          <EditorSaveButton
+            key={activeEditorId}
+            id={activeEditorId}
+            variant="outlined"
+            color="primary"
+            dataTest="saveEditor"
+            disabled={disableSave}
+            submitButtonLabel="Save"
+            flowId={flowId}
         />
-        <EditorSaveButton
-          key={`${activeEditorId}-close`}
-          id={activeEditorId}
-          variant="outlined"
-          color="secondary"
-          dataTest="saveAndCloseEditor"
-          disabled={disableSave}
-          onClose={handleClose}
-          submitButtonLabel="Save & close"
-          flowId={flowId}
+          <EditorSaveButton
+            key={`${activeEditorId}-close`}
+            id={activeEditorId}
+            variant="outlined"
+            color="secondary"
+            dataTest="saveAndCloseEditor"
+            disabled={disableSave}
+            onClose={handleClose}
+            submitButtonLabel="Save & close"
+            flowId={flowId}
         />
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {showPreviewAction && (
           <Button
             variant="outlined"
