@@ -35,9 +35,9 @@ export default function DynaRoutingRules(props) {
     setShowEditor(!showEditor);
   }, [showEditor]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     handleEditorClick();
-  };
+  }, [handleEditorClick]);
 
   return (
     <>
