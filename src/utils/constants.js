@@ -322,6 +322,26 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
+export const AS2_URLS_STAGING = [
+  {
+    label: 'http://api.staging.integrator.io/v1/as2',
+    value: 'http://api.staging.integrator.io/v1/as2',
+  },
+  {
+    label: 'https://api.staging.integrator.io/v1/as2',
+    value: 'https://api.staging.integrator.io/v1/as2',
+  }
+];
+export const AS2_URLS_PRODUCTION = [
+  {
+    label: 'http://api.integrator.io/v1/as2',
+    value: 'http://api.integrator.io/v1/as2',
+  },
+  {
+    label: 'https://api.integrator.io/v1/as2',
+    value: 'https://api.integrator.io/v1/as2',
+  }
+];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',
