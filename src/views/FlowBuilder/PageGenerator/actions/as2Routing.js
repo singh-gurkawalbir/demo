@@ -93,7 +93,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
           <DynaSubmit
             disabled={disableSave}
             color="secondary"
-            data-test={`as2routing-${connectionId}`}
+            data-test={`as2routingsaveclose-${connectionId}`}
             onClick={submitHandler(true)}>
             {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>

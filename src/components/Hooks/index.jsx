@@ -153,7 +153,7 @@ export default function Hooks(props) {
           <DynaSubmit
             disabled={disableSave}
             color="secondary"
-            data-test={`saveHook-${resourceId}`}
+            data-test={`saveAndCloseHook-${resourceId}`}
             onClick={submitHookValues(true)}>
             {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>

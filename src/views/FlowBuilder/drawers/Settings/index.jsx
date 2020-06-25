@@ -193,6 +193,7 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
+            data-test="saveFlowSettings"
             onClick={validateAndSubmit()}
             disabled={disableSave}>
             {defaultLabels.saveLabel}
@@ -200,6 +201,7 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
+            data-test="saveAndCloseFlowSettings"
             onClick={validateAndSubmit(true)}
             disabled={disableSave}
             color="secondary">

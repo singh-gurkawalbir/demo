@@ -149,10 +149,18 @@ export default function FlowSchedule({
         disabled={disabled}
         fieldMeta={fieldMeta}
         optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit onClick={handleValidateAndSubmit()} color="primary" disabled={disableSave}>
+        <DynaSubmit
+          onClick={handleValidateAndSubmit()}
+          color="primary"
+          data-test="saveFlowSchedule"
+          disabled={disableSave}>
           {defaultLabels.saveLabel}
         </DynaSubmit>
-        <DynaSubmit onClick={handleValidateAndSubmit(true)} color="secondary" disabled={disableSave}>
+        <DynaSubmit
+          onClick={handleValidateAndSubmit(true)}
+          color="secondary"
+          data-test="saveAndCloseFlowSchedule"
+          disabled={disableSave}>
           {defaultLabels.saveAndCloseLabel}
         </DynaSubmit>
         <Button onClick={onClose} variant="text" color="primary">
