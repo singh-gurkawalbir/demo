@@ -51,12 +51,11 @@ export default {
     type: 'text',
     label: 'Application',
     defaultValue: r => {
+      const application = r.assistant || r.type;
       if (isNewId(r._id)) {
-        return r.application;
+        return application;
       }
       const applications = applicationsList();
-      const application = r.assistant || r.type;
-
       const app = applications.find(a => a.id === application) || {};
       return app.name;
     },

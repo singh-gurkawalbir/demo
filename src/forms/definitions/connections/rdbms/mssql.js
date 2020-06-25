@@ -35,7 +35,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
