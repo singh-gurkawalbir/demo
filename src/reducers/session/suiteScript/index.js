@@ -5,10 +5,10 @@ import installer, * as fromInstaller from './installer';
 import mappings, * as fromMappings from './mappings';
 
 export default combineReducers({
+  mappings,
   resourceForm,
   flows,
   installer,
-  mappings
 });
 
 export function resourceFormState(
