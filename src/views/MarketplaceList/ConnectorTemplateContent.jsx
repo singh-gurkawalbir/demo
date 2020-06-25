@@ -26,6 +26,7 @@ export default function ConnectorTemplateContent({ resource, application }) {
     ? applications[1]
     : applications[0];
 
+  // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
   if (name.indexOf('Magento 1') !== -1 && assistant === 'magento') {
     assistant = 'magento1';
   }
