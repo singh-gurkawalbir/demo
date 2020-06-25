@@ -740,11 +740,11 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   resource.daysToRunOn = ['1', '2', '3', '4', '5', '6', '0'];
   resource.dayToRunOn = undefined;
   if (resourceType === 'flow') {
-    resource._keepDeltaBehindExportId = flow && flow._keepDeltaBehindExportId
-    resource._keepDeltaBehindFlowId = flow && flow._keepDeltaBehindFlowId
+    resource._keepDeltaBehindExportId = flow?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?._keepDeltaBehindFlowId;
   } else {
-    resource._keepDeltaBehindExportId = flow && flow.pageGenerators.length && flow.pageGenerators[index] && flow.pageGenerators[index]._keepDeltaBehindExportId
-    resource._keepDeltaBehindFlowId = flow && flow.pageGenerators.length && flow.pageGenerators[index] && flow.pageGenerators[index]._keepDeltaBehindFlowId
+    resource._keepDeltaBehindExportId = flow?.pageGenerators?.[index]?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?.pageGenerators?.[index]?._keepDeltaBehindFlowId;
   }
 
   if (!value) {
