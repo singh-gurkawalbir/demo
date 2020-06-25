@@ -178,8 +178,10 @@ import walmart from './walmart';
 import logisense from './logisense';
 import joor from './joor';
 import sapbydesign from './sapbydesign';
+import concurexpense from './concurexpense';
 
 export default {
+  concurexpense,
   bigquery,
   googlemail,
   surveymonkey,
