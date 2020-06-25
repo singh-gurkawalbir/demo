@@ -15,6 +15,7 @@ export default {
         'helpscout',
         'errorception',
         'hubspot',
+        'trello',
       ];
 
       if (
@@ -174,8 +175,9 @@ export default {
         'travis-org',
         'mailparser',
         'parseur',
+        'mailparser-io',
+        'sapariba',
       ];
-
       if (
         r &&
         r.webhook &&
