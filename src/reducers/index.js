@@ -4883,19 +4883,26 @@ export function suitesciptMappingsSaveStatus(state) {
   return fromSession.suitesciptMappingsSaveStatus(state && state.session);
 }
 
-export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+
+export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
     integrationId,
     ssLinkedConnectionId,
   });
-  if (!flows) { return emptyObject; }
-  const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-  if (!selectedFlow) { return emptyObject; }
-  const { import: importRes } = selectedFlow;
-  const { type: importType, _connectionId } = importRes;
+  return flows && flows.find(flow => flow._id === flowId);
+}
+export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig } = flow;
+  const { type: importType, _connectionId } = importConfig;
   if (importType === 'netsuite') {
-    const { recordType } = importRes.netsuite;
+    const { recordType } = importConfig.netsuite;
     const { subRecordType } = options;
     let commMetaPath;
 
@@ -4917,7 +4924,7 @@ export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, int
     return { data, status };
   }
   if (importType === 'salesforce') {
-    const { sObjectType } = importRes.salesforce;
+    const { sObjectType } = importConfig.salesforce;
 
     const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
     // TO check
@@ -4936,11 +4943,27 @@ export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, int
   }
 }
 
-export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
-  const flows = suiteScriptResourceList(state, {
-    resourceType: 'flows',
-    integrationId,
+export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
+    integrationId,
+    flowId
   });
-  return flows && flows.find(flow => flow._id === flowId);
+  if (!flow) { return emptyObject; }
+  const { import: importConfig} = flow;
+
+  const {type: importType, _connectionId, salesforce } = importConfig;
+
+  if (importType !== 'salesforce') {
+    return emptyObject;
+  }
+  const {sObjectType} = salesforce;
+
+  const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+  return metadataOptionsAndResources({
+    state,
+    connectionId: ssLinkedConnectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
 }

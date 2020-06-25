@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../../utils/resource';
+import Spinner from '../../../components/Spinner';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles({
   NetsuiteRules: {

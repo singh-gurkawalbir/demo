@@ -9,6 +9,7 @@ const rootPath = ':flowId/mapping';
 export default function SuiteScriptMappingDrawer() {
   const history = useHistory();
 
+
   const handelClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -16,7 +17,7 @@ export default function SuiteScriptMappingDrawer() {
     <RightDrawer
       path={rootPath}
       height="tall"
-      width="large"
+      width="full"
       title="Import Mapping"
       variant="temporary"
       // helpKey={}

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../reducers';
@@ -11,6 +11,8 @@ import RefreshIcon from '../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
+import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
+import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -108,19 +110,25 @@ const SuiteScriptMapping = (props) => {
 
   const classes = useStyles();
   const dispatch = useDispatch();
-  const showPreviewPane = false;
 
-  const {mappings, lookups, changeIdentifier} = useSelector(state => selectors.suiteScriptMappings(state));
-  const {importType, exportType} = useSelector(state => {
-    const flow = selectors.suiteScriptFlowDetail(state, {
-      integrationId,
-      ssLinkedConnectionId,
-      flowId,
-    });
-    const exportType = flow.export.netsuite ? 'netsuite' : flow.export.type;
-
-    return {importType: flow.import && flow.import.type, exportType};
-  }, shallowEqual);
+  const {
+    mappings,
+    lookups,
+    changeIdentifier,
+    importType,
+    exportType,
+    connectionId,
+    recordType,
+    sObjectType,
+    lastModifiedRowKey = '',
+  } = useSelector(state => selectors.suiteScriptMappings(state));
+  const salesforceMasterRecordTypeInfo = useSelector(state => selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
+    ssLinkedConnectionId,
+    flowId}));
+  const saveInProgress = useSelector(
+    state => selectors.suitesciptMappingsSaveStatus(state).saveInProgress
+  );
+  const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
   const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
@@ -153,24 +161,50 @@ const SuiteScriptMapping = (props) => {
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
 
-      if (value === '') {
-        if (
-          (field === 'extract' && generate === '') ||
-          (field === 'generate' &&
-            extract === '' &&
-            !('hardCodedValue' in _mapping))
-        ) {
-          handleDelete(key);
-
-          return;
+      // check if value changes or user entered something in new row
+      if ((!key && value) || (key && _mapping[field] !== value)) {
+        if (key && value === '') {
+          if (
+            (field === 'extract' && generate === '') ||
+                  (field === 'generate' &&
+                  extract === '' &&
+                  !('hardCodedValue' in _mapping))
+          ) {
+            dispatch(actions.suiteScript.mapping.delete(key));
+            return;
+          }
         }
+        dispatch(actions.suiteScript.mapping.patchField({ field, key, value}));
+        return;
       }
-
-      dispatch(actions.suiteScript.mapping.patchField({field, key, value }));
+      if (lastModifiedRowKey !== key) {
+        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+        dispatch(actions.suiteScript.mapping.updateLastFieldTouched(_lastModifiedRowKey));
+      }
     },
-    [dispatch, handleDelete]
+    [dispatch, lastModifiedRowKey]
   );
-
+  const handleSFNSAssistantFieldClick = useCallback(
+    meta => {
+      if (disabled) {
+        return;
+      }
+      let value;
+      if (sObjectType) {
+        value = meta.id;
+      } else if (recordType) {
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
+      }
+      if (lastModifiedRowKey && value) {
+        dispatch(
+          actions.suiteScript.mapping.patchField({
+            field: 'generate',
+            key: lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
+            value
+          })
+        );
+      }
+    }, [disabled, dispatch, lastModifiedRowKey, recordType, sObjectType]);
   const patchSettings = useCallback(
     (key, settings) => {
       dispatch(actions.suiteScript.mapping.patchSettings(key, settings));
@@ -249,7 +283,7 @@ const SuiteScriptMapping = (props) => {
       });
     }
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
-
+  const showPreviewPane = ['netsuite', 'salesforce'].includes(importType);
   return (
     <div className={classes.root}>
       <div
@@ -326,8 +360,9 @@ const SuiteScriptMapping = (props) => {
         </div>
         <ButtonGroup
           className={classes.importMappingButtonGroup}>
+
           <SaveButton
-            disabled={!!(disabled)}
+            disabled={!!(disabled || saveInProgress)}
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
@@ -338,19 +373,50 @@ const SuiteScriptMapping = (props) => {
             color="secondary"
             dataTest="saveAndCloseImportMapping"
             onClose={handleClose}
-            disabled={!!(disabled)}
+            disabled={!!(disabled || saveInProgress)}
             showOnlyOnChanges
             submitButtonLabel="Save & close"
           />
           <Button
             variant="text"
             data-test="saveImportMapping"
-            // disabled={!!saveInProgress}
+            disabled={!!saveInProgress}
             onClick={handleClose}>
             Cancel
           </Button>
         </ButtonGroup>
       </div>
+      {showPreviewPane && (
+        <div className={classes.assistantContainer}>
+          {importType === 'netsuite' && (
+          <NetSuiteMappingAssistant
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+            netSuiteConnectionId={ssLinkedConnectionId}
+            netSuiteRecordType={recordType}
+            onFieldClick={handleSFNSAssistantFieldClick}
+            data={{}}
+       />
+          )}
+          {importType === 'salesforce' && (
+          <SalesforceMappingAssistant
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            connectionId={connectionId}
+            sObjectType={sObjectType}
+            sObjectLabel={sObjectType}
+            layoutId={salesforceMasterRecordTypeId}
+            onFieldClick={handleSFNSAssistantFieldClick}
+            data={{}}
+     />
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -370,7 +436,8 @@ export default function SuiteScriptMappingWrapper(props) {
     () => {
       dispatch(
         actions.suiteScript.importSampleData.request(
-          {ssLinkedConnectionId,
+          {
+            ssLinkedConnectionId,
             integrationId,
             flowId,
           }

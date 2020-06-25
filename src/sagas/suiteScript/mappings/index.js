@@ -29,8 +29,8 @@ export function* refreshGenerates({ isInit = false }) {
       flowId
     }
   );
-  const { import: importRes } = flow;
-  const {type: importType, _connectionId} = importRes;
+  const { import: importConfig } = flow;
+  const {type: importType, _connectionId} = importConfig;
 
   const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
@@ -38,7 +38,7 @@ export function* refreshGenerates({ isInit = false }) {
     importType
   );
   if (importType === 'salesforce') {
-    const { sObjectType } = importRes.salesforce;
+    const { sObjectType } = importConfig.salesforce;
     // getting all childRelationshipFields of parent sObject
     const { data: childRelationshipFields = [] } = yield select(selectors.getMetadataOptions,
       {
@@ -46,8 +46,7 @@ export function* refreshGenerates({ isInit = false }) {
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
-    // during init, parent sObject metadata is already fetched.
-    const sObjectList = isInit ? [] : [sObjectType];
+    let sObjectList = [];
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
       if (id.indexOf('[*].') !== -1) {
@@ -68,13 +67,17 @@ export function* refreshGenerates({ isInit = false }) {
         }
       }
     });
+    if (isInit) {
+      // during init, parent sObject metadata is already fetched.
+
+      sObjectList = sObjectList.filter(sObject => sObject !== sObjectType);
+    }
     yield put(actions.suiteScript.importSampleData.request(
       {
         ssLinkedConnectionId,
         integrationId,
         flowId,
         options: {
-          refreshCache: !isInit,
           sObjects: sObjectList,
         }
       }
@@ -107,12 +110,32 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
       flowId
     }
   );
-  const {export: exportRes, import: importRes} = flow;
-  const {type: importType, mapping} = importRes;
+  const {export: exportRes, import: importConfig} = flow;
+  const {type: importType, mapping} = importConfig;
   const generatedMappings = suiteScriptMappingUtil.generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
   let lookups = [];
-  if (importType === 'netsuite' && importRes.netsuite && importRes.netsuite.lookups) { lookups = deepClone(importRes.netsuite.lookups); } else if (importType === 'salesforce' && importRes.salesforce && importRes.salesforce.lookups) { lookups = deepClone(importRes.salesforce.lookups); }
-  yield put(actions.suiteScript.mapping.initComplete({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }));
+  if (importType === 'netsuite' && importConfig.netsuite && importConfig.netsuite.lookups) { lookups = deepClone(importConfig.netsuite.lookups); } else if (importType === 'salesforce' && importConfig.salesforce && importConfig.salesforce.lookups) { lookups = deepClone(importConfig.salesforce.lookups); }
+  const exportType = flow.export.netsuite ? 'netsuite' : flow.export.type;
+
+  const options = {
+    importType,
+    exportType,
+    connectionId: importConfig._connectionId
+  };
+  if (importType === 'netsuite') {
+    options.recordType = importConfig.netsuite.recordType;
+  } else if (importType === 'salesforce') {
+    options.sObjectType = importConfig.salesforce.sObjectType;
+  }
+  yield put(actions.suiteScript.mapping.initComplete(
+    {
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      generatedMappings,
+      lookups,
+      options
+    }));
   yield call(refreshGenerates, {isInit: true });
 }
 
@@ -132,11 +155,11 @@ export function* saveMappings() {
       flowId
     }
   );
-  const {export: exportConfig, import: importRes, _id: resourceId} = flow;
-  const {type: importType, _connectionId } = importRes;
+  const {export: exportConfig, import: importConfig, _id: resourceId} = flow;
+  const {type: importType, _connectionId } = importConfig;
   const options = {};
   if (importType === 'salesforce') {
-    const { sObjectType } = importRes.salesforce;
+    const { sObjectType } = importConfig.salesforce;
 
     const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
       {
@@ -146,13 +169,13 @@ export function* saveMappings() {
       });
     options.childRelationships = childRelationshipFields;
   } else if (importType === 'netsuite') {
-    const { recordType } = importRes.netsuite;
+    const { recordType } = importConfig.netsuite;
     options.recordType = recordType;
   }
   const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
   patchSet.push({
-    op: importRes.mapping ? 'replace' : 'add',
+    op: importConfig.mapping ? 'replace' : 'add',
     path: '/import/mapping',
     value: _mappings,
   });
@@ -207,8 +230,8 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
       flowId
     }
   );
-  const { import: importRes } = flow;
-  const {type: importType} = importRes;
+  const { import: importConfig } = flow;
+  const {type: importType} = importConfig;
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
@@ -263,8 +286,8 @@ export function* updateImportSampleData() {
       flowId
     }
   );
-  const { import: importRes } = flow;
-  const {type: importType} = importRes;
+  const { import: importConfig } = flow;
+  const {type: importType} = importConfig;
 
   const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
@@ -304,4 +327,6 @@ export const mappingSagas = [
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, refreshGenerates),
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
+
+
 ];

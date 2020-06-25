@@ -14,8 +14,8 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       flowId
     }
   );
-  const { import: importRes} = flow;
-  const {type: importType, _connectionId, netsuite, salesforce} = importRes;
+  const { import: importConfig} = flow;
+  const {type: importType, _connectionId, netsuite, salesforce} = importConfig;
   if (importType === 'netsuite') {
     const { recordType } = netsuite;
 
@@ -32,7 +32,7 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
           actions.metadata.request(
             ssLinkedConnectionId,
             `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjects[i]}`,
-            { refreshCache }
+            { ignoreCache: true }
           )
         );
       }
@@ -42,7 +42,7 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
         actions.metadata.request(
           ssLinkedConnectionId,
           `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
-          { refreshCache }
+          { ignoreCache: true }
         )
       );
     }

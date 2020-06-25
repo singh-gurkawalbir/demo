@@ -2277,9 +2277,9 @@ const suiteScript = {
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
         ssLinkedConnectionId, integrationId, flowId
       }),
-    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups }) =>
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
-        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options
       }),
     patchField: ({ field, key, value }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
@@ -2313,6 +2313,7 @@ const suiteScript = {
     updateMappings: (mappings) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
       mappings
     }),
+    updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
     clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
   }
 };

@@ -15,7 +15,16 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE:
       {
-        const { generatedMappings, lookups } = action;
+        /**
+         * options = {
+         * importType,
+         * exportType,
+         * connectionId,
+         * recordType, // in case of netsuite import
+         * sObjectType // in case of salesforce import
+         * }
+         */
+        const { generatedMappings, lookups, options = {} } = action;
 
         const formattedMappings = generatedMappings.map(m => ({...m,
           rowIdentifier: 0,
@@ -30,7 +39,8 @@ export default (state = {}, action) => {
           ssLinkedConnectionId,
           integrationId,
           flowId,
-          status: 'success'
+          status: 'success',
+          ...options
         };
         break;
       }
@@ -47,7 +57,7 @@ export default (state = {}, action) => {
 
         draft.mappings.mappings = filteredMapping;
 
-        if (draft.mappings.lastModifiedKey === key) draft.mappings.lastModifiedKey = '';
+        if (draft.mappings.lastModifiedRowKey === key) delete draft.mappings.lastModifiedRowKey;
 
         const {
           isSuccess,
@@ -103,15 +113,18 @@ export default (state = {}, action) => {
           }
 
           draft.mappings.mappings[index] = objCopy;
+          draft.mappings.lastModifiedRowKey = objCopy.key;
         } else if (value) {
+          const newKey = shortid.generate();
+
           draft.mappings.mappings.push({
             [field]: value,
             rowIdentifier: 0,
-            key: shortid.generate(),
+            key: newKey,
           });
+          draft.mappings.lastModifiedRowKey = newKey;
         }
 
-        draft.mappings.lastModifiedKey = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -158,7 +171,7 @@ export default (state = {}, action) => {
           }
 
           draft.mappings.mappings[index] = { ...valueTmp };
-          draft.mappings.lastModifiedKey = key;
+          draft.mappings.lastModifiedRowKey = key;
           const {
             isSuccess,
             errMessage: validationErrMsg,
@@ -223,14 +236,16 @@ export default (state = {}, action) => {
         draft.mappings.validationErrMsg = undefined;
         draft.mappings.mappingsCopy = deepClone(draft.mappings.mappings);
         draft.mappings.lookupsCopy = deepClone(draft.mappings.lookups);
-
         break;
       case actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED:
         draft.mappings.saveStatus = 'failed';
         draft.mappings.validationErrMsg = undefined;
-
         break;
-
+      case actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
+        const { key } = action;
+        draft.mappings.lastModifiedRowKey = key;
+        break;
+      }
       default:
     }
   });

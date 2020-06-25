@@ -5,6 +5,7 @@ import { stringCompare } from '../../../utils/sort';
 This file consists of filter map which is used to filter netsuite and salesforce metadata
 */
 
+const emptySet = [];
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
@@ -118,6 +119,7 @@ export default {
         }))) ||
     [],
   'salesforce-sObject-layout': data => data,
+  'suitescript-salesforce-sObject-layout': data => (data && data.layouts && Array.isArray(data.layouts) && data.layouts.length && data.layouts[0]) || emptySet,
   'salesforce-sObjects': data =>
     data.map(d => ({
       label: d.label,
