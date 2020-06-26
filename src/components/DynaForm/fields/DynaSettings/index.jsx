@@ -69,6 +69,7 @@ export default function DynaSettings(props) {
     [id, onFieldChange]
   );
   const handleExpandClick = useCallback(() => {
+    // HACK! to prevent event bubbling
     if (match.isExact) {
       setIsCollapsed(!isCollapsed);
     }
