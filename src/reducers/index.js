@@ -4931,3 +4931,7 @@ export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
 
   return isInstallComplete;
 }
+
+export function userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId) {
+  return !!resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
+}

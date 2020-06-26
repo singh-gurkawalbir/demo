@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
 import actions from '../../../actions';
@@ -13,10 +13,13 @@ import {
   getScheduleDetails,
   getCronExpression,
 } from './util';
+import * as selectors from '../../../reducers';
 
-export default function FlowSchedule({ flow, onClose, className, disabled }) {
+
+export default function FlowSchedule({ flow, onClose, className }) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, flow.ssLinkedConnectionId));
   const scheduleStartMinute = 0;
   const handleSubmit = useCallback(
     (formValues) => {
@@ -110,14 +113,14 @@ export default function FlowSchedule({ flow, onClose, className, disabled }) {
         integrationId={flow._integrationId}
         resourceType="flows"
         resourceId={flow._id}
-        disabled={disabled}
+        disabled={!isManageLevelUser}
         fieldMeta={fieldMeta}
         optionsHandler={fieldMeta.optionsHandler}
       >
-        <DynaSubmit onClick={handleSubmit} color="primary">
+        <DynaSubmit disabled={!isManageLevelUser} onClick={handleSubmit} >
           Save
         </DynaSubmit>
-        <Button onClick={onClose} variant="text" color="primary">
+        <Button onClick={onClose} variant="text" >
           Cancel
         </Button>
       </DynaForm>

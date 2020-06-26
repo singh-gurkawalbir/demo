@@ -28,9 +28,6 @@ function RoutingWrapper(props) {
       ssLinkedConnectionId,
     })
   );
-
-  // TODO: Ashok: Connector specific things to be added for schedule drawer
-  // incase of !isViewMode && isIntegrationApp
   return (
     <FlowSchedule
       flow={flow}

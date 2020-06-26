@@ -11,6 +11,7 @@ describe('suiteScript reducers test cases', () => {
       resourceForm: {},
       flows: {},
       installer: {},
+      account: {},
     });
   });
   describe('suiteScript installer reducer', () => {
