@@ -55,6 +55,7 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form view',
+    visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   asynchronous: {

@@ -126,6 +126,8 @@ export default function Integration(props) {
     templateId,
     hasIntegration,
     supportsChild,
+    installSteps,
+    uninstallSteps,
     mode,
   } = useSelector(state => {
     const integration = selectors.resource(
@@ -143,6 +145,8 @@ export default function Integration(props) {
         isIntegrationApp: !!integration._connectorId,
         description: integration.description,
         sandbox: integration.sandbox,
+        installSteps: integration.installSteps,
+        uninstallSteps: integration.uninstallSteps,
         supportsChild: integration && integration.initChild && integration.initChild.function
       };
     }
@@ -454,11 +458,11 @@ export default function Integration(props) {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
-  } else if (mode === 'install') {
+  } else if (installSteps && installSteps.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );
-  } else if (mode === 'uninstall') {
+  } else if (uninstallSteps && uninstallSteps.length && mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
         childId ? `/${childId}` : ''

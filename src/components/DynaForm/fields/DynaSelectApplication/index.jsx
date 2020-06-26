@@ -1,15 +1,16 @@
 import React, { useMemo, useRef, useCallback } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import SearchIcon from '../../../icons/SearchIcon';
-
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -61,10 +62,13 @@ export default function SelectApplication(props) {
     flowId,
     options: fieldOptions,
     resourceType,
+    resourceId,
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
+    proceedOnChange,
   } = props;
+  const match = useRouteMatch();
   const classes = useStyles();
   const theme = useTheme();
   const ref = useRef(null);
@@ -233,16 +237,33 @@ export default function SelectApplication(props) {
         label: applications.find(a => a.id === value).name,
       };
 
+  const dispatch = useDispatch();
   const handleChange = useCallback(e => {
     ref?.current?.select?.blur();
+    const newValue = isMulti ? [...value, e.value] : e.value;
 
     if (onFieldChange) {
-      const newValue = isMulti ? [...value, e.value] : e.value;
-
-      // console.log('newValue', newValue);
       onFieldChange(id, newValue);
     }
-  }, [id, isMulti, onFieldChange, value]);
+    // when proceedOnChange is true
+    // it means this form contains only this one field
+    // we dispatch form submit as soon as the new value is vetted
+    if (proceedOnChange && applications.find(a => a.id === newValue)) {
+      const values = {};
+      values[id] = newValue;
+      dispatch(
+        actions.resourceForm.submit(
+          resourceType,
+          resourceId,
+          values,
+          match,
+          false,
+          false,
+          flowId
+        )
+      );
+    }
+  }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
 
 
   const handleFocus = useCallback(() => {

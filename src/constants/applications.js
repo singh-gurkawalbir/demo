@@ -183,6 +183,7 @@ const connectors = [
     assistant: 'aptrinsic',
   },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
+  { id: 'sapariba', name: 'SAP Ariba', type: 'http', webhookOnly: true },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
   { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
@@ -217,7 +218,7 @@ const connectors = [
     assistant: 'bigcommerce',
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
-  { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
+  { id: 'box', name: 'Box', type: 'http', webhookOnly: true },
   { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
@@ -298,8 +299,7 @@ const connectors = [
     id: 'dropbox',
     name: 'Dropbox',
     type: 'rest',
-    assistant: 'dropbox',
-    webhook: true,
+    webhookOnly: true,
   },
   {
     id: 'dunandbradstreet',
@@ -433,6 +433,8 @@ const connectors = [
     id: 'intercom',
     name: 'Intercom',
     marketPlaceOnly: true,
+    type: 'http',
+    webhookOnly: true,
   },
   { id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet' },
   {
@@ -646,7 +648,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment', webhook: true },
+  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true },
   {
     id: 'servicenow',
     name: 'ServiceNow',
@@ -742,8 +744,7 @@ const connectors = [
     id: 'travis',
     name: 'Travis CI',
     type: 'http',
-    assistant: 'travis',
-    webhook: true,
+    webhookOnly: true,
   },
   { id: 'trinet', name: 'TriNet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
@@ -805,7 +806,6 @@ export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
 
@@ -842,7 +842,6 @@ export const groupApplications = (
     if (connector.marketPlaceOnly) {
       return false;
     }
-    const assistant = assistants.find(a => a.id === connector.assistant);
 
     if (
       connector.assistant &&
@@ -850,27 +849,12 @@ export const groupApplications = (
       resourceType !== 'connections' &&
       appType
     ) {
-      if (assistant) {
-        if (appType === 'import') {
-          return assistant.import;
-        }
-        if (appType === 'export') {
-          return assistant.export;
-        }
-
-        return true;
-      }
-
       return true;
     }
 
     // Do not show FTP/S3 import for DataLoader flows
     if (resourceType === 'pageProcessor' && isSimpleImport) {
       return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
-    }
-
-    if (resourceType === 'pageProcessor' && assistant) {
-      return assistant.export || assistant.import;
     }
 
     // Webhooks are shown only for exports and for page generators in flow context

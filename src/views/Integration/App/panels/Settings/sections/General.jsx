@@ -7,19 +7,27 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import { IAFormStateManager } from '../../Flows';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.common.white,
-    overflow: 'auto',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    paddingBottom: theme.spacing(1),
-  },
-  formContent: {
-    padding: theme.spacing(0, 2),
-  },
-  formGeneralPanel: {
-    minHeight: 250,
-  },
+  configureform: {
+    padding: theme.spacing(2, 3),
+    '& + div': {
+      padding: theme.spacing(2, 0),
+      margin: theme.spacing(0, 3),
+    },
+    '& > * div.MuiTabs-horizontal': {
+      marginTop: theme.spacing(-2),
+      marginLeft: theme.spacing(-3),
+    },
+    '& > div[class*= "fieldsContainer"]': {
+      height: '100%',
+      '& > div[class*= "makeStyles-root"]': {
+        paddingTop: theme.spacing(5),
+        height: '100%',
+        '& > div[class*= "panelContainer"]': {
+          paddingBottom: theme.spacing(5),
+        },
+      },
+    },
+  }
 }));
 
 export default function GeneralPanel({ integrationId, storeId }) {
@@ -50,22 +58,20 @@ export default function GeneralPanel({ integrationId, storeId }) {
   );
 
   return (
-    <div className={classes.root}>
+    <div>
       <PanelHeader title="General" />
-
-      <div className={classes.formContent}>
-        {hasGeneralSettings && (
-          <IAFormStateManager
-            key={storeId}
-            fieldMeta={translatedMeta}
-            integrationId={integrationId}
-            isIAForm
-            className={classes.formGeneralPanel}
-            storeId={storeId}
-            formState={formState}
+      {hasGeneralSettings && (
+      <IAFormStateManager
+        key={storeId}
+        fieldMeta={translatedMeta}
+        integrationId={integrationId}
+        isIAForm
+        className={classes.configureform}
+        storeId={storeId}
+        formState={formState}
+        orientation="horizontal"
           />
-        )}
-      </div>
+      )}
     </div>
   );
 }

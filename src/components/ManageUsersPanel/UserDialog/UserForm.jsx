@@ -46,8 +46,8 @@ export default function UserForm({
 
   if (
     isEditMode &&
-    ![
-      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    [
+      USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(data.accessLevel) &&
     data.integrationAccessLevel.length
@@ -112,8 +112,16 @@ export default function UserForm({
             field: 'accessLevel',
             is: [USER_ACCESS_LEVELS.TILE],
           },
+          {
+            field: 'accessLevel',
+            is: [USER_ACCESS_LEVELS.ACCOUNT_MONITOR],
+          },
         ],
-        requiredWhen: [
+        requiredWhenAll: [
+          {
+            field: 'accessLevel',
+            is: [USER_ACCESS_LEVELS.TILE],
+          },
           {
             field: 'integrationsToMonitor',
             is: [[]],

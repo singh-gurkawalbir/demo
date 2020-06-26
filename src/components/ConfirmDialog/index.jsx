@@ -28,6 +28,7 @@ export const ConfirmDialog = props => {
         color: 'primary',
       },
     ],
+    onDialogClose,
   } = props;
   const handleButtonClick = useCallback(
     button => () => {
@@ -36,10 +37,19 @@ export const ConfirmDialog = props => {
     },
     [onClose]
   );
+
+  const handleClose = useCallback(() => {
+    // Calls onDialogClose if passed
+    if (typeof onDialogClose === 'function') {
+      onDialogClose();
+    }
+    // Default close fn which closes the dialog
+    onClose();
+  }, [onClose, onDialogClose]);
   const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose} maxWidth={maxWidth}>
+    <ModalDialog show onClose={handleClose} maxWidth={maxWidth}>
       {title}
       {isHtml ? (
         <RawHtml className={classes.message} html={message} />

@@ -90,29 +90,27 @@ export function integrationUsers(state, integrationId) {
   let integrationAccessLevel;
 
   aShares.forEach(u => {
-    if (
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(u.accessLevel)
-    ) {
+    if (u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE) {
       integrationUsers.push({
         ...u,
-        accessLevel:
-          u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MANAGE
-            ? INTEGRATION_ACCESS_LEVELS.MANAGE
-            : INTEGRATION_ACCESS_LEVELS.MONITOR,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
         integrationAccessLevel: undefined,
       });
-    } else if (u.accessLevel === USER_ACCESS_LEVELS.TILE) {
-      integrationAccessLevel = u.integrationAccessLevel.find(
+    } else if ([USER_ACCESS_LEVELS.ACCOUNT_MONITOR, USER_ACCESS_LEVELS.TILE].includes(u.accessLevel)) {
+      integrationAccessLevel = u.integrationAccessLevel && u.integrationAccessLevel.find(
         ial => ial._integrationId === integrationId
       );
+      if (integrationAccessLevel) {
+        integrationAccessLevel = integrationAccessLevel.accessLevel;
+      }
+      if (!integrationAccessLevel && u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+        integrationAccessLevel = INTEGRATION_ACCESS_LEVELS.MONITOR;
+      }
 
       if (integrationAccessLevel) {
         integrationUsers.push({
           ...u,
-          accessLevel: integrationAccessLevel.accessLevel,
+          accessLevel: integrationAccessLevel,
           integrationAccessLevel: undefined,
         });
       }
