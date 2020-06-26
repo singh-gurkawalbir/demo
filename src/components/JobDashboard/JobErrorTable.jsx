@@ -10,7 +10,6 @@ import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';
 import ExpandMore from '../icons/ArrowDownIcon';
-import JsonEditorDialog from '../JsonEditorDialog';
 import Spinner from '../Spinner';
 import CeligoTable from '../CeligoTable';
 import DateTimeDisplay from '../DateTimeDisplay';
@@ -18,7 +17,6 @@ import ButtonsGroup from '../ButtonGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
-import RetryDrawer from './RetryDrawer';
 import { UNDO_TIME } from './util';
 
 const useStyles = makeStyles(theme => ({
@@ -120,16 +118,9 @@ function JobErrorTable({
       je.retryObject &&
       je.retryObject.isRetriable
   ).length;
-  const [editDataOfRetryId, setEditDataOfRetryId] = useState();
+  // const [editDataOfRetryId, setEditDataOfRetryId] = useState();
   const [expanded, setExpanded] = useState({});
-  // #region derived props from selectors
-  const retryObject = useSelector(state => {
-    if (!editDataOfRetryId) {
-      return undefined;
-    }
 
-    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
-  });
   const uploadedFile = useSelector(
     state => selectors.getUploadedFile(state, fileId),
     shallowEqual
@@ -146,7 +137,7 @@ function JobErrorTable({
 
     return childJob.errorFile && childJob.errorFile.id;
   });
-  // #end region
+
   const jobErrorsData = [];
 
   jobErrorsInCurrentPage.forEach(j => {
@@ -316,16 +307,6 @@ function JobErrorTable({
     }
   }
 
-  function handleEditRetryDataClick(retryId) {
-    setEditDataOfRetryId(retryId);
-  }
-
-  useEffect(() => {
-    if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
-      dispatch(actions.job.requestRetryData({ retryId: editDataOfRetryId }));
-    }
-  }, [dispatch, editDataOfRetryId, retryObject]);
-
   useEffect(() => {
     const { status, error, file: errorFile } = uploadedFile || {};
 
@@ -401,21 +382,6 @@ function JobErrorTable({
     onCloseClick,
   ]);
 
-  function handleRetryDataChange(data) {
-    const updatedData = { ...retryObject.retryData, data };
-
-    dispatch(
-      actions.job.updateRetryData({
-        retryId: editDataOfRetryId,
-        retryData: updatedData,
-      })
-    );
-  }
-
-  function handleRetryDataEditorClose() {
-    setEditDataOfRetryId();
-  }
-
   const handleExpandCollapseClick = errorId => {
     setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
   };
@@ -442,21 +408,6 @@ function JobErrorTable({
 
   return (
     <>
-      <RetryDrawer />
-      {editDataOfRetryId &&
-        (retryObject && retryObject.retryData ? (
-          <JsonEditorDialog
-            onChange={handleRetryDataChange}
-            onClose={handleRetryDataEditorClose}
-            value={retryObject.retryData.data}
-            title="Edit retry data"
-            id={editDataOfRetryId}
-          />
-        ) : (
-          <div className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading retry data...</span>
-          </div>
-        ))}
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
         <div className={classes.spinner}>
           <Spinner size={20} /> <span>Uploading...</span>
@@ -546,7 +497,7 @@ function JobErrorTable({
             <>
               <Divider className={classes.downloadOnlyDivider} />
               <Typography>
-                Please use the &apos;Download All Errors&apos; button above to
+                Please use the &apos;Download all errors&apos; button above to
                 view the errors for this job.
               </Typography>
             </>
@@ -625,6 +576,7 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Retry data',
+                    align: 'center',
                     value: r => <EditRetryCell
                       retryId={r._retryId}
                       isEditable={r.metadata?.isParent &&
@@ -632,23 +584,6 @@ function JobErrorTable({
                       dateTime={r.createdAt} />,
                   },
                 ]}
-                // TODO : @Raghu Need to refactor.. Move all this metadata stuff out of this JSX
-                rowActions={r => {
-                  if (!(r.metadata?.isParent &&
-                    r.retryObject?.isDataEditable)) return [];
-                  return [
-                    {
-                      icon: <EditIcon />,
-                      label: 'Edit retry data',
-                      component: function EditRetryData() {
-                        useEffect(() => {
-                          handleEditRetryDataClick(r._retryId);
-                        }, []);
-                        return null;
-                      },
-                    },
-                  ];
-                }}
               />
             </>
           )}

@@ -21,10 +21,13 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     // height: theme.spacing(10),
     marginTop: theme.spacing(1),
-    padding: theme.spacing(2, 2, 2, 2),
+    padding: theme.spacing(2, 2, 1, 0),
   },
   spinner: {
     marginRight: theme.spacing(1),
+  },
+  errorText: {
+    marginTop: theme.spacing(1),
   },
 }));
 
@@ -35,6 +38,9 @@ function DrawerContent() {
   const history = useHistory();
   const retryId = match.params?.retryId;
 
+  const [error, setError] = useState();
+  const [touched, setTouched] = useState(false);
+
   const retryData = useSelector(state => {
     if (!retryId) return undefined;
 
@@ -43,9 +49,8 @@ function DrawerContent() {
   });
 
   const [data, setData] = useState(retryData?.data);
-  const [error, setError] = useState();
 
-  const handleSubmit = useCallback(() => {
+  const handleSave = useCallback(() => {
     const parsedData = JSON.parse(data);
 
     // console.log({ ...retryData, data: parsedData }, retryId);
@@ -55,13 +60,20 @@ function DrawerContent() {
         retryData: { ...retryData, data: parsedData },
       })
     );
+    setTouched(false);
   }, [dispatch, retryData, retryId, data]);
+
+  const handleSaveAndClose = useCallback(() => {
+    handleSave();
+    history.goBack();
+  }, [handleSave, history]);
 
   const handleChange = useCallback(value => {
     try {
       JSON.parse(value);
       setError();
       setData(value);
+      setTouched(true);
     } catch (e) {
       setError('Your retry data is not a valid JSON object.');
     }
@@ -83,13 +95,16 @@ function DrawerContent() {
     return <Spinner className={classes.spinner} />;
   }
 
+  const disabled = !!error || !touched;
   return (
     <div className={classes.root}>
       <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
-      {error && <Typography component="div" color="error">{error}</Typography>}
+
+      {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
+
       <ButtonGroup className={classes.actions}>
-        <Button disabled={!!error} variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
-        <Button disabled={!!error} variant="contained" onClick={handleSubmit}>Save and Close</Button>
+        <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
+        <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save and Close</Button>
         <Button
           variant="text"
           // eslint-disable-next-line react/jsx-handler-names
@@ -100,11 +115,11 @@ function DrawerContent() {
   );
 }
 
-export default function RetryDrawer() {
+export default function RetryDrawer({height}) {
   return (
     <RightDrawer
       path="editRetry/:retryId"
-      height="short"
+      height={height}
       width="medium"
       title="Edit retry data"
       variant="permanent">

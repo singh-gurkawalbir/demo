@@ -6,6 +6,7 @@ import * as selectors from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
+import RetryDrawer from '../RetryDrawer';
 
 
 const useStyles = makeStyles(() => ({
@@ -27,7 +28,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function ErrorDrawer({
-  height = 'short',
+  height = 'tall',
   jobId,
   parentJobId,
   showResolved,
@@ -113,12 +114,16 @@ export default function ErrorDrawer({
           <Spinner size={20} /> <span>Loading child jobs...</span>
         </div>
       ) : (
-        <JobErrorTable
-          jobErrors={jobErrors}
-          errorCount={errorCount}
-          job={job}
-          onCloseClick={onClose}
+        <>
+          <RetryDrawer height={height} />
+
+          <JobErrorTable
+            jobErrors={jobErrors}
+            errorCount={errorCount}
+            job={job}
+            onCloseClick={onClose}
           />
+        </>
       )}
     </RightDrawer>
   );
