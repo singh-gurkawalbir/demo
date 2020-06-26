@@ -16,7 +16,7 @@ import actions from '../../../../../actions';
 import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
-import {SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../../../utils/constants';
+import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
 import openExternalUrl from '../../../../../utils/window';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
 import RightDrawer from '../../../../../components/drawer/Right';
@@ -56,11 +56,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const { _id: connectorId, name, urlName, ssName } = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
-export default function SalesforceV2Installation() {
+export default function SuiteScriptIntegrationAppInstallation() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const suiteScriptConnectorId = match.params.integrationAppName;
+  const { _id: connectorId, name, urlName, ssName } = useMemo(() => SUITESCRIPT_CONNECTORS.find(s => s._id === suiteScriptConnectorId), [suiteScriptConnectorId]);
+
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const [connection, setConnection] = useState(null);
   const [ssConnection, setSSConnection] = useState(null);
@@ -83,7 +85,7 @@ export default function SalesforceV2Installation() {
         connectorId,
       ));
     }
-  }, [dispatch, installSteps]);
+  }, [connectorId, dispatch, installSteps]);
 
   useEffect(() => {
     if (isInstallComplete) {
@@ -99,7 +101,7 @@ export default function SalesforceV2Installation() {
         connectorId,
       ));
     }
-  }, [dispatch, enqueueSnackbar, history, isInstallComplete, ssIntegrationId, ssLinkedConnectionId]);
+  }, [connectorId, dispatch, enqueueSnackbar, history, isInstallComplete, ssIntegrationId, ssLinkedConnectionId, urlName]);
 
   const verifySFBundle = useCallback((connectionId) => {
     if (!currentStep.isTriggered && !connectionId) {
@@ -129,7 +131,7 @@ export default function SalesforceV2Installation() {
         )
       );
     }
-  }, [currentStep, dispatch, ssLinkedConnectionId]);
+  }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
   const verifyNSBundle = useCallback((connectionId) => {
     if (!currentStep.isTriggered && !connectionId) {
@@ -160,7 +162,7 @@ export default function SalesforceV2Installation() {
         )
       );
     }
-  }, [currentStep, dispatch, ssLinkedConnectionId]);
+  }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
   const handleStepClick = useCallback((step) => {
     const {
@@ -261,7 +263,7 @@ export default function SalesforceV2Installation() {
         )
       );
     }
-  }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
+  }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, connectorId, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
 
   const handleBackClick = useCallback(e => {
     e.preventDefault();
@@ -287,7 +289,7 @@ export default function SalesforceV2Installation() {
     );
     verifyNSBundle(connectionId);
     setConnection(null);
-  }, [dispatch, verifyNSBundle]);
+  }, [connectorId, dispatch, verifyNSBundle]);
 
   const onSSConnSubmitComplete = useCallback(() => {
     if (currentStep.connectionType === 'salesforce') {
@@ -306,7 +308,7 @@ export default function SalesforceV2Installation() {
     );
     setSSConnection(null);
     history.goBack();
-  }, [currentStep, dispatch, history, ssLinkedConnectionId]);
+  }, [connectorId, currentStep, dispatch, history, ssLinkedConnectionId]);
 
   if (error) {
     enqueueSnackbar({

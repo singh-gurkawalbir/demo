@@ -85,8 +85,6 @@ export default function reducer(state = {}, action) {
             subRecordMappingId,
             salesforceMasterRecordTypeId,
             showSalesforceNetsuiteAssistant,
-            // lastModifiedKey helps to set generate field when any field in salesforce mapping assistant is clicked
-            lastModifiedKey: '',
           };
 
           tmp.mappingsCopy = deepClone(tmp.mappings);
@@ -112,14 +110,17 @@ export default function reducer(state = {}, action) {
         draft[id].mappings = value;
         break;
       }
-
+      case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
+        draft[id].lastModifiedRowKey = key;
+        break;
+      }
       case actionTypes.MAPPING.DELETE: {
         draft[id].changeIdentifier += 1;
         const filteredMapping = draft[id].mappings.filter(m => m.key !== key);
 
         draft[id].mappings = filteredMapping;
 
-        if (draft[id].lastModifiedKey === key) draft[id].lastModifiedKey = '';
+        if (draft[id].lastModifiedRowKey === key) delete draft[id].lastModifiedRowKey;
 
         const {
           isSuccess,
@@ -174,8 +175,12 @@ export default function reducer(state = {}, action) {
         const index = draft[id].mappings.findIndex(m => m.key === key);
 
         if (draft[id].mappings[index]) {
-          const objCopy = { ...draft[id].mappings[index] };
+          // in case parent mapping is displayed with subrecord mapping in future, this condition is to be modified to support that. Include isSubrecordMapping
+          if (field === 'generate' && (draft[id].mappings[index].isRequired)) {
+            return;
+          }
 
+          const objCopy = { ...draft[id].mappings[index] };
           objCopy.rowIdentifier += 1;
 
           let inputValue = value;
@@ -212,15 +217,17 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = objCopy;
+          draft[id].lastModifiedRowKey = objCopy.key;
         } else if (value) {
+          const newKey = shortid.generate();
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,
-            key: shortid.generate(),
+            key: newKey,
           });
+          draft[id].lastModifiedRowKey = newKey;
         }
 
-        draft[id].lastModifiedKey = key;
         const {
           isSuccess,
           errMessage: validationErrMsg,
@@ -285,7 +292,8 @@ export default function reducer(state = {}, action) {
           }
 
           draft[id].mappings[index] = { ...valueTmp };
-          draft[id].lastModifiedKey = key;
+          draft[id].lastModifiedRowKey = key;
+
           const {
             isSuccess,
             errMessage: validationErrMsg,

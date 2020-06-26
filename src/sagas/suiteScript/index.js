@@ -2,6 +2,7 @@ import { resourceFormSagas } from './resourceForm';
 import { resourceSagas } from './resources';
 import { jobSagas } from './jobs';
 import { flowSagas } from './flows';
+import { accountSagas } from './account';
 import installerSagas from './installer';
 import { importSampleDataSagas } from './sampleData/imports';
 import {mappingSagas} from './mappings';
@@ -12,6 +13,7 @@ export const suiteScriptSagas = [
   ...resourceSagas,
   ...jobSagas,
   ...flowSagas,
+  ...accountSagas,
   ...installerSagas,
   ...importSampleDataSagas,
   ...mappingSagas

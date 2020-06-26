@@ -62,9 +62,9 @@ const SuiteScriptFlowBuilder = loadable(() =>
     /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
   )
 );
-const SalesforceV2Installation = loadable(() =>
+const SuiteScriptIntegrationAppInstallation = loadable(() =>
   import(
-    /* webpackChunkName: 'SalesforceV2Installation' */ '../../views/SuiteScript/Integration/App/Install'
+    /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/SuiteScript/Integration/App/Install'
   )
 );
 
@@ -196,7 +196,7 @@ export default function AppRouting() {
       <Route
         path="/pg/suitescript/integrationapps/:integrationAppName/setup"
         >
-        <SalesforceV2Installation />
+        <SuiteScriptIntegrationAppInstallation />
       </Route>
       <Route
         path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId"

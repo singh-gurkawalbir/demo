@@ -392,7 +392,10 @@ export default function ClonePreview(props) {
             <DynaForm
               fieldMeta={fieldMeta}
               optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit data-test="clone" onClick={clone}>
+              <DynaSubmit
+                skipDisableButtonForFormTouched
+                data-test="clone"
+                onClick={clone}>
                 {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
               </DynaSubmit>
             </DynaForm>

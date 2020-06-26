@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatLastModified } from '../../../CeligoTable/util';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
@@ -25,7 +25,7 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

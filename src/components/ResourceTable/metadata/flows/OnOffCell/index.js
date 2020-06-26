@@ -80,9 +80,6 @@ export default function OnOffCell({
       message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow?`,
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: `${disabled ? 'Enable' : 'Disable'}`,
           onClick: () => {
             if (isIntegrationApp && !istwoDotZeroFrameWork) {
@@ -117,6 +114,10 @@ export default function OnOffCell({
               patchFlow('/disabled', !disabled);
             }
           }
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         }]
     });
   }, [
@@ -153,7 +154,7 @@ export default function OnOffCell({
           className={classes.celigoSwitchOnOff}
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
-          enabled={!disabled}
+          checked={!disabled}
           onChange={handleDisableClick}
       />
       </RemoveMargin>

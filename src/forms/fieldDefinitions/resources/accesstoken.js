@@ -17,6 +17,7 @@ export default {
     label: 'Auto purge token',
     required: r => isNewId(r && r._id),
     defaultValue: 'none',
+    skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
       const items = [

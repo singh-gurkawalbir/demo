@@ -61,12 +61,19 @@ function toggleData(data, mode) {
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
-    '& > *': {
-      marginRight: theme.spacing(2),
-    },
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   actionSpacer: {
     flexGrow: 100,
+  },
+  wrapper: {
+    '& Button': {
+      marginRight: theme.spacing(2),
+    },
+    '& Button:last-child': {
+      marginRight: 0,
+    },
   },
 }));
 const toggleOptions = [
@@ -131,11 +138,12 @@ export default function EditorDrawer({
       message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
       buttons: [
         {
-          label: 'No, go back',
-        },
-        {
           label: 'Yes, cancel',
           onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
         },
       ]
     });
@@ -224,6 +232,37 @@ export default function EditorDrawer({
         resourceType={resourceType}
       />
       <div className={classes.actionContainer}>
+        <div className={classes.wrapper}>
+          {!hideSaveAction && (
+          <>
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              submitButtonLabel="Save"
+            />
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="secondary"
+              dataTest="saveAndCloseEditor"
+              disabled={disableSave}
+              onClose={handleSave}
+              submitButtonLabel="Save & close"
+            />
+          </>
+          )}
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {!editor.autoEvaluate && (
           <Button
             data-test="previewEditorResult"
@@ -233,25 +272,6 @@ export default function EditorDrawer({
             Preview
           </Button>
         )}
-        {!hideSaveAction && (
-          <EditorSaveButton
-            id={editorId}
-            variant="outlined"
-            color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            onClose={handleSave}
-            submitButtonLabel="Save"
-          />
-        )}
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
       </div>
     </RightDrawer>
   );

@@ -20,11 +20,12 @@ export default {
         message: 'Are you sure you want to revoke this token?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Revoke',
             onClick: revokeConnection,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

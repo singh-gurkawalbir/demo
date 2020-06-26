@@ -3,6 +3,7 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import * as selectors from '../../../reducers';
+import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
 
 export function* commitStagedChanges({
   resourceType,
@@ -29,11 +30,10 @@ export function* commitStagedChanges({
 
   if (['exports', 'imports'].includes(resourceTypeToUse)) {
     resourceTypeToUse = 'flows';
-    resourceId = resourceId
-      .replace('re', '')
-      .replace('ri', '')
-      .replace('e', '')
-      .replace('i', '');
+  }
+
+  if (resourceTypeToUse === 'flows') {
+    resourceId = getFlowIdAndTypeFromUniqueId(resourceId).flowId;
   }
 
   let path = `/suitescript/connections/${ssLinkedConnectionId}/`;

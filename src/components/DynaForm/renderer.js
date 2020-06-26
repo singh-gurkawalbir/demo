@@ -13,10 +13,9 @@ const fieldStyle = {
   width: '100%',
 };
 
-function getRenderer(editMode, formFieldsMeta, resourceId, resourceType) {
+function getRenderer(editMode, formFieldsMeta, resourceId, resourceType, proceedOnChange) {
   return function renderer(field) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
-
     const { id, fieldId, type } = field;
     const DynaField = fields[type];
     const fid = id || fieldId;
@@ -34,7 +33,7 @@ function getRenderer(editMode, formFieldsMeta, resourceId, resourceType) {
       <div key={fid} style={wrapper}>
         <div style={fieldStyle}>
           <FieldWrapper {...field}>
-            <DynaField resourceContext={context} />
+            <DynaField resourceContext={context} proceedOnChange={proceedOnChange} />
           </FieldWrapper>
         </div>
       </div>

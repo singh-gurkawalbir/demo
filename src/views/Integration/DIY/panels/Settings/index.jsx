@@ -12,7 +12,7 @@ import FormBuilderButton from '../../../../../components/FormBuilderButton';
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: theme.spacing(0, 2, 0, 2),
+    padding: theme.spacing(0, 1, 0, 1),
   },
   root: {
     backgroundColor: theme.palette.common.white,

@@ -13,7 +13,7 @@ import AgentsIcon from '../../components/icons/AgentsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
-import TicketTagIcon from '../../components/icons/TicketTagIcon';
+import SubmitTicketIcon from '../../components/icons/SubmitTicketIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
 import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
@@ -23,6 +23,7 @@ import UniversityIcon from '../../components/icons/UniversityIcon';
 import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
 import MyApiIcon from '../../components/icons/MyApiIcon';
+import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 
 export default function menuItems(
   userProfile,
@@ -92,10 +93,10 @@ export default function menuItems(
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
+        { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration apps', Icon: ConnectionsIcon, path: '/connectors', },
-        { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
+        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors', },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -117,7 +118,7 @@ export default function menuItems(
         },
         {
           label: 'Submit ticket',
-          Icon: TicketTagIcon,
+          Icon: SubmitTicketIcon,
           component: 'a',
           href: SUBMIT_TICKET_URL,
         },

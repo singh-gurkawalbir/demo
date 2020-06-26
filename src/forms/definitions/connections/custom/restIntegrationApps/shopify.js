@@ -187,20 +187,25 @@ export default {
     ],
   },
   actions: [
-    { id: 'cancel' },
     {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
-      id: 'test',
-      label: 'Test',
+      id: 'save',
+      label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     {
-      id: 'save',
-      label: 'Test and save',
+      id: 'saveandclose',
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+    },
+    { id: 'cancel' },
+    {
+      id: 'test',
+      mode: 'secondary',
+      label: 'Test',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],
