@@ -86,7 +86,7 @@ function reducer(state, action) {
       throw new Error();
   }
 }
-
+// TODO @Raghu: Refactor this component and push complexity to sagas
 const TestAndSaveButton = props => {
   const [formState, dispatchLocalAction] = useReducer(reducer, {});
   const {
@@ -195,6 +195,8 @@ const TestAndSaveButton = props => {
     dispatchLocalAction({ type: 'setFormValues', formValues: values });
   }, [handleTestConnection, testClear]);
 
+  // TODO: @Surya Do we need to pass all props to DynaAction?
+  // Please revisit after form refactor
   return (
     <>
       <ConfirmDialog

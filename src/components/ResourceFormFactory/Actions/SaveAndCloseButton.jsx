@@ -8,8 +8,8 @@ import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
   actionButton: {
-    marginTop: theme.spacing.double,
-    marginLeft: theme.spacing.double,
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(2),
   },
 });
 const SaveButton = props => {
@@ -54,7 +54,8 @@ const SaveButton = props => {
     disableSaveOnClick,
     setDisableSaveOnClick,
   });
-
+  // TODO: @Surya Do we need to pass all props to DynaAction?
+  // Please revisit after form refactor
   return (
     <DynaAction
       {...props}

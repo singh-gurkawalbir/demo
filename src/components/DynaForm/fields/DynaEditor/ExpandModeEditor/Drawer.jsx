@@ -89,7 +89,7 @@ function ActionsFooter(props) {
         onClick={handleClose}
         variant="text"
         color="primary">
-        cancel
+        Cancel
       </Button>
     </>
   );

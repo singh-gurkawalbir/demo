@@ -18,8 +18,7 @@ import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    marginTop: theme.spacing(3),
-    marginRight: '10px',
+    margin: theme.spacing(3, 1, 0, 0)
   },
   cancel: {
     marginTop: theme.spacing(3),
@@ -122,7 +121,7 @@ export default function ConfigureDebugger(props) {
       onClose,
     }
   );
-
+  // TODO @Raghu: Convert this into a Right Drawer
   return (
     <Drawer
       anchor="right"
