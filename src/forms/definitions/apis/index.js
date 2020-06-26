@@ -11,12 +11,13 @@ export default {
       delete retValues['/shipworks/password'];
       retValues['/shipworks'] = undefined;
     }
+    delete retValues['/shipworksApiIdentifier'];
+    delete retValues['/apiIdentifier'];
     return retValues;
   },
   fieldMap: {
     name: {
       id: 'name',
-      name: '/name',
       defaultValue: r => r.name,
       type: 'text',
       label: 'Name',
@@ -24,7 +25,6 @@ export default {
     },
     description: {
       id: 'description',
-      name: '/description',
       defaultValue: r => r.description,
       type: 'text',
       multiline: true,
@@ -33,7 +33,6 @@ export default {
     },
     script: {
       id: 'script',
-      name: '/script',
       type: 'hook',
       hookType: 'script',
       defaultValue: r => ({
@@ -46,7 +45,6 @@ export default {
     },
     enableShipworksAuthentication: {
       id: 'enableShipworksAuthentication',
-      name: '/enableShipworksAuthentication',
       type: 'checkbox',
       label: 'Enable ShipWorks authentication',
       defaultValue: r => !!(r && r.shipworks && r.shipworks.username),
@@ -54,7 +52,6 @@ export default {
     'shipworks.username': {
       id: 'shipworks.username',
       type: 'text',
-      name: 'shipworks/username',
       label: 'Username',
       visibleWhen: [
         {
@@ -71,7 +68,6 @@ export default {
     },
     'shipworks.password': {
       id: 'shipworks.password',
-      name: 'shipworks/password',
       defaultValue: '',
       type: 'text',
       inputType: 'password',
@@ -97,6 +93,27 @@ export default {
       helpKey: 'apiIdentifier',
       type: 'apiidentifier',
       visible: r => r && !isNewId(r._id),
+      defaultValue: r => `v1/apis/${r._id}/request`
+    },
+    shipworksApiIdentifier: {
+      id: 'shipworksApiIdentifier',
+      label: 'Invoke',
+      helpKey: 'apiIdentifier',
+      type: 'apiidentifier',
+      visible: r => r && !isNewId(r._id),
+      defaultValue: r => `v1/shipworks/${r._id}/request`,
+      visibleWhen: r => {
+        const isNew = isNewId(r._id);
+
+        if (isNew) return [];
+
+        return [
+          {
+            field: 'enableShipworksAuthentication',
+            is: [true],
+          },
+        ];
+      },
     },
   },
 
@@ -106,7 +123,7 @@ export default {
       {
         collapsed: false,
         label: 'General',
-        fields: ['name', 'description', 'script'],
+        fields: ['name', 'description', 'script', 'apiIdentifier'],
       },
       {
         collapsed: true,
@@ -115,7 +132,7 @@ export default {
           'enableShipworksAuthentication',
           'shipworks.username',
           'shipworks.password',
-          'apiIdentifier',
+          'shipworksApiIdentifier',
         ],
       },
     ],
