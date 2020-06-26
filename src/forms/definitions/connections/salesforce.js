@@ -13,7 +13,7 @@ export default {
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name', required: true },
+    name: { fieldId: 'name' },
     'salesforce.sandbox': { fieldId: 'salesforce.sandbox' },
     'salesforce.oauth2FlowType': { fieldId: 'salesforce.oauth2FlowType' },
     'salesforce.info.email': {

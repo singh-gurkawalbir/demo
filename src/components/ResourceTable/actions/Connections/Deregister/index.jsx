@@ -34,11 +34,12 @@ export default {
         message: 'Are you sure you want to deregister this connection? The connection will no longer be accessible to this integration.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Deregister',
             onClick: deregisterConnection,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

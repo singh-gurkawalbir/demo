@@ -24,7 +24,7 @@ export default function InstallTemplateDrawer() {
       hideBackButton={hideBackButton}
       path={rootPath}
       type="default"
-      title="Install Template"
+      title="Install template"
       height="tall"
       width="large">
       <Switch>

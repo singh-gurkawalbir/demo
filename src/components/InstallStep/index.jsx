@@ -9,6 +9,7 @@ import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -118,9 +119,7 @@ export default function InstallationStep(props) {
         </Grid>
         <Grid item xs={3} className={classes.step}>
           <Typography>{step.name}</Typography>
-        </Grid>
-        <Grid item xs className={classes.step}>
-          <Typography>{step.description}</Typography>
+          <InfoIconButton info={step.description} size="xs" />
         </Grid>
         <Grid item xs={2} className={clsx(classes.step, classes.imgBlock)}>
           {step.imageURL && (

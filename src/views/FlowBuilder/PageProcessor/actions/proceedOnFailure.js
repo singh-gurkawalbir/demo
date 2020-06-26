@@ -1,5 +1,5 @@
 import Button from '@material-ui/core/Button';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
@@ -7,6 +7,7 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import * as selectors from '../../../../reducers';
 
 const emptyObject = {};
@@ -26,6 +27,7 @@ function ProceedOnFailureDialog(props) {
     'flows',
     flowId
   );
+
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(
     pageProcessors[resourceIndex] &&
@@ -63,7 +65,7 @@ function ProceedOnFailureDialog(props) {
       fields: ['proceedOnFailure'],
     },
   };
-  const handleSubmit = formValues => {
+  const saveFormValues = useCallback(formValues => {
     const { proceedOnFailure } = formValues;
     const patchSet = [
       {
@@ -75,23 +77,36 @@ function ProceedOnFailureDialog(props) {
 
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-    onClose();
-  };
+  }, [dispatch, flowId, resourceIndex]);
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/flows/${flowId}`,
+      disabled: isViewMode,
+      onSave: saveFormValues,
+      onClose,
+    }
+  );
 
   return (
     <ModalDialog show={open} onClose={onClose}>
       <div>
-        {' '}
         {title}
-        {' '}
       </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <DynaSubmit
-            disabled={isViewMode}
+            disabled={disableSave}
             data-test="saveProceedOnFailure"
-            onClick={handleSubmit}>
-            Save
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            disabled={disableSave}
+            data-test="saveAndCloseProceedOnFailure"
+            color="secondary"
+            onClick={submitHandler(true)}>
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button data-test="cancelProceedOnFailure" onClick={onClose}>
             Cancel

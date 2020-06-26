@@ -30,11 +30,12 @@ export default {
         message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Detach',
             onClick: detachFlow,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
