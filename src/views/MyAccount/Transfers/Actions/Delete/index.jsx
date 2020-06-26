@@ -17,13 +17,14 @@ export default {
         message: 'Are you sure you want to delete this transfer?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Delete',
             onClick: () => {
               deleteTransfer();
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

@@ -113,6 +113,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       // Make NetSuite always the second application
       [app1, app2] = [app2, app1];
     }
+    // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+    if (tile.name && tile.name.indexOf('Magento 1') !== -1 && app1 === 'magento') {
+      app1 = 'magento1';
+    }
   }
 
   const isNotYetSupported =

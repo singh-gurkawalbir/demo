@@ -14,6 +14,7 @@ import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
 import getHooksMetadata from './hooksMetadata';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   fbContDrawer: {
@@ -41,6 +42,7 @@ export default function Hooks(props) {
     resourceId,
     'value'
   );
+
   const fieldMeta = useMemo(
     () =>
       getHooksMetadata(resourceType, resource, {
@@ -102,8 +104,18 @@ export default function Hooks(props) {
     },
     [resourceType]
   );
-  const handleSubmit = useCallback(
-    values => {
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/${resourceType}/${resourceId}`,
+      disabled,
+      onSave,
+      onClose: onCancel,
+    }
+  );
+
+  const submitHookValues = useCallback(
+    closeOnSave => values => {
       const selectedValues = {
         hooks: getSelectedHooks(values),
         suiteScriptHooks: getSelectedSuiteScriptHooks(values),
@@ -119,14 +131,13 @@ export default function Hooks(props) {
         });
       }
 
-      onSave({
+      submitHandler(closeOnSave)({
         hooks: selectedValues.hooks.selectedHook,
         suiteScriptHooks: selectedValues.suiteScriptHooks.selectedHook,
       });
     },
-    [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, onSave]
+    [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, submitHandler]
   );
-
   // console.log('RENDER: Hooks');
 
   return (
@@ -134,10 +145,17 @@ export default function Hooks(props) {
       <div className={classes.fbContDrawer}>
         <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
           <DynaSubmit
-            disabled={disabled}
+            disabled={disableSave}
             data-test={`saveHook-${resourceId}`}
-            onClick={handleSubmit}>
-            Save
+            onClick={submitHookValues()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            disabled={disableSave}
+            color="secondary"
+            data-test={`saveAndCloseHook-${resourceId}`}
+            onClick={submitHookValues(true)}>
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
             Cancel

@@ -59,7 +59,7 @@ function* getDefinition({ definitionId, format }) {
   }
 }
 
-function* saveUserFileDefinition({ definitionRules, formValues, flowId }) {
+function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClose }) {
   const fileDefinition =
     formValues.resourceType === 'imports'
       ? definitionRules
@@ -83,6 +83,7 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId }) {
     formValues,
     definitionId,
     flowId,
+    skipClose
   });
 }
 

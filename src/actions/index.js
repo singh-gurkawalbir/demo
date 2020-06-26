@@ -465,11 +465,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
@@ -1308,7 +1309,8 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
 
 };
 const searchCriteria = {

@@ -28,9 +28,6 @@ export default function AddonInstallerButton({ resource }) {
         message: 'Are you sure you want to uninstall?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Uninstall',
             onClick: () => {
               dispatch(
@@ -49,6 +46,10 @@ export default function AddonInstallerButton({ resource }) {
                 )
               );
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

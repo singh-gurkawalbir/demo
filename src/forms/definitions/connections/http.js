@@ -170,7 +170,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -630,16 +630,6 @@ export default {
   },
   actions: [
     {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
-        },
-      ],
-    },
-    {
       id: 'saveandcontinue',
       label: 'Save & continue',
       visibleWhenAll: [
@@ -676,7 +666,31 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'cancel',
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
+        },
+      ],
     },
   ],
 };
