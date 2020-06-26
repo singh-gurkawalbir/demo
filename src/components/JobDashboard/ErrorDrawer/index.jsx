@@ -85,7 +85,6 @@ export default function ErrorDrawer({
         setChildJobId(jobWithErrors._id);
       }
     }
-    // eeslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, childJobId, flowJobChildrenLoaded, jobWithErrors, showResolved]);
 
   let job;
@@ -101,11 +100,10 @@ export default function ErrorDrawer({
     <RightDrawer
       path="viewErrors"
       height={height}
-      width="xl"
+      width="full"
       // type="paper"
       title={title}
       variant="temporary"
-      // actions={!isInviteUser && action}
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>
