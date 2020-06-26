@@ -10,6 +10,7 @@ import data, * as fromData from './data';
 import * as fromResources from './data/resources';
 import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
+import * as fromMetadata from './session/metadata';
 import comms, * as fromComms from './comms';
 import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
@@ -3472,6 +3473,20 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
+
+export const makeOptionsFromMetadata = () => {
+  const madeSelector = fromMetadata.makeOptionsFromMetadata();
+  return (state,
+    connectionId,
+    commMetaPath,
+    filterKey,
+  ) => madeSelector(
+    state?.session?.metadata,
+    connectionId,
+    commMetaPath,
+    filterKey,
+  );
+};
 
 export function optionsMapFromMetadata(
   state,

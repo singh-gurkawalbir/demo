@@ -216,7 +216,6 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
-
 export function optionsMapFromMetadata(
   state,
   connectionId,

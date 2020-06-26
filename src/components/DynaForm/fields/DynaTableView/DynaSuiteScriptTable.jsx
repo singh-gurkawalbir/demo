@@ -1,12 +1,13 @@
 import { makeStyles } from '@material-ui/core';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import DynaTableView from './DynaTable';
-import DynaSelect from '../DynaSelect';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import Spinner from '../../../Spinner';
+import DynaSelect from '../DynaSelect';
+import DynaTableView from './DynaTable';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -63,22 +64,20 @@ function DynaSuiteScriptTable(props) {
   },
   [salesforceProductFieldOptions]);
 
-  const computedValue = Object.keys(value || {}).map(key => ({
+  const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
     extracts: key,
     generates: value[key],
-  }));
+  })), [value]);
   const commMetaPath = `suitescript/connections/${connectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Product2?ignoreCache=true`;
 
 
-  const { data: allFieldsOptions} = useSelector(state => selectors.optionsFromMetadata({
-    state,
-    connectionId,
+  const { data: allFieldsOptions} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     commMetaPath,
-    filterKey: 'suiteScript-sObjects-product2',
-  }));
+    'suiteScript-sObjects-product2');
+
+
   const dispatch = useDispatch();
   const salesforceProductFieldId = `${id}_salesforceProductField`;
-
 
   useEffect(() => {
     if (salesforceProductFieldOptions) {
@@ -116,7 +115,7 @@ function DynaSuiteScriptTable(props) {
       },
     ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [extractFieldHeader, extracts, generateFieldHeader, generates, selectOption, supportsExtractsRefresh, supportsGeneratesRefresh]);
+  }, [salesforceProductOptions, allFieldsOptions, selectOption]);
 
   const salesforceProductFieldChange = useCallback((id, val) => {
     setSelectOption(val);
