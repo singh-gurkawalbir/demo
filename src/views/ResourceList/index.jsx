@@ -65,6 +65,14 @@ export default function ResourceList(props) {
     filterConfig
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
+  let addResourceLabel = '';
+  if (resourceType) {
+    if (['accesstokens', 'apis'].indexOf(resourceType)) {
+      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+    } else {
+      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
+    }
+  }
 
   useEffect(() => {
     let int;
@@ -116,7 +124,7 @@ export default function ResourceList(props) {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {resourceName.toLowerCase()}
+            <AddIcon /> Create {addResourceLabel}
           </IconTextButton>
         </div>
       </CeligoPageBar>
@@ -125,7 +133,7 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <Typography>
               {list.total === 0
-                ? `You don't have any ${resourceName.toLowerCase()}s.`
+                ? `You don't have any ${addResourceLabel}s.`
                 : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
             </Typography>
           ) : (
