@@ -354,21 +354,18 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-  function getAssistantName() {
+  // useTechAdaptorForm field we are using for showing banner on the screen incase
+  // import/export assistant is not present and if we are showing generic adaptor
+  function getTechAdaptorFormValue() {
     if (!stagedProcessor || !stagedProcessor.patch) {
-      return false;
+      return resource?.useTechAdaptorForm;
     }
-    const assistantName = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/originalAssistant'
+    const useTechAdaptorForm = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
     );
-    return {
-      showNotificationToaster: !!assistantName?.value,
-      assistantName: assistantName?.value,
-    };
+    return !!useTechAdaptorForm?.value;
   }
-
-  const {showNotificationToaster, assistantName} = getAssistantName();
-
+  const showNotificationToaster = getTechAdaptorFormValue();
   return (
     <>
       <div className={classes.root}>
@@ -412,7 +409,7 @@ export default function Panel(props) {
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
             showNotificationToaster={showNotificationToaster}
-            assistantName={assistantName}
+            assistantName={applicationType}
             {...props}
           />
         </LoadResources>

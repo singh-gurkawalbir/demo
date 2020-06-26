@@ -39,11 +39,13 @@ export default {
       newValues['/adaptorType'] = 'NetSuiteDistributedImport';
     }
 
-    if (app.assistant && !app.useGenericAdaptor) {
+    if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
-    if (app.useGenericAdaptor) {
-      newValues['/originalAssistant'] = app.assistant;
+    // If there is no assistant for the import, we need to show generic adaptor form
+    // we are patching useTechAdaptorForm field to not to show default assistant form
+    if (!app.import) {
+      newValues['/useTechAdaptorForm'] = true;
     }
 
     // On creation of a new page processor lookup,  isLookup is set true

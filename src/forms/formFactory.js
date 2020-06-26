@@ -235,7 +235,7 @@ const getResourceFormAssets = ({
           resource &&
           (resource.useParentForm !== undefined
             ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
+            : resource.assistant) && !resource.useTechAdaptorForm
         ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
@@ -279,7 +279,7 @@ const getResourceFormAssets = ({
           resource &&
           (resource.useParentForm !== undefined
             ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
+            : resource.assistant) && !resource.useTechAdaptorForm
         ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
@@ -299,7 +299,13 @@ const getResourceFormAssets = ({
         } else {
           meta = meta[type];
         }
-
+        // This patching is needed in case if import/export assistant is not present
+        // and if we are showing generic Adaptor form. We need to save these in order to
+        // know assistant name while editing form and also to show banner.
+        if (resource.useTechAdaptorForm) {
+          meta['/assistant'] = resource.assistant;
+          meta['/useTechAdaptorForm'] = resource.useTechAdaptorForm;
+        }
         if (meta) {
           ({ fieldMap, layout, init, preSave, actions } = meta);
         }

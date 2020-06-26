@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import ReactResizeDetector from 'react-resize-detector';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import ResourceForm from '../ResourceFormFactory';
-import NotificationToaster from '../NotificationToaster';
+import GenericAdaptorNotification from '../GenericAdaptorNotification';
 
 const useStyles = makeStyles(theme => ({
   removeTopPadding: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   notification: {
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(2, 0),
   }
 }));
 
@@ -51,19 +51,7 @@ export default function ResourceFormWithStatusPanel({ className, showNotificatio
           />
         )}
         {showNotificationToaster &&
-        <NotificationToaster className={classes.notification} variant="info" size="large">
-          <Typography variant="h6">
-            We haven’t created a simplified form for your {assistantName} app yet. Don’t worry! We’ve got you covered. Use our universal HTTP connector to configure your source.{' '}
-            <a
-              className={classes.emailLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              href="mailto:product_feedback@celigo.com">
-              <u>Let us know</u>
-            </a>
-            {' '}to prioritize this!
-          </Typography>
-        </NotificationToaster>}
+          <GenericAdaptorNotification className={classes.notification} assistantName={assistantName} />}
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <ResourceForm className={classes.form} {...props} />

@@ -829,7 +829,6 @@ export const groupApplications = (
     if (connector.marketPlaceOnly) {
       return false;
     }
-    const assistant = assistants.find(a => a.id === connector.assistant);
 
     if (
       connector.assistant &&
@@ -837,27 +836,12 @@ export const groupApplications = (
       resourceType !== 'connections' &&
       appType
     ) {
-      if (assistant) {
-        if (appType === 'import') {
-          return assistant.import || assistant.useGenericAdaptor;
-        }
-        if (appType === 'export') {
-          return assistant.export || assistant.useGenericAdaptor;
-        }
-
-        return true;
-      }
-
       return true;
     }
 
     // Do not show FTP/S3 import for DataLoader flows
     if (resourceType === 'pageProcessor' && isSimpleImport) {
       return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
-    }
-
-    if (resourceType === 'pageProcessor' && assistant) {
-      return assistant.export || assistant.import || assistant.useGenericAdaptor;
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
