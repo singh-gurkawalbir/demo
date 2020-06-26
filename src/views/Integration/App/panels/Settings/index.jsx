@@ -88,7 +88,7 @@ export default function SettingsPanel({
   const filterTabs = [];
 
   if (hideGeneralTab) {
-    filterTabs.push('general');
+    filterTabs.push('common');
   }
 
   const availableSections = useMemo(() => allSections.filter(sec =>
