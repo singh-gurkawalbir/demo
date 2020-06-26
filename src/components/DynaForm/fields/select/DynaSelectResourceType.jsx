@@ -9,7 +9,7 @@ const webhookOnlyOptions = [
     label: 'Listen for real-time data from source application',
     value: 'webhook',
   },
-]
+];
 
 const webhookAssistantOptions = [
   {
