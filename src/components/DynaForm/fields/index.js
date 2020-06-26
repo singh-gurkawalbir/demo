@@ -219,9 +219,6 @@ export default {
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
   jsonresourcepath: DynaJsonResourcePath,
-<<<<<<< HEAD
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
-=======
   routingrules: DynaRoutingRules,
->>>>>>> a3e17a270148cee2457e10e2e051a587eb271112
 };
