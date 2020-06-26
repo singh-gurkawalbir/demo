@@ -26,7 +26,7 @@ function ScheduleDialog({
       minWidth="md"
       maxWidth="md"
       disabled={isViewMode}>
-      <div>Export schedule</div>
+      <div>Flow schedule override</div>
       <div>
         <FlowSchedule flow={flow} onClose={onClose} pg={pg} index={index} />
       </div>
