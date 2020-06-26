@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
 import { isProduction } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
@@ -51,12 +51,11 @@ export default {
     type: 'text',
     label: 'Application',
     defaultValue: r => {
+      const application = r.assistant || r.type;
       if (isNewId(r._id)) {
-        return r.application;
+        return application;
       }
       const applications = applicationsList();
-      const application = r.assistant || r.type;
-
       const app = applications.find(a => a.id === application) || {};
       return app.name;
     },
@@ -1020,7 +1019,6 @@ export default {
     type: 'text',
     label: 'Callback URL',
     defaultDisabled: true,
-    visible: !isProduction(),
     defaultValue: () => {
       if (isProduction()) {
         return 'https://integrator.io/connection/oauth2callback';
@@ -1875,22 +1873,12 @@ export default {
   },
   as2url: {
     type: 'select',
-    label: 'AS2 URL',
-    options: [
-      {
-        items: [
-          {
-            label: 'http://api.staging.integrator.io/v1/as2',
-            value: 'http://api.staging.integrator.io/v1/as2',
-          },
-          {
-            label: 'https://api.staging.integrator.io/v1/as2',
-            value: 'https://api.staging.integrator.io/v1/as2',
-          },
-        ],
-      },
+    label: 'AS2 url',
+    options: [{
+      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
+    }
     ],
-    value: 'https://api.staging.integrator.io/v1/as2',
+    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',
@@ -2119,12 +2107,13 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
-    type: 'hook',
-    label: '',
+    type: 'routingrules',
+    label: 'Routing rules editor',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
-    helpkey: 'export.as2.contentBasedFlowRouter',
+    helpKey: 'connection.as2.contentBasedFlowRouter',
+    title: 'Choose a script and function name to use for determining AS2 message routing',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
@@ -2576,10 +2565,12 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access key ID',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
+    required: true,
   },
   // #endregion dynamodb
   settings: {

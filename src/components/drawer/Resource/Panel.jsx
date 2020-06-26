@@ -212,10 +212,10 @@ export default function Panel(props) {
     }
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType =
-      getStagedValue('/adaptorType') || (resource && resource.adaptorType);
-    const assistant =
-      getStagedValue('/assistant') || (resource && resource.assistant);
+    const adaptorType = resourceType === 'connections'
+      ? getStagedValue('type') || resource?.type
+      : getStagedValue('/adaptorType') || resource?.adaptorType;
+    const assistant = getStagedValue('/assistant') || resource?.assistant;
 
     if (adaptorType === 'WebhookExport') {
       return (
@@ -350,8 +350,7 @@ export default function Panel(props) {
   }
 
   const showApplicationLogo =
-    flowId &&
-    ['exports', 'imports'].includes(resourceType) &&
+    ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
   const title = useMemo(

@@ -85,6 +85,13 @@ export default function FlowSchedule({
             : undefined,
       },
     ];
+    if (formVal.timeZone) {
+      patchSet.push({
+        op: 'replace',
+        path: '/timezone',
+        value: formVal.timeZone
+      });
+    }
     const sanitized = sanitizePatchSet({
       patchSet,
       flow,
@@ -121,7 +128,8 @@ export default function FlowSchedule({
     [enqueueSnackbar, submitHandler]
   );
 
-  resource = setValues(resource, schedule, scheduleStartMinute);
+  const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
+  resource = setValues(resource, schedule, scheduleStartMinute, flow, index, resourceIdentifier);
 
   if (resource && !resource.frequency) {
     resource.frequency = '';
@@ -138,6 +146,7 @@ export default function FlowSchedule({
     pg,
     flows,
     scheduleStartMinute,
+    resourceIdentifier,
   });
 
   return (

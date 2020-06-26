@@ -43,6 +43,7 @@ const DynaForm = props => {
     resourceType,
     full,
     isResourceForm,
+    proceedOnChange,
     ...rest
   } = props;
   const classes = useStyles();
@@ -50,7 +51,7 @@ const DynaForm = props => {
   let { layout } = fieldMeta;
   const { fieldMap } = fieldMeta;
   const { formState } = rest;
-  const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
+  const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType, proceedOnChange);
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy

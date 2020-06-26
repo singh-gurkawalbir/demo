@@ -143,9 +143,6 @@ export default function MarketplaceList() {
         message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Install',
             onClick: tag => {
               dispatch(
@@ -157,6 +154,10 @@ export default function MarketplaceList() {
               );
               history.push(getRoutePath('/dashboard'));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

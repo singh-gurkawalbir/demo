@@ -121,11 +121,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
             buttons: [
               {
-                label: 'Cancel',
-              },
-              {
                 label: 'Detach',
                 onClick: detachFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
               },
             ],
           });
@@ -158,11 +159,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             message: 'Are you sure you want to delete this flow?',
             buttons: [
               {
-                label: 'Cancel',
-              },
-              {
                 label: 'Delete',
                 onClick: deleteFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
               },
             ],
           });

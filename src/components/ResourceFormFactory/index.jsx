@@ -85,7 +85,7 @@ const getConnectionType = resource => {
  * secondary - test, validate, ...other sort of actions
  * TODO @Surya: Revisit this once form refactor is done
  */
-const ActionButtons = ({actions, formProps}) => {
+const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const primaryActions = [];
   const secondaryActions = [];
@@ -112,6 +112,7 @@ const ActionButtons = ({actions, formProps}) => {
       const actionContainer = <Action
         key={action.id}
         dataTest={action.id}
+        proceedOnChange={proceedOnChange}
         {...rest}
         {...action}
         {...actionProps}
@@ -135,7 +136,7 @@ const ActionButtons = ({actions, formProps}) => {
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
-  const { actions } = props.fieldMeta;
+  const { actions, fieldMap = {} } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   // Any extra actions other than Save, Cancel which needs to be separated goes here
@@ -163,12 +164,18 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     }));
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, secondaryActions]);
 
+  // this prop allows child components to know that the form contains only a single field
+  // and the form should proceed to auto submit on field change
+  // the field type should implement proper onChange logic
+  // as required, this currently only applies to new connection form
+  const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
+
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
   return (
-    <DynaForm {...props} isResourceForm>
-      <ActionButtons actions={actionButtons} formProps={props} />
+    <DynaForm proceedOnChange={proceedOnChange} {...props} isResourceForm>
+      {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}
     </DynaForm>
   );
 }

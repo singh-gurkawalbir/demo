@@ -52,6 +52,10 @@ export default function AddOrSelect(props) {
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
+
+  const newDoc = useSelector(state =>
+    selectors.resource(state, resourceType, newId)
+  );
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, newId)
   );
@@ -65,7 +69,7 @@ export default function AddOrSelect(props) {
   };
 
   const handleSubmitComplete = () => {
-    onSubmitComplete(newId, isAuthorized);
+    onSubmitComplete(newId, newDoc, isAuthorized);
   };
 
   const fieldMeta = {

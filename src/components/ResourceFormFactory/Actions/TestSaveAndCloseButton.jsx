@@ -35,16 +35,17 @@ const ConfirmDialog = props => {
         message: `Are you sure you want to save this connection? Test connection failed with the following error: ${commErrorMessage}.`,
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Save',
             onClick: () => {
-              handleSaveCompleted();
+              handleSubmit(formValues);
               handleCloseAndClearForm();
             },
           },
           {
-            label: 'Save',
+            label: 'Cancel',
+            color: 'secondary',
             onClick: () => {
-              handleSubmit(formValues);
+              handleSaveCompleted();
               handleCloseAndClearForm();
             },
           },
