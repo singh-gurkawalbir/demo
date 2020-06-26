@@ -48,9 +48,25 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+export const SuiteScriptForm = (props) => {
+  const dispatch = useDispatch();
+
+  const {ssLinkedConnectionId, integrationId } = props;
+  useEffect(() => {
+    dispatch(actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
+    return () => {
+      dispatch(actions.suiteScript.iaForm.initClear(ssLinkedConnectionId, integrationId));
+    };
+  }, [dispatch, integrationId, ssLinkedConnectionId]);
+
+  return (
+    <FormStateManager
+      {...props}
+/>);
+};
+
 function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, parentUrl }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const match = useRouteMatch();
   const section = useSelector(state => {
     const flowSections = selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId);
@@ -78,12 +94,7 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
     [flowSettingsMeta, integrationId, ssLinkedConnectionId]
   );
 
-  useEffect(() => {
-    dispatch(actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
-    return () => {
-      dispatch(actions.suiteScript.iaForm.initClear(ssLinkedConnectionId, integrationId));
-    };
-  }, [dispatch, integrationId, ssLinkedConnectionId]);
+
   const { formState, handleClose } = useSuiteScriptIAFormWithHandleClose(
     integrationId, ssLinkedConnectionId,
     parentUrl
@@ -106,7 +117,7 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
         onClose={handleClose}>
         <DrawerTitleBar title={`Configure all ${section.title} flows`} />
 
-        <FormStateManager
+        <SuiteScriptForm
           ssLinkedConnectionId={ssLinkedConnectionId}
           integrationId={integrationId}
           sectionId={sectionId}

@@ -429,7 +429,7 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 
   if (!resources) return null;
 
-  if (resourceType === 'settings') { return resources[id] }
+  if (resourceType === 'settings') { return resources[id]; }
   let match = resources.find(r => r._id === id);
 
   if (!match) {
@@ -589,7 +589,7 @@ export function hasData(
 
   const resources = state[ssLinkedConnectionId][resourceType];
 
-  if (resourceType === 'settings') { return !!resources[integrationId] }
+  if (resourceType === 'settings') { return !!resources[integrationId]; }
   if (resourceType === 'flows') {
     return resources.filter(r => r._integrationId === integrationId).length > 0;
   }

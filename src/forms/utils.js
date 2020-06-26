@@ -379,6 +379,8 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'relatedListsDialog') {
     newField.type = 'salesforcerelatedlistia';
     newField.resource = resource;
+  } else if (newField.type === 'link') {
+    newField.type = 'suitescripttable';
   } else if (newField.type === 'staticMapWidget') {
     newField.type = 'staticMap';
   } else if (newField.type === 'textarea') {
@@ -448,7 +450,7 @@ export const translateDependencyProps = fieldMap => {
 
     if (dependencies) {
       Object.keys(dependencies).forEach(value => {
-        const dependencyFields = dependencies[value].fields;
+        const dependencyFields = dependencies[value].fields || dependencies[value].links;
 
         if (type === 'checkbox') {
           rules.push(

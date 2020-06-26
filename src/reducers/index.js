@@ -1814,6 +1814,18 @@ export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
     titleId: getTitleIdFromSection(sec),
   }));
 }
+
+export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
+  if (!state) return null;
+  const {general } = suiteScriptSettings(state, id, ssLinkedConnectionId);
+
+
+  if (Array.isArray(general)) {
+    return general.find(s => s.title === 'General') || emptyObject;
+  }
+  return general || emptyObject;
+}
+
 export function integrationAppGeneralSettings(state, id, storeId) {
   if (!state) return emptyObject;
   let fields;

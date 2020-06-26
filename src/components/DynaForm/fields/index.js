@@ -103,8 +103,10 @@ import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import DynaFeatureCheck from './checkbox/DynaFeatureCheck';
+import DyanSuiteScriptTable from './DynaTableView/DynaSuiteScriptTable';
 
 export default {
+  suitescripttable: DyanSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,

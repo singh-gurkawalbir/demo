@@ -1,18 +1,19 @@
-import React from 'react';
-import {
-  Route,
-  Switch,
-  NavLink,
-  useRouteMatch,
-  Redirect,
-} from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import React, {useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  NavLink,
+  Redirect, Route,
+  Switch,
+  useRouteMatch
+} from 'react-router-dom';
+import actions from '../../../../../../actions';
+import * as selectors from '../../../../../../reducers';
+import { isJavaFlow } from '../../../../../../utils/suiteScript';
 import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';
-import * as selectors from '../../../../../../reducers';
-import {isJavaFlow} from '../../../../../../utils/suiteScript';
+import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,7 +60,25 @@ const allSections = [
   },
 ];
 
-export default function AdminPanel({ ssLinkedConnectionId, integrationId }) {
+export const useLoadSuiteScriptSettings = ({
+  ssLinkedConnectionId,
+  integrationId,
+}) => {
+  const dispatch = useDispatch();
+
+  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType: 'settings',
+  }));
+  useEffect(() => {
+    if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return {hasSettingsMetadata};
+};
+function AdminPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const hasJavaFlows = useSelector(state =>
@@ -121,5 +140,25 @@ export default function AdminPanel({ ssLinkedConnectionId, integrationId }) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminPanelWithLoad({ ssLinkedConnectionId, integrationId }) {
+  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
+
+  return (
+    <LoadSuiteScriptResources
+      required
+      ssLinkedConnectionId={ssLinkedConnectionId}
+      integrationId={integrationId}
+      resources="flows">
+      {hasSettingsMetadata &&
+
+      <AdminPanel
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+
+ />}
+    </LoadSuiteScriptResources>
   );
 }

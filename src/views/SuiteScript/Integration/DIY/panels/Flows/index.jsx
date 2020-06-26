@@ -1,8 +1,8 @@
 import { Grid, List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, NavLink, Route, useRouteMatch, Redirect } from 'react-router-dom';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link, NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import SettingsIcon from '../../../../../../components/icons/SettingsIcon';
 import IconTextButton from '../../../../../../components/IconTextButton';
@@ -10,9 +10,9 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
-import actions from '../../../../../../actions';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
 import ConfigureDrawer from './ConfigureDrawer';
+import {useLoadSuiteScriptSettings} from '../Admin';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -147,18 +147,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
-    ssLinkedConnectionId,
-    integrationId,
-    resourceType: 'settings',
-  }));
+  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
   return (
     <div className={classes.root}>
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
