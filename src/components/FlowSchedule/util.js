@@ -373,6 +373,7 @@ export const getMetadata = ({
   pg,
   flows,
   scheduleStartMinute,
+  resourceIdentifier,
 }) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
@@ -405,9 +406,9 @@ export const getMetadata = ({
         label: 'Time zone',
         helpKey: 'flow.timezone',
         defaultValue:
-          (flow && flow.timeZone) ||
-          (integration && integration.timeZone) ||
-          (preferences && preferences.timezone),
+          (flow?.timezone) ||
+          (integration?.timeZone) ||
+          (preferences?.timezone),
         options: [
           {
             items:
@@ -419,6 +420,7 @@ export const getMetadata = ({
               [],
           },
         ],
+        visible: resourceIdentifier === 'flow',
       },
       activeTab: {
         id: 'activeTab',
@@ -710,7 +712,7 @@ export const getMetadata = ({
   };
 };
 
-export const setValues = (data, schedule, scheduleStartMinute) => {
+export const setValues = (data, schedule, scheduleStartMinute, flow, index, resourceType) => {
   const resource = { ...data };
   const value = schedule;
   const frequency = {
@@ -737,6 +739,13 @@ export const setValues = (data, schedule, scheduleStartMinute) => {
   );
   resource.daysToRunOn = ['1', '2', '3', '4', '5', '6', '0'];
   resource.dayToRunOn = undefined;
+  if (resourceType === 'flow') {
+    resource._keepDeltaBehindExportId = flow?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?._keepDeltaBehindFlowId;
+  } else {
+    resource._keepDeltaBehindExportId = flow?.pageGenerators?.[index]?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?.pageGenerators?.[index]?._keepDeltaBehindFlowId;
+  }
 
   if (!value) {
     resource.activeTab = PRESET_TAB;
