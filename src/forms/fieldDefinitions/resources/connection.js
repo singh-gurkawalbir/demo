@@ -51,7 +51,8 @@ export default {
     type: 'text',
     label: 'Application',
     defaultValue: r => {
-      if (isNewId(r._id)) {
+      const isNew = isNewId(r._id);
+      if (isNew) {
         return r.application;
       }
       const applications = applicationsList();

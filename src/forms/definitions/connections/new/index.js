@@ -10,7 +10,7 @@ export default {
       ...rest,
       '/adaptorType': `${app.type.toUpperCase()}Connection`,
       '/type': app.type,
-      '/aplication': app.name,
+      '/application': app.name,
     };
 
     if (app.assistant) {
