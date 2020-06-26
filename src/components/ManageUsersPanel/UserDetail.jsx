@@ -178,6 +178,14 @@ export default function UserDetail(props) {
     [getMessageForAction, props]
   );
   const { user, integrationId, isAccountOwner } = props;
+  let userAccessLevel = user.accessLevel;
+  if (
+    user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    user.integrationAccessLevel &&
+    user.integrationAccessLevel.length > 0
+  ) {
+    userAccessLevel = USER_ACCESS_LEVELS.TILE;
+  }
 
   return (
     <>
@@ -205,7 +213,7 @@ export default function UserDetail(props) {
               [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
               [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
               [USER_ACCESS_LEVELS.TILE]: 'Tile',
-            }[user.accessLevel]}
+            }[userAccessLevel]}
           {integrationId &&
             {
               [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',
