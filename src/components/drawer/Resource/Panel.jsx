@@ -126,7 +126,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
     return 'Fix offline connection';
   }
-  if (resourceType === 'accesstokens') {
+  if (['accesstokens', 'apis'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
 

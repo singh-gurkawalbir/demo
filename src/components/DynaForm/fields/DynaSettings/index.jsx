@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -40,6 +41,7 @@ export default function DynaSettings(props) {
     fieldsOnly = false
   } = props;
   const classes = useStyles();
+  const match = useRouteMatch();
   const { resourceType, resourceId } = resourceContext;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
@@ -66,8 +68,12 @@ export default function DynaSettings(props) {
     },
     [id, onFieldChange]
   );
-  const handleExpandClick = useCallback(() =>
-    setIsCollapsed(!isCollapsed), [isCollapsed]);
+  const handleExpandClick = useCallback(() => {
+    // HACK! to prevent event bubbling
+    if (match.isExact) {
+      setIsCollapsed(!isCollapsed);
+    }
+  }, [isCollapsed, match]);
 
   // Only developers can see/edit raw settings!
   // thus, if there is no settings form and the user is not a dev, render nothing.
