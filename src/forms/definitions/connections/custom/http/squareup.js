@@ -72,6 +72,7 @@ export default {
   layout: {
     type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
         fields: ['http.auth.oauth.scope'] },
