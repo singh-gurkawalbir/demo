@@ -8,8 +8,8 @@ import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
   actionButton: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing.double,
+    marginLeft: theme.spacing.double,
   },
 });
 const SaveButton = props => {

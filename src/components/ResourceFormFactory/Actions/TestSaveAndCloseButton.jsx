@@ -128,7 +128,7 @@ const TestAndSaveButton = props => {
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const { handleSubmitForm } = useLoadingSnackbarOnSave({
+  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave: handleSaveForm,
     resourceType,
@@ -173,12 +173,12 @@ const TestAndSaveButton = props => {
   }, [saveTerminated]);
 
   useEffect(() => {
-    if (pingLoading || savingForm || disabled) {
+    if (pingLoading || savingForm || disabled || isSaving || erroredMessage) {
       setDisableSaveOnClick(true);
     } else {
       setDisableSaveOnClick(false);
     }
-  }, [pingLoading, savingForm, setDisableSaveOnClick, disabled]);
+  }, [pingLoading, savingForm, setDisableSaveOnClick, disabled, isSaving, erroredMessage]);
 
   const handleCloseAndClearForm = useCallback(() => {
     dispatchLocalAction({
@@ -212,7 +212,7 @@ const TestAndSaveButton = props => {
       {/* its a two step process we first test the connection then we save..therefore we disable testAndSave button during this period */}
       <DynaAction
         {...props}
-        disabled={disabled || pingLoading || savingForm || disableSaveOnClick}
+        disabled={disableSaveOnClick}
         onClick={handleTestAndSave}
         className={classes.actionButton}
         size="small"
