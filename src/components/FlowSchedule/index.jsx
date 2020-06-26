@@ -98,7 +98,7 @@ export default function FlowSchedule({
           op: 'replace',
           path: '/timezone',
           value: formVal.timeZone
-        })
+        });
       }
       const sanitized = sanitizePatchSet({
         patchSet,
