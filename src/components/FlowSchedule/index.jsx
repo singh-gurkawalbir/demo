@@ -14,10 +14,6 @@ import {
   getScheduleStartMinute,
   getScheduleVal,
 } from './util';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-
-const exportFilterConfig = { type: 'exports' };
-const flowsFilterConfig = { type: 'flows' };
 
 export default function FlowSchedule({
   flow,
@@ -38,14 +34,6 @@ export default function FlowSchedule({
   const exp = useSelector(state =>
     selectors.resource(state, 'exports', pg && pg._exportId)
   );
-  const exports = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    exportFilterConfig
-  ).resources;
-  const flows = useSelectorMemo(
-    selectors.makeResourceListSelector,
-    flowsFilterConfig
-  ).resources;
   let resource = pg || flow;
   const schedule = (pg && pg.schedule) || flow.schedule;
   const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
@@ -120,10 +108,6 @@ export default function FlowSchedule({
     preferences,
     flow,
     schedule,
-    exp,
-    exports,
-    pg,
-    flows,
     scheduleStartMinute,
   });
 

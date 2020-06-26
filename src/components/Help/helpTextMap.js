@@ -1280,7 +1280,7 @@ export default {
   'flow.description':
     'Describe your flow in more detail here so that other users can understand the business problem you are solving, and also how your integration solution works. Be sure to highlight any nuances that a user who will make changes in the future might need to know about.',
   'flow.schedule':
-    'It is a cron (time-based job scheduler). You can set scheduling for flow execution',
+    'Your flow will be run on schedule according to this cron expression.',
   'flow.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'flow._exportId':
@@ -1949,9 +1949,9 @@ export default {
   'flow.frequency':
     'This field dictates how often your integration flow is run. Please log a support ticket if there is a specific preset frequency that you would like to see added to this list.',
   'flow.startTime':
-    "This field lets you control the first execution time of your flow (i.e. your integration flow will not run before this time), and then subsequent execution times are determined by the 'Frequency' and 'End Time' values set.",
+    'This field lets you control the first scheduled execution time for your flow each day. \n\nPlease note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue, or other flows ahead of you in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time (i.e. this allows Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time).',
   'flow.endTime':
-    'This field lets you control the last scheduled execution of your flow (i.e. your integration flow will not be scheduled after this time).',
+    'This field lets you control the last scheduled execution time for your flow each day.',
   'flow.daysToRunOn':
     'This field lets you configure the specific day(s) you would like this integration flow to run on.',
   'flow.type':
@@ -1998,7 +1998,7 @@ export default {
   'fb.pg.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the export before the records are passed along to downstream applications.',
   'fb.pg.exports.schedule':
-    'Define schedule to run export which overrides the flow schedule',
+    "Define a 'schedule override' here to run this export/transfer on its own schedule.",
   'fb.pg.exports.as2routing':
     'AS2 Exports which share a connection require routing rules to be in place so that incoming messages can be properly routed to the correct flow. This export has a shared AS2 connection and thus needs routing rules to be in place.',
   'fb.pp.exports.transform':
