@@ -817,7 +817,6 @@ export const groupApplications = (
           export: asst.export,
           import: asst.import,
           webhook: asst.webhook,
-          useGenericAdaptor: asst.useGenericAdaptor,
         });
       }
     });
@@ -899,7 +898,6 @@ export const applicationsList = () => {
       export: asst.export,
       import: asst.import,
       webhook: asst.webhook,
-      useGenericAdaptor: asst.useGenericAdaptor,
     });
   });
   return applications;
