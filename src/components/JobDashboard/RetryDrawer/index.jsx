@@ -96,6 +96,7 @@ function DrawerContent() {
   }
 
   const disabled = !!error || !touched;
+
   return (
     <div className={classes.root}>
       <CodeEditor name="retryEditor" mode="json" value={data} onChange={handleChange} />
