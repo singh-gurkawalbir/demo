@@ -104,7 +104,7 @@ export function integrationUsers(state, integrationId) {
         integrationAccessLevel = integrationAccessLevel.accessLevel;
       }
       if (!integrationAccessLevel && u.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
-        integrationAccessLevel = INTEGRATION_ACCESS_LEVELS.MONITOR
+        integrationAccessLevel = INTEGRATION_ACCESS_LEVELS.MONITOR;
       }
 
       if (integrationAccessLevel) {

@@ -6,7 +6,7 @@ import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
 import DynaForm from '../DynaForm';
 import consolidatedActions from './Actions';
-import { getResourceSubType } from '../../utils/resource';
+import { getResourceSubType, multiStepSaveResourceTypes } from '../../utils/resource';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 
@@ -79,20 +79,69 @@ const getConnectionType = resource => {
 
   return type;
 };
-
-const ActionButtons = ({actions, formProps, proceedOnChange}) => (actions.length &&
-actions.map(action => {
-  const Action = consolidatedActions[action.id];
-  // remove form disabled prop...
-  // they dont necessary apply to action button
-  const { disabled, ...rest } = formProps;
-  return <Action key={action.id} dataTest={action.id} proceedOnChange={proceedOnChange} {...rest} {...action} />;
-})) || null;
+/**
+ * We use primary and secondary actions to differentiate two sets of buttons we use for forms
+ * primary - save, save&close, cancel
+ * secondary - test, validate, ...other sort of actions
+ * TODO @Surya: Revisit this once form refactor is done
+ */
+const ActionButtons = ({actions, formProps, proceedOnChange}) => {
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
+  const primaryActions = [];
+  const secondaryActions = [];
+  if (actions.length) {
+    actions.forEach(action => {
+      const Action = consolidatedActions[action.id];
+      let actionProps = {};
+      /**
+      * Passes a global state for disable functionality for actions except 'cancel'
+      * used to manage disable states across buttons
+      * Ex: when save is clicked , save&close gets disabled
+      * In these cases, individual actions are recommended to use this disable prop to update
+      * rather than a local state
+      */
+      if (action.id !== 'cancel') {
+        actionProps = {
+          disableSaveOnClick,
+          setDisableSaveOnClick
+        };
+      }
+      // remove form disabled prop...
+      // they dont necessary apply to action button
+      const { disabled, ...rest } = formProps;
+      const actionContainer = <Action
+        key={action.id}
+        dataTest={action.id}
+        proceedOnChange={proceedOnChange}
+        {...rest}
+        {...action}
+        {...actionProps}
+      />;
+      if (action.mode === 'secondary') {
+        secondaryActions.push(actionContainer);
+      } else {
+        primaryActions.push(actionContainer);
+      }
+    });
+  } else {
+    return null;
+  }
+  return (
+    <>
+      <div> {primaryActions} </div>
+      <div> { secondaryActions }</div>
+    </>
+  );
+};
 
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType, isNew } = props;
   const { actions, fieldMap = {} } = props.fieldMeta;
   const connectionType = getConnectionType(resource);
+  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
+  // Any extra actions other than Save, Cancel which needs to be separated goes here
+  const secondaryActions = ['test', 'validate'];
+
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
     if (actions) return actions;
@@ -102,25 +151,30 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
         actionButtons = ['oauth', 'cancel'];
       } else {
-        actionButtons = ['test', 'testandsave', 'cancel'];
+        actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
       }
+    } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
+      actionButtons = ['save', 'saveandclose', 'cancel'];
     } else {
-      actionButtons = ['save', 'cancel'];
+      actionButtons = ['saveandclose', 'cancel'];
     }
-    return actionButtons.map(id => ({id}));
-  }, [actions, connectionType, isNew, resourceType]);
+    return actionButtons.map(id => ({
+      id,
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+    }));
+  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, secondaryActions]);
+
   // this prop allows child components to know that the form contains only a single field
   // and the form should proceed to auto submit on field change
   // the field type should implement proper onChange logic
   // as required, this currently only applies to new connection form
   const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
-  // console.log('render: <ActionsFactory>');
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
   return (
-    <DynaForm proceedOnChange={proceedOnChange} {...props}>
+    <DynaForm proceedOnChange={proceedOnChange} {...props} isResourceForm>
       {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}
     </DynaForm>
   );
@@ -145,7 +199,6 @@ export const FormStateManager = props => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.submitComplete]);
-
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);

@@ -123,6 +123,14 @@ export const adaptorTypeMap = {
   DynamodbExport: 'dynamodb',
 };
 
+export const multiStepSaveResourceTypes = [
+  'imports',
+  'exports',
+  'connections',
+  'pageGenerator',
+  'pageProcessor',
+];
+
 const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
 
