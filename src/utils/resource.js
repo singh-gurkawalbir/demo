@@ -123,6 +123,14 @@ export const adaptorTypeMap = {
   DynamodbExport: 'dynamodb',
 };
 
+export const multiStepSaveResourceTypes = [
+  'imports',
+  'exports',
+  'connections',
+  'pageGenerator',
+  'pageProcessor',
+];
+
 const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
 
@@ -728,8 +736,8 @@ export function getConnectionType(resource) {
 
   if (assistant) return assistant;
 
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
+  if (resource?.type === 'netsuite') {
+    if (resource?.netsuite?.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
   }

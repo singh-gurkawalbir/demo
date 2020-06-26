@@ -28,6 +28,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  resourceFormButtons: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
 }));
 const DynaForm = props => {
   const {
@@ -38,6 +42,7 @@ const DynaForm = props => {
     resourceId,
     resourceType,
     full,
+    isResourceForm,
     proceedOnChange,
     ...rest
   } = props;
@@ -83,7 +88,14 @@ const DynaForm = props => {
       {/* The children are action buttons for the form */}
       {children && (
         <div className={classes.actions}>
-          <ButtonGroup>{children}</ButtonGroup>
+          {/* Incase of a resource form,  isResourceForm property allows the button group container to be split left and right
+            * based on primary and secondary action buttons
+            */}
+          <ButtonGroup
+            className={clsx({
+              [classes.resourceFormButtons]: isResourceForm
+            })}>{children}
+          </ButtonGroup>
         </div>
       )}
     </Form>

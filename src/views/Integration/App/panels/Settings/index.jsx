@@ -77,10 +77,10 @@ export default function SettingsPanel({
 
   const allSections = useMemo(() => ([
     {
-      path: 'general',
+      path: 'common',
       label: 'General',
       Section: GeneralSection,
-      id: 'general',
+      id: 'common',
     },
     ...flowSections
   ]), [flowSections]);
