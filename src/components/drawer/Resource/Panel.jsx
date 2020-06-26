@@ -363,7 +363,18 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-
+  // useTechAdaptorForm field we are using for showing banner on the screen incase
+  // import/export assistant is not present and if we are showing generic adaptor
+  function getTechAdaptorFormValue() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      return resource?.useTechAdaptorForm;
+    }
+    const useTechAdaptorForm = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    );
+    return !!useTechAdaptorForm?.value;
+  }
+  const showNotificationToaster = getTechAdaptorFormValue();
   return (
     <>
       <div className={classes.root}>
@@ -407,6 +418,8 @@ export default function Panel(props) {
             submitButtonColor={submitButtonColor}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
+            showNotificationToaster={showNotificationToaster}
+            assistantName={applicationType}
             {...props}
           />
         </LoadResources>

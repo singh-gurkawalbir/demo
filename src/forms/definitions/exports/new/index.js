@@ -29,6 +29,12 @@ export default {
       if (app.assistant) {
         newValues['/assistant'] = app.assistant;
       }
+
+      // If there is no assistant for the export, we need to show generic adaptor form
+      // we are patching useTechAdaptorForm field to not to show default assistant form
+      if (!app.export) {
+        newValues['/useTechAdaptorForm'] = true;
+      }
     }
 
     return newValues;
