@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, multiStepSaveResourceTypes } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
@@ -212,10 +212,10 @@ export default function Panel(props) {
     }
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType =
-      getStagedValue('/adaptorType') || (resource && resource.adaptorType);
-    const assistant =
-      getStagedValue('/assistant') || (resource && resource.assistant);
+    const adaptorType = resourceType === 'connections'
+      ? getStagedValue('type') || resource?.type
+      : getStagedValue('/adaptorType') || resource?.adaptorType;
+    const assistant = getStagedValue('/assistant') || resource?.assistant;
 
     if (adaptorType === 'WebhookExport') {
       return (
@@ -236,14 +236,10 @@ export default function Panel(props) {
 
     return assistant || adaptorType;
   });
-  const isMultiStepSaveResource = [
-    'imports',
-    'exports',
-    'connections',
-    'pageGenerator',
-    'pageProcessor',
-  ].includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
+  // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
+  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
+  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
 
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {
@@ -320,9 +316,20 @@ export default function Panel(props) {
       // so move to step 2 of the form...
 
       dispatch(actions.resource.created(resourceId, id));
+      // Incase of a resource with single step save, when skipFormClose is passed
+      // redirect to the updated URL with new resourceId as we do incase of edit - check else part
+      if (skipFormClose && !isMultiStepSaveResource) {
+        return props.history.replace(
+          generatePath(match.path, {
+            id: newResourceId || id,
+            resourceType,
+            operation,
+          })
+        );
+      }
+      // In other cases , close the drawer
       onClose();
     } else {
-      // For web hook generate URL case
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
       if (skipFormClose) {
@@ -343,8 +350,7 @@ export default function Panel(props) {
   }
 
   const showApplicationLogo =
-    flowId &&
-    ['exports', 'imports'].includes(resourceType) &&
+    ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
   const title = useMemo(
@@ -398,6 +404,7 @@ export default function Panel(props) {
             resourceId={id}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
+            submitButtonColor={submitButtonColor}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
             {...props}

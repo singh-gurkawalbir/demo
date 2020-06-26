@@ -79,7 +79,7 @@ export default function DynaStaticMapWidget(props) {
       label: extractFieldHeader,
       name: extractFieldHeader,
       required: true,
-      type: extracts.length ? 'select' : 'input',
+      type: extracts.length ? 'autosuggest' : 'input',
       options: extracts,
       supportsRefresh: supportsExtractsRefresh,
     },
@@ -89,7 +89,7 @@ export default function DynaStaticMapWidget(props) {
       name: generateFieldHeader,
       required: true,
       options: generates,
-      type: generates.length ? 'select' : 'input',
+      type: generates.length ? 'autosuggest' : 'input',
       supportsRefresh: supportsGeneratesRefresh,
     },
   ];

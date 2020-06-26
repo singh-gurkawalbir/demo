@@ -183,6 +183,7 @@ const connectors = [
     assistant: 'aptrinsic',
   },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
+  { id: 'sapariba', name: 'SAP Ariba', type: 'http', webhookOnly: true },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
   { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
@@ -217,7 +218,7 @@ const connectors = [
     assistant: 'bigcommerce',
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
-  { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
+  { id: 'box', name: 'Box', type: 'http', webhookOnly: true },
   { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
@@ -255,6 +256,20 @@ const connectors = [
     icon: 'concur',
   },
   {
+    id: 'concurexpense',
+    name: 'Concur Expense',
+    type: 'http',
+    assistant: 'concurexpense',
+    icon: 'concur',
+  },
+  {
+    id: 'concurinvoice',
+    name: 'Concur Invoice',
+    type: 'http',
+    assistant: 'concurinvoice',
+    icon: 'concur',
+  },
+  {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
     type: 'rest',
@@ -284,8 +299,7 @@ const connectors = [
     id: 'dropbox',
     name: 'Dropbox',
     type: 'rest',
-    assistant: 'dropbox',
-    webhook: true,
+    webhookOnly: true,
   },
   {
     id: 'dunandbradstreet',
@@ -419,6 +433,8 @@ const connectors = [
     id: 'intercom',
     name: 'Intercom',
     marketPlaceOnly: true,
+    type: 'http',
+    webhookOnly: true,
   },
   { id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet' },
   {
@@ -632,7 +648,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment', webhook: true },
+  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true },
   {
     id: 'servicenow',
     name: 'ServiceNow',
@@ -728,8 +744,7 @@ const connectors = [
     id: 'travis',
     name: 'Travis CI',
     type: 'http',
-    assistant: 'travis',
-    webhook: true,
+    webhookOnly: true,
   },
   { id: 'trinet', name: 'TriNet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
@@ -791,7 +806,6 @@ export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
 

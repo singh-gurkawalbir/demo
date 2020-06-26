@@ -13,14 +13,14 @@ import actions from '../../actions';
 import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import useConfirmDialog from '../ConfirmDialog';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    marginTop: theme.spacing(3),
+    margin: theme.spacing(3, 1, 0, 0)
   },
   cancel: {
-    padding: theme.spacing(3),
     marginTop: theme.spacing(3),
   },
   label: {
@@ -69,11 +69,8 @@ export default function ConfigureDebugger(props) {
   const { id, debugDate, onClose } = props;
   const { confirmDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
-  const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
   const handleSaveClick = useCallback(() => {
-    setSaveLabel('Saving');
-
     const debugTime = moment()
       .add(debugValue, 'm')
       .toISOString();
@@ -86,8 +83,7 @@ export default function ConfigureDebugger(props) {
     ];
 
     dispatch(actions.resource.patch('connections', id, patchSet));
-    onClose();
-  }, [debugValue, dispatch, id, onClose]);
+  }, [debugValue, dispatch, id]);
   const handleValueChange = useCallback((_id, val) => {
     setDebugValue(val);
   }, []);
@@ -118,6 +114,15 @@ export default function ConfigureDebugger(props) {
     });
   }, [onClose, confirmDialog]);
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/connections/${id}`,
+      method: 'PATCH',
+      onSave: handleSaveClick,
+      onClose,
+    }
+  );
+  // TODO @Raghu: Convert this into a Right Drawer
   return (
     <Drawer
       anchor="right"
@@ -160,10 +165,19 @@ export default function ConfigureDebugger(props) {
             data-test="saveDebuggerConfiguration"
             variant="outlined"
             color="primary"
-            onClick={handleSaveClick}
+            onClick={submitHandler()}
             className={classes.submit}
-            value="Save">
-            {saveLabel}
+            disabled={disableSave} >
+            {defaultLabels.saveLabel}
+          </Button>
+          <Button
+            data-test="saveAndCloseDebuggerConfiguration"
+            variant="outlined"
+            color="secondary"
+            onClick={submitHandler(true)}
+            className={classes.submit}
+            disabled={disableSave} >
+            {defaultLabels.saveAndCloseLabel}
           </Button>
           <Button
             variant="text"

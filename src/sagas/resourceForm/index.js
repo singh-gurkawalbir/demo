@@ -812,6 +812,7 @@ export function* saveResourceWithDefinitionID({
   formValues,
   definitionId,
   flowId,
+  skipClose = false,
 }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
@@ -825,7 +826,7 @@ export function* saveResourceWithDefinitionID({
       resourceId,
       newValues,
       null,
-      false,
+      skipClose,
       false,
       flowId
     )

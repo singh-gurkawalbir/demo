@@ -34,7 +34,14 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
 
       setDisableSave(true);
 
-      if (accessLevel === USER_ACCESS_LEVELS.TILE) {
+      if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+        integrationsToManage.forEach((_integrationId) =>
+          aShareData.integrationAccessLevel.push({
+            _integrationId,
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          })
+        );
+      } else if (accessLevel === USER_ACCESS_LEVELS.TILE) {
         aShareData.accessLevel = undefined;
         integrationsToManage.forEach(_integrationId =>
           aShareData.integrationAccessLevel.push({
