@@ -48,7 +48,7 @@ export default {
       id: 'enableShipworksAuthentication',
       name: '/enableShipworksAuthentication',
       type: 'checkbox',
-      label: 'Enable Shipworks authentication',
+      label: 'Enable ShipWorks authentication',
       defaultValue: r => !!(r && r.shipworks && r.shipworks.username),
     },
     'shipworks.username': {
