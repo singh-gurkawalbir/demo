@@ -1,7 +1,7 @@
 export default {
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample File (that would be exported)',
+    placeholder: 'Sample File (that would be exported)',
     mode: 'csv',
     required: true,
   },

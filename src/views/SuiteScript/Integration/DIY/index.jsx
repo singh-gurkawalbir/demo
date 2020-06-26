@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../reducers';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
@@ -16,6 +16,7 @@ import DashboardPanel from './panels/Dashboard';
 // import IntegrationTabs from '../common/Tabs';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import IntegrationTabs from '../common/Tabs';
+import actions from '../../../../actions';
 import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +59,9 @@ const tabs = [
 
 export default function Integration({ match }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const { ssLinkedConnectionId, integrationId } = match.params;
+  const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const integration = useSelector(state =>
     selectors.suiteScriptResource(state, {
@@ -66,6 +69,32 @@ export default function Integration({ match }) {
       id: integrationId,
       ssLinkedConnectionId,
     })
+  );
+  const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
+
+  const handleTitleChange = useCallback(
+    title => {
+      dispatch(
+        actions.suiteScript.resource.patchStaged(
+          integrationId,
+          [{ op: 'replace', path: '/name', value: title }],
+          'value',
+          ssLinkedConnectionId,
+          integrationId,
+          'integrations'
+        )
+      );
+      dispatch(
+        actions.suiteScript.resource.commitStaged(
+          integrationId,
+          'value',
+          ssLinkedConnectionId,
+          integrationId,
+          'integrations'
+        )
+      );
+    },
+    [dispatch, integrationId, ssLinkedConnectionId]
   );
 
   // TODO: <ResourceDrawer> Can be further optimized to take advantage
@@ -84,8 +113,9 @@ export default function Integration({ match }) {
           title={
             integration && (
               <EditableText
+                disabled={!canEdit}
                 text={integration.displayName}
-                // onChange={handleTitleChange}
+                onChange={handleTitleChange}
                 inputClassName={
                   drawerOpened
                     ? classes.editableTextInputShift

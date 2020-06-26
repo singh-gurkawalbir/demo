@@ -21,7 +21,7 @@ export default function LegacySection({ ssLinkedConnectionId }) {
 
   return (
     <>
-      <PanelHeader title="Legacy Control Panel" />
+      <PanelHeader title="Legacy Control Panel1" />
       <div className={classes.formContainer}>
         <ResourceForm
           ssLinkedConnectionId={ssLinkedConnectionId}
@@ -30,9 +30,6 @@ export default function LegacySection({ ssLinkedConnectionId }) {
           resourceType="refreshlegacycontrolpanel"
           resourceId="something"
           submitButtonLabel="Save"
-          // onSubmitComplete={handleSubmitComplete}
-          // onCancel={abortAndClose}
-          // {...props}
         />
       </div>
     </>
