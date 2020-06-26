@@ -19,7 +19,7 @@ import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  getResourceSubType,
+  getConnectionType,
   generateNewId,
 } from '../../../../../utils/resource';
 import LoadResources from '../../../../../components/LoadResources';
@@ -59,31 +59,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant === 'shopify') {
-    if (
-      resource.http &&
-      resource.http.auth &&
-      resource.http.auth.type === 'oauth'
-    ) {
-      return 'shopify-oauth';
-    }
-
-    return '';
-  }
-
-  if (assistant) return assistant;
-
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
-      return 'netsuite-oauth';
-    }
-  }
-
-  return type;
-};
 
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
@@ -155,6 +130,7 @@ export default function ConnectorInstallation(props) {
       ...resourceConstants.OAUTH_APPLICATIONS,
       'netsuite-oauth',
       'shopify-oauth',
+      'acumatica-oauth',
     ],
     []
   );
@@ -269,9 +245,6 @@ export default function ConnectorInstallation(props) {
       message: 'Are you sure you want to uninstall?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: 'Uninstall',
           onClick: () => {
             const storeId = (integration.stores || {}).length
@@ -310,6 +283,10 @@ export default function ConnectorInstallation(props) {
               );
             }
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });

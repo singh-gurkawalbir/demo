@@ -131,11 +131,12 @@ export default function EditorDrawer({
       message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
       buttons: [
         {
-          label: 'No, go back',
-        },
-        {
           label: 'Yes, cancel',
           onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
         },
       ]
     });
