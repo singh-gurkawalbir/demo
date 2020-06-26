@@ -728,8 +728,8 @@ export function getConnectionType(resource) {
 
   if (assistant) return assistant;
 
-  if (resource.type === 'netsuite') {
-    if (resource.netsuite.authType === 'token-auto') {
+  if (resource?.type === 'netsuite') {
+    if (resource?.netsuite?.authType === 'token-auto') {
       return 'netsuite-oauth';
     }
   }
