@@ -56,8 +56,7 @@ export default {
         return r.application;
       }
       const applications = applicationsList();
-      const application = r.assistant || r.type;
-
+      const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
       const app = applications.find(a => a.id === application) || {};
       return app.name;
     },
