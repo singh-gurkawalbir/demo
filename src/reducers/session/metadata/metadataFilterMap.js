@@ -5,6 +5,7 @@ import { stringCompare } from '../../../utils/sort';
 This file consists of filter map which is used to filter netsuite and salesforce metadata
 */
 
+const emptySet = [];
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
@@ -118,6 +119,7 @@ export default {
         }))) ||
     [],
   'salesforce-sObject-layout': data => data,
+  'suitescript-salesforce-sObject-layout': data => (data && data.layouts && Array.isArray(data.layouts) && data.layouts.length && data.layouts[0]) || emptySet,
   'salesforce-sObjects': data =>
     data.map(d => ({
       label: d.label,
@@ -282,6 +284,61 @@ export default {
     returnVal.searchLayoutable = searchLayoutable;
 
     return returnVal;
+  },
+  'suiteScriptSalesforce-sObjectCompositeMetadata': (data, options = {}) => {
+    const { applicationResource, connectionId, commMetaPath } = options;
+    const _data = [];
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        _data.push({
+          value: field.name,
+          label: field.label,
+          type: field.type,
+          custom: field.custom,
+          triggerable: field.triggerable,
+          picklistValues: field.picklistValues,
+          updateable: field.updateable,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        if (child.relationshipName) {
+          const sObjectMetadataPath = `${commMetaPath.substring(0, commMetaPath.lastIndexOf('/'))}/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][sObjectMetadataPath]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              _data.push({
+                value: `${child.relationshipName}[*].${field.name}`,
+                label: `${child.relationshipName}: ${field.label}`,
+                type: field.type,
+                custom: field.custom,
+                triggerable: field.triggerable,
+                picklistValues: field.picklistValues,
+                updateable: field.updateable,
+              });
+            });
+          } else {
+            _data.push({
+              value: `_child_${child.relationshipName}`,
+              label: `${child.relationshipName} : Fields...`,
+              type: 'childRelationship',
+              childSObject: child.childSObject,
+              relationshipName: child.relationshipName,
+            });
+          }
+        }
+      });
+    }
+
+    return _data;
   },
   default: data =>
     data &&

@@ -12,9 +12,15 @@ import moment from 'moment';
 import actions from '../../actions';
 import DrawerTitleBar from '../drawer/TitleBar';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
+import useConfirmDialog from '../ConfirmDialog';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+
 
 const useStyles = makeStyles(theme => ({
   submit: {
+    margin: theme.spacing(3, 1, 0, 0)
+  },
+  cancel: {
     marginTop: theme.spacing(3),
   },
   label: {
@@ -60,13 +66,11 @@ const debugDurationOptions = [
 
 export default function ConfigureDebugger(props) {
   const classes = useStyles();
-  const { id, name, debugDate, onClose } = props;
+  const { id, debugDate, onClose } = props;
+  const { confirmDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
-  const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
   const handleSaveClick = useCallback(() => {
-    setSaveLabel('Saving');
-
     const debugTime = moment()
       .add(debugValue, 'm')
       .toISOString();
@@ -79,8 +83,7 @@ export default function ConfigureDebugger(props) {
     ];
 
     dispatch(actions.resource.patch('connections', id, patchSet));
-    onClose();
-  }, [debugValue, dispatch, id, onClose]);
+  }, [debugValue, dispatch, id]);
   const handleValueChange = useCallback((_id, val) => {
     setDebugValue(val);
   }, []);
@@ -94,7 +97,32 @@ export default function ConfigureDebugger(props) {
       return moment(debugDate).diff(moment(), 'minutes');
     }
   }, [debugDate]);
+  const handleCancelClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm cancel',
+      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+      buttons: [
+        {
+          label: 'Yes, cancel',
+          onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
+        },
+      ]
+    });
+  }, [onClose, confirmDialog]);
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/connections/${id}`,
+      method: 'PATCH',
+      onSave: handleSaveClick,
+      onClose,
+    }
+  );
+  // TODO @Raghu: Convert this into a Right Drawer
   return (
     <Drawer
       anchor="right"
@@ -104,9 +132,8 @@ export default function ConfigureDebugger(props) {
       }}>
       <DrawerTitleBar
         onClose={onClose}
-        title={`Configure debugger: ${name}`}
-        helpKey="connection.configDebugger"
-        helpTitle="Configure debugger"
+        title="Debug connection"
+        helpKey="connection.debug"
       />
       <div className={classes.content}>
         <FormControl component="fieldset">
@@ -138,10 +165,27 @@ export default function ConfigureDebugger(props) {
             data-test="saveDebuggerConfiguration"
             variant="outlined"
             color="primary"
-            onClick={handleSaveClick}
+            onClick={submitHandler()}
             className={classes.submit}
-            value="Save">
-            {saveLabel}
+            disabled={disableSave} >
+            {defaultLabels.saveLabel}
+          </Button>
+          <Button
+            data-test="saveAndCloseDebuggerConfiguration"
+            variant="outlined"
+            color="secondary"
+            onClick={submitHandler(true)}
+            className={classes.submit}
+            disabled={disableSave} >
+            {defaultLabels.saveAndCloseLabel}
+          </Button>
+          <Button
+            variant="text"
+            className={classes.cancel}
+            color="primary"
+            data-test="closeEditor"
+            onClick={handleCancelClick}>
+            Cancel
           </Button>
         </div>
       </div>

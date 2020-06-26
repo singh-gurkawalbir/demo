@@ -61,42 +61,31 @@ const flowBuilderRoutes = [
   },
 ];
 
+const integrationRoutes = [
+  {
+    path: '/admin',
+    breadcrumb: () => 'Admin',
+    childRoutes: [
+      { path: '/general', breadcrumb: () => 'General' },
+      { path: '/legacy', breadcrumb: () => 'Legacy' },
+    ],
+  },
+  { path: '/flows', breadcrumb: () => 'Flows' },
+  { path: '/dashboard', breadcrumb: () => 'Dashboard' },
+  { path: '/connections', breadcrumb: () => 'Connections' },
+  ...flowBuilderRoutes,
+];
+
 const suiteScriptRoutes = [
   {
     path: '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId',
     breadcrumb: IntegrationCrumb,
-    childRoutes: [
-      {
-        path: '/admin',
-        breadcrumb: () => 'Admin',
-        childRoutes: [
-          { path: '/general', breadcrumb: () => 'General' },
-          { path: '/legacy', breadcrumb: () => 'Legacy' },
-        ],
-      },
-      { path: '/flows', breadcrumb: () => 'Flows' },
-      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
-      ...flowBuilderRoutes,
-    ],
+    childRoutes: integrationRoutes,
   },
   {
     path: '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId',
     breadcrumb: IntegrationCrumb,
-    childRoutes: [
-      {
-        path: '/admin',
-        breadcrumb: () => 'Admin',
-        childRoutes: [
-          { path: '/general', breadcrumb: () => 'General' },
-          { path: '/legacy', breadcrumb: () => 'Legacy' },
-        ],
-      },
-      { path: '/flows', breadcrumb: () => 'Flows' },
-      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
-      ...flowBuilderRoutes,
-    ],
+    childRoutes: integrationRoutes,
   }
 ];
 

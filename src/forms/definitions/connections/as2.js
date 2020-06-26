@@ -258,7 +258,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'My AS2 Station Configuration',
+        label: 'Configure my AS2 station',
         fields: [
           'as2url',
           'as2.as2Id',
@@ -276,7 +276,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Partner AS2 Station Configuration',
+        label: 'Configure partner AS2 station',
         fields: [
           'as2.partnerStationInfo.as2URI',
           'as2.partnerId',
@@ -293,7 +293,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Authentication',
+        label: 'Configure auth',
         fields: [
           'as2.partnerStationInfo.auth.type',
           'as2.partnerStationInfo.auth.failStatusCode',
@@ -330,7 +330,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Configure routing for shared connection',
+        label: 'Configure routing for shared connections',
         fields: ['as2.contentBasedFlowRouter'],
       },
       {
@@ -343,6 +343,9 @@ export default {
   actions: [
     {
       id: 'save',
+    },
+    {
+      id: 'saveandclose'
     },
     {
       id: 'cancel',

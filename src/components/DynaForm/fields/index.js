@@ -104,6 +104,8 @@ import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import DynaFeatureCheck from './checkbox/DynaFeatureCheck';
 import DyanSuiteScriptTable from './DynaTableView/DynaSuiteScriptTable';
+import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
+import DynaRoutingRules from './editors/DynaRoutingRules';
 
 export default {
   suitescripttable: DyanSuiteScriptTable,
@@ -221,4 +223,6 @@ export default {
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
   jsonresourcepath: DynaJsonResourcePath,
+  linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
+  routingrules: DynaRoutingRules,
 };

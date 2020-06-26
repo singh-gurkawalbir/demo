@@ -4,6 +4,13 @@ import DynaSelect from '../DynaSelect';
 import { sourceOptions, destinationOptions } from '../../../../forms/utils';
 import * as selectors from '../../../../reducers';
 
+const webhookOnlyOptions = [
+  {
+    label: 'Listen for real-time data from source application',
+    value: 'webhook',
+  },
+];
+
 const webhookAssistantOptions = [
   {
     label: 'Export records from source application',
@@ -34,7 +41,7 @@ const importOption = [
  * This function handles what to show as resource type options based on application
  */
 function getAvailableResourceTypeOptions(application, mode, isDataloader) {
-  const { type, assistant, webhook, export: _export, import: _import } =
+  const { type, assistant, webhook, webhookOnly, export: _export, import: _import } =
     application || {};
 
   // Defensive code to avoid unknown issues
@@ -48,6 +55,9 @@ function getAvailableResourceTypeOptions(application, mode, isDataloader) {
   const possibleOptions = optionsMap[assistant || type];
 
   if (possibleOptions) return possibleOptions;
+  if (mode === 'source' && webhookOnly) {
+    return webhookOnlyOptions;
+  }
 
   // Incase of a webhook assistant
   if (mode === 'source' && assistant && webhook) {

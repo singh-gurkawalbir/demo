@@ -142,20 +142,87 @@ export const PERMISSIONS = Object.freeze({
 });
 
 export const PASSWORD_MASK = '******';
+export const SUITESCRIPT_CONNECTOR_IDS = { salesforce: 'suitescript-salesforce-netsuite', svb: 'suitescript-svb-netsuite'};
 export const SUITESCRIPT_CONNECTORS = Object.freeze([
   {
     _id: 'suitescript-salesforce-netsuite',
-    name: 'Salesforce - NetSuite Connector',
+    name: 'Salesforce - NetSuite Connector (V2)',
     urlName: 'sfns',
     ssName: 'Salesforce Connector',
-    description:
-      'Streamline your Lead-to-Cash process with the Salesforce - NetSuite Connector. Manage sales process effectively and in real-time. Packed with Celigo’s deep domain expertise and best practices, this Connector is the embodiment of several years of customer feedback, learning and growth.  With distributed adapters running only in NetSuite and Salesforce, our connector allows endless customization options.',
+    description: 'v2 is the legacy version of our Integration app that comes bundled with comprehensive out-of-the-box flows for the Lead-to-Cash process. With an intuitive setup that requires no coding, integrating platforms is a seamless process.',
     applications: ['salesforce', 'netsuite'],
     user: {
       name: 'Celigo',
       email: 'yrjcbv9kkq1azk@gmail.com',
       company: 'Celigo',
     },
+    installSteps: Object.freeze([
+      {
+        name: 'NetSuite Connection',
+        type: 'connection',
+        connectionType: 'netsuite',
+        description: 'Select a NetSuite connection or create a new one for your NetSuite account. Integrator.io will use this to connect to your NetSuite account.',
+        imageURL: '/images/company-logos/netsuite.png',
+        completed: false,
+        __index: 1
+      },
+      {
+        imageURL: '/images/company-logos/netsuite.png',
+        installURL: 'https://system.na1.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+        completed: false,
+        description: 'Install integrator bundle in NetSuite account.',
+        name: 'Integrator Bundle',
+        type: 'integrator-bundle',
+        __index: 2
+      },
+      {
+        imageURL: '/images/company-logos/netsuite.png',
+        installURL: 'https://system.na1.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=48893',
+        completed: false,
+        description: 'Install Salesforce Connector bundle in NetSuite account.',
+        name: 'Salesforce Bundle',
+        type: 'connector-bundle',
+        __index: 3
+      },
+      {
+        name: 'NetSuite Connection',
+        type: 'ssConnection',
+        connectionType: 'netsuite',
+        description: 'Provide NetSuite account credentials. The Connector will use them to send data from Salesforce to NetSuite.',
+        imageURL: '/images/company-logos/netsuite.png',
+        completed: false,
+        __index: 4
+      },
+      {
+        name: 'Salesforce Connection',
+        type: 'ssConnection',
+        connectionType: 'salesforce',
+        description: 'Provide Salesforce account credentials. The Connector will use them to send data from NetSuite to Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 5
+      },
+      {
+        name: 'Integrator package',
+        type: 'package',
+        installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04to0000000OIhq',
+        installerFunction: 'verifyIntegratorPackage',
+        description: 'Install integrator package in Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 6
+      },
+      {
+        name: 'Connector package',
+        type: 'package',
+        installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04tj0000000LYeu',
+        installerFunction: 'verifyConnectorPackage',
+        description: 'Install NetSuite Connector package in Salesforce.',
+        imageURL: '/images/company-logos/salesforce.png',
+        completed: false,
+        __index: 7
+      }
+    ])
   },
   {
     _id: 'suitescript-svb-netsuite',
@@ -196,7 +263,8 @@ export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'shared/ashares',
 ];
 // eslint-disable-next-line no-useless-escape
-export const URI_VALIDATION_PATTERN = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|localhost|127\.0\.0\.1|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
+// export const URI_VALIDATION_PATTERN = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|localhost|127\.0\.0\.1|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
+export const URI_VALIDATION_PATTERN = /^((https?|ftp):\/\/)?(([^:\n\r]+):([^@\n\r]+)@)?((www\\.)?([^/\n\r]+))\/?([^?\n\r]+)?\\??([^#\n\r]*)?#?([^\n\r]*)$/i;
 export const REST_ASSISTANTS = [
   '3dcart',
   'certify',
@@ -330,6 +398,26 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   'https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
+export const AS2_URLS_STAGING = [
+  {
+    label: 'http://api.staging.integrator.io/v1/as2',
+    value: 'http://api.staging.integrator.io/v1/as2',
+  },
+  {
+    label: 'https://api.staging.integrator.io/v1/as2',
+    value: 'https://api.staging.integrator.io/v1/as2',
+  }
+];
+export const AS2_URLS_PRODUCTION = [
+  {
+    label: 'http://api.integrator.io/v1/as2',
+    value: 'http://api.integrator.io/v1/as2',
+  },
+  {
+    label: 'https://api.integrator.io/v1/as2',
+    value: 'https://api.integrator.io/v1/as2',
+  }
+];
 export const AWS_REGIONS_LIST = [
   {
     label: 'US East (N. Virginia) [us-east-1]',

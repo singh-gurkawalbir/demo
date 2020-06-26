@@ -465,11 +465,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
@@ -778,7 +779,7 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+    initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
@@ -860,7 +861,7 @@ const integrationApp = {
       }),
   },
   uninstaller2: {
-    init: (integrationId) =>
+    init: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
         id: integrationId,
       }),
@@ -874,7 +875,7 @@ const integrationApp = {
         id: integrationId,
         uninstallSteps,
       }),
-    requestSteps: (integrationId) =>
+    requestSteps: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
         id: integrationId,
       }),
@@ -1102,6 +1103,14 @@ const user = {
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+      addLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
+      deleteLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
     },
   },
   preferences: {
@@ -1300,9 +1309,11 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
 
 };
+
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {
@@ -1986,6 +1997,20 @@ const suiteScript = {
         }),
         scope,
       }),
+    commitStaged: (
+      id,
+      scope,
+      ssLinkedConnectionId,
+      integrationId,
+      resourceType
+    ) =>
+      action(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, {
+        resourceType,
+        id,
+        scope,
+        ssLinkedConnectionId,
+        integrationId,
+      }),
     clearStaged: (
       id,
       scope,
@@ -2040,6 +2065,11 @@ const suiteScript = {
         resourceId,
         ssLinkedConnectionId,
       }),
+  },
+  importSampleData: {
+    request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
+      ssLinkedConnectionId, integrationId, flowId, options
+    })
   },
   sampleData: {
     request: (
@@ -2197,28 +2227,158 @@ const suiteScript = {
         flowId,
         _id,
       }),
-    enable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    enable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.ENABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    disable: ({ssLinkedConnectionId, integrationId, _id}) =>
+    disable: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DISABLE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
-    isOnOffActionInprogress: ({onOffInProgress, ssLinkedConnectionId, _id}) =>
-      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS,
-        { onOffInProgress, ssLinkedConnectionId, _id }),
-    delete: ({ssLinkedConnectionId, integrationId, _id}) =>
+    isOnOffActionInprogress: ({ onOffInProgress, ssLinkedConnectionId, _id }) =>
+      action(actionTypes.SUITESCRIPT.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
+        onOffInProgress,
+        ssLinkedConnectionId,
+        _id,
+      }),
+    delete: ({ ssLinkedConnectionId, integrationId, _id }) =>
       action(actionTypes.SUITESCRIPT.FLOW.DELETE, {
         ssLinkedConnectionId,
         integrationId,
         _id,
       }),
   },
+  account: {
+    checkHasIntegrations: connectionId =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.CHECK_HAS_INTEGRATIONS, {
+        connectionId,
+      }),
+    receivedHasIntegrations: (account, hasIntegrations) =>
+      action(actionTypes.SUITESCRIPT.ACCOUNT.RECEIVED_HAS_INTEGRATIONS, {
+        account,
+        hasIntegrations,
+      }),
+  },
+  installer: {
+    initSteps: connectorId =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS, {
+        id: connectorId,
+      }),
+    updateStep: (connectorId, status) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.STEP, {
+        id: connectorId,
+        status,
+      }),
+    updateSSLinkedConnectionId: (connectorId, connectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.LINKED_CONNECTION, {
+        id: connectorId,
+        ssLinkedConnectionId: connectionId,
+      }),
+    updateSSIntegrationId: (connectorId, ssIntegrationId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_INTEGRATION_ID, {
+        id: connectorId,
+        ssIntegrationId,
+      }),
+    updateSSConnection: (connectorId, connectionId, doc) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_CONNECTION, {
+        id: connectorId,
+        connectionId,
+        doc,
+      }),
+    updatePackage: (connectorId, packageType, packageUrl) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE, {
+        id: connectorId,
+        packageType,
+        packageUrl,
+      }),
+    requestPackages: (connectorId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, {
+        connectorId,
+        ssLinkedConnectionId,
+      }),
+    verifyNSBundle: (connectorId, ssLinkedConnectionId, shouldContinue, ssName) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.INTEGRATOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        shouldContinue,
+        ssName,
+      }),
+    verifySFBundle: (connectorId, ssLinkedConnectionId, ssName) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.CONNECTOR_BUNDLE, {
+        connectorId,
+        ssLinkedConnectionId,
+        ssName,
+      }),
+    verifySSConnection: (connectorId, ssLinkedConnectionId, connectionType) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, {
+        connectorId,
+        ssLinkedConnectionId,
+        connectionType,
+      }),
+    verifyPackage: (connectorId, ssLinkedConnectionId, installerFunction) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.PACKAGE, {
+        connectorId,
+        ssLinkedConnectionId,
+        installerFunction,
+      }),
+    failed: (connectorId, error) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.FAILED, {
+        id: connectorId,
+        error,
+      }),
+    clearSteps: connectorId =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.CLEAR_STEPS, {
+        id: connectorId,
+      }),
+  },
+  mapping: {
+    init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
+        ssLinkedConnectionId, integrationId, flowId
+      }),
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options
+      }),
+    patchField: ({ field, key, value }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
+    delete: (key) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
+        key
+      }),
+    patchSettings: (key, settings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
+        key, settings
+      }),
+    updateLookups: (lookups) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
+        lookups
+      }),
+    changeOrder: (mappings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER, {
+        mappings
+      }),
+    save: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE, {}),
+    saveFailed: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED, { }),
+    saveComplete: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE, {}),
+    refreshGenerates: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, {}),
+    patchIncompleteGenerates: (
+      {key, value},
+    ) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
+    updateMappings: (mappings) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
+      mappings
+    }),
+    updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
+    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
+  }
 };
 const editorSampleData = {
   request: ({

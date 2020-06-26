@@ -52,6 +52,10 @@ export default function AddOrSelect(props) {
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
+
+  const newDoc = useSelector(state =>
+    selectors.resource(state, resourceType, newId)
+  );
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, newId)
   );
@@ -65,7 +69,7 @@ export default function AddOrSelect(props) {
   };
 
   const handleSubmitComplete = () => {
-    onSubmitComplete(newId, isAuthorized);
+    onSubmitComplete(newId, newDoc, isAuthorized);
   };
 
   const fieldMeta = {
@@ -99,18 +103,18 @@ export default function AddOrSelect(props) {
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
         <RadioGroup
-          {...props}
+          value={props.value}
           id="selectType"
           className={classes.resourceFormRadioGroupWrapper}
           label="What would you like to do?"
           defaultValue={useNew ? 'new' : 'existing'}
-          fullWidth
+          isValid
           onFieldChange={handleTypeChange}
           options={[
             {
               items: [
-                { label: `Setup New ${resourceLabel}`, value: 'new' },
-                { label: `Use Existing ${resourceLabel}`, value: 'existing' },
+                { label: `Set up new ${resourceName}`, value: 'new' },
+                { label: `Use existing ${resourceName}`, value: 'existing' },
               ],
             },
           ]}

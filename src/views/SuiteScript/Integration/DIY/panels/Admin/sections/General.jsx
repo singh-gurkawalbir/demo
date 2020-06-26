@@ -26,7 +26,7 @@ export default function GeneralSection({
   integrationId,
 }) {
   const classes = useStyles();
-
+  const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
   const integration = useSelector(
     state =>
       selectors.suiteScriptResource(state, {
@@ -35,6 +35,7 @@ export default function GeneralSection({
         ssLinkedConnectionId,
       })
   );
+  const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
 
 
   const flowSettingsMeta = useSelector(
@@ -80,7 +81,7 @@ export default function GeneralSection({
           resourceType="integrations"
           resourceId={integrationId}
           submitButtonLabel="Save"
-          disabled={integration && integration.isNotEditable}
+          disabled={!canEdit}
         />
       </div>
     </>

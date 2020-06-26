@@ -150,6 +150,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
   return (
     <div className={classes.root}>
+      <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
       <LoadSuiteScriptResources
         required

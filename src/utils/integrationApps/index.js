@@ -165,6 +165,7 @@ export default {
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
+      step.type === 'ssConnection' ||
       step.sourceConnection ||
       step.type === INSTALL_STEP_TYPES.FORM
     ) {
@@ -173,7 +174,7 @@ export default {
       } else if (step.isTriggered) {
         stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Configure';
+        stepText = isUninstall ? 'Click to uninstall' : 'Click to configure';
       }
     } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
@@ -182,17 +183,17 @@ export default {
         if (step.verifying) {
           stepText = 'Verifying...';
         } else {
-          stepText = 'Verify Now';
+          stepText = 'Verify now';
         }
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+        stepText = isUninstall ? 'Click to Uninstall' : 'Click to install';
       }
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
       stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
     } else {
-      stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+      stepText = isUninstall ? 'Click to uninstall' : 'Click to install';
     }
 
     return stepText;

@@ -61,38 +61,33 @@ export default function UserDetail(props) {
           } this user?`,
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
               label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
         break;
       case 'makeOwner':
         confirmDialog({
-          title: 'Transfer Account Ownership',
+          title: 'Confirm owner',
           isHtml: true,
-          message: `${
-            user.sharedWithUser.name
-              ? `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`
-              : `<b>${user.sharedWithUser.email}</b>`
-          } <br/> 
-          All owner privileges will be transferred to this user, and your account will be converted to Manager. <br/>
-          Please click Confirm to proceed with this change.
-          `,
+          message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -103,13 +98,14 @@ export default function UserDetail(props) {
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
               label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -182,6 +178,14 @@ export default function UserDetail(props) {
     [getMessageForAction, props]
   );
   const { user, integrationId, isAccountOwner } = props;
+  let userAccessLevel = user.accessLevel;
+  if (
+    user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    user.integrationAccessLevel &&
+    user.integrationAccessLevel.length > 0
+  ) {
+    userAccessLevel = USER_ACCESS_LEVELS.TILE;
+  }
 
   return (
     <>
@@ -209,7 +213,7 @@ export default function UserDetail(props) {
               [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
               [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
               [USER_ACCESS_LEVELS.TILE]: 'Tile',
-            }[user.accessLevel]}
+            }[userAccessLevel]}
           {integrationId &&
             {
               [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',

@@ -369,6 +369,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
   const sharedResourceTypeMap = {
     account: 'ashares',
     stack: 'sshares',
+    transfer: 'transfers',
   };
   const path = `/${sharedResourceTypeMap[resourceType]}/${id}/accept`;
   const opts = {
@@ -386,7 +387,9 @@ export function* acceptSharedInvite({ resourceType, id }) {
     return true;
   }
 
+
   const userPreferences = yield select(selectors.userPreferences);
+
 
   if (
     resourceType === 'account' &&
@@ -394,6 +397,9 @@ export function* acceptSharedInvite({ resourceType, id }) {
   ) {
     yield put(actions.auth.clearStore());
     yield put(actions.auth.initSession());
+  } else if (resourceType === 'transfer') {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('transfers'));
   } else {
     yield put(
       actions.resource.requestCollection(
@@ -407,6 +413,7 @@ export function* rejectSharedInvite({ resourceType, id }) {
   const sharedResourceTypeMap = {
     account: 'ashares',
     stack: 'sshares',
+    transfer: 'transfers',
   };
   const path = `/${sharedResourceTypeMap[resourceType]}/${id}/dismiss`;
   const opts = {
@@ -429,12 +436,15 @@ export function* rejectSharedInvite({ resourceType, id }) {
       )
     );
   }
-
-  yield put(
-    actions.resource.requestCollection(
-      `shared/${sharedResourceTypeMap[resourceType]}`
-    )
-  );
+  if (resourceType === 'transfer') {
+    yield put(actions.resource.requestCollection('transfers'));
+  } else {
+    yield put(
+      actions.resource.requestCollection(
+        `shared/${sharedResourceTypeMap[resourceType]}`
+      )
+    );
+  }
 }
 
 export function* requestNumEnabledFlows() {
@@ -453,6 +463,50 @@ export function* requestNumEnabledFlows() {
   }
 
   yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
+}
+
+export function* addSuiteScriptLinkedConnection({ connectionId }) {
+  const path = `/preferences/ssConnectionIds/${connectionId}`;
+  const opts = { method: 'PUT', body: {} };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not link suitescript integrator'
+      )
+    );
+  }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
+}
+
+export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
+  const path = `/preferences/ssConnectionIds/${connectionId}`;
+  const opts = { method: 'DELETE', body: {} };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not unlink suitescript integrator'
+      )
+    );
+  }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
 }
 
 export const userSagas = [
@@ -478,4 +532,12 @@ export const userSagas = [
     requestNumEnabledFlows
   ),
   takeLatest(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
+  takeEvery(
+    actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION,
+    addSuiteScriptLinkedConnection
+  ),
+  takeEvery(
+    actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
+    deleteSuiteScriptLinkedConnection
+  ),
 ];

@@ -99,7 +99,7 @@ export default function DynaWebHookSampleData(props) {
           color="secondary"
           className={classes.inlineActions}
           onClick={generateSampleData}>
-          Click to Show
+          Click to show
         </Button>
         <Typography className={classes.inlineActions}> or </Typography>
         <Button
@@ -107,7 +107,7 @@ export default function DynaWebHookSampleData(props) {
           color="secondary"
           className={classes.inlineActions}
           onClick={handleManualEnter}>
-          Manually Enter
+          Manually enter
         </Button>
       </div>
     </div>

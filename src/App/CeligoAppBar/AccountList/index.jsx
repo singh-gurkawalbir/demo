@@ -135,9 +135,6 @@ export default function AccountList() {
         message: 'Are you sure you want to leave this account? You will no longer have access to the account after you leave.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Leave',
             onClick: () => {
               if (userPreferences.defaultAShareId === account.id) {
@@ -146,6 +143,10 @@ export default function AccountList() {
 
               dispatch(actions.user.org.accounts.leave(account.id));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

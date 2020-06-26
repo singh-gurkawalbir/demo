@@ -23,7 +23,7 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '
 import {
   tileStatus,
   dragTileConfig,
-  dropTileConfig,
+  dropTileConfig
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
@@ -71,9 +71,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
-  const isNotYetSupported = ['integrator.io', 'eu.integrator.io'].includes(
-    getDomain()
-  );
+  const isNotYetSupported = [].includes(getDomain());
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
@@ -152,7 +150,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     <>
       {showNotYetSupportedDialog && (
         <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          <>Not Yet Available</>
+          Not Yet Available
           <Typography>
             This Integration{tile._connectorId && ' App'} is not yet available
             from this UI. To access your Integration
@@ -189,20 +187,18 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
                 </Link>
               </Typography>
             </CardTitle>
-            {tile.connector &&
-              tile.connector.applications &&
-              tile.connector.applications.length > 1 && (
-                <ApplicationImages>
-                  <ApplicationImg
-                    type={getApplication(tile.connector.applications[0])}
-                  />
-                  <span>
-                    <AddIcon />
-                  </span>
-                  <ApplicationImg
-                    type={getApplication(tile.connector.applications[1])}
-                  />
-                </ApplicationImages>
+            {tile.connector && tile.connector.applications && (
+              <ApplicationImages>
+                <ApplicationImg
+                  type={getApplication(tile.connector.applications[0])}
+                />
+                <span>
+                  <AddIcon />
+                </span>
+                <ApplicationImg
+                  type={getApplication(tile.connector.applications[1])}
+                />
+              </ApplicationImages>
             )}
           </Content>
           <Footer>

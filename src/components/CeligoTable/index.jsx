@@ -59,7 +59,6 @@ const useStyles = makeStyles(theme => ({
   },
   actionColHead: {
     width: 125,
-    textAlign: 'center',
   },
 }));
 
@@ -225,7 +224,7 @@ export default function CeligoTable({
               )
             )}
             {rowActions && (
-              <TableCell className={classes.actionColHead}>Actions</TableCell>
+              <TableCell align="center" className={classes.actionColHead}>Actions</TableCell>
             )}
           </TableRow>
         </TableHead>

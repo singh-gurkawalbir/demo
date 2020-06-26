@@ -40,9 +40,10 @@ const useStyles = makeStyles(theme => ({
       borderTopLeftRadius: 24,
       borderBottomLeftRadius: 24,
     },
+
     '& button:last-child': {
-      borderTopRightRadius: 24,
-      borderBottomRightRadius: 24,
+      borderTopRightRadius: '24px !important',
+      borderBottomRightRadius: '24px !important',
     },
   },
   item: {

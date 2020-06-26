@@ -125,7 +125,7 @@ export default (
           const { collection = [] } = action;
 
           if (resourceType.startsWith('suitescript/connections/')) {
-            const [, , ssLinkedConnectionId] = resourceType.split('/');
+            const [, , ssLinkedConnectionId, , integrationId] = resourceType.split('/');
 
             if (!draft[ssLinkedConnectionId]) {
               draft[ssLinkedConnectionId] = { tiles: [] };
@@ -150,7 +150,7 @@ export default (
                   _id: tile._integrationId,
                   name: tile.name,
                   displayName: tile.displayName,
-                  isNotEditable: tile.isNotEditable || (tile.name !== tile.displayName)
+                  isNotEditable: tile.isNotEditable || (tile.name !== tile.displayName),
                 };
 
                 if (tile._connectorId) {
@@ -185,7 +185,7 @@ export default (
               ];
             } else if (resourceType.endsWith('/connections')) {
               draft[ssLinkedConnectionId].connections = collection;
-            } else if (resourceType.endsWith('/flows')) {
+            } else if (resourceType.endsWith('/flows') && integrationId) {
               if (!draft[ssLinkedConnectionId].flows) {
                 draft[ssLinkedConnectionId].flows = [];
               }
@@ -210,6 +210,11 @@ export default (
                   };
                 }
               });
+            } else if (resourceType.endsWith('/flows')) {
+              // next data flows
+              draft[ssLinkedConnectionId].nextFlows = collection.filter(
+                f => f.version === 'V2' && f.integrationName !== 'Simple Imports'
+              );
             }
           }
         }

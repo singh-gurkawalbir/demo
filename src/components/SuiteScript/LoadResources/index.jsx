@@ -46,6 +46,8 @@ export default function LoadResources({
 
           if (resource.resourceType === 'flows') {
             path += `integrations/${integrationId}/flows`;
+          } else if (resource.resourceType === 'nextFlows') {
+            path += 'flows';
           } else {
             path += `${resource.resourceType}`;
           }

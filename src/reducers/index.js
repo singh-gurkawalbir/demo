@@ -2127,7 +2127,7 @@ export function addNewStoreSteps(state, integrationId) {
     return addNewStoreSteps;
   }
 
-  const modifiedSteps = produce(steps, draft => {
+  const modifiedSteps = produce(steps, (draft) => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -2639,16 +2639,13 @@ export function userPermissionsOnConnection(state, connectionId) {
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
+    let integrationPermissions = {};
 
     ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!highestPermissionIntegration.accessLevel) {
-          highestPermissionIntegration = permissions.integrations[i._id];
-        } else if (
-          highestPermissionIntegration.accessLevel ===
-          INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          highestPermissionIntegration = permissions.integrations[i._id];
+      integrationPermissions = permissions.integrations[i._id] || permissions.integrations.all || {};
+      if (integrationPermissions.accessLevel) {
+        if (!highestPermissionIntegration.accessLevel || highestPermissionIntegration.accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR) {
+          highestPermissionIntegration = integrationPermissions;
         }
       }
     });
@@ -2701,6 +2698,9 @@ export const resourcePermissions = (
     }
     if (resourceId) {
       let value = permissions[resourceType][resourceId];
+      if (!value && resourceType === 'integrations') {
+        value = permissions[resourceType].all;
+      }
 
       // remove tile level permissions added to connector while are not valid.
       if (resourceData && resourceData._connectorId) {
@@ -2977,11 +2977,10 @@ export function tiles(state) {
     return {
       ...i,
       permissions: {
-        accessLevel: (permissions.integrations[i._id] || {}).accessLevel,
+        accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
         connections: {
           edit:
-            permissions.integrations[i._id] &&
-            permissions.integrations[i._id].connections.edit,
+            (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
         },
       },
     };
@@ -2991,52 +2990,51 @@ export function tiles(state) {
   let connector;
   let status;
 
-  return tiles
-    .map(t => {
-      integration = integrations.find(i => i._id === t._integrationId) || {};
+  return tiles.map(t => {
+    integration = integrations.find((i) => i._id === t._integrationId) || {};
 
-      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-        status = TILE_STATUS.UNINSTALL;
-      } else if (
-        t._connectorId &&
-        integration.mode !== INTEGRATION_MODES.SETTINGS
-      ) {
-        status = TILE_STATUS.IS_PENDING_SETUP;
-      } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-        status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
-      } else if (t.numError && t.numError > 0) {
-        status = TILE_STATUS.HAS_ERRORS;
-      } else {
-        status = TILE_STATUS.SUCCESS;
-      }
+    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+      status = TILE_STATUS.UNINSTALL;
+    } else if (
+      t._connectorId &&
+      integration.mode !== INTEGRATION_MODES.SETTINGS
+    ) {
+      status = TILE_STATUS.IS_PENDING_SETUP;
+    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
+      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+    } else if (t.numError && t.numError > 0) {
+      status = TILE_STATUS.HAS_ERRORS;
+    } else {
+      status = TILE_STATUS.SUCCESS;
+    }
 
-      if (t._connectorId) {
-        connector = published.find(i => i._id === t._connectorId) || {
-          user: {},
-        };
-
-        return {
-          ...t,
-          status,
-          integration: {
-            mode: integration.mode,
-            permissions: integration.permissions,
-          },
-          connector: {
-            owner: connector.user.company || connector.user.name,
-            applications: connector.applications || [],
-          },
-        };
-      }
+    if (t._connectorId) {
+      connector = published.find((i) => i._id === t._connectorId) || {
+        user: {},
+      };
 
       return {
         ...t,
         status,
         integration: {
+          mode: integration.mode,
           permissions: integration.permissions,
         },
+        connector: {
+          owner: connector.user.company || connector.user.name,
+          applications: connector.applications || [],
+        },
       };
-    });
+    }
+
+    return {
+      ...t,
+      status,
+      integration: {
+        permissions: integration.permissions,
+      },
+    };
+  });
 }
 // #endregion
 
@@ -3816,6 +3814,7 @@ export function integrationAppImportMetadata(state, importId) {
   );
 }
 
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
@@ -3944,14 +3943,17 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
+  const { merged: resource = {} } = resourceData(
+    state,
+    'exports',
+    resourceId
+  );
   if (isNewId(resourceId)) {
-    const { merged: resource = {} } = resourceData(
-      state,
-      'exports',
-      resourceId
-    );
-
     return !resource.isLookup;
+  }
+  // In case of webhook, by default it is page generator.
+  if (resource.type === 'webhook') {
+    return true;
   }
 
   // Search in flow doc to determine pg/pp
@@ -4227,6 +4229,7 @@ export function isPreviewPanelAvailableForResource(
   resourceType,
   flowId
 ) {
+  if (resourceType !== 'exports') return false;
   const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
@@ -4500,6 +4503,8 @@ export function suiteScriptResourceStatus(
 
   if (resourceType === 'flows') {
     path += `integrations/${integrationId}/flows`;
+  } else if (resourceType === 'nextFlows') {
+    path += 'flows';
   } else {
     path += `${resourceType}`;
   }
@@ -4986,4 +4991,188 @@ export const rdbmsConnectionType = (state, connectionId) => {
 
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, connectionId) {
+  const connection = resource(state, 'connections', connectionId);
+
+  if (!(connection && connection.netsuite && connection.netsuite.account)) {
+    return false;
+  }
+
+  return fromSession.netsuiteAccountHasSuiteScriptIntegrations(
+    state && state.session,
+    connection.netsuite.account
+  );
+}
+
+export function canLinkSuiteScriptIntegrator(state, connectionId) {
+  const preferences = userPreferences(state);
+  if (preferences && preferences.ssConnectionIds) {
+    if (preferences.ssConnectionIds.includes(connectionId)) {
+      return true;
+    }
+
+    const linkedAccounts = [];
+    let connection = resource(state, 'connections', connectionId);
+    if (!connection?.netsuite?.account || connection._connectorId) {
+      return false;
+    }
+    const connectionAccount = connection.netsuite.account.toUpperCase();
+    preferences.ssConnectionIds.forEach(connId => {
+      connection = resource(state, 'connections', connId);
+      if (connection && connection.netsuite && connection.netsuite.account) {
+        linkedAccounts.push(connection.netsuite.account.toUpperCase());
+      }
+    });
+    if (linkedAccounts.includes(connectionAccount)) {
+      return false;
+    }
+  }
+
+  return netsuiteAccountHasSuiteScriptIntegrations(state, connectionId);
+}
+
+export function suiteScriptIntegratorLinkedConnectionId(state, account) {
+  const preferences = userPreferences(state);
+  if (!preferences || !preferences.ssConnectionIds) {
+    return;
+  }
+
+  let linkedConnectionId;
+  let connection;
+  preferences.ssConnectionIds.forEach(connId => {
+    connection = resource(state, 'connections', connId);
+    if (
+      connection?.netsuite?.account?.toUpperCase() === account.toUpperCase()
+    ) {
+      linkedConnectionId = connId;
+    }
+  });
+  return linkedConnectionId;
+}
+
+const emptyArr = [];
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  if (!state) return null;
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
+  const modifiedSteps = produce(installer.steps || emptyArr, (draft) => {
+    const unCompletedStep = draft.find(s => !s.completed);
+
+    if (unCompletedStep) {
+      unCompletedStep.isCurrentStep = true;
+    }
+  });
+  return {...installer, steps: modifiedSteps};
+}
+
+export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
+  if (!state) return null;
+  let isInstallComplete = false;
+  const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
+
+  if (!installer || !installer.steps) return isInstallComplete;
+  isInstallComplete =
+    installer.steps.length &&
+    !installer.steps.reduce((result, step) => result || !step.completed, false);
+
+  return isInstallComplete;
+}
+
+export function userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId) {
+  return !!resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
+}
+export function suiteScriptMappings(state) {
+  return fromSession.suiteScriptMappings(state && state.session);
+}
+export function suitesciptMappingsChanged(state) {
+  return fromSession.suitesciptMappingsChanged(state && state.session);
+}
+export function suitesciptMappingsSaveStatus(state) {
+  return fromSession.suitesciptMappingsSaveStatus(state && state.session);
+}
+
+
+export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId,
+    ssLinkedConnectionId,
+  });
+  return flows && flows.find(flow => flow._id === flowId);
+}
+export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig } = flow;
+  const { type: importType, _connectionId } = importConfig;
+  if (importType === 'netsuite') {
+    const { recordType } = importConfig.netsuite;
+    const { subRecordType } = options;
+    let commMetaPath;
+
+    if (subRecordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    }
+
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
+    });
+
+    return { data, status };
+  }
+  if (importType === 'salesforce') {
+    const { sObjectType } = importConfig.salesforce;
+
+    const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+    // TO check
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+      // filterKey:
+      //   salesforce.api === 'compositerecord'
+      //     ? 'salesforce-sObjectCompositeMetadata'
+      //     : 'salesforce-recordType',
+    });
+
+    return { data, status };
+  }
+}
+
+export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig} = flow;
+
+  const {type: importType, _connectionId, salesforce } = importConfig;
+
+  if (importType !== 'salesforce') {
+    return emptyObject;
+  }
+  const {sObjectType} = salesforce;
+
+  const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+  return metadataOptionsAndResources({
+    state,
+    connectionId: ssLinkedConnectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
 }

@@ -164,15 +164,16 @@ export default function JobActionsMenu({
     [enqueueSnackbar]
   );
 
-  function handleMenuClose() {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
   }
 
-  const handleRunStart = () => {
+  const handleRunStart = useCallback(() => {
+    handleMenuClose();
     setActionsToMonitor({
       ...actionsToMonitor,
       runFlow: {
@@ -181,7 +182,7 @@ export default function JobActionsMenu({
       },
     });
     dispatch(actions.job.paging.setCurrentPage(0));
-  };
+  }, [actionsToMonitor, dispatch, handleMenuClose, job._flowId]);
 
   function handleActionClick(action) {
     handleMenuClose();
@@ -202,9 +203,6 @@ export default function JobActionsMenu({
         message:
           'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
-          {
-            label: 'No, go back',
-          },
           {
             label: 'Yes, cancel',
             onClick: () => {
@@ -248,6 +246,10 @@ export default function JobActionsMenu({
 
               dispatch(actions.job.cancel({ jobId: job._id }));
             },
+          },
+          {
+            label: 'No, go back',
+            color: 'secondary',
           },
         ],
       });
