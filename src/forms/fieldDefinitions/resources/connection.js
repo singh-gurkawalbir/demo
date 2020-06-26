@@ -1851,7 +1851,8 @@ export default {
     options: [{
       items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
     }
-    ]
+    ],
+    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',
