@@ -79,7 +79,7 @@ export const userNotifications = createSelector(
         type: 'transfer',
         nameOrCompany: t.ownerUser.name || t.ownerUser.company,
         email: t.ownerUser.email,
-        message: `Wants to transfer integration(s) ${interationsDoc.join(',')} to you.`,
+        message: `wants to transfer integration(s) ${interationsDoc.join(',')} to you.`,
       });
     });
 

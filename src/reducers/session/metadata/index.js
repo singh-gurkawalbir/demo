@@ -178,6 +178,7 @@ export const optionsFromMetadata = ({
     metaFilter(data, {
       applicationResource,
       connectionId,
+      commMetaPath
     });
 
   return {

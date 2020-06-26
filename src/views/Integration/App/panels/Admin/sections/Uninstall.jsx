@@ -46,9 +46,6 @@ export default function UninstallSection({ storeId, integrationId }) {
       message: 'Are you sure you want to uninstall?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: 'Uninstall',
           onClick: () => {
             if (
@@ -64,6 +61,10 @@ export default function UninstallSection({ storeId, integrationId }) {
               );
             }
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });

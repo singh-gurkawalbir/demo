@@ -465,11 +465,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
@@ -1308,9 +1309,11 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id })
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
 
 };
+
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {
@@ -2038,6 +2041,11 @@ const suiteScript = {
         ssLinkedConnectionId,
       }),
   },
+  importSampleData: {
+    request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
+      ssLinkedConnectionId, integrationId, flowId, options
+    })
+  },
   sampleData: {
     request: (
       ssLinkedConnectionId,
@@ -2302,6 +2310,50 @@ const suiteScript = {
         id: connectorId,
       }),
   },
+  mapping: {
+    init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
+        ssLinkedConnectionId, integrationId, flowId
+      }),
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options
+      }),
+    patchField: ({ field, key, value }) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
+    delete: (key) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
+        key
+      }),
+    patchSettings: (key, settings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
+        key, settings
+      }),
+    updateLookups: (lookups) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
+        lookups
+      }),
+    changeOrder: (mappings) =>
+      action(actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER, {
+        mappings
+      }),
+    save: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE, {}),
+    saveFailed: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED, { }),
+    saveComplete: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE, {}),
+    refreshGenerates: () =>
+      action(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, {}),
+    patchIncompleteGenerates: (
+      {key, value},
+    ) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
+    updateMappings: (mappings) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
+      mappings
+    }),
+    updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
+    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
+  }
 };
 const editorSampleData = {
   request: ({

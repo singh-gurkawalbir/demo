@@ -3,8 +3,10 @@ import resourceForm, * as fromResourceForm from './resourceForm';
 import flows, * as fromFlows from './flows';
 import account, * as fromAccount from './account';
 import installer, * as fromInstaller from './installer';
+import mappings, * as fromMappings from './mappings';
 
 export default combineReducers({
+  mappings,
   resourceForm,
   flows,
   account,
@@ -51,4 +53,13 @@ export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
 
 export function installerData(state, id) {
   return fromInstaller.installerData(state && state.installer, id);
+}
+export function mappingState(state) {
+  return fromMappings.mappingState(state && state.mappings);
+}
+export function mappingsChanged(state) {
+  return fromMappings.mappingsChanged(state && state.mappings);
+}
+export function mappingsSaveStatus(state) {
+  return fromMappings.mappingsSaveStatus(state && state.mappings);
 }

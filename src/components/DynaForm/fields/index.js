@@ -103,6 +103,7 @@ import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
+import DynaRoutingRules from './editors/DynaRoutingRules';
 
 export default {
   mode: DynaMode,
@@ -219,4 +220,5 @@ export default {
   selectwithinput: DynaSelectWithInput,
   jsonresourcepath: DynaJsonResourcePath,
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
+  routingrules: DynaRoutingRules,
 };

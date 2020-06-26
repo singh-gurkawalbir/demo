@@ -711,3 +711,20 @@ export function suiteScriptIntegrationAppInstallerData(state, id) {
     id
   );
 }
+export function suiteScriptMappings(state) {
+  return fromSuiteScript.mappingState(
+    state && state.suiteScript
+  );
+}
+
+export function suitesciptMappingsChanged(state) {
+  return fromSuiteScript.mappingsChanged(
+    state && state.suiteScript
+  );
+}
+
+export function suitesciptMappingsSaveStatus(state,) {
+  return fromSuiteScript.mappingsSaveStatus(
+    state && state.suiteScript
+  );
+}

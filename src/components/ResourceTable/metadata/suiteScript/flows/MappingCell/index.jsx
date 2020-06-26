@@ -1,23 +1,26 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import MapDataIcon from '../../../../../icons/MapDataIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
 import { flowSupportsMapping } from '../../../../../../utils/suiteScript';
 
 export default function MappingCell({flow}) {
   const history = useHistory();
+  const location = useLocation();
   const showMapping = flowSupportsMapping(flow);
   const handleClick = useCallback(() => {
-    history.push(`flows/${flow._id}/mapping`);
-  }, [history, flow._id]);
+    history.push(`${location.pathname}/${flow._id}/mapping`);
+  }, [location.pathname, flow._id, history]);
 
   if (!showMapping) return null;
 
   return (
-    <IconButtonWithTooltip
-      tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
-      onClick={handleClick}>
-      <MapDataIcon />
-    </IconButtonWithTooltip>
+    <>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
+        onClick={handleClick}>
+        <MapDataIcon />
+      </IconButtonWithTooltip>
+    </>
   );
 }

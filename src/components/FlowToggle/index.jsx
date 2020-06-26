@@ -50,9 +50,6 @@ export default function FlowToggle({
       message,
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
           label: `${enable ? 'Enable' : 'Disable'}`,
           onClick: () => {
             if (flow._connectorId && !istwoDotZeroFrameWork) {
@@ -100,6 +97,10 @@ export default function FlowToggle({
               );
             }
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });

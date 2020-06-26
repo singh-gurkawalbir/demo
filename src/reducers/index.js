@@ -2591,16 +2591,13 @@ export function userPermissionsOnConnection(state, connectionId) {
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
+    let integrationPermissions = {};
 
     ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!highestPermissionIntegration.accessLevel) {
-          highestPermissionIntegration = permissions.integrations[i._id];
-        } else if (
-          highestPermissionIntegration.accessLevel ===
-          INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          highestPermissionIntegration = permissions.integrations[i._id];
+      integrationPermissions = permissions.integrations[i._id] || permissions.integrations.all || {};
+      if (integrationPermissions.accessLevel) {
+        if (!highestPermissionIntegration.accessLevel || highestPermissionIntegration.accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR) {
+          highestPermissionIntegration = integrationPermissions;
         }
       }
     });
@@ -2653,6 +2650,9 @@ export const resourcePermissions = (
     }
     if (resourceId) {
       let value = permissions[resourceType][resourceId];
+      if (!value && resourceType === 'integrations') {
+        value = permissions[resourceType].all;
+      }
 
       // remove tile level permissions added to connector while are not valid.
       if (resourceData && resourceData._connectorId) {
@@ -2929,11 +2929,10 @@ export function tiles(state) {
     return {
       ...i,
       permissions: {
-        accessLevel: (permissions.integrations[i._id] || {}).accessLevel,
+        accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
         connections: {
           edit:
-            permissions.integrations[i._id] &&
-            permissions.integrations[i._id].connections.edit,
+            (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
         },
       },
     };
@@ -3767,6 +3766,7 @@ export function integrationAppImportMetadata(state, importId) {
   );
 }
 
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
@@ -3895,14 +3895,17 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
+  const { merged: resource = {} } = resourceData(
+    state,
+    'exports',
+    resourceId
+  );
   if (isNewId(resourceId)) {
-    const { merged: resource = {} } = resourceData(
-      state,
-      'exports',
-      resourceId
-    );
-
     return !resource.isLookup;
+  }
+  // In case of webhook, by default it is page generator.
+  if (resource.type === 'webhook') {
+    return true;
   }
 
   // Search in flow doc to determine pg/pp
@@ -4178,6 +4181,7 @@ export function isPreviewPanelAvailableForResource(
   resourceType,
   flowId
 ) {
+  if (resourceType !== 'exports') return false;
   const { merged: resourceObj = {} } = resourceData(
     state,
     resourceType,
@@ -4934,4 +4938,98 @@ export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
 
 export function userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId) {
   return !!resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
+}
+export function suiteScriptMappings(state) {
+  return fromSession.suiteScriptMappings(state && state.session);
+}
+export function suitesciptMappingsChanged(state) {
+  return fromSession.suitesciptMappingsChanged(state && state.session);
+}
+export function suitesciptMappingsSaveStatus(state) {
+  return fromSession.suitesciptMappingsSaveStatus(state && state.session);
+}
+
+
+export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId,
+    ssLinkedConnectionId,
+  });
+  return flows && flows.find(flow => flow._id === flowId);
+}
+export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig } = flow;
+  const { type: importType, _connectionId } = importConfig;
+  if (importType === 'netsuite') {
+    const { recordType } = importConfig.netsuite;
+    const { subRecordType } = options;
+    let commMetaPath;
+
+    if (subRecordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    }
+
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
+    });
+
+    return { data, status };
+  }
+  if (importType === 'salesforce') {
+    const { sObjectType } = importConfig.salesforce;
+
+    const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+    // TO check
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+      // filterKey:
+      //   salesforce.api === 'compositerecord'
+      //     ? 'salesforce-sObjectCompositeMetadata'
+      //     : 'salesforce-recordType',
+    });
+
+    return { data, status };
+  }
+}
+
+export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig} = flow;
+
+  const {type: importType, _connectionId, salesforce } = importConfig;
+
+  if (importType !== 'salesforce') {
+    return emptyObject;
+  }
+  const {sObjectType} = salesforce;
+
+  const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+  return metadataOptionsAndResources({
+    state,
+    connectionId: ssLinkedConnectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
 }

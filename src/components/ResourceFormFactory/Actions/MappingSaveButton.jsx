@@ -27,6 +27,7 @@ const MappingSaveButton = props => {
     flowId,
   } = props;
   const [saveTrigerred, setSaveTriggered] = useState(false);
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { validationErrMsg } = useSelector(state =>
     selectors.mapping(state, id)
@@ -53,6 +54,8 @@ const MappingSaveButton = props => {
     saveTerminated,
     onSave,
     resourceType: 'mappings',
+    disableSaveOnClick,
+    setDisableSaveOnClick
   });
   const handleButtonClick = () => {
     if (validationErrMsg) {
