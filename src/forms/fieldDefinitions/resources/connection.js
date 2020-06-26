@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
 import { isProduction } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
@@ -1019,7 +1019,6 @@ export default {
     type: 'text',
     label: 'Callback URL',
     defaultDisabled: true,
-    visible: !isProduction(),
     defaultValue: () => {
       if (isProduction()) {
         return 'https://integrator.io/connection/oauth2callback';
@@ -1874,22 +1873,12 @@ export default {
   },
   as2url: {
     type: 'select',
-    label: 'AS2 URL',
-    options: [
-      {
-        items: [
-          {
-            label: 'http://api.staging.integrator.io/v1/as2',
-            value: 'http://api.staging.integrator.io/v1/as2',
-          },
-          {
-            label: 'https://api.staging.integrator.io/v1/as2',
-            value: 'https://api.staging.integrator.io/v1/as2',
-          },
-        ],
-      },
+    label: 'AS2 url',
+    options: [{
+      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
+    }
     ],
-    value: 'https://api.staging.integrator.io/v1/as2',
+    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',
