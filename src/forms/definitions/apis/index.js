@@ -106,7 +106,7 @@ export default {
       {
         collapsed: false,
         label: 'General',
-        fields: ['name', 'description', 'apiIdentifier', 'script'],
+        fields: ['name', 'description', 'script'],
       },
       {
         collapsed: true,
@@ -115,6 +115,7 @@ export default {
           'enableShipworksAuthentication',
           'shipworks.username',
           'shipworks.password',
+          'apiIdentifier',
         ],
       },
     ],
