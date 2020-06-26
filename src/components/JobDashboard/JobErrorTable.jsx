@@ -205,6 +205,7 @@ function JobErrorTable({
           },
           {
             label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -386,6 +387,7 @@ function JobErrorTable({
           },
           {
             label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

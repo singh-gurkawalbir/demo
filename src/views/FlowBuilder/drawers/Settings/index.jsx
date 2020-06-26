@@ -9,6 +9,7 @@ import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import * as selectors from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -144,9 +145,6 @@ export default function SettingsDrawer({
       ];
 
       if (Object.hasOwnProperty.call(formVal, 'settings')) {
-        // dont submit the form if there is validation error
-        // REVIEW: re-visit once Surya's form PR is merged
-        if (formVal && formVal.settings && formVal.settings.__invalid) return;
         patchSet.push({
           op: 'replace',
           path: '/settings',
@@ -156,10 +154,29 @@ export default function SettingsDrawer({
 
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-      history.goBack();
     },
-    [dispatch, integrationId, flow._id, history]
+    [dispatch, integrationId, flow._id]
   );
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/flows/${flow._id}`,
+      onSave: handleSubmit,
+      onClose: handleClose,
+    }
+  );
+
+  const validateAndSubmit = useCallback(closeOnSave => formVal => {
+    if (Object.hasOwnProperty.call(formVal, 'settings')) {
+      // dont submit the form if there is validation error
+      // REVIEW: re-visit once Surya's form PR is merged
+      if (formVal && formVal.settings && formVal.settings.__invalid) {
+        return;
+      }
+    }
+    submitHandler(closeOnSave)(formVal);
+  }, [submitHandler]);
+
   return (
     <RightDrawer
       path="settings"
@@ -176,10 +193,19 @@ export default function SettingsDrawer({
           <DynaSubmit
             resourceType={resourceType}
             resourceId={resourceId}
-            onClick={handleSubmit}
-            color="primary"
-            variant="outlined">
-            Save
+            data-test="saveFlowSettings"
+            onClick={validateAndSubmit()}
+            disabled={disableSave}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            resourceType={resourceType}
+            resourceId={resourceId}
+            data-test="saveAndCloseFlowSettings"
+            onClick={validateAndSubmit(true)}
+            disabled={disableSave}
+            color="secondary">
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button onClick={handleClose} variant="text" color="primary">
             Cancel

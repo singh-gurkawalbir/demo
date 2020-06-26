@@ -398,6 +398,14 @@ export function accessLevel(state, accountId) {
     return undefined;
   }
 
+  if (
+    account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    account.integrationAccessLevel &&
+    account.integrationAccessLevel.length > 0
+  ) {
+    return USER_ACCESS_LEVELS.TILE;
+  }
+
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
 }
 
@@ -581,6 +589,18 @@ export function permissions(
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;
+
+    if (account && account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+      permissions.integrations.none = {
+        accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+        flows: {},
+        connections: {},
+      };
+      permissions.integrations.all = { ...permissions.integrations.none };
+      permissions.integrations.connectors = {
+        ...permissions.integrations.none,
+      };
+    }
 
     if (
       account &&

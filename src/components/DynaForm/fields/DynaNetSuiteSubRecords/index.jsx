@@ -154,9 +154,6 @@ export default function DynaNetSuiteSubRecords(props) {
         message: 'Are you sure you want to remove this subrecord import?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Remove',
             onClick: () => {
               const updatedSubrecords = subrecords.filter(
@@ -177,6 +174,10 @@ export default function DynaNetSuiteSubRecords(props) {
                 )
               );
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
