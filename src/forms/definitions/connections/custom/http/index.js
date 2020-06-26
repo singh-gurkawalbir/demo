@@ -178,6 +178,7 @@ import walmart from './walmart';
 import logisense from './logisense';
 import joor from './joor';
 import sapbydesign from './sapbydesign';
+import concurinvoice from './concurinvoice';
 import concurexpense from './concurexpense';
 
 export default {
@@ -361,4 +362,5 @@ export default {
   logisense,
   joor,
   sapbydesign,
+  concurinvoice,
 };

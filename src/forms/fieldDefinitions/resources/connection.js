@@ -51,12 +51,11 @@ export default {
     type: 'text',
     label: 'Application',
     defaultValue: r => {
+      const application = r.assistant || r.type;
       if (isNewId(r._id)) {
-        return r.application;
+        return application;
       }
       const applications = applicationsList();
-      const application = r.assistant || r.type;
-
       const app = applications.find(a => a.id === application) || {};
       return app.name;
     },
@@ -2119,12 +2118,13 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
-    type: 'hook',
-    label: '',
+    type: 'routingrules',
+    label: 'Routing rules editor',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
-    helpkey: 'export.as2.contentBasedFlowRouter',
+    helpKey: 'connection.as2.contentBasedFlowRouter',
+    title: 'Choose a script and function name to use for determining AS2 message routing',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
@@ -2576,10 +2576,12 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access key ID',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
+    required: true,
   },
   // #endregion dynamodb
   settings: {

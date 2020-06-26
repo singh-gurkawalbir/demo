@@ -255,6 +255,20 @@ const connectors = [
     icon: 'concur',
   },
   {
+    id: 'concurexpense',
+    name: 'Concur Expense',
+    type: 'http',
+    assistant: 'concurexpense',
+    icon: 'concur',
+  },
+  {
+    id: 'concurinvoice',
+    name: 'Concur Invoice',
+    type: 'http',
+    assistant: 'concurinvoice',
+    icon: 'concur',
+  },
+  {
     id: 'constantcontactv2',
     name: 'Constant Contact V2',
     type: 'rest',
