@@ -16,6 +16,7 @@ import DashboardPanel from './panels/Dashboard';
 // import IntegrationTabs from '../common/Tabs';
 import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import IntegrationTabs from '../common/Tabs';
+import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -100,7 +101,11 @@ export default function Integration({ match }) {
           match={match}
           className={classes.PageWrapper}
         />
+        {/* Add Suitescript flow related component */}
+        <SuiteScriptMappingDrawer
+        />
       </LoadSuiteScriptResources>
+
     </>
   );
 }

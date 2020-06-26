@@ -3766,6 +3766,7 @@ export function integrationAppImportMetadata(state, importId) {
   );
 }
 
+
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
@@ -4933,4 +4934,99 @@ export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
     !installer.steps.reduce((result, step) => result || !step.completed, false);
 
   return isInstallComplete;
+}
+
+export function suiteScriptMappings(state) {
+  return fromSession.suiteScriptMappings(state && state.session);
+}
+export function suitesciptMappingsChanged(state) {
+  return fromSession.suitesciptMappingsChanged(state && state.session);
+}
+export function suitesciptMappingsSaveStatus(state) {
+  return fromSession.suitesciptMappingsSaveStatus(state && state.session);
+}
+
+
+export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId,
+    ssLinkedConnectionId,
+  });
+  return flows && flows.find(flow => flow._id === flowId);
+}
+export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig } = flow;
+  const { type: importType, _connectionId } = importConfig;
+  if (importType === 'netsuite') {
+    const { recordType } = importConfig.netsuite;
+    const { subRecordType } = options;
+    let commMetaPath;
+
+    if (subRecordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    }
+
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
+    });
+
+    return { data, status };
+  }
+  if (importType === 'salesforce') {
+    const { sObjectType } = importConfig.salesforce;
+
+    const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+    // TO check
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+      // filterKey:
+      //   salesforce.api === 'compositerecord'
+      //     ? 'salesforce-sObjectCompositeMetadata'
+      //     : 'salesforce-recordType',
+    });
+
+    return { data, status };
+  }
+}
+
+export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { import: importConfig} = flow;
+
+  const {type: importType, _connectionId, salesforce } = importConfig;
+
+  if (importType !== 'salesforce') {
+    return emptyObject;
+  }
+  const {sObjectType} = salesforce;
+
+  const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+  return metadataOptionsAndResources({
+    state,
+    connectionId: ssLinkedConnectionId,
+    commMetaPath,
+    filterKey: 'salesforce-masterRecordTypeInfo',
+  });
 }
