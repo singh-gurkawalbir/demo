@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function JobErrorTable({
-  rowsPerPage = 10,
+  rowsPerPage = 50,
   jobErrors,
   errorCount,
   job,
@@ -517,7 +517,6 @@ function JobErrorTable({
                   'aria-label': 'Next Page',
                 }}
                 onChangePage={handleChangePage}
-                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
               />
 
               <CeligoTable

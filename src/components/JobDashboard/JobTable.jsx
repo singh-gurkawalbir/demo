@@ -24,7 +24,6 @@ const useStyles = makeStyles(theme => ({
   checkFlow: {
     paddingLeft: 40,
   },
-  tablePaginationRoot: { float: 'right' },
   name: {
     width: '18.15%',
     wordBreak: 'break-word',
@@ -188,7 +187,8 @@ function JobTable({
       </Table>
 
       <ErrorDrawer
-        height={isFlowBuilderView ? 'short' : 'tall'}
+        // for now, force tall (default)
+        // height={isFlowBuilderView ? 'short' : 'tall'}
         jobId={showErrorDialogFor.jobId}
         parentJobId={showErrorDialogFor.parentJobId}
         showResolved={showErrorDialogFor.showResolved}
