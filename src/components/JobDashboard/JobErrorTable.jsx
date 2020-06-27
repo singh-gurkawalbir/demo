@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   error: {
     color: theme.palette.error.main,
   },
-  info: {
+  resolved: {
     color: theme.palette.info.main,
   },
   darkGray: {
@@ -424,7 +424,7 @@ function JobErrorTable({
           Error: <span className={classes.error}>{job.numError}</span>
         </li>
         <li>
-          Resolved: <span className={classes.info}>{job.numResolved}</span>
+          Resolved: <span className={classes.resolved}>{job.numResolved}</span>
         </li>
         <li>
           Duration: <span className={classes.darkGray}>{job.duration}</span>
@@ -549,7 +549,9 @@ function JobErrorTable({
                   {
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => (r.resolved ? 'Yes' : 'No'),
+                    value: r => r.resolved ?
+                      (<span className={classes.resolved}>Yes</span>)
+                      : (<span className={classes.error}>No</span>),
                   },
                   {
                     heading: 'Source',

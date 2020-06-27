@@ -21,7 +21,9 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     // height: theme.spacing(10),
     marginTop: theme.spacing(1),
-    padding: theme.spacing(2, 2, 1, 0),
+    padding: theme.spacing(2, 0, 1, 0),
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   spinner: {
     marginRight: theme.spacing(1),
@@ -31,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DrawerContent() {
+function DrawerContent({jobId, flowJobId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
@@ -79,6 +81,15 @@ function DrawerContent() {
     }
   }, []);
 
+  const handleRetry = useCallback(() => {
+    dispatch(
+      actions.job.retrySelectedRetries({
+        jobId, flowJobId, selectedRetryIds: [retryId],
+      })
+    );
+    history.goBack(2);
+  }, [dispatch, flowJobId, history, jobId, retryId]);
+
   useEffect(() => {
     if (retryId && !retryData) {
       dispatch(actions.job.requestRetryData({ retryId }));
@@ -103,20 +114,23 @@ function DrawerContent() {
 
       {error && <Typography className={classes.errorText} component="div" color="error">{error}</Typography>}
 
-      <ButtonGroup className={classes.actions}>
-        <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
-        <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save and Close</Button>
-        <Button
-          variant="text"
-          // eslint-disable-next-line react/jsx-handler-names
-          onClick={history.goBack}>Cancel
-        </Button>
-      </ButtonGroup>
+      <div className={classes.actions}>
+        <ButtonGroup>
+          <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
+          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save and Close</Button>
+          <Button
+            variant="text"
+            // eslint-disable-next-line react/jsx-handler-names
+            onClick={history.goBack}>Cancel
+          </Button>
+        </ButtonGroup>
+        <Button disabled={!!error || touched} variant="outlined" color="secondary" onClick={handleRetry}>Retry</Button>
+      </div>
     </div>
   );
 }
 
-export default function RetryDrawer({height}) {
+export default function RetryDrawer({height, jobId, flowJobId}) {
   return (
     <RightDrawer
       path="editRetry/:retryId"
@@ -124,7 +138,7 @@ export default function RetryDrawer({height}) {
       width="medium"
       title="Edit retry data"
       variant="permanent">
-      <DrawerContent />
+      <DrawerContent jobId={jobId} flowJobId={flowJobId} />
     </RightDrawer>
   );
 }

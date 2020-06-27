@@ -115,7 +115,7 @@ export default function ErrorDrawer({
         </div>
       ) : (
         <>
-          <RetryDrawer height={height} />
+          <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
 
           <JobErrorTable
             jobErrors={jobErrors}
