@@ -69,7 +69,10 @@ export default function DynaSettings(props) {
     [id, onFieldChange]
   );
   const handleExpandClick = useCallback(() => {
-    // HACK! to prevent event bubbling
+    // HACK! to overcome event bubbling.
+    // We don't want child views affecting the panel state.
+    // TODO: Our mistake here is that the formBuilder drawer
+    // is a child of the summary panel.
     if (match.isExact) {
       setIsCollapsed(!isCollapsed);
     }
