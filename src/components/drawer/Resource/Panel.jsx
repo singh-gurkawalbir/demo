@@ -126,7 +126,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
     return 'Fix offline connection';
   }
-  if (resourceType === 'accesstokens') {
+  if (['accesstokens', 'apis'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
 
@@ -363,7 +363,18 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-
+  // useTechAdaptorForm field we are using for showing banner on the screen incase
+  // import/export assistant is not present and if we are showing generic adaptor
+  function getTechAdaptorFormValue() {
+    if (!stagedProcessor || !stagedProcessor.patch) {
+      return resource?.assistant && resource?.useTechAdaptorForm;
+    }
+    const useTechAdaptorForm = stagedProcessor.patch.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    );
+    return !!useTechAdaptorForm?.value;
+  }
+  const showNotificationToaster = getTechAdaptorFormValue();
   return (
     <>
       <div className={classes.root}>
@@ -407,6 +418,8 @@ export default function Panel(props) {
             submitButtonColor={submitButtonColor}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
+            showNotificationToaster={showNotificationToaster}
+            assistantName={applicationType}
             {...props}
           />
         </LoadResources>

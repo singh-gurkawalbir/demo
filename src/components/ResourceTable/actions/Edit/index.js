@@ -6,8 +6,8 @@ import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 export default {
   label: (rowData, actionProps) => {
-    if (actionProps.resourceType === 'accesstokens') {
-      return 'Edit API token';
+    if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
+      return `Edit ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType]}`;
     }
     return `Edit ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
   },

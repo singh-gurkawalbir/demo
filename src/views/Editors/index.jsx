@@ -10,7 +10,6 @@ import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
-import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
@@ -237,22 +236,6 @@ export default function Editors() {
             data={rawData}
             defaultData={JSON.stringify({}, null, 2)}
             onClose={handleClose}
-          />
-        );
-      case 'JSONEditor':
-        return (
-          <JsonEditorDialog
-            value={rawData}
-            title="JSON editor"
-            id={editorName}
-            onClose={() => {
-              // eslint-disable-next-line react/no-this-in-sfc
-              this.handleEditorChange(null);
-            }}
-            onChange={value => {
-              // eslint-disable-next-line
-              console.log(value);
-            }}
           />
         );
       case 'FilterEditor':

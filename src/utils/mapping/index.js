@@ -744,10 +744,10 @@ export default {
     }
   },
   getApplicationName: (resource = {}, conn) => {
-    if (resource.assistant) {
+    if (resource.assistant || conn.assistant) {
       const connectors = applicationsList();
       const assistant = connectors.find(
-        connector => connector.id === resource.assistant
+        connector => (connector.id === resource.assistant || connector.id === conn.assistant)
       );
 
       if (assistant) return assistant.name;
