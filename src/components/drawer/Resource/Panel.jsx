@@ -367,7 +367,7 @@ export default function Panel(props) {
   // import/export assistant is not present and if we are showing generic adaptor
   function getTechAdaptorFormValue() {
     if (!stagedProcessor || !stagedProcessor.patch) {
-      return resource?.useTechAdaptorForm;
+      return resource?.assistant && resource?.useTechAdaptorForm;
     }
     const useTechAdaptorForm = stagedProcessor.patch.find(
       p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
