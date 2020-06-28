@@ -2131,6 +2131,25 @@ export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
   return isFrameWork2;
 }
 
+export function integrationAppChildIdOfFlow(state, integrationId, flowId) {
+  if (!state || !integrationId) {
+    return null;
+  }
+  const integration = fromData.resource(state.data, 'integrations', integrationId);
+  if (integration?.settings?.supportsMultiStore) {
+    const { stores } = integrationAppSettings(state, integrationId);
+    if (!flowId && stores?.length) {
+      return stores[0].value;
+    }
+    return stores.find(store => integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
+  }
+  if (isIntegrationAppVersion2(state, integrationId, true)) {
+    if (!flowId) return integrationId;
+    return fromData.resource(state.data, 'flows', flowId)?._integrationId;
+  }
+  return null;
+}
+
 // #end integrationApps Region
 
 export function resourceReferences(state) {
