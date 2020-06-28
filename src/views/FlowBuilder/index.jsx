@@ -425,11 +425,10 @@ function FlowBuilder() {
     if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
       // Incase of a pg or pp opened ... replace url flowId with newFlowId
       // @BugFix: IO-16074
-      const newPath = generatePath(nestedPgOrPpPath.path, {
+      history.replace(generatePath(nestedPgOrPpPath.path, {
         ...nestedPgOrPpPath.params,
         flowId: newFlowId,
-      });
-      history.replace(newPath);
+      }));
     } else {
       // In all other cases go back to flow url with new FlowId
       history.replace(rewriteUrl(newFlowId));
