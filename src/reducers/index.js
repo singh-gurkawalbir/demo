@@ -3433,12 +3433,18 @@ export function auditLogs(
   filters,
   options = {}
 ) {
-  const auditLogs = fromData.auditLogs(
+  let auditLogs = fromData.auditLogs(
     state.data,
     resourceType,
     resourceId,
     filters
   );
+
+  const result = {
+    logs: [],
+    count: 0,
+    totalCount: 0
+  };
 
   if (options.storeId) {
     const {
@@ -3454,7 +3460,7 @@ export function auditLogs(
       ...map(connections, '_id'),
     ];
 
-    return auditLogs.filter(log => {
+    auditLogs = auditLogs.filter(log => {
       if (
         ['export', 'import', 'connection', 'flow'].includes(log.resourceType)
       ) {
@@ -3465,7 +3471,10 @@ export function auditLogs(
     });
   }
 
-  return auditLogs;
+  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
+  result.count = result.logs.length;
+  result.totalCount = auditLogs.length;
+  return result;
 }
 
 export function affectedResourcesAndUsersFromAuditLogs(
