@@ -9,8 +9,8 @@ import ResourceReferences from '../../../ResourceReferences';
 
 export default {
   label: (rowData, actionProps) => {
-    if (actionProps.resourceType === 'accesstokens') {
-      return 'Delete API token';
+    if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
+      return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType]}`;
     }
     return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
   },
@@ -29,8 +29,8 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
-      if (resourceType === 'accesstokens') {
-        type = 'API token';
+      if (['accesstokens', 'apis'].includes(resourceType)) {
+        type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {
         type =
         resourceType && resourceType.indexOf('/licenses') >= 0
