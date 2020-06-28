@@ -230,17 +230,6 @@ const getResourceFormAssets = ({
           meta = formMeta.connections.rdbms[rdbmsSubType];
         } else if (RDBMS_TYPES.indexOf(type) !== -1) {
           meta = formMeta.connections.rdbms[type];
-        } else if (
-          resource &&
-          (resource.useParentForm !== undefined
-            ? !resource.useParentForm && resource.assistant
-            : resource.assistant) && !resource.useTechAdaptorForm
-        ) {
-          meta = meta.custom.http.assistantDefinition(
-            resource._id,
-            resource,
-            assistantData
-          );
         } else {
           meta = formMeta.connections[type];
         }
