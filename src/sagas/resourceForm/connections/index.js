@@ -473,10 +473,12 @@ export function* pingAndUpdateConnection({ connectionId }) {
   try {
     yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}/ping`,
+      hidden: true
     });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,
+      hidden: true
     });
 
     yield put(actions.resource.received('connections', connectionResource));
