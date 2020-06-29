@@ -111,7 +111,7 @@ export default function ConnectionDrawer({
   return (
     <RightDrawer
       path="setConnection"
-      title="Please provide NetSuite account id"
+      title="Please provide NetSuite account ID"
       infoText="This is used to verify if there is an existing connection already linked to NetSuite."
       height="tall"
       width="medium"
@@ -136,7 +136,7 @@ export default function ConnectionDrawer({
           resourceType="connections"
           onClose={handleConnectionClose}
           onSubmitComplete={handleSubmitComplete}
-          showManageOnly
+          manageOnly
           addOrSelect
           />}
       </div>

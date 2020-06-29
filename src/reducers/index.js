@@ -1117,7 +1117,7 @@ export function userAccessLevelOnConnection(state, connectionId) {
 
   return accessLevelOnConnection;
 }
-export function matchingConnectionList(state, connection = {}, environment, showManageOnly) {
+export function matchingConnectionList(state, connection = {}, environment, manageOnly) {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
     environment = currentEnvironment(state);
@@ -1137,7 +1137,7 @@ export function matchingConnectionList(state, connection = {}, environment, show
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
-          const accessLevel = showManageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
+          const accessLevel = manageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
@@ -1175,10 +1175,10 @@ export function filteredResourceList(
   resource,
   resourceType,
   environment,
-  showManageOnly
+  manageOnly
 ) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource, environment, showManageOnly)
+    ? matchingConnectionList(state, resource, environment, manageOnly)
     : matchingStackList(state);
 }
 

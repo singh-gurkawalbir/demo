@@ -33,7 +33,7 @@ export default function AddOrSelect(props) {
     resource,
     environment,
     resourceType = 'connections',
-    showManageOnly = false
+    manageOnly = false
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);
@@ -43,7 +43,7 @@ export default function AddOrSelect(props) {
       RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]
     ];
   const resourceList = useSelector(state =>
-    selectors.filteredResourceList(state, resource, resourceType, environment, showManageOnly)
+    selectors.filteredResourceList(state, resource, resourceType, environment, manageOnly)
   );
   const options = resourceList.map(c => ({
     label: c.offline ? `${c.name} - Offline` : c.name,
