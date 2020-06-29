@@ -114,7 +114,7 @@ const NetsuiteValidateButton = props => {
       onClick={() => {
         handleValidate(trim(value));
       }}>
-      {isValidatingNetsuiteUserRoles ? 'Validating' : 'Validate'}
+      {isValidatingNetsuiteUserRoles ? 'Testing' : 'Test Connection'}
     </Button>
   );
 };
