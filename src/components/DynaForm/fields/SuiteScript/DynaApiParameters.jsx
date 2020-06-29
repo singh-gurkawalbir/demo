@@ -115,7 +115,6 @@ export default function DynaApiParameters(props) {
           onClick={() => setShowApiParametersModal(true)}>
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
-        {/* {Todo (shiva): we need helpText for the component} */}
         <FieldHelp {...props} />
       </div>
       <ErroredMessageComponent

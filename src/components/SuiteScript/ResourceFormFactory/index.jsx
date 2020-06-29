@@ -47,41 +47,30 @@ const mapStateToProps = (
 
 const mapDispatchToProps = dispatch => ({
   handleInitForm: (
+    ssLinkedConnectionId,
     resourceType,
     resourceId,
-    isNew,
     flowId,
-    ssLinkedConnectionId
   ) => {
-    const skipCommit =
-      isNew &&
-      [
-        'imports',
-        'exports',
-        'connections',
-        'pageGenerator',
-        'pageProcessor',
-      ].includes(resourceType);
-
     dispatch(
       actions.suiteScript.resourceForm.init(
+        ssLinkedConnectionId,
         resourceType,
         resourceId,
-        isNew,
-        skipCommit,
+        false,
+        false,
         flowId,
         undefined,
-        ssLinkedConnectionId
       )
     );
   },
 
-  handleClearResourceForm: (resourceType, resourceId, ssLinkedConnectionId) => {
+  handleClearResourceForm: (ssLinkedConnectionId, resourceType, resourceId) => {
     dispatch(
       actions.suiteScript.resourceForm.clear(
+        ssLinkedConnectionId,
         resourceType,
         resourceId,
-        ssLinkedConnectionId
       )
     );
   },
@@ -187,15 +176,14 @@ export const ResourceFormFactory = props => {
 
   useEffect(() => {
     handleInitForm(
+      ssLinkedConnectionId,
       resourceType,
       resourceId,
-      isNew,
       flowId,
-      ssLinkedConnectionId
     );
 
     return () =>
-      handleClearResourceForm(resourceType, resourceId, ssLinkedConnectionId);
+      handleClearResourceForm(ssLinkedConnectionId, resourceType, resourceId);
   }, [
     flowId,
     handleClearResourceForm,

@@ -190,12 +190,11 @@ export function* saveMappings() {
   const resourceType = 'imports';
   yield put(
     actions.suiteScript.resource.patchStaged(
+      ssLinkedConnectionId,
+      resourceType,
       resourceId,
       patchSet,
       SCOPES.VALUE,
-      ssLinkedConnectionId,
-      integrationId,
-      resourceType
     )
   );
   const resp = yield call(commitStagedChanges, {
