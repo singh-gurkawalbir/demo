@@ -40,7 +40,7 @@ export default function PreviewTable({ templateId }) {
   if (!data.length) {
     return (
       <div>
-        <Typography variant="h4">Loading preview...</Typography>
+        <Typography variant="h4">Loading</Typography>
         <Spinner />
       </div>
     );

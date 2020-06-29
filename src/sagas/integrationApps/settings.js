@@ -224,7 +224,7 @@ export function* saveCategoryMappings({ integrationId, flowId }) {
         },
         method: 'PUT',
       },
-      message: 'Fetching...',
+      message: 'Loading',
     }) || {});
   } catch (error) {
     yield put(

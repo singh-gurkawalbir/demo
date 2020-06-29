@@ -43,7 +43,7 @@ export default function UploadFile() {
   if (uploadInProgress) {
     return (
       <SystemStatus>
-        <Typography variant="h4">Loading preview...</Typography>
+        <Typography variant="h4">Loading</Typography>
       </SystemStatus>
     );
   }
