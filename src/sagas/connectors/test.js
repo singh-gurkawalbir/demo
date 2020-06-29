@@ -19,7 +19,7 @@ describe('evaluateProcessor saga', () => {
       call(apiCallWithRetry, {
         path,
         opts: { body: { fieldName, type: fieldType }, method: 'PUT' },
-        message: 'Fetching metadata',
+        message: 'Loading',
       })
     );
 
@@ -48,7 +48,7 @@ describe('evaluateProcessor saga', () => {
       call(apiCallWithRetry, {
         path,
         opts: { body: { type: fieldType, fieldName }, method: 'PUT' },
-        message: 'Fetching metadata',
+        message: 'Loading',
       })
     );
 

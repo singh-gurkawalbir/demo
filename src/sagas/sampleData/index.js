@@ -101,7 +101,7 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
       previewData = yield call(apiCallWithRetry, {
         path,
         opts: { method: 'POST', body },
-        message: `Fetching ${resourceType} Preview`,
+        message: 'Loading',
         hidden: true,
       });
     }

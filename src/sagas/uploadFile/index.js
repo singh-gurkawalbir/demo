@@ -65,7 +65,7 @@ export function* previewZip({ file, fileType = 'application/zip' }) {
     const previewPath = `/integrations/template/preview?runKey=${runKey}`;
     const components = yield call(apiCallWithRetry, {
       path: previewPath,
-      message: 'Loading Components from zip file',
+      message: 'Loading',
     });
 
     yield put(actions.template.receivedPreview(components, runKey, true));

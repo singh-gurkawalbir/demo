@@ -297,7 +297,7 @@ function JobDetail({
       {expanded && !job.children && (
         <TableRow>
           <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading child jobs...</span>
+            <Spinner size={20} /> <span>Loading</span>
           </TableCell>
         </TableRow>
       )}
