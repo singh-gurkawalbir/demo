@@ -69,7 +69,7 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* linkUnlinkSuiteScriptIntegrator(connectionId, link) {
+export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   if (!isBoolean(link)) {
     return;
   }
@@ -84,7 +84,7 @@ export function* linkUnlinkSuiteScriptIntegrator(connectionId, link) {
       if (!isLinked) {
         yield put(
           actions.user.preferences.update({
-            ssConnectionIds: [...userPreferences.ssConnectionIds, connectionId],
+            ssConnectionIds: [...(userPreferences.ssConnectionIds || []), connectionId],
           })
         );
       }
@@ -317,8 +317,8 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   if (resourceType === 'connections' && merged.type === 'netsuite') {
     yield call(
       linkUnlinkSuiteScriptIntegrator,
-      merged._id,
-      merged.netsuite.linkSuiteScriptIntegrator
+      { connectionId: merged._id,
+        link: merged.netsuite.linkSuiteScriptIntegrator }
     );
   }
 }
@@ -815,6 +815,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
+  takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
 
   ...metadataSagas,
 ];

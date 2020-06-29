@@ -8,9 +8,6 @@ export default function IntegrationCrumb({ ssLinkedConnectionId, integrationId }
     selectors.suiteScriptResource(state, {ssLinkedConnectionId, resourceType: 'integrations', id: integrationId})
   );
 
-  // we dont want to "require" integrations resources to be loaded to prevent
-  // the UI from appearing slow... just default the name to a const if no
-  // integration -yet- exists in the state.
   return (
     <LoadResources ssLinkedConnectionId={ssLinkedConnectionId} resources="tiles">
       {integration ? integration.displayName : 'Integration'}

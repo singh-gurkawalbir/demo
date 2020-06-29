@@ -58,7 +58,7 @@ export function* enableFlow({ ssLinkedConnectionId, integrationId, _id }) {
   }
 
   yield put(
-    actions.suiteScript.resource.received('flows', flow, ssLinkedConnectionId, integrationId)
+    actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
   );
   yield put(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}));
 }
@@ -81,7 +81,7 @@ export function* disableFlow({ ssLinkedConnectionId, integrationId, _id }) {
   }
 
   yield put(
-    actions.suiteScript.resource.received('flows', flow, ssLinkedConnectionId, integrationId)
+    actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, 'flows', flow)
   );
   yield put(actions.suiteScript.flow.isOnOffActionInprogress({onOffInProgress: false, ssLinkedConnectionId, _id}));
 }

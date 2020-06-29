@@ -8,6 +8,7 @@ import * as selectors from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
+import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -78,12 +79,12 @@ const integrationRoutes = [
 
 const suiteScriptRoutes = [
   {
-    path: '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId',
+    path: getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId'),
     breadcrumb: IntegrationCrumb,
     childRoutes: integrationRoutes,
   },
   {
-    path: '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId',
+    path: getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
     childRoutes: integrationRoutes,
   }

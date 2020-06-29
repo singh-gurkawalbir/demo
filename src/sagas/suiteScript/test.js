@@ -197,6 +197,7 @@ describe('suiteScript sagas', () => {
             )
           )
           .put(actions.suiteScript.installer.updateSSIntegrationId(connectorId, expectedOut[0]._integrationId))
+          .put(actions.suiteScript.resource.connections.linkIntegrator(ssLinkedConnectionId, true))
           .call(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .run();
       });

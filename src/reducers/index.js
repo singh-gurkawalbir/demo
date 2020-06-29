@@ -1074,7 +1074,50 @@ export function resourcesByIds(state, resourceType, resourceIds) {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
-export function matchingConnectionList(state, connection = {}, environment) {
+export function userPermissions(state) {
+  return fromUser.permissions(state.user);
+}
+
+export function userAccessLevelOnConnection(state, connectionId) {
+  const permissions = userPermissions(state);
+  let accessLevelOnConnection;
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+        i._registeredConnectionIds &&
+        i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
+  }
+
+  return accessLevelOnConnection;
+}
+export function matchingConnectionList(state, connection = {}, environment, manageOnly) {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
     environment = currentEnvironment(state);
@@ -1094,11 +1137,13 @@ export function matchingConnectionList(state, connection = {}, environment) {
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
+          const accessLevel = manageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
             (this.netsuite.account && this.netsuite.environment) &&
-            (!environment || !!this.sandbox === (environment === 'sandbox'))
+            (!environment || !!this.sandbox === (environment === 'sandbox')) &&
+            (accessLevel === 'owner' || accessLevel === 'manage')
           );
         }
 
@@ -1129,10 +1174,11 @@ export function filteredResourceList(
   state,
   resource,
   resourceType,
-  environment
+  environment,
+  manageOnly
 ) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource, environment)
+    ? matchingConnectionList(state, resource, environment, manageOnly)
     : matchingStackList(state);
 }
 
@@ -2513,10 +2559,6 @@ export function userAccessLevel(state) {
   return fromUser.accessLevel(state.user);
 }
 
-export function userPermissions(state) {
-  return fromUser.permissions(state.user);
-}
-
 const parentResourceToLookUpTo = {
   flows: 'integrations',
 };
@@ -2754,46 +2796,6 @@ export function publishedConnectors(state) {
   }).resources;
 
   return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
-}
-
-export function userAccessLevelOnConnection(state, connectionId) {
-  const permissions = userPermissions(state);
-  let accessLevelOnConnection;
-
-  if (
-    [
-      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-    ].includes(permissions.accessLevel)
-  ) {
-    accessLevelOnConnection = permissions.accessLevel;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-    const ioIntegrations = resourceList(state, {
-      type: 'integrations',
-    }).resources;
-    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-      i =>
-        i._registeredConnectionIds &&
-        i._registeredConnectionIds.includes(connectionId)
-    );
-
-    ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!accessLevelOnConnection) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
-        } else if (
-          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
-        }
-      }
-    });
-  }
-
-  return accessLevelOnConnection;
 }
 
 export function availableConnectionsToRegister(state, integrationId) {
@@ -4893,7 +4895,7 @@ export function canLinkSuiteScriptIntegrator(state, connectionId) {
 
 export function suiteScriptIntegratorLinkedConnectionId(state, account) {
   const preferences = userPreferences(state);
-  if (!preferences || !preferences.ssConnectionIds) {
+  if (!preferences || !preferences.ssConnectionIds || !account) {
     return;
   }
 

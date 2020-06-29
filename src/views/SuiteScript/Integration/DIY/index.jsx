@@ -76,21 +76,20 @@ export default function Integration({ match }) {
     title => {
       dispatch(
         actions.suiteScript.resource.patchStaged(
+          ssLinkedConnectionId,
+          'integrations',
           integrationId,
           [{ op: 'replace', path: '/name', value: title }],
           'value',
-          ssLinkedConnectionId,
-          integrationId,
-          'integrations'
         )
       );
       dispatch(
         actions.suiteScript.resource.commitStaged(
+          ssLinkedConnectionId,
+          null,
+          'integrations',
           integrationId,
           'value',
-          ssLinkedConnectionId,
-          integrationId,
-          'integrations'
         )
       );
     },
