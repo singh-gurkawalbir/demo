@@ -54,7 +54,7 @@ const ConnectorLicenses = loadable(() =>
 );
 const SuiteScriptIntegration = loadable(() =>
   import(
-    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/App'
   )
 );
 const SuiteScriptFlowBuilder = loadable(() =>

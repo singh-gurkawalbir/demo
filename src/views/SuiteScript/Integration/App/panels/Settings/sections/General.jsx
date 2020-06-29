@@ -4,8 +4,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import * as selectors from '../../../../../../../reducers';
-import { SuiteScriptForm } from '../../Flows/ConfigureDrawer';
-
+import { SuiteScriptForm } from './ConfigureSettings';
 
 const useStyles = makeStyles(theme => ({
   formContainer: {
@@ -19,8 +18,6 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
-
-
 export default function GeneralSection({
   ssLinkedConnectionId,
   integrationId,
@@ -49,7 +46,7 @@ export default function GeneralSection({
   );
   const translatedMeta = useMemo(
     () => integrationSettingsToDynaFormMetadata(
-      flowSettingsMeta,
+      flowSettingsMeta || {},
       integrationId,
       true,
       {},

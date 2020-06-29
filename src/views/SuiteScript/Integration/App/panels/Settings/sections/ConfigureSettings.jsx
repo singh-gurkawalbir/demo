@@ -1,16 +1,13 @@
-import React, { useMemo, useEffect } from 'react';
-import clsx from 'clsx';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import * as selectors from '../../../../../../../reducers';
-import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
-import DrawerTitleBar from '../../../../../../../components/drawer/TitleBar';
-import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/suiteScript/useSuiteScriptIAFormWithHandleClose';
+import clsx from 'clsx';
+import React, { useEffect, useMemo } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
 import { FormStateManager } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
-import actions from '../../../../../../../actions';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
+import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/suiteScript/useSuiteScriptIAFormWithHandleClose';
+import * as selectors from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -65,9 +62,8 @@ export const SuiteScriptForm = (props) => {
 />);
 };
 
-function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, parentUrl }) {
+export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, parentUrl }) {
   const classes = useStyles();
-  const match = useRouteMatch();
   const section = useSelector(state => {
     const flowSections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
 
@@ -107,38 +103,17 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      <Drawer
-        // variant="persistent"
-        anchor="right"
-        open={!!match}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        onClose={handleClose}>
-        <DrawerTitleBar title={`Configure all ${section.title} flows`} />
-
-        <SuiteScriptForm
-          ssLinkedConnectionId={ssLinkedConnectionId}
-          integrationId={integrationId}
-          sectionId={sectionId}
-          onSubmitComplete={handleClose}
-          formState={formState}
-          className={clsx(classes.configureDrawerform, {
-            [classes.configureDrawerCamForm]: section.sections,
-          })}
-          fieldMeta={translatedMeta}
+      <SuiteScriptForm
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+        sectionId={sectionId}
+        onSubmitComplete={handleClose}
+        formState={formState}
+        className={clsx(classes.configureDrawerform, {
+          [classes.configureDrawerCamForm]: section.sections,
+        })}
+        fieldMeta={translatedMeta}
         />
-      </Drawer>
     </LoadSuiteScriptResources>
-  );
-}
-
-export default function ConfigureDrawerRoute(props) {
-  const match = useRouteMatch();
-
-  return (
-    <Route exact path={`${match.url}/configure`}>
-      <ConfigureDrawer {...props} parentUrl={match.url} />
-    </Route>
   );
 }

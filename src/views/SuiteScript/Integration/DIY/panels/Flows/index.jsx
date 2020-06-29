@@ -2,17 +2,14 @@ import { Grid, List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';
+import { NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';
 import CeligoTable from '../../../../../../components/CeligoTable';
-import SettingsIcon from '../../../../../../components/icons/SettingsIcon';
-import IconTextButton from '../../../../../../components/IconTextButton';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
-import ConfigureDrawer from './ConfigureDrawer';
-import {useLoadSuiteScriptSettings} from '../Admin';
+import { useLoadSuiteScriptSettings } from '../Admin';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,10 +40,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function FlowList({ ssLinkedConnectionId, integrationId }) {
-  const classes = useStyles();
   const match = useRouteMatch();
   const { sectionId } = match.params;
-  const { fields, flows, sections } = useSelector(state =>
+  const { flows } = useSelector(state =>
     selectors.suiteScriptFlowSettings(
       state,
       integrationId,
@@ -55,7 +51,6 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
     )
   );
 
-  const hasAdvancedSettings = !!fields || !!sections;
   const flowSections = useSelector(state =>
     selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId)
   );
@@ -65,26 +60,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
   return (
     <>
       <ScheduleDrawer />
-      <ConfigureDrawer
-        integrationId={integrationId}
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        sectionId={sectionId}
-      />
-
-
-      <PanelHeader title={`${section.title} flows`}>
-        {hasAdvancedSettings && (
-          <IconTextButton
-            variant="text"
-            color="primary"
-            data-test={`configure${section.title}`}
-            component={Link}
-            className={classes.configureSectionBtn}
-            to={`${sectionId}/configure`}>
-            <SettingsIcon /> Configure {section.title}
-          </IconTextButton>
-        )}
-      </PanelHeader>
+      <PanelHeader title={`${section.title} flows`} />
       <CeligoTable
         data={flows}
         filterKey={filterKey}

@@ -4502,9 +4502,9 @@ export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
 
 
   if (Array.isArray(general)) {
-    return general.find(s => s.title === 'General') || emptyObject;
+    return general.find(s => s.title === 'General');
   }
-  return general || emptyObject;
+  return general;
 }
 
 

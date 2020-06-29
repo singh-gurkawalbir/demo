@@ -11,7 +11,6 @@ import {
 import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
-import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 
@@ -46,12 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
-  {
-    path: 'general',
-    label: 'General',
-    Section: GeneralSection,
-    id: 'general',
-  },
   {
     path: 'legacy',
     label: 'Legacy',
