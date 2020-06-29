@@ -32,7 +32,7 @@ export function* refreshGenerates({ isInit = false }) {
   const { import: importConfig } = flow;
   const {type: importType, _connectionId} = importConfig;
 
-  const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
+  const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
     importData,
     importType
@@ -235,7 +235,8 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
-  const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
+  const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
+  console.log(importData);
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
     importData,
     importType
@@ -289,7 +290,7 @@ export function* updateImportSampleData() {
   const { import: importConfig } = flow;
   const {type: importType} = importConfig;
 
-  const {data: importData} = yield select(selectors.getSuiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
+  const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
     importData,
     importType

@@ -2044,44 +2044,66 @@ const suiteScript = {
   importSampleData: {
     request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
       ssLinkedConnectionId, integrationId, flowId, options
+    }),
+    requestMetadata: ({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      metadata,
+      connectionId
+    }) =>
+      action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST_METADATA, {
+        ssLinkedConnectionId,
+        integrationId,
+        flowId,
+        metadata,
+        connectionId
+      }),
+    received: ({ssLinkedConnectionId, integrationId, flowId, data}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED, {
+      ssLinkedConnectionId, integrationId, flowId, data
+    }),
+    receivedError: ({ssLinkedConnectionId, integrationId, flowId, error}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED_ERROR, {
+      ssLinkedConnectionId, integrationId, flowId, error
     })
   },
   sampleData: {
-    request: (
+    request: ({
       ssLinkedConnectionId,
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      runOffline
-    ) =>
+      integrationId,
+      flowId,
+      options
+    }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, {
         ssLinkedConnectionId,
-        resourceId,
-        resourceType,
-        values,
-        stage,
-        runOffline,
+        integrationId,
+        flowId,
+        options
       }),
-    received: (ssLinkedConnectionId, resourceId, previewData) =>
+    received: ({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      previewData
+    }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED, {
         ssLinkedConnectionId,
-        resourceId,
+        integrationId,
+        flowId,
         previewData,
       }),
-    update: (ssLinkedConnectionId, resourceId, processedData, stage) =>
-      action(actionTypes.SUITESCRIPT.SAMPLEDATA.UPDATE, {
-        ssLinkedConnectionId,
-        resourceId,
-        processedData,
-        stage,
-      }),
-    receivedError: (ssLinkedConnectionId, resourceId, error, stage) =>
+    // update: (ssLinkedConnectionId, resourceId, processedData, stage) =>
+    //   action(actionTypes.SUITESCRIPT.SAMPLEDATA.UPDATE, {
+    //     ssLinkedConnectionId,
+    //     resourceId,
+    //     processedData,
+    //     stage,
+    //   }),
+    receivedError: ({ ssLinkedConnectionId, integrationId, flowId, error }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR, {
         ssLinkedConnectionId,
-        resourceId,
-        error,
-        stage,
+        integrationId,
+        flowId,
+        error
       }),
     reset: (ssLinkedConnectionId, resourceId) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {

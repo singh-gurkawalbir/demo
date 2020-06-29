@@ -129,7 +129,7 @@ const SuiteScriptMapping = (props) => {
     state => selectors.suitesciptMappingsSaveStatus(state).saveInProgress
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
-  const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId}));
@@ -425,17 +425,36 @@ export default function SuiteScriptMappingWrapper(props) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
+
+  const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
   const integrationId = str1[str1.length - 1];
   const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
   const ssLinkedConnectionId = str2[str2.length - 1];
   const flowId = match.params && match.params.flowId;
 
-  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  console.log('flowSampleData', flowSampleDataStatus, flowSampleData);
+  console.log('importSampleData', importSampleDataStatus, importSampleData);
   const requestImportSampleData = useCallback(
     () => {
       dispatch(
         actions.suiteScript.importSampleData.request(
+          {
+            ssLinkedConnectionId,
+            integrationId,
+            flowId,
+          }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
+  const requestFlowSampleData = useCallback(
+    () => {
+      dispatch(
+        actions.suiteScript.sampleData.request(
           {
             ssLinkedConnectionId,
             integrationId,
@@ -457,11 +476,26 @@ export default function SuiteScriptMappingWrapper(props) {
 
 
   useEffect(() => {
+    if (
+      !flowSampleDataLoaded &&
+      (flowSampleDataStatus === 'received' || flowSampleDataStatus === 'error')
+    ) {
+      setFlowSampleDataLoaded(true);
+    }
+  }, [flowSampleDataLoaded, flowSampleDataStatus]);
+
+
+  useEffect(() => {
     if (!importSampleData && !importSampleDataLoaded) {
       requestImportSampleData();
     }
   }, [importSampleData, dispatch, requestImportSampleData, importSampleDataLoaded]);
-  if (!importSampleDataLoaded) {
+  useEffect(() => {
+    if (!flowSampleData && !flowSampleDataLoaded) {
+      requestFlowSampleData();
+    }
+  }, [flowSampleData, flowSampleDataLoaded, requestFlowSampleData]);
+  if (!importSampleDataLoaded || !flowSampleDataLoaded) {
     return (
       <SpinnerWrapper>
         <Spinner />

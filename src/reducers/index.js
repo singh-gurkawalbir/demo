@@ -3465,6 +3465,7 @@ export function metadataOptionsAndResources({
   );
 }
 
+
 /*
  * TODO: @Raghu - Should be removed and use above selector
  * Function Definition needs to be changed to
@@ -4958,7 +4959,8 @@ export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationI
   });
   return flows && flows.find(flow => flow._id === flowId);
 }
-export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+
+export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
@@ -5007,6 +5009,12 @@ export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, int
 
     return { data, status };
   }
+  console.log('going in');
+  return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
+}
+
+export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 
 export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
@@ -5032,4 +5040,8 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
+}
+
+export function suiteScriptConnections(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptConnections(state && state.data, ssLinkedConnectionId);
 }
