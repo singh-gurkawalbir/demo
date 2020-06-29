@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -7,6 +7,7 @@ import RightDrawer from '../../drawer/Right';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 
 const useStyles = makeStyles(() => ({
@@ -30,6 +31,7 @@ const useStyles = makeStyles(() => ({
 export default function ErrorDrawer({
   height = 'tall',
   jobId,
+  includeAll = false,
   parentJobId,
   showResolved,
   numError = 0,
@@ -42,8 +44,13 @@ export default function ErrorDrawer({
   const [errorCount, setErrorCount] = useState(
     childJobId ? numError + numResolved : undefined
   );
-  const flowJob = useSelector(state =>
-    selectors.flowJob(state, { jobId: parentJobId || jobId })
+  const jobFilter = useMemo(() => (
+    { jobId: parentJobId || jobId, includeAll }
+  ),
+  [includeAll, jobId, parentJobId]);
+  const flowJob = useSelectorMemo(
+    selectors.makeFlowJob,
+    jobFilter
   );
   const jobErrors = useSelector(state =>
     selectors.jobErrors(state, childJobId)
