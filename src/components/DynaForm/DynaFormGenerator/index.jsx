@@ -8,7 +8,7 @@ import {
   TabComponentSimple,
   TabComponentWithoutSave,
   TabComponentWithoutSaveVertical,
-  TabIASuiteScriptComponent
+  SuiteScriptTabIAComponent
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
 
@@ -79,7 +79,7 @@ export default function FormGenerator(props) {
     ConvertedContainer = TabIAComponent;
   } else if (type === 'suitScriptTabIA') {
     // similar to tabIa behavior except used in suitescript
-    ConvertedContainer = TabIASuiteScriptComponent;
+    ConvertedContainer = SuiteScriptTabIAComponent;
   } else if (type === 'tab') {
     ConvertedContainer = TabComponentSimple;
   } else if (type === 'tabWithoutSave') {

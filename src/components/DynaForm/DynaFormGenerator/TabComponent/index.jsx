@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { Tabs, Tab, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
-import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptSaveButton';
+import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
 
 import FormGenerator from '..';
 import {
@@ -136,7 +136,7 @@ function FormWithSave(props) {
   );
 }
 
-export function TabIASuiteScriptComponent(props) {
+export function SuiteScriptTabIAComponent(props) {
   return (
     <TabComponent {...props}>
       <FormWithSave >

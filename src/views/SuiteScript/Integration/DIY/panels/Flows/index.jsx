@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function FlowList({ integrationId, ssLinkedConnectionId }) {
+function FlowList({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { sectionId } = match.params;

@@ -1808,24 +1808,6 @@ export function integrationAppFlowSections(state, id, store) {
     titleId: getTitleIdFromSection(sec),
   }));
 }
-export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
-  const {sections = []} = suiteScriptSettings(state, id, ssLinkedConnectionId);
-  return sections.map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-  }));
-}
-
-export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
-  if (!state) return null;
-  const {general } = suiteScriptSettings(state, id, ssLinkedConnectionId);
-
-
-  if (Array.isArray(general)) {
-    return general.find(s => s.title === 'General') || emptyObject;
-  }
-  return general || emptyObject;
-}
 
 export function integrationAppGeneralSettings(state, id, storeId) {
   if (!state) return emptyObject;
@@ -4505,6 +4487,27 @@ export const getScriptContext = createSelector(
   }
 );
 
+// #region suiteScript
+export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptSettings(state, id, ssLinkedConnectionId);
+  return sections.map(sec => ({
+    ...sec,
+    titleId: getTitleIdFromSection(sec),
+  }));
+}
+
+export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
+  if (!state) return null;
+  const {general } = suiteScriptSettings(state, id, ssLinkedConnectionId);
+
+
+  if (Array.isArray(general)) {
+    return general.find(s => s.title === 'General') || emptyObject;
+  }
+  return general || emptyObject;
+}
+
+
 export function suiteScriptResourceStatus(
   state,
   {
@@ -4632,14 +4635,8 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
 
   const integrationResource =
     suiteScriptSettings(state, id, ssLinkedConnectionId) || emptyObject;
-  const {
-    supportsMatchRuleEngine: showMatchRuleEngine,
-    sections = [],
-  } = integrationResource || {};
+  const { sections = []} = integrationResource || {};
   let requiredFlows = [];
-  let hasNSInternalIdLookup = false;
-  let showFlowSettings = false;
-  let hasDescription = false;
   const allSections = sections;
 
 
@@ -4656,20 +4653,6 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   } else {
     requiredFlows = map(selectedSection.flows, '_id');
   }
-  hasNSInternalIdLookup = some(
-    selectedSection.flows,
-    f => f.showNSInternalIdLookup
-  );
-  hasDescription = some(selectedSection.flows, f => {
-    const flow = suiteScriptResource(state, {resourceType: 'flows', id: f._id, ssLinkedConnectionId, integrationId: id}) || {};
-
-    return !!flow.description;
-  });
-  showFlowSettings = some(
-    selectedSection.flows,
-    f =>
-      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
-  );
   const { fields, sections: subSections } = selectedSection;
 
 
@@ -4686,12 +4669,7 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   return {
     flows,
     fields,
-    flowSettings: selectedSection.flows,
     sections: subSections,
-    hasNSInternalIdLookup,
-    hasDescription,
-    showFlowSettings,
-    showMatchRuleEngine,
   };
 }
 
@@ -4813,6 +4791,8 @@ export function suiteScriptJob(
 export function suiteScriptJobErrors(state, { jobId, jobType }) {
   return fromData.suiteScriptJobErrors(state.data, { jobId, jobType });
 }
+
+// #endregion suiteScript
 
 export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);

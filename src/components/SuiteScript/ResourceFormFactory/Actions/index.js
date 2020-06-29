@@ -3,7 +3,7 @@ import CancelButton from './CancelButton';
 import SaveButton from './SaveButton';
 import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
-import SuiteScriptSaveButton from './SuiteScriptSaveButton';
+import SuiteScriptIASettingsSaveButton from './SuiteScriptIASettingsSaveButton';
 
 export const useLoadingSnackbarOnSave = props => {
   const { saveTerminated, onSave } = props;
@@ -27,7 +27,7 @@ export const useLoadingSnackbarOnSave = props => {
 };
 
 export default {
-  suiteScriptSave: SuiteScriptSaveButton,
+  suiteScriptSave: SuiteScriptIASettingsSaveButton,
   cancel: CancelButton,
   save: SaveButton,
   testandsave: TestAndSaveButton,

@@ -450,6 +450,7 @@ export const translateDependencyProps = fieldMap => {
 
     if (dependencies) {
       Object.keys(dependencies).forEach(value => {
+        // links are similar to fields property and these are dependencies defined for link components
         const dependencyFields = dependencies[value].fields || dependencies[value].links;
 
         if (type === 'checkbox') {
@@ -571,7 +572,7 @@ export const integrationSettingsToDynaFormMetadata = (
   ssLinkedConnectionId
 ) => {
   const finalData = {};
-  const { resource, isFlow = false, isSuiteScriptConfigure} = options;
+  const { resource, isFlow = false, isSuiteScriptIntegrator} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -611,7 +612,7 @@ export const integrationSettingsToDynaFormMetadata = (
     // type tabIA sends per tab
     // for flow settings we send everything for advancedSettings we send per tab
 
-    if (isSuiteScriptConfigure) { finalData.layout.type = 'suitScriptTabIA'; } else { finalData.layout.type = isFlow ? 'tab' : 'tabIA'; }
+    if (isSuiteScriptIntegrator) { finalData.layout.type = 'suitScriptTabIA'; } else { finalData.layout.type = isFlow ? 'tab' : 'tabIA'; }
 
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,

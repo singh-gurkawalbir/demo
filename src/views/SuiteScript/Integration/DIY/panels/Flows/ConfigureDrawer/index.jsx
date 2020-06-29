@@ -88,7 +88,7 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
       flowSettingsMeta,
       integrationId,
       true,
-      {isSuiteScriptConfigure: true},
+      {isSuiteScriptIntegrator: true},
       ssLinkedConnectionId
     ),
     [flowSettingsMeta, integrationId, ssLinkedConnectionId]

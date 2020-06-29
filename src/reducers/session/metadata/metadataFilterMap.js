@@ -212,7 +212,7 @@ export default {
         label: d.label,
         value: d.name,
       })),
-  'suiteScript-sObjects-product2': data =>
+  'suiteScript-sObjects': data =>
     data.fields &&
     data.fields.map(({label, name, picklistValues}) =>
       ({label, name, options: picklistValues && picklistValues.map(({label, value}) => ({label, value}))})

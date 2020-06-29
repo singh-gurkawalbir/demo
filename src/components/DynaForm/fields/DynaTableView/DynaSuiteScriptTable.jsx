@@ -73,7 +73,7 @@ function DynaSuiteScriptTable(props) {
 
   const { data: allFieldsOptions} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     commMetaPath,
-    'suiteScript-sObjects-product2');
+    'suiteScript-sObjects');
 
 
   const dispatch = useDispatch();

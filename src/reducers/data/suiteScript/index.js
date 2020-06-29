@@ -503,15 +503,6 @@ export function suiteScriptSettings(state, id, ssLinkedConnectionId) {
     if (draft.settings.general) {
       draft.settings.hasGeneralSettings = true;
     }
-
-    if (draft.settings.supportsMultiStore) {
-      draft.stores = draft.settings.sections.map(s => ({
-        label: s.title,
-        hidden: !!s.hidden,
-        mode: s.mode,
-        value: s.id,
-      }));
-    }
   });
 }
 export function jobsPagingDetails(state) {

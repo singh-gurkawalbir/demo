@@ -117,7 +117,7 @@ export function* commitStagedChanges({
 }
 
 
-function* requestResource({
+function* requestSuiteScriptMetadata({
   resourceType,
   ssLinkedConnectionId,
   integrationId,
@@ -160,7 +160,7 @@ function* featureCheck({
 
 
 export const resourceSagas = [
-  takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestResource),
+  takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestSuiteScriptMetadata),
   takeEvery(actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST, featureCheck),
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, commitStagedChanges),
 ];

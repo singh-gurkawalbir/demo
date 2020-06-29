@@ -1,28 +1,28 @@
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import actions from '../../../../actions';
-import DynaAction from '../../../DynaForm/DynaAction';
-import * as selectors from '../../../../reducers';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLoadingSnackbarOnSave } from '.';
+import actions from '../../../../actions';
+import * as selectors from '../../../../reducers';
+import DynaAction from '../../../DynaForm/DynaAction';
 
-const styles = theme => ({
+
+const useStyles = makeStyles(theme => ({
   actionButton: {
     marginTop: theme.spacing.double,
     marginLeft: theme.spacing.double,
   },
-});
+}));
 
-
-const SuiteSciptSaveButton = props => {
+const SuiteScriptIASettingsSaveButton = props => {
   const {
     submitButtonLabel = 'Submit',
-    classes,
     disabled = false,
     sectionId,
     ssLinkedConnectionId,
     integrationId,
   } = props;
+  const classes = useStyles();
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
     selectors.suiteScriptIAFormSaveProcessTerminated(state, {
@@ -54,4 +54,4 @@ const SuiteSciptSaveButton = props => {
   );
 };
 
-export default withStyles(styles)(SuiteSciptSaveButton);
+export default SuiteScriptIASettingsSaveButton;
