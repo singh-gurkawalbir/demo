@@ -114,7 +114,7 @@ export default function DynaNetSuiteLookupFilters(props) {
     return (
       <div className={classes.loading}>
         <Typography className={classes.heading}>
-          Loading search filters.
+          Loading
         </Typography>
         <Spinner size={24} />
       </div>

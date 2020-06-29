@@ -22,7 +22,7 @@ export function* fetchMetadata({
         },
         method: 'PUT',
       },
-      message: 'Fetching metadata',
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.connectors.failedMetadata(fieldName, _integrationId));

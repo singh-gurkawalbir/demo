@@ -59,7 +59,7 @@ export function* getNetsuiteOrSalesforceMeta({
     const metadata = yield call(apiCallWithRetry, {
       path,
       opts: {},
-      message: 'Fetching',
+      message: 'Loading',
     });
 
     // Handle Errors sent as part of response object  with status 200

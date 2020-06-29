@@ -40,7 +40,7 @@ export const ErroredMessageList = ({ messages }) =>
       </Fragment>
     ))
     : null;
-const LOADING_MSG = 'Loading… What do you call 8 Hobbits? A Hobbyte.';
+const LOADING_MSG = 'Loading';
 const RETRY_MSG = 'Retrying… Hold your breath….';
 const Notifications = ({ allLoadingOrErrored }) => {
   if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
