@@ -53,11 +53,20 @@ const ConnectorInstallBase = loadable(() =>
 const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
+
+
 const SuiteScriptIntegration = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
+  )
+);
+
+const SuiteScriptIntegrationApp = loadable(() =>
   import(
     /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/App'
   )
 );
+
 const SuiteScriptFlowBuilder = loadable(() =>
   import(
     /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
@@ -230,7 +239,7 @@ export default function AppRouting() {
       />
       <Route
         path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab')}
-        component={SuiteScriptIntegration}
+        component={SuiteScriptIntegrationApp}
       />
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />

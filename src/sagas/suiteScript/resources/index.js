@@ -126,7 +126,7 @@ function* requestSuiteScriptMetadata({
 
   try {
     const resource = yield call(apiCallWithRetry, {path, opts});
-    yield put(actions.suiteScript.resource.received(resourceType, resource, ssLinkedConnectionId, integrationId));
+    yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resource));
   } catch (error) {
     return true;
   }
