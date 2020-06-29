@@ -277,7 +277,7 @@ function JobDetail({
         <ErrorCountCell
           count={job.numResolved}
           isJobInProgress={isJobInProgress}
-          onClick={() => handleViewErrorsClick(false)}
+          onClick={() => handleViewErrorsClick(true)}
           className={classes.resolved}
            />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
