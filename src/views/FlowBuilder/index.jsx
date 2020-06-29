@@ -76,6 +76,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     padding: theme.spacing(0, 0, 3, 3),
     backgroundColor: theme.palette.background.default,
+    '& * div[class*="makeStyles-name"]': {
+      background: theme.palette.background.paper,
+    },
   },
   processorContainer: {
     display: 'flex',
@@ -94,13 +97,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
-  },
-  sourceTitle: {
-    marginBottom: theme.spacing(3),
+
   },
   destinationTitle: {
-    marginBottom: theme.spacing(3),
     marginLeft: 100,
     justifyContent: 'flex-start',
   },

@@ -39,10 +39,9 @@ const useStyles = makeStyles(theme => ({
   },
   draggable: { cursor: 'move' },
   name: {
-    height: blockHeight,
+    height: 150,
     overflow: 'hidden',
     width: '100%',
-    alignItems: 'flex-end',
     justifyContent: 'center',
     display: 'flex',
     textAlign: 'center',
@@ -51,13 +50,13 @@ const useStyles = makeStyles(theme => ({
     fontSize: 15,
     lineHeight: '19px',
     fontFamily: 'source sans pro',
-    // Todo: confirm color with keon and add to palette
-    background: '#f0f4ff',
+    background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: 1,
     padding: theme.spacing(2),
     wordBreak: 'break-word',
+    paddingTop: 100,
   },
   buttonContainer: {
     display: 'flex',

@@ -24,7 +24,7 @@ import { actionsMap } from '../../../utils/flows';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 220;
+const blockHeight = 200;
 const lineHeightOffset = 85;
 const lineWidth = 160;
 const emptyObj = {};
@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
-    // marginBottom: theme.spacing(3),
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
