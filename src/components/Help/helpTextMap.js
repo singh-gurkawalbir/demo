@@ -1285,7 +1285,7 @@ export default {
   'flow.description':
     'Describe your flow in more detail here so that other users can understand the business problem you are solving, and also how your integration solution works. Be sure to highlight any nuances that a user who will make changes in the future might need to know about.',
   'flow.schedule':
-    'It is a cron (time-based job scheduler). You can set scheduling for flow execution',
+    'Your flow will be run on schedule according to this cron expression.',
   'flow.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'flow._exportId':
@@ -1954,9 +1954,9 @@ export default {
   'flow.frequency':
     'This field dictates how often your integration flow is run. Please log a support ticket if there is a specific preset frequency that you would like to see added to this list.',
   'flow.startTime':
-    "This field lets you control the first execution time of your flow (i.e. your integration flow will not run before this time), and then subsequent execution times are determined by the 'Frequency' and 'End Time' values set.",
+    'This field lets you control the first scheduled execution time for your flow each day. \n\nPlease note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue, or other flows ahead of you in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time (i.e. this allows Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time).',
   'flow.endTime':
-    'This field lets you control the last scheduled execution of your flow (i.e. your integration flow will not be scheduled after this time).',
+    'This field lets you control the last scheduled execution time for your flow each day.',
   'flow.daysToRunOn':
     'This field lets you configure the specific day(s) you would like this integration flow to run on.',
   'flow.type':
@@ -2003,7 +2003,7 @@ export default {
   'fb.pg.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the export before the records are passed along to downstream applications.',
   'fb.pg.exports.schedule':
-    'Define schedule to run export which overrides the flow schedule',
+    "Define a 'schedule override' here to run this export/transfer on its own schedule.",
   'fb.pg.exports.as2routing':
     'AS2 Exports which share a connection require routing rules to be in place so that incoming messages can be properly routed to the correct flow. This export has a shared AS2 connection and thus needs routing rules to be in place.',
   'fb.pp.exports.transform':
@@ -2148,5 +2148,10 @@ export default {
   filterExpression: 'Use this field to filter out any reference list by entering the "where" clause of SOQL query. This expression will be added as a part of the SOQL query in the where clause while fetching the childSObjectType. If no filter is added, IO will send all the child SObjects in the export data. Ex: If you would like to only export Contacts whose LastName has "Bond" in it, set the expression as "LastName=`Bond` ".',
   orderBy: 'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
   'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...",
+  'mapping.suitescript.netsuite.lookup.searchField': 'Field name that is provided to the lookups defined, using this field name the respective field from the record will be extracted out and provided for the respective field in the import system.',
+  'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
+  'mapping.lookup.default': 'This holds the default value to be set for the extract field.',
+  'mapping.suitescript.lookup.useNull': 'Please check this field if you want to use \'null\' as the default lookup value. This value will be used if your lookup does not find anything.',
+  'mapping.suitescript.lookup.useEmptyString': 'Please check this field if you want to use \'\' (i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything.'
   // #region UI help text
 };

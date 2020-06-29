@@ -29,11 +29,7 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
         _id: flow._id,
       }).onOffInProgress
   );
-  const hasManagePermissions = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)
-        .edit
-  );
+  const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
   const handleDisableClick = useCallback(() => {
     defaultConfirmDialog(
       `${flow.disabled ? 'enable' : 'disable'} ${flowName}?`,
@@ -63,8 +59,8 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
     <CeligoSwitch
       className={classes.celigoSwitchOnOff}
       data-test={`toggleOnAndOffFlow${flowName}`}
-      disabled={!hasManagePermissions}
-      enabled={!flow.disabled}
+      disabled={!isManageLevelUser}
+      checked={!flow.disabled}
       onChange={handleDisableClick}
     />
   );

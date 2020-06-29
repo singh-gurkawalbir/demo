@@ -66,6 +66,7 @@ export default {
     },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
     exportPanel: {
       fieldId: 'exportPanel',
@@ -91,7 +92,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['pageSize', 'dataURITemplate'],
+            fields: ['pageSize', 'dataURITemplate', 'skipRetries'],
           },
         ],
       },

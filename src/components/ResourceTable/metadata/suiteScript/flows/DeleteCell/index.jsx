@@ -38,17 +38,13 @@ export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderVie
     isFlowBuilderView,
     ssLinkedConnectionId,
   ]);
-  const hasManagePermissions = useSelector(
-    state =>
-      selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)
-        .edit
-  );
+  const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
     <IconButtonWithTooltip
       tooltipProps={{title: 'Delete', placement: 'bottom'}}
       onClick={handleClick}
-      disabled={!hasManagePermissions}>
+      disabled={!isManageLevelUser}>
       <TrashIcon />
     </IconButtonWithTooltip>
   );

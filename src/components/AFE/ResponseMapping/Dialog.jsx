@@ -258,7 +258,7 @@ export default function ResponseMappingDialog(props) {
               onSave={handleSave}
               onClose={handleClose}
               saveInProgress={closeOnSave && saveInProgress}
-              label="Save and Close"
+              label="Save & close"
             />
           )}
           <Button

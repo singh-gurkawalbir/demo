@@ -284,6 +284,7 @@ export default {
       fieldId: 'salesforce.objectType',
     },
     pageSize: { fieldId: 'pageSize' },
+    skipRetries: { fieldId: 'skipRetries' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
@@ -358,6 +359,7 @@ export default {
               'salesforce.distributed.batchSize',
               'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
+              'skipRetries',
               'apiIdentifier'
             ],
           },

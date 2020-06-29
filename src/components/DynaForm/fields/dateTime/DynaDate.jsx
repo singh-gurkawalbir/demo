@@ -11,7 +11,7 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 export default function DatePicker(props) {
   const { id, label, onFieldChange, value = '', disabled } = props;
   const [dateValue, setDateValue] = useState(value || null);
-  const format = 'MM/DD/YYYY';
+  const format = props.format || 'MM/DD/YYYY';
 
   useEffect(() => {
     onFieldChange(id, moment(dateValue).format(format) || '');
