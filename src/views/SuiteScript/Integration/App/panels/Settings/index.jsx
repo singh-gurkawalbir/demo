@@ -157,7 +157,6 @@ function SettingsPanelComponent({
                       integrationId={integrationId}
                       ssLinkedConnectionId={ssLinkedConnectionId}
                       sectionId={path}
-                      parentUrl={match.url}
                       />
                   </>) : <Section
                     integrationId={integrationId}

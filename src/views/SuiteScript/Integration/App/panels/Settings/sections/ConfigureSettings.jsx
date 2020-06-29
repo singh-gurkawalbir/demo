@@ -62,7 +62,7 @@ export const SuiteScriptForm = (props) => {
 />);
 };
 
-export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, parentUrl }) {
+export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId }) {
   const classes = useStyles();
   const section = useSelector(state => {
     const flowSections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
@@ -93,7 +93,6 @@ export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, s
 
   const { formState, handleClose } = useSuiteScriptIAFormWithHandleClose(
     integrationId, ssLinkedConnectionId,
-    parentUrl
   );
 
 
