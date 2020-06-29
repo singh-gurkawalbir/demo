@@ -133,9 +133,10 @@ export default function MappingRow(props) {
     if (flowSampleData) {
       flowSampleData.forEach(extract => {
         formattedFields.push({
-          id: extract.id,
-          name: extract.name
+          id: extract.id || extract.value,
+          name: extract.name || extract.label
         });
+        // for netsuite
         if (extract.type === 'select') {
           formattedFields.push({
             id: `${extract.id}.internalid`,

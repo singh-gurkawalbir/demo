@@ -126,6 +126,7 @@ const SuiteScriptMapping = (props) => {
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
   const {status: importSampleDataStatus} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId}));
@@ -139,6 +140,20 @@ const SuiteScriptMapping = (props) => {
     [dispatch],
   );
 
+  const handleRefreshExtracts = useCallback(
+    () => {
+      dispatch(
+        actions.suiteScript.sampleData.request(
+          {
+            ssLinkedConnectionId,
+            integrationId,
+            flowId,
+          }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
 
   const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType]);
   const generateLabel = useMemo(() => `Import Field ${getAppType(importType) ? `(${getAppType(importType)})` : ''}`, [importType]);
@@ -295,6 +310,19 @@ const SuiteScriptMapping = (props) => {
               [classes.topHeadingCustomWidth]: showPreviewPane,
             })}>
             {extractLabel}
+            { flowSampleDataStatus !== 'requested' && (
+              <RefreshIcon
+                disabled={disabled}
+                onClick={handleRefreshExtracts}
+                className={classes.refreshButton}
+                data-test="refreshExtracts"
+              />
+            )}
+            {flowSampleDataStatus === 'requested' && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
 
           <Typography

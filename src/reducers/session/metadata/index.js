@@ -180,7 +180,6 @@ export const optionsFromMetadata = ({
       connectionId,
       commMetaPath
     });
-
   return {
     data: transformedData,
     status,

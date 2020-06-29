@@ -5009,6 +5009,51 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
 }
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { export: exportConfig } = flow;
+  const { type: exportType, _connectionId } = exportConfig;
+  if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
+    const {recordType} = exportConfig.netsuite.realtime;
+
+    const { subRecordType } = options;
+    let commMetaPath;
+
+    if (subRecordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    }
+
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
+    });
+
+    return { data, status };
+  }
+  if (exportType === 'salesforce') {
+    const { sObjectType } = exportConfig.salesforce;
+
+    const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+    // TO check
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+    });
+
+    return { data, status };
+  }
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 

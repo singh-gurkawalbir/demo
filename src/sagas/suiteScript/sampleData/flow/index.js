@@ -6,6 +6,7 @@ import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const {refreshCache } = options;
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -18,38 +19,18 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
   const {type: exportType, _connectionId } = exportConfig;
 
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
-    const {refreshCache} = options;
-    const {netsuite} = exportConfig;
-    const {recordType} = netsuite.realtime;
-    let path = `/netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    if (refreshCache) {
-      path = `${path}?refreshCache=true`;
-    }
-    try {
-      const response = yield call(apiCallWithRetry, {
-        path,
-        opts: { method: 'GET' },
-        message: 'Fetching Preview',
-        hidden: true,
-      });
-
-      const previewData = response.map(({id, name}) => ({id, name}));
-      yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData}));
-    } catch (e) {
-      // Handling Errors with status code between 400 and 500
-      if (e.status === 403 || e.status === 401) {
-        // todo
-        return;
-      }
-      if (e.status >= 400 && e.status < 500) {
-        const parsedError = JSON.parse(e.message);
-
-        return yield put(
-          actions.suiteScript.sampleData.receivedError({ ssLinkedConnectionId, integrationId, flowId, error: parsedError})
-        );
-      }
-    }
-    // realtime data
+    const {recordType} = exportConfig.netsuite.realtime;
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    yield put(
+      actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache, ignoreCache: true })
+    );
+  } else if (exportType === 'salesforce') {
+    const {sObjectType} = exportConfig.salesforce;
+    yield put(actions.metadata.request(
+      ssLinkedConnectionId,
+      `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
+      { refreshCache, ignoreCache: true }
+    ));
   } else if (exportType === 'fileCabinet') {
     // ftp => export.sampleData
   } else if (['rakuten', 'sears', 'newegg'].includes(exportType)) {
