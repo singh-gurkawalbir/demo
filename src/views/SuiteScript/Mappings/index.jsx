@@ -122,7 +122,7 @@ const SuiteScriptMapping = (props) => {
     ssLinkedConnectionId,
     flowId}));
   const saveInProgress = useSelector(
-    state => selectors.suitesciptMappingsSaveStatus(state).saveInProgress
+    state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
   const {status: importSampleDataStatus} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));

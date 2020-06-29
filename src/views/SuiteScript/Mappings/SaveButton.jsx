@@ -52,7 +52,7 @@ const MappingSaveButton = props => {
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
-    selectors.suitesciptMappingsSaveStatus(state)
+    selectors.suiteScriptMappingsSaveStatus(state)
   );
 
   const onSave = useCallback(() => {

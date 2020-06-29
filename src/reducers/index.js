@@ -4948,8 +4948,8 @@ export function suiteScriptMappings(state) {
 export function suitesciptMappingsChanged(state) {
   return fromSession.suitesciptMappingsChanged(state && state.session);
 }
-export function suitesciptMappingsSaveStatus(state) {
-  return fromSession.suitesciptMappingsSaveStatus(state && state.session);
+export function suiteScriptMappingsSaveStatus(state) {
+  return fromSession.suiteScriptMappingsSaveStatus(state && state.session);
 }
 
 

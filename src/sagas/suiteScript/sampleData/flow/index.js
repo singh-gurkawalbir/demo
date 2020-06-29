@@ -56,7 +56,6 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData}));
     }
   } else {
-    // type == test , netsuite.type === 'restlet',
     const path = `/suitescript/connections/${ssLinkedConnectionId}/export/preview`;
     try {
       const body = exportConfig;

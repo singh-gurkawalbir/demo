@@ -723,7 +723,7 @@ export function suitesciptMappingsChanged(state) {
   );
 }
 
-export function suitesciptMappingsSaveStatus(state) {
+export function suiteScriptMappingsSaveStatus(state) {
   return fromSuiteScript.mappingsSaveStatus(
     state && state.suiteScript
   );
