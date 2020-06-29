@@ -99,14 +99,14 @@ const TestAndSaveButton = props => {
     values => {
       dispatch(
         actions.suiteScript.resourceForm.submit(
+          ssLinkedConnectionId,
+          undefined,
           resourceType,
           resourceId,
           values,
           undefined,
           false,
           undefined,
-          ssLinkedConnectionId,
-          undefined
         )
       );
     },

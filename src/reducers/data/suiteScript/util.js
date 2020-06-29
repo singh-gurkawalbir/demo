@@ -9,7 +9,7 @@ export function tileDisplayName(tile) {
   } else {
     switch (tile.name) {
       case 'Salesforce Connector':
-        name = 'Salesforce - NetSuite Connector';
+        name = 'Salesforce - NetSuite Connector (V2)';
         break;
       case 'SVB Connector':
         name = 'SVB - NetSuite Connector';

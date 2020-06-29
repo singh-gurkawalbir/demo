@@ -166,21 +166,20 @@ function FlowBuilder() {
     (title) => {
       dispatch(
         actions.suiteScript.resource.patchStaged(
+          ssLinkedConnectionId,
+          'flows',
           flowId,
           [{ op: 'replace', path: '/name', value: title }],
           'value',
-          ssLinkedConnectionId,
-          integrationId,
-          'flows'
         )
       );
       dispatch(
         actions.suiteScript.resource.commitStaged(
-          flowId,
-          'value',
           ssLinkedConnectionId,
           integrationId,
-          'flows'
+          'flows',
+          flowId,
+          'value',
         )
       );
     },
