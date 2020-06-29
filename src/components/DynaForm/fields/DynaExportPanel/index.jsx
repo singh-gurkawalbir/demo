@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormContext } from 'react-forms-processor/dist';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { deepClone } from 'fast-json-patch';
 import actions from '../../../../actions';
 import {
@@ -61,15 +61,24 @@ function DynaExportPanel(props) {
   const isPageGeneratorExport = useSelector(state =>
     isPageGenerator(state, flowId, resourceId)
   );
+  const isPreviewDisabled = useSelector(state =>
+    isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
     getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
-  const isPreviewDisabled = useSelector(state =>
-    isExportPreviewDisabled(state, resourceId, resourceType));
-  const [panelType, setPanelType] = useState(
-    availablePreviewStages.length && availablePreviewStages[0].value
-  );
+  // Default panel is the panel shown by default when export panel is launched
+  // We can configure it in the metadata with 'default' as true
+  // Else the last stage being the Parse stage till now is taken as the default stage
+  const defaultPanel = useMemo(() => {
+    if (!availablePreviewStages.length) return;
+    const defaultStage = availablePreviewStages.find(stage => stage.default === true);
+    const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
+    return defaultStage ? defaultStage.value : lastStage.value;
+  }, [availablePreviewStages]);
+  // set the panel type with the default panel
+  const [panelType, setPanelType] = useState(defaultPanel);
+  // get the map of all the stages with their respective sampleData for the stages
   const previewStageDataList = useSelector(state => {
     const stageData = [];
 
@@ -82,6 +91,9 @@ function DynaExportPanel(props) {
 
     return stageData;
   }, shallowEqual);
+  // get the default raw stage sampleData to track the status of the request
+  // As the status is same for all the stages
+  // TODO @Raghu : what if later on there is a need of individual status for each stage?
   const resourceSampleData = useSelector(state =>
     getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
