@@ -7,7 +7,7 @@ import Drawer from '@material-ui/core/Drawer';
 import * as selectors from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../../components/drawer/TitleBar';
-import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/useSuiteScriptIAFormWithHandleClose';
+import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/suiteScript/useSuiteScriptIAFormWithHandleClose';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
 import { FormStateManager } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import actions from '../../../../../../../actions';
@@ -69,13 +69,13 @@ function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId, paren
   const classes = useStyles();
   const match = useRouteMatch();
   const section = useSelector(state => {
-    const flowSections = selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId);
+    const flowSections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
 
     return flowSections.find(s => s.titleId === sectionId);
   });
   const flowSettingsMeta = useSelector(
     state =>
-      selectors.suiteScriptSectionMetadata(
+      selectors.suiteScriptIASectionMetadata(
         state,
         integrationId,
         ssLinkedConnectionId,

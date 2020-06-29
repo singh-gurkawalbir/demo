@@ -7,7 +7,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import DynaSelect from '../DynaSelect';
-import DynaTableView from './DynaTable';
+import DynaTableView from '../DynaTableView/DynaTable';
 
 const useStyles = makeStyles(theme => ({
   margin: {

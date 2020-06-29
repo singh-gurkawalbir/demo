@@ -57,7 +57,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
 
   const hasAdvancedSettings = !!fields || !!sections;
   const flowSections = useSelector(state =>
-    selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId)
+    selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
@@ -100,7 +100,7 @@ function FlowPanel({ integrationId, ssLinkedConnectionId }) {
   const classes = useStyles();
 
   const flowSections = useSelector(state =>
-    selectors.suiteScriptFlowSections(state, integrationId, ssLinkedConnectionId)
+    selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId)
   );
 
   // If someone arrives at this view without requesting a section, then we

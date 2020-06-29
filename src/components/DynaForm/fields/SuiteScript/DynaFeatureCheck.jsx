@@ -1,7 +1,7 @@
 
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import DynaCheckbox from './DynaCheckbox';
+import DynaCheckbox from '../checkbox/DynaCheckbox';
 import * as selectors from '../../../../reducers';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../reducers/comms/networkComms';
@@ -12,7 +12,7 @@ import Spinner from '../../../Spinner';
 export default function DynaFeatureCheck(props) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, _integrationId: integrationId, featureName, onFieldChange: fieldChange, id, value} = props;
-  const {status, message} = useSelector(state => selectors.suiteScriptFeatureCheckState(state, { ssLinkedConnectionId, integrationId, featureName}));
+  const {status, message} = useSelector(state => selectors.suiteScriptIAFeatureCheckState(state, { ssLinkedConnectionId, integrationId, featureName}));
   const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => () => {

@@ -488,7 +488,7 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 }
 
 
-export function suiteScriptSettings(state, id, ssLinkedConnectionId) {
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
   const integration = resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
 
   if (!integration) {

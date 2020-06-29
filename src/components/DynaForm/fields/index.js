@@ -102,8 +102,8 @@ import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
-import DynaFeatureCheck from './checkbox/DynaFeatureCheck';
-import DyanSuiteScriptTable from './DynaTableView/DynaSuiteScriptTable';
+import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
+import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 

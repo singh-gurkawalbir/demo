@@ -47,7 +47,7 @@ export default (state = {}, action) => {
   });
 };
 const emptyObj = {};
-export function suiteScriptFeatureCheckState(
+export function suiteScriptIAFeatureCheckState(
   state,
   { ssLinkedConnectionId, integrationId, featureName}
 ) {

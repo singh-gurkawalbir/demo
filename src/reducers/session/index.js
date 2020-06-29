@@ -71,11 +71,11 @@ export default combineReducers({
 
 // #region PUBLIC SELECTORS
 
-export function suiteScriptFeatureCheckState(
+export function suiteScriptIAFeatureCheckState(
   state,
   { ssLinkedConnectionId, integrationId, featureName}
 ) {
-  return fromSuiteScript.suiteScriptFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
+  return fromSuiteScript.suiteScriptIAFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
 }
 export function netsuiteUserRoles(
   state,

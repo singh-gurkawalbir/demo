@@ -1743,8 +1743,8 @@ export function integrationAppSettings(state, id) {
   return fromData.integrationAppSettings(state.data, id);
 }
 
-export function suiteScriptSettings(state, id, ssLinkedConnectionId) {
-  return fromData.suiteScriptSettings(state && state.data, id, ssLinkedConnectionId);
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
+  return fromData.suiteScriptIASettings(state && state.data, id, ssLinkedConnectionId);
 }
 export function integrationAppLicense(state, id) {
   if (!state) return emptyObject;
@@ -1887,7 +1887,7 @@ export function integrationAppSectionMetadata(
 }
 
 
-export function suiteScriptSectionMetadata(
+export function suiteScriptIASectionMetadata(
   state,
   integrationId,
   ssLinkedConnectionId,
@@ -1897,7 +1897,7 @@ export function suiteScriptSectionMetadata(
     return emptyObject;
   }
 
-  const integrationResource = suiteScriptSettings(
+  const integrationResource = suiteScriptIASettings(
     state,
     integrationId,
     ssLinkedConnectionId
@@ -4488,8 +4488,8 @@ export const getScriptContext = createSelector(
 );
 
 // #region suiteScript
-export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
-  const {sections = []} = suiteScriptSettings(state, id, ssLinkedConnectionId);
+export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
   return sections.map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
@@ -4498,7 +4498,7 @@ export function suiteScriptFlowSections(state, id, ssLinkedConnectionId) {
 
 export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
   if (!state) return null;
-  const {general } = suiteScriptSettings(state, id, ssLinkedConnectionId);
+  const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
 
   if (Array.isArray(general)) {
@@ -4559,11 +4559,11 @@ export const suiteScriptResource = (
     integrationId,
   });
 
-export function suiteScriptFeatureCheckState(
+export function suiteScriptIAFeatureCheckState(
   state,
   { ssLinkedConnectionId, integrationId, featureName}
 ) {
-  return fromSession.suiteScriptFeatureCheckState(state && state.session, { ssLinkedConnectionId, integrationId, featureName});
+  return fromSession.suiteScriptIAFeatureCheckState(state && state.session, { ssLinkedConnectionId, integrationId, featureName});
 }
 export const suiteScriptResourceData = (
   state,
@@ -4634,7 +4634,7 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   if (!state) return emptyObject;
 
   const integrationResource =
-    suiteScriptSettings(state, id, ssLinkedConnectionId) || emptyObject;
+    suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
   const { sections = []} = integrationResource || {};
   let requiredFlows = [];
   const allSections = sections;

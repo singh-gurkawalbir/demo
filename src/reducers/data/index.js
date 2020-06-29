@@ -55,8 +55,8 @@ export function integrationAppSettings(state, id) {
   return fromResources.integrationAppSettings(state && state.resources, id);
 }
 
-export function suiteScriptSettings(state, id, ssLinkedConnectionId) {
-  return fromSuiteScript.suiteScriptSettings(state && state.suiteScript, id, ssLinkedConnectionId);
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
+  return fromSuiteScript.suiteScriptIASettings(state && state.suiteScript, id, ssLinkedConnectionId);
 }
 
 export function defaultStoreId(state, id, store) {

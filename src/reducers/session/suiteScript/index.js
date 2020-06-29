@@ -17,11 +17,11 @@ export default combineReducers({
   installer,
 });
 
-export function suiteScriptFeatureCheckState(
+export function suiteScriptIAFeatureCheckState(
   state,
   { ssLinkedConnectionId, integrationId, featureName}
 ) {
-  return fromFeatureCheck.suiteScriptFeatureCheckState(state && state.featureCheck, { ssLinkedConnectionId, integrationId, featureName});
+  return fromFeatureCheck.suiteScriptIAFeatureCheckState(state && state.featureCheck, { ssLinkedConnectionId, integrationId, featureName});
 }
 
 
