@@ -78,21 +78,20 @@ export default function FlowSchedule({ flow, onClose, className }) {
 
       dispatch(
         actions.suiteScript.resource.patchStaged(
+          flow.ssLinkedConnectionId,
+          'flows',
           flow._id,
           patchSet,
           'value',
-          flow.ssLinkedConnectionId,
-          flow._integrationId,
-          'flows'
         )
       );
       dispatch(
         actions.suiteScript.resource.commitStaged(
-          flow._id,
-          'value',
           flow.ssLinkedConnectionId,
           flow._integrationId,
-          'flows'
+          'flows',
+          flow._id,
+          'value',
         )
       );
       onClose();

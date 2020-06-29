@@ -26,10 +26,6 @@ export default function DynaApiMethod(props) {
   }, shallowEqual);
 
   return (
-    <DynaSelect
-      {...rest}
-      // onFieldChange={onFieldChangeMaterialUi}
-      options={[{ items: apiMethods || [] }]}
-    />
+    <DynaSelect {...rest} options={[{ items: apiMethods || [] }]} />
   );
 }

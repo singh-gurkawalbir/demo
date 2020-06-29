@@ -181,7 +181,6 @@ const optionsFromMetadataTransformFunct = (
       connectionId,
       commMetaPath
     });
-
   return {
     data: transformedData,
     status,

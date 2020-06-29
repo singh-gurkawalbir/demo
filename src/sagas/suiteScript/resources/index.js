@@ -83,21 +83,21 @@ export function* commitStagedChanges({
 
   yield put(
     actions.suiteScript.resource.received(
+      ssLinkedConnectionId,
+      integrationId,
       resourceType,
       updated,
-      ssLinkedConnectionId,
-      integrationId
     )
   );
 
   yield put(
     actions.suiteScript.resource.updated(
+      ssLinkedConnectionId,
+      integrationId,
       resourceType,
       updated._id,
       master,
       patch,
-      ssLinkedConnectionId,
-      integrationId
     )
   );
 
@@ -107,11 +107,10 @@ export function* commitStagedChanges({
 
   yield put(
     actions.suiteScript.resource.clearStaged(
+      ssLinkedConnectionId,
+      resourceType,
       id,
       scope,
-      ssLinkedConnectionId,
-      integrationId,
-      resourceType
     )
   );
 }

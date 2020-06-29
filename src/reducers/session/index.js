@@ -750,8 +750,21 @@ export function suitesciptMappingsChanged(state) {
   );
 }
 
-export function suitesciptMappingsSaveStatus(state,) {
+export function suiteScriptMappingsSaveStatus(state) {
   return fromSuiteScript.mappingsSaveStatus(
     state && state.suiteScript
+  );
+}
+
+export function suiteScriptImportSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.importSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
+  );
+}
+export function suiteScriptFlowSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.flowSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
   );
 }

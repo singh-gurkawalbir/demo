@@ -137,7 +137,7 @@ export default function MarketplaceList() {
   const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
     if (connector._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
-      history.push(`/pg/suitescript/integrationapps/${SUITESCRIPT_CONNECTOR_IDS.salesforce}/setup`);
+      history.push(getRoutePath(`/suitescript/integrationapps/${SUITESCRIPT_CONNECTOR_IDS.salesforce}/setup`));
     } else if (connector.installed) {
       confirmDialog({
         isPrompt: true,

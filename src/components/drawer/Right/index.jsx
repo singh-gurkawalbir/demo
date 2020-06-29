@@ -71,6 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   tall: {
     marginTop: theme.appBarHeight,
+    paddingBottom: theme.appBarHeight,
   },
   short: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
@@ -78,6 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
   },
   popperMaxWidthView: {
     maxWidth: 250,

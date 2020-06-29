@@ -149,6 +149,9 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
     );
     yield put(actions.suiteScript.installer.updateSSIntegrationId(connectorId, found[0]._integrationId));
 
+    // link the integration with the connection id
+    yield put(actions.suiteScript.resource.connections.linkIntegrator(ssLinkedConnectionId, true));
+
     // to verify the next SS connections step
     yield put(actions.suiteScript.installer.updateStep(
       connectorId,

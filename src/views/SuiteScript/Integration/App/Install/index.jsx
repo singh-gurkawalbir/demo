@@ -18,11 +18,7 @@ import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
 import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
 import openExternalUrl from '../../../../../utils/window';
-import ResourceSetupDrawer from '../../../../../components/ResourceSetup';
 import RightDrawer from '../../../../../components/drawer/Right';
-import {
-  generateNewId,
-} from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
@@ -30,6 +26,9 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import Spinner from '../../../../../components/Spinner';
 import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
+import getRoutePath from '../../../../../utils/routePaths';
+import LoadResources from '../../../../../components/LoadResources';
+import ConnectionDrawer from '../drawer/Connection';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,7 +63,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
   const { _id: connectorId, name, urlName, ssName } = useMemo(() => SUITESCRIPT_CONNECTORS.find(s => s._id === suiteScriptConnectorId), [suiteScriptConnectorId]);
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const [connection, setConnection] = useState(null);
   const [ssConnection, setSSConnection] = useState(null);
   const history = useHistory();
   // using isEqual as shallowEqual doesn't do nested equality checks
@@ -95,7 +93,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
       });
       dispatch(actions.resource.requestCollection(`suitescript/connections/${ssLinkedConnectionId}/tiles`));
       history.replace(
-        `/pg/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`
+        getRoutePath(`/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`)
       );
       dispatch(actions.suiteScript.installer.clearSteps(
         connectorId,
@@ -182,23 +180,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
         return false;
       }
 
-      const newId = generateNewId();
-      const conn = {
-        type: connectionType,
-        [connectionType]: { type: connectionType},
-      };
-
-      dispatch(
-        actions.resource.patchStaged(
-          newId,
-          jsonUtil.objectToPatchSet(conn),
-          SCOPES.VALUE
-        )
-      );
-      setConnection({
-        newId,
-        doc: conn,
-      });
+      history.push(`${match.url}/setConnection`);
     } else if (type === 'integrator-bundle') {
       verifyNSBundle();
     } else if (type === 'connector-bundle') {
@@ -212,12 +194,11 @@ export default function SuiteScriptIntegrationAppInstallation() {
       if (doc) {
         dispatch(
           actions.suiteScript.resource.patchStaged(
+            ssLinkedConnectionId,
+            'connections',
             doc._id,
             jsonUtil.objectToPatchSet(doc),
             SCOPES.VALUE,
-            ssLinkedConnectionId,
-            connectorId,
-            'connections'
           )
         );
         setSSConnection({
@@ -270,10 +251,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
     history.push('/pg/marketplace');
   }, [history]);
 
-  const handleConnectionClose = useCallback(() => {
-    setConnection(null);
-  }, []);
-
   const handleSubmitComplete = useCallback((connectionId) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
@@ -288,8 +265,8 @@ export default function SuiteScriptIntegrationAppInstallation() {
       )
     );
     verifyNSBundle(connectionId);
-    setConnection(null);
-  }, [connectorId, dispatch, verifyNSBundle]);
+    history.goBack();
+  }, [connectorId, dispatch, history, verifyNSBundle]);
 
   const onSSConnSubmitComplete = useCallback(() => {
     if (currentStep.connectionType === 'salesforce') {
@@ -318,23 +295,17 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.innerContent}>
-        { packageCommStatus === COMM_STATES.LOADING &&
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>}
-        {connection && (
-        <ResourceSetupDrawer
-          resourceId={connection.newId}
-          resource={connection.doc}
-          resourceType="connections"
-          onClose={handleConnectionClose}
-          onSubmitComplete={handleSubmitComplete}
-          addOrSelect
-        />
-        )}
-        {ssConnection && (
+    <LoadResources resources="integrations,connections">
+      <div className={classes.root}>
+        <div className={classes.innerContent}>
+          { packageCommStatus === COMM_STATES.LOADING &&
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>}
+          <ConnectionDrawer
+            connectorId={connectorId}
+            handleSubmitComplete={handleSubmitComplete} />
+          {ssConnection && (
           <RightDrawer
             path="editConnection"
             type="legacy"
@@ -348,40 +319,41 @@ export default function SuiteScriptIntegrationAppInstallation() {
               onSubmitComplete={onSSConnSubmitComplete}
         />
           </RightDrawer>
-        )}
-        <Grid container className={classes.formHead}>
-          <Grid item xs={1}>
-            <IconButton
-              data-test="back"
-              onClick={handleBackClick}
-              size="medium">
-              <ArrowBackIcon fontSize="inherit" />
-            </IconButton>
+          )}
+          <Grid container className={classes.formHead}>
+            <Grid item xs={1}>
+              <IconButton
+                data-test="back"
+                onClick={handleBackClick}
+                size="medium">
+                <ArrowBackIcon fontSize="inherit" />
+              </IconButton>
+            </Grid>
+            <Grid item xs>
+              <Paper elevation={0} className={classes.paper}>
+                <Breadcrumbs
+                  separator={<ArrowRightIcon />}
+                  aria-label="breadcrumb">
+                  <Typography color="textPrimary">Setup</Typography>
+                  <Typography color="textPrimary">
+                    {name}
+                  </Typography>
+                </Breadcrumbs>
+              </Paper>
+            </Grid>
           </Grid>
-          <Grid item xs>
-            <Paper elevation={0} className={classes.paper}>
-              <Breadcrumbs
-                separator={<ArrowRightIcon />}
-                aria-label="breadcrumb">
-                <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">
-                  {name}
-                </Typography>
-              </Breadcrumbs>
-            </Paper>
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.stepTable}>
-          {installSteps.map((step, index) => (
-            <InstallationStep
-              key={step.__index}
-              handleStepClick={handleStepClick}
-              index={index + 1}
-              step={step}
+          <Grid container spacing={3} className={classes.stepTable}>
+            {installSteps.map((step, index) => (
+              <InstallationStep
+                key={step.__index}
+                handleStepClick={handleStepClick}
+                index={index + 1}
+                step={step}
               />
-          ))}
-        </Grid>
+            ))}
+          </Grid>
+        </div>
       </div>
-    </div>
+    </LoadResources>
   );
 }

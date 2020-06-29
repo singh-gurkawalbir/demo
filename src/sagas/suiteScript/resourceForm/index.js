@@ -84,7 +84,6 @@ export function* submitFormValues({
   resourceType,
   resourceId,
   values,
-  isGenerate,
   ssLinkedConnectionId,
   integrationId,
 }) {
@@ -107,12 +106,11 @@ export function* submitFormValues({
   if (patchSet && patchSet.length > 0) {
     yield put(
       actions.suiteScript.resource.patchStaged(
+        ssLinkedConnectionId,
+        resourceType,
         resourceId,
         patchSet,
         SCOPES.VALUE,
-        ssLinkedConnectionId,
-        integrationId,
-        resourceType
       )
     );
   }
@@ -146,7 +144,6 @@ export function* submitFormValues({
         resourceType,
         id: resourceId,
         scope: SCOPES.VALUE,
-        isGenerate,
         ssLinkedConnectionId,
         integrationId,
       });
@@ -154,10 +151,10 @@ export function* submitFormValues({
       if (resp && (resp.error || resp.conflict)) {
         return yield put(
           actions.suiteScript.resourceForm.submitFailed(
+            ssLinkedConnectionId,
+            integrationId,
             resourceType,
             resourceId,
-            ssLinkedConnectionId,
-            integrationId
           )
         );
       }
@@ -166,22 +163,23 @@ export function* submitFormValues({
 
   yield put(
     actions.suiteScript.resourceForm.submitComplete(
+      ssLinkedConnectionId,
+      integrationId,
       resourceType,
       resourceId,
       finalValues,
-      ssLinkedConnectionId,
-      integrationId
     )
   );
 }
 
 export function* submitResourceForm(params) {
-  const { resourceType, resourceId } = params;
+  const { ssLinkedConnectionId, resourceType, resourceId } = params;
   const { cancelSave } = yield race({
     saveForm: call(submitFormValues, params),
     cancelSave: take(
       action =>
-        action.type === actionTypes.RESOURCE_FORM.SUBMIT_ABORTED &&
+        action.type === actionTypes.SUITESCRIPT.RESOURCE_FORM.SUBMIT_ABORTED &&
+        action.ssLinkedConnectionId === ssLinkedConnectionId &&
         action.resourceType === resourceType &&
         action.resourceId === resourceId
     ),
@@ -259,13 +257,13 @@ export function* initFormValues({
 
   yield put(
     actions.suiteScript.resourceForm.initComplete(
+      ssLinkedConnectionId,
       resourceType,
       resourceId,
       finalFieldMeta,
       isNew,
       skipCommit,
       flowId,
-      ssLinkedConnectionId
     )
   );
 }

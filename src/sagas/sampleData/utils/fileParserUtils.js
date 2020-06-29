@@ -104,7 +104,7 @@ export function* parseFileDefinition({ sampleData, resource }) {
           _fileDefinitionId,
         },
       },
-      message: 'Fetching flows Preview',
+      message: 'Loading',
       hidden: true,
     });
 

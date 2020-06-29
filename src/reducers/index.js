@@ -51,6 +51,8 @@ import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -1075,7 +1077,50 @@ export function resourcesByIds(state, resourceType, resourceIds) {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 }
 
-export function matchingConnectionList(state, connection = {}, environment) {
+export function userPermissions(state) {
+  return fromUser.permissions(state.user);
+}
+
+export function userAccessLevelOnConnection(state, connectionId) {
+  const permissions = userPermissions(state);
+  let accessLevelOnConnection;
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+        i._registeredConnectionIds &&
+        i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
+  }
+
+  return accessLevelOnConnection;
+}
+export function matchingConnectionList(state, connection = {}, environment, manageOnly) {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
     environment = currentEnvironment(state);
@@ -1095,11 +1140,13 @@ export function matchingConnectionList(state, connection = {}, environment) {
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
+          const accessLevel = manageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
             (this.netsuite.account && this.netsuite.environment) &&
-            (!environment || !!this.sandbox === (environment === 'sandbox'))
+            (!environment || !!this.sandbox === (environment === 'sandbox')) &&
+            (accessLevel === 'owner' || accessLevel === 'manage')
           );
         }
 
@@ -1130,10 +1177,11 @@ export function filteredResourceList(
   state,
   resource,
   resourceType,
-  environment
+  environment,
+  manageOnly
 ) {
   return resourceType === 'connections'
-    ? matchingConnectionList(state, resource, environment)
+    ? matchingConnectionList(state, resource, environment, manageOnly)
     : matchingStackList(state);
 }
 
@@ -2544,10 +2592,6 @@ export function userAccessLevel(state) {
   return fromUser.accessLevel(state.user);
 }
 
-export function userPermissions(state) {
-  return fromUser.permissions(state.user);
-}
-
 const parentResourceToLookUpTo = {
   flows: 'integrations',
 };
@@ -2785,46 +2829,6 @@ export function publishedConnectors(state) {
   }).resources;
 
   return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
-}
-
-export function userAccessLevelOnConnection(state, connectionId) {
-  const permissions = userPermissions(state);
-  let accessLevelOnConnection;
-
-  if (
-    [
-      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-    ].includes(permissions.accessLevel)
-  ) {
-    accessLevelOnConnection = permissions.accessLevel;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-    const ioIntegrations = resourceList(state, {
-      type: 'integrations',
-    }).resources;
-    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-      i =>
-        i._registeredConnectionIds &&
-        i._registeredConnectionIds.includes(connectionId)
-    );
-
-    ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!accessLevelOnConnection) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
-        } else if (
-          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
-        }
-      }
-    });
-  }
-
-  return accessLevelOnConnection;
 }
 
 export function availableConnectionsToRegister(state, integrationId) {
@@ -3510,6 +3514,7 @@ export function metadataOptionsAndResources({
   );
 }
 
+
 /*
  * TODO: @Raghu - Should be removed and use above selector
  * Function Definition needs to be changed to
@@ -4092,6 +4097,32 @@ export function isDataLoaderExport(state, resourceId, flowId) {
     'value'
   );
   return resourceObj.type === 'simple';
+}
+/**
+ * All the adaptors whose preview depends on connection
+ * are disabled if their respective connections are offline
+ * Any other criteria to disable preview panel can be added here
+ */
+export function isExportPreviewDisabled(state, resourceId, resourceType) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
+  // their preview does not depend on connection, so it can be enabled
+  // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
+  // As we are using this below condition multiple places
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    isRestCsvMediaTypeExport(state, resourceId)
+  ) {
+    return false;
+  }
+  // In all other cases, where preview depends on connection being online, return the same
+  return isConnectionOffline(state, resourceObj._connectionId);
 }
 
 // Gives back supported stages of data flow based on resource type
@@ -5030,7 +5061,7 @@ export function canLinkSuiteScriptIntegrator(state, connectionId) {
 
 export function suiteScriptIntegratorLinkedConnectionId(state, account) {
   const preferences = userPreferences(state);
-  if (!preferences || !preferences.ssConnectionIds) {
+  if (!preferences || !preferences.ssConnectionIds || !account) {
     return;
   }
 
@@ -5083,8 +5114,8 @@ export function suiteScriptMappings(state) {
 export function suitesciptMappingsChanged(state) {
   return fromSession.suitesciptMappingsChanged(state && state.session);
 }
-export function suitesciptMappingsSaveStatus(state) {
-  return fromSession.suitesciptMappingsSaveStatus(state && state.session);
+export function suiteScriptMappingsSaveStatus(state) {
+  return fromSession.suiteScriptMappingsSaveStatus(state && state.session);
 }
 
 
@@ -5096,7 +5127,8 @@ export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationI
   });
   return flows && flows.find(flow => flow._id === flowId);
 }
-export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+
+export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
@@ -5137,14 +5169,60 @@ export function getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, int
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
-      // filterKey:
-      //   salesforce.api === 'compositerecord'
-      //     ? 'salesforce-sObjectCompositeMetadata'
-      //     : 'salesforce-recordType',
     });
 
     return { data, status };
   }
+  return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
+}
+
+export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+  const flow = suiteScriptFlowDetail(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    flowId
+  });
+  if (!flow) { return emptyObject; }
+  const { export: exportConfig } = flow;
+  const { type: exportType, _connectionId } = exportConfig;
+  if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
+    const {recordType} = exportConfig.netsuite.realtime;
+
+    const { subRecordType } = options;
+    let commMetaPath;
+
+    if (subRecordType) {
+      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
+       * in case of subrecord */
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
+    } else {
+      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+    }
+
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suitescript-recordTypeDetail',
+    });
+
+    return { data, status };
+  }
+  if (exportType === 'salesforce') {
+    const { sObjectType } = exportConfig.salesforce;
+
+    const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+    // TO check
+    const { data, status } = metadataOptionsAndResources({
+      state,
+      connectionId: ssLinkedConnectionId,
+      commMetaPath,
+      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+    });
+
+    return { data, status };
+  }
+  return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 
 export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
@@ -5170,4 +5248,8 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
+}
+
+export function suiteScriptConnections(state, ssLinkedConnectionId) {
+  return fromData.suiteScriptConnections(state && state.data, ssLinkedConnectionId);
 }

@@ -8,12 +8,18 @@ import actions from '../../../actions';
 import MappingRow from './MappingRow';
 import SaveButton from './SaveButton';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../components/IconTextButton';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
 import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
 
+const getAppType = (resType) => {
+  if (resType === 'netsuite') return 'Netsuite';
+  if (resType === 'rakuten') return 'Rakuten';
+  if (resType === 'sears') return 'Sears';
+  if (resType === 'newegg') return 'Newegg';
+  if (resType === 'salesforce') return 'Salesforce';
+};
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,6 +61,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
+    textAlign: 'center',
     width: '46%',
     '& > div': {
       width: '100%',
@@ -89,17 +96,6 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-function RefreshButton({className, ...props}) {
-  return (
-    <IconTextButton
-      variant="contained"
-      color="secondary"
-      className={className}
-      {...props}>
-      Refresh <RefreshIcon />
-    </IconTextButton>
-  );
-}
 const SuiteScriptMapping = (props) => {
   const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId } = props;
   const [state, setState] = useState({
@@ -126,10 +122,11 @@ const SuiteScriptMapping = (props) => {
     ssLinkedConnectionId,
     flowId}));
   const saveInProgress = useSelector(
-    state => selectors.suitesciptMappingsSaveStatus(state).saveInProgress
+    state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
-  const {status: importSampleDataStatus} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
     dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId}));
@@ -143,8 +140,23 @@ const SuiteScriptMapping = (props) => {
     [dispatch],
   );
 
-  const extractLabel = `Source Record Field (${exportType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
-  const generateLabel = `Import Field (${importType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
+  const handleRefreshExtracts = useCallback(
+    () => {
+      dispatch(
+        actions.suiteScript.sampleData.request(
+          {
+            ssLinkedConnectionId,
+            integrationId,
+            flowId,
+          }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
+
+  const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType]);
+  const generateLabel = useMemo(() => `Import Field ${getAppType(importType) ? `(${getAppType(importType)})` : ''}`, [importType]);
   const emptyRowIndex = useMemo(() => localMappings.length, [
     localMappings,
   ]);
@@ -298,6 +310,19 @@ const SuiteScriptMapping = (props) => {
               [classes.topHeadingCustomWidth]: showPreviewPane,
             })}>
             {extractLabel}
+            { flowSampleDataStatus !== 'requested' && (
+              <RefreshIcon
+                disabled={disabled}
+                onClick={handleRefreshExtracts}
+                className={classes.refreshButton}
+                data-test="refreshExtracts"
+              />
+            )}
+            {flowSampleDataStatus === 'requested' && (
+              <span className={classes.spinner}>
+                <Spinner size={24} color="primary" />
+              </span>
+            )}
           </Typography>
 
           <Typography
@@ -305,7 +330,7 @@ const SuiteScriptMapping = (props) => {
             className={clsx(classes.childHeader, classes.topHeading)}>
             {generateLabel}
             { importSampleDataStatus !== 'requested' && (
-              <RefreshButton
+              <RefreshIcon
                 disabled={disabled}
                 onClick={handleRefreshGenerates}
                 className={classes.refreshButton}
@@ -425,17 +450,34 @@ export default function SuiteScriptMappingWrapper(props) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
+
+  const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
   const integrationId = str1[str1.length - 1];
   const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
   const ssLinkedConnectionId = str2[str2.length - 1];
   const flowId = match.params && match.params.flowId;
 
-  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const requestImportSampleData = useCallback(
     () => {
       dispatch(
         actions.suiteScript.importSampleData.request(
+          {
+            ssLinkedConnectionId,
+            integrationId,
+            flowId,
+          }
+        )
+      );
+    },
+    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+  );
+  const requestFlowSampleData = useCallback(
+    () => {
+      dispatch(
+        actions.suiteScript.sampleData.request(
           {
             ssLinkedConnectionId,
             integrationId,
@@ -457,11 +499,26 @@ export default function SuiteScriptMappingWrapper(props) {
 
 
   useEffect(() => {
+    if (
+      !flowSampleDataLoaded &&
+      (flowSampleDataStatus === 'received' || flowSampleDataStatus === 'error')
+    ) {
+      setFlowSampleDataLoaded(true);
+    }
+  }, [flowSampleDataLoaded, flowSampleDataStatus]);
+
+
+  useEffect(() => {
     if (!importSampleData && !importSampleDataLoaded) {
       requestImportSampleData();
     }
   }, [importSampleData, dispatch, requestImportSampleData, importSampleDataLoaded]);
-  if (!importSampleDataLoaded) {
+  useEffect(() => {
+    if (!flowSampleData && !flowSampleDataLoaded) {
+      requestFlowSampleData();
+    }
+  }, [flowSampleData, flowSampleDataLoaded, requestFlowSampleData]);
+  if (!importSampleDataLoaded || !flowSampleDataLoaded) {
     return (
       <SpinnerWrapper>
         <Spinner />

@@ -8,6 +8,7 @@ import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Un
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
+import getRoutePath from '../../utils/routePaths';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -194,41 +195,41 @@ export default function AppRouting() {
         render={({ history }) => history.replace('/pg/accesstokens')}
         />
       <Route
-        path="/pg/suitescript/integrationapps/:integrationAppName/setup"
+        path={getRoutePath('/suitescript/integrationapps/:integrationAppName/setup')}
         >
         <SuiteScriptIntegrationAppInstallation />
       </Route>
       <Route
-        path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId"
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId')}
         exact
         render={({ history, match }) => {
           history.replace(
-            `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`
+            getRoutePath(`/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`)
           );
         }}
       />
       <Route
-        path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId"
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId')}
         exact
         render={({ history, match }) => {
           history.replace(
-            `/pg/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`
+            getRoutePath(`/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`)
           );
         }}
       />
       <Route
         path={[
-          '/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId',
-          '/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
+          getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
         ]}>
         <SuiteScriptFlowBuilder />
       </Route>
       <Route
-        path="/pg/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab"
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab')}
         component={SuiteScriptIntegration}
       />
       <Route
-        path="/pg/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab"
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab')}
         component={SuiteScriptIntegration}
       />
       <Route path="/pg/:resourceType" component={ResourceList} />

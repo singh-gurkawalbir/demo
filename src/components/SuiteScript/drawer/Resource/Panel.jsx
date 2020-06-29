@@ -89,10 +89,10 @@ export default function Panel(props) {
     notificationPanelHeight,
   });
   const abortAndClose = useCallback(() => {
-    dispatch(actions.resourceForm.submitAborted(resourceType, id));
+    dispatch(actions.suiteScript.resourceForm.submitAborted(ssLinkedConnectionId, integrationId, resourceType, id));
     onClose();
-    dispatch(actions.resource.clearStaged(id));
-  }, [dispatch, id, onClose, resourceType]);
+    dispatch(actions.suiteScript.resource.clearStaged(ssLinkedConnectionId, resourceType, id));
+  }, [dispatch, id, integrationId, onClose, resourceType, ssLinkedConnectionId]);
   const submitButtonLabel = 'Save';
   const requiredResources = ['tiles', 'connections', 'flows'];
   const resize = (width, height) => {

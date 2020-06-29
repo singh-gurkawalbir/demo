@@ -6,6 +6,8 @@ import featureCheck, * as fromFeatureCheck from './featureCheck';
 import account, * as fromAccount from './account';
 import installer, * as fromInstaller from './installer';
 import mappings, * as fromMappings from './mappings';
+import importSampleData, * as fromImportSampleData from './sampleData/import';
+import flowSampleData, * as fromFlowSampleData from './sampleData/flow';
 
 export default combineReducers({
   mappings,
@@ -15,6 +17,8 @@ export default combineReducers({
   featureCheck,
   account,
   installer,
+  importSampleData,
+  flowSampleData,
 });
 
 export function suiteScriptIAFeatureCheckState(
@@ -94,4 +98,11 @@ export function mappingsChanged(state) {
 }
 export function mappingsSaveStatus(state) {
   return fromMappings.mappingsSaveStatus(state && state.mappings);
+}
+
+export function importSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromImportSampleData.importSampleDataContext(state && state.importSampleData, {ssLinkedConnectionId, integrationId, flowId});
+}
+export function flowSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromFlowSampleData.flowSampleDataContext(state && state.flowSampleData, {ssLinkedConnectionId, integrationId, flowId});
 }

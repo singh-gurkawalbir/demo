@@ -92,21 +92,20 @@ export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
       ];
       dispatch(
         actions.suiteScript.resource.patchStaged(
+          ssLinkedConnectionId,
+          'flows',
           flowId,
           patchSet,
           'value',
-          ssLinkedConnectionId,
-          flow._integrationId,
-          'flows'
         )
       );
       dispatch(
         actions.suiteScript.resource.commitStaged(
-          flowId,
-          'value',
           ssLinkedConnectionId,
           flow._integrationId,
-          'flows'
+          'flows',
+          flowId,
+          'value',
         )
       );
       history.goBack();

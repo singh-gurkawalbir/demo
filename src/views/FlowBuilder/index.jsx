@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -418,7 +418,21 @@ function FlowBuilder() {
   // Replaces the url once the virtual flow resource is
   // persisted and we have the final flow id.
   if (newFlowId) {
-    history.replace(rewriteUrl(newFlowId));
+    const nestedPgOrPpPath = matchPath(location.pathname, {
+      path: `${match.path}/:mode/:resourceType/:resourceId`,
+    });
+
+    if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
+      // Incase of a pg or pp opened ... replace url flowId with newFlowId
+      // @BugFix: IO-16074
+      history.replace(generatePath(nestedPgOrPpPath.path, {
+        ...nestedPgOrPpPath.params,
+        flowId: newFlowId,
+      }));
+    } else {
+      // In all other cases go back to flow url with new FlowId
+      history.replace(rewriteUrl(newFlowId));
+    }
 
     return null;
   }
