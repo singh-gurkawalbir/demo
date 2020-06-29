@@ -5001,15 +5001,10 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
-      // filterKey:
-      //   salesforce.api === 'compositerecord'
-      //     ? 'salesforce-sObjectCompositeMetadata'
-      //     : 'salesforce-recordType',
     });
 
     return { data, status };
   }
-  console.log('going in');
   return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 

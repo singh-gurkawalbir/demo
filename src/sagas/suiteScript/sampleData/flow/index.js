@@ -20,7 +20,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
     const {refreshCache} = options;
     const {netsuite} = exportConfig;
-    const {recordType} = netsuite;
+    const {recordType} = netsuite.realtime;
     let path = `/netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
     if (refreshCache) {
       path = `${path}?refreshCache=true`;

@@ -109,10 +109,9 @@ export default function MappingRow(props) {
   const ref = useRef(null);
 
   const {data: importData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-  const {data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {data: flowSampleData = []} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const generateFields = useMemo(() => {
-    console.log('*************', importData);
     const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
       importData,
       importType

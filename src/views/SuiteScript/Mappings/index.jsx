@@ -8,12 +8,18 @@ import actions from '../../../actions';
 import MappingRow from './MappingRow';
 import SaveButton from './SaveButton';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
-import IconTextButton from '../../../components/IconTextButton';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
 import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
 
+const getAppType = (resType) => {
+  if (resType === 'netsuite') return 'Netsuite';
+  if (resType === 'rakuten') return 'Rakuten';
+  if (resType === 'sears') return 'Sears';
+  if (resType === 'newegg') return 'Newegg';
+  if (resType === 'salesforce') return 'Salesforce';
+};
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,6 +61,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
+    textAlign: 'center',
     width: '46%',
     '& > div': {
       width: '100%',
@@ -89,17 +96,6 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-function RefreshButton({className, ...props}) {
-  return (
-    <IconTextButton
-      variant="contained"
-      color="secondary"
-      className={className}
-      {...props}>
-      Refresh <RefreshIcon />
-    </IconTextButton>
-  );
-}
 const SuiteScriptMapping = (props) => {
   const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId } = props;
   const [state, setState] = useState({
@@ -143,8 +139,9 @@ const SuiteScriptMapping = (props) => {
     [dispatch],
   );
 
-  const extractLabel = `Source Record Field (${exportType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
-  const generateLabel = `Import Field (${importType === 'netsuite' ? 'Netsuite' : 'Salesforce'})`;
+
+  const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType, getAppType]);
+  const generateLabel = useMemo(() => `Import Field ${getAppType(importType) ? `(${getAppType(importType)})` : ''}`, [importType]);
   const emptyRowIndex = useMemo(() => localMappings.length, [
     localMappings,
   ]);
@@ -305,7 +302,7 @@ const SuiteScriptMapping = (props) => {
             className={clsx(classes.childHeader, classes.topHeading)}>
             {generateLabel}
             { importSampleDataStatus !== 'requested' && (
-              <RefreshButton
+              <RefreshIcon
                 disabled={disabled}
                 onClick={handleRefreshGenerates}
                 className={classes.refreshButton}
@@ -435,8 +432,6 @@ export default function SuiteScriptMappingWrapper(props) {
 
   const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-  console.log('flowSampleData', flowSampleDataStatus, flowSampleData);
-  console.log('importSampleData', importSampleDataStatus, importSampleData);
   const requestImportSampleData = useCallback(
     () => {
       dispatch(

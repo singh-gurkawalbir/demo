@@ -66,13 +66,8 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       const methodObj = connection.apiMethods.find(m => m.id === method);
       const { fields } = methodObj;
       const previewData = fields.map(({label, id}) => ({id, name: label}));
-      console.log('previewData', previewData);
       return yield put(
         actions.suiteScript.importSampleData.received({ ssLinkedConnectionId, integrationId, flowId, data: previewData}));
-      // );
-      // return yield put(
-      //   actions.suiteScript.importSampleData.receivedError({ ssLinkedConnectionId, integrationId, flowId, error: parsedError})
-      // );
     }
   }
 }

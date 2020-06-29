@@ -29,8 +29,8 @@ export function* refreshGenerates({ isInit = false }) {
       flowId
     }
   );
-  const { import: importConfig } = flow;
-  const {type: importType, _connectionId} = importConfig;
+  const { import: importRes } = flow;
+  const {type: importType, _connectionId} = importRes;
 
   const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
@@ -38,7 +38,7 @@ export function* refreshGenerates({ isInit = false }) {
     importType
   );
   if (importType === 'salesforce') {
-    const { sObjectType } = importConfig.salesforce;
+    const { sObjectType } = importRes.salesforce;
     // getting all childRelationshipFields of parent sObject
     const { data: childRelationshipFields = [] } = yield select(selectors.getMetadataOptions,
       {
@@ -110,22 +110,38 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
       flowId
     }
   );
-  const {export: exportRes, import: importConfig} = flow;
-  const {type: importType, mapping} = importConfig;
+  const {export: exportRes, import: importRes} = flow;
+  let importType;
+  let exportType;
+  // let mapping;
+  // add realtime
+  if (importRes.netsuite && ['restlet', 'batch'].includes(importRes.netsuite.type)) {
+    importType = 'netsuite';
+  } else {
+    importType = importRes.type;
+  }
+  const {mapping} = importRes;
+
+  const {lookups = []} = importRes[importType];
+  if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
+    exportType = 'netsuite';
+  } else {
+    exportType = exportRes.type;
+  }
+
+
+  // const {type: importType, mapping} = importRes;
   const generatedMappings = suiteScriptMappingUtil.generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
-  let lookups = [];
-  if (importType === 'netsuite' && importConfig.netsuite && importConfig.netsuite.lookups) { lookups = deepClone(importConfig.netsuite.lookups); } else if (importType === 'salesforce' && importConfig.salesforce && importConfig.salesforce.lookups) { lookups = deepClone(importConfig.salesforce.lookups); }
-  const exportType = flow.export.netsuite ? 'netsuite' : flow.export.type;
 
   const options = {
     importType,
     exportType,
-    connectionId: importConfig._connectionId
+    connectionId: importRes._connectionId
   };
   if (importType === 'netsuite') {
-    options.recordType = importConfig.netsuite.recordType;
+    options.recordType = importRes.netsuite.recordType;
   } else if (importType === 'salesforce') {
-    options.sObjectType = importConfig.salesforce.sObjectType;
+    options.sObjectType = importRes.salesforce.sObjectType;
   }
   yield put(actions.suiteScript.mapping.initComplete(
     {
@@ -155,11 +171,11 @@ export function* saveMappings() {
       flowId
     }
   );
-  const {export: exportConfig, import: importConfig, _id: resourceId} = flow;
-  const {type: importType, _connectionId } = importConfig;
+  const {export: exportConfig, import: importRes, _id: resourceId} = flow;
+  const {type: importType, _connectionId } = importRes;
   const options = {};
   if (importType === 'salesforce') {
-    const { sObjectType } = importConfig.salesforce;
+    const { sObjectType } = importRes.salesforce;
 
     const { data: childRelationshipFields } = yield select(selectors.getMetadataOptions,
       {
@@ -169,13 +185,13 @@ export function* saveMappings() {
       });
     options.childRelationships = childRelationshipFields;
   } else if (importType === 'netsuite') {
-    const { recordType } = importConfig.netsuite;
+    const { recordType } = importRes.netsuite;
     options.recordType = recordType;
   }
   const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
   patchSet.push({
-    op: importConfig.mapping ? 'replace' : 'add',
+    op: importRes.mapping ? 'replace' : 'add',
     path: '/import/mapping',
     value: _mappings,
   });
@@ -230,13 +246,12 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
       flowId
     }
   );
-  const { import: importConfig } = flow;
-  const {type: importType} = importConfig;
+  const { import: importRes } = flow;
+  const {type: importType} = importRes;
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
   const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
-  console.log(importData);
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
     importData,
     importType
@@ -287,8 +302,8 @@ export function* updateImportSampleData() {
       flowId
     }
   );
-  const { import: importConfig } = flow;
-  const {type: importType} = importConfig;
+  const { import: importRes } = flow;
+  const {type: importType} = importRes;
 
   const {data: importData} = yield select(selectors.suiteScriptImportSampleData, {ssLinkedConnectionId, integrationId, flowId});
   const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
