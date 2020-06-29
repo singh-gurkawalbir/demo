@@ -96,7 +96,7 @@ export default function DynaNetSuiteQualificationCriteria(props) {
     return (
       <div className={classes.loaderRecord}>
         <Typography className={classes.loaderRecordMetaDataText}>
-          Loading record metadata.
+          Loading
         </Typography>
         <Spinner size={24} />
       </div>

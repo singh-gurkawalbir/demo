@@ -173,7 +173,7 @@ export function* previewMappings({ id }) {
     const preview = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: 'Fetching preview data',
+      message: 'Loading',
     });
 
     if (application === adaptorTypeMap.NetSuiteDistributedImport) {

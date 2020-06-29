@@ -50,6 +50,8 @@ import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -2590,16 +2592,13 @@ export function userPermissionsOnConnection(state, connectionId) {
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
+    let integrationPermissions = {};
 
     ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!highestPermissionIntegration.accessLevel) {
-          highestPermissionIntegration = permissions.integrations[i._id];
-        } else if (
-          highestPermissionIntegration.accessLevel ===
-          INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          highestPermissionIntegration = permissions.integrations[i._id];
+      integrationPermissions = permissions.integrations[i._id] || permissions.integrations.all || {};
+      if (integrationPermissions.accessLevel) {
+        if (!highestPermissionIntegration.accessLevel || highestPermissionIntegration.accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR) {
+          highestPermissionIntegration = integrationPermissions;
         }
       }
     });
@@ -2652,6 +2651,9 @@ export const resourcePermissions = (
     }
     if (resourceId) {
       let value = permissions[resourceType][resourceId];
+      if (!value && resourceType === 'integrations') {
+        value = permissions[resourceType].all;
+      }
 
       // remove tile level permissions added to connector while are not valid.
       if (resourceData && resourceData._connectorId) {
@@ -3001,11 +3003,10 @@ export function tiles(state) {
     return {
       ...i,
       permissions: {
-        accessLevel: (permissions.integrations[i._id] || {}).accessLevel,
+        accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
         connections: {
           edit:
-            permissions.integrations[i._id] &&
-            permissions.integrations[i._id].connections.edit,
+            (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
         },
       },
     };
@@ -3968,14 +3969,17 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
+  const { merged: resource = {} } = resourceData(
+    state,
+    'exports',
+    resourceId
+  );
   if (isNewId(resourceId)) {
-    const { merged: resource = {} } = resourceData(
-      state,
-      'exports',
-      resourceId
-    );
-
     return !resource.isLookup;
+  }
+  // In case of webhook, by default it is page generator.
+  if (resource.type === 'webhook') {
+    return true;
   }
 
   // Search in flow doc to determine pg/pp
@@ -4117,6 +4121,32 @@ export function isDataLoaderExport(state, resourceId, flowId) {
     'value'
   );
   return resourceObj.type === 'simple';
+}
+/**
+ * All the adaptors whose preview depends on connection
+ * are disabled if their respective connections are offline
+ * Any other criteria to disable preview panel can be added here
+ */
+export function isExportPreviewDisabled(state, resourceId, resourceType) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
+  // their preview does not depend on connection, so it can be enabled
+  // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
+  // As we are using this below condition multiple places
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    isRestCsvMediaTypeExport(state, resourceId)
+  ) {
+    return false;
+  }
+  // In all other cases, where preview depends on connection being online, return the same
+  return isConnectionOffline(state, resourceObj._connectionId);
 }
 
 // Gives back supported stages of data flow based on resource type

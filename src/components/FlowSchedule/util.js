@@ -368,11 +368,8 @@ export const getMetadata = ({
   preferences,
   flow,
   schedule,
-  exp,
-  exports,
-  pg,
-  flows,
   scheduleStartMinute,
+  resourceIdentifier,
 }) => {
   const startTimeData = HOURS_LIST.map(
     hour =>
@@ -405,9 +402,9 @@ export const getMetadata = ({
         label: 'Time zone',
         helpKey: 'flow.timezone',
         defaultValue:
-          (flow && flow.timeZone) ||
-          (integration && integration.timeZone) ||
-          (preferences && preferences.timezone),
+          (flow?.timezone) ||
+          (integration?.timeZone) ||
+          (preferences?.timezone),
         options: [
           {
             items:
@@ -419,6 +416,7 @@ export const getMetadata = ({
               [],
           },
         ],
+        visible: resourceIdentifier === 'flow',
       },
       activeTab: {
         id: 'activeTab',
@@ -443,6 +441,7 @@ export const getMetadata = ({
         type: 'select',
         label: 'Frequency',
         helpKey: 'flow.frequency',
+        skipSort: true,
         defaultValue: resource.frequency,
         options: [
           {
@@ -473,6 +472,7 @@ export const getMetadata = ({
         type: 'select',
         label: 'Start time',
         helpKey: 'flow.startTime',
+        skipSort: true,
         defaultValue: resource && resource.startTime,
         options: [
           {
@@ -489,8 +489,6 @@ export const getMetadata = ({
             isNot: [''],
           },
         ],
-        description:
-          'Please note that start time represents when your flow will get placed in the queue for processing. The actual run time for your flow may vary based on the current message load in your queue, or other flows that are ahead of your flow in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time to help maintain balance regarding the total number of flows that are starting at any specific time.',
       },
       endTime: {
         id: 'endTime',
@@ -498,6 +496,7 @@ export const getMetadata = ({
         type: 'select',
         label: 'End time',
         helpKey: 'flow.endTime',
+        skipSort: true,
         defaultValue: resource && resource.endTime,
         omitWhenHidden: true,
         options: [
@@ -513,7 +512,7 @@ export const getMetadata = ({
           },
           {
             field: 'frequency',
-            isNot: ['once_weekly', 'once_daily', 'twice_daily', ''],
+            isNot: ['once_weekly', 'once_daily', ''],
           },
         ],
       },
@@ -522,7 +521,8 @@ export const getMetadata = ({
         name: 'daysToRunOn',
         type: 'multiselect',
         helpKey: 'flow.daysToRunOn',
-        label: 'Days to run nn',
+        label: 'Run on these days',
+        skipSort: true,
         defaultValue: resource.daysToRunOn || [
           '1',
           '2',
@@ -561,7 +561,8 @@ export const getMetadata = ({
         name: 'dayToRunOn',
         helpKey: 'flow.daysToRunOn',
         type: 'select',
-        label: 'Day to run on',
+        label: 'Run on this day',
+        skipSort: true,
         defaultValue: resource.dayToRunOn,
         options: [
           {
@@ -608,37 +609,6 @@ export const getMetadata = ({
           },
         ],
       },
-      _keepDeltaBehindFlowId: {
-        id: '_keepDeltaBehindFlowId',
-        name: '_keepDeltaBehindFlowId',
-        helpKey: 'flow._keepDeltaBehindFlowId',
-        type: 'select',
-        visible: isDeltaFlowModel(pg, exp, flow, exports),
-        label: 'Master flow:',
-        defaultValue: resource && resource._keepDeltaBehindFlowId,
-        options: getRelevantDeltaFlows(flows, flow, exports),
-      },
-      _keepDeltaBehindExportId: {
-        id: '_keepDeltaBehindExportId',
-        name: '_keepDeltaBehindExportId',
-        helpKey: 'flow._keepDeltaBehindExportId',
-        label: 'Delta export:',
-        type: 'select',
-        options: getExportsFromSelectedDeltaFlow(
-          resource && resource._keepDeltaBehindFlowId,
-          flows,
-          exports
-        ),
-        requiredWhen: [
-          {
-            field: '_keepDeltaBehindFlowId',
-            isNot: [''],
-          },
-        ],
-        visible: isDeltaFlowModel(pg, exp, flow, exports),
-        refreshOptionsOnChangesTo: ['_keepDeltaBehindFlowId'],
-        defaultValue: resource && resource._keepDeltaBehindExportId,
-      },
     },
     layout: {
       fields: [
@@ -650,28 +620,9 @@ export const getMetadata = ({
         'daysToRunOn',
         'dayToRunOn',
         'schedule',
-      ],
-      type: 'collapse',
-      containers: [
-        {
-          collapsed: true,
-          label: 'Synchronize delta export',
-          fields: ['_keepDeltaBehindFlowId', '_keepDeltaBehindExportId'],
-        },
-      ],
+      ]
     },
     optionsHandler: (fieldId, fields) => {
-      if (fieldId === '_keepDeltaBehindExportId') {
-        const keepDeltaBehindFlowId = fields.find(
-          field => field.id === '_keepDeltaBehindFlowId'
-        );
-
-        return getExportsFromSelectedDeltaFlow(
-          keepDeltaBehindFlowId && keepDeltaBehindFlowId.value,
-          flows,
-          exports
-        );
-      }
       if (fieldId === 'endTime') {
         const frequency = fields.find(field => field.id === 'frequency').value;
         let minutes = 0;
@@ -710,7 +661,7 @@ export const getMetadata = ({
   };
 };
 
-export const setValues = (data, schedule, scheduleStartMinute) => {
+export const setValues = (data, schedule, scheduleStartMinute, flow, index, resourceType) => {
   const resource = { ...data };
   const value = schedule;
   const frequency = {
@@ -737,6 +688,13 @@ export const setValues = (data, schedule, scheduleStartMinute) => {
   );
   resource.daysToRunOn = ['1', '2', '3', '4', '5', '6', '0'];
   resource.dayToRunOn = undefined;
+  if (resourceType === 'flow') {
+    resource._keepDeltaBehindExportId = flow?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?._keepDeltaBehindFlowId;
+  } else {
+    resource._keepDeltaBehindExportId = flow?.pageGenerators?.[index]?._keepDeltaBehindExportId;
+    resource._keepDeltaBehindFlowId = flow?.pageGenerators?.[index]?._keepDeltaBehindFlowId;
+  }
 
   if (!value) {
     resource.activeTab = PRESET_TAB;

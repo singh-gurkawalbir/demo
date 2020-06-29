@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { useDrag } from 'react-dnd-cjs';
+import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
@@ -58,6 +58,7 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
+  onMove,
   onErrors,
   openErrorCount,
   ...pg
@@ -107,7 +108,44 @@ const PageGenerator = ({
     }),
     canDrag: !isViewMode,
   });
-  const opacity = isDragging ? 0.5 : 1;
+  const opacity = isDragging ? 0.2 : 1;
+  // #region Drag and Drop handlers
+  const [, drop] = useDrop({
+    accept: itemTypes.PAGE_GENERATOR,
+
+    hover(item, monitor) {
+      if (!ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      onMove(dragIndex, hoverIndex);
+      // eslint-disable-next-line no-param-reassign
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
+  // #endregion
   const handleBlockClick = useCallback(() => {
     const newId = generateNewId();
 

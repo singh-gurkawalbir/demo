@@ -64,7 +64,6 @@ export default {
             },
           ],
         },
-
         'lookup.mapList': {
           id: 'lookup.mapList',
           name: '_mapList',
@@ -117,6 +116,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',

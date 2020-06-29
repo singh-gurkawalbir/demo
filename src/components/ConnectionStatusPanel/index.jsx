@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const getStatusVariantAndMessage = ({
   resourceType,
-  isConnectionFix,
   showOfflineMsg,
   testStatus,
 }) => {
@@ -47,9 +46,7 @@ const getStatusVariantAndMessage = ({
   } if (!testStatus && showOfflineMsg) {
     return {
       variant: 'error',
-      message: isConnectionFix
-        ? ' Review and test this form to bring your connections back online.'
-        : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
     };
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -229,7 +229,7 @@ function FlowBuilder() {
     },
     [dispatch, flowId, isNewFlow]
   );
-  const handleMove = useCallback(
+  const handleMovePP = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -239,6 +239,17 @@ function FlowBuilder() {
       patchFlow('/pageProcessors', newOrder);
     },
     [pageProcessors, patchFlow]
+  );
+  const handleMovePG = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageGenerators[dragIndex];
+      const newOrder = [...pageGenerators];
+
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      patchFlow('/pageGenerators', newOrder);
+    },
+    [pageGenerators, patchFlow]
   );
   const handleDelete = useCallback(
     type => () => index => {
@@ -254,10 +265,6 @@ function FlowBuilder() {
         title: 'Confirm remove',
         message: `Are you sure you want to remove this ${resourceType}?`,
         buttons: [
-          {
-            label: 'Cancel',
-            color: 'secondary',
-          },
           {
             label: 'Remove',
             color: 'primary',
@@ -276,6 +283,10 @@ function FlowBuilder() {
                 patchFlow('/pageGenerators', newOrder);
               }
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -426,7 +437,21 @@ function FlowBuilder() {
   // Replaces the url once the virtual flow resource is
   // persisted and we have the final flow id.
   if (newFlowId) {
-    history.replace(rewriteUrl(newFlowId));
+    const nestedPgOrPpPath = matchPath(location.pathname, {
+      path: `${match.path}/:mode/:resourceType/:resourceId`,
+    });
+
+    if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
+      // Incase of a pg or pp opened ... replace url flowId with newFlowId
+      // @BugFix: IO-16074
+      history.replace(generatePath(nestedPgOrPpPath.path, {
+        ...nestedPgOrPpPath.params,
+        flowId: newFlowId,
+      }));
+    } else {
+      // In all other cases go back to flow url with new FlowId
+      history.replace(rewriteUrl(newFlowId));
+    }
 
     return null;
   }
@@ -608,6 +633,7 @@ function FlowBuilder() {
                   index={i}
                   isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
+                  onMove={handleMovePG}
                 />
               ))}
               {!pageGenerators.length && (
@@ -663,7 +689,7 @@ function FlowBuilder() {
                   isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
-                  onMove={handleMove}
+                  onMove={handleMovePP}
                 />
               ))}
               {!pageProcessors.length && showAddPageProcessor && (

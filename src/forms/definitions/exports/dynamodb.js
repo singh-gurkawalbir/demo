@@ -123,6 +123,7 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
     type: 'column',
@@ -160,6 +161,7 @@ export default {
               'dynamodb.onceExportSortKey',
             ],
           },
+          { collapsed: true, label: 'Advanced', fields: ['skipRetries'] },
         ],
       },
       {

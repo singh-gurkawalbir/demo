@@ -48,9 +48,8 @@ function PageProcessorHooks({
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }));
-      onClose();
     },
-    [dispatch, onClose, resource, resourceId, resourceType, flowId]
+    [dispatch, resource, resourceId, resourceType, flowId]
   );
   const handleDrawerClose = useCallback(() => onClose(false), [onClose]);
 

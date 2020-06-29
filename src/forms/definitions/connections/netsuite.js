@@ -222,19 +222,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
-      id: 'validate',
-      label: 'Validate',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
-    },
-    {
       id: 'save',
       label: 'Save',
       visibleWhen: [
@@ -249,11 +236,15 @@ export default {
       ],
     },
     {
-      id: 'test',
+      id: 'saveandclose',
       visibleWhen: [
         {
           field: 'netsuite.authType',
-          is: ['token'],
+          is: ['basic'],
+        },
+        {
+          field: 'netsuite.authType',
+          is: [''],
         },
       ],
     },
@@ -269,6 +260,39 @@ export default {
     },
     {
       id: 'testandsave',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'testsaveandclose',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'validate',
+      label: 'Validate',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'netsuite.authType',
