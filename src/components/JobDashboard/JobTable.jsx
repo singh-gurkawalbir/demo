@@ -188,6 +188,7 @@ function JobTable({
       </Table>
       {showErrorDialogFor.jobId && (
         <JobErrorDialog
+          integrationName={integrationName}
           jobId={showErrorDialogFor.jobId}
           parentJobId={showErrorDialogFor.parentJobId}
           showResolved={showErrorDialogFor.showResolved}

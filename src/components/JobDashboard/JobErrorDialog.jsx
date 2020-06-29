@@ -59,6 +59,7 @@ export default function JobErrorDialog({
   numError = 0,
   numResolved = 0,
   onCloseClick,
+  integrationName,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -126,7 +127,9 @@ export default function JobErrorDialog({
     <ModalDialog show minWidth="md" maxWidth="xl" onClose={handleCloseClick}>
       <>
         <div>
-          {`${flowJob?.name}`}
+          {/* if there is no integration name then we aresending Standalone flows */}
+          {integrationName === null ? 'Standalone Flows' : `${integrationName}`}
+          {` > ${flowJob?.name}`}
           {job?.name && ` > ${job.name}`}
         </div>
 
