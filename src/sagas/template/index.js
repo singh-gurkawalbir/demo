@@ -29,7 +29,7 @@ export function* requestPreview({ templateId }) {
   try {
     components = yield call(apiCallWithRetry, {
       path,
-      message: 'Fetching Preview',
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.template.failedPreview(templateId));

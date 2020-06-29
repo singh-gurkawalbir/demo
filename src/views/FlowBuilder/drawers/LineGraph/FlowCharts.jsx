@@ -147,7 +147,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
   if (data.status === 'requested') {
     return (
       <Loader open hideBackDrop>
-        <Typography variant="body2">Fetching data</Typography>
+        <Typography variant="body2">Loading</Typography>
         <Spinner color="primary" size={24} />
       </Loader>
     );

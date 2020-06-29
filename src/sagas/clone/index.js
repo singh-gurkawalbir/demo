@@ -13,7 +13,7 @@ export function* requestPreview({ resourceType, resourceId }) {
   try {
     components = yield call(apiCallWithRetry, {
       path,
-      message: 'Fetching Preview',
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.template.failedPreview(`${resourceType}-${resourceId}`));

@@ -117,7 +117,7 @@ function DrawerContent({jobId, flowJobId}) {
       <div className={classes.actions}>
         <ButtonGroup>
           <Button disabled={disabled} variant="outlined" color="primary" onClick={handleSave}>Save</Button>
-          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save and Close</Button>
+          <Button disabled={disabled} variant="outlined" color="secondary" onClick={handleSaveAndClose}>Save & close</Button>
           <Button
             variant="text"
             // eslint-disable-next-line react/jsx-handler-names

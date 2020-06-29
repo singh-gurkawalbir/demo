@@ -118,7 +118,7 @@ export default function ErrorDrawer({
 
       {!job ? (
         <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading child jobs...</span>
+          <Spinner size={20} /> <span>Loading</span>
         </div>
       ) : (
         <>
