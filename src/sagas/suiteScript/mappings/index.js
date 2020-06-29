@@ -111,18 +111,10 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId }) {
     }
   );
   const {export: exportRes, import: importRes} = flow;
-  let importType;
-  let exportType;
-  // let mapping;
-  // add realtime
-  if (importRes.netsuite && ['restlet', 'batch'].includes(importRes.netsuite.type)) {
-    importType = 'netsuite';
-  } else {
-    importType = importRes.type;
-  }
-  const {mapping} = importRes;
+  const {type: importType, mapping} = importRes;
 
   const {lookups = []} = importRes[importType];
+  let exportType;
   if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
     exportType = 'netsuite';
   } else {
@@ -172,7 +164,7 @@ export function* saveMappings() {
     }
   );
   const {export: exportConfig, import: importRes, _id: resourceId} = flow;
-  const {type: importType, _connectionId } = importRes;
+  const { type: importType, _connectionId } = importRes;
   const options = {};
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
