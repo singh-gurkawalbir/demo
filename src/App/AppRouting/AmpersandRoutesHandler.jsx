@@ -6,7 +6,6 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 
 export default function AmpersandRoutesHandler({match}) {
-  console.log('AmpersandRouteHandler', match);
   const {
     integrationId,
     flowId,
