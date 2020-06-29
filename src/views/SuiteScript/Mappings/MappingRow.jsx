@@ -84,7 +84,6 @@ export default function MappingRow(props) {
   const {
     id,
     mapping,
-    extractFields = [],
     onFieldUpdate,
     disabled,
     updateLookupHandler,
@@ -109,11 +108,55 @@ export default function MappingRow(props) {
   const classes = useStyles();
   const ref = useRef(null);
 
-  const {data: importData} = useSelector(state => selectors.getSuiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-  const generateFields = useMemo(() => suiteScriptMappingUtil.getFormattedGenerateData(
-    importData,
-    importType
-  ), [importData, importType]);
+  const {data: importData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {data: flowSampleData = []} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+
+  const generateFields = useMemo(() => {
+    const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
+      importData,
+      importType
+    );
+    return formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+  }, [importData, importType]);
+
+  const extractFields = useMemo(() => {
+    const formattedFields = [];
+    if (flowSampleData) {
+      flowSampleData.forEach(extract => {
+        formattedFields.push({
+          id: extract.id || extract.value,
+          name: extract.name || extract.label
+        });
+        // for netsuite
+        if (extract.type === 'select') {
+          formattedFields.push({
+            id: `${extract.id}.internalid`,
+            name: `${extract.name} (InternalId)`
+          });
+        }
+      });
+    }
+    return formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+  }, [flowSampleData]);
+
 
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({

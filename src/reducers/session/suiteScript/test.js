@@ -12,7 +12,9 @@ describe('suiteScript reducers test cases', () => {
       flows: {},
       installer: {},
       account: {},
-      mappings: {}
+      mappings: {},
+      flowSampleData: {},
+      importSampleData: {}
     });
   });
   describe('suiteScript installer reducer', () => {

@@ -240,6 +240,8 @@ const getFormattedGenerateData = (importData,
         type: d.type,
         sublist: d.sublist,
       }));
+    } else {
+      formattedGenerateFields = importData;
     }
   }
 
@@ -250,5 +252,6 @@ export default {
   validateMappings,
   generateFieldAndListMappings,
   updateMappingConfigs,
-  getFormattedGenerateData
+  getFormattedGenerateData,
+  // getExtractPaths
 };

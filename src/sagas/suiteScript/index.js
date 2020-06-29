@@ -5,6 +5,8 @@ import { flowSagas } from './flows';
 import { accountSagas } from './account';
 import installerSagas from './installer';
 import { importSampleDataSagas } from './sampleData/imports';
+import { flowSampleDataSagas } from './sampleData/flow';
+
 import {mappingSagas} from './mappings';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -16,5 +18,6 @@ export const suiteScriptSagas = [
   ...accountSagas,
   ...installerSagas,
   ...importSampleDataSagas,
-  ...mappingSagas
+  ...mappingSagas,
+  ...flowSampleDataSagas
 ];

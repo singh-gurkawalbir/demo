@@ -233,41 +233,36 @@ export default {
     })
   },
   sampleData: {
-    request: (
+    request: ({
       ssLinkedConnectionId,
-      resourceId,
-      resourceType,
-      values,
-      stage,
-      runOffline
-    ) =>
+      integrationId,
+      flowId,
+      options
+    }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, {
         ssLinkedConnectionId,
-        resourceId,
-        resourceType,
-        values,
-        stage,
-        runOffline,
+        integrationId,
+        flowId,
+        options
       }),
-    received: (ssLinkedConnectionId, resourceId, previewData) =>
+    received: ({
+      ssLinkedConnectionId,
+      integrationId,
+      flowId,
+      previewData
+    }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED, {
         ssLinkedConnectionId,
-        resourceId,
+        integrationId,
+        flowId,
         previewData,
       }),
-    update: (ssLinkedConnectionId, resourceId, processedData, stage) =>
-      action(actionTypes.SUITESCRIPT.SAMPLEDATA.UPDATE, {
-        ssLinkedConnectionId,
-        resourceId,
-        processedData,
-        stage,
-      }),
-    receivedError: (ssLinkedConnectionId, resourceId, error, stage) =>
+    receivedError: ({ ssLinkedConnectionId, integrationId, flowId, error }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR, {
         ssLinkedConnectionId,
-        resourceId,
-        error,
-        stage,
+        integrationId,
+        flowId,
+        error
       }),
     reset: (ssLinkedConnectionId, resourceId) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
