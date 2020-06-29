@@ -20,6 +20,9 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED: {
         const {data} = action;
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].status = 'received';
         draft[id].data = data;
         break;
