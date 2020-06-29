@@ -270,6 +270,7 @@ export default {
     's3.bucket': { fieldId: 's3.bucket' },
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
+    's3.backupBucket': { fieldId: 's3.backupBucket' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -375,6 +376,7 @@ export default {
               's3.bucket',
               's3.keyStartsWith',
               's3.keyEndsWith',
+              's3.backupBucket'
             ],
           },
           {

@@ -126,4 +126,8 @@ export default {
       },
     ],
   },
+  'ftp.backupDirectoryPath': {
+    type: 'text',
+    label: 'Archived directory path',
+  }
 };

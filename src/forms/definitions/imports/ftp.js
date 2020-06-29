@@ -313,6 +313,9 @@ export default {
     'ftp.inProgressFileName': {
       fieldId: 'ftp.inProgressFileName',
     },
+    'ftp.backupDirectoryPath': {
+      fieldId: 'ftp.backupDirectoryPath',
+    },
     'ftp.blobFileName': {
       fieldId: 'ftp.blobFileName',
     },
@@ -376,6 +379,7 @@ export default {
           'file.xml.body',
           'ftp.blobFileName',
           'file.lookups',
+          'ftp.backupDirectoryPath',
         ],
       },
       {

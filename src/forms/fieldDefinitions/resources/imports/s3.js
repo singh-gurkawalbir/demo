@@ -25,4 +25,8 @@ export default {
     defaultValue: r => (r && r.s3 && r.s3.fileKey) || 'file-{{timestamp}}',
     refreshOptionsOnChangesTo: ['file.type'],
   },
+  's3.backupBucket': {
+    type: 'text',
+    label: 'Archived bucket name',
+  },
 };

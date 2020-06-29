@@ -269,6 +269,7 @@ export default {
     'ftp.directoryPath': { fieldId: 'ftp.directoryPath' },
     'ftp.fileNameStartsWith': { fieldId: 'ftp.fileNameStartsWith' },
     'ftp.fileNameEndsWith': { fieldId: 'ftp.fileNameEndsWith' },
+    'ftp.backupDirectoryPath': {fieldId: 'ftp.backupDirectoryPath'},
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -377,6 +378,7 @@ export default {
               'ftp.directoryPath',
               'ftp.fileNameStartsWith',
               'ftp.fileNameEndsWith',
+              'ftp.backupDirectoryPath',
             ],
           },
           {
