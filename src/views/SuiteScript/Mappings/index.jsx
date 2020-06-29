@@ -140,7 +140,7 @@ const SuiteScriptMapping = (props) => {
   );
 
 
-  const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType, getAppType]);
+  const extractLabel = useMemo(() => `Source Record Field ${getAppType(exportType) ? `(${getAppType(exportType)})` : ''}`, [exportType]);
   const generateLabel = useMemo(() => `Import Field ${getAppType(importType) ? `(${getAppType(importType)})` : ''}`, [importType]);
   const emptyRowIndex = useMemo(() => localMappings.length, [
     localMappings,
