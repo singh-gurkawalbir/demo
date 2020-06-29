@@ -314,6 +314,10 @@ export default function AppRouting() {
         ]}
         component={AmpersandRoutesHandler}
       />
+      {/*
+         Ampersand Routers Handling end
+      */}
+
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />
     </Switch>
