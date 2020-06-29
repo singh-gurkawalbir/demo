@@ -147,6 +147,11 @@ export default {
           retainStatus,
           ssLinkedConnectionId,
         }),
+      linkIntegrator: (resourceId, link) =>
+        action(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, {
+          connectionId: resourceId,
+          link
+        }),
     },
     patchStaged: (
       ssLinkedConnectionId,
