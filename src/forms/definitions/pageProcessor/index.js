@@ -142,12 +142,17 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'application',
-      'resourceType',
-      'connection',
-      'existingImport',
-      'existingExport',
+    type: 'box',
+    containers: [
+      {
+        fields: [
+          'application',
+          'resourceType',
+          'connection',
+          'existingImport',
+          'existingExport',
+        ],
+      },
     ],
   },
   optionsHandler: (fieldId, fields) => {

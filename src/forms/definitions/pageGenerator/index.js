@@ -136,7 +136,12 @@ export default {
     },
   },
   layout: {
-    fields: ['application', 'type', 'connection', 'existingExport'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application', 'type', 'connection', 'existingExport'],
+      },
+    ],
   },
 
   optionsHandler: (fieldId, fields) => {
