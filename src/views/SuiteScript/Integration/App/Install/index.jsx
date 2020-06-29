@@ -30,6 +30,7 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import Spinner from '../../../../../components/Spinner';
 import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
+import getRoutePath from '../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -95,7 +96,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
       });
       dispatch(actions.resource.requestCollection(`suitescript/connections/${ssLinkedConnectionId}/tiles`));
       history.replace(
-        `/pg/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`
+        getRoutePath(`/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`)
       );
       dispatch(actions.suiteScript.installer.clearSteps(
         connectorId,
@@ -212,12 +213,11 @@ export default function SuiteScriptIntegrationAppInstallation() {
       if (doc) {
         dispatch(
           actions.suiteScript.resource.patchStaged(
+            ssLinkedConnectionId,
+            'connections',
             doc._id,
             jsonUtil.objectToPatchSet(doc),
             SCOPES.VALUE,
-            ssLinkedConnectionId,
-            connectorId,
-            'connections'
           )
         );
         setSSConnection({

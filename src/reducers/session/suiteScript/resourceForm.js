@@ -21,7 +21,6 @@ export default (state = {}, action) => {
     resourceType,
     resourceId,
   });
-  const stateCopy = { ...state, [key]: { ...state[key] } };
 
   switch (type) {
     case actionTypes.SUITESCRIPT.RESOURCE_FORM.INIT:
@@ -53,11 +52,6 @@ export default (state = {}, action) => {
           showFormValidationsBeforeTouch: false,
         },
       };
-
-    case actionTypes.SUITESCRIPT.RESOURCE_FORM.CLEAR_INIT_DATA:
-      stateCopy[key] && delete stateCopy[key].initData;
-
-      return stateCopy;
 
     case actionTypes.SUITESCRIPT.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
       // only after form successfully intializes does it make sense to show validations

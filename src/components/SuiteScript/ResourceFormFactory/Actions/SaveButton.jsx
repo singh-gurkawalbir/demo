@@ -37,14 +37,14 @@ const SaveButton = props => {
     values => {
       dispatch(
         actions.suiteScript.resourceForm.submit(
+          ssLinkedConnectionId,
+          integrationId,
           resourceType,
           resourceId,
           values,
           match,
           false,
           isGenerate,
-          ssLinkedConnectionId,
-          integrationId
         )
       );
     },
