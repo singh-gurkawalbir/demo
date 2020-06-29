@@ -12,6 +12,7 @@ import {
   isPageGenerator,
   drawerOpened,
   makeResourceDataSelector,
+  isExportPreviewDisabled,
 } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import Panels from './Panels';
@@ -64,6 +65,8 @@ function DynaExportPanel(props) {
     getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
+  const isPreviewDisabled = useSelector(state =>
+    isExportPreviewDisabled(state, resourceId, resourceType));
   const [panelType, setPanelType] = useState(
     availablePreviewStages.length && availablePreviewStages[0].value
   );
@@ -112,11 +115,14 @@ function DynaExportPanel(props) {
 
   useEffect(() => {
     // Fetches preview data incase of initial load of an edit export mode
-    if (!isPreviewDataFetched && !isNewId(resourceId)) {
+    // Not fetched for online connections
+    // TODO @Raghu: should we make a offline preview call though connection is offline ?
+    // Needs a refactor to preview saga for that
+    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
       setIsPreviewDataFetched(true);
       fetchExportPreviewData();
     }
-  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData]);
+  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 
   const handlePanelViewChange = useCallback(panelType => {
     setPanelType(panelType);
@@ -136,6 +142,7 @@ function DynaExportPanel(props) {
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
         panelType={panelType}
+        disabled={isPreviewDisabled}
       />
       <Panels.PreviewBody
         resourceSampleData={resourceSampleData}

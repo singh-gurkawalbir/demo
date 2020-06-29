@@ -50,6 +50,8 @@ import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -4119,6 +4121,32 @@ export function isDataLoaderExport(state, resourceId, flowId) {
     'value'
   );
   return resourceObj.type === 'simple';
+}
+/**
+ * All the adaptors whose preview depends on connection
+ * are disabled if their respective connections are offline
+ * Any other criteria to disable preview panel can be added here
+ */
+export function isExportPreviewDisabled(state, resourceId, resourceType) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
+  // their preview does not depend on connection, so it can be enabled
+  // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
+  // As we are using this below condition multiple places
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    isRestCsvMediaTypeExport(state, resourceId)
+  ) {
+    return false;
+  }
+  // In all other cases, where preview depends on connection being online, return the same
+  return isConnectionOffline(state, resourceObj._connectionId);
 }
 
 // Gives back supported stages of data flow based on resource type
