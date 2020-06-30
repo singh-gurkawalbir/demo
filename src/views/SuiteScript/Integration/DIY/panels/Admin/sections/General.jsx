@@ -49,7 +49,7 @@ export default function GeneralSection({
       flowSettingsMeta || {},
       integrationId,
       true,
-      {},
+      {isSuiteScriptIntegrator: true},
       ssLinkedConnectionId
     ),
     [flowSettingsMeta, integrationId, ssLinkedConnectionId]
