@@ -1,7 +1,6 @@
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useMemo } from 'react';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
 import {
@@ -34,7 +33,6 @@ export default function Hooks(props) {
     resourceId,
     flowId,
   } = props;
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles();
   const { merged: resource } = useSelectorMemo(
     selectors.makeResourceDataSelector,
@@ -125,10 +123,7 @@ export default function Hooks(props) {
         selectedValues.hooks.isInvalidHook ||
         selectedValues.suiteScriptHooks.isInvalidHook
       ) {
-        return enqueueSnackbar({
-          message: 'Please fill the mandatory fields',
-          variant: 'error',
-        });
+        return null;
       }
 
       submitHandler(closeOnSave)({
@@ -136,7 +131,7 @@ export default function Hooks(props) {
         suiteScriptHooks: selectedValues.suiteScriptHooks.selectedHook,
       });
     },
-    [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, submitHandler]
+    [getSelectedHooks, getSelectedSuiteScriptHooks, submitHandler]
   );
   // console.log('RENDER: Hooks');
 
