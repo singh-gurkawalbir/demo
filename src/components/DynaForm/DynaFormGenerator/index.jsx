@@ -11,7 +11,7 @@ import {
   SuiteScriptTabIAComponent
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
-
+import BoxComponents from './BoxComponents';
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -70,6 +70,8 @@ export default function FormGenerator(props) {
 
   if (type === 'collapse') {
     ConvertedContainer = CollapsedComponents;
+  } else if (type === 'box') {
+    ConvertedContainer = BoxComponents;
   } else if (type === 'indent') {
     ConvertedContainer = IndentedComponents;
   } else if (type === 'column') {

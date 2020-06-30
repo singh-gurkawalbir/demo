@@ -9,6 +9,8 @@ import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
+import AmpersandRoutesHandler from './AmpersandRoutesHandler';
+import { AMPERSAND_ROUTES } from '../../utils/constants';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -240,6 +242,11 @@ export default function AppRouting() {
       <Route
         path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab')}
         component={SuiteScriptIntegrationApp}
+      />
+      <Route
+        exact
+        path={[...AMPERSAND_ROUTES]}
+        component={AmpersandRoutesHandler}
       />
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />

@@ -232,7 +232,7 @@ export const accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile;
+      const { name, email } = profile || {};
 
       return { name, email };
     }

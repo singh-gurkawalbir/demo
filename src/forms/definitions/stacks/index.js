@@ -10,15 +10,20 @@ export default {
     'lambda.language': { fieldId: 'lambda.language' },
   },
   layout: {
-    fields: [
-      'name',
-      'type',
-      'server.hostURI',
-      'lambda.accessKeyId',
-      'lambda.secretAccessKey',
-      'lambda.awsRegion',
-      'lambda.functionName',
-      'lambda.language',
+    type: 'box',
+    containers: [
+      {
+        fields: [
+          'name',
+          'type',
+          'server.hostURI',
+          'lambda.accessKeyId',
+          'lambda.secretAccessKey',
+          'lambda.awsRegion',
+          'lambda.functionName',
+          'lambda.language',
+        ],
+      },
     ],
   },
   preSave: formValues => {

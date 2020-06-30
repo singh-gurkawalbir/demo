@@ -1,6 +1,5 @@
 import produce from 'immer';
 import { get } from 'lodash';
-import moment from 'moment';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
@@ -663,20 +662,6 @@ export const resourceDetailsMap = createSelector(
     return allResources;
   }
 );
-
-// TODO: Vamshi unit tests for selector
-export function isAgentOnline(state, agentId) {
-  if (!state) return false;
-  const matchingAgent =
-    state.agents && state.agents.find(r => r._id === agentId);
-
-  return !!(
-    matchingAgent &&
-    matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
-      process.env.AGENT_STATUS_INTERVAL
-  );
-}
 
 export function hasSettingsForm(state, resourceType, resourceId) {
   const res = resource(state, resourceType, resourceId);
