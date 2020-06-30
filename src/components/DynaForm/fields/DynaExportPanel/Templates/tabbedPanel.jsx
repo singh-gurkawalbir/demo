@@ -71,7 +71,6 @@ export default function TabbedPanel(props) {
             value="body"
             id="tab-body"
             aria-controls="tab-body"
-
           />
           <Tab
             label="Header"
