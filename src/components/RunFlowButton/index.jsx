@@ -84,6 +84,8 @@ export default function RunFlowButton({
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isIntegrationAppVersion2 = useSelector(state => selectors.isIntegrationAppVersion2(state, flowDetails._integrationId, true));
+
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
   const dataLoaderFileType = useSelector(state => {
@@ -143,20 +145,13 @@ export default function RunFlowButton({
 
     if (
       flowDetails.isDeltaFlow &&
-      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog || isIntegrationAppVersion2)
     ) {
       setShowDeltaStartDateDialog(true);
     } else {
       handleRunFlow();
     }
-  }, [
-    flowDetails._connectorId,
-    flowDetails.isDeltaFlow,
-    flowDetails.showStartDateDialog,
-    handleRunFlow,
-    hasRunKey,
-    isDataLoaderFlow,
-  ]);
+  }, [flowDetails._connectorId, flowDetails.isDeltaFlow, flowDetails.showStartDateDialog, handleRunFlow, hasRunKey, isDataLoaderFlow, isIntegrationAppVersion2]);
   const handleFileChange = useCallback(
     e => {
       const file = e.target.files[0];
