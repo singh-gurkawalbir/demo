@@ -205,10 +205,7 @@ export default function Integration(props) {
   const {addOnStatus, hasAddOns} = useSelector(state => {
     const addOnState = selectors.integrationAppAddOnState(state, integrationId);
     return {addOnStatus: addOnState.status,
-      hasAddOns: addOnState &&
-      addOnState.addOns &&
-      addOnState.addOns.addOnMetaData &&
-      addOnState.addOns.addOnMetaData.length > 0};
+      hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
@@ -435,7 +432,7 @@ export default function Integration(props) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
             'settings'}`}
         />
       );
