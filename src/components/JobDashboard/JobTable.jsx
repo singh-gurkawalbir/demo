@@ -189,6 +189,7 @@ function JobTable({
       <ErrorDrawer
         // for now, force tall (default)
         // height={isFlowBuilderView ? 'short' : 'tall'}
+        integrationName={integrationName}
         jobId={showErrorDialogFor.jobId}
         parentJobId={showErrorDialogFor.parentJobId}
         showResolved={showErrorDialogFor.showResolved}
