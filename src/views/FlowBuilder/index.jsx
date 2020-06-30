@@ -655,7 +655,7 @@ function FlowBuilder() {
               variant="overline">
               {isDataLoaderFlow
                 ? 'DESTINATION APPLICATION'
-                : 'DESTINATIONS & LOOKUP '}
+                : 'DESTINATIONS & LOOKUPS '}
 
               {showAddPageProcessor && !isFreeFlow && (
                 <IconButton
