@@ -5,7 +5,7 @@ export default {
     '/assistant': 'constantcontactv3',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': 'https://api.cc.email/v3/',
+    '/http/baseURI': 'https://api.cc.email/',
     '/http/auth/oauth/authURI': 'https://api.cc.email/v3/idfed',
     '/http/auth/oauth/tokenURI':
       'https://idfed.constantcontact.com/as/token.oauth2',
