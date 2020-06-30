@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import { List, Collapse, ButtonBase, Chip } from '@material-ui/core';
+import { List, Collapse, ButtonBase, Chip, Tooltip } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -19,8 +19,7 @@ import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
 import ArrowRightIcon from '../../components/icons/ArrowRightIcon';
 import ArrowLeftIcon from '../../components/icons/ArrowLeftIcon';
-import useResourceList from '../../hooks/useResourceList';
-import useMarketPlaceConnectors from '../../hooks/useMarketPlaceConnectors';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -147,11 +146,8 @@ const useStyles = makeStyles(theme => ({
   },
   innerListItems: {
     backgroundColor: theme.palette.background.drawer3,
-    // backgroundColor: 'rgb(255,255,255,0.1)',
     '&:hover': {
-      backgroundColor: theme.palette.background.drawer3,
-      // backgroundColor: theme.palette.background.drawerActive,
-    },
+      backgroundColor: theme.palette.background.drawer3, },
   },
   logoContainer: {
     alignItems: 'center',
@@ -183,7 +179,19 @@ const useStyles = makeStyles(theme => ({
       padding: [[0, 5]],
     },
   },
+  collapsedArrowIcon: {
+    width: 18,
+  },
 }));
+
+function getHrefProps(href, path) {
+  return {
+    target: href && '_blank',
+    href,
+    to: !href ? getRoutePath(path) : undefined
+  };
+}
+
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
@@ -197,24 +205,39 @@ export default function CeligoDrawer() {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const [expand, setExpand] = React.useState(null);
+  const expand = useSelector(state => selectors.expandSelected(state));
   const isSandbox = environment === 'sandbox';
-  const marketplaceConnectors = useMarketPlaceConnectors(undefined, isSandbox);
+  const marketplaceConnectors = useSelectorMemo(
+    selectors.makeMarketPlaceConnectorsSelector,
+    undefined,
+    isSandbox
+  );
   const handleDrawerToggle = useCallback(() => {
-    dispatch(actions.toggleDrawer());
-  }, [dispatch]);
+    dispatch(
+      actions.user.preferences.update({
+        drawerOpened: !drawerOpened,
+      })
+    );
+  }, [dispatch, drawerOpened]);
   const handleExpandClick = useCallback(
     label => () => {
-      setExpand(label === expand ? null : label);
+      const selectedExpandValue = label === expand ? null : label;
 
-      if (!drawerOpened) handleDrawerToggle();
+      dispatch(
+        actions.user.preferences.update({
+          expand: selectedExpandValue,
+        })
+      );
     },
-    [drawerOpened, expand, handleDrawerToggle]
+    [dispatch, expand]
   );
 
   // what is the active item? does it have a parent
@@ -233,7 +256,7 @@ export default function CeligoDrawer() {
           [classes.drawerClose]: !drawerOpened,
         }),
       }}
-      open={drawerOpened}>
+      open={!drawerOpened}>
       <div
         className={clsx(classes.menuContainer, {
           [classes.menuContainerSandbox]: isSandbox,
@@ -272,7 +295,7 @@ export default function CeligoDrawer() {
               accessLevel,
               integrations,
               marketplaceConnectors
-            ).map(({ label, Icon, path, routeProps, children }) => (
+            ).map(({ label, Icon, path, routeProps, children, href, component }) => (
               <Fragment key={label}>
                 <ListItem
                   button
@@ -281,12 +304,21 @@ export default function CeligoDrawer() {
                       expand !== label &&
                       matchPath(location.pathname, routeProps || `/pg${path}`),
                   })}
-                  component={children ? undefined : Link}
-                  to={getRoutePath(path)}
+                  component={children ? undefined : component || Link}
+                  {...getHrefProps(href, path)}
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {<Icon />}
+                    {drawerOpened ? <Icon /> :
+                    <Tooltip placement="right-end" enterDelay={0} title={label}>
+                      <div>
+                        <Icon />
+                      </div>
+                    </Tooltip>}
+
+                    {(!drawerOpened && children) &&
+                    (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
+
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{
@@ -323,13 +355,16 @@ export default function CeligoDrawer() {
                             data-test={label}
                             key={label}
                             component={component || Link}
-                            target={href && '_blank'}
-                            href={href}
-                            to={!href ? getRoutePath(path) : undefined}
+                            {...getHrefProps(href, path)}
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                              {<Icon />}
+                              {drawerOpened ? <Icon /> :
+                              <Tooltip placement="right-end" enterDelay={0} title={label}>
+                                <div>
+                                  <Icon />
+                                </div>
+                              </Tooltip>}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}

@@ -1,10 +1,9 @@
 import util from '../../../../utils/json';
-import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 
 const requestBody = editor => ({
   rules: {
-    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
-    rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
+    columnDelimiter: editor.columnDelimiter,
+    rowDelimiter: editor.rowDelimiter,
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
     includeHeader: editor.includeHeader,
@@ -16,7 +15,9 @@ const requestBody = editor => ({
   data: [JSON.parse(editor.data)],
 });
 const validate = editor => ({
-  dataError: util.validateJsonString(editor.data),
+  dataError: !editor.data
+    ? 'Must provide some sample data.'
+    : util.validateJsonString(editor.data),
 });
 const dirty = editor => {
   const { initRule } = editor || {};
@@ -35,11 +36,11 @@ const dirty = editor => {
 
     if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
       return true;
-    } else if (
+    }
+    if (
       ['string', 'number'].includes(typeof editor[key]) &&
       initRule[key] !== editor[key]
-    )
-      return true;
+    ) return true;
   }
 
   return false;
@@ -47,26 +48,6 @@ const dirty = editor => {
 
 const init = editor => {
   const { rule = {}, ...others } = editor;
-
-  // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
-  if (rule.columnDelimiter) {
-    const columnDelimiter = util.getObjectKeyFromValue(
-      csvOptions.ColumnDelimiterMap,
-      rule.columnDelimiter
-    );
-
-    rule.columnDelimiter = columnDelimiter;
-  }
-
-  // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
-  if (rule.rowDelimiter) {
-    const rowDelimiter = util.getObjectKeyFromValue(
-      csvOptions.RowDelimiterMap,
-      rule.rowDelimiter
-    );
-
-    rule.rowDelimiter = rowDelimiter;
-  }
 
   return {
     ...others,

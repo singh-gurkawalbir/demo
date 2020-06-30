@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import * as selectors from '../../../../reducers';
@@ -19,9 +20,16 @@ const mapDispatchToProps = dispatch => ({
   handleClearToken: resourceId =>
     dispatch(actions.resource.connections.clearToken(resourceId)),
 });
-const useStyles = makeStyles(() => ({
-  children: {
+const useStyles = makeStyles(theme => ({
+  dynaTokenWrapper: {
+    flexDirection: 'row !important',
+  },
+  dynaTokenField: {
     flex: 1,
+  },
+  dynaTokenbtn: {
+    marginTop: 26,
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -71,17 +79,11 @@ function TokenGenerator(props) {
   }, [enquesnackbar, handleClearToken, message, resourceId]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ flexBasis: '70%', '& div': { width: '100%' } }}>
-        <MaterialUiTextField
-          {...props}
-          disabled={false}
-          required
-          className={classes.children}
-          style={{ width: '100%' }}
-        />
+    <div className={classes.dynaTokenWrapper}>
+      <div className={classes.dynaTokenField}>
+        <MaterialUiTextField {...props} disabled={false} required />
       </div>
-      <div>
+      <div className={classes.dynaTokenbtn}>
         <GenerateTokenButton {...props} className={classes.children} />
       </div>
     </div>

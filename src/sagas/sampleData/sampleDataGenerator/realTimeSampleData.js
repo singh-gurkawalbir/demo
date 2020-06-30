@@ -18,6 +18,7 @@ function* attachRelatedLists({
   relatedLists = [],
   connectionId,
   childRelationships = [],
+  refresh,
 }) {
   let mergedMetadata = metadata;
 
@@ -28,6 +29,7 @@ function* attachRelatedLists({
     const { data: sfMetadata = {} } = yield call(fetchMetadata, {
       connectionId,
       commMetaPath,
+      refresh,
     });
     const relatedListMetadata = {
       ...getSalesforceRealTimeSampleData(sfMetadata),
@@ -47,7 +49,7 @@ function* attachRelatedLists({
   return mergedMetadata;
 }
 
-export default function* requestRealTimeMetadata({ resource }) {
+export default function* requestRealTimeMetadata({ resource, refresh }) {
   const { adaptorType } = resource;
 
   if (adaptorType) {
@@ -62,6 +64,7 @@ export default function* requestRealTimeMetadata({ resource }) {
         const nsMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
+          refresh,
         });
         const { data: metadata } = nsMetadata;
 
@@ -73,11 +76,14 @@ export default function* requestRealTimeMetadata({ resource }) {
         // Need to add actual logic and return the same
         const { _connectionId: connectionId, salesforce } = resource;
         const { sObjectType, distributed = {} } = salesforce;
+
+        if (!sObjectType) return;
         const { referencedFields = [], relatedLists = [] } = distributed;
         const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`;
         const sfMetadata = yield call(fetchMetadata, {
           connectionId,
           commMetaPath,
+          refresh,
         });
         let { data: metadata } = sfMetadata;
         const { childRelationships } = metadata;
@@ -90,6 +96,7 @@ export default function* requestRealTimeMetadata({ resource }) {
           relatedLists: relatedLists || [],
           childRelationships,
           connectionId,
+          refresh,
         });
       }
 

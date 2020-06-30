@@ -1,27 +1,30 @@
-import { Fragment } from 'react';
-import { makeStyles, Button } from '@material-ui/core';
+import React from 'react';
+import { makeStyles } from '@material-ui/core';
 import EditorField from '../../DynaEditor';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   editor: {
     height: 200,
   },
-});
+  rawViewWrapper: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing(2),
+  },
+}));
 
-export default function RawView({ onToggleClick, ...rest }) {
+export default function RawView(props) {
   const classes = useStyles();
 
-  // Only developers would ever see this raw settings view, so we can safely
-  // render the toggle editor button with no other conditions.
   return (
-    <Fragment>
-      <Button onClick={onToggleClick}>Toggle form editor</Button>
-      <EditorField
-        {...rest}
-        label="Settings"
-        editorClassName={classes.editor}
-        mode="json"
-      />
-    </Fragment>
+    <EditorField
+      {...props}
+      label="Settings"
+      helpKey="settings"
+      className={classes.rawViewWrapper}
+      editorClassName={classes.editor}
+      mode="json"
+    />
   );
 }

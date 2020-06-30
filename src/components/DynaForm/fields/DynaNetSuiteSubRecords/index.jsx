@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,13 +9,14 @@ import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
 import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
-import ActionButton from '../../../../components/ActionButton';
-import useConfirmDialog from '../../../../components/ConfirmDialog';
+import ActionButton from '../../../ActionButton';
+import useConfirmDialog from '../../../ConfirmDialog';
 import {
   getNetSuiteSubrecordLabel,
   getNetSuiteSubrecordImports,
 } from '../../../../utils/resource';
-import AddIcon from '../../../../components/icons/AddIcon';
+import AddIcon from '../../../icons/AddIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   subrecords: {
@@ -25,6 +26,8 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     position: 'relative',
     marginLeft: 12,
+    marginRight: theme.spacing(4),
+    marginTop: theme.spacing(-3),
     '&:before': {
       position: 'absolute',
       content: '""',
@@ -38,7 +41,6 @@ const useStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing(2),
   },
   link: {
     display: 'flex',
@@ -53,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: theme.spacing(2),
   },
   actionBtns: {
     display: 'flex',
@@ -87,37 +90,27 @@ export default function DynaNetSuiteSubRecords(props) {
       return rec && rec.hasSubRecord;
     }
   });
-  const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useSelector(
-    state => {
-      const { merged: importDoc } = selectors.resourceData(
-        state,
-        'imports',
-        resourceId
-      );
-      let subrecords;
-      let subrecordsFromMappings = [];
-      let hasNetsuiteDa = false;
-
-      if (importDoc && importDoc.netsuite_da) {
-        hasNetsuiteDa = true;
-        ({ subrecords } = importDoc.netsuite_da);
-
-        if (!subrecords && importDoc.netsuite_da.mapping) {
-          subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
-        }
-      }
-
-      return { hasNetsuiteDa, subrecords, subrecordsFromMappings };
-    },
-    (left, right) => {
-      left &&
-        right &&
-        (left.subrecords === right.subrecords ||
-          (left.subrecords &&
-            right.subrecords &&
-            left.subrecords.length === right.subrecords.length));
-    }
+  const { merged: importDoc } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'imports',
+    resourceId
   );
+  const { subrecords, subrecordsFromMappings, hasNetsuiteDa } = useMemo(() => {
+    let subrecords;
+    let subrecordsFromMappings = [];
+    let hasNetsuiteDa = false;
+
+    if (importDoc && importDoc.netsuite_da) {
+      hasNetsuiteDa = true;
+      ({ subrecords } = importDoc.netsuite_da);
+
+      if (!subrecords && importDoc.netsuite_da.mapping) {
+        subrecordsFromMappings = getNetSuiteSubrecordImports(importDoc);
+      }
+    }
+
+    return { hasNetsuiteDa, subrecords, subrecordsFromMappings };
+  }, [importDoc]);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
 
@@ -128,14 +121,14 @@ export default function DynaNetSuiteSubRecords(props) {
       if (!hasNetsuiteDa) {
         patchSet.push({
           op: 'add',
-          path: `/netsuite_da`,
+          path: '/netsuite_da',
           value: {},
         });
       }
 
       patchSet.push({
         op: 'add',
-        path: `/netsuite_da/subrecords`,
+        path: '/netsuite_da/subrecords',
         value: subrecordsFromMappings,
       });
 
@@ -157,14 +150,11 @@ export default function DynaNetSuiteSubRecords(props) {
   const handleDeleteClick = useCallback(
     fieldId => {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm remove',
         message: 'Are you sure you want to remove this subrecord import?',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
-            label: 'Yes',
+            label: 'Remove',
             onClick: () => {
               const updatedSubrecords = subrecords.filter(
                 sr => sr.fieldId !== fieldId
@@ -176,7 +166,7 @@ export default function DynaNetSuiteSubRecords(props) {
                   [
                     {
                       op: 'replace',
-                      path: `/netsuite_da/subrecords`,
+                      path: '/netsuite_da/subrecords',
                       value: updatedSubrecords,
                     },
                   ],
@@ -184,6 +174,10 @@ export default function DynaNetSuiteSubRecords(props) {
                 )
               );
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -196,7 +190,7 @@ export default function DynaNetSuiteSubRecords(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <SubRecordDrawer
         resourceContext={resourceContext}
         flowId={flowId}
@@ -237,6 +231,6 @@ export default function DynaNetSuiteSubRecords(props) {
             </div>
           ))}
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -1,5 +1,6 @@
-import EditorDialog from '../EditorDialog';
-import HttpRequestBodyEditor from './';
+import React from 'react';
+import HttpRequestBodyEditor from '.';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function HttpRequestBodyDialog(props) {
   const {
@@ -9,9 +10,8 @@ export default function HttpRequestBodyDialog(props) {
     contentType,
     lookups = [],
     disabled,
-    resultTitle,
-    dataTitle,
-    ruleTitle,
+    isSampleDataLoading,
+    editorVersion,
     ...rest
   } = props;
   const defaults = {
@@ -22,18 +22,21 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <EditorDialog id={id} {...defaults} {...rest} disabled={disabled}>
+    <AFE2EditorDialog
+      id={id}
+      {...defaults}
+      {...rest}
+      disabled={disabled}
+      editorVersion={editorVersion}>
       <HttpRequestBodyEditor
         contentType={contentType}
         editorId={id}
         lookups={lookups}
         rule={rule}
         data={data}
+        isSampleDataLoading={isSampleDataLoading}
         disabled={disabled}
-        ruleTitle={ruleTitle}
-        dataTitle={dataTitle}
-        resultTitle={resultTitle}
       />
-    </EditorDialog>
+    </AFE2EditorDialog>
   );
 }

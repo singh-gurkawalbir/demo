@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
@@ -95,18 +95,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    // TODO: InstallSteps check here is temporary. Nees to to change this as part of IA2.o implementation.
-    if (
-      integration &&
-      integration.installSteps &&
-      integration.installSteps.length
-    ) {
-      urlToIntegrationSettings = `/integrations/${integration._id}`;
-      urlToIntegrationUsers = `/integrations/${integration._id}/users`;
-    } else {
-      urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-      urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-    }
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
   let app1;
@@ -122,6 +112,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     if (app1 === 'netsuite') {
       // Make NetSuite always the second application
       [app1, app2] = [app2, app1];
+    }
+    // Slight hack here. Both Magento1 and magento2 use same applicationId 'magento', but we need to show different images.
+    if (tile.name && tile.name.indexOf('Magento 1') !== -1 && app1 === 'magento') {
+      app1 = 'magento1';
     }
   }
 
@@ -140,7 +134,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '58d94e6b2e4b300dbf6b01bc', // eBay
       '5b754a8fddbb3b71d6046c87', // Amazon MCF
       '58c90bccc13f547763bf2fc1', // Amazon
-      // '586cb88fc1d53d6a279d527e', // CAM
+      '586cb88fc1d53d6a279d527e', // CAM
+      '5728756afee45a8d11e79cb7', // ADP
       '5a546b705556c2539f4a8dba', // Shipwire
       '5bfe38e363afaf4b872b4ee0', // Returnly
       '58859b520b11ee387108165a', // ShipStation
@@ -157,6 +152,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5e8d6f912387e356b6769bc5', // Amazon EU
       '5e8d6ca02387e356b6769bb8', // Shopify EU
       '5e7d921e2387e356b67669ce', // SFNSIO EU
+      '581cebf290a63a26daea6081', // Jet - NetSuite
+      '57dbed962eca42c50e6e22be', // Walmart - NetSuite
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -253,10 +250,10 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   // #endregion
 
   return (
-    <Fragment>
+    <>
       {showNotYetSupportedDialog && (
         <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          <Fragment>Not Yet Available</Fragment>
+          <>Not Yet Available</>
           <Typography>
             This Integration App is not yet available from this UI. To access
             your Integration App, switch back to the <a href="/">legacy UI</a>.
@@ -301,7 +298,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                   </span>
                   <ApplicationImg type={app2} />
                 </ApplicationImages>
-              )}
+            )}
           </Content>
           <Footer>
             <FooterActions>
@@ -342,7 +339,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           </Footer>
         </HomePageCardContainer>
       </div>
-    </Fragment>
+    </>
   );
 }
 

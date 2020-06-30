@@ -1,6 +1,6 @@
 export default {
   'rest.method': {
-    type: 'radiogroup',
+    type: 'select',
     label: 'Method',
     required: true,
     visibleWhen: [
@@ -40,7 +40,7 @@ export default {
   },
   'rest.blobMethod': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     options: [
       {
@@ -125,15 +125,13 @@ export default {
     },
   },
   'rest.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     label: 'Relative URI',
     required: true,
     arrayIndex: 0,
     connectionId: r => r && r._connectionId,
     defaultValue: r =>
       r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
-    refreshOptionsOnChangesTo: ['rest.lookups', 'name'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -189,10 +187,9 @@ export default {
     type: 'httprequestbody',
     defaultValue: r =>
       Array.isArray(((r || {}).rest || {}).body) ? r.rest.body[0] : undefined,
-    label: 'Build HTTP request body',
+    label: 'Override HTTP request body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
-    refreshOptionsOnChangesTo: ['rest.lookups'],
     visibleWhen: [
       {
         field: 'rest.method',
@@ -207,7 +204,6 @@ export default {
   'rest.successPath': {
     type: 'text',
     label: 'Success path',
-    placeholder: 'Optional',
     visibleWhenAll: [
       {
         field: 'rest.method',
@@ -224,7 +220,6 @@ export default {
   'rest.successValues': {
     type: 'text',
     label: 'Success values',
-    placeholder: 'Optional',
     visibleWhenAll: [
       {
         field: 'rest.method',
@@ -241,7 +236,6 @@ export default {
   'rest.responseIdPath': {
     type: 'text',
     label: 'Response ID path',
-    placeholder: 'Optional',
     visibleWhen: [
       {
         field: 'rest.method',
@@ -258,7 +252,7 @@ export default {
   sampleData: {
     type: 'editor',
     mode: 'json',
-    label: 'If so,please paste it here',
+    label: 'Paste destination record here',
     visibleWhenAll: [
       {
         field: 'inputMode',
@@ -269,6 +263,7 @@ export default {
         isNot: ['DELETE'],
       },
     ],
+    helpKey: 'import.sampleData',
     defaultValue: r =>
       r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },

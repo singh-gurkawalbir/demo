@@ -1,17 +1,22 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField } from '@material-ui/core';
+import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import SalesforceLookupFilterEditorDialog from '../../AFE/SalesforceLookupFilterEditor';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExitIcon';
+import FilterIcon from '../../icons/FilterIcon';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
+  lookupFieldWrapper: {
+    display: 'flex',
+  },
+  lookupField: {
+    width: '100%',
   },
   exitButton: {
     float: 'right',
@@ -35,6 +40,7 @@ export default function DynaSalesforceLookup(props) {
     resourceId,
     flowId,
     label,
+    multiline,
     options,
   } = props;
   const handleEditorClick = () => {
@@ -92,7 +98,7 @@ export default function DynaSalesforceLookup(props) {
   }, [dispatch, extractFields, flowId, resourceId]);
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SalesforceLookupFilterEditorDialog
           title="Where Clause"
@@ -104,25 +110,40 @@ export default function DynaSalesforceLookup(props) {
           options={options}
         />
       )}
-      <ActionButton
-        data-test={id}
-        onClick={handleEditorClick}
-        className={classes.exitButton}>
-        <ExitIcon />
-      </ActionButton>
-      <TextField
-        key={id}
-        name={name}
-        label={label}
-        className={classes.textField}
-        placeholder={placeholder}
-        helperText={isValid ? '' : errorMessages}
-        disabled
-        required={required}
-        error={!isValid}
-        value={value}
-        variant="filled"
-      />
-    </Fragment>
+
+      <FormControl className={classes.dynaTextFormControl}>
+        <div className={classes.dynaTextLabelWrapper}>
+          <FormLabel htmlFor={id} required={required} error={!isValid}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        <div className={classes.lookupFieldWrapper}>
+          <div className={classes.lookupField}>
+            <TextField
+              key={id}
+              name={name}
+              multiline={multiline}
+              placeholder={placeholder}
+              className={classes.lookupField}
+              disabled
+              value={value}
+              variant="filled"
+            />
+
+            <ErroredMessageComponent
+              isValid={isValid}
+              errorMessages={errorMessages}
+            />
+          </div>
+          <ActionButton
+            data-test={id}
+            onClick={handleEditorClick}
+            className={classes.exitButton}>
+            <FilterIcon />
+          </ActionButton>
+        </div>
+      </FormControl>
+    </>
   );
 }

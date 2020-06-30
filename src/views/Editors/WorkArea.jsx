@@ -1,6 +1,5 @@
-import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Select from '@material-ui/core/Select';
@@ -9,13 +8,13 @@ import FormControl from '@material-ui/core/FormControl';
 import CodeEditor from '../../components/CodeEditor';
 import sampleData from './sampleData';
 
-@hot(module)
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
+    height: '100%',
   },
   rawDataContainer: {
-    height: '25vh',
+    height: 'calc(100% - 84px)',
   },
   caption: {
     marginTop: theme.spacing(2),
@@ -33,75 +32,66 @@ import sampleData from './sampleData';
     float: 'right',
     paddingBottom: theme.spacing(1),
   },
-}))
-export default class WorkArea extends Component {
-  state = {
-    sampleType: 'json2',
-  };
+}));
 
-  componentDidMount() {
-    const { sampleType } = this.state;
-    const { onChange } = this.props;
+export default function WorkArea({ onChange, rawData }) {
+  const classes = useStyles();
+  const [sampleType, setSampleType] = useState('json2');
+  const handleSampleTypeChange = useCallback(event => {
+    setSampleType(event.target.value);
+  }, []);
 
+  // any time the sample type changes, we want tp publish this change
+  // to the parent (onChange)
+  useEffect(() => {
     onChange(sampleData[sampleType].data);
-  }
+  }, [onChange, sampleType]);
 
-  handleChange = event => {
-    const { onChange } = this.props;
-    const sampleType = event.target.value;
+  const { mode } = sampleData[sampleType];
 
-    this.setState({ sampleType });
-    onChange(sampleData[sampleType].data);
-  };
+  return (
+    <>
+      <Paper className={classes.paper}>
+        <Typography variant="body1">
+          Click on any editor in the left margin to launch it. The sample data
+          below will be used as the input to the editor.
+        </Typography>
 
-  render() {
-    const { rawData, onChange, classes } = this.props;
-    const { sampleType } = this.state;
-    const { mode } = sampleData[sampleType];
-
-    return (
-      <Fragment>
-        <Paper className={classes.paper}>
-          <Typography variant="body1">
-            Click on any editor in the left margin to launch it. The raw data
-            below will be used as the input.
-          </Typography>
-
-          <div className={classes.rawDataTitleBar}>
-            <div className={classes.titleBarItem}>
-              <Typography
-                color="textSecondary"
-                className={classes.caption}
-                variant="caption">
-                RAW DATA
-              </Typography>
-            </div>
-            <div className={classes.titleBarItem}>
-              <FormControl className={classes.sampleType}>
-                <Select
-                  value={this.state.sampleType}
-                  onChange={this.handleChange}
-                  displayEmpty>
-                  {Object.keys(sampleData).map(key => (
-                    <MenuItem key={key} value={key}>
-                      {sampleData[key].name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
+        <div className={classes.rawDataTitleBar}>
+          <div className={classes.titleBarItem}>
+            <Typography
+              color="textSecondary"
+              className={classes.caption}
+              variant="caption">
+              Sample Data
+            </Typography>
           </div>
-
-          <div className={classes.rawDataContainer}>
-            <CodeEditor
-              name="rawData"
-              value={rawData}
-              mode={mode}
-              onChange={onChange}
-            />
+          <div className={classes.titleBarItem}>
+            <FormControl className={classes.sampleType}>
+              <Select
+                value={sampleType}
+                onChange={handleSampleTypeChange}
+                displayEmpty>
+                {Object.keys(sampleData).map(key => (
+                  <MenuItem key={key} value={key}>
+                    {sampleData[key].name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
-        </Paper>
-      </Fragment>
-    );
-  }
+        </div>
+
+        <div className={classes.rawDataContainer}>
+          <CodeEditor
+            name="rawData"
+            value={rawData}
+            mode={mode}
+            onChange={onChange}
+            skipDelay
+          />
+        </div>
+      </Paper>
+    </>
+  );
 }

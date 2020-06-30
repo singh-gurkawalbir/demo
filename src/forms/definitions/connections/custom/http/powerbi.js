@@ -5,7 +5,7 @@ export default {
     '/assistant': 'powerbi',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.powerbi.com`,
+    '/http/baseURI': 'https://api.powerbi.com',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':
@@ -22,13 +22,19 @@ export default {
       label: 'Admin user',
       type: 'checkbox',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.unencrypted.adminUser'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.adminUser'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

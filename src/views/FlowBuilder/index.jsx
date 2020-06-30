@@ -1,6 +1,6 @@
-import { useState, useCallback, Fragment, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
+import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -14,131 +14,34 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
+import ConnectionsDrawer from './drawers/Connections';
+import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
+import ErrorDetailsDrawer from './drawers/ErrorsDetails';
+import ChartsDrawer from './drawers/LineGraph';
 import PageProcessor from './PageProcessor';
 import PageGenerator from './PageGenerator';
 import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
+import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
+import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
+import CloseIcon from '../../components/icons/CloseIcon';
+import HelpIcon from '../../components/icons/HelpIcon';
 import EditableText from '../../components/EditableText';
-import SwitchOnOff from '../../components/OnOff';
+import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
-import { isConnector, isFreeFlowResource } from '../../utils/flows';
+import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
-import DateTimeDisplay from '../../components/DateTimeDisplay';
-
-// #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
-/* 
-  var FlowSchema = new Schema({
- _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
-  schedule: {type: String, cLocked: false, template: true, patch: true},
-  timezone: {type: String, cLocked: false, template: true, patch: true},
-  name: { type: String, template: true, maxSize: 300, patch: true },
-  description: {type: String, template: true, maxSize: 10 * 1024, patch: true},
-  lastModified: {type: Date, default: Date.now, index: true},
-  free: {type: Boolean, template: true},
-  _templateId: {type: Schema.Types.ObjectId, ref: 'Template', template: true},
-  externalId: {type: String},
-  wizardState: {type: String, enum: ['step1', 'step2', 'step3', 'done'], lowercase: true, template: true},
-  __startDateHelper: {type: Date},
-  // these are the initial exports that will run at the beginning of a flow and
-  // generate all the pages of data that will then flow through all of the pageProcessors
-  // defined below
-  pageGenerators: {
-    type: [{
-      application: { type: String },
-      _connectionId: {type: Schema.Types.ObjectId, ref: 'Connection'},
-      webhookOnly: {type: Boolean},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      _keepDeltaBehindFlowId: {type: Schema.Types.ObjectId, ref: 'Flow'},
-      _keepDeltaBehindExportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      schedule: {type: String, cLocked: false, patch: true},
-      skipRetries: {type: Boolean, patch: true},
-      __startDateHelper: {type: Date},
-      _id: false
-    }],
-  },
-  // the exports in this array are used to enhance the data, and the imports are used
-  // to submit the data.
-  pageProcessors: {
-    type: [{
-      type: {type: String, enum: ['export', 'import'], lowercase: true},
-      application: { type: String },
-      _connectionId: {type: Schema.Types.ObjectId, ref: 'Connection'},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      _importId: {type: Schema.Types.ObjectId, ref: 'Import'},
-      proceedOnFailure: {type: Boolean},
-      responseMapping: {
-        fields: {
-          type: [{
-            extract: { type: String },
-            generate: { type: String },
-            _id: false
-          }],
-          cLocked: false
-        },
-        lists: {
-          type: [{
-            generate: { type: String },
-            fields: [{
-              extract: { type: String },
-              generate: { type: String },
-              _id: false
-            }],
-            _id: false
-          }],
-          cLocked: false
-        }
-      },
-      hooks: {
-        postResponseMap: {
-          function: { type: String },
-          _scriptId: {type: Schema.Types.ObjectId, ref: 'Script'},
-          configuration: Schema.Types.Mixed
-        }
-      },
-      _id: false
-    }],
-  },
-  _runNextFlowIds: {type: [{type: Schema.Types.ObjectId, ref: 'Flow'}], template: true},
-  // Once the UI changes for IO-8003 are done, _runNextExportIds will be renamed to _runNextFlowIds while existing _runNextFlowIds is removed
-  _runNextExportIds: {
-    type: [{
-      _id: false,
-      _flowId: {type: Schema.Types.ObjectId, ref: 'Flow'},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'}
-    }],
-    template: true
-  },
-  // old schema, not needed. _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
-  // old schema, not needed. _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
-  _integrationId: {type: Schema.Types.ObjectId, ref: 'Integration'},
-  _connectorId: {type: Schema.Types.ObjectId, ref: 'Connector'},
-  disabled: {type: Boolean, patch: true},
-  skipRetries: {type: Boolean, patch: true, template: true},
-  resolvedAt: {type: Date},
-  sandbox: {type: Boolean},
-  createdAt: {type: Date, default: Date.now}, // docs created after 17th April 2017 will have this field set
-  deletedAt: {type: Date},
-  _keepDeltaBehindFlowId: {type: Schema.Types.ObjectId, ref: 'Flow', template: true}, // this field is deprecated
-  runPageGeneratorsInParallel: {type: Boolean, patch: true, template: true},
-  settingsForm: {
-    form: { type: Schema.Types.Mixed },
-    init: {
-      _scriptId: { type: Schema.Types.ObjectId, ref: 'Script' },
-      function: { type: String }
-    },
-    submit: {
-      _scriptId: { type: Schema.Types.ObjectId, ref: 'Script' },
-      function: { type: String }
-    }
-  }
-  })
-*/
-// #endregion
+import StatusCircle from '../../components/StatusCircle';
+import useConfirmDialog from '../../components/ConfirmDialog';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { isProduction } from '../../forms/utils';
+import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
+import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -223,10 +126,24 @@ const useStyles = makeStyles(theme => ({
   editableTextInputShift: {
     width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
   },
+  errorStatus: {
+    justifyContent: 'center',
+    height: 'unset',
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    fontSize: '12px',
+  },
+  divider: {
+    width: 1,
+    height: 30,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: 5,
+  },
 }));
 
 function FlowBuilder() {
   const match = useRouteMatch();
+  const location = useLocation();
   const { flowId, integrationId } = match.params;
   const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
@@ -242,15 +159,25 @@ function FlowBuilder() {
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
-  const flow = useSelector(
-    state => selectors.resourceData(state, 'flows', flowId).merged,
-    shallowEqual
-  );
+  const { confirmDialog } = useConfirmDialog();
+  const flow = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
+  ).merged;
   const { pageProcessors = [], pageGenerators = [] } = flow;
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
+  const {
+    status: openFlowErrorsStatus,
+    data: flowErrorsMap,
+    total: totalErrors = 0,
+  } = useSelector(state => selectors.errorMap(state, flowId));
   // There are 2 conditions to identify this flow as a Data loader.
   // if it is an existing flow, then we can use the existence of a simple export,
   // else for staged flows, we can test to see if the pending export
@@ -263,12 +190,12 @@ function FlowBuilder() {
     (pageProcessors.length === 0 &&
       pageGenerators.length &&
       pageGenerators[0]._exportId);
-  const isConnectorType = isConnector(flow);
+  const isIAType = isIntegrationApp(flow);
   const isFreeFlow = isFreeFlowResource(flow);
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
-  const isViewMode = isMonitorLevelAccess || isConnectorType;
+  const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const patchFlow = useCallback(
     (path, value) => {
@@ -283,7 +210,7 @@ function FlowBuilder() {
     },
     [dispatch, flowId, isNewFlow]
   );
-  const handleMove = useCallback(
+  const handleMovePP = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -294,23 +221,58 @@ function FlowBuilder() {
     },
     [pageProcessors, patchFlow]
   );
-  const handleDelete = useCallback(
-    type => index => {
-      if (type === itemTypes.PAGE_PROCESSOR) {
-        const newOrder = [...pageProcessors];
+  const handleMovePG = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageGenerators[dragIndex];
+      const newOrder = [...pageGenerators];
 
-        newOrder.splice(index, 1);
-        patchFlow('/pageProcessors', newOrder);
-      }
-
-      if (type === itemTypes.PAGE_GENERATOR) {
-        const newOrder = [...pageGenerators];
-
-        newOrder.splice(index, 1);
-        patchFlow('/pageGenerators', newOrder);
-      }
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      patchFlow('/pageGenerators', newOrder);
     },
-    [pageGenerators, pageProcessors, patchFlow]
+    [pageGenerators, patchFlow]
+  );
+  const handleDelete = useCallback(
+    type => () => index => {
+      let resourceType;
+
+      if (type === itemTypes.PAGE_PROCESSOR) {
+        resourceType = 'page processor';
+      } else {
+        resourceType = 'page generator';
+      }
+
+      confirmDialog({
+        title: 'Confirm remove',
+        message: `Are you sure you want to remove this ${resourceType}?`,
+        buttons: [
+          {
+            label: 'Remove',
+            color: 'primary',
+            onClick: () => {
+              if (type === itemTypes.PAGE_PROCESSOR) {
+                const newOrder = [...pageProcessors];
+
+                newOrder.splice(index, 1);
+                patchFlow('/pageProcessors', newOrder);
+              }
+
+              if (type === itemTypes.PAGE_GENERATOR) {
+                const newOrder = [...pageGenerators];
+
+                newOrder.splice(index, 1);
+                patchFlow('/pageGenerators', newOrder);
+              }
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    },
+    [pageGenerators, pageProcessors, patchFlow, confirmDialog]
   );
   const pushOrReplaceHistory = useCallback(
     to => {
@@ -348,6 +310,12 @@ function FlowBuilder() {
     },
     [patchFlow]
   );
+  const handleErrors = useCallback(
+    resourceId => () => {
+      handleDrawerOpen(`errors/${resourceId}`);
+    },
+    [handleDrawerOpen]
+  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(1);
@@ -355,6 +323,25 @@ function FlowBuilder() {
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
   }, []);
+  const handleDrawerClick = useCallback(
+    path => () => {
+      handleDrawerOpen(path);
+    },
+    [handleDrawerOpen]
+  );
+  const handleExitClick = useCallback(() => {
+    // Note that our App init must do some internal redirects since
+    // a new browser tab session always has a history depth of 3!
+    // if depth is more than 3, we are safe to just go back in the history queue.
+    if (history.length > 3) {
+      history.goBack();
+    }
+    // Otherwise parse the location and return the user to the integration details
+    // page.
+    const parts = location.pathname.split('/');
+    const newPath = `${parts.slice(0, 4).join('/')}/flows`;
+    history.push(newPath);
+  }, [history, location]);
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -392,6 +379,17 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
+    if (!openFlowErrorsStatus && !isNewFlow && isUserInErrMgtTwoDotZero) {
+      dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
+    }
+  }, [
+    dispatch,
+    flowId,
+    isNewFlow,
+    isUserInErrMgtTwoDotZero,
+    openFlowErrorsStatus,
+  ]);
+  useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
       if (match.url.toLowerCase().includes('dataloader')) {
@@ -420,36 +418,46 @@ function FlowBuilder() {
   // Replaces the url once the virtual flow resource is
   // persisted and we have the final flow id.
   if (newFlowId) {
-    history.replace(rewriteUrl(newFlowId));
+    const nestedPgOrPpPath = matchPath(location.pathname, {
+      path: `${match.path}/:mode/:resourceType/:resourceId`,
+    });
+
+    if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
+      // Incase of a pg or pp opened ... replace url flowId with newFlowId
+      // @BugFix: IO-16074
+      history.replace(generatePath(nestedPgOrPpPath.path, {
+        ...nestedPgOrPpPath.params,
+        flowId: newFlowId,
+      }));
+    } else {
+      // In all other cases go back to flow url with new FlowId
+      history.replace(rewriteUrl(newFlowId));
+    }
 
     return null;
   }
   // #endregion
 
-  // eslint-disable-next-line
-  // console.log('render: <FlowBuilder>');
-
   return (
     <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
-        disabled={isViewMode}
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flowId={flowId} />
+      <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
         resourceType="flows"
         resourceId={flowId}
         flow={flow}
       />
+      <ConnectionsDrawer flowId={flowId} integrationId={integrationId} />
+      <AuditLogDrawer flowId={flowId} integrationId={integrationId} />
       <QueuedJobsDrawer />
+
+      <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
         title={
@@ -467,49 +475,93 @@ function FlowBuilder() {
           />
         }
         subtitle={
-          <Fragment>
+          <>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
-              <DateTimeDisplay dateTime={flow.lastModified} />
+              <CeligoTimeAgo date={flow.lastModified} />
             )}
-          </Fragment>
+          </>
         }
         infoText={flow.description}>
+        {totalErrors ? (
+          <span className={classes.errorStatus}>
+            <StatusCircle variant="error" size="small" />
+            {totalErrors} errors
+          </span>
+        ) : null}
         <div className={classes.actions}>
+          {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
+            <IconButton
+              disabled={isNewFlow}
+              data-test="charts"
+              onClick={handleDrawerClick('charts')}>
+              <HelpIcon />
+            </IconButton>
+          )}
           {!isDataLoaderFlow && (
-            <SwitchOnOff.component
+            <FlowToggle
+              integrationId={integrationId}
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
-              isConnector={isConnectorType}
+              isConnector={isIAType}
               data-test="switchFlowOnOff"
             />
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-
           {flowDetails && flowDetails.showScheduleIcon && (
-            <IconButton
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Schedule',
+                placement: 'bottom',
+              }}
               disabled={isNewFlow}
               data-test="scheduleFlow"
-              onClick={() => handleDrawerOpen('schedule')}>
+              onClick={handleDrawerClick('schedule')}>
               <CalendarIcon />
-            </IconButton>
+            </IconButtonWithTooltip>
           )}
-
-          <IconButton
+          <IconButtonWithTooltip
+            tooltipProps={{
+              title: 'Settings',
+              placement: 'bottom',
+            }}
             disabled={isNewFlow}
-            onClick={() => handleDrawerOpen('settings')}
+            onClick={handleDrawerClick('settings')}
             data-test="flowSettings">
             <SettingsIcon />
-          </IconButton>
-          {!isConnectorType && (
+          </IconButtonWithTooltip>
+
+          {!isIAType && (
             <FlowEllipsisMenu
               flowId={flowId}
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
+          {isUserInErrMgtTwoDotZero && (
+            <>
+              <div className={classes.divider} />
+              <IconButton
+                disabled={isNewFlow}
+                onClick={handleDrawerClick('connections')}
+                data-test="flowConnections">
+                <ConnectionsIcon />
+              </IconButton>
+              <IconButton
+                disabled={isNewFlow}
+                onClick={handleDrawerClick('auditlog')}
+                data-test="flowAuditLog">
+                <AuditLogIcon />
+              </IconButton>
+            </>
+          )}
+
+          <div className={classes.divider} />
+          <IconButton onClick={handleExitClick} size="small">
+            <CloseIcon />
+          </IconButton>
         </div>
       </CeligoPageBar>
       <div
@@ -549,8 +601,12 @@ function FlowBuilder() {
                 <PageGenerator
                   {...pg}
                   onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+                  onErrors={handleErrors(pg._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
                   key={
                     pg._exportId ||
                     pg._connectionId ||
@@ -559,6 +615,7 @@ function FlowBuilder() {
                   index={i}
                   isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
+                  onMove={handleMovePG}
                 />
               ))}
               {!pageGenerators.length && (
@@ -595,8 +652,14 @@ function FlowBuilder() {
                 <PageProcessor
                   {...pp}
                   onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+                  onErrors={handleErrors(pp._importId || pp._exportId)}
                   flowId={flowId}
                   integrationId={integrationId}
+                  openErrorCount={
+                    (flowErrorsMap &&
+                      flowErrorsMap[pp._importId || pp._exportId]) ||
+                    0
+                  }
                   key={
                     pp._importId ||
                     pp._exportId ||
@@ -607,7 +670,7 @@ function FlowBuilder() {
                   isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
-                  onMove={handleMove}
+                  onMove={handleMovePP}
                 />
               ))}
               {!pageProcessors.length && showAddPageProcessor && (
@@ -626,7 +689,7 @@ function FlowBuilder() {
                     You can add a destination application once you complete the
                     configuration of your data loader.
                   </Typography>
-                )}
+              )}
             </div>
           </div>
         </div>

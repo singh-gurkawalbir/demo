@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
@@ -11,13 +12,13 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     '& button': {
       marginLeft: 0,
-      height: 20,
+      height: 22,
       border: 0,
       backgroundColor: 'transparent',
       minWidth: 100,
       '& span': {
         color: theme.palette.secondary.light,
-        lineHeight: '23px',
+        lineHeight: '24px',
       },
     },
     '& button.Mui-selected': {
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
       },
     },
     '& button:hover': {
-      backgroundColor: 'rgba(0,0,0,0.05)',
+      backgroundColor: 'transparent',
       color: theme.palette.secondary.light,
       borderRadius: 24,
     },
@@ -39,9 +40,10 @@ const useStyles = makeStyles(theme => ({
       borderTopLeftRadius: 24,
       borderBottomLeftRadius: 24,
     },
+
     '& button:last-child': {
-      borderTopRightRadius: 24,
-      borderBottomRightRadius: 24,
+      borderTopRightRadius: '24px !important',
+      borderBottomRightRadius: '24px !important',
     },
   },
   item: {

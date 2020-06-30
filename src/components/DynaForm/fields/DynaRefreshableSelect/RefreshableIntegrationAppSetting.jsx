@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export default function RefreshableIntegrationAppSetting(props) {
   const {
@@ -39,7 +39,10 @@ export default function RefreshableIntegrationAppSetting(props) {
     }),
     [_integrationId]
   );
-  const connection = useResourceList(netsuiteFilterConfig).resources[0];
+  const connection = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    netsuiteFilterConfig
+  ).resources[0];
   const netSuiteSystemDomain = useMemo(
     () =>
       fieldName.includes('_listSavedSearches') &&
@@ -58,16 +61,20 @@ export default function RefreshableIntegrationAppSetting(props) {
       const { label } = selectedOption;
 
       // save it as a valueLabel
-      onFieldChange(fieldName, { id: value, label }, true);
+      if (label) {
+        onFieldChange(fieldName, { id: value, label }, true);
+      }
     }
-  }, [fieldName, onFieldChange, options, value, valueAndLabel]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldName, options, value, valueAndLabel]);
 
   useEffect(() => {
     if (!value && newValue && !autofill && disabled) {
       setAutofill(true);
       onFieldChange(fieldName, newValue, true);
     }
-  }, [newValue, autofill, onFieldChange, fieldName, disabled, value]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newValue, autofill, fieldName, disabled, value]);
 
   useEffect(() => {
     if (netSuiteSystemDomain && value && value.id) {

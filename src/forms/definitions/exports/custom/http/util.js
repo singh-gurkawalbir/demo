@@ -56,9 +56,11 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
       label: pathParam.name,
-      type: 'text',
+      type: 'textwithflowsuggestion',
+      showLookup: false,
       value: values[pathParam.id],
       required: !!pathParam.required,
+      helpText: pathParam.description,
     };
 
     if (pathParam.options && pathParam.options.length > 0) {
@@ -109,6 +111,7 @@ export function exportTypeFieldsMeta({
 
   return [
     {
+      helpKey: 'export.type',
       fieldId: 'assistantMetadata.exportType',
       options: [
         {
@@ -258,25 +261,30 @@ export function fieldMeta({ resource, assistantData }) {
     ...hiddenFields,
     ...basicFields,
     ...pathParameterFields,
-    ...exportTypeFields,
+
     ...searchParameterFields,
   ];
+  const exportTypeRelatedFields = [...exportTypeFields];
   const fieldMap = {
     common: {
       formId: 'common',
     },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportData: {
-      id: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
+    pageSize: { fieldId: 'pageSize' },
+    formView: { fieldId: 'formView' },
+    skipRetries: { fieldId: 'skipRetries' },
   };
   const fieldIds = [];
+  const exportTypeFieldIds = [];
 
   fields.forEach(field => {
     fieldMap[field.id || field.fieldId] = field;
     fieldIds.push(field.id || field.fieldId);
+  });
+  exportTypeRelatedFields.forEach(field => {
+    fieldMap[field.id || field.fieldId] = field;
+    exportTypeFieldIds.push(field.id || field.fieldId);
   });
 
   fieldMap.exportPanel = {
@@ -302,7 +310,29 @@ export function fieldMeta({ resource, assistantData }) {
       type: 'column',
       containers: [
         {
-          fields: ['common', 'exportOneToMany', 'exportData', ...fieldIds],
+          type: 'collapse',
+          containers: [
+            {
+              collapsed: true,
+              label: 'General',
+              fields: ['common', 'exportOneToMany', 'formView'],
+            },
+            {
+              collapsed: true,
+              label: 'What would you like to export?',
+              fields: [...fieldIds],
+            },
+            {
+              collapsed: true,
+              label: 'Configure export type',
+              fields: [...exportTypeFieldIds],
+            },
+            {
+              collapsed: true,
+              label: 'Advanced',
+              fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
+            },
+          ],
         },
         {
           fields: ['exportPanel'],

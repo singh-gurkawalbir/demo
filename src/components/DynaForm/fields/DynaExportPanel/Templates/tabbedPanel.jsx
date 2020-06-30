@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 400,
     overflow: 'auto',
     maxWidth: 680,
-    color: theme.palette.text.hint,
+    color: theme.palette.text.primary,
   },
   sampleDataContainerAlign: {
     marginTop: theme.spacing(2),
@@ -64,6 +64,7 @@ export default function TabbedPanel(props) {
           value={tabValue}
           onChange={handleTabChange}
           textColor="primary"
+          centered
           indicatorColor="primary">
           <Tab
             label="Body"

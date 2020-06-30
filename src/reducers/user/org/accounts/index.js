@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import {
   ACCOUNT_IDS,
@@ -7,6 +8,8 @@ import {
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
 } from '../../../../utils/constants';
+
+const emptyList = [];
 
 export default (state = [], action) => {
   const { type, resourceType } = action;
@@ -29,7 +32,8 @@ export default (state = [], action) => {
         const sharedAccounts = state.filter(a => a._id !== ACCOUNT_IDS.OWN);
 
         return [ownAccount, ...sharedAccounts];
-      } else if (resourceType === 'shared/ashares') {
+      }
+      if (resourceType === 'shared/ashares') {
         const ownAccounts = state.filter(a => a._id === ACCOUNT_IDS.OWN);
 
         if (!ownAccounts.length) {
@@ -266,104 +270,118 @@ export function diyLicense(state, accountId) {
 
 export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
   if (!state) {
-    return [];
+    return emptyList;
   }
 
-  const licenses = [];
+  const licenses = emptyList;
   const account = state.find(acc => acc._id === accountId);
 
   return account ? account.ownerUser.licenses : licenses;
 }
 
-export function sharedAccounts(state) {
-  if (!state) {
-    return [];
-  }
-
-  const accepted = state.filter(
-    a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
-  );
-  const shared = [];
-
-  accepted.forEach(a => {
-    if (!a.ownerUser || !a.ownerUser.licenses) return;
-
-    const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
-
-    shared.push({
-      id: a._id,
-      company: a.ownerUser.company,
-      email: a.ownerUser.email,
-      hasSandbox:
-        ioLicense && (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
-      hasConnectorSandbox:
-        a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
-          .length > 0,
-    });
-  });
-
-  return shared;
-}
-
-export function accountSummary(state) {
-  const shared = sharedAccounts(state);
-  const accounts = [];
-
-  if (!shared || shared.length === 0) {
-    const ownLicense = integratorLicense(state, ACCOUNT_IDS.OWN);
-
-    if (ownLicense) {
-      accounts.push({
-        id: ACCOUNT_IDS.OWN,
-        hasSandbox: !!ownLicense.hasSandbox,
-        hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
-      });
+export const sharedAccounts = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return emptyList;
     }
 
+    const accepted = state.filter(
+      a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
+    );
+    const shared = [];
+
+    accepted.forEach(a => {
+      if (!a.ownerUser || !a.ownerUser.licenses) return;
+
+      const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+
+      shared.push({
+        id: a._id,
+        company: a.ownerUser.company,
+        email: a.ownerUser.email,
+        hasSandbox:
+          ioLicense &&
+          (ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0),
+        hasConnectorSandbox:
+          a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
+            .length > 0,
+      });
+    });
+
+    return shared;
+  }
+);
+// TODO: Santosh integratorLicense selector implementation should be lazily created
+// can remove this selector after implementation
+const ownLicense = createSelector(
+  state => state,
+  state => integratorLicense(state, ACCOUNT_IDS.OWN)
+);
+
+export const accountSummary = createSelector(
+  sharedAccounts,
+  ownLicense,
+  (shared, ownLicense) => {
+    const accounts = [];
+
+    if (!shared || shared.length === 0) {
+      if (ownLicense) {
+        accounts.push({
+          id: ACCOUNT_IDS.OWN,
+          hasSandbox: !!ownLicense.hasSandbox,
+          hasConnectorSandbox: !!ownLicense.hasConnectorSandbox,
+        });
+      }
+
+      return accounts;
+    }
+
+    shared.forEach(a => {
+      accounts.push({
+        id: a.id,
+        company: a.company,
+        canLeave: shared.length > 1,
+        hasSandbox: !!a.hasSandbox,
+        hasConnectorSandbox: !!a.hasConnectorSandbox,
+      });
+    });
+
     return accounts;
   }
+);
 
-  shared.forEach(a => {
-    accounts.push({
-      id: a.id,
-      company: a.company,
-      canLeave: shared.length > 1,
-      hasSandbox: !!a.hasSandbox,
-      hasConnectorSandbox: !!a.hasConnectorSandbox,
+export const notifications = createSelector(
+  state => state,
+  state => {
+    const accounts = [];
+
+    if (!state || !state.length) {
+      return accounts;
+    }
+
+    const pending = state.filter(
+      a =>
+        a.ownerUser &&
+        !a.accepted &&
+        !a.dismissed &&
+        !a.disabled &&
+        a._id !== ACCOUNT_IDS.OWN
+    );
+
+    pending.forEach(a => {
+      const { name, email, company } = a.ownerUser;
+
+      accounts.push({
+        id: a._id,
+        accessLevel: a.accessLevel,
+        ownerUser: { name, email, company },
+      });
     });
-  });
 
-  return accounts;
-}
-
-export function notifications(state) {
-  const accounts = [];
-
-  if (!state || !state.length) {
     return accounts;
   }
-
-  const pending = state.filter(
-    a =>
-      a.ownerUser &&
-      !a.accepted &&
-      !a.dismissed &&
-      !a.disabled &&
-      a._id !== ACCOUNT_IDS.OWN
-  );
-
-  pending.forEach(a => {
-    const { name, email, company } = a.ownerUser;
-
-    accounts.push({
-      id: a._id,
-      accessLevel: a.accessLevel,
-      ownerUser: { name, email, company },
-    });
-  });
-
-  return accounts;
-}
+);
 
 export function accessLevel(state, accountId) {
   if (!state) {
@@ -378,6 +396,14 @@ export function accessLevel(state, accountId) {
 
   if (!account) {
     return undefined;
+  }
+
+  if (
+    account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    account.integrationAccessLevel &&
+    account.integrationAccessLevel.length > 0
+  ) {
+    return USER_ACCESS_LEVELS.TILE;
   }
 
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
@@ -418,6 +444,7 @@ export function permissions(
     'users',
     'exports',
     'imports',
+    'apis',
   ];
   const permissions = {};
 
@@ -562,6 +589,18 @@ export function permissions(
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;
+
+    if (account && account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+      permissions.integrations.none = {
+        accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+        flows: {},
+        connections: {},
+      };
+      permissions.integrations.all = { ...permissions.integrations.none };
+      permissions.integrations.connectors = {
+        ...permissions.integrations.none,
+      };
+    }
 
     if (
       account &&

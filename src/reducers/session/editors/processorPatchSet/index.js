@@ -24,7 +24,7 @@ function getLogic(editor) {
     editor.processor;
 
   if (!processorKey) {
-    throw new Error(`Not supported.`);
+    throw new Error('Not supported.');
   }
 
   const logic = logicMap[processorKey];

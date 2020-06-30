@@ -34,11 +34,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportRdbmsData: {
-      fieldId: 'exportRdbmsData',
-      type: 'labeltitle',
-      label: 'What would you like to export from?',
-    },
     'rdbms.query': { fieldId: 'rdbms.query' },
     type: {
       id: 'type',
@@ -59,6 +54,8 @@ export default {
           items: [
             { label: 'All', value: 'all' },
             { label: 'Test', value: 'test' },
+            { label: 'Delta', value: 'delta' },
+            { label: 'Once', value: 'once' },
           ],
         },
       ],
@@ -69,6 +66,7 @@ export default {
     },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    skipRetries: { fieldId: 'skipRetries' },
     exportOneToMany: { formId: 'exportOneToMany' },
     exportPanel: {
       fieldId: 'exportPanel',
@@ -78,20 +76,23 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'exportOneToMany',
-          'exportRdbmsData',
-          'rdbms.query',
-          'type',
-          'rdbms.once.query',
-        ],
         type: 'collapse',
         containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
+          {
+            collapsed: true,
+            label: 'What would you like to export?',
+            fields: ['rdbms.query'],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: ['type', 'rdbms.once.query'],
+          },
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['pageSize', 'dataURITemplate'],
+            fields: ['pageSize', 'dataURITemplate', 'skipRetries'],
           },
         ],
       },

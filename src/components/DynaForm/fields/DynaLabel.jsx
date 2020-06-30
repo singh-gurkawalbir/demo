@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { FieldWrapper } from 'react-forms-processor';
@@ -35,9 +35,12 @@ function DynaLabel(props) {
     setAnchorEl(null);
   };
 
+  const showArrowPopper =
+    !disablePopover && (helpText || (helpKey && helpTextMap[helpKey]));
+
   return (
-    <Fragment>
-      {!disablePopover && (
+    <>
+      {showArrowPopper && (
         <ArrowPopper
           placement="left"
           className={classes.helpPopper}
@@ -56,7 +59,7 @@ function DynaLabel(props) {
         className={classes.textField}>
         {label}
       </Typography>
-    </Fragment>
+    </>
   );
 }
 

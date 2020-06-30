@@ -1,10 +1,13 @@
+import React from 'react';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import StackShares from '../../actions/StackShares';
-import StackSystemToken from '../../../../components/StackSystemToken';
+import StackSystemToken from '../../../StackSystemToken';
 import { formatLastModified } from '../../../CeligoTable/util';
+import GenerateToken from '../../actions/GenerateToken';
+import Edit from '../../actions/Edit';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -31,19 +34,24 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: 'System token',
-      width: '250px',
-      value: r => !r.shared && r.server && getSystemToken(r),
-    },
-    {
-      heading: 'Access key ID',
-      value: r => r.lambda && r.lambda.accessKeyId,
-    },
-    {
-      heading: `Last updated`,
+      heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
     },
+    {
+      heading: 'Access key Id',
+      value: r => r.lambda && r.lambda.accessKeyId,
+    },
+    {
+      heading: 'System token',
+      width: '285px',
+      value: r => (r.server ? !r.shared && getSystemToken(r) : 'N/A'),
+    },
   ],
-  rowActions: [StackShares, AuditLogs, References, Delete],
+  rowActions: r => {
+    if (!r || !r.shared) {
+      return [Edit, GenerateToken, StackShares, AuditLogs, References, Delete];
+    }
+    return [];
+  }
 };

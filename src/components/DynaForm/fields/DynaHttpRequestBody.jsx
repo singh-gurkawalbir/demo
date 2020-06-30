@@ -1,129 +1,129 @@
-import { useState, useEffect, useMemo, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, FormControl, FormLabel } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import React, { useState, useCallback, useMemo, Fragment } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
+import { Button, FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
-import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
-import {
-  getXMLSampleTemplate,
-  getJSONSampleTemplate,
-} from '../../AFE/HttpRequestBodyEditor/templateMapping';
-import actions from '../../../actions';
-import getFormattedSampleData from '../../../utils/sampleData';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import lookupUtil from '../../../utils/lookup';
+import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  dynaHttpReqWrapper: {
+  dynaHttpRequestBodyWrapper: {
+    flexDirection: 'row !important',
     width: '100%',
-    display: 'flex',
     alignItems: 'center',
   },
-  dynaHttpFormControl: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  dynaHttpLabel: {
-    marginRight: 12,
-    marginBottom: 0,
-  },
-  httpReqbtn: {
+  dynaReqBodyBtn: {
     marginRight: theme.spacing(0.5),
   },
+  dynaHttpReqLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
+  },
 }));
+const ManageLookup = props => {
+  const {
+    label = 'Manage lookups',
+    lookupFieldId,
+    value,
+    onFieldChange,
+    flowId,
+    resourceType,
+    resourceId,
+  } = props;
 
-export default function DynaHttpRequestBody(props) {
-  const classes = useStyles();
+  return (
+    <DynaLookupEditor
+      id={lookupFieldId}
+      label={label}
+      value={value}
+      onFieldChange={onFieldChange}
+      flowId={flowId}
+      resourceType={resourceType}
+      resourceId={resourceId}
+    />
+  );
+};
+
+const DynaHttpRequestBody = props => {
   const {
     id,
+    formContext,
     onFieldChange,
     options = {},
     value,
     label,
     title,
-    resultTitle,
-    ruleTitle,
-    dataTitle,
     resourceId,
-    connectionId,
     resourceType,
     flowId,
     arrayIndex,
+    supportLookup = true,
+    disableEditorV2 = false,
   } = props;
-  const { lookups: lookupsObj, resourceName } = options;
+  const classes = useStyles();
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  let parsedRule =
-    options && typeof arrayIndex === 'number' && Array.isArray(value)
-      ? value[arrayIndex]
-      : value;
-  const lookupFieldId = lookupsObj && lookupsObj.fieldId;
-  const lookups = lookupsObj && lookupsObj.data;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
-
-  const dispatch = useDispatch();
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
-  const resource = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
-  );
-  const { adaptorType } = resource.merged || {};
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
-  const { data: sampleData } = useSelector(state => {
-    if (!['exports', 'imports'].includes(resourceType)) return {};
-
-    return selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
+  const { adaptorType, connectionId } = useSelector(state => {
+    const { merged: resourceData = {} } = selectors.resourceData(
+      state,
       resourceType,
-      stage: 'flowInput',
-    });
-  });
-  // constructing data
-  const wrapSampleDataInArray =
-    adaptorType === 'HTTPImport' || adaptorType === 'HTTPExport';
-  const formattedSampleData = useMemo(
-    () =>
-      getFormattedSampleData({
-        connection,
-        sampleData,
-        resourceType,
-        resourceName,
-        wrapInArray: wrapSampleDataInArray,
-      }),
-    [connection, resourceName, resourceType, sampleData, wrapSampleDataInArray]
-  );
-  const stringifiedSampleData = useMemo(
-    () => JSON.stringify(formattedSampleData, null, 2),
-    [formattedSampleData]
-  );
+      resourceId
+    );
+    const { adaptorType, _connectionId: connectionId } = resourceData;
 
-  useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
-    if (flowId && !sampleData && !isPageGenerator) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          resourceType,
-          'flowInput'
-        )
-      );
+    return { adaptorType, connectionId };
+  }, shallowEqual);
+  const formattedRule = useMemo(
+    () => (Array.isArray(value) ? value[arrayIndex] : value),
+    [arrayIndex, value]
+  );
+  const lookups =
+    supportLookup &&
+    resourceType === 'imports' &&
+    lookupUtil.getLookupFromFormContext(formContext, adaptorType);
+  const action = useMemo(() => {
+    if (!supportLookup || resourceType !== 'imports') {
+      return;
     }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
+    const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
+
+    if (!lookupFieldId) return;
+
+    return ManageLookup({
+      lookupFieldId,
+      value: lookups,
+      onFieldChange,
+      flowId,
+      resourceType,
+      resourceId,
+      connectionId,
+    });
+  }, [
+    adaptorType,
+    connectionId,
+    flowId,
+    lookups,
+    onFieldChange,
+    resourceId,
+    resourceType,
+    supportLookup,
+  ]);
+  const handleEditorClick = useCallback(() => {
+    setShowEditor(!showEditor);
+  }, [showEditor]);
+  // TODO: break into different function. To be done across all editors
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
+      // TODO: Give better name for arrayIndex
       if (typeof arrayIndex === 'number' && Array.isArray(value)) {
         // save to array at position arrayIndex
         const valueTmp = value;
@@ -139,74 +139,48 @@ export default function DynaHttpRequestBody(props) {
     handleEditorClick();
   };
 
-  if (!parsedRule) {
-    if (contentType === 'json')
-      parsedRule = getJSONSampleTemplate(formattedSampleData.data);
-    else parsedRule = getXMLSampleTemplate(formattedSampleData.data);
-  }
-
-  let lookupField;
-  const lookupOptions = {
-    isSQLLookup: false,
-    sampleData: formattedSampleData,
-    resourceId,
-    resourceType,
-    flowId,
-    connectionId,
-    resourceName,
-  };
-
-  if (lookupFieldId) {
-    lookupField = (
-      <DynaLookupEditor
-        id={lookupFieldId}
-        label="Manage Lookups"
-        value={lookups}
-        onFieldChange={onFieldChange}
-        options={lookupOptions}
-      />
-    );
-  }
-
   return (
-    <Fragment>
+    <Fragment key={`${resourceId}-${id}`}>
       {showEditor && (
-        <HttpRequestBodyEditorDialog
+        <DynaEditorWithFlowSampleData
           contentType={contentType === 'json' ? 'json' : 'xml'}
-          title={title || 'Build HTTP Request Body'}
-          id={`${resourceId}-${id}`}
-          rule={parsedRule}
+          title={title || 'Build HTTP request body'}
+          fieldId={id}
           onFieldChange={onFieldChange}
           lookups={lookups}
-          data={stringifiedSampleData}
           onClose={handleClose}
-          action={lookupField}
-          ruleTitle={ruleTitle}
-          dataTitle={dataTitle}
-          resultTitle={resultTitle}
+          action={action}
+          editorType="httpRequestBody"
+          flowId={flowId}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          disableEditorV2={disableEditorV2}
+          rule={formattedRule}
         />
       )}
-      <FormControl className={classes.dynaHttpFormControl}>
-        <div className={classes.dynaHttpReqWrapper}>
-          <FormLabel htmlFor={id} className={classes.dynaHttpLabel}>
-            HTTP body:
-          </FormLabel>
-
-          {/* Todo: Aditya 
-           HTTP body If HTTP body not clicked, show "Configure body" as label of the button. If clicked, show AFE. If no changes on save, show Configure body. If saves changes, show "Edit body" as the label of the button. */}
-
-          <Button
-            data-test={id}
-            variant="outlined"
-            color="secondary"
-            className={classes.httpReqbtn}
-            onClick={handleEditorClick}>
-            {label}
-          </Button>
-          <FieldHelp {...props} />
-        </div>
-        <ErroredMessageComponent {...props} />
-      </FormControl>
+      <div className={classes.dynaHttpRequestBodyWrapper}>
+        <FormLabel className={classes.dynaHttpReqLabel}>
+          {label ? `${label}:` : ''}
+        </FormLabel>
+        <Button
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          className={classes.dynaReqBodyBtn}
+          onClick={handleEditorClick}>
+          Launch
+        </Button>
+        <FieldHelp {...props} />
+      </div>
+      <ErroredMessageComponent {...props} />
     </Fragment>
+  );
+};
+
+export default function DynaHttpRequestBodyWrapper(props) {
+  return (
+    <FormContext.Consumer>
+      {form => <DynaHttpRequestBody {...props} formContext={form} />}
+    </FormContext.Consumer>
   );
 }

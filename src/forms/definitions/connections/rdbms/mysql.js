@@ -36,7 +36,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -61,23 +61,37 @@ export default {
       fieldId: 'rdbms.ssl.ca',
       visibleWhen: [{ field: 'rdbms.useSSL', is: [true] }],
     },
+    application: {
+      fieldId: 'application',
+    },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'rdbmsFields',
-      'rdbms.port',
-      'rdbms.useSSL',
-      'rdbms.ssl.ca',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rdbmsFields',
+          'rdbms.port',
+          'rdbms.useSSL',
+          'rdbms.ssl.ca',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['rdbmsAdvanced'],
       },
     ],

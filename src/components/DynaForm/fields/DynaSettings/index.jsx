@@ -1,80 +1,124 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Typography from '@material-ui/core/Typography';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import * as selectors from '../../../../reducers';
-import EditDrawer from '../../../AFE/SettingsFormEditor/Drawer';
 import FormView from './FormView';
 import RawView from './RawView';
+import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
+import useIntegration from '../../../../hooks/useIntegration';
+import FormBuilderButton from '../../../FormBuilderButton';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    padding: theme.spacing(1),
+  },
+  divider: {
+    marginTop: '20px',
+    marginBottom: '10px',
+  },
+  summaryContainer: {
+    width: '100%',
+  },
+  summaryLabel: {
+    flexGrow: 1,
+    alignSelf: 'center',
+  },
+}));
 
 export default function DynaSettings(props) {
-  const { id, resourceContext, disabled, onFieldChange } = props;
-  const { resourceType, resourceId } = resourceContext;
-  const history = useHistory();
+  const {
+    id,
+    resourceContext,
+    disabled,
+    onFieldChange,
+    label = 'Custom settings',
+    collapsed = true,
+    fieldsOnly = false
+  } = props;
+  const classes = useStyles();
   const match = useRouteMatch();
-  const settingsForm = useSelector(state => {
-    const resource = selectors.resource(state, resourceType, resourceId);
+  const { resourceType, resourceId } = resourceContext;
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+  const integrationId = useIntegration(resourceType, resourceId);
 
-    return resource && resource.settingsForm;
-  });
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
+  const allowFormEdit = useSelector(state =>
+    selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
-  const toggleEditMode = useCallback(() => {
-    history.push(`${match.url}/editSettings`);
-  }, [history, match.url]);
+
+  const hasSettingsForm = useSelector(state =>
+    selectors.hasSettingsForm(state, resourceType, resourceId)
+  );
   const handleSettingFormChange = useCallback(
     (values, isValid) => {
-      // console.log(isValid ? 'valid: ' : 'invalid: ', values);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
-      onFieldChange(id, { ...values, __invalid: !isValid });
+      if (!isValid) {
+        onFieldChange(id, { ...values, __invalid: true });
+      } else {
+        onFieldChange(id, values);
+      }
       // dispatch(
       //   action.formFieldChange(formId, fieldId, newValue, shouldTouch, isValid)
       // );
     },
     [id, onFieldChange]
   );
-  const handleEditClose = useCallback(
-    // (shouldCommit, editor) => {
-    // console.log('edit drawer closed', shouldCommit, editor);
-    // },
-    () => history.goBack(),
-    [history]
-  );
-  const hasSettingsForm =
-    settingsForm && (settingsForm.form || settingsForm.init);
+  const handleExpandClick = useCallback(() => {
+    // HACK! to overcome event bubbling.
+    // We don't want child views affecting the panel state.
+    // TODO: Our mistake here is that the formBuilder drawer
+    // is a child of the summary panel.
+    if (match.isExact) {
+      setIsCollapsed(!isCollapsed);
+    }
+  }, [isCollapsed, match]);
 
-  // console.log('settingsForm', settingsForm);
+  // Only developers can see/edit raw settings!
+  // thus, if there is no settings form and the user is not a dev, render nothing.
+  if (!allowFormEdit && !hasSettingsForm) {
+    return null;
+  }
 
-  // only developers can see/edit raw settings!
-  // thus, if there is no metadata and the user is not a dev, render nothing.
-  if (!isDeveloper && !hasSettingsForm) return null;
-
-  // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
-  return (
-    // Always render the edit drawer. This drawer has logic within to not display unless the
-    // browser location ends with a specific path.
-    <Fragment>
-      {isDeveloper && (
-        <EditDrawer
-          editorId={id}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          settingsForm={settingsForm}
-          onClose={handleEditClose}
-        />
-      )}
-      {hasSettingsForm ? (
+  function renderSettings() {
+    if (hasSettingsForm) {
+      return (
         <FormView
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}
           onFormChange={handleSettingFormChange}
-          onToggleClick={toggleEditMode}
-        />
-      ) : (
-        <RawView {...props} onToggleClick={toggleEditMode} />
-      )}
-    </Fragment>
+      />
+      );
+    }
+
+    return <RawView {...props} saveMode="json" />;
+  }
+
+  if (fieldsOnly) return renderSettings();
+
+  // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
+  return (
+    <div className={classes.child}>
+      <ExpansionPanel expanded={!isCollapsed}>
+        <ExpansionPanelSummary
+          data-test={label}
+          className={classes.summaryContainer}
+          onClick={handleExpandClick}
+          expandIcon={<ExpandMoreIcon />}>
+          <Typography className={classes.summaryLabel}>{label}</Typography>
+          {!isCollapsed && (
+            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
+          )}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails >
+          {renderSettings()}
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
+    </div>
   );
 }

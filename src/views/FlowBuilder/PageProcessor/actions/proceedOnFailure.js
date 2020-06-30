@@ -1,24 +1,41 @@
-import { Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import actions from '../../../../actions';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
 import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import * as selectors from '../../../../reducers';
+
+const emptyObject = {};
 
 function ProceedOnFailureDialog(props) {
   const dispatch = useDispatch();
-  const { open, onClose, flowId, resourceIndex, isViewMode } = props;
-  const { merged: flow = {} } = useSelector(state =>
-    selectors.resourceData(state, 'flows', flowId)
+  const {
+    open,
+    onClose,
+    flowId,
+    resourceIndex,
+    isViewMode,
+    resourceType,
+  } = props;
+  const { merged: flow = emptyObject } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
   );
+
   const { pageProcessors = [] } = flow;
   const defaultValue = !!(
     pageProcessors[resourceIndex] &&
     pageProcessors[resourceIndex].proceedOnFailure
   );
+  const title = `What should happen to a record if the ${
+    resourceType === 'exports' ? 'lookup' : 'import'
+  } fails?`;
   const fieldMeta = {
     fieldMap: {
       proceedOnFailure: {
@@ -48,7 +65,7 @@ function ProceedOnFailureDialog(props) {
       fields: ['proceedOnFailure'],
     },
   };
-  const handleSubmit = formValues => {
+  const saveFormValues = useCallback(formValues => {
     const { proceedOnFailure } = formValues;
     const patchSet = [
       {
@@ -60,19 +77,36 @@ function ProceedOnFailureDialog(props) {
 
     dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
     dispatch(actions.resource.commitStaged('flows', flowId, 'value'));
-    onClose();
-  };
+  }, [dispatch, flowId, resourceIndex]);
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/flows/${flowId}`,
+      disabled: isViewMode,
+      onSave: saveFormValues,
+      onClose,
+    }
+  );
 
   return (
     <ModalDialog show={open} onClose={onClose}>
-      <div> What should happen to a record if the lookup fails?</div>
+      <div>
+        {title}
+      </div>
       <div>
         <DynaForm disabled={isViewMode} fieldMeta={fieldMeta}>
           <DynaSubmit
-            disabled={isViewMode}
+            disabled={disableSave}
             data-test="saveProceedOnFailure"
-            onClick={handleSubmit}>
-            Save
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            disabled={disableSave}
+            data-test="saveAndCloseProceedOnFailure"
+            color="secondary"
+            onClick={submitHandler(true)}>
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button data-test="cancelProceedOnFailure" onClick={onClose}>
             Cancel
@@ -86,7 +120,7 @@ function ProceedOnFailureDialog(props) {
 function ProceedOnFailure(props) {
   const { open } = props;
 
-  return <Fragment>{open && <ProceedOnFailureDialog {...props} />}</Fragment>;
+  return <>{open && <ProceedOnFailureDialog {...props} />}</>;
 }
 
 export default {

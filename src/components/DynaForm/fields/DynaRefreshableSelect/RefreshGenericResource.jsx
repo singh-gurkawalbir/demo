@@ -1,6 +1,6 @@
-import { useEffect, useState, cloneElement, useCallback } from 'react';
+import React, { useEffect, useState, cloneElement, useCallback } from 'react';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
@@ -9,15 +9,19 @@ import DynaMultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
+import ErroredMessageComponent from '../ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
     display: 'flex',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
-  refreshGenericActionBtn: {
+  refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
+  },
+  refreshLoader: {
+    marginLeft: theme.spacing(1),
   },
   refreshRoot: {
     width: '100%',
@@ -100,7 +104,7 @@ export default function RefreshGenericResource(props) {
     openExternalUrl({ url: urlToOpen });
   }, [urlToOpen]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner />;
+  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
 
   return (
     <div>
@@ -108,6 +112,7 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.refreshGenericResourceWrapper}>
+
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
@@ -117,27 +122,31 @@ export default function RefreshGenericResource(props) {
         {!isLoading && !removeRefresh && (
           <ActionButton
             onClick={onRefresh}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
           </ActionButton>
         )}
         {fieldData && isLoading && (
-          <span className={classes.refreshGenericActionBtn}>
-            <Spinner size={24} color="primary" />
+          <span
+            className={clsx(
+              classes.refreshGenericResourceActionBtn,
+              classes.refreshLoader
+            )}>
+            <Spinner size={24} />
           </span>
         )}
         {urlToOpen && (
           <ActionButton
             onClick={handleOpenResource}
-            className={classes.refreshGenericActionBtn}
+            className={classes.refreshGenericResourceActionBtn}
             data-test="openResource">
             <ExitIcon />
           </ActionButton>
         )}
-        {description && <FormHelperText>{description}</FormHelperText>}
-        {fieldError && <FormHelperText error>{fieldError}</FormHelperText>}
       </FormControl>
+      {fieldError && <ErroredMessageComponent errorMessages={fieldError} />}
+      {description && <ErroredMessageComponent description={description} />}
     </div>
   );
 }

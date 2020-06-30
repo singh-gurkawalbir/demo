@@ -1,32 +1,41 @@
-import { useEffect, Fragment } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import DynaForm from '../../../../DynaForm';
+import DynaForm from '../../..';
+import Spinner from '../../../../Spinner';
+import SpinnerWrapper from '../../../../SpinnerWrapper';
+
+const useStyles = makeStyles({
+  wrapper: {
+    width: '100%',
+  },
+});
 
 export default function FormView({
   resourceId,
   resourceType,
   onFormChange,
-  onToggleClick,
   disabled,
 }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const formState = useSelector(state =>
+  const settingsFormState = useSelector(state =>
     selectors.customSettingsForm(state, resourceId)
   );
-  const isDeveloper = useSelector(
-    state => selectors.userProfile(state).developer
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
   );
 
   useEffect(() => {
     // use effect will fire any time formState changes but...
     // Only if the formState is missing do we need to perform an init.
-    if (!formState) {
+    if (!settingsFormState) {
       dispatch(actions.customSettings.formRequest(resourceType, resourceId));
     }
-  }, [dispatch, formState, resourceId, resourceType]);
+  }, [dispatch, settingsFormState, resourceId, resourceType]);
 
   useEffect(
     () => () => {
@@ -36,38 +45,33 @@ export default function FormView({
     [dispatch, resourceId]
   );
 
-  if (formState && formState.error) {
+  if (settingsFormState && settingsFormState.error) {
     return (
-      <Fragment>
-        <Typography>{formState.error}</Typography>
-        {isDeveloper && (
-          <Button variant="contained" onClick={onToggleClick}>
-            Toggle form editor
-          </Button>
-        )}
-      </Fragment>
+      <div>
+        <Typography>{settingsFormState.error}</Typography>
+      </div>
     );
   }
 
-  if (!formState || formState.status === 'request') {
-    return <Typography>Initializing form...</Typography>;
+  if (!settingsFormState || settingsFormState.status === 'request') {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
   }
 
   return (
-    <Fragment>
-      {isDeveloper && (
-        <Button variant="contained" onClick={onToggleClick}>
-          Toggle form editor
-        </Button>
-      )}
+    <div className={classes.wrapper}>
       <DynaForm
-        key={formState.key}
+        key={settingsFormState.key}
         onChange={onFormChange}
         disabled={disabled}
-        fieldMeta={formState.meta}
+        fieldMeta={settingsFormState.meta}
         resourceId={resourceId}
         resourceType={resourceType}
+        formState={formState}
       />
-    </Fragment>
+    </div>
   );
 }

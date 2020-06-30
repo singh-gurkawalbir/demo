@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, cloneElement } from 'react';
+import React, { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -22,6 +22,7 @@ import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
+import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -50,16 +51,27 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
+  wrapper: {
+    '& Button': {
+      marginRight: '10px',
+    },
+    '& Button:last-child': {
+      marginRight: '0px',
+    },
+  },
+  editorToggleContainer: {
+    marginRight: theme.spacing(2),
+  },
 }));
-
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
  */
+
 export default function EditorDialog(props) {
   const {
     children,
@@ -76,6 +88,8 @@ export default function EditorDialog(props) {
     dataTest = 'editor',
     hidePreviewAction = false,
     patchOnSave = false,
+    toggleAction,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -93,6 +107,9 @@ export default function EditorDialog(props) {
   const isEditorDirty = useSelector(state =>
     selectors.isEditorDirty(state, id)
   );
+  const handleAutoPreviewToggle = useCallback(() => {
+    dispatch(actions.editor.patch(id, { autoEvaluate: !editor.autoEvaluate }));
+  }, [dispatch, editor.autoEvaluate, id]);
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, id)
   );
@@ -125,23 +142,23 @@ export default function EditorDialog(props) {
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
-        title: 'Confirm',
-        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'No',
-          },
-          {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: onClose,
           },
+          {
+            label: 'No, go back',
+            color: 'secondary',
+          }
         ],
       });
     } else {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-  // TODO (Aditya) : Check with Surya if confirmDialog returns same reference everytime
   const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
@@ -178,12 +195,21 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
+          <DynaCheckbox
+            disabled={disabled}
+            hideLabelSpacing
+            id="disableAutoPreview"
+            onFieldChange={handleAutoPreviewToggle}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
           {action}
         </div>
         <div className={classes.toggleContainer}>
+          {toggleAction}
           {showLayoutOptions && (
             <ToggleButtonGroup
               value={layout}
@@ -215,9 +241,53 @@ export default function EditorDialog(props) {
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
-        children && cloneElement(children, { layout })}
+        children && cloneElement(children, { layout })
+}
       </DialogContent>
       <DialogActions className={classes.actions}>
+        <div className={classes.wrapper}>
+          {patchOnSave ? (
+            <>
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="primary"
+                dataTest="saveEditor"
+                disabled={disableSave}
+                submitButtonLabel="Save"
+                flowId={flowId}
+            />
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseEditor"
+                disabled={disableSave}
+                onClose={handleSave(true)}
+                submitButtonLabel="Save & close"
+                flowId={flowId}
+            />
+            </>
+          ) : (
+            <Button
+              variant="outlined"
+              data-test="saveEditor"
+              disabled={disableSave}
+              color="primary"
+              onClick={handleSave(true)}>
+              Save
+            </Button>
+          )}
+
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {showPreviewAction && (
           <Button
             data-test="previewEditorResult"
@@ -226,35 +296,6 @@ export default function EditorDialog(props) {
             Preview
           </Button>
         )}
-        {patchOnSave ? (
-          <EditorSaveButton
-            id={id}
-            variant="outlined"
-            color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            onClose={handleSave(true)}
-            submitButtonLabel="Save"
-          />
-        ) : (
-          <Button
-            variant="outlined"
-            data-test="saveEditor"
-            disabled={disableSave}
-            color="primary"
-            onClick={handleSave(true)}>
-            Save
-          </Button>
-        )}
-
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
       </DialogActions>
     </Dialog>
   );

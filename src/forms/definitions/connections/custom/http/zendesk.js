@@ -87,8 +87,7 @@ export default {
           r.http.auth.basic &&
           r.http.auth.basic.username
         ) {
-          if (r.http.auth.basic.username.indexOf('/token') !== -1)
-            return r.http.auth.basic.username.replace('/token', '');
+          if (r.http.auth.basic.username.indexOf('/token') !== -1) return r.http.auth.basic.username.replace('/token', '');
 
           return r.http.auth.basic.username;
         }
@@ -109,20 +108,23 @@ export default {
       label: 'API token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.zendeskSubdomain',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.apiToken',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.zendeskSubdomain',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.apiToken'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

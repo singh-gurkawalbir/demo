@@ -1,4 +1,5 @@
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import IconButton from '@material-ui/core/IconButton';
 import clsx from 'clsx';
@@ -7,13 +8,12 @@ const useStyles = makeStyles(theme => ({
   editorButton: {
     marginLeft: theme.spacing(1),
     display: 'inline-block',
-    background: theme.palette.background.paper,
     padding: 0,
     borderRadius: 2,
-    color: theme.palette.text.hint,
+    color: theme.palette.secondary.light,
     cursor: 'pointer',
     '&:hover': {
-      background: theme.palette.background.paper,
+      background: 'transparent',
       '& > span': {
         color: theme.palette.primary.main,
       },

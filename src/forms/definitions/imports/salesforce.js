@@ -1,5 +1,3 @@
-import { isNewId } from '../../../utils/resource';
-
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -56,6 +54,10 @@ export default {
       }
     }
 
+    if (newValues['/inputMode'] !== 'blob') {
+      delete newValues['/blobKeyPath'];
+    }
+
     delete newValues['/inputMode'];
 
     return {
@@ -67,7 +69,13 @@ export default {
     apiType: {
       id: 'apiType',
       type: 'labeltitle',
-      label: 'Where would you like to import the data?',
+      label: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          return 'Where would you like to transfer the files?';
+        }
+
+        return 'Where would you like to import the records?';
+      },
       visibleWhen: [
         {
           field: 'inputMode',
@@ -79,6 +87,7 @@ export default {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -87,14 +96,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (!isNew) return true;
-
-        return false;
+        return 'records';
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     'salesforce.api': { fieldId: 'salesforce.api' },
     'salesforce.document.id': { fieldId: 'salesforce.document.id' },
@@ -141,11 +147,6 @@ export default {
     },
     'salesforce.contentVersion.pathOnClient': {
       fieldId: 'salesforce.contentVersion.pathOnClient',
-    },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
     },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
@@ -218,50 +219,54 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'apiType',
-      'salesforce.api',
-      'importData',
-      'blobKeyPath',
-      'salesforce.lookups',
-      'salesforce.sObjectType',
-      'salesforce.operation',
-      'salesforce.blobsObjectType',
-      'salesforce.blobOperation',
-      'salesforce.attachment.id',
-      'salesforce.attachment.name',
-      'salesforce.attachment.parentId',
-      'salesforce.attachment.contentType',
-      'salesforce.attachment.description',
-      'salesforce.attachment.isPrivate',
-      'salesforce.document.id',
-      'salesforce.document.name',
-      'salesforce.document.folderId',
-      'salesforce.document.contentType',
-      'salesforce.document.developerName',
-      'salesforce.document.isInternalUseOnly',
-      'salesforce.document.isPublic',
-      'salesforce.contentVersion.contentDocumentId',
-      'salesforce.contentVersion.title',
-      'salesforce.contentVersion.pathOnClient',
-      'salesforce.contentVersion.tagCsv',
-      'salesforce.contentVersion.contentLocation',
-      'salesforce.compositeOperation',
-      'ignoreExisting',
-      'ignoreMissing',
-      'salesforce.idLookup.whereClause',
-      'salesforce.upsert.externalIdField',
-      'salesforce.idLookup.extract',
-      'dataMappings',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
+        fields: [
+          'salesforce.api',
+          'salesforce.lookups',
+          'salesforce.sObjectType',
+          'salesforce.operation',
+          'salesforce.blobsObjectType',
+          'salesforce.blobOperation',
+          'salesforce.attachment.id',
+          'salesforce.attachment.name',
+          'salesforce.attachment.parentId',
+          'salesforce.attachment.contentType',
+          'salesforce.attachment.description',
+          'salesforce.attachment.isPrivate',
+          'salesforce.document.id',
+          'salesforce.document.name',
+          'salesforce.document.folderId',
+          'salesforce.document.contentType',
+          'salesforce.document.developerName',
+          'salesforce.document.isInternalUseOnly',
+          'salesforce.document.isPublic',
+          'salesforce.contentVersion.contentDocumentId',
+          'salesforce.contentVersion.title',
+          'salesforce.contentVersion.pathOnClient',
+          'salesforce.contentVersion.tagCsv',
+          'salesforce.contentVersion.contentLocation',
+          'salesforce.compositeOperation',
+          'ignoreExisting',
+          'ignoreMissing',
+          'salesforce.idLookup.whereClause',
+          'salesforce.upsert.externalIdField',
+          'salesforce.idLookup.extract',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

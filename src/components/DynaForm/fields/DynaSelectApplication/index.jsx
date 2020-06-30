@@ -1,16 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
-import applications, {
-  groupApplications,
-} from '../../../../constants/applications';
+import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import SearchIcon from '../../../icons/SearchIcon';
+import actions from '../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -39,7 +39,6 @@ const useStyles = makeStyles(theme => ({
   inputLabel: {
     transform: 'unset',
     position: 'static',
-    marginBottom: theme.spacing(1),
   },
   img: {
     maxWidth: '100%',
@@ -63,24 +62,29 @@ export default function SelectApplication(props) {
     flowId,
     options: fieldOptions,
     resourceType,
+    resourceId,
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
+    proceedOnChange,
   } = props;
-  // Custom styles for Select Control
-  const flowDetails = useSelector(state =>
-    selectors.flowDetails(state, flowId)
+  const match = useRouteMatch();
+  const classes = useStyles();
+  const theme = useTheme();
+  const ref = useRef(null);
+  const isDataLoader = useSelector(state =>
+    selectors.isDataLoader(state, flowId)
   );
   const groupedApps = useMemo(
     () =>
       groupApplications(resourceType, {
         appType: appType || (fieldOptions && fieldOptions.appType),
-        isSimpleImport: flowDetails && !!flowDetails.isSimpleImport,
+        isSimpleImport: isDataLoader,
       }),
-    [appType, fieldOptions, flowDetails, resourceType]
+    [appType, fieldOptions, isDataLoader, resourceType]
   );
-  const classes = useStyles();
-  const theme = useTheme();
+
+  // Custom styles for Select Control
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -101,7 +105,7 @@ export default function SelectApplication(props) {
     }),
     control: () => ({
       minWidth: 365,
-      height: '48px',
+      height: '38px',
       border: '1px solid',
       borderColor: theme.palette.divider,
       borderRadius: '2px',
@@ -115,7 +119,7 @@ export default function SelectApplication(props) {
       position: 'relative',
       boxSizing: 'borderBox',
       transition: 'all 100ms ease 0s',
-      outline: `0px !important`,
+      outline: '0px !important',
       '&:hover': {
         borderColor: theme.palette.primary.main,
       },
@@ -130,10 +134,12 @@ export default function SelectApplication(props) {
     }),
     input: () => ({
       color: theme.palette.secondary.light,
+      // marginLeft: 3,
     }),
     placeholder: () => ({
       color: theme.palette.secondary.light,
       position: 'absolute',
+      height: '100%',
     }),
     indicatorSeparator: () => ({
       display: 'none',
@@ -157,7 +163,7 @@ export default function SelectApplication(props) {
     }),
     dropdownIndicator: () => ({
       color: theme.palette.secondary.light,
-      padding: '8px',
+      padding: theme.spacing(0.5, 1, 0, 1),
       cursor: 'pointer',
       '&:hover': {
         color: fade(theme.palette.secondary.light, 0.8),
@@ -182,6 +188,7 @@ export default function SelectApplication(props) {
       assistant: app.assistant,
     })),
   }));
+
   const DropdownIndicator = props => (
     <components.DropdownIndicator {...props}>
       <SearchIcon />
@@ -220,23 +227,53 @@ export default function SelectApplication(props) {
 
     return true;
   };
+  const applications = applicationsList();
 
   const defaultValue =
     !value || isMulti
       ? ''
       : {
-          value,
-          label: applications.find(a => a.id === value).name,
-        };
+        value,
+        label: applications.find(a => a.id === value).name,
+      };
 
-  function handleChange(e) {
+  const dispatch = useDispatch();
+  const handleChange = useCallback(e => {
+    ref?.current?.select?.blur();
+    const newValue = isMulti ? [...value, e.value] : e.value;
+
     if (onFieldChange) {
-      const newValue = isMulti ? [...value, e.value] : e.value;
-
-      // console.log('newValue', newValue);
       onFieldChange(id, newValue);
     }
-  }
+    // when proceedOnChange is true
+    // it means this form contains only this one field
+    // we dispatch form submit as soon as the new value is vetted
+    if (proceedOnChange && applications.find(a => a.id === newValue)) {
+      const values = {};
+      values[id] = newValue;
+      dispatch(
+        actions.resourceForm.submit(
+          resourceType,
+          resourceId,
+          values,
+          match,
+          false,
+          false,
+          flowId
+        )
+      );
+    }
+  }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
+
+
+  const handleFocus = useCallback(() => {
+    const refState = ref?.current?.state;
+    const inputValue = refState.value?.label;
+
+    if (inputValue) {
+      refState.inputValue = inputValue;
+    }
+  }, []);
 
   function handleRemove(index) {
     const newApps = [...value];
@@ -255,6 +292,7 @@ export default function SelectApplication(props) {
         {label}
       </InputLabel>
       <Select
+        ref={ref}
         name={name}
         placeholder={placeholder}
         closeMenuOnSelect
@@ -263,6 +301,8 @@ export default function SelectApplication(props) {
         defaultMenuIsOpen={!value}
         options={options}
         onChange={handleChange}
+        onFocus={handleFocus}
+        // onBlur={handleBlur}
         styles={customStyles}
         filterOption={filterOptions}
       />

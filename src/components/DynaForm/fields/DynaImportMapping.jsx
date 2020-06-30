@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import ImportMapping from '../../../components/AFE/ImportMapping';
+import ImportMapping from '../../AFE/ImportMapping';
 import mappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
 import * as selectors from '../../../reducers';
@@ -73,7 +73,7 @@ export default function DynaImportMapping(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {isModalVisible && (
         <ImportMapping
           title="Define import mapping"
@@ -98,6 +98,6 @@ export default function DynaImportMapping(props) {
         onClick={toggleModalVisibility}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

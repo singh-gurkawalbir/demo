@@ -1,4 +1,3 @@
-import { Chip } from '@material-ui/core';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,7 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
@@ -17,8 +16,10 @@ import {
   defaultPatchSetConverter,
   getMissingPatchSet,
 } from '../../../forms/utils';
-import ActionButton from '../../../components/ActionButton';
-import useResourceList from '../../../hooks/useResourceList';
+import ActionButton from '../../ActionButton';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import StatusCircle from '../../StatusCircle';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -47,11 +48,11 @@ const handleAddNewResource = args => {
   ) {
     let values;
 
-    if (['pageProcessor', 'pageGenerator'].includes(resourceType))
+    if (['pageProcessor', 'pageGenerator'].includes(resourceType)) {
       values = resourceMeta[resourceType].preSave({
         application: options.appType,
       });
-    else if (['iClients'].includes(resourceType)) {
+    } else if (['iClients'].includes(resourceType)) {
       values = {
         ...values,
         '/assistant': assistant,
@@ -98,11 +99,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  connectionStatusWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   dynaSelectMultiSelectActions: {
     flexDirection: 'row !important',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   menuItem: {
     maxWidth: '95%',
@@ -112,6 +117,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function ConnectionLoadingChip(props) {
+  const classes = useStyles();
   const { connectionId } = props;
   const dispatch = useDispatch();
 
@@ -128,9 +134,15 @@ function ConnectionLoadingChip(props) {
   }
 
   return isConnectionOffline ? (
-    <Chip color="secondary" label="Offline" />
+    <div className={classes.connectionStatusWrapper}>
+      <StatusCircle size="small" variant="error" />
+      offline
+    </div>
   ) : (
-    <Chip color="primary" label="Online" />
+    <div className={classes.connectionStatusWrapper}>
+      <StatusCircle size="small" variant="info" />
+      online
+    </div>
   );
 }
 
@@ -151,6 +163,7 @@ function DynaSelectResource(props) {
     statusExport,
     ignoreEnvironmentFilter,
     resourceContext,
+    skipPingConnection,
   } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -164,7 +177,10 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
-  const { resources = emptyArray } = useResourceList(filterConfig);
+  const { resources = emptyArray } = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    filterConfig
+  );
   const createdId = useSelector(state =>
     selectors.createdResourceId(state, newResourceId)
   );
@@ -184,13 +200,6 @@ function DynaSelectResource(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdId]);
-  let filteredResources = resources;
-
-  if ((options && options.filter) || filter) {
-    filteredResources = filteredResources.filter(
-      sift(options && options.filter ? options.filter : filter)
-    );
-  }
 
   // When adding a new resource and subsequently editing it disable selecting a new connection
   const isAddingANewResource =
@@ -198,23 +207,33 @@ function DynaSelectResource(props) {
     (location.pathname.endsWith(`/add/${resourceType}/${newResourceId}`) ||
       location.pathname.endsWith(`/edit/${resourceType}/${newResourceId}`));
   const disableSelect = disabled || isAddingANewResource;
-  const resourceItems = filteredResources.map(conn => ({
-    label: conn.name || conn._id,
-    value: conn._id,
-  }));
-  const { expConnId, assistant } = useSelector(state => {
-    const { merged } =
-      selectors.resourceData(
-        state,
-        resourceContext.resourceType,
-        resourceContext.resourceId
-      ) || {};
+  const resourceItems = useMemo(() => {
+    let filteredResources = resources;
 
-    return {
+    if ((options && options.filter) || filter) {
+      filteredResources = filteredResources.filter(
+        sift(options && options.filter ? options.filter : filter)
+      );
+    }
+
+    return filteredResources.map(conn => ({
+      label: conn.name || conn._id,
+      value: conn._id,
+    }));
+  }, [filter, options, resources]);
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceContext.resourceType,
+      resourceContext.resourceId
+    ) || {};
+  const { expConnId, assistant } = useMemo(
+    () => ({
       expConnId: merged && merged._connectionId,
       assistant: merged.assistant,
-    };
-  });
+    }),
+    [merged]
+  );
   const handleAddNewResourceMemo = useCallback(
     () =>
       handleAddNewResource({
@@ -253,6 +272,14 @@ function DynaSelectResource(props) {
         },
       ];
 
+      if (statusExport) {
+        patchSet.push({
+          op: 'add',
+          path: '/statusExport',
+          value: true
+        });
+      }
+
       // this not an actual value we would like to commit...this is just to load the right form
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
@@ -268,12 +295,13 @@ function DynaSelectResource(props) {
     value,
   ]);
   const truncatedItems = items =>
-    items.map(i => ({
+    items.sort(stringCompare('label')).map(i => ({
       label: (
         <div title={i.label} className={classes.menuItem}>
           {i.label}
         </div>
       ),
+      optionSearch: i.label,
       value: i.value,
     }));
 
@@ -319,7 +347,7 @@ function DynaSelectResource(props) {
             <EditIcon />
           </ActionButton>
         )}
-        {resourceType === 'connections' && !!value && (
+        {resourceType === 'connections' && !!value && !skipPingConnection && (
           <ConnectionLoadingChip connectionId={value} />
         )}
       </div>

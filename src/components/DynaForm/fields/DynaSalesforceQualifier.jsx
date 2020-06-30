@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
 import ActionButton from '../../ActionButton';
-import ExitIcon from '../../icons/ExpandWindowIcon';
+import ExitIcon from '../../icons/FilterIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
@@ -15,10 +15,10 @@ const useStyles = makeStyles(theme => ({
   },
   exitButtonsalsForceQualifier: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(4),
   },
   dynaSalesforceQualifierWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   textField: {
     width: '100%',
@@ -65,7 +65,7 @@ export default function DynaSalesforceQualifier(props) {
     <div className={classes.dynaSalesforceQualifierWrapper}>
       {showEditor && (
         <SalesforceEditorDialog
-          title="Qualification Criteria"
+          title="Field specific qualification criteria"
           id={id}
           value={value}
           resourceId={resourceId}

@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/3dCartWebAPI/v1/Customers',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://apirest.3dcart.com`,
+    '/http/baseURI': 'https://apirest.3dcart.com',
     '/http/auth/token/headerName': 'Token',
     '/http/auth/token/scheme': ' ',
     '/http/auth/token/location': 'header',
@@ -52,18 +52,21 @@ export default {
       helpKey: '3dcart.connection.http.auth.token.token',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.threedcartSecureUrl',
-      'http.encrypted.PrivateKey',
-      'http.auth.token.token',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.threedcartSecureUrl',
+          'http.encrypted.PrivateKey',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

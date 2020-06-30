@@ -1,6 +1,7 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
+import { Button, FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
 import * as selectors from '../../../../reducers';
@@ -10,6 +11,7 @@ import {
   FILE_GENERATOR,
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
+import FieldHelp from '../../FieldHelp';
 
 /*
  * This editor is shown in case of :
@@ -17,8 +19,25 @@ import {
  *  2. When editing an export, resource has a userDefinitionId using which we get rules
  *    customized and saved by user while creation
  */
+const useStyles = makeStyles(theme => ({
+  fileDefinitionContainer: {
+    flexDirection: 'row !important',
+    width: '100%',
+    alignItems: 'center',
+  },
+  fileDefinitionBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  fileDefinitionLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
+  },
+}));
 
 function DynaFileDefinitionEditor(props) {
+  const classes = useStyles();
   const {
     id,
     label,
@@ -83,7 +102,7 @@ function DynaFileDefinitionEditor(props) {
     let template;
 
     if (definitionId && format) {
-      template = selectors.getFileDefinition(state, definitionId, {
+      template = selectors.fileDefinition(state, definitionId, {
         format,
         resourceType,
       });
@@ -126,19 +145,21 @@ function DynaFileDefinitionEditor(props) {
     if (isRuleChanged) {
       onFieldChange(id, rule, true);
       // Processes the updated sample data and rules on change of format
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: parserType,
-            file: sampleData,
-            editorValues: { rule, data: sampleData },
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
+      if (sampleData) {
+        dispatch(
+          actions.sampleData.request(
+            resourceId,
+            resourceType,
+            {
+              type: parserType,
+              file: sampleData,
+              editorValues: { rule, data: sampleData },
+              formValues: formContext.value,
+            },
+            'file'
+          )
+        );
+      }
       setIsRuleChanged(false);
     }
   }, [
@@ -160,32 +181,39 @@ function DynaFileDefinitionEditor(props) {
   }, [rule]);
 
   return (
-    <Fragment>
-      <LoadResources resources="filedefinitions">
-        {showEditor && (
-          <FileDefinitionEditorDialog
-            title="File Definition Editor"
-            id={id + resourceId}
-            processor={processor}
-            data={
-              sampleData ||
-              (resourceType === 'exports'
-                ? props.sampleData
-                : JSON.stringify(props.sampleData, null, 2))
-            }
-            rule={value}
-            onClose={handleClose}
-            disabled={disabled}
-          />
-        )}
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleEditorClick}>
-          {label}
-        </Button>
-      </LoadResources>
-    </Fragment>
+    <>
+      <div className={classes.fileDefinitionContainer}>
+        <LoadResources resources="filedefinitions">
+          {showEditor && (
+            <FileDefinitionEditorDialog
+              title={label || 'File definition editor'}
+              id={id + resourceId}
+              processor={processor}
+              data={
+                sampleData ||
+                (resourceType === 'exports'
+                  ? props.sampleData
+                  : JSON.stringify(props.sampleData, null, 2))
+              }
+              rule={value}
+              onClose={handleClose}
+              disabled={disabled}
+            />
+          )}
+          <FormLabel className={classes.fileDefinitionLabel}>
+            {label}:
+          </FormLabel>
+          <Button
+            variant="outlined"
+            color="secondary"
+            className={classes.fileDefinitionBtn}
+            onClick={handleEditorClick}>
+            Launch
+          </Button>
+          <FieldHelp {...props} />
+        </LoadResources>
+      </div>
+    </>
   );
 }
 

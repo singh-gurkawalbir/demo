@@ -19,7 +19,7 @@ export default {
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
-      { id: 'dynamodb.ignoreExtract', type: 'textwithlookupextract' },
+      { id: 'dynamodb.ignoreExtract' },
     ],
     options: [
       {
@@ -42,10 +42,9 @@ export default {
     required: true,
   },
   'dynamodb.partitionKey': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
     showLookup: false,
-    connectionId: r => r && r._connectionId,
     label: 'Partition key',
     requiredWhen: [
       {
@@ -55,10 +54,9 @@ export default {
     ],
   },
   'dynamodb.sortKey': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
+    showSuggestionsWithoutHandlebar: true,
     showLookup: false,
-    connectionId: r => r && r._connectionId,
     label: 'Sort key',
   },
   'dynamodb.itemDocument': {
@@ -67,7 +65,7 @@ export default {
     hideDefaultData: true,
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
-    label: 'Launch query builder',
+    label: 'Query builder',
     title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
     visibleWhen: [
@@ -98,7 +96,7 @@ export default {
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
-      `{ "#n1":"Name","#n2":"Id"}`,
+      '{ "#n1":"Name","#n2":"Id"}',
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',
@@ -116,7 +114,7 @@ export default {
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      `{ ":p1":"A",":p2":"1"}`,
+      '{ ":p1":"A",":p2":"1"}',
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',
@@ -129,11 +127,9 @@ export default {
     ],
   },
   'dynamodb.ignoreExtract': {
-    type: 'textwithlookupextract',
-    fieldType: 'ignoreExistingData',
+    type: 'textwithflowsuggestion',
     showLookup: false,
-    adaptorType: r => r && r.adaptorType,
-    connectionId: r => r && r._connectionId,
+    showSuggestionsWithoutHandlebar: true,
     label: 'Ignore extract',
     required: true,
   },

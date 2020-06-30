@@ -1,16 +1,16 @@
-import { useState, useEffect, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
-import CodeEditor from '../../../components/CodeEditor';
+import CodeEditor from '../../CodeEditor';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import ModalDialog from '../../ModalDialog';
-import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -117,7 +117,7 @@ export default function DynaSqlQuery(props) {
   ]);
 
   return (
-    <Fragment>
+    <>
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
@@ -144,6 +144,6 @@ export default function DynaSqlQuery(props) {
         </div>
         {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
       </div>
-    </Fragment>
+    </>
   );
 }

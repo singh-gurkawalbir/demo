@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -43,8 +43,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ProfileMenuButton() {
-  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
   const hasProfile = useSelector(state => selectors.hasProfile(state));
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
@@ -54,14 +55,7 @@ export default function ProfileMenuButton() {
       selectors.resourcePermissions(state).accessLevel ===
       USER_ACCESS_LEVELS.ACCOUNT_OWNER
   );
-  const accountOwnerEmail = useSelector(state => {
-    const owner = selectors.accountOwner(state);
-
-    if (owner) {
-      return owner.email;
-    }
-  });
-  const dispatch = useDispatch();
+  const accountOwnerEmail = useSelector(state => selectors.accountOwner(state)?.email);
   const open = !!anchorEl;
   const { name, email } = profile;
   const handleMenu = event => {
@@ -80,7 +74,7 @@ export default function ProfileMenuButton() {
   if (!hasProfile || !hasPreferences) return null;
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="profileMenu"
         size="small"
@@ -109,10 +103,10 @@ export default function ProfileMenuButton() {
             </Typography>
             <Typography className={classes.email}>
               {accountOwnerEmail && (
-                <Fragment>
+                <>
                   Account owner
                   {!isAccountOwner && `: ${accountOwnerEmail}`}
-                </Fragment>
+                </>
               )}
             </Typography>
           </Grid>
@@ -136,6 +130,6 @@ export default function ProfileMenuButton() {
           </Button>
         </div>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
@@ -7,12 +7,15 @@ import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const flowsFilterConfig = { type: 'flows' };
 
 export default function AttachFlows({ onClose, integrationId }) {
-  const allFlows = useResourceList(flowsFilterConfig).resources;
+  const allFlows = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsFilterConfig
+  ).resources;
   const flows = useMemo(() => allFlows.filter(f => !f._integrationId), [
     allFlows,
   ]);
@@ -62,7 +65,7 @@ export default function AttachFlows({ onClose, integrationId }) {
 
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach Flows</div>
+      <div>Attach flows</div>
       <div>
         <LoadResources
           required

@@ -1,13 +1,22 @@
 import stableStringify from 'fast-json-stable-stringify';
 
+export const safeParse = o => {
+  if (typeof o === 'object' || !o) return o;
+
+  try {
+    return JSON.parse(o);
+  } catch (e) {
+    return undefined;
+  }
+};
+
 export const hashCode = (s, stable) => {
   let hash = 0;
   let i;
   let chr;
   let str = s;
 
-  if (typeof s === 'object')
-    str = stable ? stableStringify(s) : JSON.stringify(s);
+  if (typeof s === 'object') str = stable ? stableStringify(s) : JSON.stringify(s);
 
   if (!str || str.length === 0) return hash;
 
@@ -32,4 +41,4 @@ export const isJsonString = str => {
   return true;
 };
 
-export default { hashCode, isJsonString };
+export default { hashCode, isJsonString, safeParse };

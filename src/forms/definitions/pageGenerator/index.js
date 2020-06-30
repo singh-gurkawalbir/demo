@@ -1,4 +1,4 @@
-import applications, {
+import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../constants/applications';
@@ -22,6 +22,7 @@ export default {
     if (exportId) {
       return { '/resourceId': exportId };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
@@ -30,10 +31,16 @@ export default {
 
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
+      newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+
+      if (application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+      } else newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
+      newValues['/resourceType'] = type;
+
       newValues['/adaptorType'] = `${appTypeToAdaptorType[app.type]}Export`;
 
       if (application === 'webhook') {
@@ -43,6 +50,11 @@ export default {
 
       if (app.assistant) {
         newValues['/assistant'] = app.assistant;
+      }
+      // If there is no assistant for the export, we need to show generic adaptor form
+      // we are patching useTechAdaptorForm field to not to show default assistant form
+      if (!app.export && app.assistant) {
+        newValues['/useTechAdaptorForm'] = true;
       }
     }
 
@@ -57,43 +69,23 @@ export default {
       appType: 'export',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
-      defaultValue: r => (r && r.application) || '',
+      defaultValue: r => {
+        if (!r) return '';
+
+        return r.rdbmsAppType || r.application || '';
+      },
       required: true,
     },
     type: {
       id: 'type',
       name: 'type',
-      type: 'radiogroup',
-      label: 'This application supports two options for exporting data',
-      defaultValue: r => (r && r.type) || 'api',
+      type: 'selectresourcetype',
+      mode: 'source',
+      label: 'What would you like to do?',
       required: true,
-      options: [
-        {
-          items: [
-            { label: 'API', value: 'api' },
-            { label: 'Webhook', value: 'webhook' },
-          ],
-        },
-      ],
-      visibleWhen: [
-        {
-          field: 'application',
-          is: getWebhookConnectors().map(connector => connector.id),
-        },
-      ],
-    },
-
-    existingExport: {
-      id: 'exportId',
-      name: 'exportId',
-      type: 'selectflowresource',
-      flowResourceType: 'pg',
-      resourceType: 'exports',
-      label: 'Would you like to use an existing export?',
       defaultValue: '',
-      required: false,
-      allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
+      placeholder: 'Please select',
+      refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
           field: 'application',
@@ -101,7 +93,6 @@ export default {
         },
       ],
     },
-
     connection: {
       id: 'connection',
       name: '/_connectionId',
@@ -119,19 +110,54 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', is: ['api'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
     },
+
+    existingExport: {
+      id: 'exportId',
+      name: 'exportId',
+      type: 'selectflowresource',
+      flowResourceType: 'pg',
+      resourceType: 'exports',
+      label: 'Would you like to use an existing export?',
+      defaultValue: '',
+      required: false,
+      allowEdit: true,
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+        'exportId',
+      ],
+      visibleWhenAll: [
+        {
+          field: 'application',
+          isNot: [''],
+        },
+      ],
+    },
   },
   layout: {
-    fields: ['application', 'type', 'connection', 'existingExport'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application', 'type', 'connection', 'existingExport'],
+      },
+    ],
   },
 
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
+    const connectionField = fields.find(field => field.id === 'connection');
+
+    if (fieldId === 'type') {
+      return { selectedApplication: app };
+    }
 
     if (fieldId === 'connection') {
       const expression = [];
@@ -158,7 +184,6 @@ export default {
     }
 
     if (fieldId === 'exportId') {
-      const connectionField = fields.find(field => field.id === 'connection');
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =
@@ -198,16 +223,30 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
 
+      if (['netsuite', 'salesforce'].indexOf(app.type) >= 0) {
+        if (type === 'realtime') {
+          expression.push({ type: 'distributed' });
+        } else {
+          expression.push({ type: { $ne: 'distributed' } });
+        }
+      }
+
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
+      let label =
+        isWebhook || type === 'realtime'
+          ? 'Would you like to use an existing listener?'
+          : exportField.label;
+
+      if (type === 'transferFiles') {
+        label = 'Would you like to use an existing transfer?';
+      }
 
       return {
         filter,
         appType: app.type,
         visible,
-        label: isWebhook
-          ? 'Would you like to use an existing listener?'
-          : exportField.label,
+        label,
       };
     }
 

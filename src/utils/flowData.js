@@ -16,7 +16,7 @@ import {
   IMPORT_RESPONSE_MAPPING_EXTRACTS,
 } from './responseMapping';
 import arrayUtils from './array';
-import { isConnector } from './flows';
+import { isIntegrationApp } from './flows';
 import { isJsonString } from './string';
 
 const sampleDataStage = {
@@ -216,8 +216,7 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   };
 
   updatedPathsFromPatchSet.forEach(path => {
-    if (pathRegex.sequence.test(path) && !updates.sequence)
-      updates.sequence = true;
+    if (pathRegex.sequence.test(path) && !updates.sequence) updates.sequence = true;
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path
@@ -247,7 +246,7 @@ export const isUIDataExpectedForResource = (resource, connection, flow) =>
   isFileAdaptor(resource) ||
   isRestCsvMediaTypeExport(resource, connection) ||
   isBlobTypeResource(resource) ||
-  isConnector(flow);
+  isIntegrationApp(flow);
 
 /*
  * Gives a sample data for Blob resource

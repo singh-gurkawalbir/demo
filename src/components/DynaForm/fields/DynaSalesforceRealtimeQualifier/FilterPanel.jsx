@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 import { isEmpty } from 'lodash';
 import config from './config';

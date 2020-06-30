@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    retValues['/rest/pingRelativeURI'] === '/admin/orders.json';
+    retValues['/rest/pingRelativeURI'] === '/orders.json';
 
     if (retValues['/rest/authType'] === 'oauth') {
       retValues['/rest/tokenLocation'] = 'header';
@@ -27,15 +27,15 @@ export default {
             ? /^(read_|write_)(\w*)/.exec(scope)[2]
             : '';
           const pingURIs = {
-            content: '/admin/articles/authors.json',
-            themes: '/admin/themes.json',
-            products: '/admin/products/count.json',
-            customers: '/admin/customers/count.json',
-            orders: '/admin/orders/count.json',
-            script_tags: '/admin/script_tags/count.json',
-            fulfillments: '/admin/fulfillment_services.json?scope=all',
-            shipping: '/admin/carrier_services.json',
-            users: '/admin/users.json',
+            content: '/articles/authors.json',
+            themes: '/themes.json',
+            products: '/products/count.json',
+            customers: '/customers/count.json',
+            orders: '/orders/count.json',
+            script_tags: '/script_tags/count.json',
+            fulfillments: '/fulfillment_services.json?scope=all',
+            shipping: '/carrier_services.json',
+            users: '/users.json',
           };
 
           retValues['/rest/pingRelativeURI'] = pingURIs[scopeId];
@@ -56,7 +56,9 @@ export default {
       '/type': 'rest',
       '/assistant': 'shopify',
       '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://${formValues['/rest/storeURL']}.myshopify.com`,
+      '/rest/baseURI': `https://${
+        formValues['/rest/storeURL']
+      }.myshopify.com/admin/api/${formValues['/rest/unencrypted/version']}`,
       '/rest/pingMethod': 'GET',
     };
   },
@@ -99,6 +101,15 @@ export default {
           message: 'Subdomain should not contain spaces.',
         },
       },
+    },
+    'rest.unencrypted.version': {
+      fieldId: 'rest.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      required: true,
+      defaultValue: r =>
+        (r && r.rest && r.rest.unencrypted && r.rest.unencrypted.version) ||
+        '2020-01',
     },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
@@ -153,6 +164,8 @@ export default {
         'unauthenticated_write_checkouts',
         'unauthenticated_write_customers',
         'unauthenticated_read_content',
+        'read_assigned_fulfillment_orders',
+        'write_assigned_fulfillment_orders',
       ],
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
@@ -163,30 +176,36 @@ export default {
       'name',
       'rest.authType',
       'rest.storeURL',
+      'rest.unencrypted.version',
       'rest.basicAuth.username',
       'rest.basicAuth.password',
       'rest.scope',
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
   actions: [
-    { id: 'cancel' },
     {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
-      id: 'test',
-      label: 'Test',
+      id: 'save',
+      label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     {
-      id: 'save',
-      label: 'Test and save',
+      id: 'saveandclose',
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+    },
+    { id: 'cancel' },
+    {
+      id: 'test',
+      mode: 'secondary',
+      label: 'Test',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],

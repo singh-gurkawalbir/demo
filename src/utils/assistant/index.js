@@ -737,7 +737,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   if (adaptorType === 'http') {
     Object.keys(operationDetails.response || {}).forEach(
-      prop => (exportDoc.response[prop] = operationDetails.response[prop])
+      prop => { exportDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 
@@ -949,6 +949,11 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  /** paging.body should be a string */
+  if (exportDoc.paging && isObject(exportDoc.paging.body)) {
+    exportDoc.paging.body = JSON.stringify(exportDoc.paging.body);
+  }
+
   const assistantMetadata = { resource };
 
   if (version) {
@@ -1026,7 +1031,12 @@ export function generateValidReactFormFieldId(fieldId) {
     .replace(/\]/g, '*__*');
 }
 
-export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
+export function convertToReactFormFields({
+  paramMeta = {},
+  value = {},
+  flowId,
+  resourceContext = {},
+}) {
   const fields = [];
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
@@ -1083,6 +1093,10 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         fieldType = 'text';
       }
 
+      if (fieldType === 'text' && fieldDetailsMap[fieldId].type !== 'integer') {
+        fieldType = 'textwithflowsuggestion';
+      }
+
       fieldDetailsMap[fieldId].inputType = fieldType;
     });
 
@@ -1131,14 +1145,36 @@ export function convertToReactFormFields({ paramMeta = {}, value = {} }) {
         readOnly: !!field.readOnly,
       };
 
+      if (fieldDef.readOnly) {
+        fieldDef.defaultDisabled = true;
+      }
+
+      if (fieldDef.type === 'textwithflowsuggestion') {
+        fieldDef.showLookup = false;
+      }
+
+      if (flowId) {
+        fieldDef.flowId = flowId;
+      }
+
+      if (resourceContext) {
+        if (resourceContext.resourceId) {
+          fieldDef.resourceId = resourceContext.resourceId;
+        }
+
+        if (resourceContext.resourceType) {
+          fieldDef.resourceType = resourceContext.resourceType;
+        }
+      }
+
       if (['multiselect', 'select'].includes(fieldDef.type)) {
         fieldDef.options = [
           {
             items: field.options
               ? field.options.map(opt => ({
-                  label: opt.toString(),
-                  value: opt,
-                }))
+                label: opt.toString(),
+                value: opt,
+              }))
               : [],
           },
         ];
@@ -1690,7 +1726,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     importDoc.response.successPath = operationDetails.successPath;
 
     Object.keys(operationDetails.response || {}).forEach(
-      prop => (importDoc.response[prop] = operationDetails.response[prop])
+      prop => { importDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 

@@ -1,6 +1,8 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
   const { id, type, update, steps, installerFunction, message } = action;
   let step;
@@ -22,10 +24,11 @@ export default (state = {}, action) => {
         steps.forEach(step => {
           let stepIndex = -1;
 
-          if (draft[id] && draft[id].steps)
+          if (draft[id] && draft[id].steps) {
             stepIndex = draft[id].steps.findIndex(
               s => s.installerFunction === step.installerFunction
             );
+          }
 
           if (stepIndex !== -1) {
             draft[id].steps[stepIndex] = {
@@ -70,7 +73,7 @@ export default (state = {}, action) => {
 
 export function addNewStoreSteps(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   return state[id];

@@ -7,11 +7,14 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/domains',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.mailgun.net/v3`,
+    '/http/baseURI': 'https://api.mailgun.net/v3',
     '/http/auth/basic/username': 'api',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: {
+      fieldId: 'application',
+    },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'API key',
@@ -20,10 +23,13 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.basic.password'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.basic.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

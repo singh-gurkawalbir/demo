@@ -1,22 +1,29 @@
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../actions';
-import Icon from '../../../icons/DownloadIcon';
+import DownloadIcon from '../../../icons/DownloadIcon';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 export default {
-  label: 'Download',
-  component: function DownloadResources({ resourceType, resource }) {
-    const dispatch = useDispatch();
+  label: (rowData, actionProps) => {
+    if (actionProps.resourceType === 'templates') {
+      return 'Download file';
+    }
+    return `Download ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
+  },
 
-    return (
-      <IconButton
-        data-test="downloadResourceFile"
-        size="small"
-        onClick={() => {
-          dispatch(actions.resource.downloadFile(resource._id, resourceType));
-        }}>
-        <Icon />
-      </IconButton>
-    );
+  icon: DownloadIcon,
+  component: function DownloadResource({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const dispatch = useDispatch();
+    const downloadReference = useCallback(() => {
+      dispatch(actions.resource.downloadFile(resourceId, resourceType));
+    }, [dispatch, resourceId, resourceType]);
+
+    useEffect(() => {
+      downloadReference();
+    }, [downloadReference]);
+
+    return null;
   },
 };

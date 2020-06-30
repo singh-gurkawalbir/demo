@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
@@ -10,8 +16,8 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-// import StatusCircle from '../../../components/StatusCircle';
-// import Status from '../../../components/Status/';
+import StatusCircle from '../../../components/StatusCircle';
+import Status from '../../../components/Status';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 
@@ -122,7 +128,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   deleteButton: {
-    position: `absolute`,
+    position: 'absolute',
     right: -theme.spacing(0.5),
     top: -theme.spacing(0.5),
     zIndex: 1,
@@ -134,6 +140,7 @@ const useStyles = makeStyles(theme => ({
 function AppBlock({
   className,
   onDelete,
+  onErrors,
   children,
   forwardedRef,
   onBlockClick,
@@ -153,6 +160,7 @@ function AppBlock({
   isPageGenerator,
   schedule,
   index,
+  openErrorCount,
   ...rest
 }) {
   const classes = useStyles();
@@ -176,15 +184,7 @@ function AppBlock({
      */
 
     if (resource._connectionId) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        resource._connectionId
-      );
-
-      if (!connection || !connection.rdbms || !connection.rdbms.type) return;
-
-      return connection.rdbms.type;
+      return selectors.rdbmsConnectionType(state, resource._connectionId);
     }
 
     if (resource.type && resource.type === 'rdbms' && resource.rdbms) {
@@ -192,8 +192,7 @@ function AppBlock({
     }
   });
   const connAssistant = useSelector(state => {
-    if (blockType === 'dataLoader' || !resource || !resource._connectionId)
-      return;
+    if (blockType === 'dataLoader' || !resource || !resource._connectionId) return;
 
     const connection = selectors.resource(
       state,
@@ -222,17 +221,24 @@ function AppBlock({
     },
     [activeAction]
   );
-  const handleActionClose = useCallback(() => setActiveAction(null), []);
+  const handleActionClose = useCallback(() => {
+    setActiveAction(null);
+    setExpanded();
+  }, []);
   const hasActions = actions && Array.isArray(actions) && actions.length;
-  let leftActions = [];
-  let middleActions = [];
-  let rightActions = [];
+  const { leftActions, middleActions, rightActions } = useMemo(() => {
+    let leftActions = [];
+    let middleActions = [];
+    let rightActions = [];
 
-  if (hasActions) {
-    leftActions = actions.filter(a => a.position === 'left');
-    middleActions = actions.filter(a => a.position === 'middle');
-    rightActions = actions.filter(a => a.position === 'right');
-  }
+    if (hasActions) {
+      leftActions = actions.filter(a => a.position === 'left');
+      middleActions = actions.filter(a => a.position === 'middle');
+      rightActions = actions.filter(a => a.position === 'right');
+    }
+
+    return { leftActions, middleActions, rightActions };
+  }, [actions, hasActions]);
 
   function renderActions(actions) {
     if (!actions || !actions.length) return null;
@@ -340,17 +346,20 @@ function AppBlock({
                 className={classes.addButton}
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
-                helpText="Add data processor">
+                helpText="Define options">
                 <AddIcon />
               </ActionIconButton>
             ) : null}
           </div>
         </div>
-        {/* connectorType && (
-          <Status className={classes.status} label="5324 new errors">
+        {openErrorCount ? (
+          <Status
+            className={classes.status}
+            onClick={onErrors}
+            label={`${openErrorCount} errors`}>
             <StatusCircle variant="error" size="small" />
           </Status>
-        ) */}
+        ) : null}
       </div>
     </div>
   );

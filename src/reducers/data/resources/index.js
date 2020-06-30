@@ -1,9 +1,11 @@
 import produce from 'immer';
 import { get } from 'lodash';
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
 import { convertOldFlowSchemaToNewOne } from '../../../utils/flows';
+import { stringCompare } from '../../../utils/sort';
 
 const emptyObject = {};
 const emptyList = [];
@@ -92,7 +94,10 @@ function getIntegrationAppsNextState(state, action) {
       stepsToUpdate &&
         stepsToUpdate.forEach(step => {
           const stepIndex = integration.install.findIndex(
-            s => s.name === step.name
+            s =>
+              (step.installerFunction &&
+                s.installerFunction === step.installerFunction) ||
+              (step.name && s.name === step.name)
           );
 
           if (stepIndex !== -1) {
@@ -172,6 +177,12 @@ export default (state = {}, action) => {
 
         return produce(state, draft => {
           draft.connectorLicenses = newCollection || [];
+        });
+      }
+
+      if (resourceType === 'recycleBinTTL' && collection && collection.length) {
+        return produce(state, draft => {
+          draft.recycleBinTTL = collection.map(i => ({...i, key: i.doc._id}));
         });
       }
 
@@ -287,14 +298,16 @@ export default (state = {}, action) => {
     case actionTypes.CONNECTION.UPDATE_STATUS: {
       // cant implement immer here with current implementation. Sort being used in selector.
       if (newState.connections && newState.connections.length) {
-        collection.forEach(({ _id: cId, offline, queues }) => {
-          resourceIndex = newState.connections.findIndex(r => r._id === cId);
+        collection &&
+          collection.length &&
+          collection.forEach(({ _id: cId, offline, queues }) => {
+            resourceIndex = newState.connections.findIndex(r => r._id === cId);
 
-          if (resourceIndex !== -1) {
-            newState.connections[resourceIndex].offline = !!offline;
-            newState.connections[resourceIndex].queueSize = queues[0].size;
-          }
-        });
+            if (resourceIndex !== -1) {
+              newState.connections[resourceIndex].offline = !!offline;
+              newState.connections[resourceIndex].queueSize = queues[0].size;
+            }
+          });
 
         return newState;
       }
@@ -325,10 +338,7 @@ export default (state = {}, action) => {
   }
 };
 
-// #region PUBLIC SELECTORS
-export function resource(state, resourceType, id) {
-  // console.log('fetch', resourceType, id);
-
+export function resourceIdState(state, resourceType, id) {
   if (!state || !id || !resourceType) {
     return null;
   }
@@ -337,7 +347,15 @@ export function resource(state, resourceType, id) {
 
   if (!resources) return null;
 
-  const match = resources.find(r => r._id === id);
+  return resources.find(r => r._id === id);
+}
+
+// #region PUBLIC SELECTORS
+// TODO:Deprecate this selector and use makeResourceSelector
+export function resource(state, resourceType, id) {
+  // console.log('fetch', resourceType, id);
+
+  const match = resourceIdState(state, resourceType, id);
 
   if (!match) return null;
 
@@ -349,12 +367,41 @@ export function resource(state, resourceType, id) {
   // Could you find the best solution for this? I favour the latter if that approach is easy.
   if (['exports', 'imports'].includes(resourceType)) {
     if (match.assistant && !match.assistantMetadata) {
+      // TODO:mutating a reference of the redux state..we have to fix this
+      // if this reducer was implemented in immer ...it would have pointed this error
       match.assistantMetadata = {};
     }
   }
 
   return match;
 }
+
+// transformed from above selector
+function resourceTransformed(resourceIdState, resourceType) {
+  if (!resourceIdState) return null;
+
+  // TODO: Santosh. This is an example of a bad practice where the selector, which should
+  // only return some part of the state, is actually mutating the state prior to returning
+  // the value.  Instead, the reducer should do the work of normalizing the data if needed.
+  // I don't know why this code is here. Either the RECEIVE_RESOURCE_* should do this, or
+  // the components) using this property should be smart enough to work with an undefined prop.
+  // Could you find the best solution for this? I favour the latter if that approach is easy.
+  if (['exports', 'imports'].includes(resourceType)) {
+    if (resourceIdState.assistant && !resourceIdState.assistantMetadata) {
+      return { ...resourceIdState, assistantMetadata: {} };
+    }
+  }
+
+  return resourceIdState;
+}
+
+export const makeResourceSelector = () =>
+  createSelector(
+    (state, resourceType, id) => resourceIdState(state, resourceType, id),
+    (_, resourceType) => resourceType,
+    (resourceIdState, resourceType) =>
+      resourceTransformed(resourceIdState, resourceType)
+  );
 
 export function exportNeedsRouting(state, id) {
   if (!state) return false;
@@ -470,7 +517,13 @@ export function defaultStoreId(state, id, store) {
       return store;
     }
 
-    return settings.stores[0].value;
+    // If the first store in the integration is in incomplete state or uninstall mode, on clicking the tile from dashboard
+    // user will be redirected directly to uninstall steps or install steps, which may confuse user.
+    // As done in ampersand, will select first "valid" store available as defaullt store.
+    return (
+      (settings.stores.find(s => s.mode === 'settings') || {}).value ||
+      settings.stores[0].value
+    );
   }
 
   return undefined;
@@ -526,25 +579,8 @@ export function resourceList(
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
 
-  function desc(a, b, orderBy) {
-    const aVal = get(a, orderBy);
-    const bVal = get(b, orderBy);
-
-    if (bVal < aVal) {
-      return -1;
-    }
-
-    if (bVal > aVal) {
-      return 1;
-    }
-
-    return 0;
-  }
-
   const comparer = ({ order, orderBy }) =>
-    order === 'desc'
-      ? (a, b) => desc(a, b, orderBy)
-      : (a, b) => -desc(a, b, orderBy);
+    order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
   const sorted = sort ? resources.sort(comparer(sort)) : resources;
   let filteredByEnvironment;
@@ -583,47 +619,50 @@ export function hasData(state, resourceType) {
   return !!(state && state[resourceType]);
 }
 
-export function resourceDetailsMap(state) {
-  const allResources = {};
+export const resourceDetailsMap = createSelector(
+  state => state,
+  state => {
+    const allResources = {};
 
-  if (!state) {
+    if (!state) {
+      return allResources;
+    }
+
+    Object.keys(state).forEach(resourceType => {
+      if (!['published', 'tiles'].includes(resourceType)) {
+        allResources[resourceType] = {};
+
+        if (state[resourceType] && state[resourceType].length) {
+          state[resourceType].forEach(resource => {
+            allResources[resourceType][resource._id] = {
+              name: resource.name,
+            };
+
+            if (resource._integrationId) {
+              allResources[resourceType][resource._id]._integrationId =
+                resource._integrationId;
+            }
+
+            if (resource._connectorId) {
+              allResources[resourceType][resource._id]._connectorId =
+                resource._connectorId;
+            }
+
+            if (resourceType === 'flows') {
+              allResources[resourceType][
+                resource._id
+              ].numImports = resource.pageProcessors
+                ? resource.pageProcessors.length
+                : 1;
+            }
+          });
+        }
+      }
+    });
+
     return allResources;
   }
-
-  Object.keys(state).forEach(resourceType => {
-    if (!['published', 'tiles'].includes(resourceType)) {
-      allResources[resourceType] = {};
-
-      if (state[resourceType] && state[resourceType].length) {
-        state[resourceType].forEach(resource => {
-          allResources[resourceType][resource._id] = {
-            name: resource.name,
-          };
-
-          if (resource._integrationId) {
-            allResources[resourceType][resource._id]._integrationId =
-              resource._integrationId;
-          }
-
-          if (resource._connectorId) {
-            allResources[resourceType][resource._id]._connectorId =
-              resource._connectorId;
-          }
-
-          if (resourceType === 'flows') {
-            allResources[resourceType][
-              resource._id
-            ].numImports = resource.pageProcessors
-              ? resource.pageProcessors.length
-              : 1;
-          }
-        });
-      }
-    }
-  });
-
-  return allResources;
-}
+);
 
 // TODO: Vamshi unit tests for selector
 export function isAgentOnline(state, agentId) {
@@ -637,5 +676,12 @@ export function isAgentOnline(state, agentId) {
     new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
       process.env.AGENT_STATUS_INTERVAL
   );
+}
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  const res = resource(state, resourceType, resourceId);
+  const settingsForm = res && res.settingsForm;
+
+  return !!(settingsForm && (settingsForm.form || settingsForm.init));
 }
 // #endregion

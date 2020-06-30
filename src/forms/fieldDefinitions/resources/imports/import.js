@@ -1,3 +1,5 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   name: { type: 'text', label: 'Name', required: true },
   description: { type: 'text', label: 'Description' },
@@ -7,11 +9,14 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form view',
+    visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   apiIdentifier: {
-    label: 'Invoke this import [post]',
+    label: 'Invoke',
+    helpKey: 'apiIdentifier',
     type: 'apiidentifier',
+    visible: r => r && !isNewId(r._id),
   },
   mapping: {
     type: 'mapping',
@@ -36,36 +41,32 @@ export default {
   },
   ignoreExisting: {
     type: 'checkbox',
-    label: 'Ignore existing',
+    label: 'Ignore existing records',
     defaultValue: r => !!(r && r.ignoreExisting),
   },
   ignoreMissing: {
     type: 'checkbox',
-    label: 'Ignore missing',
+    label: 'Ignore missing records',
     defaultValue: r => !!(r && r.ignoreMissing),
   },
   idLockTemplate: {
-    type: 'relativeuri',
+    type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
   },
   dataURITemplate: {
-    type: 'relativeuri',
-    label: 'Override data URI template',
-    placeholder: 'Optional',
-    connectionId: r => r && r._connectionId,
+    type: 'datauritemplate',
+    label: 'Data URI template',
+    editorTitle: 'Build data URI template',
   },
   oneToMany: {
     type: 'radiogroup',
-    label:
-      'Does each individual record being processed translate to multiple records in the import application?',
-    defaultValue: r =>
-      r &&
-      ((typeof r.oneToMany === 'string' && r.oneToMany === 'true') ||
-        !!r.oneToMany),
+    label: 'One to many',
+    helpKey: 'oneToMany',
+    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'Yes (advanced)', value: 'true' },
           { label: 'No', value: 'false' },
         ],
       },
@@ -73,9 +74,9 @@ export default {
   },
   pathToMany: {
     type: 'text',
-    label:
-      'if records being processed are represented by Objects then please specify the JSON path to be child records',
-    placeholder: 'Optional. Not needed for row/array formats.',
+    label: 'Path to many',
+    helpKey: 'pathToMany',
+    placeholder: 'Not needed for array/row based data',
     visibleWhen: [
       {
         field: 'oneToMany',
@@ -99,6 +100,7 @@ export default {
         is: ['blob'],
       },
     ],
+    defaultValue: r => (r && r.blobKeyPath) || 'blobKey',
     required: true,
   },
   assistant: {
@@ -114,7 +116,7 @@ export default {
           { label: 'Amazonaws', value: 'amazonaws' },
           { label: 'Amazonmws', value: 'amazonmws' },
           { label: 'Anaplan', value: 'anaplan' },
-          { label: 'Ariba', value: 'ariba' },
+          { label: 'SAP Ariba', value: 'ariba' },
           { label: 'Asana', value: 'asana' },
           { label: 'Atera', value: 'atera' },
           { label: 'Authorize.net', value: 'authorize.net' },
@@ -148,6 +150,7 @@ export default {
           { label: 'Freshdesk', value: 'freshdesk' },
           { label: 'Ftp', value: 'ftp' },
           { label: 'Github', value: 'github' },
+          { label: 'Gorgias', value: 'gorgias' },
           { label: 'Gooddata', value: 'gooddata' },
           { label: 'Google', value: 'google' },
           { label: 'Googleanalytics', value: 'googleanalytics' },
@@ -814,7 +817,6 @@ export default {
   },
   settings: {
     type: 'settings',
-    showOnDeveloperMode: true,
     defaultValue: r => r && r.settings,
   },
 };

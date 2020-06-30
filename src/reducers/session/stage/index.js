@@ -1,5 +1,9 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
+
+const emptyList = [];
+const emptyObj = {};
 
 export default (state = {}, action) => {
   const {
@@ -76,8 +80,7 @@ export default (state = {}, action) => {
 
         return;
 
-      // eslint-disable-next-line no-case-declarations
-      case actionTypes.RESOURCE.STAGE_PATCH:
+      case actionTypes.RESOURCE.STAGE_PATCH: {
         if (!newPatch || !newPatch.length) return;
 
         if (!draft[id]) {
@@ -100,25 +103,24 @@ export default (state = {}, action) => {
             newPatch[0].path ===
               draft[id].patch[draft[id].patch.length - 1].path &&
             newPatch[0].op === draft[id].patch[draft[id].patch.length - 1].op
-          )
-            draft[id].patch.pop();
+          ) draft[id].patch.pop();
         }
 
         const scopedPatchWithTimestamp = scope
           ? newPatch.map(patch => ({
-              ...patch,
-              timestamp,
-              scope,
-            }))
+            ...patch,
+            timestamp,
+            scope,
+          }))
           : newPatch.map(patch => ({
-              ...patch,
-              timestamp,
-            }));
+            ...patch,
+            timestamp,
+          }));
 
         draft[id].patch = [...draft[id].patch, ...scopedPatchWithTimestamp];
 
         return;
-
+      }
       case actionTypes.RESOURCE.STAGE_CONFLICT:
         if (!draft[id]) {
           draft[id] = {};
@@ -147,31 +149,64 @@ export default (state = {}, action) => {
   });
 };
 
+export function stagedIdState(state, id) {
+  if (!state || !id || !state[id]) {
+    return null;
+  }
+
+  return state[id];
+}
+
 // #region PUBLIC SELECTORS
 export function stagedResource(state, id, scope) {
   if (!state || !id || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   let updatedPatches;
 
-  if (scope)
+  if (scope) {
     updatedPatches =
       state[id] &&
       state[id].patch &&
       state[id].patch.filter(patch => patch.scope === scope);
-  else updatedPatches = state[id] && state[id].patch;
+  } else updatedPatches = state[id] && state[id].patch;
 
   return { ...state[id], patch: updatedPatches };
 }
 
-export function getAllResourceConflicts(state) {
-  if (!state) {
-    return [];
-  }
+function transformStagedResource(stagedIdState, scope) {
+  if (!stagedIdState) return null;
 
-  return Object.keys(state)
-    .filter(rId => state[rId] && state[rId].conflict)
-    .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
+  let updatedPatches;
+
+  if (scope) {
+    updatedPatches =
+      stagedIdState &&
+      stagedIdState.patch &&
+      stagedIdState.patch.filter(patch => patch.scope === scope);
+  } else updatedPatches = stagedIdState && stagedIdState.patch;
+
+  return { ...stagedIdState, patch: updatedPatches };
 }
+
+export const makeTransformStagedResource = () =>
+  createSelector(
+    stagedIdState,
+    (_1, _2, scope) => scope,
+    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
+  );
+
+export const getAllResourceConflicts = createSelector(
+  state => state,
+  state => {
+    if (!state) {
+      return emptyList;
+    }
+
+    return Object.keys(state)
+      .filter(rId => state[rId] && state[rId].conflict)
+      .map(rId => ({ resourceId: rId, conflict: state[rId].conflict }));
+  }
+);
 // #endregion

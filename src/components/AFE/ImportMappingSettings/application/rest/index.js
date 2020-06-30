@@ -104,7 +104,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
@@ -121,9 +121,8 @@ export default {
         'lookup.relativeURI': {
           id: 'lookup.relativeURI',
           name: '_relativeURI',
-          type: 'textwithlookupextract',
-          fieldType: 'relativeUri',
-          hideLookups: true,
+          type: 'relativeuri',
+          showLookup: false,
           connectionId,
           resourceId,
           flowId,
@@ -163,7 +162,6 @@ export default {
           name: '_body',
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
-          label: 'Build HTTP request body',
           defaultValue: lookup.body || '',
           // helpText not present
           visibleWhenAll: [
@@ -240,6 +238,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
@@ -280,7 +279,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {
@@ -466,9 +465,9 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name:',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          connectionId,
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [

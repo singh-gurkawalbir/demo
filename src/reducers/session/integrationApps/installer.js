@@ -1,8 +1,10 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
+const emptyObj = {};
+
 export default (state = {}, action) => {
-  const { id, type, update } = action;
+  const { id, type, update, formMeta } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -18,6 +20,9 @@ export default (state = {}, action) => {
         if (!draft[id]) {
           draft[id] = {};
         }
+
+        // for 'form' type step
+        draft[id].formMeta = formMeta;
 
         if (update === 'inProgress') {
           draft[id].isTriggered = true;
@@ -37,7 +42,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export function integrationAppsInstaller(state, id) {
   if (!state || !state[id]) {
-    return {};
+    return emptyObj;
   }
 
   return state[id];

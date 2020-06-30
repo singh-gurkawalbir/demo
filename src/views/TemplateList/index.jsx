@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,7 +17,7 @@ import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -28,9 +28,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
+
 export default function TemplateList(props) {
   const { location } = props;
-  const defaultFilter = useMemo(() => ({ take: 10 }), []);
   const classes = useStyles();
   const filter =
     useSelector(state => selectors.filter(state, 'templates')) || defaultFilter;
@@ -41,10 +42,13 @@ export default function TemplateList(props) {
     }),
     [filter]
   );
-  const list = useResourceList(templatesFilterConfig);
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    templatesFilterConfig
+  );
 
   return (
-    <Fragment>
+    <>
       <CheckPermissions
         permission={
           PERMISSIONS && PERMISSIONS.templates && PERMISSIONS.templates.view
@@ -74,7 +78,7 @@ export default function TemplateList(props) {
             {list.count === 0 ? (
               <Typography>
                 {list.total === 0
-                  ? `You don't have any templates.`
+                  ? "You don't have any templates."
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
@@ -93,6 +97,6 @@ export default function TemplateList(props) {
           maxCount={list.filtered}
         />
       </CheckPermissions>
-    </Fragment>
+    </>
   );
 }

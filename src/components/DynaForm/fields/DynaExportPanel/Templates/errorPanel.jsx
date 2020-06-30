@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 400,
     overflow: 'auto',
     maxWidth: 680,
-    color: theme.palette.text.hint,
+    color: theme.palette.text.primary,
   },
 }));
 

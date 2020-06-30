@@ -1,25 +1,51 @@
+import React from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import Typography from '@material-ui/core/Typography';
-import { MODEL_PLURAL_TO_LABEL, getApiUrl } from '../../../utils/resource';
-import FieldHelp from '../../../components/DynaForm/FieldHelp';
+import Button from '@material-ui/core/Button';
+import DynaText from './DynaText';
+import { getApiUrl } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
-  text: {
-    padding: theme.spacing(1, 0),
-    fontSize: theme.spacing(2),
+  dynaAPIWrapper: {
+    flexDirection: 'row !important',
+  },
+  children: {
+    flex: 1,
+  },
+  copyInvokeUrlBtn: {
+    marginTop: 26,
+    marginLeft: theme.spacing(1),
   },
 }));
 
 export default function DynaApiIdentifier(props) {
-  const { value, id, resourceType } = props;
+  const { value } = props;
   const classes = useStyles();
   const apiUrl = getApiUrl();
-
+  const invokeUrl = `${apiUrl}/${value}`;
   return (
-    <Typography data-test={id} className={classes.text}>
-      Invoke this {MODEL_PLURAL_TO_LABEL[resourceType]} via [POST] to:
-      {` ${apiUrl}/${value}`}
-      <FieldHelp {...props} />
-    </Typography>
+    <div className={classes.dynaAPIWrapper}>
+      <DynaText
+        {...props}
+        disabled
+        className={classes.children}
+        value={invokeUrl}
+        />
+      <div className={classes.copyInvokeUrlBtn}>
+        <CopyToClipboard
+          text={invokeUrl}>
+          <Button
+            data-test="copyToClipboard"
+            title="Copy to clipboard"
+            variant="outlined"
+            color="secondary">
+            Copy URL
+          </Button>
+        </CopyToClipboard>
+      </div>
+
+
+    </div>
   );
 }

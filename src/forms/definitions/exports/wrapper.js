@@ -40,11 +40,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
     'wrapper.function': { fieldId: 'wrapper.function' },
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
     type: {
@@ -82,18 +77,23 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: [
-      'common',
-      'exportOneToMany',
-      'exportData',
-      'wrapper.function',
-      'wrapper.configuration',
-      'type',
-      'delta.dateField',
-      'once.booleanField',
-    ],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'exportOneToMany'],
+      },
+      {
+        collapsed: true,
+        label: 'What would you like to export?',
+        fields: ['wrapper.function', 'wrapper.configuration'],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: ['type', 'delta.dateField', 'once.booleanField'],
+      },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },

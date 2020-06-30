@@ -1,5 +1,5 @@
 import { FormContext } from 'react-forms-processor/dist';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
@@ -9,15 +9,18 @@ function DynaUploadFile(props) {
   const {
     options = '',
     id,
+    maxSize,
     resourceId,
     resourceType,
     formContext,
     onFieldChange,
+    placeholder,
+    persistData = false,
   } = props;
-  const DEFAULT_PLACEHOLDER = 'Browse to zip file:';
+  const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
-  const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
+  const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
     state => getUploadedFile(state, fileId),
     shallowEqual
@@ -28,6 +31,7 @@ function DynaUploadFile(props) {
 
     if (status === 'received') {
       setFileName(name);
+
       onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(
@@ -47,14 +51,17 @@ function DynaUploadFile(props) {
 
   useEffect(() => {
     // resets sample data on change of file type
-    if (options) {
+    // The below code includes clean up of sampleData, form field and file state
+    // when persistData is passed... no cleanup is done as it implies retaining existing state
+    // TODO @Raghu: Find a better way to clean up only when needed
+    if (options && !persistData) {
       dispatch(actions.sampleData.reset(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
-      setFileName(DEFAULT_PLACEHOLDER);
+      setFileName('');
     }
 
-    return () => dispatch(actions.file.reset(fileId));
+    return () => !persistData && dispatch(actions.file.reset(fileId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId, fileId]);
 
@@ -63,14 +70,22 @@ function DynaUploadFile(props) {
       const file = event.target.files[0];
 
       if (!file) return;
-      dispatch(actions.file.processFile({ fileId, file, fileType: options }));
+      dispatch(actions.file.processFile(
+        {
+          fileId,
+          file,
+          fileType: options,
+          fileProps: { maxSize },
+        }
+      ));
     },
-    [dispatch, fileId, options]
+    [dispatch, fileId, options, maxSize]
   );
 
   return (
     <FileUploader
       {...props}
+      label={DEFAULT_PLACEHOLDER}
       fileName={fileName}
       uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}

@@ -1,4 +1,5 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
@@ -9,6 +10,7 @@ import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,8 +25,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const getStatusVariantAndMessage = ({
   resourceType,
-  isConnectionFix,
-  isOffline,
+  showOfflineMsg,
   testStatus,
 }) => {
   if (resourceType !== 'connections') {
@@ -37,17 +38,15 @@ const getStatusVariantAndMessage = ({
       message:
         'Your test was not successful. Check your information and try again',
     };
-  } else if (testStatus === PING_STATES.SUCCESS) {
+  } if (testStatus === PING_STATES.SUCCESS) {
     return {
       variant: 'success',
       message: 'Your connection is working great! Nice Job!',
     };
-  } else if (!testStatus && isOffline) {
+  } if (!testStatus && showOfflineMsg) {
     return {
       variant: 'error',
-      message: isConnectionFix
-        ? ' Review and test this form to bring your connections back online.'
-        : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
     };
   }
 
@@ -61,21 +60,27 @@ export default function ConnectionStatusPanel(props) {
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
-  const connectionId = useSelector(state => {
-    if (resourceType === 'connections') return resourceId;
-    const { merged: resource } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
-
-    return resource._connectionId;
-  });
+  const { merged: resource } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
+  const connectionId =
+    resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
     state => selectors.testConnectionCommState(state, connectionId).commState
   );
+  const isIAIntegration = useSelector(state => {
+    const connection =
+      selectors.resource(state, 'connections', connectionId) || {};
+
+    return !!(connection && connection._connectorId);
+  });
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
+  );
+  const isIAConnectionSetupPending = useSelector(state =>
+    selectors.isIAConnectionSetupPending(state, connectionId)
   );
   const handleConnectionFixClick = useCallback(() => {
     history.push(
@@ -87,14 +92,24 @@ export default function ConnectionStatusPanel(props) {
   const { variant, message } = useMemo(() => {
     const queryParams = new URLSearchParams(location.search);
     const isConnectionFix = queryParams.get('fixConnnection') === 'true';
+    const showOfflineMsg = isIAIntegration
+      ? !isIAConnectionSetupPending && isOffline
+      : isOffline;
 
     return getStatusVariantAndMessage({
       isConnectionFix,
-      isOffline,
+      showOfflineMsg,
       testStatus,
       resourceType,
     });
-  }, [isOffline, location.search, resourceType, testStatus]);
+  }, [
+    isIAConnectionSetupPending,
+    isIAIntegration,
+    isOffline,
+    location.search,
+    resourceType,
+    testStatus,
+  ]);
 
   useEffect(() => {
     // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
@@ -124,8 +139,8 @@ export default function ConnectionStatusPanel(props) {
           <Typography variant="h6">{message}</Typography>
         ) : (
           <Typography component="div" variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited.
+            The connection associated with this resource is currently offline
+            and configuration is limited.
             <Button
               data-test="fixConnection"
               className={classes.fixConnectionBtn}

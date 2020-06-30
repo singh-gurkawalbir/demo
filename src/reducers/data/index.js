@@ -26,6 +26,18 @@ export function resource(state, resourceType, id) {
   return fromResources.resource(state && state.resources, resourceType, id);
 }
 
+export function resourceIdState(state, resourceType, id) {
+  return fromResources.resourceIdState(
+    state && state.resources,
+    resourceType,
+    id
+  );
+}
+
+export function makeResourceSelector() {
+  return fromResources.makeResourceSelector();
+}
+
 export function resourceList(state, options) {
   return fromResources.resourceList(state && state.resources, options);
 }
@@ -213,8 +225,8 @@ export function flowJobsPagingDetails(state) {
   return fromJobs.flowJobsPagingDetails(state.jobs);
 }
 
-export function flowJobs(state) {
-  return fromJobs.flowJobs(state.jobs);
+export function flowJobs(state, options) {
+  return fromJobs.flowJobs(state.jobs, options);
 }
 
 export function inProgressJobIds(state) {
@@ -241,18 +253,23 @@ export function jobErrorRetryObject(state, retryId) {
   return fromJobs.jobErrorRetryObject(state.jobs, retryId);
 }
 
-// TODO: Santosh, since ALL selectors "get" something, its meaningless to add
-// "get" prefix to selector names. If you run into examples like this, pls
-// rename.
-export const getPreBuiltFileDefinitions = (state, format) =>
-  fromFileDefinitions.getPreBuiltFileDefinitions(
+export const preBuiltFileDefinitions = (state, format) =>
+  fromFileDefinitions.preBuiltFileDefinitions(
     state && state.fileDefinitions,
     format
   );
 
-export const getFileDefinition = (state, definitionId, options) =>
-  fromFileDefinitions.getFileDefinition(
+export const fileDefinition = (state, definitionId, options) =>
+  fromFileDefinitions.fileDefinition(
     state && state.fileDefinitions,
     definitionId,
     options
   );
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromResources.hasSettingsForm(
+    state && state.resources,
+    resourceType,
+    resourceId
+  );
+}

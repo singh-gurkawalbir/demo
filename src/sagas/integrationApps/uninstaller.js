@@ -13,7 +13,7 @@ export function* preUninstall({ storeId, id }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: { body: { storeId }, method: 'PUT' },
-      message: `Fetching Uninstall steps`,
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.api.failure(path, 'PUT', error && error.message, false));
@@ -46,7 +46,7 @@ export function* uninstallStep({ storeId, id, uninstallerFunction, addOnId }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: { body: { storeId, addOnId }, method: 'PUT' },
-      message: `Uninstalling`,
+      message: 'Uninstalling',
     }) || {};
   } catch (error) {
     if (addOnId) {
@@ -99,7 +99,7 @@ export function* uninstallIntegration({ integrationId }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: { body: {}, method: 'DELETE' },
-      message: `Uninstalling`,
+      message: 'Uninstalling',
     });
   } catch (error) {
     return undefined;

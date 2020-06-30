@@ -1,11 +1,9 @@
 import isEqual from 'lodash/isEqual';
-import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
-import util from '../../../../utils/json';
 
 const requestBody = editor => {
   const rules = {
-    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
-    rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
+    columnDelimiter: editor.columnDelimiter,
+    rowDelimiter: editor.rowDelimiter,
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
   };
@@ -46,16 +44,15 @@ const dirty = editor => {
 
     if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
       return true;
-    } else if (
+    }
+    if (
       Array.isArray(editor[key]) &&
       !isEqual(initRule[key], editor[key])
-    )
-      return true;
-    else if (
+    ) return true;
+    if (
       ['string', 'number'].includes(typeof editor[key]) &&
       initRule[key] !== editor[key]
-    )
-      return true;
+    ) return true;
   }
 
   return false;
@@ -65,26 +62,6 @@ const init = editor => {
   const { rule = {}, ...others } = editor;
 
   rule.multipleRowsPerRecord = !!(rule.keyColumns && rule.keyColumns.length);
-
-  // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
-  if (rule.columnDelimiter) {
-    const columnDelimiter = util.getObjectKeyFromValue(
-      csvOptions.ColumnDelimiterMap,
-      rule.columnDelimiter
-    );
-
-    rule.columnDelimiter = columnDelimiter;
-  }
-
-  // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
-  if (rule.rowDelimiter) {
-    const rowDelimiter = util.getObjectKeyFromValue(
-      csvOptions.RowDelimiterMap,
-      rule.rowDelimiter
-    );
-
-    rule.rowDelimiter = rowDelimiter;
-  }
 
   return {
     ...others,

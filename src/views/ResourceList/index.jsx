@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,7 +18,8 @@ import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { connectorFilter } from './util';
 import actions from '../../actions';
-import useResourceList from '../../hooks/useResourceList';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import StackShareDrawer from '../../components/StackShare/Drawer';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -28,7 +29,18 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const defaultFilter = { take: 10 };
+const defaultFilter = { take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10 };
+const resourcesToLoad = resourceType => {
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    // add connections
+    return `${resourceType},connections`;
+  }
+  if (resourceType === 'apis') {
+    return `${resourceType},scripts`;
+  }
+
+  return resourceType;
+};
 
 export default function ResourceList(props) {
   const location = useLocation();
@@ -48,8 +60,19 @@ export default function ResourceList(props) {
     }),
     [filter, resourceType]
   );
-  const list = useResourceList(filterConfig);
+  const list = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    filterConfig
+  );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
+  let addResourceLabel = '';
+  if (resourceType) {
+    if (['accesstokens', 'apis'].indexOf(resourceType)) {
+      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+    } else {
+      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
+    }
+  }
 
   useEffect(() => {
     let int;
@@ -79,10 +102,13 @@ export default function ResourceList(props) {
   return (
     <CheckPermissions
       permission={
-        PERMISSIONS &&
-        PERMISSIONS[resourceType] &&
-        PERMISSIONS[resourceType].view
-      }>
+         PERMISSIONS &&
+         PERMISSIONS[resourceType] &&
+         PERMISSIONS[resourceType].view
+       }>
+      {// This is where we will be adding all Right drawers to Celigo Table
+      resourceType === 'stacks' && <StackShareDrawer />
+      }
       <ResourceDrawer {...props} />
       <CeligoPageBar
         title={`${resourceName}s`}
@@ -98,16 +124,16 @@ export default function ResourceList(props) {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {resourceName.toLowerCase()}
+            <AddIcon /> Create {addResourceLabel}
           </IconTextButton>
         </div>
       </CeligoPageBar>
       <div className={classes.resultContainer}>
-        <LoadResources required resources={resourceType}>
+        <LoadResources required resources={resourcesToLoad(resourceType)}>
           {list.count === 0 ? (
             <Typography>
               {list.total === 0
-                ? `You don't have any ${resourceName.toLowerCase()}s.`
+                ? `You don't have any ${addResourceLabel}s.`
                 : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
             </Typography>
           ) : (

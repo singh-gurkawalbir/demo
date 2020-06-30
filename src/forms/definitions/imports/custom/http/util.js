@@ -60,6 +60,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
         type: 'text',
         value: values[pathParam.id],
         required: !!pathParam.required,
+        helpText: pathParam.description,
       };
 
       if (pathParam.options && pathParam.options.length > 0) {
@@ -113,7 +114,6 @@ export function howToFindIdentifierFieldsMeta({
   pathParameterValues = {},
   lookupType,
   lookupQueryParameterValues = {},
-  resource,
 }) {
   const lookupTypeOptions = [];
   const fields = [];
@@ -175,10 +175,8 @@ export function howToFindIdentifierFieldsMeta({
       const identifierField = {
         id: `assistantMetadata.pathParams.${identifierPathParam.id}`,
         label: 'Which field?',
-        type: 'textwithlookupextract',
-        fieldType: 'ignoreExistingData',
-        hideLookups: true,
-        connectionId: resource._connectionId,
+        type: 'textwithflowsuggestion',
+        showLookup: false,
         required: true,
         value: pathParameterValues[identifierPathParam.id],
         visibleWhenAll: [
@@ -280,7 +278,6 @@ export function fieldMeta({ resource, assistantData }) {
         pathParameterValues: assistantConfig.pathParams,
         lookupType: assistantConfig.lookupType,
         lookupQueryParameterValues: assistantConfig.lookupQueryParams,
-        resource,
       });
     }
   }
@@ -296,14 +293,11 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
+    formView: { fieldId: 'formView' },
     dataMappings: {
       formId: 'dataMappings',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
 
@@ -319,7 +313,24 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common', 'importData', ...fieldIds, 'dataMappings'],
+      type: 'collapse',
+      containers: [
+        {
+          collapsed: true,
+          label: 'General',
+          fields: ['common', 'dataMappings', 'formView'],
+        },
+        {
+          collapsed: true,
+          label: 'How would you like the records imported?',
+          fields: [...fieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Advanced',
+          fields: ['apiIdentifier'],
+        },
+      ],
     },
   };
 }

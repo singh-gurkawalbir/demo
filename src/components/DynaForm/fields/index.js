@@ -4,6 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
@@ -55,7 +56,6 @@ import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
-import DynaTextWithLookupExtract from './DynaTextWithLookupExtract';
 import Salesforce from './DynaSalesforceExportComponents';
 import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTreeModal';
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
@@ -92,6 +92,16 @@ import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
 import DynaExportSelect from './DynaExportSelect';
+import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
+import DynaDataURITemplate from './DynaDataURITemplate';
+import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
+import DynaNameWithEditor from './DynaNameWithEditor';
+import DynaSelectLookup from './DynaSelectLookup';
+import DynaURI from './DynaURI';
+import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
+import DynaSelectWithInput from './DynaSelectWithInput';
+import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaRoutingRules from './editors/DynaRoutingRules';
 
 export default {
   mode: DynaMode,
@@ -110,11 +120,13 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
+  uri: DynaURI,
   httprequestbody: DynaHttpRequestBody,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
@@ -157,7 +169,6 @@ export default {
   datetime: DynaDateTime,
   sqlquerybuilder: DynaSQLQueryBuilder,
   salesforcequalifier: DynaSalesforceQualifier,
-  textwithlookupextract: DynaTextWithLookupExtract,
   salesforcerequiredtrigger: Salesforce.DynaRequiredTrigger,
   salesforcereferencedfields: Salesforce.DynaReferencedFields,
   salesforcerelatedlistmodal: ReferencedFieldsModal,
@@ -197,4 +208,13 @@ export default {
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
   exportSelect: DynaExportSelect,
+  datauritemplate: DynaDataURITemplate,
+  concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
+  textwithflowsuggestion: DynaTextWithFlowSuggestion,
+  namewitheditor: DynaNameWithEditor,
+  selectlookup: DynaSelectLookup,
+  csvhasheaderrow: DynaCsvHasHeaderRow,
+  selectwithinput: DynaSelectWithInput,
+  jsonresourcepath: DynaJsonResourcePath,
+  routingrules: DynaRoutingRules,
 };

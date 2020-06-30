@@ -1,9 +1,7 @@
-import {
-  onlineStatus,
-  formatLastModified,
-  getConnectorName,
-} from '../CeligoTable/util';
+import React from 'react';
+import { formatLastModified, onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
+import { ConnectorNameComp } from '../ResourceTable/metadata';
 
 export default {
   columns: (r, { onClose }) => [
@@ -21,7 +19,12 @@ export default {
       orderBy: 'name',
     },
     { heading: 'Status', value: r => onlineStatus(r) },
-    { heading: 'Connector', value: r => getConnectorName(r) },
+    {
+      heading: 'Connector',
+      value: function ConnectorName(r) {
+        return <ConnectorNameComp r={r} />;
+      },
+    },
     {
       heading: 'API',
       value: r => {

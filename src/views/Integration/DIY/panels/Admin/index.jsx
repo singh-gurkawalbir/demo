@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Route,
   Switch,
@@ -5,13 +6,17 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
-import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
+import { useSelector, shallowEqual } from 'react-redux';
+import * as selectors from '../../../../../reducers';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
-import * as selectors from '../../../../../reducers';
+import ApiTokensSection from './sections/ApiTokens';
+import SubscriptionSection from './sections/Subscription';
+import UninstallSection from './sections/Uninstall';
+import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,26 +59,68 @@ const allSections = [
     path: 'readme',
     label: 'Readme',
     Section: ReadmeSection,
-    id: 'readMe',
+    id: 'readme',
   },
+  {
+    path: 'apitoken',
+    label: 'API tokens',
+    Section: ApiTokensSection,
+    id: 'apitoken',
+  },
+  {
+    path: 'subscription',
+    label: 'Subscription',
+    Section: SubscriptionSection,
+    id: 'subscription',
+  },
+  {
+    path: 'uninstall',
+    label: 'Uninstall',
+    Section: UninstallSection,
+    id: 'uninstall',
+  }
 ];
+const emptyObj = {};
 
-export default function AdminPanel({ integrationId }) {
+export default function AdminPanel({ integrationId, childId }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const developerModeOn = useSelector(state => selectors.developerMode(state));
-  const sectionsToHide = [];
+  const isParent = !childId || (childId === integrationId);
+  const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
+  const {
+    isIntegrationApp,
+    supportsChild,
+  } = useSelector(state => {
+    const integration = selectors.resource(
+      state,
+      'integrations',
+      integrationId
+    );
 
-  if (integrationId === STANDALONE_INTEGRATION.id) {
-    sectionsToHide.push('readme');
-  }
+    if (integration) {
+      return {
+        isIntegrationApp: !!integration._connectorId,
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+      };
+    }
 
-  if (!developerModeOn) {
-    sectionsToHide.push('settings');
-  }
+    return emptyObj;
+  }, shallowEqual);
+  const children = useSelector(
+    state => selectors.integrationChildren(state, integrationId),
+    shallowEqual
+  );
+  const sectionsToShow = getAdminLevelTabs({
+    integrationId,
+    children,
+    isIntegrationApp,
+    isParent,
+    supportsChild,
+    isMonitorLevelUser
+  });
 
   const availableSections = allSections.filter(
-    sec => !sectionsToHide.includes(sec.id)
+    sec => sectionsToShow.includes(sec.id)
   );
 
   // if someone arrives at this view without requesting a section, then we
@@ -109,7 +156,7 @@ export default function AdminPanel({ integrationId }) {
           <Switch>
             {availableSections.map(({ path, Section }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section integrationId={integrationId} />
+                <Section integrationId={integrationId} childId={childId} />
               </Route>
             ))}
           </Switch>

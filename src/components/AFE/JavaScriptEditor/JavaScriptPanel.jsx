@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,13 +8,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import Spinner from '../../Spinner';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
-import useResourceList from '../../../hooks/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,12 +52,16 @@ export default function JavaScriptPanel(props) {
     entryFunction = '',
     scriptId = '',
   } = editor;
-  const scriptContent = useSelector(state => {
-    const data = selectors.resourceData(state, 'scripts', scriptId);
-
-    return data && data.merged && data.merged.content;
-  });
-  const allScripts = useResourceList(scriptFilterConfig).resources;
+  const data = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'scripts',
+    scriptId
+  );
+  const scriptContent = data && data.merged && data.merged.content;
+  const allScripts = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    scriptFilterConfig
+  ).resources;
   const dispatch = useDispatch();
   const patchEditor = useCallback(
     val => {
@@ -106,9 +110,8 @@ export default function JavaScriptPanel(props) {
       patchEditor(patchObj);
     } else if (scriptContent === undefined && scriptId) {
       requestScript();
-    }
-    // case of scriptId selected as none
-    else if (scriptId === undefined && !('initCode' in editor)) {
+    } else if (scriptId === undefined && !('initCode' in editor)) {
+      // case of scriptId selected as none
       patchEditor({ initCode: undefined });
     }
   }, [
@@ -157,8 +160,7 @@ export default function JavaScriptPanel(props) {
             className={classes.textField}
             value={entryFunction}
             onChange={event =>
-              patchEditor({ entryFunction: event.target.value })
-            }
+              patchEditor({ entryFunction: event.target.value })}
             label="Function"
             margin="dense"
           />
@@ -170,16 +172,16 @@ export default function JavaScriptPanel(props) {
               onClick={handleInsertStubClick}
               disabled={disabled}
               data-test={insertStubKey}>
-              {`Insert ${hooksLabelMap[insertStubKey]} stub`}
+              {`Insert ${hooksLabelMap[insertStubKey].toLowerCase()} stub`}
             </Button>
           )}
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            <Fragment>
+            <>
               <Typography>Retrieving your script</Typography>
               <Spinner />
-            </Fragment>
+            </>
           ) : (
             <CodePanel
               name="code"

@@ -1,11 +1,10 @@
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { Button } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -17,7 +16,6 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
   },
   title: {
-    textTransform: 'capitalize',
     color: theme.palette.text.title,
   },
   content: {
@@ -25,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '8px',
     maxHeight: '300px',
     overflowY: 'auto',
+    fontFamily: 'Roboto400',
     color: theme.palette.text.primary,
     fontSize: '14px',
     lineHeight: '22px',
@@ -38,13 +37,16 @@ const useStyles = makeStyles(theme => ({
   action: {
     borderTop: '1px solid',
     borderColor: theme.palette.divider,
-    paddingTop: '8px',
     width: '100%',
     overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   actionTitle: {
     float: 'left',
     width: '60%',
+    paddingTop: 10,
   },
   caption: {
     wordBreak: 'break-word',
@@ -52,6 +54,7 @@ const useStyles = makeStyles(theme => ({
   actionButtons: {
     float: 'right',
     textAlign: 'right',
+    paddingTop: '8px',
     '& Button': {
       borderColor: theme.palette.divider,
       padding: '3px 5px',
@@ -87,27 +90,22 @@ function HelpContent(props) {
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
-  const [enquesnackbar] = useEnqueueSnackbar();
   const handleUpdateFeedBack = useCallback(
     helpful => () => {
       if (helpful) {
         dispatch(actions.postFeedback(resourceType, fieldId, helpful));
-
-        enquesnackbar({ message: 'Feedback noted.Thanks!' });
       } else {
         setFeedbackText(true);
       }
     },
 
-    [dispatch, enquesnackbar, fieldId, resourceType]
+    [dispatch, fieldId, resourceType]
   );
   const handleSendFeedbackText = useCallback(() => {
     dispatch(
       actions.postFeedback(resourceType, fieldId, false, feedbackTextValue)
     );
-
-    enquesnackbar({ message: 'Feedback noted.Thanks!' });
-  }, [dispatch, enquesnackbar, feedbackTextValue, fieldId, resourceType]);
+  }, [dispatch, feedbackTextValue, fieldId, resourceType]);
   const onChange = useCallback(e => {
     setFeedbackTextValue(e.target.value);
   }, []);
@@ -123,7 +121,7 @@ function HelpContent(props) {
         </Typography>
       )}
       {feedbackText ? (
-        <Fragment>
+        <>
           {/* TODO:Azhar some styling required */}
           <TextField
             name="feedbackText"
@@ -139,9 +137,9 @@ function HelpContent(props) {
             onClick={handleSendFeedbackText}>
             Submit
           </Button>
-        </Fragment>
+        </>
       ) : (
-        <Fragment>
+        <>
           <div className={classes.content}>{children}</div>
           <div className={classes.action}>
             <Typography className={classes.actionTitle}>
@@ -164,7 +162,7 @@ function HelpContent(props) {
               </Button>
             </div>
           </div>
-        </Fragment>
+        </>
       )}
     </div>
   );

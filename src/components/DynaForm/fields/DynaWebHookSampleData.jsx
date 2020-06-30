@@ -1,19 +1,23 @@
-import { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
+import { isJsonString } from '../../../utils/string';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   container: {
     height: '15vh',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   actions: {
-    height: '6vh',
-    padding: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   inlineActions: {
     display: 'inline',
@@ -24,7 +28,16 @@ export default function DynaWebHookSampleData(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const { label, id, onFieldChange, options, resourceId } = props;
+  const {
+    label,
+    id,
+    onFieldChange,
+    options,
+    resourceId,
+    errorMessages,
+    description,
+    isValid,
+  } = props;
   const [manualEnter, setManualEnter] = useState(false);
   const sampleData = useSelector(state => {
     const resource = selectors.resource(state, 'exports', resourceId) || {};
@@ -39,35 +52,33 @@ export default function DynaWebHookSampleData(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, sampleData]);
   const generateSampleData = useCallback(() => {
-    if (!options.webHookUrl || !options.webHookProvider) {
+    if (!options.webHookUrl) {
       return enqueueSnackbar({
-        message: 'Url and Provider are mandatory',
+        message: 'Webhook url is mandatory',
         variant: 'error',
       });
     }
 
     dispatch(actions.resource.request('exports', resourceId));
-  }, [
-    dispatch,
-    enqueueSnackbar,
-    options.webHookProvider,
-    options.webHookUrl,
-    resourceId,
-  ]);
+  }, [dispatch, enqueueSnackbar, options.webHookUrl, resourceId]);
   const handleManualEnter = useCallback(() => {
     setManualEnter(true);
   }, []);
   const handleSampleDataChange = useCallback(
     value => {
-      onFieldChange(id, value);
+      if (isJsonString(value)) {
+        onFieldChange(id, JSON.parse(value));
+      } else {
+        onFieldChange(id, value);
+      }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id]
+    [id, onFieldChange]
   );
 
   return (
     <div>
-      <Typography>{label}</Typography>
+      <FormLabel error={!isValid} >{label}</FormLabel>
+
       <div className={classes.container}>
         <CodeEditor
           name="sampleData"
@@ -77,13 +88,26 @@ export default function DynaWebHookSampleData(props) {
           onChange={handleSampleDataChange}
         />
       </div>
+      <ErroredMessageComponent
+        description={description}
+        errorMessages={errorMessages}
+        isValid={isValid}
+        />
       <div className={classes.actions}>
-        <Button className={classes.inlineActions} onClick={generateSampleData}>
-          Click to Show
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.inlineActions}
+          onClick={generateSampleData}>
+          Click to show
         </Button>
         <Typography className={classes.inlineActions}> or </Typography>
-        <Button className={classes.inlineActions} onClick={handleManualEnter}>
-          Manually Enter
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.inlineActions}
+          onClick={handleManualEnter}>
+          Manually enter
         </Button>
       </div>
     </div>

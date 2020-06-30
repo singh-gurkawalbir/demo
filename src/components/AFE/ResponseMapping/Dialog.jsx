@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect, Fragment } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -69,12 +69,12 @@ const SaveButton = props => {
       disabled={disabled}
       onClick={handleBtnClick}>
       {saveInProgress ? (
-        <Fragment>
+        <>
           <Spinner size={16} />
           Saving
-        </Fragment>
+        </>
       ) : (
-        <Fragment>{label}</Fragment>
+        <>{label}</>
       )}
     </Button>
   );
@@ -258,7 +258,7 @@ export default function ResponseMappingDialog(props) {
               onSave={handleSave}
               onClose={handleClose}
               saveInProgress={closeOnSave && saveInProgress}
-              label="Save and Close"
+              label="Save & close"
             />
           )}
           <Button

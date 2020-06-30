@@ -1,3 +1,4 @@
+import React from 'react';
 import HandlebarsEditor from '../HandlebarsEditor';
 
 export default function HttpRequestBodyEditor(props) {
@@ -7,11 +8,9 @@ export default function HttpRequestBodyEditor(props) {
     contentType,
     layout = 'compact',
     rule,
-    resultTitle,
-    dataTitle,
-    ruleTitle,
     data,
     lookups,
+    isSampleDataLoading = false,
   } = props;
   const mode = contentType || 'json';
 
@@ -27,10 +26,8 @@ export default function HttpRequestBodyEditor(props) {
       dataMode="json"
       layout={layout}
       resultMode={mode}
-      ruleTitle={ruleTitle || `HTTP Body Template (${mode})`}
-      dataTitle={dataTitle || 'Data'}
-      resultTitle={resultTitle || 'Final HTTP Body'}
       enableAutocomplete
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }

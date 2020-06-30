@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -25,10 +26,10 @@ const useStyles = makeStyles(theme => ({
   chips: {
     display: 'flex',
     flexWrap: 'wrap',
-    padding: [[12, 0]],
+    padding: 0,
   },
   chip: {
-    margin: theme.spacing(0.25),
+    margin: 4,
   },
   menuItems: {
     paddingRight: theme.spacing(1),
@@ -156,8 +157,7 @@ export default function DynaMultiSelect(props) {
                   typeof selected.map === 'function' &&
                   selected.map(createChip)}
               </div>
-            )
-          }>
+            )}>
           {items}
         </CeligoSelect>
       </FormControl>

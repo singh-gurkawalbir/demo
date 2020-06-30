@@ -70,23 +70,50 @@ export default {
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.auth.token.token',
-      'http.auth.oauth.scope',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.auth.token.token',
+          'http.auth.oauth.scope'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -99,17 +126,11 @@ export default {
       ],
     },
     {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-      ],
+      id: 'cancel',
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

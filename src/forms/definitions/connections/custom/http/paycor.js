@@ -5,7 +5,7 @@ export default {
     '/assistant': 'paycor',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://secure.paycor.com`,
+    '/http/baseURI': 'https://secure.paycor.com',
     '/http/ping/relativeURI': 'Documents/api/documents/customreport',
     '/http/ping/method': 'GET',
   }),
@@ -29,13 +29,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.unencrypted.publicKey', 'http.encrypted.secretKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.publicKey', 'http.encrypted.secretKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

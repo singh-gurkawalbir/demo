@@ -87,19 +87,22 @@ export default {
       label: 'Generate token',
       defaultValue: '',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.accountType',
-      'http.unencrypted.clientId',
-      'http.encrypted.clientSecret',
-      'http.auth.token.token',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.accountType',
+          'http.unencrypted.clientId',
+          'http.encrypted.clientSecret',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

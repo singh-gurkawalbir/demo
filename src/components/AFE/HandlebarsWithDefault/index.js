@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -54,7 +54,6 @@ export default function HandlebarsWithDefaults(props) {
     dispatch(
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
-        autoEvaluate: true,
         autoEvaluateDelay: 300,
         template: props.rule,
         initTemplate: props.rule,

@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
@@ -14,6 +15,7 @@ Object.freeze(COMM_STATES);
 export default (state = initialState, action) => {
   const { type, path, message, hidden, method = 'GET', key } = action;
   const timestamp = Date.now();
+  let errorMsg;
   const commKey = commKeyGenerator(path, method);
 
   return produce(state, draft => {
@@ -45,9 +47,16 @@ export default (state = initialState, action) => {
         break;
 
       case actionTypes.API_FAILURE:
+        try {
+          const errorsJSON = JSON.parse(message);
+
+          errorMsg = (errorsJSON && errorsJSON[0].message) || message;
+        } catch (e) {
+          errorMsg = message;
+        }
         if (!draft[commKey]) draft[commKey] = {};
         draft[commKey].status = COMM_STATES.ERROR;
-        draft[commKey].message = message || 'unknown error';
+        draft[commKey].message = errorMsg || 'unknown error';
 
         // if not defined it should be false
         draft[commKey].hidden = !!hidden;
@@ -60,8 +69,7 @@ export default (state = initialState, action) => {
           if (
             draft[i].status === COMM_STATES.ERROR ||
             draft[i].status === COMM_STATES.SUCCESS
-          )
-            delete draft[i];
+          ) delete draft[i];
         });
 
         break;
@@ -112,50 +120,50 @@ function isHidden(state, resourceName) {
   return !!(state && state[resourceName] && state[resourceName].hidden);
 }
 
-// TODO: @Santosh, This is a perfect candidate for memoization using re-select.
-// Reselect is a redux module which is used to cache the results of selectors IFF
-// there arguments don't change. Since this selector has no arguments, it would be
-// easy to cache... the cache would be invalidated any time some comms activity occurred.
-// I'm not sure if this is a frequently used selector and what the overall benefit
-// would be, but it could be a good exercise to learn how reselect works...
-export function allLoadingOrErrored(state) {
-  if (!state || typeof state !== 'object') {
-    return null;
-  }
-
-  const resources = [];
-
-  Object.keys(state).forEach(key => {
-    const comm = {
-      name: key,
-      status: commStatus(state, key),
-      retryCount: retryCount(state, key),
-      timestamp: timestampComms(state, key),
-      message: requestMessage(state, key),
-      isHidden: isHidden(state, key),
-    };
-
-    if (
-      (comm.status === COMM_STATES.LOADING ||
-        comm.status === COMM_STATES.ERROR) &&
-      !comm.isHidden
-    ) {
-      resources.push(comm);
+export const allLoadingOrErrored = createSelector(
+  state => state,
+  state => {
+    if (!state || typeof state !== 'object') {
+      return null;
     }
-  });
 
-  return resources.length ? resources : null;
-}
+    const resources = [];
 
-export function isLoadingAnyResource(state) {
-  if (!state || typeof state !== 'object') {
-    return null;
+    Object.keys(state).forEach(key => {
+      const comm = {
+        name: key,
+        status: commStatus(state, key),
+        retryCount: retryCount(state, key),
+        timestamp: timestampComms(state, key),
+        message: requestMessage(state, key),
+        isHidden: isHidden(state, key),
+      };
+
+      if (
+        (comm.status === COMM_STATES.LOADING ||
+          comm.status === COMM_STATES.ERROR) &&
+        !comm.isHidden
+      ) {
+        resources.push(comm);
+      }
+    });
+
+    return resources.length ? resources : null;
   }
+);
 
-  return (
-    Object.keys(state).filter(
-      resource => isLoading(state, resource) && !isHidden(state, resource)
-    ).length !== 0
-  );
-}
+export const isLoadingAnyResource = createSelector(
+  state => state,
+  state => {
+    if (!state || typeof state !== 'object') {
+      return null;
+    }
+
+    return (
+      Object.keys(state).filter(
+        resource => isLoading(state, resource) && !isHidden(state, resource)
+      ).length !== 0
+    );
+  }
+);
 // #endregion

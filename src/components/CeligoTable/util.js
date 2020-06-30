@@ -1,8 +1,8 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import TimeAgo from 'react-timeago';
 import { Typography } from '@material-ui/core';
+import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
@@ -10,7 +10,7 @@ import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
-  <Fragment>
+  <>
     <Link
       to={
         resourceType === 'connectorLicenses'
@@ -22,7 +22,7 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
         : resource.name || resource._id}
     </Link>
     {resource.shared && <Typography>Shared</Typography>}
-  </Fragment>
+  </>
 );
 
 export const GetResourceReferenceLink = ({ r }) => {
@@ -38,25 +38,35 @@ export const GetResourceReferenceLink = ({ r }) => {
   );
 };
 
-export const getConnectorName = resource => {
+export const useGetConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
-  let app;
+  const { _connectionId } = resource;
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', _connectionId)
+  );
 
-  if (type === 'rdbms') {
-    if (resourceType === 'connections') {
-      app = getApp(resource.rdbms.type);
-    } else {
-      return 'RDBMS';
-    }
-  } else {
-    app = getApp(type, assistant);
+  if (type !== 'rdbms') {
+    return getApp(type, assistant).name;
   }
 
-  return app.name;
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    return getApp(connection && connection.rdbms && connection.rdbms.type).name;
+  }
+  if (resource && resource.rdbms && resource.rdbms.type) {
+    return getApp(resource.rdbms.type).name;
+  }
+
+  return 'RDBMS';
+};
+export const useGetScriptName = id => {
+  const script = useSelector(state =>
+    selectors.resource(state, 'scripts', id)
+  );
+  return (script && script.name) || id;
 };
 
 export const formatLastModified = lastModified => (
-  <TimeAgo date={lastModified} />
+  <CeligoTimeAgo date={lastModified} />
 );
 
 export const onlineStatus = r => (
@@ -68,7 +78,8 @@ export const onlineStatus = r => (
 
 export default {
   formatLastModified,
-  getConnectorName,
+  useGetConnectorName,
   getResourceLink,
   onlineStatus,
+  useGetScriptName,
 };

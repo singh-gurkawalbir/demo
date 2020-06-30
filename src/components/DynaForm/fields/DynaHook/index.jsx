@@ -1,10 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
 import LoadResources from '../../../LoadResources';
 
+// TODO @Raghu: add logic for apis
+const emptyObj = {};
 export default function DynaHook(props) {
   const {
     flowId,
@@ -26,6 +28,10 @@ export default function DynaHook(props) {
   // Fetches different input data for different hook types goes here
   const requestSampleData = useCallback(
     ({ flowId, resourceId, resourceType, stage }) => {
+      // TODO @Raghu: add logic for apis
+      if (resourceType === 'apis') {
+        return;
+      }
       const finalStage = resourceType === 'exports' ? stage : hookStage;
 
       return actions.flowData.requestSampleData(
@@ -62,12 +68,14 @@ export default function DynaHook(props) {
 
   const preHookData = useSelector(state => {
     if (props.preHookData) return props.preHookData;
-
+    if (resourceType === 'apis') {
+      return emptyObj;
+    }
     return getSampleDataSelector({ state, flowId, resourceId });
   });
   const preHookDataStatus = useSelector(state => {
     // Incase of default data for hooks, return status as received
-    if (props.preHookData || hooksWithDefaultSampleData.includes(hookStage)) {
+    if (props.preHookData || resourceType === 'apis' || hooksWithDefaultSampleData.includes(hookStage)) {
       return 'received';
     }
 

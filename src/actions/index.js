@@ -12,6 +12,7 @@ export const availableResources = [
   'tiles',
   'flows',
   'templates',
+  'apis',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -135,8 +136,23 @@ const marketplace = {
 const recycleBin = {
   restore: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  restoreRedirectUrl: redirectTo =>
+    action(actionTypes.RECYCLEBIN.RESTORE_REDIRECT_TO, { redirectTo }),
+  restoreClear: () => action(actionTypes.RECYCLEBIN.RESTORE_CLEAR),
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
+};
+const flowMetrics = {
+  request: (flowId, filters) =>
+    action(actionTypes.FLOW_METRICS.REQUEST, {
+      flowId,
+      filters,
+    }),
+
+  received: (flowId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
+  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
   downloadFile: (id, resourceType) =>
@@ -146,18 +162,22 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  updateChildIntegration: (parentId, childId) =>
+    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, master, patch) =>
+  updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
       resourceId,
       master,
       patch,
+      context,
     }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
@@ -200,12 +220,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options) =>
+  commitStaged: (resourceType, id, scope, options, context) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
+      context,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -391,6 +412,12 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
+  validationError: (validationError, connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.VALIDATION_ERROR, {
+      validationError,
+      connectionId,
+      commMetaPath,
+    }),
   requestAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
       resourceId,
@@ -437,11 +464,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
@@ -700,6 +728,13 @@ const integrationApp = {
           response,
         }
       ),
+    addOnLicenseMetadataFailed: integrationId =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE,
+        {
+          integrationId,
+        }
+      ),
     requestMappingMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
@@ -743,6 +778,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    initChild: (integrationId) => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+      id: integrationId,
+    }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
@@ -750,23 +788,35 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
+    scriptInstallStep: (
+      integrationId,
+      connectionId,
+      connectionDoc,
+      formSubmission
+    ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
+        formSubmission,
       }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        formMeta,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
+      }),
+    getCurrentStep: (integrationId, step) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP, {
+        id: integrationId,
+        step,
       }),
   },
   uninstaller: {
@@ -807,6 +857,44 @@ const integrationApp = {
     uninstallIntegration: integrationId =>
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER.DELETE_INTEGRATION, {
         integrationId,
+      }),
+  },
+  uninstaller2: {
+    init: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
+        id: integrationId,
+      }),
+    failed: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED, {
+        id: integrationId,
+        error,
+      }),
+    receivedSteps: (integrationId, uninstallSteps) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS, {
+        id: integrationId,
+        uninstallSteps,
+      }),
+    requestSteps: (integrationId) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
+        id: integrationId,
+      }),
+    updateStep: (integrationId, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE, {
+        id: integrationId,
+        update,
+      }),
+    uninstallStep: (integrationId, formVal) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, {
+        id: integrationId,
+        formVal,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
+        id: integrationId,
+      }),
+    complete: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
+        id: integrationId,
       }),
   },
   store: {
@@ -929,11 +1017,12 @@ const file = {
       fileType,
       file,
     }),
-  processFile: ({ fileId, file, fileType }) =>
+  processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
       fileId,
       file,
       fileType,
+      fileProps,
     }),
   processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
@@ -1059,6 +1148,15 @@ const importSampleData = {
       options,
       refreshCache,
     }),
+  iaMetadataRequest: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_REQUEST, {
+      _importId,
+    }),
+  iaMetadataReceived: ({ _importId, metadata }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_RECEIVED, {
+      _importId,
+      metadata,
+    }),
 };
 const flowData = {
   init: flow => action(actionTypes.FLOW_DATA.INIT, { flow }),
@@ -1162,7 +1260,7 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
   saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
@@ -1191,7 +1289,7 @@ const mapping = {
       value,
     }),
   delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  save: (id, context) => action(actionTypes.MAPPING.SAVE, { id, context }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
@@ -1202,6 +1300,9 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
+
 };
 const searchCriteria = {
   init: (id, value) =>
@@ -1245,6 +1346,11 @@ const resourceForm = {
       isNew,
       skipCommit,
       flowId,
+    }),
+  initFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT_FAILED, {
+      resourceId,
+      resourceType,
     }),
   clearInitData: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
@@ -1437,6 +1543,158 @@ const job = {
       action(actionTypes.JOB.ERROR.PREVIEW.CLEAR, { jobId }),
   },
 };
+const errorManager = {
+  openFlowErrors: {
+    request: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST, { flowId }),
+    received: ({ flowId, openErrors }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED, {
+        flowId,
+        openErrors,
+      }),
+  },
+  integrationErrors: {
+    request: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
+        integrationId,
+      }),
+    received: ({ integrationId, integrationErrors }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED, {
+        integrationId,
+        integrationErrors,
+      }),
+  },
+  flowErrorDetails: {
+    request: ({ flowId, resourceId, loadMore, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST, {
+        flowId,
+        resourceId,
+        loadMore,
+        isResolved,
+      }),
+    received: ({
+      flowId,
+      resourceId,
+      errorDetails,
+      loadMore,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED, {
+        flowId,
+        resourceId,
+        errorDetails,
+        loadMore,
+        isResolved,
+      }),
+    error: ({ flowId, resourceId, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ERROR, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+    selectErrors: ({
+      flowId,
+      resourceId,
+      errorIds,
+      checked,
+      isResolved = false,
+    }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ERRORS, {
+        flowId,
+        resourceId,
+        errorIds,
+        checked,
+        isResolved,
+      }),
+    selectAll: ({ flowId, resourceId, checked, options }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.SELECT_ALL_ERRORS, {
+        flowId,
+        resourceId,
+        checked,
+        options,
+      }),
+    retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
+        {
+          flowId,
+          resourceId,
+          retryIds,
+          isResolved,
+        }
+      ),
+    resolve: ({ flowId, resourceId, errorIds = [] }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.REQUEST,
+        {
+          flowId,
+          resourceId,
+          errorIds,
+        }
+      ),
+    retryReceived: ({ flowId, resourceId, retryCount, isResolved = false }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.RECEIVED,
+        {
+          flowId,
+          resourceId,
+          isResolved,
+          retryCount,
+        }
+      ),
+    resolveReceived: ({ flowId, resourceId, resolveCount }) =>
+      action(
+        actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RESOLVE.RECEIVED,
+        {
+          flowId,
+          resourceId,
+          resolveCount,
+        }
+      ),
+    remove: ({ flowId, resourceId, errorIds = [], isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REMOVE, {
+        flowId,
+        resourceId,
+        isResolved,
+        errorIds,
+      }),
+    clear: ({ flowId, resourceId, isResolved = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR, {
+        flowId,
+        resourceId,
+        isResolved,
+      }),
+  },
+  retryData: {
+    request: ({ flowId, resourceId, retryId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+      }),
+    received: ({ flowId, resourceId, retryId, retryData }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }),
+    receivedError: ({ flowId, resourceId, retryId, error }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR, {
+        flowId,
+        resourceId,
+        retryId,
+        error,
+      }),
+    updateRequest: ({ flowId, resourceId, retryId, retryData }) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_REQUEST, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }),
+  },
+};
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
@@ -1547,6 +1805,47 @@ const exportData = {
     }),
 };
 // #endregion
+const editorSampleData = {
+  request: ({
+    flowId,
+    resourceId,
+    resourceType,
+    stage,
+    formValues,
+    fieldType,
+    requestedTemplateVersion,
+    isV2NotSupported,
+  }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      formValues,
+      fieldType,
+      requestedTemplateVersion,
+      isV2NotSupported,
+    }),
+  received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {
+      flowId,
+      resourceId,
+      fieldType,
+      sampleData,
+      templateVersion,
+    }),
+  receivedError: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR, {
+      resourceId,
+      flowId,
+      fieldType,
+    }),
+  clear: ({ resourceId, flowId }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.CLEAR, {
+      resourceId,
+      flowId,
+    }),
+};
 
 export default {
   postFeedback,
@@ -1571,7 +1870,9 @@ export default {
   auth,
   auditLogs,
   accessToken,
+  flowMetrics,
   job,
+  errorManager,
   flow,
   agent,
   template,
@@ -1592,4 +1893,5 @@ export default {
   responseMapping,
   customSettings,
   exportData,
+  editorSampleData,
 };

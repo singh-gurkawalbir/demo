@@ -1,4 +1,4 @@
-import { useMemo, Fragment } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +11,7 @@ import dateTimezones from '../../utils/dateTimezones';
 import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -52,6 +53,14 @@ export default function ProfileComponent() {
     ],
     []
   );
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const preferences = useSelector(state =>
     selectors.userProfilePreferencesProps(state)
   );
@@ -121,6 +130,14 @@ export default function ProfileComponent() {
     dispatch(actions.user.profile.unlinkWithGoogle());
   };
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: '/profile',
+      method: 'PUT',
+      onSave: handleSubmit,
+    }
+  );
+
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -143,6 +160,7 @@ export default function ProfileComponent() {
       password: {
         id: 'password',
         name: 'password',
+        label: 'Password',
         helpKey: 'myaccount.password',
         type: 'userpassword',
       },
@@ -226,10 +244,15 @@ export default function ProfileComponent() {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Profile" />
-      <DynaForm fieldMeta={fieldMeta} render>
-        <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
+      <DynaForm formState={formState} fieldMeta={fieldMeta}>
+        <DynaSubmit
+          showCustomFormValidations={showCustomFormValidations}
+          onClick={submitHandler()}
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
       </DynaForm>
       {getDomain() !== 'eu.integrator.io' && (
         <div>
@@ -251,12 +274,12 @@ export default function ProfileComponent() {
                   <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
-            )}
+          )}
           {preferences &&
             preferences.auth_type_google &&
             preferences.auth_type_google.id && (
               <InputLabel>
-                <span className={classes.label}>Unlink to:</span>
+                <span className={classes.label}>Unlink from:</span>
                 <Button
                   data-test="unlinkWithGoogle"
                   variant="contained"
@@ -266,9 +289,9 @@ export default function ProfileComponent() {
                   <span className={classes.btnLabel}>Google</span>
                 </Button>
               </InputLabel>
-            )}
+          )}
         </div>
       )}
-    </Fragment>
+    </>
   );
 }

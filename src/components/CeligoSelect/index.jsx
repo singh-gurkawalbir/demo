@@ -1,3 +1,5 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
@@ -33,10 +35,13 @@ const useStyles = makeStyles(theme => ({
     '& >.MuiSelect-selectMenu': {
       padding: [[0, 32, 0, 12]],
       lineHeight: '38px',
-      margin: [[0, -15]],
+      margin: [[0, -12]],
     },
     '& svg': {
       right: theme.spacing(1),
+    },
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
     },
   },
 }));

@@ -2,7 +2,7 @@
 import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../actions';
 import {
   ACCOUNT_IDS,
@@ -14,7 +14,7 @@ import {
 import { COMM_STATES } from './comms/networkComms';
 
 describe('global selectors', () => {
-  describe(`isProfileDataReady`, () => {
+  describe('isProfileDataReady', () => {
     test('should return false on bad or empty state.', () => {
       expect(selectors.isProfileDataReady()).toBe(false);
       expect(selectors.isProfileDataReady({})).toBe(false);
@@ -105,7 +105,172 @@ describe('global selectors', () => {
       });
     });
   });
+  // TODO delete the above resourceData test suite once we deprecate resourceData selector
+  describe('resourceData cache ', () => {
+    const resourceData = selectors.makeResourceDataSelector();
 
+    test('should return {} on bad state or args.', () => {
+      expect(resourceData()).toEqual({});
+      expect(resourceData({ data: {} })).toEqual({});
+    });
+
+    test('should return correct data when no staged data exists.', () => {
+      const exports = [{ _id: 1, name: 'test A' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      expect(resourceData(state, 'exports', 1)).toEqual({
+        merged: exports[0],
+        staged: undefined,
+        master: exports[0],
+      });
+    });
+
+    test('should return correct data when no staged data or resource exists. (new resource)', () => {
+      const exports = [{ _id: 1, name: 'test A' }];
+      const state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+
+      expect(resourceData(state, 'exports', 'new-resource-id')).toEqual({
+        merged: {},
+        staged: undefined,
+        master: undefined,
+      });
+    });
+
+    test('should return correct data when staged data exists.', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+
+      expect(resourceData(state, 'exports', 1)).toEqual({
+        merged: { _id: 1, name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: exports[0],
+      });
+    });
+
+    test('should return the same cached data even when a patch occurs for a different id', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+      const result = resourceData(state, 'exports', 1);
+
+      expect(result).toEqual({
+        merged: { _id: 1, name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: exports[0],
+      });
+      state = reducer(state, actions.resource.patchStaged(2, patch));
+      const cachedResult = resourceData(state, 'exports', 1);
+
+      expect(result).toBe(cachedResult);
+    });
+
+    test('should return the same cached data even after a different resource has been received', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+      const result = resourceData(state, 'exports', 1);
+
+      expect(result).toEqual({
+        merged: { _id: 1, name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: exports[0],
+      });
+
+      const imports = [{ _id: 1, name: 'test X' }];
+
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('imports', imports)
+      );
+      const cachedResult = resourceData(state, 'exports', 1);
+
+      expect(result).toBe(cachedResult);
+    });
+    test('should void the cache and regenerate the same result when we received the same collection again', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const anotherExportsInst = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+      const result = resourceData(state, 'exports', 1);
+
+      expect(result).toEqual({
+        merged: { _id: 1, name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: exports[0],
+      });
+
+      // provoke cache to regenerate with another instance of exports
+      state = reducer(
+        state,
+        actions.resource.receivedCollection('exports', anotherExportsInst)
+      );
+
+      const cachedResult = resourceData(state, 'exports', 1);
+
+      // cachedResult is the same as result but different reference
+      expect(cachedResult).toEqual({
+        merged: { _id: 1, name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: exports[0],
+      });
+
+      expect(result).not.toBe(cachedResult);
+    });
+    test('should return correct data when staged data exists but no master.', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged('new-id', patch));
+
+      expect(resourceData(state, 'exports', 'new-id')).toEqual({
+        merged: { name: 'patch X' },
+        lastChange: expect.any(Number),
+        patch: [{ ...patch[0], timestamp: expect.any(Number) }],
+        master: null,
+      });
+    });
+  });
   describe('resourceStatus ', () => {
     describe('GET resource calls ', () => {
       const method = 'GET';
@@ -156,7 +321,7 @@ describe('global selectors', () => {
       state = reducer(state, actions.api.complete('/exports', 'POST'));
       expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
     });
-    test(`shouldn't re-add the forward slash in the resourceStatus selector to determine comm status for non resource calls`, () => {
+    test('shouldn\'t re-add the forward slash in the resourceStatus selector to determine comm status for non resource calls', () => {
       let state = reducer(
         {},
         actions.api.request(
@@ -303,7 +468,6 @@ describe('Reducers in the root reducer', () => {
     expect(state).toEqual({
       app: {
         appErrored: false,
-        drawerOpened: true,
         bannerOpened: true,
         count: 1,
       },
@@ -1021,7 +1185,6 @@ describe('publishedConnectors selector', () => {
 });
 
 describe('userAccessLevelOnConnection selector', () => {
-  // eslint-disable-next-line prettier/prettier
   test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
     const state = reducer(
       {
@@ -2153,7 +2316,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                             placeholder: 'Optional',
@@ -2538,7 +2701,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
                             placeholder: 'Optional',
@@ -3361,7 +3524,7 @@ describe('integrationApp Settings reducers', () => {
                         'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                     },
                     {
-                      label: 'Column Delimiter:',
+                      label: 'Column delimiter:',
                       type: 'input',
                       name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
@@ -4141,7 +4304,7 @@ describe('integrationApp Settings reducers', () => {
                       'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                   },
                   {
-                    label: 'Column Delimiter:',
+                    label: 'Column delimiter:',
                     type: 'input',
                     name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                     placeholder: 'Optional',

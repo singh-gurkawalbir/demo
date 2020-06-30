@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -9,7 +10,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
-import useResourceList from '../../../hooks/useResourceList';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -26,9 +27,17 @@ const integrationsFilterConfig = {
   ignoreEnvironmentFilter: true,
 };
 
-export default function UserForm({ id, onSaveClick, onCancelClick }) {
+export default function UserForm({
+  id,
+  onSaveClick,
+  onCancelClick,
+  disableSave,
+}) {
   const classes = useStyles();
-  const integrations = useResourceList(integrationsFilterConfig).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const users = useSelector(state => selectors.orgUsers(state));
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
@@ -37,8 +46,8 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
 
   if (
     isEditMode &&
-    ![
-      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    [
+      USER_ACCESS_LEVELS.TILE,
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(data.accessLevel) &&
     data.integrationAccessLevel.length
@@ -71,25 +80,26 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         label: 'Access level',
         defaultValue: isEditMode ? data.accessLevel || 'tile' : '',
         required: true,
+        skipSort: true,
         options: [
           {
             items: [
               {
-                label: 'Manage All (including future) Integrations',
+                label: 'Manage all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
               },
               {
-                label: 'Monitor All (including future) Integrations',
+                label: 'Monitor all integrations',
                 value: USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
               },
               {
-                label: 'Manage/Monitor Selected Integrations',
+                label: 'Manage/monitor select integrations',
                 value: USER_ACCESS_LEVELS.TILE,
               },
             ],
           },
         ],
-        helpText: 'Access Level help text',
+        helpKey: 'users.accesslevel',
       },
       integrationsToManage: {
         id: 'integrationsToManage',
@@ -102,8 +112,16 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
             field: 'accessLevel',
             is: [USER_ACCESS_LEVELS.TILE],
           },
+          {
+            field: 'accessLevel',
+            is: [USER_ACCESS_LEVELS.ACCOUNT_MONITOR],
+          },
         ],
-        requiredWhen: [
+        requiredWhenAll: [
+          {
+            field: 'accessLevel',
+            is: [USER_ACCESS_LEVELS.TILE],
+          },
           {
             field: 'integrationsToMonitor',
             is: [[]],
@@ -111,7 +129,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),
@@ -140,7 +158,7 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
         ],
         options: [
           {
-            items: integrations.map(i => ({
+            items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
             })),
@@ -165,10 +183,11 @@ export default function UserForm({ id, onSaveClick, onCancelClick }) {
       <DynaForm fieldMeta={fieldMeta}>
         <div className={classes.actions}>
           <DynaSubmit
+            disabled={disableSave}
             data-test="submitUserForm"
             className={classes.actionButton}
             onClick={onSaveClick}>
-            Save
+            {disableSave ? 'Saving...' : 'Save'}
           </DynaSubmit>
           <Button
             data-test="cancelUserForm"

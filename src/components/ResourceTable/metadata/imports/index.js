@@ -1,12 +1,12 @@
+import React from 'react';
+import { ConnectorNameComp } from '..';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
-import Delete from '../../actions/Delete';
-import References from '../../actions/References';
 import AuditLogs from '../../actions/AuditLogs';
 import Clone from '../../actions/Clone';
-import {
-  formatLastModified,
-  getConnectorName,
-} from '../../../CeligoTable/util';
+import Delete from '../../actions/Delete';
+import References from '../../actions/References';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -17,12 +17,17 @@ export default {
       },
       orderBy: 'name',
     },
-    { heading: 'Connector', value: r => getConnectorName(r) },
+    {
+      heading: 'Application',
+      value: function ConnectorName(r) {
+        return <ConnectorNameComp r={r} />;
+      },
+    },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Clone, AuditLogs, References, Delete],
+  rowActions: [Edit, AuditLogs, References, Clone, Delete],
 };

@@ -18,22 +18,22 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+      actions.user.org.accounts.requestLicenses('Retrieving licenses')
     ),
     call(
       getResourceCollection,
-      actions.user.org.users.requestCollection(`Retrieving org users`)
+      actions.user.org.users.requestCollection('Retrieving org users')
     ),
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestCollection(`Retrieving user's accounts`)
-    ),
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+    )
   ]);
 }
 
@@ -54,6 +54,27 @@ export function* retrievingAssistantDetails() {
     actions.resource.requestCollection('ui/assistants')
   );
   const assistantConnectors = [];
+  const webhookAssistants = [
+    'activecampaign',
+    'dropbox',
+    'github',
+    'box',
+    'hubspot',
+    'intercom',
+    'jira',
+    'mailchimp',
+    'parseur',
+    'postmark',
+    'recurly',
+    'intercom',
+    'segment',
+    'shipwire',
+    'shopify',
+    'slack',
+    'stripe',
+    'travis',
+    'surveymonkey'
+  ];
 
   if (
     collection &&
@@ -68,6 +89,7 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
     collection.rest.applications.forEach(asst => {
@@ -78,11 +100,12 @@ export function* retrievingAssistantDetails() {
         assistant: asst._id,
         export: asst.export,
         import: asst.import,
+        webhook: webhookAssistants.indexOf(asst._id) >= 0,
       });
     });
     assistantConnectors.push({
       id: 'financialforce',
-      name: 'Financial Force',
+      name: 'FinancialForce',
       type: 'salesforce',
       assistant: 'financialforce',
       export: true,
@@ -170,6 +193,10 @@ export function* auth({ email, password }) {
     if (isExpired) {
       // remount the component
       yield put(actions.app.reload());
+    }
+    const {accessLevel} = yield select(selectors.resourcePermissions);
+    if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+      yield put(actions.resource.requestCollection('transfers'));
     }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));

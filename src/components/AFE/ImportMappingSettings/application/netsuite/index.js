@@ -32,6 +32,8 @@ export default {
       isCategoryMapping,
     } = params;
     const {
+      resourceId,
+      flowId,
       connectionId,
       recordType,
       isComposite,
@@ -174,9 +176,10 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
+          requiredWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           helpKey: 'mapping.lookup.mode',
           options: [
@@ -197,6 +200,7 @@ export default {
           type: 'refreshableselect',
           label: 'Search record type',
           connectionId,
+          required: true,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -209,10 +213,12 @@ export default {
           type: 'netsuitelookupfilters',
           label: 'NS filters',
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           value: lookup.expression,
           data: extractFields,
@@ -223,11 +229,13 @@ export default {
           type: 'text',
           label: 'Lookup filter expression',
           multiline: true,
+          required: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['lookup.expression'],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
@@ -237,6 +245,7 @@ export default {
           name: 'resultField',
           type: 'refreshableselect',
           label: 'Value field',
+          required: true,
           defaultValue: lookup.resultField,
           /** savedRecordType is not being used with the intension of passing prop to the component.
            * But being used in reference to optionHandler.
@@ -249,9 +258,14 @@ export default {
           connectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
+          requiredWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+          ],
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.recordType', isNot: [''] },
           ],
         },
         'lookup.mapList': {
@@ -284,9 +298,9 @@ export default {
           visibleWhenAll: isCategoryMapping
             ? [{ field: 'fieldMappingType', is: ['lookup'] }]
             : [
-                { field: 'fieldMappingType', is: ['lookup'] },
-                { field: 'lookup.mode', is: ['static'] },
-              ],
+              { field: 'fieldMappingType', is: ['lookup'] },
+              { field: 'lookup.mode', is: ['static'] },
+            ],
         },
         functions: {
           id: 'functions',
@@ -320,6 +334,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
@@ -335,7 +350,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {
@@ -365,9 +380,9 @@ export default {
           visibleWhenAll: isCategoryMapping
             ? [{ field: 'fieldMappingType', is: ['lookup'] }]
             : [
-                { field: 'lookup.mode', is: ['dynamic', 'static'] },
-                { field: 'fieldMappingType', is: ['lookup'] },
-              ],
+              { field: 'lookup.mode', is: ['dynamic', 'static'] },
+              { field: 'fieldMappingType', is: ['lookup'] },
+            ],
           helpKey: 'mapping.lookupAction',
         },
         hardcodedDefault: {
@@ -554,14 +569,9 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name',
-          type: 'textwithlookupextract',
-          fieldType: 'lookupMappings',
-          importType: 'netsuite',
-          connectionId,
-          extractFields,
-          fieldMetadata,
-          fieldId,
-          recordType,
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
@@ -637,7 +647,8 @@ export default {
           }
 
           return expressionValue;
-        } else if (fieldId === 'lookupAction') {
+        }
+        if (fieldId === 'lookupAction') {
           const lookupModeField = fields.find(
             field => field.id === 'lookup.mode'
           );
@@ -672,11 +683,13 @@ export default {
           }
 
           return options;
-        } else if (fieldId === 'lookup.recordType') {
+        }
+        if (fieldId === 'lookup.recordType') {
           return {
             resourceToFetch: 'recordTypes',
           };
-        } else if (fieldId === 'lookup.expressionText') {
+        }
+        if (fieldId === 'lookup.expressionText') {
           const lookupExpressionField = fields.find(
             field => field.id === 'lookup.expression'
           );
@@ -803,8 +816,7 @@ export default {
 
     if (
       fieldMetadata &&
-      fieldMetadata.type !== 'date' &&
-      fieldMetadata.type !== 'datetime'
+      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
     ) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;

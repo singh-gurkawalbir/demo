@@ -35,7 +35,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -49,22 +49,36 @@ export default {
     'rdbms.instanceName': { fieldId: 'rdbms.instanceName' },
     'rdbms.port': { fieldId: 'rdbms.port' },
     rdbmsAdvanced: { formId: 'rdbmsAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'rdbms.version',
-      'rdbmsFields',
-      'rdbms.instanceName',
-      'rdbms.port',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'rdbms.version',
+          'rdbmsFields',
+          'rdbms.instanceName',
+          'rdbms.port',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['rdbmsAdvanced'],
       },
     ],

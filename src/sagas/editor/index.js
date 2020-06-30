@@ -56,8 +56,15 @@ export function* evaluateProcessor({ id }) {
     }
   }
 
-  const processResult = processorLogic.processResult(editor);
-  const finalResult = processResult ? processResult(editor, result) : result;
+  let finalResult;
+
+  try {
+    const processResult = processorLogic.processResult(editor);
+
+    finalResult = processResult ? processResult(editor, result) : result;
+  } catch (e) {
+    return yield put(actions.editor.evaluateFailure(id, e.message));
+  }
 
   return yield put(actions.editor.evaluateResponse(id, finalResult));
 }
@@ -82,60 +89,100 @@ export function* evaluateExternalProcessor({ processorData }) {
   }
 }
 
-export function* saveProcessor({ id }) {
+export function* saveProcessor({ id, context }) {
   const patches = yield select(selectors.editorPatchSet, id);
+  const editor = yield select(selectors.editor, id);
+
+  if (!editor) {
+    return; // nothing to do
+  }
 
   if (!patches) {
-    yield put(actions.editor.saveFailed(id));
+    return yield put(actions.editor.saveFailed(id));
+  }
+
+  // if preview before saving the editor is on, call the evaluateProcessor
+  if (editor.previewOnSave) {
+    const evaluateResponse = yield call(evaluateProcessor, { id });
+
+    if (
+      evaluateResponse &&
+      (evaluateResponse.error || evaluateResponse.violations)
+    ) {
+      return yield put(actions.editor.saveFailed(id));
+    }
   }
 
   /**
-   *Editor will not be closed unless 'foregroundPatch' terminates. After success/failure of foreground patch, 'backgroundPatches' run in background.
-   backgroundPatches is an array consisting of resource patch and/or actions
-  Example:
-  foregroundPatch = {
-      patch: [{ op: 'replace', path:${path}, value: ${value} }],
-      resourceType: ${resourceType},
-      resourceId: ${resourceId},
-   };
-   backgroundPatches=[
-    {
-        patch: [
-          {
-            op: 'replace',
-            path: '/content',
-            value: ${code},
-          },
-        ],
-        resourceType: 'scripts',
-        resourceId: ${scriptId},
-    },
-    actions.analytics.gainsight.trackEvent('actionName')
-    ];
-   */
+     *Editor will not be closed unless 'foregroundPatches' terminates. After success/failure of foreground patches, 'backgroundPatches' run in background.
+     backgroundPatches and foregroundPatches are arrays consisting of resource patch and/or actions
+    Example:
+    foregroundPatches = [{
+        patch: [{ op: 'replace', path:${path}, value: ${value} }],
+        resourceType: ${resourceType},
+        resourceId: ${resourceId},
+     },
 
-  const { foregroundPatch, backgroundPatches } = patches || {};
+        patch: [{ op: 'replace', path:${path}, value: ${value} }],
+        resourceType: ${resourceType},
+        resourceId: ${resourceId},
+     }];
+     backgroundPatches=[
+      {
+          patch: [
+            {
+              op: 'replace',
+              path: '/content',
+              value: ${code},
+            },
+          ],
+          resourceType: 'scripts',
+          resourceId: ${scriptId},
+      },
+      actions.analytics.gainsight.trackEvent('actionName')
+      ];
+     */
 
-  if (foregroundPatch) {
-    const { patch, resourceType, resourceId } = foregroundPatch || {};
+  let { foregroundPatches } = patches || {};
+  const { backgroundPatches } = patches || {};
 
-    if (!!patch && !!resourceType && !!resourceId) {
-      yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
-      const error = yield call(commitStagedChanges, {
-        resourceType,
-        id: resourceId,
-        scope: SCOPES.VALUE,
-      });
+  // for backward compatibility
+  foregroundPatches =
+    foregroundPatches && !Array.isArray(foregroundPatches)
+      ? [foregroundPatches]
+      : foregroundPatches;
 
-      // trigger save failed in case of error
-      if (error) yield put(actions.editor.saveFailed(id));
+  if (foregroundPatches) {
+    for (let index = 0; index < foregroundPatches.length; index += 1) {
+      const { action, patch, resourceType, resourceId } =
+        foregroundPatches[index] || {};
 
-      // trigger save complete in case of success
-      yield put(actions.editor.saveComplete(id));
-    } else {
-      // trigger save failed in case any among patch, resourceType and resourceId is missing
-      yield put(actions.editor.saveFailed(id));
+      // check if foregroundPatch is an action
+      if (action) {
+        yield put(foregroundPatches[index].action);
+      } else if (!!patch && !!resourceType && !!resourceId) {
+        yield put(
+          actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE)
+        );
+        const error = yield call(commitStagedChanges, {
+          resourceType,
+          id: resourceId,
+          scope: SCOPES.VALUE,
+          context,
+        });
+
+        // trigger save failed in case of error
+        if (error) {
+          return yield put(actions.editor.saveFailed(id));
+        }
+      } else {
+        // trigger save failed in case any among patch, resourceType and resourceId is missing
+        return yield put(actions.editor.saveFailed(id));
+      }
     }
+
+    // if all foregroundPatches succeed
+    yield put(actions.editor.saveComplete(id));
   } else {
     // trigger save complete in case editor doesnt have any foreground processes
     yield put(actions.editor.saveComplete(id));

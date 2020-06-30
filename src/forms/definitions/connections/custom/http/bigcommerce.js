@@ -138,6 +138,7 @@ export default {
     },
     genericOauthConnector: {
       formId: 'genericOauthConnector',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -153,28 +154,55 @@ export default {
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.auth.token.token',
-      'http.unencrypted.clientId',
-      'storeHash',
-      'http.auth.oauth.scope',
-      'genericOauthConnector',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.auth.token.token',
+          'http.unencrypted.clientId',
+          'storeHash',
+          'http.auth.oauth.scope',
+          'genericOauthConnector'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -187,17 +215,11 @@ export default {
       ],
     },
     {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic'],
-        },
-      ],
+      id: 'cancel',
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

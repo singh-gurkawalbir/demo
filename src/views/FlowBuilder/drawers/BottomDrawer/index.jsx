@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, Fragment, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -19,7 +20,7 @@ import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
-import useResourceList from '../../../../hooks/useResourceList';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -50,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderTop: 0,
     display: 'flex',
-    justifyContent: `space-between`,
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },
@@ -118,12 +119,18 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
+  // Hard coded to false as we need to show bottom drawer
+  // till the new drawers are fully functional
+  const isUserInErrMgtTwoDotZero = false;
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
-  const connections = useResourceList(connectionsFilterConfig).resources;
+  const connections = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    connectionsFilterConfig
+  ).resources;
   const connectionIdNameMap = useMemo(() => {
     const resourceIdNameMap = {};
 
-    connections.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id; });
 
     return resourceIdNameMap;
   }, [connections]);
@@ -195,51 +202,64 @@ export default function BottomDrawer({
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example">
-          <Tab
-            {...tabProps(0)}
-            icon={
-              isAnyFlowConnectionOffline ? (
-                <WarningIcon className={classes.connectionWarning} />
-              ) : (
-                <ConnectionsIcon />
-              )
-            }
-            label="Connections"
-          />
-          <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-          {connectionDebugLogs &&
-            Object.keys(connectionDebugLogs).map(
-              (connectionId, cIndex) =>
-                connectionDebugLogs[connectionId] && (
-                  <Tab
-                    className={classes.customTab}
-                    {...tabProps(cIndex + 3)}
-                    icon={<DebugIcon />}
-                    key={connectionId}
-                    component="div"
-                    label={
-                      <div className={classes.customTabContainer}>
-                        {connectionIdNameMap[connectionId]} - DEBUG
-                        <IconButton
-                          className={classes.closeBtn}
-                          onClick={handleDebugLogsClose(connectionId)}>
-                          <CloseIcon />
-                        </IconButton>
-                      </div>
-                    }
-                  />
+        {isUserInErrMgtTwoDotZero ? (
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+          </Tabs>
+        ) : (
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab
+              {...tabProps(0)}
+              icon={
+                isAnyFlowConnectionOffline ? (
+                  <WarningIcon className={classes.connectionWarning} />
+                ) : (
+                  <ConnectionsIcon />
                 )
-            )}
-        </Tabs>
+              }
+              label="Connections"
+            />
+            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
+            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+            {connectionDebugLogs &&
+              Object.keys(connectionDebugLogs).map(
+                (connectionId, cIndex) =>
+                  connectionDebugLogs[connectionId] && (
+                    <Tab
+                      className={classes.customTab}
+                      {...tabProps(cIndex + 3)}
+                      icon={<DebugIcon />}
+                      key={connectionId}
+                      component="div"
+                      label={
+                        <div className={classes.customTabContainer}>
+                          {connectionIdNameMap[connectionId]} - DEBUG
+                          <IconButton
+                            className={classes.closeBtn}
+                            onClick={handleDebugLogsClose(connectionId)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </div>
+                      }
+                    />
+                  )
+              )}
+          </Tabs>
+        )}
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
@@ -255,44 +275,51 @@ export default function BottomDrawer({
           </IconButton>
         </div>
       </div>
-
-      <TabPanel value={tabValue} index={0} classes={classes}>
-        <ConnectionPanel flow={flow} />
-      </TabPanel>
-      <TabPanel value={tabValue} index={1} classes={classes}>
-        <RunDashboardPanel flow={flow} />
-      </TabPanel>
-      <TabPanel value={tabValue} index={2} classes={classes}>
-        <AuditPanel flow={flow} />
-      </TabPanel>
-      {connectionDebugLogs &&
-        Object.keys(connectionDebugLogs).map(
-          (connectionId, cIndex) =>
-            connectionDebugLogs[connectionId] && (
-              <TabPanel
-                value={tabValue}
-                key={connectionId}
-                index={cIndex + 3}
-                classes={classes}>
-                <Fragment>
-                  <div className={classes.rightActionContainer}>
-                    <IconTextButton
-                      className={classes.refreshButton}
-                      onClick={handleDebugLogsRefresh(connectionId)}>
-                      <RefreshIcon /> Refresh
-                    </IconTextButton>
-                  </div>
-                  <CodePanel
-                    name="code"
-                    readOnly
-                    value={connectionDebugLogs[connectionId]}
-                    mode="javascript"
-                    overrides={{ useWorker: false }}
-                  />
-                </Fragment>
-              </TabPanel>
-            )
-        )}
+      {isUserInErrMgtTwoDotZero ? (
+        <TabPanel value={tabValue} index={0} classes={classes}>
+          <RunDashboardPanel flow={flow} />
+        </TabPanel>
+      ) : (
+        <>
+          <TabPanel value={tabValue} index={0} classes={classes}>
+            <ConnectionPanel flow={flow} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={1} classes={classes}>
+            <RunDashboardPanel flow={flow} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2} classes={classes}>
+            <AuditPanel flow={flow} />
+          </TabPanel>
+          {connectionDebugLogs &&
+            Object.keys(connectionDebugLogs).map(
+              (connectionId, cIndex) =>
+                connectionDebugLogs[connectionId] && (
+                  <TabPanel
+                    value={tabValue}
+                    key={connectionId}
+                    index={cIndex + 3}
+                    classes={classes}>
+                    <>
+                      <div className={classes.rightActionContainer}>
+                        <IconTextButton
+                          className={classes.refreshButton}
+                          onClick={handleDebugLogsRefresh(connectionId)}>
+                          <RefreshIcon /> Refresh
+                        </IconTextButton>
+                      </div>
+                      <CodePanel
+                        name="code"
+                        readOnly
+                        value={connectionDebugLogs[connectionId]}
+                        mode="javascript"
+                        overrides={{ useWorker: false }}
+                      />
+                    </>
+                  </TabPanel>
+                )
+            )}
+        </>
+      )}
     </Drawer>
   );
 }

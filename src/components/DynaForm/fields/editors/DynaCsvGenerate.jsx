@@ -1,118 +1,88 @@
-import { useState, Fragment, useEffect, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
-import CsvConfigEditorDialog from '../../../AFE/CsvConfigEditor/Dialog';
-import csvOptions from '../../../AFE/CsvConfigEditor/options';
+import React, { useState, } from 'react';
+import { FormLabel, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import FieldHelp from '../../FieldHelp';
+import DynaEditorWithFlowSampleData from '../DynaEditorWithFlowSampleData';
+
+const useStyles = makeStyles(theme => ({
+  dynaCsvGenerateWrapper: {
+    flexDirection: 'row !important',
+    width: '100%',
+    alignItems: 'center',
+  },
+  dynaCsvBtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  dynaCsvLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
+  },
+}));
 
 export default function DynaCsvGenerate(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
-    value = {},
     label,
     resourceId,
     flowId,
     resourceType,
     disabled,
+    helpKey,
+    options = {},
   } = props;
+  const { fields = {} } = options;
   const [showEditor, setShowEditor] = useState(false);
-  const [sampleDataLoaded, setSampleDataLoaded] = useState(false);
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
 
-  const dispatch = useDispatch();
-  /*
-   * Fetches Raw data - CSV file to be parsed based on the rules
-   */
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    })
-  );
-  const fetchSampleData = useCallback(() => {
-    dispatch(
-      actions.flowData.requestSampleData(
-        flowId,
-        resourceId,
-        resourceType,
-        'flowInput'
-      )
-    );
-  }, [dispatch, flowId, resourceId, resourceType]);
-
-  useEffect(() => {
-    if (!sampleDataLoaded) {
-      fetchSampleData();
-    }
-  }, [fetchSampleData, sampleDataLoaded]);
-  useEffect(() => {
-    if (!sampleDataLoaded && sampleData) {
-      setSampleDataLoaded(true);
-    }
-  }, [sampleData, sampleDataLoaded]);
   const handleClose = (shouldCommit, editorValues) => {
     if (shouldCommit) {
-      const {
-        rowDelimiter,
-        columnDelimiter,
-        includeHeader,
-        wrapWithQuotes,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        truncateLastRowDelimiter,
-      } = editorValues;
-
-      onFieldChange(id, {
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
-        includeHeader,
-        truncateLastRowDelimiter,
-        replaceTabWithSpace,
-        replaceNewlineWithSpace,
-        wrapWithQuotes,
+      Object.keys(fields).forEach(key => {
+        onFieldChange(`file.csv.${key}`, editorValues[key]);
       });
-
-      // On change of rules, trigger sample data update
-      // It calls processor on final rules to parse csv file
     }
 
     handleEditorClick();
   };
 
-  const stringifiedSampleData = sampleData
-    ? JSON.stringify(sampleData, null, 2)
-    : '';
-
   return (
-    <Fragment>
+    <>
       {showEditor && (
-        <CsvConfigEditorDialog
-          key={sampleDataLoaded}
-          title="CSV Generate Options"
+        <DynaEditorWithFlowSampleData
+          title="CSV generator helper"
           id={id + resourceId}
           mode="csv"
-          data={stringifiedSampleData}
-          resourceType={resourceType}
           csvEditorType="generate"
           /** rule to be passed as json */
-          rule={value}
+          rule={fields}
           onClose={handleClose}
           disabled={disabled}
+          flowId={flowId}
+          editorType="csvGenerate"
+          resourceId={resourceId}
+          resourceType={resourceType}
+          fieldId="file.csv"
         />
+
       )}
-      <Button
-        data-test={id}
-        variant="contained"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
-    </Fragment>
+      <div className={classes.dynaCsvGenerateWrapper}>
+        <FormLabel className={classes.dynaCsvLabel}>{label}</FormLabel>
+        <Button
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          className={classes.dynaCsvBtn}
+          onClick={handleEditorClick}>
+          Launch
+        </Button>
+
+        <FieldHelp {...props} helpKey={helpKey} />
+      </div>
+    </>
   );
 }

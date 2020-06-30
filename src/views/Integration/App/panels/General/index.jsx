@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
@@ -16,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
   formContent: {
     padding: theme.spacing(0, 2),
+  },
+  formGeneralPanel: {
+    minHeight: 250,
   },
 }));
 
@@ -57,6 +61,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
             fieldMeta={translatedMeta}
             integrationId={integrationId}
             isIAForm
+            className={classes.formGeneralPanel}
             storeId={storeId}
             formState={formState}
           />

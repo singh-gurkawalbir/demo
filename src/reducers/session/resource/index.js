@@ -1,10 +1,19 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
 export default function reducer(state = {}, action) {
-  const { type, tempId, id, resourceReferences, response } = action;
+  const {
+    type,
+    tempId,
+    id,
+    resourceReferences,
+    response,
+    parentId,
+    childId,
+  } = action;
   let newState;
 
   switch (type) {
@@ -41,6 +50,17 @@ export default function reducer(state = {}, action) {
       return produce(state, draft => {
         draft.numEnabledFlows = response;
       });
+    case actionTypes.CLEAR_CHILD_INTEGRATION:
+      return produce(state, draft => {
+        draft.parentChildMap = undefined;
+        delete draft.parentChildMap;
+      });
+
+    case actionTypes.UPDATE_CHILD_INTEGRATION:
+      return produce(state, draft => {
+        draft.parentChildMap = {};
+        draft.parentChildMap[parentId] = childId;
+      });
 
     default:
       return state;
@@ -56,26 +76,28 @@ export function createdResourceId(state, tempId) {
   return state[tempId];
 }
 
-export function resourceReferences(state) {
-  if (!state || !state.references) {
-    return null;
+export const resourceReferences = createSelector(
+  state => state && state.references,
+  references => {
+    if (!references) {
+      return null;
+    }
+
+    const referencesArray = [];
+
+    Object.keys(references).forEach(type =>
+      references[type].forEach(refObj => {
+        referencesArray.push({
+          resourceType: type,
+          id: refObj.id,
+          name: refObj.name,
+        });
+      })
+    );
+
+    return referencesArray;
   }
-
-  const { references } = state;
-  const referencesArray = [];
-
-  Object.keys(references).forEach(type =>
-    references[type].forEach(refObj => {
-      referencesArray.push({
-        resourceType: type,
-        id: refObj.id,
-        name: refObj.name,
-      });
-    })
-  );
-
-  return referencesArray;
-}
+);
 
 export function integratorLicenseActionMessage(state) {
   if (!state) {
@@ -85,15 +107,26 @@ export function integratorLicenseActionMessage(state) {
   return state.integratorLicenseActionMessage;
 }
 
-export function getNumEnabledFlows(state) {
-  if (!state || !state.numEnabledFlows) {
-    return defaultObject;
+export function getChildIntegrationId(state, parentId) {
+  if (!state || !state.parentChildMap) {
+    return;
   }
 
-  return {
-    numEnabledPaidFlows: state.numEnabledFlows.numEnabledPaidFlows || 0,
-    numEnabledSandboxFlows: state.numEnabledFlows.numEnabledSandboxFlows || 0,
-    numEnabledFreeFlows: state.numEnabledFlows.numEnabledFreeFlows || 0,
-  };
+  return state.parentChildMap[parentId];
 }
+
+export const getNumEnabledFlows = createSelector(
+  state => state && state.numEnabledFlows,
+  numEnabledFlows => {
+    if (!numEnabledFlows) {
+      return defaultObject;
+    }
+
+    return {
+      numEnabledPaidFlows: numEnabledFlows.numEnabledPaidFlows || 0,
+      numEnabledSandboxFlows: numEnabledFlows.numEnabledSandboxFlows || 0,
+      numEnabledFreeFlows: numEnabledFlows.numEnabledFreeFlows || 0,
+    };
+  }
+);
 // #endregion

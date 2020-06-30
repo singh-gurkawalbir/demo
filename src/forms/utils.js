@@ -123,6 +123,15 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
 };
 
+export const isExpansionPanelRequired = (meta, fieldStates) => {
+  const requiredFields = fieldStates.filter(field => field.required);
+  const { layout, fieldMap } = meta;
+
+  return requiredFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
+};
+
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldStates.filter(field => field.visible);
   const { layout, fieldMap } = meta;
@@ -138,12 +147,12 @@ export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
-    )
+    ) {
       acc[curr] = {
         ...fieldMap[curr],
         defaultDisabled: true,
       };
-    else {
+    } else {
       acc[curr] = {
         ...fieldMap[curr],
       };
@@ -283,8 +292,7 @@ export const sanitizePatchSet = ({
             .replace(/\//g, '.');
 
           // consider it as a remove patch
-          if (get(resource, modifiedPath))
-            removePatches.push({ path: patch.path, op: 'remove' });
+          if (get(resource, modifiedPath)) removePatches.push({ path: patch.path, op: 'remove' });
         } else if (
           !field ||
           field.defaultValue !== patch.value ||
@@ -343,8 +351,8 @@ const refGeneration = field => {
   const { fieldId, id, formId } = field;
 
   if (fieldId) return fieldId;
-  else if (id) return id;
-  else if (formId) return formId;
+  if (id) return id;
+  if (formId) return formId;
   throw new Error('cant generate reference');
 };
 
@@ -373,10 +381,16 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.resource = resource;
   } else if (newField.type === 'staticMapWidget') {
     newField.type = 'staticMap';
+  } else if (newField.type === 'textarea') {
+    newField.multiline = true;
+    newField.rowsMax = 10;
   }
 
   if (newField.disabled) {
     newField.defaultDisabled = true;
+  }
+  if (newField.hidden) {
+    newField.visible = false;
   }
 
   return newField;
@@ -433,11 +447,11 @@ export const translateDependencyProps = fieldMap => {
       Object.keys(dependencies).forEach(value => {
         const dependencyFields = dependencies[value].fields;
 
-        if (type === 'checkbox')
+        if (type === 'checkbox') {
           rules.push(
             ...(extractRules(dependencyFields, key, value === 'enabled') || [])
           );
-        else rules.push(...(extractRules(dependencyFields, key, value) || []));
+        } else rules.push(...(extractRules(dependencyFields, key, value) || []));
       });
 
       delete fieldMapCopy[key].dependencies;
@@ -496,8 +510,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
           },
         ],
       };
-    })
-    .filter(f => !f.hidden);
+    });
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 
@@ -511,8 +524,7 @@ const generateFieldsAndSections = (acc, field) => {
   ) {
     let expansionPanelTitle;
 
-    if (field.properties && field.properties.sectionName)
-      ({ sectionName: expansionPanelTitle } = field.properties);
+    if (field.properties && field.properties.sectionName) ({ sectionName: expansionPanelTitle } = field.properties);
     else expansionPanelTitle = field.title;
     const matchingContainer = acc.containers.find(
       container =>
@@ -601,14 +613,13 @@ export const integrationSettingsToDynaFormMetadata = (
     }));
   }
 
-  if (finalData.fieldMap)
-    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap) finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
-      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+      containers: [{ ...finalData.layout, label: 'Advanced' }],
     };
   }
 
@@ -725,6 +736,214 @@ export const conditionalLookupOptionsforRestProduction = [
     value: 'extract_not_empty',
   },
 ];
+export const sourceOptions = {
+  ftp: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
+  as2: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
+  s3: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
+  webhook: [
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'webhook',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'realtime',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'realtime',
+    },
+  ],
+  common: [
+    {
+      label: 'Export records from source application',
+      value: 'exportRecords',
+    },
+  ],
+};
+export const destinationOptions = {
+  ftp: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+  ],
+  s3: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+  ],
+  http: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  rest: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  netsuite: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  salesforce: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+
+  as2: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+  ],
+  common: [
+    {
+      label: 'Import records into destination application',
+      value: 'importRecords',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+  ],
+};
+export const alterFileDefinitionRulesVisibility = fields => {
+  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
+  const fileDefinitionRulesField = fields.find(
+    field => field.id === 'file.filedefinition.rules'
+  );
+  const fileType = fields.find(field => field.id === 'file.type');
+  const fileDefinitionFieldsMap = {
+    filedefinition: 'edix12.format',
+    fixed: 'fixed.format',
+    'delimited/edifact': 'edifact.format',
+  };
+
+  // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
+  // Whether resource is in new or edit stage -- inferred by userDefinitionId
+  if (
+    fileType &&
+    fileType.value &&
+    !fileDefinitionRulesField.userDefinitionId
+  ) {
+    // Delete existing visibility rules
+    delete fileDefinitionRulesField.visibleWhenAll;
+    delete fileDefinitionRulesField.visibleWhen;
+
+    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
+      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === formatFieldType
+      );
+
+      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+    } else {
+      fileDefinitionRulesField.visible = false;
+    }
+  }
+  // fileDefinitionRulesField should be hidden when there is no file type.
+
+  if (fileType && !fileType.value) {
+    fileDefinitionRulesField.visible = false;
+  }
+  // userDefinitionId exists only in edit mode.
+
+  if (fileDefinitionRulesField.userDefinitionId) {
+    // make visibility of format fields false incase of edit mode of file adaptors
+    Object.values(fileDefinitionFieldsMap).forEach(field => {
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === field
+      );
+
+      delete fileDefinitionFormatField.visibleWhenAll;
+      fileDefinitionFormatField.visible = false;
+    });
+  }
+};
 
 // #END_REGION Integration App from utils
 

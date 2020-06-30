@@ -1,4 +1,4 @@
-import { useCallback, Fragment, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Typography, Tooltip, Button } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -110,6 +110,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     },
     [isNotYetSupported]
   );
+  // IO-13418
+  const getApplication = application =>
+    application === 'magento' ? 'magento1' : application;
   // #region Drag&Drop related
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
@@ -122,10 +125,10 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
 
   // #endregion
   return (
-    <Fragment>
+    <>
       {showNotYetSupportedDialog && (
         <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          <Fragment>Not Yet Available</Fragment>
+          <>Not Yet Available</>
           <Typography>
             This Integration{tile._connectorId && ' App'} is not yet available
             from this UI. To access your Integration
@@ -162,13 +165,17 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
               tile.connector.applications &&
               tile.connector.applications.length > 1 && (
                 <ApplicationImages>
-                  <ApplicationImg type={tile.connector.applications[0]} />
+                  <ApplicationImg
+                    type={getApplication(tile.connector.applications[0])}
+                  />
                   <span>
                     <AddIcon />
                   </span>
-                  <ApplicationImg type={tile.connector.applications[1]} />
+                  <ApplicationImg
+                    type={getApplication(tile.connector.applications[1])}
+                  />
                 </ApplicationImages>
-              )}
+            )}
           </Content>
           <Footer>
             <FooterActions>
@@ -208,7 +215,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
           </Footer>
         </HomePageCardContainer>
       </div>
-    </Fragment>
+    </>
   );
 }
 

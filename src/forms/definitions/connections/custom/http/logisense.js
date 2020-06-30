@@ -11,24 +11,59 @@ export default {
       ...formValues,
       '/type': 'http',
       '/assistant': 'logisense',
-      '/http/auth/type': 'custom',
+      '/http/auth/type': 'token',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `http://${formValues['/storeURL']}`,
+      '/http/baseURI': `https://${formValues['/storeURL']}`,
       '/http/ping/relativeURI': '/ResourceServer/api/v1/Account',
-      '/http/ping/method': 'POST',
-      '/http/ping/body': JSON.stringify(pingData),
+      '/http/ping/method': 'GET',
+      '/http/disableStrictSSL': `${formValues['/environment']}` === 'sandbox',
+      '/http/auth/token/location': 'header',
+      '/http/auth/token/scheme': 'Bearer',
+      '/http/auth/token/headerName': 'Authorization',
       '/http/headers': [{ name: 'Accept', value: 'application/json' }],
+      '/http/auth/token/refreshRelativeURI': `https://${
+        formValues['/storeURL']
+      }/AuthorizationServer/Access/Login`,
+      '/http/auth/token/refreshBody': JSON.stringify(pingData),
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
     };
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    environment: {
+      id: 'environment',
+      type: 'select',
+      label: 'Account type',
+      helpKey: 'logisense.connection.environment',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'Production', value: 'production' },
+            { label: 'Sandbox', value: 'sandbox' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const disableStrictSSL = r && r.http && r.http.disableStrictSSL;
+
+        if (disableStrictSSL) {
+          if (disableStrictSSL === true) {
+            return 'sandbox';
+          }
+
+          return 'production';
+        }
+      },
+    },
     storeURL: {
       id: 'storeURL',
       startAdornment: 'https://',
       type: 'text',
       label: 'Store URL',
       required: true,
-      helpKey: 'logisense.connection.http.storeURL',
+      helpKey: 'logisense.connection.storeURL',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -69,20 +104,41 @@ export default {
       inputType: 'password',
       defaultValue: '',
       helpKey: 'logisense.connection.http.encrypted.clientId',
+      description:
+        'Note: for security reasons this field must always be re-entered.',
+    },
+    'http.auth.token.token': {
+      fieldId: 'http.auth.token.token',
+      type: 'tokengen',
+      inputType: 'password',
+      resourceId: r => r._id,
+      disabledWhen: [
+        { field: 'http.unencrypted.username', is: [''] },
+        { field: 'http.encrypted.password', is: [''] },
+        { field: 'http.encrypted.clientId', is: [''] },
+      ],
+      label: 'Generate token',
+      defaultValue: '',
+      required: true,
+    },
+    application: {
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'storeURL',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-      'http.encrypted.clientId',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment',
+          'storeURL',
+          'http.unencrypted.username',
+          'http.encrypted.password',
+          'http.encrypted.clientId',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -83,6 +83,7 @@ function InputFilterDialog({
       insertStubKey="filter"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      flowId={flowId}
     />
   );
 }
@@ -90,7 +91,7 @@ function InputFilterDialog({
 function InputFilter(props) {
   const { open } = props;
 
-  return <Fragment>{open && <InputFilterDialog {...props} />}</Fragment>;
+  return <>{open && <InputFilterDialog {...props} />}</>;
 }
 
 export default {

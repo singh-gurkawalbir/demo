@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Form } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -11,7 +11,7 @@ import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
-    maxHeight: `100%`,
+    maxHeight: '100%',
     overflowY: 'auto',
     padding: theme.spacing(1),
     border: 'none',
@@ -26,7 +26,12 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     padding: theme.spacing(2, 0),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  resourceFormButtons: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
 }));
 const DynaForm = props => {
   const {
@@ -37,6 +42,8 @@ const DynaForm = props => {
     resourceId,
     resourceType,
     full,
+    isResourceForm,
+    proceedOnChange,
     ...rest
   } = props;
   const classes = useStyles();
@@ -44,7 +51,7 @@ const DynaForm = props => {
   let { layout } = fieldMeta;
   const { fieldMap } = fieldMeta;
   const { formState } = rest;
-  const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType);
+  const renderer = getRenderer(editMode, fieldMeta, resourceId, resourceType, proceedOnChange);
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy
@@ -81,7 +88,14 @@ const DynaForm = props => {
       {/* The children are action buttons for the form */}
       {children && (
         <div className={classes.actions}>
-          <ButtonGroup>{children}</ButtonGroup>
+          {/* Incase of a resource form,  isResourceForm property allows the button group container to be split left and right
+            * based on primary and secondary action buttons
+            */}
+          <ButtonGroup
+            className={clsx({
+              [classes.resourceFormButtons]: isResourceForm
+            })}>{children}
+          </ButtonGroup>
         </div>
       )}
     </Form>
@@ -101,13 +115,11 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     selectors.resource(state, resourceType, resourceId)
   );
   // pass in the integration Id to find access level of its associated forms
-  // eslint-disable-next-line prettier/prettier
   const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
     state => selectors.formAccessLevel(state, integrationId, resource, disabled)
   );
   const updatedFieldMeta = useMemo(() => {
-    if (disableAllFieldsExceptClocked)
-      return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
+    if (disableAllFieldsExceptClocked) return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);
 
     return fieldMeta;
   }, [disableAllFieldsExceptClocked, fieldMeta, resourceType]);

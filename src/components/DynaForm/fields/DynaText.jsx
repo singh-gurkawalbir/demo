@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
@@ -21,10 +22,6 @@ const useStyles = makeStyles(theme => ({
   formField: {
     width: '100%',
   },
-  startAdornmentText: {
-    whiteSpace: 'nowrap',
-    minWidth: theme.spacing(10),
-  },
   subSection: {
     maxWidth: '95%',
     marginLeft: '5%',
@@ -32,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   dynaFieldCopyClipboard: {
     display: 'flex',
     width: '100%',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     '& > div:first-child': {
       flex: 1,
     },
@@ -44,8 +41,19 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   dynaTextLabelWrapper: {
-    display: 'flex',
+    display: props => (props.label ? 'flex' : 'none'),
     alignItems: 'flex-start',
+    '&:empty': {
+      display: 'none',
+    },
+  },
+  startAdornmentWrapper: {
+    marginTop: '0px !important',
+  },
+  textAreaField: {
+    '& > .MuiFilledInput-multiline': {
+      paddingRight: theme.spacing(4),
+    },
   },
 }));
 
@@ -111,7 +119,7 @@ function DynaText(props) {
     onFieldChange(id, value ? value.split(delimiter) : value);
   };
 
-  const classes = useStyles();
+  const classes = useStyles(props);
   const inpValue = value === '' && inputType === 'number' ? 0 : value;
   const InputProps = useMemo(() => {
     const props = {
@@ -167,7 +175,7 @@ function DynaText(props) {
         value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
-        className={clsx(classes.formField, className)}
+        className={clsx(classes.formField, {[classes.textAreaField]: multiline }, className)}
       />
       <ErroredMessageComponent
         isValid={isValid}

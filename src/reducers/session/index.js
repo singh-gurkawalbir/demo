@@ -3,6 +3,7 @@ import stage, * as fromStage from './stage';
 import filters, * as fromFilters from './filters';
 import editors, * as fromEditors from './editors';
 import metadata, * as fromMetadata from './metadata';
+import editorSampleData, * as fromEditorSampleData from './editorSampleData';
 import connectors, * as fromConnectors from './connectors';
 import connections, * as fromConnections from './connections';
 import resourceForm, * as fromResourceForm from './resourceForm';
@@ -12,11 +13,13 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import importSampleData, * as fromImportSampleData from './sampleData/imports';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
+import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
@@ -24,10 +27,13 @@ import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
+import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import customSettings, * as fromCustomSettings from './customSettings';
+import recycleBin, * as fromRecycleBin from './recycleBin';
 
 export default combineReducers({
+  recycleBin,
   stage,
   filters,
   editors,
@@ -42,7 +48,9 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  importSampleData,
   flowData,
+  flowMetrics,
   integrationApps,
   templates,
   oAuthAuthorize,
@@ -53,8 +61,10 @@ export default combineReducers({
   responseMapping,
   fileUpload,
   jobErrorsPreview,
+  errorManagement,
   customSettings,
   exportData: exportDataReducer,
+  editorSampleData,
 });
 
 // #region PUBLIC SELECTORS
@@ -88,6 +98,10 @@ export function tokenRequestLoading(state, resourceId) {
   );
 }
 
+export function recycleBinState(state) {
+  return fromRecycleBin.recycleBinState(state && state.recycleBin);
+}
+
 export function filter(state, name) {
   return fromFilters.filter(state && state.filters, name);
 }
@@ -110,6 +124,17 @@ export function editorPatchSet(state, id) {
 
 export function editorPatchStatus(state, id) {
   return fromEditors.editorPatchStatus(state && state.editors, id);
+}
+
+export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
+  return fromEditorSampleData.getEditorSampleData(
+    state && state.editorSampleData,
+    {
+      flowId,
+      resourceId,
+      fieldType,
+    }
+  );
 }
 
 export function mapping(state, id) {
@@ -147,6 +172,18 @@ export function getSearchCriteria(state, id) {
 
 export function processorRequestOptions(state, id) {
   return fromEditors.processorRequestOptions(state && state.editors, id);
+}
+
+export function stagedState(state) {
+  return state && state.stage;
+}
+
+export function stagedIdState(state, id) {
+  return fromStage.stagedIdState(state && state.stage, id);
+}
+
+export function makeTransformStagedResource() {
+  return fromStage.makeTransformStagedResource();
 }
 
 export function stagedResource(state, id, scope) {
@@ -458,6 +495,13 @@ export function uninstallData(state, id, storeId) {
   );
 }
 
+export function uninstall2Data(state, id) {
+  return fromIntegrationApps.uninstall2Data(
+    state && state.integrationApps,
+    id,
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
@@ -478,6 +522,10 @@ export function createdResourceId(state, tempId) {
 
 export function integratorLicenseActionMessage(state) {
   return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromResource.getChildIntegrationId(state && state.resource, parentId);
 }
 
 export function resourceReferences(state) {
@@ -520,6 +568,13 @@ export function getLastExportDateTime(state, flowId) {
   );
 }
 
+export function retryDataContext(state, retryId) {
+  return fromErrorManagement.retryDataContext(
+    state && state.errorManagement,
+    retryId
+  );
+}
+
 export function getTransferPreviewData(state) {
   return fromTransfers.getPreviewData(state && state.transfers);
 }
@@ -535,6 +590,51 @@ export function getJobErrorsPreview(state, jobId) {
   );
 }
 
+export function resourceErrors(state, { flowId, resourceId, options }) {
+  return fromErrorManagement.resourceErrors(state && state.errorManagement, {
+    flowId,
+    resourceId,
+    options,
+  });
+}
+
+export function isAllErrorsSelected(
+  state,
+  { flowId, resourceId, isResolved, errorIds }
+) {
+  return fromErrorManagement.isAllErrorsSelected(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      isResolved,
+      errorIds,
+    }
+  );
+}
+
+export function errorMap(state, resourceId) {
+  return fromErrorManagement.errorMap(
+    state && state.errorManagement,
+    resourceId
+  );
+}
+
+export function errorActionsContext(
+  state,
+  { flowId, resourceId, actionType, errorType }
+) {
+  return fromErrorManagement.errorActionsContext(
+    state && state.errorManagement,
+    {
+      flowId,
+      resourceId,
+      actionType,
+      errorType,
+    }
+  );
+}
+
 export const exportData = (state, identifier) =>
   fromExportData.exportData(state && state.exportData, identifier);
 
@@ -544,4 +644,20 @@ export function customSettingsForm(state, resourceId) {
     resourceId
   );
 }
+
+export function flowMetricsData(state, flowId, measurement) {
+  return fromFlowMetrics.flowMetricsData(
+    state && state.flowMetrics,
+    flowId,
+    measurement
+  );
+}
+
+export function integrationAppImportMetadata(state, importId) {
+  return fromImportSampleData.integrationAppImportMetadata(
+    state && state.importSampleData,
+    importId
+  );
+}
+
 // #endregion

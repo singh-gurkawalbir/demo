@@ -173,9 +173,16 @@ import googlemail from './googlemail';
 import surveymonkey from './surveymonkey';
 import inspectorio from './inspectorio';
 import orderful from './orderful';
+import gorgias from './gorgias';
+import walmart from './walmart';
 import logisense from './logisense';
+import joor from './joor';
+import sapbydesign from './sapbydesign';
+import concurinvoice from './concurinvoice';
+import concurexpense from './concurexpense';
 
 export default {
+  concurexpense,
   bigquery,
   googlemail,
   surveymonkey,
@@ -350,5 +357,10 @@ export default {
   zendesksell,
   inspectorio,
   orderful,
+  gorgias,
+  walmart,
   logisense,
+  joor,
+  sapbydesign,
+  concurinvoice,
 };

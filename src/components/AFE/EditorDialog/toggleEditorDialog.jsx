@@ -1,4 +1,4 @@
-import { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -16,7 +16,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
-import TextToggle from '../../../components/TextToggle';
+import TextToggle from '../../TextToggle';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
@@ -57,11 +57,20 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
+  wrapper: {
+    '& Button': {
+      marginRight: '10px',
+    },
+    '& Button:last-child': {
+      marginRight: '0px',
+    },
+  }
 }));
 
 export default function ToggleEditorDialog(props) {
@@ -81,6 +90,7 @@ export default function ToggleEditorDialog(props) {
     helpTitle,
     helpKey,
     hidePreviewAction = false,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -130,15 +140,16 @@ export default function ToggleEditorDialog(props) {
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
-        title: 'Confirm',
-        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'No',
+            label: 'Yes, cancel',
+            onClick: onClose,
           },
           {
-            label: 'Yes',
-            onClick: onClose,
+            label: 'No, go back',
+            color: 'secondary',
           },
         ],
       });
@@ -252,9 +263,41 @@ export default function ToggleEditorDialog(props) {
           cloneElement(children[state.activeEditorIndex], {
             layout,
             editorId: `${id}-${state.activeEditorIndex}`,
-          })}
+          })
+}
       </DialogContent>
       <DialogActions className={classes.actions}>
+        <div className={classes.wrapper}>
+          <EditorSaveButton
+            key={activeEditorId}
+            id={activeEditorId}
+            variant="outlined"
+            color="primary"
+            dataTest="saveEditor"
+            disabled={disableSave}
+            submitButtonLabel="Save"
+            flowId={flowId}
+        />
+          <EditorSaveButton
+            key={`${activeEditorId}-close`}
+            id={activeEditorId}
+            variant="outlined"
+            color="secondary"
+            dataTest="saveAndCloseEditor"
+            disabled={disableSave}
+            onClose={handleClose}
+            submitButtonLabel="Save & close"
+            flowId={flowId}
+        />
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {showPreviewAction && (
           <Button
             variant="outlined"
@@ -264,24 +307,6 @@ export default function ToggleEditorDialog(props) {
             Preview
           </Button>
         )}
-        <EditorSaveButton
-          key={activeEditorId}
-          id={activeEditorId}
-          variant="outlined"
-          color="primary"
-          dataTest="saveEditor"
-          disabled={disableSave}
-          onClose={handleClose}
-          submitButtonLabel="Save"
-        />
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
       </DialogActions>
     </Dialog>
   );

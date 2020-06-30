@@ -1,5 +1,5 @@
 import Iframe from 'react-iframe';
-import { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -159,7 +159,6 @@ export default function NetSuiteMappingAssistant({
     !connection ||
     !connection.netsuite ||
     !connection.netsuite.account ||
-    !connection.netsuite.environment ||
     !connection.netsuite.dataCenterURLs ||
     !connection.netsuite.dataCenterURLs.systemDomain
   ) {
@@ -169,17 +168,17 @@ export default function NetSuiteMappingAssistant({
   if (!netSuiteRecordMetadata) {
     return (
       <Typography>
-        Loading record metadata...
+        Loading
         <Spinner />
       </Typography>
     );
   }
 
   return (
-    <Fragment>
+    <>
       {netSuiteFormIsLoading && (
         <Typography>
-          Loading {netSuiteRecordMetadata.label} form...
+          Loading
           {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
           <Spinner />
         </Typography>
@@ -198,7 +197,7 @@ export default function NetSuiteMappingAssistant({
       )}
 
       {!showNetSuiteForm && (
-        <Fragment>
+        <>
           <div className={classes.NetsuiteRules}>
             <Button
               onClick={handleLaunchAssistantClick}
@@ -226,8 +225,8 @@ export default function NetSuiteMappingAssistant({
               </li>
             </ol>
           </div>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

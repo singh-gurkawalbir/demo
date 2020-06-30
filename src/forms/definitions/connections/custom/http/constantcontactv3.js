@@ -5,7 +5,7 @@ export default {
     '/assistant': 'constantcontactv3',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.cc.email/v3/`,
+    '/http/baseURI': 'https://api.cc.email/v3/',
     '/http/auth/oauth/authURI': 'https://api.cc.email/v3/idfed',
     '/http/auth/oauth/tokenURI':
       'https://idfed.constantcontact.com/as/token.oauth2',
@@ -17,12 +17,15 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

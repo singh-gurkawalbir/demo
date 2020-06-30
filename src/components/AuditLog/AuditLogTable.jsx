@@ -1,91 +1,51 @@
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import TablePagination from '@material-ui/core/TablePagination';
-import { withStyles } from '@material-ui/core/styles';
-import { withSnackbar } from 'notistack';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
-import CeligoTable from '../../components/CeligoTable';
+import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
+import ShowMoreDrawer from '../drawer/ShowMore';
 
-const mapStateToProps = (
-  state,
-  { resourceType, resourceId, filters, options }
-) => {
-  const preferences = selectors.userProfilePreferencesProps(state);
-  const auditLogs = selectors.auditLogs(
-    state,
-    resourceType,
-    resourceId,
-    filters,
-    options
-  );
 
-  return {
-    preferences,
-    auditLogs,
-  };
-};
-
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     marginLeft: theme.spacing(1),
   },
 
   tablePaginationRoot: { float: 'right' },
-}))
-class AuditLogTable extends Component {
-  state = {
-    page: 0,
-    rowsPerPage: 10,
-  };
+}));
 
-  handleChangePage = (event, newPage) => {
-    this.setState({ page: newPage });
-  };
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
-  };
+export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {
+  const classes = useStyles();
+  const filterKey = `${resourceType}-${resourceId}-auditLogs`;
+  const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state));
+  const {logs: auditLogs, count, totalCount} = useSelector(state =>
+    selectors.auditLogs(
+      state,
+      resourceType,
+      resourceId,
+      filters,
+      {...options, take}
+    ));
 
-  render() {
-    const { classes, auditLogs } = this.props;
-    const { rowsPerPage, page } = this.state;
-    const auditLogsInCurrentPage =
-      auditLogs.slice(page * rowsPerPage, (page + 1) * rowsPerPage) || [];
+  return (
+    <>
+      <div className={classes.root}>
 
-    return (
-      <Fragment>
-        <div className={classes.root}>
-          <TablePagination
-            classes={{ root: classes.tablePaginationRoot }}
-            rowsPerPageOptions={[10, 25, 50, 100]}
-            component="div"
-            count={auditLogs.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            backIconButtonProps={{
-              'aria-label': 'Previous Page',
-            }}
-            nextIconButtonProps={{
-              'aria-label': 'Next Page',
-            }}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        <CeligoTable
+          data={auditLogs}
+          filterKey={filterKey}
+          {...metadata}
+          actionProps={{ resourceType, resourceId, filters, options, preferences, resourceDetails }}
           />
-          <CeligoTable
-            data={auditLogsInCurrentPage}
-            {...metadata}
-            actionProps={{ ...this.props }}
-          />
-        </div>
-      </Fragment>
-    );
-  }
+        <ShowMoreDrawer
+          filterKey={filterKey}
+          count={count}
+          maxCount={totalCount}
+        />
+      </div>
+    </>
+  );
 }
-
-export default withSnackbar(
-  connect(
-    mapStateToProps,
-    null
-  )(AuditLogTable)
-);

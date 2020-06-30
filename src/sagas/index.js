@@ -18,9 +18,11 @@ import connectorSagas from './connectors';
 import { resourceFormSagas } from './resourceForm';
 import { userSagas } from './users';
 import { jobSagas } from './jobs';
+import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editorSagas from './editor';
+import editorSampleData from './editorSampleData';
 import {
   onRequestSaga,
   onSuccessSaga,
@@ -49,6 +51,9 @@ import * as selectors from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { transferSagas } from './transfer';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
+import openErrorsSagas from './errorManagement/openErrors';
+import errorDetailsSagas from './errorManagement/errorDetails';
+import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
 
@@ -91,8 +96,6 @@ export function* apiCallWithRetry(args) {
     const { data } = apiResp.response;
 
     return data;
-  } catch (error) {
-    throw error;
   } finally {
     if (yield cancelled()) {
       // yield cancelled is true when the saga gets cancelled
@@ -102,8 +105,7 @@ export function* apiCallWithRetry(args) {
       const status = yield select(selectors.commStatusPerPath, path, method);
 
       // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS)
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
+      if (status !== COMM_STATES.SUCCESS) yield put(actions.api.complete(path, method, 'Request Aborted'));
     }
   }
 }
@@ -132,6 +134,7 @@ export default function* rootSaga() {
     ...resourceFormSagas,
     ...integrationAppsSagas,
     ...jobSagas,
+    ...flowMetricSagas,
     ...flowSagas,
     ...agentSagas,
     ...uploadFileSagas,
@@ -149,7 +152,11 @@ export default function* rootSaga() {
     ...mappingSagas,
     ...responseMappingSagas,
     ...jobErrorsPreviewSagas,
+    ...openErrorsSagas,
+    ...errorDetailsSagas,
+    ...errorRetrySagas,
     ...customSettingsSagas,
     ...exportDataSagas,
+    ...editorSampleData,
   ]);
 }

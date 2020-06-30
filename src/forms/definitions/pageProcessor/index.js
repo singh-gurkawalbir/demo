@@ -1,8 +1,6 @@
-import applications from '../../../constants/applications';
+import {applicationsList} from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-
-const visibleWhenHasApp = { field: 'application', isNot: [''] };
 
 export default {
   init: meta => meta,
@@ -19,17 +17,23 @@ export default {
     // used by the resource form code within the panel
     // component of the <ResourceDrawer> to properly
     // handle this special case.
+
     if (importId || exportId) {
       return { '/resourceId': importId || exportId };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
       '/adaptorType': `${appTypeToAdaptorType[app.type]}${
-        resourceType === 'exports' ? 'Export' : 'Import'
+        ['importRecords', 'transferFiles'].indexOf(resourceType) >= 0
+          ? 'Import'
+          : 'Export'
       }`,
     };
+
+    newValues['/resourceType'] = resourceType;
 
     if (newValues['/adaptorType'] === 'NetSuiteImport') {
       newValues['/adaptorType'] = 'NetSuiteDistributedImport';
@@ -38,13 +42,16 @@ export default {
     if (app.assistant) {
       newValues['/assistant'] = app.assistant;
     }
-
-    // On creation of a new page processor lookup,  isLookup is set true
-    if (resourceType === 'exports') {
-      newValues['/isLookup'] = true;
+    // If there is no assistant for the import, we need to show generic adaptor form
+    // we are patching useTechAdaptorForm field to not to show default assistant form
+    if ((!app.import || !app.export) && app.assistant) {
+      newValues['/useTechAdaptorForm'] = true;
     }
 
-    // console.log('presave values', newValues);
+    // On creation of a new page processor lookup,  isLookup is set true
+    if (['lookupRecords', 'lookupFiles'].indexOf(resourceType) >= 0) {
+      newValues['/isLookup'] = true;
+    }
 
     return newValues;
   },
@@ -52,21 +59,13 @@ export default {
     resourceType: {
       id: 'resourceType',
       name: 'resourceType',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'destination',
       label: 'What would you like to do?',
+      refreshOptionsOnChangesTo: ['application'],
       required: true,
-      defaultValue: r => (r && r.resourceType) || 'imports',
-      options: [
-        {
-          items: [
-            { label: 'Import data into destination app', value: 'imports' },
-            {
-              label: 'Lookup additional data (per record)',
-              value: 'exports',
-            },
-          ],
-        },
-      ],
+      visibleWhenAll: [{ field: 'application', isNot: [''] }],
+      placeholder: 'Please select',
     },
     application: {
       id: 'application',
@@ -76,7 +75,11 @@ export default {
       refreshOptionsOnChangesTo: ['resourceType'],
       placeholder:
         'Choose application or start typing to browse 150+ applications',
-      defaultValue: r => (r && r.application) || '',
+      defaultValue: r => {
+        if (!r) return '';
+
+        return r.rdbmsAppType || r.application || '';
+      },
       required: true,
     },
 
@@ -90,11 +93,16 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+        'importId',
+      ],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['imports'] },
+        { field: 'resourceType', is: ['importRecords', 'transferFiles'] },
       ],
     },
 
@@ -108,11 +116,16 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'resourceType'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'resourceType',
+        'exportId',
+      ],
       visibleWhenAll: [
         { field: 'application', isNot: [''] },
         { field: 'connection', isNot: [''] },
-        { field: 'resourceType', is: ['exports'] },
+        { field: 'resourceType', is: ['lookupRecords', 'lookupFiles'] },
       ],
     },
 
@@ -127,26 +140,39 @@ export default {
       allowNew: true,
       allowEdit: true,
       refreshOptionsOnChangesTo: ['application'],
-      visibleWhenAll: [visibleWhenHasApp],
+      visibleWhenAll: [
+        { field: 'application', isNot: [''] },
+        { field: 'resourceType', isNot: [''] },
+      ],
     },
   },
   layout: {
-    fields: [
-      'resourceType',
-      'application',
-      'connection',
-      'existingImport',
-      'existingExport',
+    type: 'box',
+    containers: [
+      {
+        fields: [
+          'application',
+          'resourceType',
+          'connection',
+          'existingImport',
+          'existingExport',
+        ],
+      },
     ],
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
     const connectionField = fields.find(field => field.id === 'connection');
-    // const resourceTypeField = fields.find(field => field.id === 'resourceType');
     const adaptorTypeSuffix = fieldId === 'importId' ? 'Import' : 'Export';
+    const applications = applicationsList();
     const app = appField
       ? applications.find(a => a.id === appField.value) || {}
       : {};
+    const resourceTypeField = fields.find(field => field.id === 'resourceType');
+
+    if (fieldId === 'resourceType') {
+      return { selectedApplication: app };
+    }
 
     if (fieldId === 'connection') {
       const expression = [];
@@ -177,14 +203,31 @@ export default {
 
       if (!adaptorTypePrefix) return;
       const expression = [];
-
-      expression.push({
-        adaptorType: `${adaptorTypePrefix}${adaptorTypeSuffix}`,
-      });
+      let adaptorType = `${adaptorTypePrefix}${adaptorTypeSuffix}`;
 
       if (fieldId === 'exportId') {
         expression.push({ isLookup: true });
       }
+
+      if (['rest', 'http', 'salesforce', 'netsuite'].indexOf(app.type) >= 0) {
+        if (resourceTypeField.value === 'importRecords') {
+          expression.push({ blobKeyPath: { $exists: false } });
+
+          if (adaptorType === 'NetSuiteImport') {
+            adaptorType = 'NetSuiteDistributedImport';
+          }
+        } else if (resourceTypeField.value === 'transferFiles') {
+          expression.push({ blobKeyPath: { $exists: true } });
+        } else if (resourceTypeField.value === 'lookupRecords') {
+          expression.push({ type: { $ne: 'blob' } });
+        } else if (resourceTypeField.value === 'lookupFiles') {
+          expression.push({ type: 'blob' });
+        }
+      }
+
+      expression.push({
+        adaptorType,
+      });
 
       if (connectionField.value) {
         expression.push({ _connectionId: connectionField.value });
@@ -196,18 +239,15 @@ export default {
 
       expression.push({ _connectorId: { $exists: false } });
       const filter = { $and: expression };
+      let importLabel = `Would you like to use an existing ${
+        resourceTypeField.value === 'transferFiles' ? 'transfer' : 'import'
+      }?`;
 
-      return { filter, appType: app.type };
-    }
+      if (fieldId === 'exportId') {
+        importLabel = 'Would you like to use an existing lookup?';
+      }
 
-    if (fieldId === 'application') {
-      const resourceTypeField = fields.find(
-        field => field.id === 'resourceType'
-      );
-
-      return {
-        appType: resourceTypeField.value === 'exports' ? 'export' : 'import',
-      };
+      return { filter, appType: app.type, label: importLabel };
     }
 
     return null;

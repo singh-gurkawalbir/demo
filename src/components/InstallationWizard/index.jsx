@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -18,7 +18,7 @@ import ResourceSetupDrawer from '../ResourceSetup';
 import InstallationStep from '../InstallStep';
 import resourceConstants from '../../forms/constants/connection';
 import {
-  getResourceSubType,
+  getConnectionType,
   MODEL_PLURAL_TO_LABEL,
   generateNewId,
 } from '../../utils/resource';
@@ -47,13 +47,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
 }));
-const getConnectionType = connection => {
-  const { assistant, type } = getResourceSubType(connection);
-
-  if (assistant) return assistant;
-
-  return type;
-};
 
 export default function InstallationWizard(props) {
   const classes = useStyles();
@@ -68,6 +61,15 @@ export default function InstallationWizard(props) {
     handleSetupComplete,
     variant,
   } = props;
+  const oAuthApplications = useMemo(
+    () => [
+      ...resourceConstants.OAUTH_APPLICATIONS,
+      'netsuite-oauth',
+      'shopify-oauth',
+      'acumatica-oauth',
+    ],
+    []
+  );
   const [installInProgress, setInstallInProgress] = useState(false);
   const [connection, setSelectedConnectionId] = useState(null);
   const [stackId, setShowStackDialog] = useState(null);
@@ -210,10 +212,10 @@ export default function InstallationWizard(props) {
     props.history.goBack();
   };
 
-  const handleSubmitComplete = (connectionId, isAuthorized) => {
+  const handleSubmitComplete = (connectionId, createdConnectionDoc, isAuthorized) => {
     if (
-      resourceConstants.OAUTH_APPLICATIONS.includes(
-        getConnectionType(connection.doc)
+      oAuthApplications.includes(
+        getConnectionType(createdConnectionDoc)
       ) &&
       !isAuthorized
     ) {

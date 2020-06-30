@@ -15,7 +15,7 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
-} from './';
+} from '.';
 
 describe('getMatchingRoute', () => {
   const testCases = [
@@ -1148,7 +1148,7 @@ describe('generateValidReactFormFieldId', () => {
 });
 
 describe('convertToReactFormFields', () => {
-  let testCases = [
+  const testCases = [
     [
       {
         fieldDetailsMap: {},
@@ -1169,7 +1169,8 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: true,
             readOnly: false,
           },
@@ -1180,7 +1181,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1196,7 +1197,8 @@ describe('convertToReactFormFields', () => {
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: false,
             readOnly: false,
             defaultValue: 'abc',
@@ -1208,7 +1210,7 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1222,14 +1224,16 @@ describe('convertToReactFormFields', () => {
           f2: {
             id: 'f2',
             name: 'f2',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: true,
             readOnly: false,
           },
           f1: {
             id: 'f1',
             name: 'f1',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             required: false,
             readOnly: false,
           },
@@ -1248,11 +1252,11 @@ describe('convertToReactFormFields', () => {
         fieldDetailsMap: {
           f1: {
             id: 'f1',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           f2: {
             id: 'f2',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1267,9 +1271,11 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1313,15 +1319,18 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_readOnly2: {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1382,7 +1391,8 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             // defaultValue: 'something else',
           },
         },
@@ -1418,11 +1428,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_select: {
             id: 'id_select',
@@ -1430,7 +1440,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1444,7 +1454,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1482,7 +1492,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'text',
+              fieldType: 'textwithflowsuggestion',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',
@@ -1520,9 +1530,11 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_multiselect: {
             id: 'id_multiselect',
@@ -1566,15 +1578,18 @@ describe('convertToReactFormFields', () => {
             placeholder: 'some placeholder',
             required: true,
             readOnly: false,
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_readOnly2: {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
           },
           id_checkbox: {
             id: 'id_checkbox',
@@ -1635,7 +1650,8 @@ describe('convertToReactFormFields', () => {
             name: 'id_some/thing',
             required: false,
             readOnly: false,
-            type: 'text',
+            type: 'textwithflowsuggestion',
+            showLookup: false,
             defaultValue: 'something else',
           },
         },
@@ -1671,11 +1687,11 @@ describe('convertToReactFormFields', () => {
           },
           id_readOnly1: {
             id: 'id_readOnly1',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_readOnly2: {
             id: 'id_readOnly2',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_select: {
             id: 'id_select',
@@ -1683,7 +1699,7 @@ describe('convertToReactFormFields', () => {
           },
           id_text: {
             id: 'id_text',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
           id_textarea: {
             id: 'id_textarea',
@@ -1697,7 +1713,7 @@ describe('convertToReactFormFields', () => {
           },
           'id_some/thing': {
             id: 'id_some.thing',
-            inputType: 'text',
+            inputType: 'textwithflowsuggestion',
           },
         },
       },
@@ -1735,7 +1751,7 @@ describe('convertToReactFormFields', () => {
             },
             {
               id: 'id_text',
-              fieldType: 'text',
+              fieldType: 'textwithflowsuggestion',
               required: true,
               name: 'Text',
               placeholder: 'some placeholder',
@@ -1763,8 +1779,6 @@ describe('convertToReactFormFields', () => {
       },
     ],
   ];
-
-  testCases = [testCases[testCases.length - 1]];
 
   each(testCases).test(
     'should return %o when passed  %o ',

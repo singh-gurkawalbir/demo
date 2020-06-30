@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
@@ -6,20 +6,25 @@ import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
 import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../../../DynaForm';
+import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import { useCallMetadataAndReturnStatus } from './DynaRelatedList';
 import Spinner from '../../../Spinner';
 import ActionButton from '../../../ActionButton';
 
-const useStyles = makeStyles({
-  fieldWrapper: {
-    flexDirection: `row !important`,
+const useStyles = makeStyles(theme => ({
+  refrencedFieldWrapper: {
+    flexDirection: 'row !important',
+    alignItems: 'flex-start',
   },
-  actionButton: {
-    marginLeft: 5,
+  editIconRefrencedField: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(4),
   },
-});
+  refrencedFieldDynaText: {
+    marginBottom: 0,
+  },
+}));
 const FirstLevelModal = props => {
   const {
     options: selectedSObject,
@@ -53,16 +58,18 @@ const FirstLevelModal = props => {
       parentSObjectType: {
         id: 'parentSObjectType',
         name: '/parentSObjectType',
-        label: 'Parent SObject Type:',
+        label: 'Parent SObject type:',
         type: 'refreshableselect',
+        helpKey: 'parentSObjectType',
         filterKey: 'salesforce-sObjects-referenceFields',
         commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
         removeRefresh: true,
       },
-
       referencedFields: {
         connectionId,
         id: 'referencedFields',
+        helpKey: 'referencedFields',
+        label: 'Referenced fields:',
         name: '/referencedFields',
         refreshOptionsOnChangesTo: ['parentSObjectType'],
         type: 'salesforcetreemodal',
@@ -78,7 +85,7 @@ const FirstLevelModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose}>
-      <div>Referenced Fields</div>
+      <div>Referenced fields</div>
 
       <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
         <DynaSubmit
@@ -109,19 +116,23 @@ export default function DynaReferencedFields(props) {
   const { status } = useCallMetadataAndReturnStatus(props);
 
   return (
-    <div className={classes.fieldWrapper}>
+    <div className={classes.refrencedFieldWrapper}>
       {firstLevelModalOpen ? (
         <FirstLevelModal {...props} handleClose={toggle} />
       ) : null}
-      <DynaText {...props} options={null} />
+      <DynaText
+        {...props}
+        options={null}
+        className={classes.refrencedFieldDynaText}
+      />
       {status === 'refreshed' ? (
-        <Spinner />
+        <Spinner size={24} />
       ) : (
         <ActionButton
           data-test="editReferencedFields"
           onClick={toggle}
           disabled={disabled}
-          className={classes.actionButton}>
+          className={classes.editIconRefrencedField}>
           <EditIcon />
         </ActionButton>
       )}

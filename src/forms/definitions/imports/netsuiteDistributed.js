@@ -1,7 +1,4 @@
-import {
-  isNewId,
-  updateMappingsBasedOnNetSuiteSubrecords,
-} from '../../../utils/resource';
+import { updateMappingsBasedOnNetSuiteSubrecords } from '../../../utils/resource';
 
 export default {
   preSave: formValues => {
@@ -11,6 +8,8 @@ export default {
       newValues['/netsuite/recordType'] = 'file';
       newValues['/distributed'] = false;
       newValues['/adaptorType'] = 'NetSuiteImport';
+    } else {
+      delete newValues['/blobKeyPath'];
     }
 
     const subrecords = newValues['/netsuite_da/subrecords'];
@@ -28,15 +27,11 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     inputMode: {
       id: 'inputMode',
       type: 'mode',
       label: 'Input mode',
+      visible: false,
       options: [
         {
           items: [
@@ -45,14 +40,11 @@ export default {
           ],
         },
       ],
-      defaultDisabled: r => {
-        const isNew = isNewId(r._id);
+      defaultValue: r => {
+        if (r.resourceType === 'transferFiles' || r.blobKeyPath) return 'blob';
 
-        if (!isNew) return true;
-
-        return false;
+        return 'records';
       },
-      defaultValue: r => (r && r.blobKeyPath ? 'blob' : 'records'),
     },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
@@ -114,32 +106,43 @@ export default {
     settings: { fieldId: 'settings' },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'importData',
-      'blobKeyPath',
-      'distributed',
-      'netsuite_da.recordType',
-      'netsuite_da.mapping',
-      'netsuite_da.subrecords',
-      'netsuite_da.operation',
-      'netsuite.operation',
-      'ignoreExisting',
-      'ignoreMissing',
-      'netsuite_da.internalIdLookup.expression',
-      'netsuite.file.internalId',
-      'netsuite.file.name',
-      'netsuite.file.fileType',
-      'netsuite.file.folder',
-      'dataMappings',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+            return 'How would you like the files transferred?';
+          }
+
+          return 'How would you like the records imported?';
+        },
+        fields: [
+          'distributed',
+          'netsuite_da.recordType',
+          'netsuite_da.mapping',
+          'netsuite_da.subrecords',
+          'netsuite_da.operation',
+          'netsuite.operation',
+          'ignoreExisting',
+          'ignoreMissing',
+          'netsuite_da.internalIdLookup.expression',
+          'netsuite.file.internalId',
+          'netsuite.file.name',
+          'netsuite.file.fileType',
+          'netsuite.file.folder',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

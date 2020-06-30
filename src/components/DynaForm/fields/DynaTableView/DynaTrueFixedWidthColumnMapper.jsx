@@ -1,6 +1,15 @@
+import React from 'react';
 import produce from 'immer';
+import { makeStyles } from '@material-ui/core/styles';
 import DynaTableView from './DynaTable';
 
+const useStyles = makeStyles(theme => ({
+  camSettingFileParsingWrapper: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(2, 3),
+  },
+}));
 const optionsMap = [
   {
     id: 'fieldName',
@@ -11,15 +20,15 @@ const optionsMap = [
   },
   {
     id: 'startPosition',
-    label: 'Start Position',
-    required: true,
+    label: 'Start',
+    required: false,
     type: 'number',
     space: 1,
   },
   {
     id: 'endPosition',
-    label: 'End Position',
-    required: true,
+    label: 'End',
+    required: false,
     type: 'number',
     space: 1,
   },
@@ -32,7 +41,7 @@ const optionsMap = [
     space: 1,
   },
   {
-    id: 'regex',
+    id: 'regexExpression',
     label: 'Regex',
     required: false,
     type: 'input',
@@ -48,6 +57,7 @@ export default function DynaTrueFixedWidthColmnMapper({
   title,
 }) {
   let newValue;
+  const classes = useStyles();
 
   if (value) {
     newValue = value.map(el => {
@@ -64,11 +74,10 @@ export default function DynaTrueFixedWidthColmnMapper({
   const onRowChange = (state, field, newValue) =>
     produce(state, draft => {
       if (
-        optionsMap.find(f => f.id === field && f.type === 'number') &&
-        // eslint-disable-next-line no-restricted-globals
-        !isNaN(newValue)
+        optionsMap.find(f => f.id === field && f.type === 'number')
       ) {
-        draft[field] = parseInt(newValue, 10);
+        // eslint-disable-next-line no-restricted-globals
+        draft[field] = isNaN(newValue) ? null : parseInt(newValue, 10);
       } else draft[field] = newValue;
 
       if (['startPosition', 'endPosition'].includes(field)) {
@@ -79,12 +88,14 @@ export default function DynaTrueFixedWidthColmnMapper({
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
-        val.map(({ fieldName, startPosition, endPosition, regex }) => ({
-          fieldName,
-          startPosition,
-          endPosition,
-          regex,
-        }))
+        val.map(
+          ({ fieldName, startPosition, endPosition, regexExpression }) => ({
+            fieldName,
+            startPosition: parseInt(startPosition, 10) === 'NaN' ? null : parseInt(startPosition, 10),
+            endPosition: parseInt(endPosition, 10) === 'NaN' ? null : parseInt(endPosition, 10),
+            regexExpression,
+          })
+        )
       );
     }
   };
@@ -92,7 +103,9 @@ export default function DynaTrueFixedWidthColmnMapper({
   return (
     <DynaTableView
       id={id}
+      hideLabel
       label={label}
+      className={classes.camSettingFileParsingWrapper}
       title={title}
       optionsMap={optionsMap}
       value={newValue}

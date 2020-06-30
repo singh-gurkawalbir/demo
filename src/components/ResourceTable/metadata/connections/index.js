@@ -1,19 +1,19 @@
-import Delete from '../../actions/Delete';
-import Revoke from '../../actions/Connections/Revoke';
-import References from '../../actions/References';
+import React from 'react';
+import moment from 'moment';
+import { ConnectorNameComp } from '..';
+import { formatLastModified, onlineStatus } from '../../../CeligoTable/util';
+import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
+import AuditLogs from '../../actions/AuditLogs';
 import ConfigureDebugger from '../../actions/Connections/ConfigDebugger';
+import OpenDebugger from '../../actions/Connections/OpenDebugger';
+import Deregister from '../../actions/Connections/Deregister';
 // eslint-disable-next-line import/no-unresolved
 import DownloadDebugLogs from '../../actions/Connections/DownloadDebugLogs';
-import OpenDebugger from '../../actions/Connections/OpenDebugger';
-import AuditLogs from '../../actions/AuditLogs';
 import RefreshMetadata from '../../actions/Connections/RefreshMetadata';
-import {
-  onlineStatus,
-  formatLastModified,
-  getConnectorName,
-} from '../../../CeligoTable/util';
-import Deregister from '../../actions/Connections/Deregister';
-import ConnectionResourceDrawerLink from '../../../ResourceDrawerLink/connection';
+import Revoke from '../../actions/Connections/Revoke';
+import Delete from '../../actions/Delete';
+import References from '../../actions/References';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: (r, actionProps) => {
@@ -31,7 +31,12 @@ export default {
         orderBy: 'name',
       },
       { heading: 'Status', value: r => onlineStatus(r) },
-      { heading: 'Type', value: r => getConnectorName(r) },
+      {
+        heading: 'Type',
+        value: function ConnectorName(r) {
+          return <ConnectorNameComp r={r} />;
+        },
+      },
       {
         heading: 'API',
         value: r => {
@@ -46,11 +51,13 @@ export default {
         heading: 'Last updated',
         value: r => formatLastModified(r.lastModified),
         orderBy: 'lastModified',
+        width: 160,
       },
       {
         heading: 'Queue size',
         // align: 'right',
         value: r => r.queueSize || 0,
+        width: 120,
       },
     ];
 
@@ -61,35 +68,32 @@ export default {
     return columns;
   },
   rowActions: (r, actionProps) => {
-    let actionsToReturn = [AuditLogs];
+    let actionsToReturn = [];
 
-    if (actionProps.type === 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, References];
-
-      actionsToReturn = [OpenDebugger, ...actionsToReturn];
-    } else {
-      actionsToReturn = [ConfigureDebugger, ...actionsToReturn];
-
-      if (r.debugDate) {
-        actionsToReturn = [DownloadDebugLogs, ...actionsToReturn];
+    if (r.debugDate && moment().isBefore(moment(r.debugDate))) {
+      if (actionProps.type === 'flowBuilder') {
+        actionsToReturn = [OpenDebugger];
+      } else {
+        actionsToReturn = [DownloadDebugLogs];
       }
     }
-
+    actionsToReturn = [ConfigureDebugger, ...actionsToReturn, AuditLogs, References];
     if (actionProps.integrationId && !r._connectorId) {
-      actionsToReturn = [Deregister, ...actionsToReturn];
-    } else if (!r._connectorId && actionProps.type !== 'flowBuilder') {
-      actionsToReturn = [...actionsToReturn, Delete];
+      actionsToReturn = [...actionsToReturn, Deregister];
     }
-
     if (r.type === 'netsuite' || r.type === 'salesforce') {
-      actionsToReturn = [RefreshMetadata, ...actionsToReturn];
+      actionsToReturn = [...actionsToReturn, RefreshMetadata];
     }
 
     if (
       r.type === 'http' &&
       !!((((r.http || {}).auth || {}).token || {}).revoke || {}).uri
     ) {
-      actionsToReturn = [Revoke, ...actionsToReturn];
+      actionsToReturn = [...actionsToReturn, Revoke];
+    }
+    actionsToReturn = [Edit, ...actionsToReturn];
+    if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
+      actionsToReturn = [...actionsToReturn, Delete];
     }
 
     return actionsToReturn;

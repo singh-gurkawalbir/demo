@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   filterButton: {
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
+    '&:first-child': {
+      marginLeft: 0,
+    },
   },
   retry: {
     minWidth: 90,
@@ -211,7 +214,7 @@ function Filters({
           <RefreshIcon /> Refresh
         </IconTextButton>
         {maxPage > 0 && (
-          <Fragment>
+          <>
             <IconButton
               disabled={currentPage === 0}
               size="small"
@@ -234,7 +237,7 @@ function Filters({
               onClick={handlePageChange(1)}>
               <ArrowRightIcon />
             </IconButton>
-          </Fragment>
+          </>
         )}
       </div>
     </div>

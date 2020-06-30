@@ -22,6 +22,7 @@ export function* changePassword({ updatedPassword }) {
       message: "Changing user's password",
       hidden: true,
     });
+
     yield put(
       actions.api.complete(
         changePasswordParams.path,
@@ -30,11 +31,22 @@ export function* changePassword({ updatedPassword }) {
       )
     );
   } catch (e) {
+    let errorMsg;
+
+    try {
+      const errorsJSON = JSON.parse(e.message);
+      const { errors } = errorsJSON;
+
+      errorMsg = errors && errors[0].message;
+    } catch (e) {
+      errorMsg = 'Invalid credentials provided.  Please try again.';
+    }
+
     yield put(
       actions.api.failure(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        'Invalid credentials provided.  Please try again.'
+        errorMsg
       )
     );
   }
@@ -357,6 +369,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
   const sharedResourceTypeMap = {
     account: 'ashares',
     stack: 'sshares',
+    transfer: 'transfers',
   };
   const path = `/${sharedResourceTypeMap[resourceType]}/${id}/accept`;
   const opts = {
@@ -374,7 +387,9 @@ export function* acceptSharedInvite({ resourceType, id }) {
     return true;
   }
 
+
   const userPreferences = yield select(selectors.userPreferences);
+
 
   if (
     resourceType === 'account' &&
@@ -382,6 +397,9 @@ export function* acceptSharedInvite({ resourceType, id }) {
   ) {
     yield put(actions.auth.clearStore());
     yield put(actions.auth.initSession());
+  } else if (resourceType === 'transfer') {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('transfers'));
   } else {
     yield put(
       actions.resource.requestCollection(
@@ -395,6 +413,7 @@ export function* rejectSharedInvite({ resourceType, id }) {
   const sharedResourceTypeMap = {
     account: 'ashares',
     stack: 'sshares',
+    transfer: 'transfers',
   };
   const path = `/${sharedResourceTypeMap[resourceType]}/${id}/dismiss`;
   const opts = {
@@ -417,12 +436,15 @@ export function* rejectSharedInvite({ resourceType, id }) {
       )
     );
   }
-
-  yield put(
-    actions.resource.requestCollection(
-      `shared/${sharedResourceTypeMap[resourceType]}`
-    )
-  );
+  if (resourceType === 'transfer') {
+    yield put(actions.resource.requestCollection('transfers'));
+  } else {
+    yield put(
+      actions.resource.requestCollection(
+        `shared/${sharedResourceTypeMap[resourceType]}`
+      )
+    );
+  }
 }
 
 export function* requestNumEnabledFlows() {

@@ -5,6 +5,7 @@ import {
   adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
+  isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
 
@@ -175,18 +176,18 @@ export const getUsedActionsMapForResource = (
   return usedActions;
 };
 
-export const isImportMappingAvailable = resource => {
-  if (!resource) return false;
-  // For Blob imports mapping shouldnot be shown.(IO-11865)
-
-  if (isBlobTypeResource(resource)) {
+export const isImportMappingAvailable = importResource => {
+  if (!importResource) return false;
+  // For Blob imports mapping should not be shown.(IO-11865)
+  if (isBlobTypeResource(importResource)) {
     return false;
   }
 
-  const { adaptorType, rdbms = {} } = resource;
+  const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
-
-  // if apptype is mongodb then mapping shouldnot be shown
+  // For File Adaptor XML Imports, no support for import mapping
+  if (isFileAdaptor(importResource) && file.type === 'xml') return false;
+  // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
 
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
@@ -207,9 +208,9 @@ export const isPageGeneratorResource = (flow = {}, resourceId) => {
 };
 
 /*
- * Based on _connectorId on flow Doc, we determine whether this flow is a connector
+ * Based on _connectorId on resource doc, we determine whether this is an Integration App resource
  */
-export const isConnector = (flow = {}) => !!(flow && flow._connectorId);
+export const isIntegrationApp = (doc = {}) => !!(doc && doc._connectorId);
 
 /*
  * Based on free property on flow Doc, we determine whether this flow is a free flow
@@ -558,8 +559,8 @@ export function getFlowDetails(flow, integration, exports) {
       (flowSettings.sections && flowSettings.sections.length)
     );
     draft.showSchedule = flow._connectorId
-      ? flow.canSchedule && !!flowSettings.showSchedule
-      : flow.canSchedule;
+      ? draft.canSchedule && !!flowSettings.showSchedule
+      : draft.canSchedule;
     draft.showStartDateDialog = flowSettings.showStartDateDialog;
     draft.disableSlider = flowSettings.disableSlider;
     draft.showUtilityMapping = flowSettings.showUtilityMapping;
@@ -670,3 +671,11 @@ export function convertOldFlowSchemaToNewOne(flow) {
 
   return updatedFlow;
 }
+
+
+export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
+  (flow.pageGenerators
+     && flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
+    (
+      flow.pageProcessors &&
+    flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));

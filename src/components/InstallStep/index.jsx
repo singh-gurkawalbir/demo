@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +9,7 @@ import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -22,8 +23,8 @@ const useStyles = makeStyles(theme => ({
     background: step.completed
       ? theme.palette.primary.main
       : step.isCurrentStep
-      ? theme.palette.success.main
-      : theme.palette.secondary.lightest,
+        ? theme.palette.success.main
+        : theme.palette.secondary.lightest,
     color:
       step.isCurrentStep || step.completed
         ? theme.palette.background.paper
@@ -105,7 +106,7 @@ export default function InstallationStep(props) {
   }
 
   const onStepClick = () => {
-    handleStepClick(step, connection);
+    handleStepClick(step, connection, index);
   };
 
   return (
@@ -118,9 +119,7 @@ export default function InstallationStep(props) {
         </Grid>
         <Grid item xs={3} className={classes.step}>
           <Typography>{step.name}</Typography>
-        </Grid>
-        <Grid item xs className={classes.step}>
-          <Typography>{step.description}</Typography>
+          <InfoIconButton info={step.description} size="xs" />
         </Grid>
         <Grid item xs={2} className={clsx(classes.step, classes.imgBlock)}>
           {step.imageURL && (
@@ -151,12 +150,12 @@ export default function InstallationStep(props) {
             </Button>
           )}
           {step.completed && (
-            <Fragment>
+            <>
               <Typography onClick={onStepClick} className={classes.successText}>
                 {integrationAppsUtil.getStepText(step, mode)}
               </Typography>
               <SuccessIcon />
-            </Fragment>
+            </>
           )}
         </Grid>
       </Grid>

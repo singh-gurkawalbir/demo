@@ -20,6 +20,35 @@ describe('Json paths util method', () => {
       { id: 'b', type: 'string' },
     ]);
   });
+
+  test('should not recurse arrays when excludeArrayIndices is true', () => {
+    const sampleJSON = {
+      a: {
+        arr: [1, 2, 3],
+        arr2: [{
+          abc: 1,
+          def: 42,
+          moreArrays: [42, 42, 42]
+        }, {
+          abc: 'aaa',
+          def: true,
+          moreArrays2: [{
+            ghi: 'jkl'
+          }, {
+            ghi: 'mno'
+          }]
+        }]
+      },
+      b: {
+        c: 42
+      }
+    };
+    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
+      { id: 'a.arr', type: 'array' },
+      { id: 'a.arr2', type: 'array' },
+      { id: 'b.c', type: 'number' },
+    ]);
+  });
 });
 
 describe('Route paths util method', () => {

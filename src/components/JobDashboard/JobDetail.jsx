@@ -1,11 +1,10 @@
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import { Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { difference } from 'lodash';
 import actions from '../../actions';
@@ -18,6 +17,7 @@ import Spinner from '../Spinner';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import ArrowUpIcon from '../icons/ArrowUpIcon';
 import DateTimeDisplay from '../DateTimeDisplay';
+import ErrorCountCell from './ErrorCountCell';
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -102,15 +102,6 @@ const useStyles = makeStyles(theme => ({
     width: '7.5%',
     textAlign: 'center',
   },
-  stateBtn: {
-    color: theme.palette.error.main,
-    float: 'right',
-    padding: 0,
-    minWidth: 'unset',
-    '&:hover': {
-      color: `${theme.palette.error.dark} !important`,
-    },
-  },
   checkActionBorder: {
     paddingLeft: '13px',
     borderLeft: `5px solid ${theme.palette.primary.main}`,
@@ -129,22 +120,21 @@ function JobDetail({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
-  const [showViewErrorsLink, setShowViewErrorsLink] = useState(false);
   const isSelected = !!(
     selectedJobs[job._id] && selectedJobs[job._id].selected
   );
   const childJobIds = job.children
     ? job.children
-        .filter(
-          cJob =>
-            [
-              JOB_STATUS.COMPLETED,
-              JOB_STATUS.FAILED,
-              JOB_STATUS.CANCELED,
-            ].includes(cJob.uiStatus) &&
+      .filter(
+        cJob =>
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.FAILED,
+            JOB_STATUS.CANCELED,
+          ].includes(cJob.uiStatus) &&
             (cJob.retriable || cJob.numError > 0)
-        )
-        .map(cJob => cJob._id)
+      )
+      .map(cJob => cJob._id)
     : [];
   const isJobInProgress = [
     JOB_STATUS.QUEUED,
@@ -239,7 +229,7 @@ function JobDetail({
   }
 
   return (
-    <Fragment>
+    <>
       <TableRow>
         <TableCell
           className={clsx({
@@ -275,53 +265,21 @@ function JobDetail({
         </TableCell>
         <TableCell className={classes.success}>{getSuccess(job)}</TableCell>
         <TableCell className={classes.ignore}>{job.numIgnore}</TableCell>
-        <TableCell
-          onMouseEnter={() => {
-            setShowViewErrorsLink(true);
-          }}
-          onMouseLeave={() => {
-            setShowViewErrorsLink(false);
-          }}
+        <ErrorCountCell
+          count={job.numError}
+          isJobInProgress={isJobInProgress}
+          isError
+          onClick={() => handleViewErrorsClick(false)}
           className={clsx(classes.error, {
             [classes.errorCount]: job.numError > 0,
-          })}>
-          {showViewErrorsLink && !isJobInProgress && job.numError > 0 ? (
-            <Button
-              data-test="viewJobErrors"
-              variant="text"
-              color="primary"
-              className={classes.stateBtn}
-              onClick={() => {
-                handleViewErrorsClick(false);
-              }}>
-              {job.numError} View
-            </Button>
-          ) : (
-            job.numError
-          )}
-        </TableCell>
-        <TableCell
-          onMouseEnter={() => {
-            setShowViewErrorsLink(true);
-          }}
-          onMouseLeave={() => {
-            setShowViewErrorsLink(false);
-          }}
-          className={classes.resolved}>
-          {showViewErrorsLink && !isJobInProgress && job.numResolved > 0 ? (
-            <Button
-              variant="text"
-              data-test="viewResolvedErroredJobs"
-              color="primary"
-              onClick={() => {
-                handleViewErrorsClick(true);
-              }}>
-              {job.numResolved} View
-            </Button>
-          ) : (
-            job.numResolved
-          )}
-        </TableCell>
+          })}
+           />
+        <ErrorCountCell
+          count={job.numResolved}
+          isJobInProgress={isJobInProgress}
+          onClick={() => handleViewErrorsClick(true)}
+          className={classes.resolved}
+           />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
         <TableCell className={classes.duration}>{job.duration}</TableCell>
         <TableCell className={classes.completed}>
@@ -339,7 +297,7 @@ function JobDetail({
       {expanded && !job.children && (
         <TableRow>
           <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading child jobs...</span>
+            <Spinner size={20} /> <span>Loading</span>
           </TableCell>
         </TableRow>
       )}
@@ -357,7 +315,7 @@ function JobDetail({
             integrationName={integrationName}
           />
         ))}
-    </Fragment>
+    </>
   );
 }
 

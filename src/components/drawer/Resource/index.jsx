@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
@@ -9,7 +9,7 @@ import * as selectors from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
-    boxShadow: `-5px 0 8px rgba(0,0,0,0.2)`,
+    boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
     padding: 0,
     zIndex: theme.zIndex.drawer + 1,
   },
@@ -29,20 +29,19 @@ function ResourceDrawer(props) {
   const match = useRouteMatch();
   const open = !!match;
   const history = useHistory();
+  const { id, resourceType } = (props.match && props.match.params) || {};
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const isPreviewPanelAvailableForResource = useSelector(state => {
-    const { id, resourceType } = (props.match && props.match.params) || {};
-
+  const isPreviewPanelAvailableForResource = useSelector(state =>
     // Returns a bool whether the resource has a preview panel or not
-    return selectors.isPreviewPanelAvailableForResource(
+    selectors.isPreviewPanelAvailableForResource(
       state,
       id,
       resourceType,
       props.flowId
-    );
-  });
+    )
+  );
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -78,7 +77,6 @@ function ResourceDrawer(props) {
 export default function ResourceDrawerRoute({
   flowId,
   integrationId,
-  disabled,
 }) {
   const match = useRouteMatch();
 
@@ -89,24 +87,14 @@ export default function ResourceDrawerRoute({
       // uses "children" as a prop and this is the intended
       // use (per their docs)
       // eslint-disable-next-line react/no-children-prop
-      children={props => {
-        // To handle connections resource when opened in flow context and stop from being disabled @BugFix: 12280
-        // TODO @Raghu: Discuss on any other better approach to handle this
-        const isConnectionUnderFlowContext =
-          flowId &&
-          props.match &&
-          props.match.params &&
-          props.match.params.resourceType === 'connections';
-
-        return (
+      children={props =>
+        (
           <ResourceDrawer
             {...props}
             flowId={flowId}
             integrationId={integrationId}
-            disabled={!isConnectionUnderFlowContext && disabled}
           />
-        );
-      }}
+        )}
     />
   );
 }

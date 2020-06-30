@@ -1,4 +1,4 @@
-function extractForm(data) {
+function extractForm(data, mode) {
   let parsedData = data;
 
   if (typeof data === 'string') {
@@ -9,6 +9,10 @@ function extractForm(data) {
     }
   }
 
+  if (mode === 'json') {
+    return parsedData;
+  }
+
   if (parsedData && parsedData.resource && parsedData.resource.settingsForm) {
     return parsedData.resource.settingsForm.form;
   }
@@ -17,7 +21,7 @@ function extractForm(data) {
 export default {
   patchSet: editor => {
     const patches = {
-      backgroundPatches: [],
+      foregroundPatches: [],
     };
     const {
       code,
@@ -26,13 +30,15 @@ export default {
       data,
       resourceId,
       resourceType,
+      mode,
     } = editor;
     const value = {};
 
     if (data) {
-      const form = extractForm(data);
+      const form = extractForm(data, mode);
 
       value.form = form;
+
       // {
       //   fieldMap: {
       //     A: {
@@ -66,9 +72,20 @@ export default {
         function: entryFunction,
         _scriptId: scriptId,
       };
+      patches.foregroundPatches.push({
+        patch: [
+          {
+            op: 'replace',
+            path: '/content',
+            value: code,
+          },
+        ],
+        resourceType: 'scripts',
+        resourceId: scriptId,
+      });
     }
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches.push({
       patch: [
         {
           op: 'replace',
@@ -78,18 +95,6 @@ export default {
       ],
       resourceType,
       resourceId,
-    };
-
-    patches.backgroundPatches.push({
-      patch: [
-        {
-          op: 'replace',
-          path: '/content',
-          value: code,
-        },
-      ],
-      resourceType: 'scripts',
-      resourceId: scriptId,
     });
 
     // console.log(patches);

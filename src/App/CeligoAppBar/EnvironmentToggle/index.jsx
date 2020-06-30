@@ -1,20 +1,12 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import TextToggle from '../../../components/TextToggle';
 import getRoutePath from '../../../utils/routePaths';
 
-const useStyles = makeStyles({
-  TextToggle: {
-    padding: 0,
-  },
-});
-
 export default function EnvironmentToggle() {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const { environment = 'production' } = useSelector(state =>
@@ -48,7 +40,6 @@ export default function EnvironmentToggle() {
       value={environment}
       onChange={handleChange}
       exclusive
-      className={classes.TextToggle}
       options={[
         { value: 'production', label: 'Production' },
         { value: 'sandbox', label: 'Sandbox' },

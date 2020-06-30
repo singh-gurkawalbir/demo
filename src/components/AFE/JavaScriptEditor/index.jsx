@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -59,7 +59,6 @@ export default function JavaScriptEditor(props) {
         data: props.data,
         context,
         initData: props.data,
-        autoEvaluate: true,
         autoEvaluateDelay: 500,
         initEntryFunction: entryFunction || 'main',
         optionalSaveParams,

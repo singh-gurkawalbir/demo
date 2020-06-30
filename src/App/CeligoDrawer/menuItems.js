@@ -2,7 +2,6 @@ import HomeIcon from '../../components/icons/HomeIcon';
 import ToolsIcon from '../../components/icons/ToolsIcon';
 import ResourcesIcon from '../../components/icons/ResourcesIcon';
 import MarketplaceIcon from '../../components/icons/MarketplaceIcon';
-import SupportIcon from '../../components/icons/SupportIcon';
 import ExportsIcon from '../../components/icons/ExportsIcon';
 import FlowBuilderIcon from '../../components/icons/FlowBuilderIcon';
 import DataLoaderIcon from '../../components/icons/DataLoaderIcon';
@@ -14,14 +13,17 @@ import AgentsIcon from '../../components/icons/AgentsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
-import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
-import TicketTagIcon from '../../components/icons/TicketTagIcon';
+import SubmitTicketIcon from '../../components/icons/SubmitTicketIcon';
 import RecycleBinIcon from '../../components/icons/RecycleBinIcon';
 import TokensApiIcon from '../../components/icons/TokensApiIcon';
-import WhatsNewIcon from '../../components/icons/WhatsNewIcon';
+import WhatsNewIcon from '../../components/icons/KnowledgeBaseIcon';
 import { getHelpUrl, getUniversityUrl } from '../../utils/resource';
 import { SUBMIT_TICKET_URL, WHATS_NEW_URL } from '../../utils/constants';
 import UniversityIcon from '../../components/icons/UniversityIcon';
+import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
+import HelpIcon from '../../components/icons/HelpIcon';
+import MyApiIcon from '../../components/icons/MyApiIcon';
+import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 
 export default function menuItems(
   userProfile,
@@ -61,6 +63,11 @@ export default function menuItems(
           path: '/integrations/none/dataLoader/new',
           routeProps: '/pg/integrations/:integrationId/dataloader',
         },
+        {
+          label: 'Dev playground',
+          Icon: EditorsPlaygroundIcon,
+          path: '/editors',
+        },
       ],
     },
     {
@@ -77,98 +84,72 @@ export default function menuItems(
         '/pg/connectors',
         '/pg/recycleBin',
         '/pg/accessTokens',
+        '/pg/apis',
       ],
       children: [
-        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
-        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
         { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },
+        { label: 'Imports', path: '/imports', Icon: ImportsIcon },
+        { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
-        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        {
-          label: 'Integration apps',
-          Icon: ConnectionsIcon,
-          path: '/connectors',
-        },
+        { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
+        { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
+        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors', },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
+    },
+    {
+      label: 'Help',
+      Icon: HelpIcon,
+      children: [
+        {
+          label: 'Help center',
+          Icon: HelpCenterIcon,
+          component: 'a',
+          href: getHelpUrl(integrations, marketplaceConnectors),
+        },
+        {
+          label: "What's New",
+          Icon: WhatsNewIcon,
+          component: 'a',
+          href: WHATS_NEW_URL,
+        },
+        {
+          label: 'Submit ticket',
+          Icon: SubmitTicketIcon,
+          component: 'a',
+          href: SUBMIT_TICKET_URL,
+        },
+      ],
+    },
+    {
+      label: 'Celigo University',
+      Icon: UniversityIcon,
+      href: getUniversityUrl,
+      component: 'a'
     },
     {
       label: 'Marketplace',
       Icon: MarketplaceIcon,
       path: '/marketplace',
     },
-    {
-      label: 'Support',
-      Icon: SupportIcon,
-      children: [
-        {
-          label: 'Knowledge base',
-          Icon: KnowledgeBaseIcon,
-          component: 'a',
-          href: getHelpUrl(integrations, marketplaceConnectors),
-        },
-        {
-          label: 'Submit ticket',
-          Icon: TicketTagIcon,
-          component: 'a',
-          href: SUBMIT_TICKET_URL,
-        },
-        {
-          label: `What's New`,
-          Icon: WhatsNewIcon,
-          component: 'a',
-          href: WHATS_NEW_URL,
-        },
-        {
-          label: 'University',
-          Icon: UniversityIcon,
-          component: 'a',
-          href: getUniversityUrl(),
-        },
-      ],
-    },
-    {
-      label: 'Editor playground (alpha)',
-      Icon: EditorsPlaygroundIcon,
-      path: '/editors',
-    },
-
-    // {
-    //   label: 'Dev Tools',
-    //   Icon: ToolsIcon,
-    //   children: [
-    // {
-    //   label: 'App builder',
-    //   path: '/resources',
-    //   Icon: AppBuilderIcon,
-    // },
-    // {
-    //   label: 'Editor playground',
-    //   path: '/editors',
-    //   Icon: EditorsPlaygroundIcon,
-    // },
-    // {
-    //   label: 'Permission explorer',
-    //   path: '/permissions',
-    //   Icon: PermissionExplorerIcon,
-    // },
-    //   ],
-    // },
   ];
 
   if (['monitor', 'tile'].includes(accessLevel)) {
     items = items.filter(i => !['Resources', 'Tools'].includes(i.label));
   } else {
     const resourceItems = items.find(i => i.label === 'Resources');
+    const toolItems = items.find(i => i.label === 'Tools');
 
     if (!isDeveloper) {
-      items = items.filter(i => !i.label.startsWith('Editor play'));
+      toolItems.children = toolItems.children.filter(
+        i => !i.label.startsWith('Dev play')
+      );
 
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Scripts' || i.label === 'Stacks')
+        i => !(i.label === 'Scripts' || i.label === 'Stacks' || i.label === 'My APIs')
       );
     }
 

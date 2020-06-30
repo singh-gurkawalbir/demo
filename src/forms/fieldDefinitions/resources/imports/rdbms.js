@@ -5,7 +5,7 @@ export default {
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
-      { id: 'rdbms.ignoreExtract', type: 'textwithlookupextract' },
+      { id: 'rdbms.ignoreExtract' },
     ],
     required: true,
     options: [
@@ -39,7 +39,7 @@ export default {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
     arrayIndex: 0,
-    label: 'Launch query builder',
+    label: 'Query builder',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -57,7 +57,7 @@ export default {
     id: 'rdbms.bulkInsert.tableName',
     type: 'text',
     label: 'Target table',
-    helpText: `Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.`,
+    helpText: 'Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.',
     required: true,
     visibleWhen: [
       {
@@ -69,7 +69,7 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
-    label: 'Launch query builder for insert',
+    label: 'Query builder for insert',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -86,7 +86,7 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
-    label: 'Launch query builder for update',
+    label: 'Query builder for update',
     title: 'SQL Query Builder',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',

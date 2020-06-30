@@ -104,7 +104,6 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    required: true,
     label: 'Link header relation',
     visibleWhenAll: [
       {
@@ -145,6 +144,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
+    title: 'Build paging post body',
     label: 'Build paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
@@ -204,8 +204,7 @@ export default {
     ],
   },
   'rest.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     required: true,
     label: 'Relative URI',
     validWhen: {
@@ -228,7 +227,6 @@ export default {
       },
     },
     connectionId: r => r && r._connectionId,
-    refreshOptionsOnChangesTo: ['name'],
   },
   'rest.successPath': {
     type: 'text',
@@ -305,8 +303,7 @@ export default {
   // #endregion transform
 
   'rest.once.relativeURI': {
-    type: 'textwithlookupextract',
-    fieldType: 'relativeUri',
+    type: 'relativeuri',
     label: 'Relative URI',
     connectionId: r => r && r._connectionId,
     visibleWhen: [

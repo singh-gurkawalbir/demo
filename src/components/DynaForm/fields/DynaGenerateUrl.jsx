@@ -1,76 +1,86 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 
+const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
+  field => !field.isValid || field.isDiscretelyInvalid
+);
 const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
   },
-  dynaWebhookTokenWrapper: {
-    flexDirection: `row !important`,
+  dynaGenerateUrlWrapper: {
+    flexDirection: 'row !important',
   },
 
-  dynaWebhookTokenbtn: {
-    marginTop: 36,
+  dynaGenerateTokenbtn: {
+    marginTop: 26,
     marginLeft: theme.spacing(1),
   },
 }));
 
+const webookRequiredFields = ['webhook.password', 'webhook.username'];
+
 function GenerateUrl(props) {
   const {
+    options = {},
     onFieldChange,
     resourceId,
     id,
     value,
-    options = {},
     buttonLabel,
     formContext,
+    flowId,
+    provider: webHookProvider
   } = props;
-  const { value: formValues } = formContext;
+  const { webHookToken } = options;
+  const { value: formValues, fields: fieldStates } = formContext;
   const classes = useStyles();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
   const finalResourceId =
     useSelector(state => selectors.createdResourceId(state, resourceId)) ||
     resourceId;
-  const handleGenerateUrl = () => {
+  const handleGenerateUrl = useCallback(() => {
+    if (inValidFields(webookRequiredFields, fieldStates)) {
+      webookRequiredFields.forEach(fieldId => {
+        onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+      });
+      return;
+    }
     dispatch(
       actions.resourceForm.submit(
         'exports',
         finalResourceId,
         formValues,
         null,
-        true
+        true,
+        false,
+        flowId
       )
     );
     setUrl(true);
-  };
+  }, [dispatch, fieldStates, finalResourceId, flowId, formValues, onFieldChange]);
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
-      // Wrapping inside a timeout to make sure it gets executed after form initializes as this component using Form Context
-      // TODO @Raghu : Fix this a better way
-      setTimeout(() => {
-        const whURL = getWebhookUrl(options, finalResourceId);
-
-        onFieldChange(id, whURL);
-        setUrl(false);
-      });
+      const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+      onFieldChange(id, whURL);
+      setUrl(false);
     }
-  }, [finalResourceId, options, id, onFieldChange, url]);
+  }, [finalResourceId, webHookProvider, webHookToken, id, onFieldChange, url]);
 
   return (
-    <Fragment>
-      <div className={classes.dynaWebhookTokenWrapper}>
+    <>
+      <div className={classes.dynaGenerateUrlWrapper}>
         <DynaText
           {...props}
           disabled
@@ -78,16 +88,10 @@ function GenerateUrl(props) {
           className={classes.children}
           value={value}
         />
-        <div className={classes.dynaWebhookTokenbtn}>
+        <div className={classes.dynaGenerateTokenbtn}>
           {value && (
             <CopyToClipboard
-              text={value}
-              onCopy={() =>
-                enqueueSnackbar({
-                  message: 'URL copied to clipboard.',
-                  variant: 'success',
-                })
-              }>
+              text={value}>
               <Button
                 data-test="copyToClipboard"
                 title="Copy to clipboard"
@@ -97,10 +101,17 @@ function GenerateUrl(props) {
               </Button>
             </CopyToClipboard>
           )}
-          {!value && <Button onClick={handleGenerateUrl}>{buttonLabel}</Button>}
+          {!value && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleGenerateUrl}>
+              {buttonLabel}
+            </Button>
+          )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }
 

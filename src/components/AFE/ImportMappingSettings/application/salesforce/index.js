@@ -18,9 +18,14 @@ export default {
       options,
       lookups,
     } = params;
-    const { connectionId } = options;
+    const { connectionId, flowId, resourceId } = options;
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
+    let picklistOptions = [];
+
+    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
+      picklistOptions = selectedGenerateObj.options;
+    }
     const fieldMeta = {
       fieldMap: {
         immutable: {
@@ -62,7 +67,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
           defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
@@ -84,6 +89,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
+          required: true,
           connectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
@@ -97,6 +103,7 @@ export default {
           type: 'salesforcelookupfilters',
           label: '',
           connectionId,
+          required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
@@ -105,6 +112,7 @@ export default {
           ],
           value: lookup.whereClause,
           data: extractFields,
+          opts: options,
         },
         'lookup.whereClauseText': {
           id: 'lookup.whereClauseText',
@@ -113,6 +121,7 @@ export default {
           type: 'text',
           multiline: true,
           disableText: true,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
           visibleWhenAll: [
@@ -125,10 +134,13 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
+          // Todo (Aditya): label is needed
+          label: 'Value field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
+          required: true,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
@@ -151,6 +163,7 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
+          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -189,6 +202,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
@@ -262,7 +276,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {
@@ -438,6 +452,7 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
+          helpKey: 'mapping.conditional.when',
           options: [
             {
               items: isProduction()
@@ -453,16 +468,14 @@ export default {
           visible: false,
           defaultValue: lookups,
         },
-
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'textwithlookupextract',
+          type: 'selectlookup',
+          flowId,
+          resourceId,
           importType: 'salesforce',
-          connectionId,
-          extractFields,
           refreshOptionsOnChangesTo: ['lookups'],
-          fieldType: 'lookupMappings',
           label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
@@ -535,7 +548,8 @@ export default {
           }
 
           return expressionValue;
-        } else if (fieldId === 'lookup.whereClause') {
+        }
+        if (fieldId === 'lookup.whereClause') {
           const sObjectTypeField = fields.find(
             field => field.id === 'lookup.sObjectType'
           );
@@ -546,7 +560,8 @@ export default {
               ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
               : '',
           };
-        } else if (fieldId === 'lookup.whereClauseText') {
+        }
+        if (fieldId === 'lookup.whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === 'lookup.whereClause'
           );

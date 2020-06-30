@@ -1,18 +1,39 @@
-import { useEffect, useState, Fragment, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
+import { FormLabel } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
+import FieldHelp from '../../FieldHelp';
+
+const useStyles = makeStyles(theme => ({
+  dynaNSSearchCriteriaWrapper: {
+    flexDirection: 'row !important',
+    width: '100%',
+    alignItems: 'center',
+  },
+  dynaNSbtn: {
+    marginRight: theme.spacing(0.5),
+  },
+  dynaFormLabel: {
+    marginBottom: 0,
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
+  },
+}));
 
 export default function DynaNSSearchCriteria(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
     value = [],
-    label,
     resourceId,
     connectionId,
+
     disabled,
     filterKey,
     options = {},
@@ -49,10 +70,10 @@ export default function DynaNSSearchCriteria(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SearchCriteriaDialog
-          title="Search Criteria"
+          title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
           fieldOptions={{
@@ -64,13 +85,22 @@ export default function DynaNSSearchCriteria(props) {
           disabled={disabled}
         />
       )}
-      <Button
-        data-test={id}
-        variant="contained"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
-    </Fragment>
+      <div className={classes.dynaNSSearchCriteriaWrapper}>
+        <FormLabel className={classes.dynaFormLabel}>
+          Additional search criteria:
+        </FormLabel>
+        <Button
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          className={classes.dynaNSbtn}
+          onClick={handleEditorClick}>
+          Launch
+        </Button>
+        {/* TODO (Aditya): we need to add the helptext for the upload file */}
+
+        <FieldHelp {...props} />
+      </div>
+    </>
   );
 }

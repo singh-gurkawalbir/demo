@@ -6,13 +6,12 @@ import {
   FormControl,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
-import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
@@ -33,9 +32,9 @@ const useStyles = makeStyles(theme => ({
   },
 
   radioGroup: {
-    marginTop: 6,
     '& label': {
       marginLeft: 0,
+      fontSize: 14,
       marginRight: theme.spacing(3),
     },
   },
@@ -45,6 +44,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     '&:last-child': {
       marginRight: theme.spacing(0.5),
+    },
+    '&.Mui-focused': {
+      color: 'inherit',
     },
   },
 }));
@@ -62,7 +64,6 @@ export default function DynaNSSavedSearch(props) {
     defaultValue,
     onFieldChange,
     id,
-    isValid,
     required,
     disabled,
     commMetaPath,
@@ -118,17 +119,16 @@ export default function DynaNSSavedSearch(props) {
   }, [value, netSuiteSystemDomain]);
 
   return (
-    <Fragment>
+    <>
       <div>
         <FormControl
-          error={!isValid}
           required={required}
           disabled={disabled}
           className={classes.nsSavedSearch}
           component="fieldset">
           <div className={classes.radioGroupWrapper}>
             <FormLabel component="legend" className={classes.radioGroupLabel}>
-              Saved search type
+              Saved search type:
             </FormLabel>
             <div className={classes.radioGroupWrapper}>
               <RadioGroup
@@ -152,7 +152,6 @@ export default function DynaNSSavedSearch(props) {
             </div>
           </div>
         </FormControl>
-        <ErroredMessageComponent {...props} />
       </div>
       <FormControl component="fieldset" className={classes.dynaNsSearched}>
         {searchType === 'public' ? (
@@ -175,6 +174,6 @@ export default function DynaNSSavedSearch(props) {
           </div>
         )}
       </FormControl>
-    </Fragment>
+    </>
   );
 }

@@ -11,6 +11,7 @@ export default {
     defaultValue: r => r.opts || {},
     type: 'editor',
     mode: 'json',
+    saveMode: 'json',
     label: 'Options',
   },
   sandbox: {

@@ -1,9 +1,11 @@
 /* global describe, test, expect */
-import { call, put, all } from 'redux-saga/effects';
+import { call, put, all, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { restore, purge } from './';
+import { restore, purge } from '.';
 import { recycleBinDependencies } from '../../constants/resource';
+import { getResourceCollection } from '../resources';
+import * as selectors from '../../reducers';
 
 describe('restore saga', () => {
   const resourceType = 'exports';
@@ -24,13 +26,19 @@ describe('restore saga', () => {
     );
     expect(saga.next().value).toEqual(
       all(
-        recycleBinDependencies[resourceType].map(resources =>
-          put(actions.resource.requestCollection(resources))
+        [...recycleBinDependencies[resourceType], 'recycleBinTTL'].map(
+          resourceType => call(getResourceCollection, { resourceType })
         )
       )
     );
+
     expect(saga.next().value).toEqual(
-      put(actions.resource.requestCollection('recycleBinTTL'))
+      select(selectors.redirectUrlToResourceListingPage, 'export', resourceId)
+    );
+    const redirectTo = '/pg/exports';
+
+    expect(saga.next(redirectTo).value).toEqual(
+      put(actions.recycleBin.restoreRedirectUrl(redirectTo))
     );
     expect(saga.next().done).toEqual(true);
   });

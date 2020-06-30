@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import * as selectors from '../../reducers';
@@ -29,15 +29,17 @@ export function AppRoutingWithAuth(props) {
     children,
     clearAppError,
   } = props;
-  const { pathname: currentRoute } = location;
+  const { pathname: currentRoute, search } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
-      if (currentRoute !== getRoutePath('signin'))
+      if (currentRoute !== getRoutePath('signin')) {
         history.push({
-          state: { attemptedRoute: currentRoute },
+          search,
+          state: { attemptedRoute: currentRoute, search },
         });
+      }
       initSession();
     }
 
@@ -47,6 +49,7 @@ export function AppRoutingWithAuth(props) {
     hasPageReloaded,
     currentRoute,
     history,
+    search,
     initSession,
     isAuthInitialized,
     clearAppError,
@@ -64,7 +67,7 @@ export function AppRoutingWithAuth(props) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
 
-      return <Redirect to={{ pathname: redirectedTo }} />;
+      return <Redirect to={{ pathname: redirectedTo, search: routeState?.search }} />;
     }
 
     return children;

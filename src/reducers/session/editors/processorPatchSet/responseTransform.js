@@ -21,7 +21,7 @@ const constructTransformData = values => {
 export default {
   patchSet: editor => {
     const patches = {
-      foregroundPatch: undefined,
+      foregroundPatches: undefined,
       backgroundPatches: [],
     };
     const responseTransform = constructTransformData(editor);
@@ -34,7 +34,7 @@ export default {
     } = editor;
     const { resourceId, resourceType } = optionalSaveParams;
 
-    patches.foregroundPatch = {
+    patches.foregroundPatches = {
       patch: [
         {
           op: 'replace',

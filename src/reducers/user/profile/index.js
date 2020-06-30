@@ -17,8 +17,7 @@ export default (state = null, action) => {
       return { ...profile, auth_type_google: {} };
 
     case actionTypes.DELETE_PROFILE:
-      if (state && state.email)
-        return { email: state.email, auth_type_google: state.auth_type_google };
+      if (state && state.email) return { email: state.email, auth_type_google: state.auth_type_google };
 
       return {};
 
@@ -34,3 +33,7 @@ export function avatarUrl(state) {
   return `https://secure.gravatar.com/avatar/${state.emailHash}?d=${process.env.CDN_BASE_URI}images/icons/icon-user-default.png&s=55`;
 }
 // #endregion PUBLIC SELECTORS
+
+export function isUserInErrMgtTwoDotZero(state) {
+  return !!(state && state.useErrMgtTwoDotZero);
+}

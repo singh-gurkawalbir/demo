@@ -1,17 +1,26 @@
-import EditorDialog from '../EditorDialog';
-import UrlEditor from './';
+import React from 'react';
+import UrlEditor from '.';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function UrlEditorDialog(props) {
-  const { id, rule, lookups = [], data, disabled, ...rest } = props;
+  const {
+    id,
+    isSampleDataLoading,
+    rule,
+    lookups = [],
+    data,
+    disabled,
+    ...rest
+  } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,
   };
 
   return (
-    <EditorDialog
+    <AFE2EditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -23,7 +32,8 @@ export default function UrlEditorDialog(props) {
         editorId={id}
         rule={rule}
         data={data}
+        isSampleDataLoading={isSampleDataLoading}
       />
-    </EditorDialog>
+    </AFE2EditorDialog>
   );
 }

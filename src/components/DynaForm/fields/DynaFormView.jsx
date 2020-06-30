@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
@@ -12,19 +12,21 @@ import * as selectors from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { emptyObject } from '../../../utils/constants';
 
 const emptyObj = {};
 const isParent = true;
-
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();
-  const staggedResource = useSelector(state => {
-    const { merged } =
-      selectors.resourceData(state, resourceType, resourceId) || {};
-
-    return merged || emptyObj;
-  });
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceType,
+      resourceId
+    ) || {};
+  const staggedResource = merged || emptyObject;
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
@@ -51,7 +53,8 @@ export function FormView(props) {
       return [
         {
           items: [
-            { label: type && type.toUpperCase(), value: `${isParent}` },
+            // if type is REST then we should show REST API
+            { label: type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -91,8 +94,7 @@ export function FormView(props) {
     if (
       selectedApplication !== `${isParent}` &&
       staggedRes['/assistant'] === undefined
-    )
-      staggedRes['/assistant'] = assistantName;
+    ) staggedRes['/assistant'] = assistantName;
 
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
@@ -126,7 +128,8 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && assistantName;
+  const isFlowBuilderAssistant =
+    flowId && assistantName && assistantName !== 'financialforce';
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

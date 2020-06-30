@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import LoadResources from '../../components/LoadResources';
+import LoadResources from '../LoadResources';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import Filters from './Filters';
@@ -11,6 +11,7 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../utils/string';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 export default function JobDashboard({
   integrationId,
@@ -31,7 +32,8 @@ export default function JobDashboard({
     selectors.isBulkRetryInProgress(state)
   );
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const jobs = useSelector(state => selectors.flowJobs(state));
+  const jobs = useSelectorMemo(selectors.makeFlowJobs);
+  const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
   const [disableActions, setDisableActions] = useState(true);
@@ -87,8 +89,8 @@ export default function JobDashboard({
   }, [dispatch, integrationId, flowId, filterHash, jobs.length]);
 
   useEffect(() => {
-    setDisableActions(isBulkRetryInProgress || jobs.length === 0);
-  }, [isBulkRetryInProgress, jobs.length]);
+    setDisableActions(isBulkRetryInProgress || numJobsWithErrors === 0);
+  }, [isBulkRetryInProgress, numJobsWithErrors]);
 
   useEffect(() => {
     let jobsSelected = 0;

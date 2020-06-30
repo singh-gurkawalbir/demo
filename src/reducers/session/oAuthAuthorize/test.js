@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import reducer from './';
+import reducer from '.';
 import actions from '../../../actions';
 
 describe('Connection Oauth authorized response', () => {
