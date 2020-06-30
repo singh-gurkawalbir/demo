@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
@@ -37,7 +37,7 @@ const SalesforceProductOptions = ({value,
 function DynaSuiteScriptTable(props) {
   const {
     id,
-    // _integrationId,
+    _integrationId: integrationId,
     extracts = [],
     onFieldChange,
     value = {},
@@ -64,11 +64,14 @@ function DynaSuiteScriptTable(props) {
   },
   [salesforceProductFieldOptions]);
 
+  const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
+  const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
+
   const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
     extracts: key,
     generates: value[key],
   })), [value]);
-  const commMetaPath = `suitescript/connections/${connectionId}/connections/SALESFORCE_CONNECTION/sObjectTypes/Product2?ignoreCache=true`;
+  const commMetaPath = `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes/Product2?ignoreCache=true`;
 
 
   const { data: allFieldsOptions} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,

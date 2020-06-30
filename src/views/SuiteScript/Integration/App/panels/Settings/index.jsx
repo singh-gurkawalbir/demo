@@ -12,7 +12,7 @@ import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { isEqual } from 'lodash';
 import * as selectors from '../../../../../../reducers';
-import GeneralSection from './sections/General';
+import GeneralSection from '../../../DIY/panels/Admin/sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';

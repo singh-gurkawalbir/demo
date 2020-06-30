@@ -1,26 +1,23 @@
-import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
-import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
-import FlowsIcon from '../../../../components/icons/FlowsIcon';
-import DashboardIcon from '../../../../components/icons/DashboardIcon';
-import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
-import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
 import EditableText from '../../../../components/EditableText';
-import AdminPanel from '../DIY/panels/Admin';
-import FlowsPanel from '../DIY/panels/Flows';
+import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import CustomSettingsIcon from '../../../../components/icons/CustomSettingsIcon';
+import DashboardIcon from '../../../../components/icons/DashboardIcon';
+import FlowsIcon from '../../../../components/icons/FlowsIcon';
+import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
+import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
+import * as selectors from '../../../../reducers';
+import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
+import IntegrationTabs from '../common/Tabs';
 import ConnectionsPanel from '../DIY/panels/Connections';
 import DashboardPanel from '../DIY/panels/Dashboard';
-// import IntegrationTabs from '../common/Tabs';
-import SettingsIcon from '../../../../components/icons/SettingsIcon';
-import IntegrationTabs from '../common/Tabs';
-import actions from '../../../../actions';
-import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
+import FlowsPanel from './panels/Flows';
+import SettingsPanel from './panels/Settings';
 
-import SettingsPanel from './panels/Settings/index';
-import CustomSettingsIcon from '../../../../components/icons/CustomSettingsIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -53,12 +50,6 @@ const tabs = [
     label: 'Connections',
     Icon: ConnectionsIcon,
     Panel: ConnectionsPanel,
-  },
-  {
-    path: 'admin',
-    label: 'Admin',
-    Icon: SettingsIcon,
-    Panel: AdminPanel,
   },
 ];
 

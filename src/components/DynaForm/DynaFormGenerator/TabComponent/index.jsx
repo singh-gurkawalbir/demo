@@ -138,7 +138,10 @@ function FormWithSave(props) {
 
 export function SuiteScriptTabIAComponent(props) {
   return (
-    <TabComponent {...props}>
+    <TabComponent
+      {...props}
+      orientation="horizontal"
+    >
       <FormWithSave >
 
         <SuiteScriptSaveButton />

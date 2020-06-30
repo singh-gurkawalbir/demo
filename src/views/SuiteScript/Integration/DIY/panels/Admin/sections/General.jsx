@@ -4,7 +4,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import * as selectors from '../../../../../../../reducers';
-import { SuiteScriptForm } from './ConfigureSettings';
+import { SuiteScriptForm } from '../../../../App/panels/Settings/sections/ConfigureSettings';
 
 const useStyles = makeStyles(theme => ({
   formContainer: {

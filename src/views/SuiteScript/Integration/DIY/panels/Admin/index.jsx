@@ -8,6 +8,7 @@ import {
   Switch,
   useRouteMatch
 } from 'react-router-dom';
+import GeneralSection from './sections/General';
 import actions from '../../../../../../actions';
 import * as selectors from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
@@ -45,6 +46,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const allSections = [
+  {
+    path: 'general',
+    label: 'General',
+    Section: GeneralSection,
+    id: 'general',
+  },
   {
     path: 'legacy',
     label: 'Legacy',

@@ -499,6 +499,16 @@ export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
     if (!draft.settings) {
       draft.settings = emptyObject;
     }
+    if (draft?.sections?.length) {
+      draft.sections.forEach((section) => {
+        if (section?.sections?.length) {
+          section?.sections.forEach((sect) => {
+            // eslint-disable-next-line no-param-reassign
+            sect.title = sect.title || 'Common';
+          });
+        }
+      });
+    }
 
     if (draft.settings.general) {
       draft.settings.hasGeneralSettings = true;
