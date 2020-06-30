@@ -2162,10 +2162,6 @@ export function resourceDetailsMap(state) {
   return fromData.resourceDetailsMap(state.data);
 }
 
-export function isAgentOnline(state, agentId) {
-  return fromData.isAgentOnline(state.data, agentId);
-}
-
 export function exportNeedsRouting(state, id) {
   return fromData.exportNeedsRouting(state && state.data, id);
 }
