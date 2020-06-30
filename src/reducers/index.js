@@ -50,6 +50,8 @@ import {
   isNewId,
   MODEL_PLURAL_TO_LABEL,
   isRealTimeOrDistributedResource,
+  isFileAdaptor,
+  isAS2Resource,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -2131,6 +2133,25 @@ export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
   return isFrameWork2;
 }
 
+export function integrationAppChildIdOfFlow(state, integrationId, flowId) {
+  if (!state || !integrationId) {
+    return null;
+  }
+  const integration = fromData.resource(state.data, 'integrations', integrationId);
+  if (integration?.settings?.supportsMultiStore) {
+    const { stores } = integrationAppSettings(state, integrationId);
+    if (!flowId && stores?.length) {
+      return stores[0].value;
+    }
+    return stores.find(store => integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
+  }
+  if (isIntegrationAppVersion2(state, integrationId, true)) {
+    if (!flowId) return integrationId;
+    return fromData.resource(state.data, 'flows', flowId)?._integrationId;
+  }
+  return null;
+}
+
 // #end integrationApps Region
 
 export function resourceReferences(state) {
@@ -3414,12 +3435,18 @@ export function auditLogs(
   filters,
   options = {}
 ) {
-  const auditLogs = fromData.auditLogs(
+  let auditLogs = fromData.auditLogs(
     state.data,
     resourceType,
     resourceId,
     filters
   );
+
+  const result = {
+    logs: [],
+    count: 0,
+    totalCount: 0
+  };
 
   if (options.storeId) {
     const {
@@ -3435,7 +3462,7 @@ export function auditLogs(
       ...map(connections, '_id'),
     ];
 
-    return auditLogs.filter(log => {
+    auditLogs = auditLogs.filter(log => {
       if (
         ['export', 'import', 'connection', 'flow'].includes(log.resourceType)
       ) {
@@ -3446,7 +3473,10 @@ export function auditLogs(
     });
   }
 
-  return auditLogs;
+  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
+  result.count = result.logs.length;
+  result.totalCount = auditLogs.length;
+  return result;
 }
 
 export function affectedResourcesAndUsersFromAuditLogs(
@@ -3694,53 +3724,59 @@ export function flowJobsPagingDetails(state) {
   return fromData.flowJobsPagingDetails(state.data);
 }
 
-export function flowJobs(state) {
-  const jobs = fromData.flowJobs(state.data);
-  const resourceMap = resourceDetailsMap(state);
+export const makeFlowJobs = () => createSelector(
+  state => state?.data,
+  (_1, options) => options,
+  (data, options) => {
+    const jobs = fromData.flowJobs(data, options);
+    const resourceMap = fromData.resourceDetailsMap(data);
 
-  return jobs.map(job => {
-    if (job.children && job.children.length > 0) {
+    return jobs.map(job => {
+      if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-      job.children = job.children.map(cJob => {
-        const additionalChildProps = {
-          name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId].name
-            : resourceMap.imports[cJob._importId].name,
-        };
+        job.children = job.children.map(cJob => {
+          const additionalChildProps = {
+            name: cJob._exportId
+              ? resourceMap.exports[cJob._exportId].name
+              : resourceMap.imports[cJob._importId].name,
+          };
 
-        return { ...cJob, ...additionalChildProps };
-      });
-    }
+          return { ...cJob, ...additionalChildProps };
+        });
+      }
 
-    const additionalProps = {
-      name:
+      const additionalProps = {
+        name:
         resourceMap.flows &&
         resourceMap.flows[job._flowId] &&
         resourceMap.flows[job._flowId].name,
-    };
+      };
 
-    if (job.doneExporting && job.numPagesGenerated > 0) {
-      additionalProps.percentComplete = Math.floor(
-        (job.numPagesProcessed * 100) /
+      if (job.doneExporting && job.numPagesGenerated > 0) {
+        additionalProps.percentComplete = Math.floor(
+          (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
             ((resourceMap.flows &&
               resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
-      );
-    } else {
-      additionalProps.percentComplete = 0;
-    }
+        );
+      } else {
+        additionalProps.percentComplete = 0;
+      }
 
-    return { ...job, ...additionalProps };
+      return { ...job, ...additionalProps };
+    });
   });
-}
 
-export function flowJob(state, { jobId }) {
-  const jobList = flowJobs(state);
 
-  return jobList.find(j => j._id === jobId);
-}
+export const makeFlowJob = () => {
+  const cachedFlowJobsSelector = makeFlowJobs();
+  return createSelector((state, ops) => cachedFlowJobsSelector(
+    state, ops),
+  (_1, ops) => ops,
+  (jobList, ops) => jobList.find(j => j._id === ops?.jobId));
+};
 
 export function inProgressJobIds(state) {
   return fromData.inProgressJobIds(state.data);
@@ -4119,6 +4155,32 @@ export function isDataLoaderExport(state, resourceId, flowId) {
     'value'
   );
   return resourceObj.type === 'simple';
+}
+/**
+ * All the adaptors whose preview depends on connection
+ * are disabled if their respective connections are offline
+ * Any other criteria to disable preview panel can be added here
+ */
+export function isExportPreviewDisabled(state, resourceId, resourceType) {
+  const { merged: resourceObj = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  );
+  // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
+  // their preview does not depend on connection, so it can be enabled
+  // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
+  // As we are using this below condition multiple places
+  if (
+    isFileAdaptor(resourceObj) ||
+    isAS2Resource(resourceObj) ||
+    isRestCsvMediaTypeExport(state, resourceId)
+  ) {
+    return false;
+  }
+  // In all other cases, where preview depends on connection being online, return the same
+  return isConnectionOffline(state, resourceObj._connectionId);
 }
 
 // Gives back supported stages of data flow based on resource type

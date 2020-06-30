@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -7,6 +7,7 @@ import RightDrawer from '../../drawer/Right';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 
 const useStyles = makeStyles(() => ({
@@ -30,11 +31,13 @@ const useStyles = makeStyles(() => ({
 export default function ErrorDrawer({
   height = 'tall',
   jobId,
+  includeAll = false,
   parentJobId,
   showResolved,
   numError = 0,
   numResolved = 0,
   onClose,
+  integrationName,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -42,8 +45,13 @@ export default function ErrorDrawer({
   const [errorCount, setErrorCount] = useState(
     childJobId ? numError + numResolved : undefined
   );
-  const flowJob = useSelector(state =>
-    selectors.flowJob(state, { jobId: parentJobId || jobId })
+  const jobFilter = useMemo(() => (
+    { jobId: parentJobId || jobId, includeAll }
+  ),
+  [includeAll, jobId, parentJobId]);
+  const flowJob = useSelectorMemo(
+    selectors.makeFlowJob,
+    jobFilter
   );
   const jobErrors = useSelector(state =>
     selectors.jobErrors(state, childJobId)
@@ -94,7 +102,8 @@ export default function ErrorDrawer({
     job = flowJob?.children?.find(j => j._id === childJobId);
   }
 
-  let title = flowJob?.name;
+  const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
+  let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
   if (job?.name) title += ` > ${job.name}`;
 
   return (
@@ -111,7 +120,7 @@ export default function ErrorDrawer({
 
       {!job ? (
         <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading child jobs...</span>
+          <Spinner size={20} /> <span>Loading</span>
         </div>
       ) : (
         <>

@@ -128,7 +128,7 @@ export function* requestEditorSampleData({
     const response = yield call(apiCallWithRetry, {
       path,
       opts,
-      message: 'Fetching editor sample data',
+      message: 'Loading',
       hidden: false,
     });
 
