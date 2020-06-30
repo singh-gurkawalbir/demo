@@ -1,3 +1,5 @@
+import { isProduction } from '../../../../utils';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -6,12 +8,11 @@ export default {
     if (retValues['/integrator/region'] === 'europe') {
       baseURI = 'https://api.eu.integrator.io';
       retValues['/integrator/environment'] = undefined;
-    } else if (retValues['/integrator/environment'] === 'staging') {
-      baseURI = 'https://api.staging.integrator.io';
-    } else if (retValues['/integrator/environment'] === 'production') {
-      baseURI = 'https://api.integrator.io';
+    } else if (isProduction()) {
+      baseURI = 'https://integrator.io';
+    } else {
+      baseURI = 'https://staging.integrator.io';
     }
-
     retValues['/http/headers'] = [
       {
         name: 'Authorization',
@@ -36,39 +37,6 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    'integrator.environment': {
-      id: 'integrator.environment',
-      type: 'select',
-      label: 'Environment',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'Production', value: 'production' },
-            { label: 'Staging', value: 'staging' },
-          ],
-        },
-      ],
-      visibleWhen: [
-        {
-          field: 'integrator.region',
-          is: ['north_america'],
-        },
-      ],
-      defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
-
-        if (baseUri) {
-          if (baseUri.indexOf('staging') !== -1) {
-            return 'staging';
-          }
-
-          return 'production';
-        }
-
-        return '';
-      },
-    },
     'integrator.region': {
       id: 'integrator.region',
       type: 'select',
@@ -120,9 +88,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['integrator.region',
-          'integrator.environment',
-          'integrator.token'] },
+        fields: ['integrator.region', 'integrator.token'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
