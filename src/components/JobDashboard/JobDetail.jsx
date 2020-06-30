@@ -277,7 +277,7 @@ function JobDetail({
         <ErrorCountCell
           count={job.numResolved}
           isJobInProgress={isJobInProgress}
-          onClick={() => handleViewErrorsClick(false)}
+          onClick={() => handleViewErrorsClick(true)}
           className={classes.resolved}
            />
         <TableCell className={classes.pages}>{getPages(job)}</TableCell>
@@ -297,7 +297,7 @@ function JobDetail({
       {expanded && !job.children && (
         <TableRow>
           <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading child jobs...</span>
+            <Spinner size={20} /> <span>Loading</span>
           </TableCell>
         </TableRow>
       )}

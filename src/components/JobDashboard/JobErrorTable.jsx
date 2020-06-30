@@ -1,36 +1,32 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import TablePagination from '@material-ui/core/TablePagination';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import { Link, useRouteMatch} from 'react-router-dom';
+import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import actions from '../../actions';
+import * as selectors from '../../reducers';
+import { JOB_STATUS } from '../../utils/constants';
+import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
 import ChevronRight from '../icons/ArrowRightIcon';
 import ExpandMore from '../icons/ArrowDownIcon';
-import actions from '../../actions';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { UNDO_TIME } from './util';
-import JsonEditorDialog from '../JsonEditorDialog';
-import * as selectors from '../../reducers';
 import Spinner from '../Spinner';
 import CeligoTable from '../CeligoTable';
-import JobErrorMessage from './JobErrorMessage';
-import { JOB_STATUS } from '../../utils/constants';
-import { generateNewId } from '../../utils/resource';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ButtonsGroup from '../ButtonGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
+import JobErrorMessage from './JobErrorMessage';
+import { UNDO_TIME } from './util';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
   fileInput: { display: 'none' },
   spinner: {
-    left: '0px',
-    right: '0px',
-    top: '60px',
-    bottom: '0px',
-    background: 'rgba(106, 123, 137, 0.7)',
+    left: 0,
+    right: 0,
+    top: -40,
+    bottom: 0,
     width: '100%',
     position: 'absolute',
     textAlign: 'center',
@@ -39,12 +35,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     height: 'inherit',
     zIndex: '3',
-    '& div': {
-      color: theme.palette.background.paper,
-    },
     '& span': {
       marginLeft: '10px',
-      color: '#fff',
     },
   },
   btnsWrappper: {
@@ -69,16 +61,19 @@ const useStyles = makeStyles(theme => ({
   error: {
     color: theme.palette.error.main,
   },
-  info: {
+  resolved: {
     color: theme.palette.info.main,
   },
   darkGray: {
     color: theme.palette.text.secondary,
   },
+  downloadOnlyDivider: {
+    margin: theme.spacing(2),
+  },
 }));
 
 function JobErrorTable({
-  rowsPerPage = 10,
+  rowsPerPage = 50,
   jobErrors,
   errorCount,
   job,
@@ -86,6 +81,7 @@ function JobErrorTable({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
   const [currentPage, setCurrentPage] = useState(0);
@@ -122,16 +118,9 @@ function JobErrorTable({
       je.retryObject &&
       je.retryObject.isRetriable
   ).length;
-  const [editDataOfRetryId, setEditDataOfRetryId] = useState();
+  // const [editDataOfRetryId, setEditDataOfRetryId] = useState();
   const [expanded, setExpanded] = useState({});
-  // #region derived props from selectors
-  const retryObject = useSelector(state => {
-    if (!editDataOfRetryId) {
-      return undefined;
-    }
 
-    return selectors.jobErrorRetryObject(state, editDataOfRetryId);
-  });
   const uploadedFile = useSelector(
     state => selectors.getUploadedFile(state, fileId),
     shallowEqual
@@ -148,7 +137,7 @@ function JobErrorTable({
 
     return childJob.errorFile && childJob.errorFile.id;
   });
-  // #end region
+
   const jobErrorsData = [];
 
   jobErrorsInCurrentPage.forEach(j => {
@@ -318,16 +307,6 @@ function JobErrorTable({
     }
   }
 
-  function handleEditRetryDataClick(retryId) {
-    setEditDataOfRetryId(retryId);
-  }
-
-  useEffect(() => {
-    if (editDataOfRetryId && (!retryObject || !retryObject.retryData)) {
-      dispatch(actions.job.requestRetryData({ retryId: editDataOfRetryId }));
-    }
-  }, [dispatch, editDataOfRetryId, retryObject]);
-
   useEffect(() => {
     const { status, error, file: errorFile } = uploadedFile || {};
 
@@ -403,21 +382,6 @@ function JobErrorTable({
     onCloseClick,
   ]);
 
-  function handleRetryDataChange(data) {
-    const updatedData = { ...retryObject.retryData, data };
-
-    dispatch(
-      actions.job.updateRetryData({
-        retryId: editDataOfRetryId,
-        retryData: updatedData,
-      })
-    );
-  }
-
-  function handleRetryDataEditorClose() {
-    setEditDataOfRetryId();
-  }
-
   const handleExpandCollapseClick = errorId => {
     setExpanded({ ...expanded, [errorId]: !expanded[errorId] });
   };
@@ -426,22 +390,24 @@ function JobErrorTable({
     setSelectedErrors(selected);
   };
 
+  function EditRetryCell({retryId, isEditable}) {
+    if (!isEditable) return null;
+
+    return (
+      <Tooltip title="Edit retry data">
+        <IconButton
+          component={Link}
+          size="small"
+          data-test="edit-retry"
+          to={`${match.url}/editRetry/${retryId}`}>
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+    );
+  }
+
   return (
     <>
-      {editDataOfRetryId &&
-        (retryObject && retryObject.retryData ? (
-          <JsonEditorDialog
-            onChange={handleRetryDataChange}
-            onClose={handleRetryDataEditorClose}
-            value={retryObject.retryData.data}
-            title="Edit retry data"
-            id={editDataOfRetryId}
-          />
-        ) : (
-          <div className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading retry data...</span>
-          </div>
-        ))}
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
         <div className={classes.spinner}>
           <Spinner size={20} /> <span>Uploading...</span>
@@ -458,7 +424,7 @@ function JobErrorTable({
           Error: <span className={classes.error}>{job.numError}</span>
         </li>
         <li>
-          Resolved: <span className={classes.info}>{job.numResolved}</span>
+          Resolved: <span className={classes.resolved}>{job.numResolved}</span>
         </li>
         <li>
           Duration: <span className={classes.darkGray}>{job.duration}</span>
@@ -472,7 +438,7 @@ function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading errors...</span>
+          <Spinner size={20} /> <span>Loading</span>
         </div>
       ) : (
         <>
@@ -529,10 +495,11 @@ function JobErrorTable({
 
           {jobErrorsInCurrentPage.length === 0 ? (
             <>
-              <div>
-                Please use the &apos;Download All Errors&apos; button above to
+              <Divider className={classes.downloadOnlyDivider} />
+              <Typography>
+                Please use the &apos;Download all errors&apos; button above to
                 view the errors for this job.
-              </div>
+              </Typography>
             </>
           ) : (
             <>
@@ -550,7 +517,6 @@ function JobErrorTable({
                   'aria-label': 'Next Page',
                 }}
                 onChangePage={handleChangePage}
-                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
               />
 
               <CeligoTable
@@ -565,14 +531,13 @@ function JobErrorTable({
                   {
                     heading: '',
                     value: r =>
-                      r.similarErrors &&
-                      r.similarErrors.length > 0 && (
+                      r.similarErrors?.length > 0 && (
                         <IconButton
                           data-test="expandJobsErrors"
                           onClick={() => {
                             handleExpandCollapseClick(r._id);
                           }}>
-                          {r.metadata && r.metadata.expanded ? (
+                          {r.metadata?.expanded ? (
                             <ExpandMore />
                           ) : (
                             <ChevronRight />
@@ -582,7 +547,10 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Resolved?',
-                    value: r => (r.resolved ? 'Yes' : 'No'),
+                    align: 'center',
+                    value: r => r.resolved ?
+                      (<span className={classes.resolved}>Yes</span>)
+                      : (<span className={classes.error}>No</span>),
                   },
                   {
                     heading: 'Source',
@@ -590,11 +558,11 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Code',
+                    align: 'center',
                     value: r => r.code,
                   },
                   {
                     heading: 'Message',
-                    // eslint-disable-next-line react/display-name
                     value: r => (
                       <JobErrorMessage
                         message={r.message}
@@ -605,29 +573,18 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Time',
-                    // eslint-disable-next-line react/display-name
                     value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
+                  {
+                    heading: 'Retry data',
+                    align: 'center',
+                    value: r => <EditRetryCell
+                      retryId={r._retryId}
+                      isEditable={r.metadata?.isParent &&
+                      r.retryObject?.isDataEditable}
+                      dateTime={r.createdAt} />,
+                  },
                 ]}
-                // TODO : @Raghu Need to refactor.. Move all this metadata stuff out of this JSX
-                rowActions={r => {
-                  if (!(r.metadata &&
-                    r.metadata.isParent &&
-                    r.retryObject &&
-                    r.retryObject.isDataEditable)) return [];
-                  return [
-                    {
-                      icon: <EditIcon />,
-                      label: 'Edit retry data',
-                      component: function EditRetryData() {
-                        useEffect(() => {
-                          handleEditRetryDataClick(r._retryId);
-                        }, []);
-                        return null;
-                      },
-                    },
-                  ];
-                }}
               />
             </>
           )}

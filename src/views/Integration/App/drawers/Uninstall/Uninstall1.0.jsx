@@ -120,7 +120,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
   if (!uninstallSteps) {
     return (
       <Loader open hideBackDrop>
-        Loading uninstall steps
+        Loading
         <Spinner />
       </Loader>
     );

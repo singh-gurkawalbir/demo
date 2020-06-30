@@ -16,7 +16,7 @@ export default function JobErrorMessage({
   let exportRecordText;
   let importRecordLink;
   let importRecordText;
-
+  // console.log(message);
   if (exportDataURI) {
     if (isValidURL(exportDataURI)) {
       exportRecordLink = exportDataURI;

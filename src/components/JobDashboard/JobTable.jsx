@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
-import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
-import JobErrorDialog from './JobErrorDialog';
+import JobDetail from './JobDetail';
+import ErrorDrawer from './ErrorDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +24,6 @@ const useStyles = makeStyles(theme => ({
   checkFlow: {
     paddingLeft: 40,
   },
-  tablePaginationRoot: { float: 'right' },
   name: {
     width: '18.15%',
     wordBreak: 'break-word',
@@ -83,6 +77,8 @@ function JobTable({
   isFlowBuilderView,
 }) {
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -139,9 +135,12 @@ function JobTable({
       numError,
       numResolved,
     });
+
+    history.push(`${match.url}/viewErrors`);
   }
 
-  function handleJobErrorDialogCloseClick() {
+  function handleErrorDrawerClose() {
+    history.goBack();
     setShowErrorDialogFor({});
   }
 
@@ -186,17 +185,18 @@ function JobTable({
           ))}
         </TableBody>
       </Table>
-      {showErrorDialogFor.jobId && (
-        <JobErrorDialog
-          integrationName={integrationName}
-          jobId={showErrorDialogFor.jobId}
-          parentJobId={showErrorDialogFor.parentJobId}
-          showResolved={showErrorDialogFor.showResolved}
-          numError={showErrorDialogFor.numError}
-          numResolved={showErrorDialogFor.numResolved}
-          onCloseClick={handleJobErrorDialogCloseClick}
+
+      <ErrorDrawer
+        // for now, force tall (default)
+        // height={isFlowBuilderView ? 'short' : 'tall'}
+        integrationName={integrationName}
+        jobId={showErrorDialogFor.jobId}
+        parentJobId={showErrorDialogFor.parentJobId}
+        showResolved={showErrorDialogFor.showResolved}
+        numError={showErrorDialogFor.numError}
+        numResolved={showErrorDialogFor.numResolved}
+        onClose={handleErrorDrawerClose}
         />
-      )}
     </>
   );
 }

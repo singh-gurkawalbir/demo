@@ -122,7 +122,7 @@ export default function ChildJobDetail({
           color="primary"
           disabled={!isSelectable}
           checked={isSelectable && isSelected}
-          onChange={event => handleSelectChange(event)}
+          onChange={handleSelectChange}
         />
       </TableCell>
       <TableCell className={classes.name}>{job.name || jobType}</TableCell>
@@ -144,7 +144,7 @@ export default function ChildJobDetail({
       <ErrorCountCell
         count={job.numResolved}
         isJobInProgress={isJobInProgress}
-        onClick={() => handleViewErrorsClick(false)}
+        onClick={() => handleViewErrorsClick(true)}
         className={classes.resolved}
       />
       <TableCell className={classes.pages}>
