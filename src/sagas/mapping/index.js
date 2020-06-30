@@ -236,7 +236,7 @@ export function* refreshGenerates({ id, isInit = false }) {
       if (generate && generate.indexOf('[*].') !== -1) {
         const subListName = generate.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName);
-        if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
+        if (childRelationshipObject && sObjectList.indexOf(childRelationshipObject?.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
       }
