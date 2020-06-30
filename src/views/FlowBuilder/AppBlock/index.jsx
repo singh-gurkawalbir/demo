@@ -47,16 +47,19 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     top: -85,
     marginBottom: -35,
-    fontSize: 15,
-    lineHeight: '19px',
-    fontFamily: 'source sans pro',
     background: theme.palette.background.default,
     borderRadius: [[0, 0, 20, 20]],
     position: 'relative',
     zIndex: 1,
     padding: theme.spacing(2),
+
+  },
+  containerName: {
+    fontSize: 15,
+    lineHeight: '19px',
     wordBreak: 'break-word',
-    paddingTop: 100,
+    paddingTop: 84,
+    width: '100%',
   },
   buttonContainer: {
     display: 'flex',
@@ -363,23 +366,25 @@ function AppBlock({
           </Status>
         ) : null}
       </div>
-      <Typography className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})} component="div" variant="h5">
-        {isTruncated ? (
-          <Tooltip
-            title={<span className={classes.tooltipNameFB}>{name}</span>}
-            TransitionComponent={Zoom}
-            placement="top"
-            enterDelay={1000}>
+      <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
+        <Typography className={classes.containerName}>
+          {isTruncated ? (
+            <Tooltip
+              title={<span className={classes.tooltipNameFB}>{name}</span>}
+              TransitionComponent={Zoom}
+              placement="top"
+              enterDelay={1000}>
+              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+                {name}
+              </Truncate>
+            </Tooltip>
+          ) : (
             <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
               {name}
             </Truncate>
-          </Tooltip>
-        ) : (
-          <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-            {name}
-          </Truncate>
-        )}
-      </Typography>
+          )}
+        </Typography>
+      </div>
 
 
     </div>
