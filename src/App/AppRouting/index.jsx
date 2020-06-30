@@ -1,6 +1,5 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import shortid from 'shortid';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
@@ -10,6 +9,7 @@ import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
+import { AMPERSAND_ROUTES } from '../../utils/constants';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -180,143 +180,11 @@ export default function AppRouting() {
         exact
         render={({ history }) => history.replace('/pg/accesstokens')}
         />
-      {/*
-         Ampersand Routers Handling begin
-      */}
-      <Route
-        path={[
-          '/pg/flows/create',
-          'orchestrations/create',
-          'flow-builder/v1_5/create'
-        ]}
-        exact
-        render={({ history }) => history.replace(`/pg/integrations/none/flowBuilder/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/integrations/create"
-        exact
-        render={({ history }) => history.replace(`/pg/dashboard/add/integrations/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/:resourceType/create"
-        exact
-        render={({ history, match }) => history.replace(`/pg/${match.params.resourceType}/add/${match.params.resourceType}/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/:resourceType/:resourceId/edit"
-        exact
-        render={({ history, match }) => history.replace(`/pg/${match.params.resourceType}/edit/${match.params.resourceType}/${match.params.connectorId}`)}
-      />
-      <Route
-        path="/pg/data-loader"
-        exact
-        render={({ history }) => history.replace(`/pg/integrations/none/dataLoader/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/integrations/:integrationId/data-loader"
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/dataLoader/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/integrations/:integrationId/data-loader/:flowId/edit"
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/dataLoader/${match.params.flowId}}`)}
-      />
-      <Route
-        path={[
-          '/pg/integrations/:integrationId/flow-builder/v1_5/:flowId/create',
-          '/pg/integrations/:integrationId/flows/:flowId/edit',
-          '/pg/integrations/:integrationId/flow-builder/v1_5/:flowId/edit',
-          '/pg/integrations/:integrationId/orchestrations/:flowId/edit',
-          '/pg/integrations/:integrationId/orchestrations/:flowId/exports/create',
-        ]}
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}`)}
-      />
-      <Route
-        path={[
-          '/pg/integrations/:integrationId/orchestrations/:flowId/:resourceType/create',
-        ]}
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/add/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/new=${shortid.generate()}`)}
-      />
-      <Route
-        path={[
-          '/pg/integrations/:integrationId/orchestrations/:flowId/:resourceType/:resourceId/edit',
-        ]}
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/edit/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/${match.params.resourceId}`)}
-      />
-      <Route
-        path={[
-          '/pg/integrations/:integrationId/flows/create',
-          '/pg/integrations/:_integrationId/orchestrations/create',
-          '/pg/integrations/:integrationId/flow-builder/v1_5/create'
-        ]}
-        exact
-        render={({ history, match }) => history.replace(`/pg/integrations/${match.params.integrationId}/flowBuilder/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/connectors/:connectorId/licenses"
-        exact
-        render={({ history, match }) => history.replace(`/pg/connectors/${match.params.connectorId}/connectorLicenses`)}
-      />
-      <Route
-        path="/pg/connectors/:connectorId/licenses/create"
-        exact
-        render={({ history, match }) => history.replace(`/pg/connectors/${match.params.connectorId}/connectorLicenses/add/connectorLicenses/new-${shortid.generate()}`)}
-      />
-      <Route
-        path="/pg/connectors/:connectorId/licenses/:licenseId/edit"
-        exact
-        render={({ history, match }) => history.replace(`/pg/connectors/${match.params.connectorId}/connectorLicenses/edit/connectorLicenses/${match.params.licenseId}`)}
-      />
-      <Route
-        path="/pg/clone/integrations/:_integrationId/:resourceType/:resourceId/preview"
-        exact
-        render={({ history, match }) => history.replace(`/pg/clone/${match.params.resourceType}/${match.params.resourceId}/preview`)}
-      />
-      <Route
-        path="/pg/clone/integrations/:_integrationId/:resourceType/:resourceId/setup"
-        exact
-        render={({ history, match }) => history.replace(`/pg/clone/${match.params.resourceType}/${match.params.resourceId}/setup`)}
-      />
-      <Route
-        path={[
-          '/pg/my-account/audit-log'
-        ]}
-        exact
-        render={({ history }) => history.replace('/pg/myAccount/audit')}
-      />
-      <Route
-        path={[
-          '/pg/my-account',
-          '/pg/my-account/:section'
-        ]}
-        exact
-        render={({ history, match }) => history.replace(`/pg/myAccount/${match.params.section || 'profile'}`)}
-      />
       <Route
         exact
-        path={[
-          '/pg/connectors/:integrationId/add-new-store-for-connector',
-          '/pg/connectors/:integrationId/settings',
-          '/pg/connectors/:integrationId/settings/tokens/:accessTokenId/:accessTokenAction',
-          '/pg/connectors/:integrationId/flows/:flowId/mapping',
-          '/pg/getting-started',
-          '/pg/licensing/flowLimitReached',
-          '/pg/licensing/orchestration',
-          '/pg/licensing/orchestrationLimitReached',
-          '/pg/licensing/needSandboxAddon',
-          '/pg/licensing/start',
-          '/pg/releasenotes/list',
-          '/pg/retry/edit',
-        ]}
+        path={[...AMPERSAND_ROUTES]}
         component={AmpersandRoutesHandler}
       />
-      {/*
-         Ampersand Routers Handling end
-      */}
 
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />
