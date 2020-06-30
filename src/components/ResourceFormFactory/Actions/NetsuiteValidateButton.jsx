@@ -40,18 +40,21 @@ const NetsuiteValidateButton = props => {
   const isValidatingNetsuiteUserRoles = useSelector(state =>
     selectors.isValidatingNetsuiteUserRoles(state)
   );
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, resourceId)
+  );
   const { message, status } = netsuiteUserRolesState || {};
   const matchingActionField = fields.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
   const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
-    if (resourceId && fieldsIsVisible) {
+    if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
         actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
       );
     }
-  }, [dispatch, fieldsIsVisible, resourceId]);
+  }, [dispatch, fieldsIsVisible, resourceId, isOffline]);
 
   useEffect(() => {
     if (fieldsIsVisible) {
