@@ -10,6 +10,7 @@ import data, * as fromData from './data';
 import * as fromResources from './data/resources';
 import * as fromMarketPlace from './data/marketPlace';
 import session, * as fromSession from './session';
+import * as fromMetadata from './session/metadata';
 import comms, * as fromComms from './comms';
 import * as fromNetworkComms from './comms/networkComms';
 import auth, * as fromAuth from './authentication';
@@ -60,7 +61,7 @@ import {
 } from '../utils/exportPanel';
 import inferErrorMessage from '../utils/inferErrorMessage';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleIdFromSection } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
@@ -1790,6 +1791,9 @@ export function integrationAppSettings(state, id) {
   return fromData.integrationAppSettings(state.data, id);
 }
 
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
+  return fromData.suiteScriptIASettings(state && state.data, id, ssLinkedConnectionId);
+}
 export function integrationAppLicense(state, id) {
   if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
@@ -1849,7 +1853,7 @@ export function integrationAppFlowSections(state, id, store) {
 
   return flowSections.map(sec => ({
     ...sec,
-    titleId: sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '',
+    titleId: getTitleIdFromSection(sec),
   }));
 }
 
@@ -1924,13 +1928,41 @@ export function integrationAppSectionMetadata(
   const selectedSection =
     allSections.find(
       sec =>
-        sec.title &&
-        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+        getTitleIdFromSection(sec) === section
     ) || {};
 
   return selectedSection;
 }
 
+
+export function suiteScriptIASectionMetadata(
+  state,
+  integrationId,
+  ssLinkedConnectionId,
+  section,
+) {
+  if (!state) {
+    return emptyObject;
+  }
+
+  const integrationResource = suiteScriptIASettings(
+    state,
+    integrationId,
+    ssLinkedConnectionId
+  );
+  const {sections = [] } =
+    integrationResource || {};
+  const allSections = sections;
+
+
+  const selectedSection =
+    allSections.find(
+      sec =>
+        getTitleIdFromSection(sec) === section
+    ) || {};
+
+  return selectedSection;
+}
 export function integrationAppFlowSettings(state, id, section, storeId) {
   if (!state) return emptyObject;
   const integrationResource =
@@ -1964,8 +1996,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
   const selectedSection =
     allSections.find(
       sec =>
-        sec.title &&
-        sec.title.replace(/\s/g, '').replace(/\W/g, '_') === section
+        getTitleIdFromSection(sec) === section
     ) || {};
 
   if (!section) {
@@ -3429,6 +3460,20 @@ export function optionsFromMetadata({
   });
 }
 
+export const makeOptionsFromMetadata = () => {
+  const madeSelector = fromMetadata.makeOptionsFromMetadata();
+  return (state,
+    connectionId,
+    commMetaPath,
+    filterKey,
+  ) => madeSelector(
+    state?.session?.metadata,
+    connectionId,
+    commMetaPath,
+    filterKey,
+  );
+};
+
 export function optionsMapFromMetadata(
   state,
   connectionId,
@@ -4473,6 +4518,27 @@ export const getScriptContext = createSelector(
   }
 );
 
+// #region suiteScript
+export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+  return sections.map(sec => ({
+    ...sec,
+    titleId: getTitleIdFromSection(sec),
+  }));
+}
+
+export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
+  if (!state) return null;
+  const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+
+
+  if (Array.isArray(general)) {
+    return general.find(s => s.title === 'General');
+  }
+  return general;
+}
+
+
 export function suiteScriptResourceStatus(
   state,
   {
@@ -4524,6 +4590,12 @@ export const suiteScriptResource = (
     integrationId,
   });
 
+export function suiteScriptIAFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSession.suiteScriptIAFeatureCheckState(state && state.session, { ssLinkedConnectionId, integrationId, featureName});
+}
 export const suiteScriptResourceData = (
   state,
   { resourceType, id, ssLinkedConnectionId, integrationId, scope }
@@ -4578,6 +4650,7 @@ export const suiteScriptResourceData = (
   return data;
 };
 
+
 export const suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
@@ -4587,6 +4660,49 @@ export const suiteScriptResourceList = (
     ssLinkedConnectionId,
     integrationId,
   });
+
+export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section) {
+  if (!state) return emptyObject;
+
+  const integrationResource =
+    suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
+  const { sections = []} = integrationResource || {};
+  let requiredFlows = [];
+  const allSections = sections;
+
+
+  const selectedSection =
+      allSections.find(
+        sec =>
+          getTitleIdFromSection(sec) === section
+      ) || {};
+
+  if (!section) {
+    allSections.forEach(sec => {
+      requiredFlows.push(...map(sec.flows, '_id'));
+    });
+  } else {
+    requiredFlows = map(selectedSection.flows, '_id');
+  }
+  const { fields, sections: subSections } = selectedSection;
+
+
+  let flows = suiteScriptResourceList(state, {
+    resourceType: 'flows',
+    integrationId: id,
+    ssLinkedConnectionId,
+  });
+  flows = flows
+    .filter(f => requiredFlows.includes(f.flowGUID))
+    .sort(
+      (a, b) => requiredFlows.indexOf(a.flowGUID) - requiredFlows.indexOf(b.flowGUID)
+    );
+  return {
+    flows,
+    fields,
+    sections: subSections,
+  };
+}
 
 export function suiteScriptIntegrationConnectionList(
   state,
@@ -4666,6 +4782,26 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptIAFormSaveProcessTerminated(
+    state && state.session,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSession.suiteScriptIAFormState(
+    state && state.session,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
 export function suiteScriptJobsPagingDetails(state) {
   return fromData.suiteScriptJobsPagingDetails(state.data);
 }
@@ -4686,6 +4822,8 @@ export function suiteScriptJob(
 export function suiteScriptJobErrors(state, { jobId, jobType }) {
   return fromData.suiteScriptJobErrors(state.data, { jobId, jobType });
 }
+
+// #endregion suiteScript
 
 export function getJobErrorsPreview(state, jobId) {
   return fromSession.getJobErrorsPreview(state && state.session, jobId);

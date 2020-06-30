@@ -212,6 +212,11 @@ export default {
         label: d.label,
         value: d.name,
       })),
+  'suiteScript-sObjects': data =>
+    data.fields &&
+    data.fields.map(({label, name, picklistValues}) =>
+      ({label, name, options: picklistValues && picklistValues.map(({label, value}) => ({label, value}))})
+    ),
   'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
     const { applicationResource, connectionId } = options;
     const _data = [];

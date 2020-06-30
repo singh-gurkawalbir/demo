@@ -379,11 +379,16 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'relatedListsDialog') {
     newField.type = 'salesforcerelatedlistia';
     newField.resource = resource;
+  } else if (newField.type === 'link') {
+    newField.type = 'suitescripttable';
   } else if (newField.type === 'staticMapWidget') {
     newField.type = 'staticMap';
   } else if (newField.type === 'textarea') {
     newField.multiline = true;
     newField.rowsMax = 10;
+  } else if (newField.type === 'checkbox' && newField.featureCheckConfig) {
+    newField.type = 'featurecheck';
+    newField.featureName = newField.featureCheckConfig.featureName;
   }
 
   if (newField.disabled) {
@@ -445,7 +450,8 @@ export const translateDependencyProps = fieldMap => {
 
     if (dependencies) {
       Object.keys(dependencies).forEach(value => {
-        const dependencyFields = dependencies[value].fields;
+        // links are similar to fields property and these are dependencies defined for link components
+        const dependencyFields = dependencies[value].fields || dependencies[value].links;
 
         if (type === 'checkbox') {
           rules.push(
@@ -484,7 +490,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields = [], _integrationId, resource) =>
+const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConnectionId) =>
   fields
     .map(field => {
       // TODO: generate correct name path
@@ -495,6 +501,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
         ...getFieldConfig(field, resource),
         defaultValue,
         name: `/${name}`,
+        ssLinkedConnectionId,
         _integrationId,
         id: name,
         helpText: tooltip,
@@ -561,10 +568,11 @@ export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
   skipContainerWrap,
-  options = {}
+  options = {},
+  ssLinkedConnectionId
 ) => {
   const finalData = {};
-  const { resource, isFlow = false } = options;
+  const { resource, isFlow = false, isSuiteScriptIntegrator} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -573,7 +581,8 @@ export const integrationSettingsToDynaFormMetadata = (
     const addedFieldIdFields = translateFieldProps(
       fields,
       integrationId,
-      resource
+      resource,
+      ssLinkedConnectionId
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
@@ -589,7 +598,8 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.fieldMap = translateFieldProps(
         section.fields,
         integrationId,
-        resource
+        resource,
+        ssLinkedConnectionId
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
@@ -601,12 +611,13 @@ export const integrationSettingsToDynaFormMetadata = (
     // type tab sends the entire form values
     // type tabIA sends per tab
     // for flow settings we send everything for advancedSettings we send per tab
-    finalData.layout.type = isFlow ? 'tab' : 'tabIA';
+
+    if (isSuiteScriptIntegrator) { finalData.layout.type = 'suitScriptTabIA'; } else { finalData.layout.type = isFlow ? 'tab' : 'tabIA'; }
 
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      ...translateFieldProps(section.fields, integrationId, resource).reduce(
+      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId).reduce(
         generateFieldsAndSections,
         {}
       ),

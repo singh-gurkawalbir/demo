@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import resourceForm, * as fromResourceForm from './resourceForm';
+import iaForm, * as fromIAForm from './iaForm';
 import flows, * as fromFlows from './flows';
+import featureCheck, * as fromFeatureCheck from './featureCheck';
 import account, * as fromAccount from './account';
 import installer, * as fromInstaller from './installer';
 import mappings, * as fromMappings from './mappings';
@@ -10,12 +12,22 @@ import flowSampleData, * as fromFlowSampleData from './sampleData/flow';
 export default combineReducers({
   mappings,
   resourceForm,
+  iaForm,
   flows,
+  featureCheck,
   account,
   installer,
   importSampleData,
   flowSampleData,
 });
+
+export function suiteScriptIAFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromFeatureCheck.suiteScriptIAFeatureCheckState(state && state.featureCheck, { ssLinkedConnectionId, integrationId, featureName});
+}
+
 
 export function resourceFormState(
   state,
@@ -41,6 +53,26 @@ export function resourceFormSaveProcessTerminated(
       ssLinkedConnectionId,
       integrationId,
     }
+  );
+}
+
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromIAForm.suiteScriptIAFormSaveProcessTerminated(
+    state && state.iaForm,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromIAForm.suiteScriptIAFormState(
+    state && state.iaForm,
+    { ssLinkedConnectionId, integrationId }
   );
 }
 

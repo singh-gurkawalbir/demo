@@ -8,8 +8,10 @@ describe('suiteScript reducers test cases', () => {
     const state = reducer(undefined, { type: 'RANDOM_ACTION' });
 
     expect(state).toEqual({
+      featureCheck: {},
       resourceForm: {},
       flows: {},
+      iaForm: {},
       installer: {},
       account: {},
       mappings: {},
