@@ -26,13 +26,10 @@ export default function BoxComponents(props) {
 
 
       return (
-        <>
-          <Paper elevation={0}>
-            <div className={classes.root}>
-              <FormGenerator {...props} layout={rest} fieldMap={fieldMap} />
-            </div>
-          </Paper>
-        </>
+        <Paper key={label} elevation={0} className={classes.root}>
+          <FormGenerator {...props} layout={rest} fieldMap={fieldMap} />
+        </Paper>
+
       );
     });
 
