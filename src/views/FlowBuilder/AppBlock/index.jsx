@@ -151,6 +151,9 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create('color'),
     color: 'rgb(0,0,0,0)',
   },
+  pgContainerName: {
+    background: theme.palette.common.white,
+  },
 }));
 
 function AppBlock({
@@ -360,8 +363,7 @@ function AppBlock({
           </Status>
         ) : null}
       </div>
-
-      <Typography className={classes.name} component="div" variant="h5">
+      <Typography className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})} component="div" variant="h5">
         {isTruncated ? (
           <Tooltip
             title={<span className={classes.tooltipNameFB}>{name}</span>}
