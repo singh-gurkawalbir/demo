@@ -26,7 +26,7 @@ const Dismiss = props =>
 
 export const ErroredMessageList = ({ messages }) =>
   messages && messages.length > 0
-    ? messages.map((msg, index) => (
+    ? messages.filter(msg => !!msg).map((msg, index) => (
       <Fragment key={msg}>
         {
             // Check if the message contains html elements, render it as html

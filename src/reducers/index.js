@@ -271,8 +271,17 @@ export function redirectToOnInstallationComplete(
     templateId || `${resourceType}-${resourceId}`
   );
 
+  const {isInstallFailed} = fromSession.template(
+    state && state.session,
+    templateId || `${resourceType}-${resourceId}`
+  );
+
+  if (isInstallFailed) {
+    return {redirectTo: null, isInstallFailed: true};
+  }
+
   if (!components) {
-    return false;
+    return {redirectTo: null};
   }
 
   switch (resourceType) {
@@ -303,7 +312,7 @@ export function redirectToOnInstallationComplete(
       break;
   }
 
-  return getRoutePath(redirectTo);
+  return {redirectTo: getRoutePath(redirectTo)};
 }
 
 export function previewTemplate(state, templateId) {
