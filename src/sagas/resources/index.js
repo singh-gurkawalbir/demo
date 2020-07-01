@@ -440,6 +440,8 @@ export function* updateIntegrationSettings({
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
       yield put(actions.resource.requestCollection('imports'));
+      // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
+      yield put(actions.resource.requestCollection('exports'));
     }
   }
 
