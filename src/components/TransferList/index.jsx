@@ -45,7 +45,7 @@ const SubHeader = ({subHeaderMap, scope, scopes, index}) => {
 
       <ListSubheader disableSticky>{subHeaderMap[scope]}</ListSubheader>
 
-    )
+    );
   }
   return null;
 }

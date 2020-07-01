@@ -86,7 +86,7 @@ export default function DynaSelectScopesDialog(props) {
     }, {});
     const flattenedScopes = scopesOrig.flatMap(ele => ele?.scopes)
     return { subHeaderMap, flattenedScopes};
-  }, [scopesOrig])
+  }, [scopesOrig]);
 
   const defaultAvailableScopes = excludeSelectedScopes(flattenedScopes, selectedScopes);
 
