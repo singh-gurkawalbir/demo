@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: theme.spacing(0, 0, 3, 3),
     backgroundColor: theme.palette.background.default,
   },

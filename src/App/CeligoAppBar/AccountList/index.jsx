@@ -96,6 +96,11 @@ const useStyles = makeStyles(theme => ({
   listWrapper: {
     minWidth: 250,
   },
+  itemRootName: {
+    margin: 0,
+    fontSize: 15,
+    lineHeight: '18px',
+  },
 }));
 
 export default function AccountList() {
@@ -185,6 +190,7 @@ export default function AccountList() {
         className={classes.popper}
         open={open}
         anchorEl={anchorEl}
+        accountListWrapper="accountListWrapper"
         placement="bottom-end"
         onClose={handleClose}>
         <List dense className={classes.listWrapper}>
@@ -202,7 +208,7 @@ export default function AccountList() {
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText>{a.company}</ListItemText>
+              <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
               {a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button

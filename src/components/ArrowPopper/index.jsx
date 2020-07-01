@@ -108,10 +108,18 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  accountListPopper: {
+    left: '125px !important',
+    top: '5px !important',
+  },
+  accountListPopperArrow: {
+    left: '110px !important',
+  }
 }));
 
 export default function ArrowPopper({
   children,
+  accountListWrapper = false,
   onClose = () => {}, // default to noop.
   className,
   ...rest
@@ -123,7 +131,7 @@ export default function ArrowPopper({
     <Popper
       {...rest}
       onClose={onClose}
-      className={classes.popper}
+      className={clsx(classes.popper, {[classes.accountListPopper]: accountListWrapper})}
       modifiers={{
         flip: {
           enabled: true,
@@ -137,7 +145,7 @@ export default function ArrowPopper({
           element: arrowEl,
         },
       }}>
-      <span className={classes.arrow} ref={setArrowEl} />
+      <span className={clsx(classes.arrow, {[classes.accountListPopperArrow]: accountListWrapper})} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
         <Paper className={clsx(classes.paper, className)} elevation={1}>
           {children}
