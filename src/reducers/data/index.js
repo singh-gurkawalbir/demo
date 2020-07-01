@@ -221,8 +221,8 @@ export function flowJobsPagingDetails(state) {
   return fromJobs.flowJobsPagingDetails(state.jobs);
 }
 
-export function flowJobs(state) {
-  return fromJobs.flowJobs(state.jobs);
+export function flowJobs(state, options) {
+  return fromJobs.flowJobs(state.jobs, options);
 }
 
 export function inProgressJobIds(state) {
