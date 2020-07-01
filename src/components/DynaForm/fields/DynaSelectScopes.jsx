@@ -81,10 +81,10 @@ export default function DynaSelectScopesDialog(props) {
       const {subHeader, scopes} = ele;
       scopes && scopes.forEach(scope => {
         acc[scope] = subHeader;
-      })
+      });
       return acc;
     }, {});
-    const flattenedScopes = scopesOrig.flatMap(ele => ele?.scopes)
+    const flattenedScopes = scopesOrig.flatMap(ele => ele?.scopes);
     return { subHeaderMap, flattenedScopes};
   }, [scopesOrig]);
 

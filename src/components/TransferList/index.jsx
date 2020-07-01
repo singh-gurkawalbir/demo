@@ -48,7 +48,7 @@ const SubHeader = ({subHeaderMap, scope, scopes, index}) => {
     );
   }
   return null;
-}
+};
 // this is necessary to preserve the order of scopes
 const sortPerOriginalScopesList = (scopesOrig) => (scopes) => scopesOrig?.filter(scope => scopes.includes(scope));
 export default function TransferList(props) {
