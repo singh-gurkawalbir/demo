@@ -567,15 +567,17 @@ export function resourceList(
     return typeof value === 'string' ? value : '';
   }
 
-  const matchTest = r => {
+  const stringTest = r => {
     if (!keyword) return true;
-
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
         : `${r._id}|${r.name}|${r.description}`;
-
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+  const matchTest = (rOrig) => {
+    const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+    return stringTest(r);
   };
 
   const comparer = ({ order, orderBy }) =>
