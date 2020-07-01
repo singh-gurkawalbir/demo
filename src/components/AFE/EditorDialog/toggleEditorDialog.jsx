@@ -22,6 +22,7 @@ import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import Help from '../../Help';
+import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -70,6 +71,9 @@ const useStyles = makeStyles(theme => ({
     '& Button:last-child': {
       marginRight: '0px',
     },
+  },
+  autoPreview: {
+    marginLeft: '10px',
   }
 }));
 
@@ -127,6 +131,9 @@ export default function ToggleEditorDialog(props) {
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
+  const handleAutoPreviewToggle = useCallback(() => {
+    dispatch(actions.editor.patch(activeEditorId, { autoEvaluate: !editor.autoEvaluate }));
+  }, [dispatch, editor.autoEvaluate, activeEditorId]);
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
@@ -298,15 +305,27 @@ export default function ToggleEditorDialog(props) {
             Cancel
           </Button>
         </div>
-        {showPreviewAction && (
+        <div>
+          <DynaCheckbox
+            disabled={disabled}
+            hideLabelSpacing
+            id="disableAutoPreview"
+            onFieldChange={handleAutoPreviewToggle}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
+          {showPreviewAction && (
           <Button
             variant="outlined"
             data-test="previewEditorResult"
             disabled={!!saveInProgress}
+            className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
-        )}
+          )}
+        </div>
+
       </DialogActions>
     </Dialog>
   );
