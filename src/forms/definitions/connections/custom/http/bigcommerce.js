@@ -32,6 +32,7 @@ export default {
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
+
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
