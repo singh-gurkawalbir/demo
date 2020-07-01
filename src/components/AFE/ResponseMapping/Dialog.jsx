@@ -251,23 +251,21 @@ export default function ResponseMappingDialog(props) {
             saveInProgress={!closeOnSave && saveInProgress}
             label="Save"
           />
-          {isDirty && (
-            <SaveButton
-              dataTest="saveAndCloseMapping"
-              color="secondary"
-              disabled={disableSave}
-              onSave={handleSave}
-              onClose={handleClose}
-              saveInProgress={closeOnSave && saveInProgress}
-              label="Save & close"
+          <SaveButton
+            dataTest="saveAndCloseMapping"
+            color="secondary"
+            disabled={disableSave}
+            onSave={handleSave}
+            onClose={handleClose}
+            saveInProgress={closeOnSave && saveInProgress}
+            label="Save & close"
             />
-          )}
           <Button
             variant="text"
             data-test="close"
             disabled={saveInProgress}
             onClick={onClose}>
-            {saveTerminated ? 'Close' : 'Cancel'}
+            Cancel
           </Button>
         </ButtonGroup>
       </div>
