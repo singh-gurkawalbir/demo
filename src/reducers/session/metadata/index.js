@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import metadataFilterMap from './metadataFilterMap';
 
@@ -154,13 +155,13 @@ export default (
   });
 };
 
-export const optionsFromMetadata = ({
-  state,
+
+const optionsFromMetadataTransformFunct = (
+  applicationResource,
   connectionId,
   commMetaPath,
   filterKey,
-}) => {
-  const applicationResource = (state && state.application) || null;
+) => {
   const path = commMetaPath;
   const { status, data, errorMessage, validationError, changeIdentifier } =
     (applicationResource &&
@@ -188,6 +189,31 @@ export const optionsFromMetadata = ({
     changeIdentifier,
   };
 };
+
+// TODO: deprecate this function and use the makeOptionsFromMetadata
+export const optionsFromMetadata = ({
+  state,
+  connectionId,
+  commMetaPath,
+  filterKey,
+}) => {
+  const applicationResource = (state && state.application) || null;
+  return optionsFromMetadataTransformFunct(applicationResource,
+    connectionId,
+    commMetaPath,
+    filterKey);
+};
+
+
+export const makeOptionsFromMetadata = () => createSelector(
+  state => state?.application,
+  (_1, connectionId) => connectionId,
+  (_1, _2, commMetaPath) => commMetaPath,
+  (_1, _2, _3, filterKey) => filterKey,
+  optionsFromMetadataTransformFunct
+
+);
+
 
 export const optionsMapFromMetadata = (
   state,

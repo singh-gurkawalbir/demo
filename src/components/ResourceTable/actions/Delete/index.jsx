@@ -10,9 +10,9 @@ import ResourceReferences from '../../../ResourceReferences';
 export default {
   label: (rowData, actionProps) => {
     if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
-      return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType]}`;
+      return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
-    return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
+    return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
   component: function DeleteResource({ resourceType, rowData = {} }) {

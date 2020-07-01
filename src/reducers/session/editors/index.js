@@ -39,6 +39,7 @@ export default function reducer(state = {}, action) {
           lastChange: Date.now(),
           initChangeIdentifier: initChangeIdentifier + 1,
           saveStatus,
+          autoEvaluate: !!(draft[id] && draft[id].autoEvaluate)
         };
         break;
       }

@@ -1,10 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import React, { useMemo } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import PanelHeader from '../../../../../../../components/PanelHeader';
-import ResourceForm from '../../../../../../../components/SuiteScript/ResourceFormFactory';
+import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import * as selectors from '../../../../../../../reducers';
-
+import { SuiteScriptForm } from '../../../../App/panels/Settings/sections/ConfigureSettings';
 
 const useStyles = makeStyles(theme => ({
   formContainer: {
@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
-
 export default function GeneralSection({
   ssLinkedConnectionId,
   integrationId,
@@ -35,11 +34,44 @@ export default function GeneralSection({
   );
   const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
 
+
+  const flowSettingsMeta = useSelector(
+    state =>
+      selectors.suiteScriptGeneralSettings(
+        state,
+        integrationId,
+        ssLinkedConnectionId,
+      ),
+    shallowEqual
+  );
+  const translatedMeta = useMemo(
+    () => integrationSettingsToDynaFormMetadata(
+      flowSettingsMeta || {},
+      integrationId,
+      true,
+      {isSuiteScriptIntegrator: true},
+      ssLinkedConnectionId
+    ),
+    [flowSettingsMeta, integrationId, ssLinkedConnectionId]
+  );
+
+  const formState = useSelector(
+    state =>
+      selectors.suiteScriptIAFormState(
+        state,
+        {integrationId, ssLinkedConnectionId}
+      ),
+    shallowEqual
+  );
+
   return (
     <>
       <PanelHeader title="General" />
       <div className={classes.formContainer}>
-        <ResourceForm
+        <SuiteScriptForm
+          fieldMeta={translatedMeta}
+          formState={formState}
+          integrationId={integrationId}
           ssLinkedConnectionId={ssLinkedConnectionId}
           className={classes.form}
           variant="edit"

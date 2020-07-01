@@ -70,6 +70,13 @@ export default combineReducers({
 });
 
 // #region PUBLIC SELECTORS
+
+export function suiteScriptIAFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSuiteScript.suiteScriptIAFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
+}
 export function netsuiteUserRoles(
   state,
   connectionId,
@@ -209,7 +216,6 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
-
 export function optionsMapFromMetadata(
   state,
   connectionId,
@@ -690,6 +696,27 @@ export function suiteScriptResourceFormSaveProcessTerminated(
     }
   );
 }
+
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormSaveProcessTerminated(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormState(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
 
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSuiteScript.isFlowOnOffInProgress(

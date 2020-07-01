@@ -102,11 +102,15 @@ import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
+import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 
 export default {
+  suitescripttable: DyanSuiteScriptTable,
+  featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,

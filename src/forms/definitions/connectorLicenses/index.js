@@ -6,6 +6,11 @@ export default {
     sandbox: { fieldId: 'sandbox' },
   },
   layout: {
-    fields: ['email', 'opts', 'expires', 'sandbox'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['email', 'opts', 'expires', 'sandbox'],
+      },
+    ],
   },
 };

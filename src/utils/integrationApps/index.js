@@ -237,3 +237,5 @@ export default {
   isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
+
+export const getTitleIdFromSection = (sec) => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';
