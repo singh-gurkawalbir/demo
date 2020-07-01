@@ -9,6 +9,7 @@ import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
+import reportCrash from './utils/crash';
 
 const middleware = [];
 let store;
@@ -17,6 +18,11 @@ const sagaMiddleware = createSagaMiddleware({
     // eslint-disable-next-line no-console
     console.warn('saga middleware crashed on error ', error);
     store.dispatch(actions.app.errored());
+    reportCrash({ error: {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    }});
   },
 });
 
