@@ -104,6 +104,7 @@ import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 
 export default {
   mode: DynaMode,
@@ -221,4 +222,5 @@ export default {
   jsonresourcepath: DynaJsonResourcePath,
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
+  suitescriptuploadfile: DynaSuiteScriptUploadFile,
 };

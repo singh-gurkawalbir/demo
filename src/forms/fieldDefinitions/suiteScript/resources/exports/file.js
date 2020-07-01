@@ -1,6 +1,6 @@
 export default {
   uploadFile: {
-    type: 'uploadfile',
+    type: 'suitescriptuploadfile',
     placeholder: 'Sample File (that would be exported)',
     mode: 'csv',
     required: true,

@@ -246,6 +246,74 @@ export default (state = {}, action) => {
         draft.mappings.lastModifiedRowKey = key;
         break;
       }
+      case actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {
+        const { value } = action;
+        draft.mappings.sfSubListExtractFieldName = value;
+
+        if (!value) {
+          const key = draft.mappings.lastModifiedRowKey;
+          if (key) {
+            const index = draft.mappings.mappings.findIndex(m => m.key === key);
+            draft.mappings.mappings[index].rowIdentifier += 1;
+          } else {
+            draft.mappings.changeIdentifier += 1;
+          }
+        }
+        break;
+      }
+      case actionTypes.SUITESCRIPT.MAPPING.REFRESH: {
+        const { key } = action;
+        const index = draft.mappings.mappings.findIndex(m => m.key === key);
+
+        if (index !== -1 && draft.mappings.mappings[index]) {
+          draft.mappings.mappings[index].changeIdentifier += 1;
+        } else {
+          draft.mappings.changeIdentifier += 1;
+        }
+        // draft.mappings.lastModifiedRowKey = key;
+        break;
+      }
+      case actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST: {
+        const { value } = action;
+        const extractList = deepClone(value);
+        if (Array.isArray(extractList) && extractList.length) {
+          const key = draft.mappings.lastModifiedRowKey;
+          if (key) {
+            const index = draft.mappings.mappings.findIndex(m => m.key === key);
+            if (index !== -1) {
+              const [extract] = extractList;
+              draft.mappings.mappings[index].extract = extract;
+              draft.mappings.mappings[index].rowIdentifier += 1;
+              extractList.splice(0, 1);
+            }
+            let positionToInsert = index + 1;
+            extractList.forEach(ext => {
+              const newMapping = {
+                extract: ext,
+                rowIdentifier: 0,
+                key: shortid.generate(),
+              };
+              draft.mappings.mappings.splice(positionToInsert, 0, newMapping);
+              positionToInsert += 1;
+            });
+          } else {
+            let positionToInsert = draft.mappings.mappings.length;
+            extractList.forEach(ext => {
+              const newMapping = {
+                extract: ext,
+                rowIdentifier: 0,
+                key: shortid.generate(),
+              };
+              draft.mappings.mappings.splice(positionToInsert, 0, newMapping);
+              positionToInsert += 1;
+            });
+          }
+          draft.mappings.changeIdentifier += 1;
+        }
+        delete draft.mappings.sfSubListExtractFieldName;
+        break;
+      }
+
       default:
     }
   });
