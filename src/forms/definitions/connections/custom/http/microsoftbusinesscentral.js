@@ -25,9 +25,8 @@ export default {
     'http.unencrypted.environmentName': {
       type: 'text',
       id: 'http.unencrypted.environmentName',
-      helpText:
-        "Enter your Microsoft Dynamics 365 Business Central's enviornment.",
-      label: 'Environment Name',
+      helpKey: 'microsoftbuisnesscentral.connection.http.unencrypted.environmentName',
+      label: 'Environment name',
       required: true,
     },
     application: {
