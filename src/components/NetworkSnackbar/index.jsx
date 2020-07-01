@@ -25,7 +25,7 @@ const Dismiss = props =>
   );
 
 export const ErroredMessageList = ({ messages }) =>
-  messages && messages.length > 0
+  messages?.length
     ? messages.filter(msg => !!msg).map((msg, index) => (
       <Fragment key={msg}>
         {
