@@ -535,7 +535,6 @@ export default {
     }),
     updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
     clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {}),
-    refresh: () => action(actionTypes.SUITESCRIPT.MAPPING.REFRESH, {}),
     checkForSFSublistExtractPatch: (key, value) => action(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
     setSFSubListFieldName: (value) => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
     patchExtractList: (value) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),

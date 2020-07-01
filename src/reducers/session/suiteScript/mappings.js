@@ -261,18 +261,6 @@ export default (state = {}, action) => {
         }
         break;
       }
-      case actionTypes.SUITESCRIPT.MAPPING.REFRESH: {
-        const { key } = action;
-        const index = draft.mappings.mappings.findIndex(m => m.key === key);
-
-        if (index !== -1 && draft.mappings.mappings[index]) {
-          draft.mappings.mappings[index].changeIdentifier += 1;
-        } else {
-          draft.mappings.changeIdentifier += 1;
-        }
-        // draft.mappings.lastModifiedRowKey = key;
-        break;
-      }
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST: {
         const { value } = action;
         const extractList = deepClone(value);
